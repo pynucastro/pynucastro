@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 2.5.0.post16+g6aec7c06 documentation</title>
+    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 2.5.0.post17+g97599731 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=92973e06"></script>
+    <script src="../../../_static/documentation_options.js?v=5a74bf84"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -439,16 +439,14 @@ document.write(`
 <div class="viewcode-block" id="BaseCxxNetwork">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_cxx_network.BaseCxxNetwork">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BaseCxxNetwork</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">RateCollection</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interpret the collection of rates and nuclei and produce the</span>
-<span class="sd">    C++ code needed to integrate the network.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize the C++ network.  This takes the same arguments as</span>
+<span class="sd">    `RateCollection` and interprets the collection of rates</span>
+<span class="sd">    and nuclei and produce the C++ code needed to integrate the</span>
+<span class="sd">    network.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the C++ network.  We take a single argument: a list</span>
-<span class="sd">        of rate files that will make up the network</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -508,15 +506,27 @@ document.write(`
 <div class="viewcode-block" id="BaseCxxNetwork.get_indent_amt">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_cxx_network.BaseCxxNetwork.get_indent_amt">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_indent_amt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;determine the amount of spaces to indent a line&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine the amount of spaces to indent a line.  This looks</span>
+<span class="sd">        for a string of the form &quot;&lt;key&gt;(#)&quot;, where # is the a number that</span>
+<span class="sd">        is the amount of indent.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        l : str</span>
+<span class="sd">            a line</span>
+<span class="sd">        k : str</span>
+<span class="sd">            a keyword of the form &quot;&lt;key&gt;&quot; that appears in the line</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">rem</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\A&#39;</span><span class="o">+</span><span class="n">k</span><span class="o">+</span><span class="sa">r</span><span class="s1">&#39;\(([0-9]*)\)\Z&#39;</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">rem</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">odir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This writes the RHS, jacobian and ancillary files for the system of ODEs that</span>
-<span class="sd">        this network describes, using the template files.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This writes the RHS, jacobian and ancillary files for the</span>
+<span class="sd">        system of ODEs that this network describes, using the template</span>
+<span class="sd">        files.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># pylint: disable=arguments-differ</span>
 

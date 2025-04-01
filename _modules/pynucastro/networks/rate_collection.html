@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.5.0.post16+g6aec7c06 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.5.0.post17+g97599731 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=92973e06"></script>
+    <script src="../../../_static/documentation_options.js?v=5a74bf84"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -518,9 +518,14 @@ document.write(`
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;a composition holds the mass fractions of the nuclei in a network</span>
 <span class="sd">    -- useful for evaluating the rates</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nuclei : (list, tuple)</span>
+<span class="sd">        an iterable of Nucleus objects</span>
+<span class="sd">    small : float</span>
+<span class="sd">        a floor for nuclei mass fractions, used as the default value</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuclei</span><span class="p">,</span> <span class="n">small</span><span class="o">=</span><span class="mf">1.e-16</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;nuclei is an iterable of the nuclei in the network&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">({</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">small</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">nuclei</span><span class="p">})</span>
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
@@ -553,40 +558,75 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">A</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; return nuclei: molar mass pairs for elements in composition&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Nucleus molar masses</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        A : dict</span>
+<span class="sd">            {Nucleus : A} pairs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">n</span><span class="p">:</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">}</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">Z</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; return nuclei: charge pairs for elements in composition&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Nucleus charge</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Z : dict</span>
+<span class="sd">            {Nucleus : Z} pairs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">n</span><span class="p">:</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">}</span>
 
 <div class="viewcode-block" id="Composition.get_nuclei">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.get_nuclei">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;return a list of Nuclei objects that make up this composition&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of Nuclei objects that make up this composition.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Composition.get_molar">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.get_molar">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_molar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; return a dictionary of molar fractions&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a dictionary of molar fractions, Y = X/A</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        molar : dict</span>
+<span class="sd">            {Nucleus : Y}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">/</span><span class="n">k</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
 
 
 <div class="viewcode-block" id="Composition.get_sum_X">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.get_sum_X">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_sum_X</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;return the sum of the mass fractions&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;return the sum of the mass fractions</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">fsum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="Composition.set_solar_like">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.set_solar_like">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_solar_like</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="mf">0.02</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; approximate a solar abundance, setting p to 0.7, He4 to 0.3 - Z and</span>
-<span class="sd">        the remainder evenly distributed with Z &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Approximate a solar abundance, setting p to 0.7, He4 to 0.3</span>
+<span class="sd">        - Z and the remainder evenly distributed with Z</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Z : float</span>
+<span class="sd">            The desired metalicity</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">rem</span> <span class="o">=</span> <span class="n">Z</span><span class="o">/</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">):</span>
@@ -602,16 +642,28 @@ document.write(`
 <div class="viewcode-block" id="Composition.set_array">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.set_array">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; set all species from a sequence of mass fractions, in the same</span>
-<span class="sd">        order as returned by get_nuclei() &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the mass fractions of all species to the values</span>
+<span class="sd">        in arr, `get_nuclei()`</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        arr : (list, tuple, numpy.ndarray)</span>
+<span class="sd">            input values of mass fractions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="Composition.set_all">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.set_all">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xval</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; set all species to a particular value &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xval</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set all species to the same scalar value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        xval : float</span>
+<span class="sd">            mass fraction value for all species</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
             <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">xval</span></div>
 
@@ -619,15 +671,24 @@ document.write(`
 <div class="viewcode-block" id="Composition.set_equal">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.set_equal">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_equal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; set all species to be equal&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set all species to be equal&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_all</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="Composition.set_random">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.set_random">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; set all species using a Dirichlet distribution with</span>
-<span class="sd">        parameters alpha and specified rng seed &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set all species using a Dirichlet distribution with</span>
+<span class="sd">        parameters alpha and specified rng seed.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        alpha : (list, tuple, numpy.ndarray)</span>
+<span class="sd">            distribution length for the Dirichlet distribution</span>
+<span class="sd">        seed : float</span>
+<span class="sd">            seed for the random number generator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="c1"># initializes random seed</span>
         <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
@@ -644,15 +705,22 @@ document.write(`
 
 <div class="viewcode-block" id="Composition.set_nuc">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.set_nuc">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_nuc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">xval</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; set nuclei name to the mass fraction xval &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_nuc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">xval</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set nuclei name to the mass fraction xval</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : Nucleus</span>
+<span class="sd">            the nucleus to set</span>
+<span class="sd">        xval: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">xval</span></div>
 
 
 <div class="viewcode-block" id="Composition.normalize">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.normalize">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; normalize the mass fractions to sum to 1 &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalize the mass fractions to sum to 1 &quot;&quot;&quot;</span>
         <span class="n">X_sum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sum_X</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
@@ -661,29 +729,59 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">ye</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; return the electron fraction &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the electron fraction of the composition</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">electron_frac</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fsum</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="o">/</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sum_X</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">electron_frac</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">abar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; return the mean molecular weight &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the mean molecular weight</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">abar</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">fsum</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">/</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">abar</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">zbar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; return the mean charge, Zbar &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the mean charge, Zbar</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abar</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">ye</span>
 
 <div class="viewcode-block" id="Composition.bin_as">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.bin_as">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">bin_as</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuclei</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;given a list of nuclei, return a new Composition object with the</span>
-<span class="sd">        current composition mass fractions binned into the new nuclei.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given a list of nuclei, return a new Composition object</span>
+<span class="sd">        with the current composition mass fractions binned into the</span>
+<span class="sd">        new nuclei.</span>
 
-<span class="sd">        if a list of nuclei is provided by exclude, then only exact</span>
-<span class="sd">        matches will be binned into the nuclei in that list</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nuclei : list</span>
+<span class="sd">            Input nuclei (either as string names or</span>
+<span class="sd">            Nucleus objects) defining the new composition.</span>
+<span class="sd">        verbose : bool</span>
+<span class="sd">            Output more information</span>
+<span class="sd">        exclude : bool</span>
+<span class="sd">            List of nuclei in `nuclei` that only</span>
+<span class="sd">            exact matches from the original composition can</span>
+<span class="sd">            map into</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        new_composition : Composition</span>
+<span class="sd">            The new binned composition</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">nuclei</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
@@ -756,17 +854,22 @@ document.write(`
 <div class="viewcode-block" id="Composition.plot">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Composition.plot">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trace_threshold</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">hard_limit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">5</span><span class="p">)):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Make a pie chart of Composition. group trace nuclei together and explode into bar chart</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a pie chart of Composition. group trace nuclei</span>
+<span class="sd">        together and explode into bar chart</span>
 
-<span class="sd">        parameters</span>
+<span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
+<span class="sd">        trace_threshold : float</span>
+<span class="sd">            the threshold to consider a component to be trace.</span>
+<span class="sd">        hard_limit : float</span>
+<span class="sd">            limit below which an abundance will not be included</span>
+<span class="sd">            in the trace nuclei wedget of the plot.</span>
+<span class="sd">        size: tuple</span>
+<span class="sd">            width, height of the plot in inches</span>
 
-<span class="sd">        trace_threshold : the threshold to consider a component to be trace.</span>
-
-<span class="sd">        hard_limit : hard limit for nuclei to be labeled in the plot. Default is None which will set the limit to 5% of total trace abundance</span>
-
-<span class="sd">        size: tuple giving width x height of the plot in inches</span>
-
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matplotlib.figure.Figure</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># find trace nuclei</span>
@@ -871,7 +974,31 @@ document.write(`
 <div class="viewcode-block" id="RateCollection">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RateCollection</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; a collection of rates that together define a network &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A collection of rates that together define a network.</span>
+<span class="sd">    There are several arguments to the constructor -- any combination</span>
+<span class="sd">    may be supplied.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rate_files : (str, list, tuple)</span>
+<span class="sd">        a string or iterable of strings of file names that define valid</span>
+<span class="sd">        rates. This can include Reaclib library files storing multiple</span>
+<span class="sd">        rates.</span>
+<span class="sd">    libraries : (Library, list, tuple)</span>
+<span class="sd">        a Library or iterable of Library objects</span>
+<span class="sd">    rates : (Rate, list, tuple)</span>
+<span class="sd">        a Rate or iterable of Rate objects</span>
+<span class="sd">    inert_nuclei : (list, tuple)</span>
+<span class="sd">        an iterable of Nuclei that should be part of the collection but</span>
+<span class="sd">        are not linked via reactions to the other Nuclei in the network.</span>
+<span class="sd">    symmetric_screening : bool</span>
+<span class="sd">        symmetric screening means that we screen the reverse rates</span>
+<span class="sd">        using the same factor as the forward rates, for rates computed</span>
+<span class="sd">        via detailed balance.</span>
+<span class="sd">    do_screening : bool</span>
+<span class="sd">        should we consider screening at all -- this mainly affects</span>
+<span class="sd">        whether we build the screening map</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># pylint: disable=too-many-public-methods</span>
 
     <span class="n">pynucastro_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -879,28 +1006,6 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">libraries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">inert_nuclei</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">symmetric_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">do_screening</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;rate_files are the files that together define the network.  This</span>
-<span class="sd">        can be any iterable or single string.</span>
-
-<span class="sd">        This can include Reaclib library files storing multiple rates.</span>
-
-<span class="sd">        If libraries is supplied, initialize a RateCollection using the rates</span>
-<span class="sd">        in the Library object(s) in list &#39;libraries&#39;.</span>
-
-<span class="sd">        If rates is supplied, initialize a RateCollection using the</span>
-<span class="sd">        Rate objects in the list &#39;rates&#39;.</span>
-
-<span class="sd">        inert_nuclei is a list of nuclei that should be part of the</span>
-<span class="sd">        collection but are not linked via reactions to the other nuclei</span>
-<span class="sd">        in the network.</span>
-
-<span class="sd">        symmetric_screening means that we screen the reverse rates</span>
-<span class="sd">        using the same factor as the forward rates, for rates computed</span>
-<span class="sd">        via detailed balance.</span>
-
-<span class="sd">        Any combination of these options may be supplied.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">combined_library</span> <span class="o">=</span> <span class="n">Library</span><span class="p">()</span>
@@ -1485,6 +1590,11 @@ document.write(`
 <span class="sd">        the proton captures at lower mass number, simplifying the</span>
 <span class="sd">        linear algebra.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        A : int</span>
+<span class="sd">            mass number above which to swap regular protons for</span>
+<span class="sd">            NSE protons.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># we want to update both the forward and reverse rates,</span>
@@ -1521,21 +1631,37 @@ document.write(`
 <div class="viewcode-block" id="RateCollection.evaluate_rates">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_rates">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;evaluate the rates for a specific density, temperature, and</span>
-<span class="sd">        composition, with optional screening</span>
+<span class="sd">        composition, with optional screening.  Note: this returns that</span>
+<span class="sd">        rate as dY/dt, where Y is the molar fraction.  For a 2 body</span>
+<span class="sd">        reaction, a + b, this will be of the form:</span>
 
-<span class="sd">        Note: this returns that rate as dY/dt, where Y is the molar fraction.</span>
-<span class="sd">        For a 2 body reaction, a + b, this will be of the form:</span>
-
-<span class="sd">        rho Y_a Y_b N_A &lt;sigma v&gt; / (1 + delta_{ab}</span>
+<span class="sd">        rho Y_a Y_b N_A &lt;sigma v&gt; / (1 + delta_{ab})</span>
 
 <span class="sd">        where delta is the Kronecker delta that accounts for a = b.</span>
 
 <span class="sd">        If you want dn/dt, where n is the number density (so you get</span>
 <span class="sd">        n_a n_b &lt;sigma v&gt;), then you need to multiply the results here</span>
 <span class="sd">        by rho N_A (where N_A is Avogadro&#39;s number).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            density used to evaluate rates</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature used to evaluate rates</span>
+<span class="sd">        composition : Composition</span>
+<span class="sd">            composition used to evaluate rates</span>
+<span class="sd">        screen_func : Callable</span>
+<span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
+<span class="sd">            -- if provided, then the evaluated rates will include the screening</span>
+<span class="sd">            correction.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">rvals</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">ys</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
         <span class="n">y_e</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">ye</span>
@@ -1558,7 +1684,25 @@ document.write(`
 <div class="viewcode-block" id="RateCollection.evaluate_jacobian">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_jacobian">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;return an array of the form J_ij = dYdot_i/dY_j for the network&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;return an array of the form J_ij = dYdot_i/dY_j for the network</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            density used to evaluate Jacobian terms</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature used to evaluate Jacobian terms</span>
+<span class="sd">        comp : Composition</span>
+<span class="sd">            composition used to evaluate Jacobian terms</span>
+<span class="sd">        screen_func : Callable</span>
+<span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
+<span class="sd">            -- if provided, then the evaluated rates will include the screening</span>
+<span class="sd">            correction.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># the rate.eval_jacobian_term does not compute the screening,</span>
         <span class="c1"># so we multiply by the factors afterwards</span>
@@ -1745,24 +1889,29 @@ document.write(`
 
 <div class="viewcode-block" id="RateCollection.evaluate_ydots">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_ydots">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_ydots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rate_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_ydots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span>
+                       <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rate_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;evaluate net rate of change of molar abundance for each nucleus</span>
 <span class="sd">        for a specific density, temperature, and composition</span>
 
-<span class="sd">        rho: the density (g/cm^3)</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            density used to evaluate rates</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature used to evaluate rates</span>
+<span class="sd">        composition : Composition</span>
+<span class="sd">            composition used to evaluate rates</span>
+<span class="sd">        screen_func : Callable</span>
+<span class="sd">            a function from :py:mod:`pynucastro.screening` used to compute the</span>
+<span class="sd">            screening enhancement for the rates.</span>
+<span class="sd">        rate_filter : Callable</span>
+<span class="sd">            a function that takes a `Rate` object and returns True</span>
+<span class="sd">            or False if it is to be shown as an edge.</span>
 
-<span class="sd">        T: the temperature (K)</span>
-
-<span class="sd">        composition: a Composition object holding the mass fractions</span>
-<span class="sd">        of the nuclei</span>
-
-<span class="sd">        screen_func: (optional) the name of a screening function to call</span>
-<span class="sd">        to add electron screening to the rates</span>
-
-<span class="sd">        rate_filter_funcion: (optional) a function that takes a Rate</span>
-<span class="sd">        object and returns true or false if it is to be shown</span>
-<span class="sd">        as an edge.</span>
-
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">)</span>
@@ -1796,13 +1945,30 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_energy_generation">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_energy_generation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span>
                                    <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_enu</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;evaluate the specific energy generation rate of the network for a specific</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the specific energy generation rate of the network for a specific</span>
 <span class="sd">        density, temperature and composition</span>
 
-<span class="sd">        screen_func: (optional) a function object to call to apply screening</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            density to evaluate the rates with</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature to evaluate the rates with</span>
+<span class="sd">        composition : Composition</span>
+<span class="sd">            composition to evaluate the rates with</span>
+<span class="sd">        screen_func : Callable</span>
+<span class="sd">            a function from :py:mod:`pynucastro.screening` to</span>
+<span class="sd">            call to compute the screening factor</span>
+<span class="sd">        return_enu : bool</span>
+<span class="sd">            return both enuc and enu -- the energy loss</span>
+<span class="sd">            from neutrinos from weak reactions</span>
 
-<span class="sd">        return_enu: (optional) return both enuc and enu -- the energy loss</span>
-<span class="sd">        from neutrinos from weak reactions</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        enuc : float</span>
+<span class="sd">            the energy generation rate</span>
+<span class="sd">        enu : float</span>
+<span class="sd">            the neutrino loss rate from weak reactions</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">ydots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_ydots</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">)</span>
@@ -1988,74 +2154,73 @@ document.write(`
 <span class="sd">        provided (rho, T, comp), then the links are colored by rate</span>
 <span class="sd">        strength.</span>
 
-
-<span class="sd">        parameters</span>
+<span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
+<span class="sd">        rho : float</span>
+<span class="sd">           density to evaluate rates with</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature to evaluate rates with</span>
+<span class="sd">        comp : Composition</span>
+<span class="sd">            composition to evaluate rates with</span>
+<span class="sd">        outfile : str</span>
+<span class="sd">            output name of the plot (extension determines the type)</span>
+<span class="sd">        size : (tuple, list)</span>
+<span class="sd">            (width, height) of the plot in pixels</span>
+<span class="sd">        dpi : int</span>
+<span class="sd">            dots per inch used with size to set output image size</span>
+<span class="sd">        title : str</span>
+<span class="sd">            title to display on the plot</span>
+<span class="sd">        ydot_cutoff_value : float</span>
+<span class="sd">            rate threshold below which we do not show a</span>
+<span class="sd">            line corresponding to a rate</span>
+<span class="sd">        show_small_ydot : bool</span>
+<span class="sd">            show visible dashed lines for rates below ydot_cutoff_value</span>
+<span class="sd">        node_size : float</span>
+<span class="sd">            size of a node (in networkx units)</span>
+<span class="sd">        node_font_size : float</span>
+<span class="sd">            size of the font used to write the isotope in the node</span>
+<span class="sd">        node_color : str</span>
+<span class="sd">            color to make the nodes</span>
+<span class="sd">        node_shape : str</span>
+<span class="sd">            shape of the node (using matplotlib marker names)</span>
+<span class="sd">        curved_edges : bool</span>
+<span class="sd">            do we use arcs to connect the nodes?</span>
+<span class="sd">        N_range : (tuple, list)</span>
+<span class="sd">            range of neutron number to zoom in on</span>
+<span class="sd">        Z_range : (tuple, list)</span>
+<span class="sd">            range of proton number to zoom in on</span>
+<span class="sd">        rotate : bool</span>
+<span class="sd">            plot A - 2Z vs. Z instead of the default Z vs. N</span>
+<span class="sd">        always_show_p : bool</span>
+<span class="sd">            include p as a node on the plot even if we</span>
+<span class="sd">            don&#39;t have p+p reactions</span>
+<span class="sd">        always_show_alpha : bool</span>
+<span class="sd">            include He4 as a node on the plot even if</span>
+<span class="sd">            we don&#39;t have 3-alpha</span>
+<span class="sd">        hide_xalpha : bool</span>
+<span class="sd">            dont connect the links to alpha for heavy</span>
+<span class="sd">            nuclei reactions of the form A(alpha,X)B or A(X,alpha)B,</span>
+<span class="sd">            except if alpha is the heaviest product.</span>
+<span class="sd">        hide_xp : bool</span>
+<span class="sd">            dont connect the links to p for heavy</span>
+<span class="sd">            nuclei reactions of the form A(p,X)B or A(X,p)B.</span>
+<span class="sd">        edge_labels : dict</span>
+<span class="sd">            a dictionary of the form {(n1, n2): &quot;label&quot;}</span>
+<span class="sd">            that gives labels for the edges in the network connecting</span>
+<span class="sd">            nucleus n1 to n2.</span>
+<span class="sd">        highlight_filter_function : Callable</span>
+<span class="sd">            a function that takes a `Rate` object and returns True or</span>
+<span class="sd">            False if we want to highlight the rate edge.</span>
+<span class="sd">        nucleus_filter_function : Callable</span>
+<span class="sd">            a function that takes a `Nucleus` object and returns</span>
+<span class="sd">            True or False if it is to be shown as a node.</span>
+<span class="sd">        rate_filter_function : Callable</span>
+<span class="sd">            a function that takes a `Rate` object</span>
+<span class="sd">            and returns True or False if it is to be shown as an edge.</span>
 
-<span class="sd">        outfile: output name of the plot -- extension determines the type</span>
-
-<span class="sd">        rho: density to evaluate rates with</span>
-
-<span class="sd">        T: temperature to evaluate rates with</span>
-
-<span class="sd">        comp: composition to evaluate rates with</span>
-
-<span class="sd">        size: tuple giving width x height of the plot in pixels</span>
-
-<span class="sd">        dpi: pixels per inch used by matplotlib in rendering bitmap</span>
-
-<span class="sd">        title: title to display on the plot</span>
-
-<span class="sd">        ydot_cutoff_value: rate threshold below which we do not show a</span>
-<span class="sd">        line corresponding to a rate</span>
-
-<span class="sd">        show_small_ydot: if true, then show visible lines for rates below</span>
-<span class="sd">        ydot_cutoff_value</span>
-
-<span class="sd">        node_size: size of a node</span>
-
-<span class="sd">        node_font_size: size of the font used to write the isotope in the node</span>
-
-<span class="sd">        node_color: color to make the nodes</span>
-
-<span class="sd">        node_shape: shape of the node (using matplotlib marker names)</span>
-
-<span class="sd">        curved_edges: do we use arcs to connect the nodes?</span>
-
-<span class="sd">        N_range: range of neutron number to zoom in on</span>
-
-<span class="sd">        Z_range: range of proton number to zoom in on</span>
-
-<span class="sd">        rotate: if True, we plot A - 2Z vs. Z instead of the default Z vs. N</span>
-
-<span class="sd">        always_show_p: include p as a node on the plot even if we</span>
-<span class="sd">        don&#39;t have p+p reactions</span>
-
-<span class="sd">        always_show_alpha: include He4 as a node on the plot even if</span>
-<span class="sd">        we don&#39;t have 3-alpha</span>
-
-<span class="sd">        hide_xalpha=False: dont connect the links to alpha for heavy</span>
-<span class="sd">        nuclei reactions of the form A(alpha,X)B or A(X,alpha)B,</span>
-<span class="sd">        except if alpha is the heaviest product.</span>
-
-<span class="sd">        hide_xp=False: dont connect the links to p for heavy</span>
-<span class="sd">        nuclei reactions of the form A(p,X)B or A(X,p)B.</span>
-
-<span class="sd">        edge_labels: a dictionary of the form {(n1, n2): &quot;label&quot;}</span>
-<span class="sd">        that gives labels for the edges in the network connecting</span>
-<span class="sd">        nucleus n1 to n2.</span>
-
-<span class="sd">        highlight_filter_function: name of a custom function that</span>
-<span class="sd">        takes a Rate object and returns true or false if we want</span>
-<span class="sd">        to highlight the rate edge.</span>
-
-<span class="sd">        nucleus_filter_funcion: name of a custom function that takes a</span>
-<span class="sd">        Nucleus object and returns true or false if it is to be shown</span>
-<span class="sd">        as a node.</span>
-
-<span class="sd">        rate_filter_funcion: a function that takes a Rate object</span>
-<span class="sd">        and returns true or false if it is to be shown as an edge.</span>
-
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matplotlib.figure.Figure</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">MultiDiGraph</span><span class="p">()</span>
@@ -2365,9 +2530,31 @@ document.write(`
                       <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                       <span class="n">rate_scaling</span><span class="o">=</span><span class="mf">1.e10</span><span class="p">,</span>
                       <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;plot the Jacobian matrix of the system.  Here, rate_scaling is used</span>
-<span class="sd">        to set the cutoff of values that we show, relative to the peak.  Any</span>
-<span class="sd">        Jacobian element smaller than this will not be shown.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the Jacobian matrix of the system.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            density used to evaluate terms</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature used to evaluate terms</span>
+<span class="sd">        comp : Composition</span>
+<span class="sd">            composition used to evaluate terms</span>
+<span class="sd">        outfile : str</span>
+<span class="sd">            output file for plot (extension is used to specify file type)</span>
+<span class="sd">        rate_scaling : float</span>
+<span class="sd">            the cutoff of values that we show, relative to the peak.  Any</span>
+<span class="sd">            Jacobian element smaller than this will not be shown.</span>
+<span class="sd">        size : (tuple, list)</span>
+<span class="sd">            size in pixels for the output plot</span>
+<span class="sd">        dpi : float</span>
+<span class="sd">            dots per inch for the output plot</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matplotlib.figure.Figure</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">jac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_jacobian</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
 
@@ -2410,6 +2597,23 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_network_chart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                            <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                            <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">force_one_column</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot a heatmap showing which rates are affected by which nuclei.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            density used to evaluate rates</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature used to evaluate rates</span>
+<span class="sd">        comp : Composition</span>
+<span class="sd">            composition used to evaluate rates</span>
+<span class="sd">        outfile</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matplotlib.figure.Figure</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">nc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_network_chart</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
 
@@ -2540,44 +2744,50 @@ document.write(`
 
 <div class="viewcode-block" id="RateCollection.gridplot">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.gridplot">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">gridplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color_field</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Plot nuclides as cells on a grid of Z vs. N, colored by *color_field*. If called</span>
-<span class="sd">        without a composition, the function will just plot the grid with no color field.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gridplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color_field</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot nuclides as cells on a grid of Z vs. N, colored by `color_field`.</span>
+<span class="sd">        If called without a composition, the function will just plot the grid</span>
+<span class="sd">        with no color field.</span>
 
-<span class="sd">        :param comp: Composition of the environment.</span>
-<span class="sd">        :param color_field: Field to color by. Must be one of &#39;X&#39; (mass fraction),</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            density used to evaluate color_field</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature used to evaluate color_field</span>
+<span class="sd">        comp : Composition</span>
+<span class="sd">            composition used to evaluate color_field</span>
+<span class="sd">        color_field : str</span>
+<span class="sd">            field to color by. Must be one of &#39;X&#39; (mass fraction),</span>
 <span class="sd">            &#39;Y&#39; (molar abundance), &#39;Xdot&#39; (time derivative of X), &#39;Ydot&#39; (time</span>
 <span class="sd">            derivative of Y), or &#39;activity&#39; (sum of contributions to Ydot of</span>
 <span class="sd">            all rates, ignoring sign).</span>
-<span class="sd">        :param rho: Density to evaluate rates at. Needed for fields involving time</span>
-<span class="sd">            derivatives.</span>
-<span class="sd">        :param T: Temperature to evaluate rates at. Needed for fields involving time</span>
-<span class="sd">            derivatives.</span>
+<span class="sd">        kwargs: dict</span>
+<span class="sd">         - &quot;scale&quot; -- One of &#39;linear&#39;, &#39;log&#39;, and &#39;symlog&#39;. Linear by default.</span>
+<span class="sd">         - &quot;small&quot; -- If using logarithmic scaling, zeros will be replaced with</span>
+<span class="sd">           this value. 1e-30 by default.</span>
+<span class="sd">         - &quot;linthresh&quot; -- Linearity threshold for symlog scaling.</span>
+<span class="sd">         - &quot;linscale&quot; --  The number of decades to use for each half of the linear</span>
+<span class="sd">           range. Stretches linear range relative to the logarithmic range.</span>
+<span class="sd">         - &quot;filter_function&quot; -- A callable to filter `Nucleus` objects with. Should</span>
+<span class="sd">           return True if the nuclide should be plotted.</span>
+<span class="sd">         - &quot;outfile&quot; -- Output file to save the plot to. The plot will be shown if</span>
+<span class="sd">           not specified.</span>
+<span class="sd">         - &quot;dpi&quot; -- DPI to save the image file at.</span>
+<span class="sd">         - &quot;cmap&quot; -- Name of the matplotlib colormap to use. Default is &#39;magma&#39;.</span>
+<span class="sd">         - &quot;edgecolor&quot; -- Color of grid cell edges.</span>
+<span class="sd">         - &quot;area&quot; -- Area of the figure without the colorbar, in square inches. 64</span>
+<span class="sd">           by default.</span>
+<span class="sd">         - &quot;no_axes&quot; -- Set to True to omit axis spines.</span>
+<span class="sd">         - &quot;no_ticks&quot; -- Set to True to omit tickmarks.</span>
+<span class="sd">         - &quot;no_cbar&quot; -- Set to True to omit colorbar.</span>
+<span class="sd">         - &quot;cbar_label&quot; -- Colorbar label.</span>
+<span class="sd">         - &quot;cbar_bounds&quot; -- Explicit colorbar bounds.</span>
+<span class="sd">         - &quot;cbar_format&quot; -- Format string or Formatter object for the colorbar ticks.</span>
 
-<span class="sd">        :Keyword Arguments:</span>
-
-<span class="sd">            - *scale* -- One of &#39;linear&#39;, &#39;log&#39;, and &#39;symlog&#39;. Linear by default.</span>
-<span class="sd">            - *small* -- If using logarithmic scaling, zeros will be replaced with</span>
-<span class="sd">              this value. 1e-30 by default.</span>
-<span class="sd">            - *linthresh* -- Linearity threshold for symlog scaling.</span>
-<span class="sd">            - *linscale* --  The number of decades to use for each half of the linear</span>
-<span class="sd">              range. Stretches linear range relative to the logarithmic range.</span>
-<span class="sd">            - *filter_function* -- A callable to filter Nucleus objects with. Should</span>
-<span class="sd">              return *True* if the nuclide should be plotted.</span>
-<span class="sd">            - *outfile* -- Output file to save the plot to. The plot will be shown if</span>
-<span class="sd">              not specified.</span>
-<span class="sd">            - *dpi* -- DPI to save the image file at.</span>
-<span class="sd">            - *cmap* -- Name of the matplotlib colormap to use. Default is &#39;magma&#39;.</span>
-<span class="sd">            - *edgecolor* -- Color of grid cell edges.</span>
-<span class="sd">            - *area* -- Area of the figure without the colorbar, in square inches. 64</span>
-<span class="sd">              by default.</span>
-<span class="sd">            - *no_axes* -- Set to *True* to omit axis spines.</span>
-<span class="sd">            - *no_ticks* -- Set to *True* to omit tickmarks.</span>
-<span class="sd">            - *no_cbar* -- Set to *True* to omit colorbar.</span>
-<span class="sd">            - *cbar_label* -- Colorbar label.</span>
-<span class="sd">            - *cbar_bounds* -- Explicit colorbar bounds.</span>
-<span class="sd">            - *cbar_format* -- Format string or Formatter object for the colorbar ticks.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matplotlib.figure.Figure</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Process kwargs</span>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.nse_network &#8212; pynucastro 2.5.0.post16+g6aec7c06 documentation</title>
+    <title>pynucastro.networks.nse_network &#8212; pynucastro 2.5.0.post17+g97599731 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=92973e06"></script>
+    <script src="../../../_static/documentation_options.js?v=5a74bf84"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -428,19 +428,34 @@ document.write(`
 <div class="viewcode-block" id="NSETableEntry">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.nse_network.NSETableEntry">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NSETableEntry</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple container to hold a single entry in the NSE table.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rho : float</span>
+<span class="sd">        the density of the NSE state</span>
+<span class="sd">    T : float</span>
+<span class="sd">        the temperature of the NSE state</span>
+<span class="sd">    Ye : float</span>
+<span class="sd">        the electron fraction</span>
+<span class="sd">    comp : Composition</span>
+<span class="sd">        the NSE composition</span>
+<span class="sd">    ydots : dict</span>
+<span class="sd">        a dictionary of dY/dt keyed by Nucleus.  This is meant to be</span>
+<span class="sd">        the weak nuclear rates only, since those affect the NSE state.</span>
+<span class="sd">    enu : float</span>
+<span class="sd">        the weak rate neutrino energy loss</span>
+<span class="sd">    comp_reduction_function : Callable</span>
+<span class="sd">        a function that converts the NSE composition into a smaller set</span>
+<span class="sd">        of nuclei.  It takes a Composition object and returns a dictionary</span>
+<span class="sd">        with the nucleus name (like &quot;Ni56&quot;) as the key and the corresponding</span>
+<span class="sd">        mass fraction as the value.  It should be ordered in the way you</span>
+<span class="sd">        want the nuclei output into the NSE table file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Ye</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                  <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ydots</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">enu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">comp_reduction_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;a simple container to hold a single entry in the NSE table.</span>
-
-<span class="sd">        Here, comp_reduction_func(comp) is a function that converts</span>
-<span class="sd">        the NSE composition into a smaller set of nuclei.  It takes a</span>
-<span class="sd">        Composition object and returns a dictionary with the nucleus</span>
-<span class="sd">        name (like &quot;Ni56&quot;) as the key and the corresponding mass fraction</span>
-<span class="sd">        as the value.  It should be ordered in the way you want the nuclei</span>
-<span class="sd">        output into the NSE table file.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="n">rho</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">T</span>
@@ -579,21 +594,29 @@ document.write(`
 <span class="sd">        Returns the NSE composition given density, temperature and prescribed electron fraction</span>
 <span class="sd">        using scipy.fsolve.</span>
 
-<span class="sd">        Parameters:</span>
-<span class="sd">        -------------------------------------</span>
-<span class="sd">        rho: NSE state density</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            NSE state density</span>
+<span class="sd">        T : float</span>
+<span class="sd">            NSE state Temperature</span>
+<span class="sd">        ye : float</span>
+<span class="sd">            prescribed electron fraction</span>
+<span class="sd">        init_guess : (tuple, list)</span>
+<span class="sd">            initial guess of chemical potential of proton and neutron, [mu_p, mu_n]</span>
+<span class="sd">        tol : float</span>
+<span class="sd">            tolerance of scipy.fsolve</span>
+<span class="sd">        use_coulomb_corr : bool</span>
+<span class="sd">            whether to include coulomb correction terms</span>
+<span class="sd">        return_sol : bool</span>
+<span class="sd">            whether to return the solution of the proton and neutron chemical potential.</span>
 
-<span class="sd">        T: NSE state Temperature</span>
-
-<span class="sd">        ye: prescribed electron fraction</span>
-
-<span class="sd">        init_guess: optional, initial guess of chemical potential of proton and neutron, [mu_p, mu_n]</span>
-
-<span class="sd">        tol: optional, sets the tolerance of scipy.fsolve</span>
-
-<span class="sd">        use_coulomb_corr: Whether to include coulomb correction terms</span>
-
-<span class="sd">        return_sol: Whether to return the solution of the proton and neutron chemical potential.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        comp : Composition</span>
+<span class="sd">            the NSE composition</span>
+<span class="sd">        u : ndarray</span>
+<span class="sd">            the chemical potentials found by solving the nonlinear system.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># From here we convert the init_guess list into a np.array object:</span>
@@ -662,6 +685,26 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">generate_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Ye_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                        <span class="n">comp_reduction_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="s2">&quot;nse.tbl&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a table of NSE properties.  For every combination of</span>
+<span class="sd">        density, temperature, and Ye, we solve for the NSE state and output</span>
+<span class="sd">        composition properties to a file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho_values : numpy.ndarray</span>
+<span class="sd">            values of density to use in the tabulation</span>
+<span class="sd">        T_values : numpy.ndarray</span>
+<span class="sd">            values of temperature to use in the tabulation</span>
+<span class="sd">        Ye_values : numpy.ndarray</span>
+<span class="sd">            values of electron fraction to use in the tabulation</span>
+<span class="sd">        comp_reduction_func : Callable</span>
+<span class="sd">            a function that takes the NSE composition and return a reduced</span>
+<span class="sd">            composition</span>
+<span class="sd">        verbose : bool</span>
+<span class="sd">            output progress on creating the table as we go along</span>
+<span class="sd">        outfile : str</span>
+<span class="sd">            filename for the NSE table output</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># initial guess</span>
         <span class="n">mu_p0</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.5</span>

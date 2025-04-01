@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.screening package &#8212; pynucastro 2.5.0.post16+g6aec7c06 documentation</title>
+    <title>pynucastro.screening package &#8212; pynucastro 2.5.0.post17+g97599731 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=92973e06"></script>
+    <script src="_static/documentation_options.js?v=5a74bf84"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -564,7 +564,7 @@ factor calculations.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.PlasmaState.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.PlasmaState#7f687fda02d0&lt;temp:float64,dens:float64,qlam0z:float64,taufac:float64,aa:float64,abar:float64,zbar:float64,z2bar:float64,n_e:float64,gamma_e_fac:float64&gt;</span></em><a class="headerlink" href="#pynucastro.screening.screen.PlasmaState.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.PlasmaState#7f2c4b7b8b90&lt;temp:float64,dens:float64,qlam0z:float64,taufac:float64,aa:float64,abar:float64,zbar:float64,z2bar:float64,n_e:float64,gamma_e_fac:float64&gt;</span></em><a class="headerlink" href="#pynucastro.screening.screen.PlasmaState.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -593,7 +593,7 @@ for a specific pair of nuclei.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.ScreenFactors.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.ScreenFactors#7f685ef74b90&lt;z1:int64,z2:int64,a1:int64,a2:int64,zs13:float64,zhat:float64,zhat2:float64,lzav:float64,aznut:float64,ztilde:float64&gt;</span></em><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.ScreenFactors#7f2c2717c390&lt;z1:int64,z2:int64,a1:int64,a2:int64,zs13:float64,zhat:float64,zhat2:float64,lzav:float64,aznut:float64,ztilde:float64&gt;</span></em><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -636,7 +636,7 @@ multi-component plasma.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.debye_huckel">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screen.</span></span><span class="sig-name descname"><span class="pre">debye_huckel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scn_fac</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span></span><a class="reference internal" href="_modules/pynucastro/screening/screen.html#debye_huckel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screen.debye_huckel" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screen.</span></span><span class="sig-name descname"><span class="pre">debye_huckel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scn_fac</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screen.html#debye_huckel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screen.debye_huckel" title="Link to this definition">#</a></dt>
 <dd><p>Calculates the Debye-Huckel enhancement factor for weak Coloumb coupling,
 following the appendix of <span id="id4">Chugunov and DeWitt [<a class="reference internal" href="zreferences.html#id6" title="A. I. Chugunov and H. E. DeWitt. Nuclear fusion reaction rates for strongly coupled ionic mixtures. Physical Review C, 80(1):014611, July 2009. arXiv:0905.3844, doi:10.1103/PhysRevC.80.014611.">2009</a>]</span>.</p>
 <dl class="field-list simple">
@@ -701,7 +701,7 @@ as returned by <a class="reference internal" href="pynucastro.networks.html#pynu
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.screen5">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screen.</span></span><span class="sig-name descname"><span class="pre">screen5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pynucastro.screening.screen.PlasmaState" title="pynucastro.screening.screen.PlasmaState"><span class="pre">PlasmaState</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scn_fac</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screen.html#screen5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screen.screen5" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screen.</span></span><span class="sig-name descname"><span class="pre">screen5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scn_fac</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screen.html#screen5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screen.screen5" title="Link to this definition">#</a></dt>
 <dd><p>Calculates screening factors following the appendix of <span id="id6">Wallace <em>et al.</em> [<a class="reference internal" href="zreferences.html#id29" title="R. K. Wallace, S. E. Woosley, and T. A. Weaver. The thermonuclear model for X-ray transients. \apj , 258:696-715, July 1982. doi:10.1086/160119.">1982</a>]</span>.</p>
 <p>Based on <span id="id7">Graboske <em>et al.</em> [<a class="reference internal" href="zreferences.html#id26" title="H. C. Graboske, H. E. Dewitt, A. S. Grossman, and M. S. Cooper. Screening Factors for Nuclear Reactions. II. Intermediate Screen-Ing and Astrophysical Applications. \apj , 181:457-474, April 1973. doi:10.1086/152062.">1973</a>]</span> for weak screening. Based on
 <span id="id8">Alastuey and Jancovici [<a class="reference internal" href="zreferences.html#id27" title="A. Alastuey and B. Jancovici. Nuclear reaction rate enhancement in dense stellar matter. \apj , 226:1034-1040, December 1978. doi:10.1086/156681.">1978</a>]</span> with plasma parameters from <span id="id9">Itoh <em>et al.</em> [<a class="reference internal" href="zreferences.html#id28" title="N. Itoh, H. Totsuji, S. Ichimaru, and H. E. Dewitt. Enhancement of thermonuclear reaction rate due to strong screening. II - Ionic mixtures. \apj , 234:1079-1084, December 1979. doi:10.1086/157590.">1979</a>]</span>,
@@ -710,7 +710,7 @@ for strong screening.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.screening_check">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screen.</span></span><span class="sig-name descname"><span class="pre">screening_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">check_func=CPUDispatcher(&lt;function</span> <span class="pre">debye_huckel&gt;)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">1.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screen.html#screening_check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screen.screening_check" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screen.</span></span><span class="sig-name descname"><span class="pre">screening_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">check_func=CPUDispatcher(&lt;function</span> <span class="pre">debye_huckel&gt;)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold=1.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screen.html#screening_check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screen.screening_check" title="Link to this definition">#</a></dt>
 <dd><p>A decorator factory that wraps a screening function with a
 check that determines whether that function can be skipped for a
 given plasma state and screening pair.</p>
