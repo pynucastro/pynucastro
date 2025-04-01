@@ -92,7 +92,8 @@ namespace network
 namespace Rates
 {
 
-    enum NetworkRates
+    enum NetworkRates :
+    std::uint8_t
     {
         k_He4_Mg24_to_Si28_removed = 1,
         k_He4_Mg24_to_p_Al27_removed = 2,
