@@ -1648,7 +1648,7 @@ class RateCollection:
         nucleus_filter_function : Callable
             a function that takes a `Nucleus` object and returns
             True or False if it is to be shown as a node.
-        rate_filter_funcion : Callable
+        rate_filter_function : Callable
             a function that takes a `Rate` object
             and returns True or False if it is to be shown as an edge.
 
