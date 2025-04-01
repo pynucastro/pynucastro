@@ -1529,7 +1529,7 @@ class RateCollection:
         # approx nuclei are given a different color
         for n in self.approx_nuclei:
             node_nuclei.append(n)
-            colors.append("#555555")
+            colors.append("#888888")
 
         if nucleus_filter_function is not None:
             node_nuclei = list(filter(nucleus_filter_function, node_nuclei))
@@ -1537,7 +1537,7 @@ class RateCollection:
             colors = []
             for n in node_nuclei:
                 if n in self.approx_nuclei:
-                    colors.append("#555555")
+                    colors.append("#888888")
                 else:
                     colors.append(node_color)
 
