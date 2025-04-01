@@ -514,7 +514,7 @@ class RateCollection:
     Parameters
     ----------
     rate_files : (str, list, tuple)
-        an string or iterable or strings of file names that define valid
+        a string or iterable of strings of file names that define valid
         rates. This can include Reaclib library files storing multiple
         rates.
     libraries : (Library, list, tuple)
