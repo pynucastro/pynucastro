@@ -87,7 +87,7 @@ for loc in tables:
 
     df_p['Log(e-cap-rate)'] = np.log10(10**table['lbeta+'] + 10**table['leps-'])
     df_p['Log(e-cap-rate)'] = df_p['Log(e-cap-rate)'].apply(lambda x: f"{float(x):.6f}")
-    df_p['Log(nu-energy-loss)'] = table['lnubar'] + np.log10(MeV_to_erg)
+    df_p['Log(nu-energy-loss)'] = table['lnu'] + np.log10(MeV_to_erg)
     df_p['Log(nu-energy-loss)'] = df_p['Log(nu-energy-loss)'].apply(lambda x: f"{float(x):.6f}")
     df_p['Log(gamma-energy)'] = -100.00
     df_p['Log(gamma-energy)'] = df_p['Log(gamma-energy)'].apply(lambda x: f"{float(x):.2f}")
