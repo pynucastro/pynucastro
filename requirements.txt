@@ -18,6 +18,7 @@ pytest>=3.6
 ipykernel
 jinja2
 nbsphinx>=0.3.1
+numpydoc
 Sphinx
 sphinx-copybutton
 sphinx-math-dollar

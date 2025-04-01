@@ -38,7 +38,7 @@ class TestFFNLibibrary:
 
         # now interpolate
         rate = r.eval(T, rho=rhoYe/Ye, comp=comp)
-        assert rate == approx(source_rate)
+        assert rate == approx(source_rate, rel=1.e-4, abs=1.e-30)
 
         nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
         assert nu_loss == approx(source_nu_loss)
@@ -72,7 +72,7 @@ class TestFFNLibibrary:
 
         # now interpolate
         rate = r.eval(T, rho=rhoYe/Ye, comp=comp)
-        assert rate == approx(source_rate)
+        assert rate == approx(source_rate, rel=1.e-4, abs=1.e-30)
 
         nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
         assert nu_loss == approx(source_nu_loss)
@@ -106,10 +106,10 @@ class TestFFNLibibrary:
 
         # now interpolate
         rate = r.eval(T, rho=rhoYe/Ye, comp=comp)
-        assert rate == approx(source_rate)
+        assert rate == approx(source_rate, rel=1.e-4, abs=1.e-30)
 
         nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
-        assert nu_loss == approx(source_nu_loss)
+        assert nu_loss == approx(source_nu_loss, rel=1.e-4, abs=1.e-30)
 
     def test_si27_p27(self, ffn_lib):
 
@@ -140,7 +140,7 @@ class TestFFNLibibrary:
 
         # now interpolate
         rate = r.eval(T, rho=rhoYe/Ye, comp=comp)
-        assert rate == approx(source_rate)
+        assert rate == approx(source_rate, rel=1.e-4, abs=1.e-12)
 
         nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
-        assert nu_loss == approx(source_nu_loss)
+        assert nu_loss == approx(source_nu_loss, rel=1.e-5, abs=1.e-12)

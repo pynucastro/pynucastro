@@ -23,16 +23,14 @@ from pynucastro.screening import get_screening_map
 
 
 class BaseCxxNetwork(ABC, RateCollection):
-    """Interpret the collection of rates and nuclei and produce the
-    C++ code needed to integrate the network.
+    """Initialize the C++ network.  This takes the same arguments as
+    `RateCollection` and interprets the collection of rates
+    and nuclei and produce the C++ code needed to integrate the
+    network.
 
     """
 
     def __init__(self, *args, **kwargs):
-        """Initialize the C++ network.  We take a single argument: a list
-        of rate files that will make up the network
-
-        """
 
         super().__init__(*args, **kwargs)
 
@@ -90,14 +88,26 @@ class BaseCxxNetwork(ABC, RateCollection):
         return []
 
     def get_indent_amt(self, l, k):
-        """determine the amount of spaces to indent a line"""
+        """Determine the amount of spaces to indent a line.  This looks
+        for a string of the form "<key>(#)", where # is the a number that
+        is the amount of indent.
+
+        Parameters
+        ----------
+        l : str
+            a line
+        k : str
+            a keyword of the form "<key>" that appears in the line
+        """
+
         rem = re.match(r'\A'+k+r'\(([0-9]*)\)\Z', l)
         return int(rem.group(1))
 
     def _write_network(self, odir=None):
-        """
-        This writes the RHS, jacobian and ancillary files for the system of ODEs that
-        this network describes, using the template files.
+        """This writes the RHS, jacobian and ancillary files for the
+        system of ODEs that this network describes, using the template
+        files.
+
         """
         # pylint: disable=arguments-differ
 
