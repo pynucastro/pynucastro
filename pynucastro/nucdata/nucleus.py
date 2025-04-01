@@ -387,7 +387,7 @@ def get_nuclei_in_range(zmin, zmax, amin, amax):
 
 
 def get_all_nuclei():
-    """Return a list will every Nucleus that has a known mass
+    """Return a list with every Nucleus that has a known mass
 
     Returns
     -------
