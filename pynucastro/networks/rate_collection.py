@@ -1418,7 +1418,7 @@ class RateCollection:
              outfile=None,
              size=(800, 600), dpi=100, title=None,
              ydot_cutoff_value=None, show_small_ydot=False,
-             node_size=1000, node_font_size=13, node_color="#A0CBE2", node_shape="o",
+             node_size=1000, node_font_size=12, node_color="#444444", node_shape="o",
              curved_edges=False,
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False,
@@ -1539,7 +1539,7 @@ class RateCollection:
         # approx nuclei are given a different color
         for n in self.approx_nuclei:
             node_nuclei.append(n)
-            colors.append("#555555")
+            colors.append("#888888")
 
         if nucleus_filter_function is not None:
             node_nuclei = list(filter(nucleus_filter_function, node_nuclei))
@@ -1547,7 +1547,7 @@ class RateCollection:
             colors = []
             for n in node_nuclei:
                 if n in self.approx_nuclei:
-                    colors.append("#555555")
+                    colors.append("#888888")
                 else:
                     colors.append(node_color)
 
@@ -1675,7 +1675,10 @@ class RateCollection:
         real_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 1]
         real_weights = [e["weight"] for u, v, e in G.edges(data=True) if e["real"] == 1]
 
-        edge_color = real_weights
+        if ydots is None:
+            edge_color = "C0"
+        else:
+            edge_color = real_weights
         ww = np.array(real_weights)
         min_weight = ww.min()
         max_weight = ww.max()
