@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.library &#8212; pynucastro 2.5.0.post17+g97599731 documentation</title>
+    <title>pynucastro.rates.library &#8212; pynucastro 2.5.0.post18+gebee7864 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=5a74bf84"></script>
+    <script src="../../../_static/documentation_options.js?v=03f077fa"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1187,6 +1187,7 @@ document.write(`
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load all of the tabular rates known and return a Library&quot;&quot;&quot;</span>
 
     <span class="n">lib_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="s2">&quot;library/tabular&quot;</span>
+    <span class="n">skip_wildcards</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ffn&quot;</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># find all of the tabular rates that pynucastro knows about</span>
@@ -1194,10 +1195,15 @@ document.write(`
 
         <span class="n">trates</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lib_path</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lib_path</span><span class="p">)):</span>
             <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">filenames</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;-toki&quot;</span><span class="p">):</span>
-                    <span class="n">trates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TabularRate</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="n">f</span><span class="p">))</span>
+                    <span class="n">add_rate</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">for</span> <span class="n">wild</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">skip_wildcards</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">wild</span> <span class="ow">in</span> <span class="n">root</span><span class="p">:</span>
+                            <span class="n">add_rate</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">if</span> <span class="n">add_rate</span><span class="p">:</span>
+                        <span class="n">trates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TabularRate</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="n">f</span><span class="p">))</span>
 
         <span class="n">Library</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="n">trates</span><span class="p">)</span></div>
 

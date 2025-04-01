@@ -165,7 +165,7 @@ and for a trinary reaction, it is:
 
    \dot{Y} = \rho^2 Y(A)^{n_A} Y(B)^{n_B} Y(C)^{n_C} \frac{N_A^2 \langle \sigma v \rangle}{n_A! n_B! n_C!}
 
-where :math:`n_A` is the number of nucleus :math:`A` in the reaction.  
+where :math:`n_A` is the number of nucleus :math:`A` in the reaction.
 
 .. note::
 
@@ -244,4 +244,3 @@ The form of the reaction :math:`A \rightarrow B`
    \dot{Y}_A = -Y(A) \lambda
 
 where :math:`\lambda` is the rate returned from the table.
-
