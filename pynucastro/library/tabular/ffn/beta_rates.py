@@ -114,8 +114,8 @@ for loc in tables:
     df_m['Log(gamma-energy)'] = df_m['Log(gamma-energy)'].apply(lambda x: f"{float(x):.2f}")
 
     df_m.loc[-1] = ['!Log(g/cm^3)', 'Log(K)', 'erg', 'erg', 'erg', 'Log(1/s)', 'Log(erg/s)', 'Log(erg/s)']  # units
-    df_m.index = df_p.index + 1  # shifting index
-    df_m = df_p.sort_index()  # sorting by index
+    df_m.index = df_m.index + 1  # shifting index
+    df_m = df_m.sort_index()  # sorting by index
 
     df_m.loc[0] = df_m.loc[0].apply(lambda x: f"{x:<15s}")
 
