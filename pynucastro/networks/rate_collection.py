@@ -31,6 +31,15 @@ from pynucastro.screening import (get_screening_map, make_plasma_state,
 
 mpl.rcParams['figure.dpi'] = 100
 
+# for plotting a legend on the network plot
+# the tuple is (dZ, dN)
+RATE_LINES = {r"$(\alpha, p)$": (1, 2),
+              r"$(\alpha, \gamma)$": (2, 2),
+              r"$(p, \gamma)$": (1, 0),
+              r"$(n, \gamma)$": (0, 1),
+              r"$\beta^-$": (1, -1),
+              r"$\beta^+$": (-1, 1)}
+
 
 class RateDuplicationError(Exception):
     """An error of multiple rates linking the same nuclei occurred"""
@@ -1416,7 +1425,8 @@ class RateCollection:
              hide_xp=False, hide_xalpha=False,
              edge_labels=None,
              highlight_filter_function=None,
-             nucleus_filter_function=None, rate_filter_function=None):
+             nucleus_filter_function=None, rate_filter_function=None,
+             legend_coord=None):
         """Make a plot of the network structure showing the links between
         nuclei.  If a full set of thermodymamic conditions are
         provided (rho, T, comp), then the links are colored by rate
@@ -1751,15 +1761,35 @@ class RateCollection:
         ax.xaxis.set_major_locator(MaxNLocator(integer=True))
         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
-        if Z_range is not None and N_range is not None:
-            if not rotated:
+        if not rotated:
+            if Z_range is not None and N_range is not None:
                 ax.set_xlim(N_range[0], N_range[1])
                 ax.set_ylim(Z_range[0], Z_range[1])
-            else:
+        else:
+            if Z_range is not None:
                 ax.set_xlim(Z_range[0], Z_range[1])
 
         if not rotated:
             ax.set_aspect("equal", "datalim")
+
+        if legend_coord is not None:
+            assert len(legend_coord) == 2
+            eps = 0.1
+            for label, dd in RATE_LINES.items():
+                dZ = dd[0]
+                dN = dd[1]
+                if rotated:
+                    ax.arrow(legend_coord[0], legend_coord[1],
+                             dZ, dN-dZ, width=0.04,
+                             length_includes_head=True)
+                    ax.text(legend_coord[0]+dZ+eps, legend_coord[1]+dN-dZ+eps,
+                            label, fontsize="small")
+                else:
+                    ax.arrow(legend_coord[1], legend_coord[0],
+                             dN, dZ, width=0.04,
+                             length_includes_head=True)
+                    ax.text(legend_coord[1]+dN+eps, legend_coord[0]+dZ+eps,
+                            label, fontsize="small")
 
         fig.set_size_inches(size[0]/dpi, size[1]/dpi)
 
