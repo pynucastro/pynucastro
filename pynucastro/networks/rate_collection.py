@@ -1364,7 +1364,7 @@ class RateCollection:
         screen_func : Callable
             a function from :py:mod:`pynucastro.screening` used to compute the
             screening enhancement for the rates.
-        rate_filter_funcion : Callable
+        rate_filter : Callable
             a function that takes a `Rate` object and returns True
             or False if it is to be shown as an edge.
 
