@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 2.5.0.post12+g8345157c documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 2.5.0.post13+g51282d76 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=004e10bb"></script>
+    <script src="../../../_static/documentation_options.js?v=42183fad"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -442,18 +442,32 @@ document.write(`
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">dYdt[j</span><span class="si">{</span><span class="n">nucleus</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">] = 0.0</span><span class="se">\n\n</span><span class="s2">&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">dYdt[j</span><span class="si">{</span><span class="n">nucleus</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">] = (</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">nucleus</span><span class="p">]:</span>
-                <span class="n">c</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">nucleus</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   -</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">ydot_string_py</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   -</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">*</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">ydot_string_py</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">nucleus</span><span class="p">]:</span>
-                <span class="n">c</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">nucleus</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   +</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">ydot_string_py</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   +</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">*</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">ydot_string_py</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">ipair</span><span class="p">,</span> <span class="n">rp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuclei_rate_pairs</span><span class="p">[</span><span class="n">nucleus</span><span class="p">]):</span>
+                <span class="c1"># when we are working with rate pairs, one or more of the</span>
+                <span class="c1"># rates may be missing.  We also have not clearly separated</span>
+                <span class="c1"># them into creation / destruction, so we&#39;ll figure that out</span>
+                <span class="n">rlist</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="p">[</span><span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="p">]</span> <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+                <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">      &quot;</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rlist</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">ostr</span> <span class="o">+=</span> <span class="s2">&quot;( &quot;</span>
+
+                <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="n">rlist</span><span class="p">:</span>
+                    <span class="n">c_reac</span> <span class="o">=</span> <span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">nucleus</span><span class="p">)</span>
+                    <span class="n">c_prod</span> <span class="o">=</span> <span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">nucleus</span><span class="p">)</span>
+                    <span class="n">c</span> <span class="o">=</span> <span class="n">c_prod</span> <span class="o">-</span> <span class="n">c_reac</span>
+                    <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;+</span><span class="si">{</span><span class="n">rate</span><span class="o">.</span><span class="n">ydot_string_py</span><span class="p">()</span><span class="si">}</span><span class="s2"> &quot;</span>
+                    <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                        <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;-</span><span class="si">{</span><span class="n">rate</span><span class="o">.</span><span class="n">ydot_string_py</span><span class="p">()</span><span class="si">}</span><span class="s2"> &quot;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;+ </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">*</span><span class="si">{</span><span class="n">rate</span><span class="o">.</span><span class="n">ydot_string_py</span><span class="p">()</span><span class="si">}</span><span class="s2"> &quot;</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rlist</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">ostr</span> <span class="o">+=</span> <span class="s2">&quot;)&quot;</span>
+                <span class="k">if</span> <span class="n">ipair</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuclei_rate_pairs</span><span class="p">[</span><span class="n">nucleus</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">ostr</span> <span class="o">+=</span> <span class="s2">&quot; +&quot;</span>
+                <span class="n">ostr</span> <span class="o">=</span> <span class="n">ostr</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   )</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
         <span class="k">return</span> <span class="n">ostr</span></div>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Approximating alpha-capture &#8212; pynucastro 2.5.0.post12+g8345157c documentation</title>
+    <title>Approximating alpha-capture &#8212; pynucastro 2.5.0.post13+g51282d76 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=004e10bb"></script>
+    <script src="_static/documentation_options.js?v=42183fad"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -602,7 +602,7 @@ combining them into a single effective rate by assuming that the protons and nuc
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/ff7243edb828bc9c79c90c1bcf2a77ea2a052e154e48600b86f80c99242e265a.png" src="_images/ff7243edb828bc9c79c90c1bcf2a77ea2a052e154e48600b86f80c99242e265a.png" />
+<img alt="_images/bfe7dfbff8be263c437b082fc07ecc1ced82a9c3d3acf7d0891bc4825eb73dad.png" src="_images/bfe7dfbff8be263c437b082fc07ecc1ced82a9c3d3acf7d0891bc4825eb73dad.png" />
 </div>
 </div>
 </section>
@@ -749,10 +749,8 @@ S32
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dYdt[jhe4] = (
-   -rho*Y[jhe4]*Y[jmg24]*rate_eval.Mg24_He4__Si28__approx
-   -rho*Y[jhe4]*Y[jsi28]*rate_eval.Si28_He4__S32__approx
-   +Y[jsi28]*rate_eval.Si28__Mg24_He4__approx
-   +Y[js32]*rate_eval.S32__Si28_He4__approx
+      ( -rho*Y[jhe4]*Y[jmg24]*rate_eval.Mg24_He4__Si28__approx +Y[jsi28]*rate_eval.Si28__Mg24_He4__approx ) +
+      ( -rho*Y[jhe4]*Y[jsi28]*rate_eval.Si28_He4__S32__approx +Y[js32]*rate_eval.S32__Si28_He4__approx )
    )
 </pre></div>
 </div>
@@ -817,14 +815,14 @@ def Mg24_He4__Si28__approx(rate_eval, tf):
 
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e-10</span><span class="p">,</span> <span class="mf">1.e-3</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-12</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-10</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
 <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/b1da3a7d00e487729df4de4d747465d9d44098902a6d92bc7085494f51faf050.png" src="_images/b1da3a7d00e487729df4de4d747465d9d44098902a6d92bc7085494f51faf050.png" />
+<img alt="_images/dc3671e887477ecc60990ea924fa8ffe677414e67d636ac268f7c76d77c02ef0.png" src="_images/dc3671e887477ecc60990ea924fa8ffe677414e67d636ac268f7c76d77c02ef0.png" />
 </div>
 </div>
 </section>
@@ -848,14 +846,14 @@ def Mg24_He4__Si28__approx(rate_eval, tf):
 
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e-10</span><span class="p">,</span> <span class="mf">1.e-3</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-12</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-10</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
 <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/5a7e3543a52647d1ca2725bfe3dccd270ffed5c85156d09f46ec258c5efcbb79.png" src="_images/5a7e3543a52647d1ca2725bfe3dccd270ffed5c85156d09f46ec258c5efcbb79.png" />
+<img alt="_images/665a94fea67196aa943ee7feaa6e88f1af0a95f76eca206378abf810715ed24e.png" src="_images/665a94fea67196aa943ee7feaa6e88f1af0a95f76eca206378abf810715ed24e.png" />
 </div>
 </div>
 <p>Here the dotted line is the approximate network.  We see that the results agree well.</p>
@@ -939,14 +937,14 @@ def Mg24_He4__Si28__approx(rate_eval, tf):
 
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e-10</span><span class="p">,</span> <span class="mf">1.e-3</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-12</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-10</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
 <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/1403910d40a6024e4364934161ffd8e5726d5537f71e2d5ca8be65ce9847b159.png" src="_images/1403910d40a6024e4364934161ffd8e5726d5537f71e2d5ca8be65ce9847b159.png" />
+<img alt="_images/6638394e5bf8a39f7d0d05b4d867a300d5056fd043a591729b3a9e20d37e2351.png" src="_images/6638394e5bf8a39f7d0d05b4d867a300d5056fd043a591729b3a9e20d37e2351.png" />
 </div>
 </div>
 <p>Here we see all 3 networks.  The full network (7 nuclei) is the solid lines.  The approximate version of that is the dotted line.  We see that they track reasonably well, especially when the abundance is high.  The dashed line is the version of the network that has the same 4 nuclei as the approximate network, but with out approximating the <span class="math notranslate nohighlight">\((\alpha, p)(p,\gamma)\)</span> links, so we see that the <span class="math notranslate nohighlight">\({}^{24}\mathrm{Mg}\)</span> takes longer to burn.</p>

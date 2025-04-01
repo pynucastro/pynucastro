@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Integrating a Network &#8212; pynucastro 2.5.0.post12+g8345157c documentation</title>
+    <title>Integrating a Network &#8212; pynucastro 2.5.0.post13+g51282d76 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=004e10bb"></script>
+    <script src="_static/documentation_options.js?v=42183fad"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -923,52 +923,52 @@ def rhs_eq(t, Y, rho, T, screen_func):
     dYdt = np.zeros((nnuc), dtype=np.float64)
 
     dYdt[jp] = (
-       -rho*Y[jp]*Y[jc12]*rate_eval.p_C12__N13
-       -rho*Y[jp]*Y[jc13]*rate_eval.p_C13__N14
-       -rho*Y[jp]*Y[jn13]*rate_eval.p_N13__O14
-       -rho*Y[jp]*Y[jn14]*rate_eval.p_N14__O15
-       -rho*Y[jp]*Y[jn15]*rate_eval.p_N15__He4_C12
+          -rho*Y[jp]*Y[jc12]*rate_eval.p_C12__N13  +
+          -rho*Y[jp]*Y[jc13]*rate_eval.p_C13__N14  +
+          -rho*Y[jp]*Y[jn13]*rate_eval.p_N13__O14  +
+          -rho*Y[jp]*Y[jn14]*rate_eval.p_N14__O15  +
+          -rho*Y[jp]*Y[jn15]*rate_eval.p_N15__He4_C12
        )
 
     dYdt[jhe4] = (
-       +rho*Y[jp]*Y[jn15]*rate_eval.p_N15__He4_C12
+          +rho*Y[jp]*Y[jn15]*rate_eval.p_N15__He4_C12
        )
 
     dYdt[jc12] = (
-       -rho*Y[jp]*Y[jc12]*rate_eval.p_C12__N13
-       +rho*Y[jp]*Y[jn15]*rate_eval.p_N15__He4_C12
+          -rho*Y[jp]*Y[jc12]*rate_eval.p_C12__N13  +
+          +rho*Y[jp]*Y[jn15]*rate_eval.p_N15__He4_C12
        )
 
     dYdt[jc13] = (
-       -rho*Y[jp]*Y[jc13]*rate_eval.p_C13__N14
-       +Y[jn13]*rate_eval.N13__C13__weak__wc12
+          -rho*Y[jp]*Y[jc13]*rate_eval.p_C13__N14  +
+          +Y[jn13]*rate_eval.N13__C13__weak__wc12
        )
 
     dYdt[jn13] = (
-       -Y[jn13]*rate_eval.N13__C13__weak__wc12
-       -rho*Y[jp]*Y[jn13]*rate_eval.p_N13__O14
-       +rho*Y[jp]*Y[jc12]*rate_eval.p_C12__N13
+          +rho*Y[jp]*Y[jc12]*rate_eval.p_C12__N13  +
+          -Y[jn13]*rate_eval.N13__C13__weak__wc12  +
+          -rho*Y[jp]*Y[jn13]*rate_eval.p_N13__O14
        )
 
     dYdt[jn14] = (
-       -rho*Y[jp]*Y[jn14]*rate_eval.p_N14__O15
-       +rho*Y[jp]*Y[jc13]*rate_eval.p_C13__N14
-       +Y[jo14]*rate_eval.O14__N14__weak__wc12
+          +rho*Y[jp]*Y[jc13]*rate_eval.p_C13__N14  +
+          -rho*Y[jp]*Y[jn14]*rate_eval.p_N14__O15  +
+          +Y[jo14]*rate_eval.O14__N14__weak__wc12
        )
 
     dYdt[jn15] = (
-       -rho*Y[jp]*Y[jn15]*rate_eval.p_N15__He4_C12
-       +Y[jo15]*rate_eval.O15__N15__weak__wc12
+          -rho*Y[jp]*Y[jn15]*rate_eval.p_N15__He4_C12  +
+          +Y[jo15]*rate_eval.O15__N15__weak__wc12
        )
 
     dYdt[jo14] = (
-       -Y[jo14]*rate_eval.O14__N14__weak__wc12
-       +rho*Y[jp]*Y[jn13]*rate_eval.p_N13__O14
+          +rho*Y[jp]*Y[jn13]*rate_eval.p_N13__O14  +
+          -Y[jo14]*rate_eval.O14__N14__weak__wc12
        )
 
     dYdt[jo15] = (
-       -Y[jo15]*rate_eval.O15__N15__weak__wc12
-       +rho*Y[jp]*Y[jn14]*rate_eval.p_N14__O15
+          +rho*Y[jp]*Y[jn14]*rate_eval.p_N14__O15  +
+          -Y[jo15]*rate_eval.O15__N15__weak__wc12
        )
 
     return dYdt
