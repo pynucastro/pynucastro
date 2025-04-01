@@ -81,7 +81,8 @@ namespace network
 namespace Rates
 {
 
-    enum NetworkRates
+    enum NetworkRates :
+    <nrxn_enum_type>(1)
     {
         <nrxn>(2)
     };

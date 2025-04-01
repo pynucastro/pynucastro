@@ -93,7 +93,7 @@ class Composition(collections.UserDict):
     Parameters
     ----------
     nuclei : (list, tuple)
-        an interable of Nucleus objects
+        an iterable of Nucleus objects
     small : float
         a floor for nuclei mass fractions, used as the default value
     """
@@ -514,7 +514,7 @@ class RateCollection:
     Parameters
     ----------
     rate_files : (str, list, tuple)
-        an string or iterable or strings of file names that define valid
+        a string or iterable of strings of file names that define valid
         rates. This can include Reaclib library files storing multiple
         rates.
     libraries : (Library, list, tuple)
@@ -540,7 +540,6 @@ class RateCollection:
                  inert_nuclei=None,
                  symmetric_screening=False, do_screening=True):
 
-        self.files = []
         self.rates = []
         combined_library = Library()
 
@@ -692,9 +691,8 @@ class RateCollection:
 
     def _read_rate_files(self, rate_files):
         # get the rates
-        self.files = rate_files
         combined_library = Library()
-        for rf in self.files:
+        for rf in rate_files:
             # create the appropriate rate object first
             try:
                 rate = load_rate(rf)
@@ -1366,7 +1364,7 @@ class RateCollection:
         screen_func : Callable
             a function from :py:mod:`pynucastro.screening` used to compute the
             screening enhancement for the rates.
-        rate_filter_funcion : Callable
+        rate_filter : Callable
             a function that takes a `Rate` object and returns True
             or False if it is to be shown as an edge.
 
@@ -1647,10 +1645,10 @@ class RateCollection:
         highlight_filter_function : Callable
             a function that takes a `Rate` object and returns True or
             False if we want to highlight the rate edge.
-        nucleus_filter_funcion : Callable
+        nucleus_filter_function : Callable
             a function that takes a `Nucleus` object and returns
             True or False if it is to be shown as a node.
-        rate_filter_funcion : Callable
+        rate_filter_function : Callable
             a function that takes a `Rate` object
             and returns True or False if it is to be shown as an edge.
 
@@ -1870,8 +1868,15 @@ class RateCollection:
         # highlight edges
         highlight_edges = [(u, v) for u, v, e in G.edges(data=True) if e["highlight"]]
 
+        if rho is None:
+            # we are not coloring edges by reaction rate, so highlight in yellow
+            highlight_color = "yellow"
+        else:
+            # use C0 since it doesn't blend in with viridis
+            highlight_color = "C0"
+
         _ = nx.draw_networkx_edges(G, G.position, width=5,
-                                   edgelist=highlight_edges, edge_color="C0", alpha=0.25,
+                                   edgelist=highlight_edges, edge_color=highlight_color, alpha=0.5,
                                    connectionstyle=connectionstyle,
                                    node_size=node_size, ax=ax)
 

@@ -55,6 +55,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<nrat_reaclib>'] = self._nrat_reaclib
         self.ftags['<nrat_tabular>'] = self._nrat_tabular
         self.ftags['<nrxn>'] = self._nrxn
+        self.ftags['<nrxn_enum_type>'] = self._nrxn_enum_type
         self.ftags['<rate_names>'] = self._rate_names
         self.ftags['<ebind>'] = self._ebind
         self.ftags['<compute_screening_factors>'] = self._compute_screening_factors
@@ -288,6 +289,16 @@ class BaseCxxNetwork(ABC, RateCollection):
         for i, r in enumerate(self.all_rates):
             of.write(f'{self.indent*n_indent}k_{r.cname()} = {i+1},\n')
         of.write(f'{self.indent*n_indent}NumRates = k_{self.all_rates[-1].cname()}\n')
+
+    def _nrxn_enum_type(self, n_indent, of):
+        nrxn = len(self.all_rates)
+        dtype = "std::uint32_t"
+        # we need 1 additional int for NumRates
+        if nrxn < 255:
+            dtype = "std::uint8_t"
+        elif nrxn < 65535:
+            dtype = "std::unit16_t"
+        of.write(f'{self.indent*n_indent}{dtype}\n')
 
     def _rate_names(self, n_indent, of):
         for i, r in enumerate(self.all_rates):

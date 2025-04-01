@@ -76,8 +76,13 @@ class DerivedRate(ReacLibRate):
             sset_d = SingleSet(a=a_rev, labelprops=rate.labelprops)
             derived_sets.append(sset_d)
 
-        super().__init__(rfile=self.rate.rfile, chapter=self.rate.chapter, original_source=self.rate.original_source,
-                reactants=self.rate.products, products=self.rate.reactants, sets=derived_sets, labelprops="derived", Q=-Q)
+        super().__init__(rfile=self.rate.rfile, chapter=self.rate.chapter,
+                         original_source=self.rate.original_source,
+                         reactants=self.rate.products, products=self.rate.reactants,
+                         sets=derived_sets, labelprops="derived", Q=-Q)
+
+        # explicitly mark it as reverse
+        self.reverse = True
 
     def _warn_about_missing_pf_tables(self):
         skip_nuclei = {Nucleus("h1"), Nucleus("n"), Nucleus("he4")}
