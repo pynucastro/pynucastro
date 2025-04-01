@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.nucdata.nucleus &#8212; pynucastro 2.5.0.post18+gebee7864 documentation</title>
+    <title>pynucastro.nucdata.nucleus &#8212; pynucastro 2.5.0.post19+g62c46828 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=03f077fa"></script>
+    <script src="../../../_static/documentation_options.js?v=d4953e4c"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -449,32 +449,62 @@ document.write(`
 <div class="viewcode-block" id="Nucleus">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Nucleus</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    a nucleus that participates in a reaction -- we store it in a</span>
-<span class="sd">    class to hold its properties, define a sorting, and give it a</span>
-<span class="sd">    pretty printing string.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A nucleus that participates in a reaction.</span>
 
-<span class="sd">    :var Z:               atomic number</span>
-<span class="sd">    :var N:               neutron number</span>
-<span class="sd">    :var A:               atomic mass</span>
-<span class="sd">    :var nucbind:         nuclear binding energy (MeV / nucleon)</span>
-<span class="sd">    :var short_spec_name: nucleus abbreviation (e.g. &quot;he4&quot;)</span>
-<span class="sd">    :var caps_name:       capitalized short species name (e.g. &quot;He4&quot;)</span>
-<span class="sd">    :var el:              element name (e.g. &quot;he&quot;)</span>
-<span class="sd">    :var pretty:          LaTeX formatted version of the nucleus name</span>
-<span class="sd">    :var dm:              mass excess (MeV)</span>
-<span class="sd">    :var A_nuc:           nuclear mass (amu)</span>
-<span class="sd">    :var mass:            nuclear mass (MeV)</span>
-<span class="sd">    :var tau:             half life (s)</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        name of the nucleus (e.g. &quot;c12&quot;)</span>
+<span class="sd">    dummy : bool</span>
+<span class="sd">        a dummy nucleus is one that we can use where</span>
+<span class="sd">        a nucleus is needed, but it is not considered</span>
+<span class="sd">        to be part of the network</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Z : float</span>
+<span class="sd">        atomic number</span>
+<span class="sd">    N : float</span>
+<span class="sd">        neutron number</span>
+<span class="sd">    A : float</span>
+<span class="sd">        atomic mass</span>
+<span class="sd">    short_spec_name : str</span>
+<span class="sd">        nucleus abbreviation (e.g. &quot;he4&quot;)</span>
+<span class="sd">    caps_name : str</span>
+<span class="sd">        capitalized short species name (e.g. &quot;He4&quot;)</span>
+<span class="sd">    el : str</span>
+<span class="sd">        element name (e.g. &quot;he&quot;)</span>
+<span class="sd">    pretty : str</span>
+<span class="sd">        LaTeX formatted version of the nucleus name</span>
+<span class="sd">    dm : float</span>
+<span class="sd">        mass excess (MeV)</span>
+<span class="sd">    nucbind : float</span>
+<span class="sd">        nuclear binding energy (MeV / nucleon)</span>
+<span class="sd">    A_nuc : float</span>
+<span class="sd">        nuclear mass (amu)</span>
+<span class="sd">    mass : float</span>
+<span class="sd">        nuclear mass (MeV)</span>
+<span class="sd">    tau : float</span>
+<span class="sd">        half life (s)</span>
+<span class="sd">    spin_states : int</span>
+<span class="sd">        the ground state spin</span>
+<span class="sd">    partition_function : PartitionFunction</span>
+<span class="sd">        the `PartitionFunction` object for this nucleus, which</span>
+<span class="sd">        allows for the evaluation of the temperature-dependent</span>
+<span class="sd">        partition function.</span>
+<span class="sd">    dummy : bool</span>
+<span class="sd">        is this a dummy nucleus</span>
+<span class="sd">    nse : bool</span>
+<span class="sd">        an NSE proton has the same properties</span>
+<span class="sd">        as a proton but compares as being distinct</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">_cache</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">dummy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">=</span> <span class="n">name</span>
 
-        <span class="c1"># a dummy nucleus is one that we can use where a nucleus is needed</span>
-        <span class="c1"># but it is not considered to be part of the network</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dummy</span> <span class="o">=</span> <span class="n">dummy</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nse</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -592,6 +622,23 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus.from_cache">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_cache</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">dummy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if we&#39;ve already created this nucleus, and if so,</span>
+<span class="sd">        return a reference to it from the cache.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            name of the nucleus (e.g. &quot;c12&quot;)</span>
+<span class="sd">        dummy : bool</span>
+<span class="sd">            a dummy nucleus is one that we can use where</span>
+<span class="sd">            a nucleus is needed, but it is not considered</span>
+<span class="sd">            to be part of the network</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Nucleus</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">dummy</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_cache</span><span class="p">:</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">dummy</span><span class="p">)</span>
@@ -602,7 +649,23 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus.from_Z_A">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_Z_A</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">dummy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;creates a nucleus given Z and A&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a nucleus given Z and A</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Z : int</span>
+<span class="sd">            atomic number</span>
+<span class="sd">        A : int</span>
+<span class="sd">            atomic weight</span>
+<span class="sd">        dummy : bool</span>
+<span class="sd">            a dummy nucleus is one that we can use where</span>
+<span class="sd">            a nucleus is needed, but it is not considered</span>
+<span class="sd">            to be part of the network</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Nucleus</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># checks if Z and A are valid inputs</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
@@ -636,14 +699,14 @@ document.write(`
 <div class="viewcode-block" id="Nucleus.c">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus.c">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;return the capitalized-style name&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the capitalized-style name&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">caps_name</span></div>
 
 
 <div class="viewcode-block" id="Nucleus.cindex">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus.cindex">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">cindex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;return the name for C++ indexing&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the name for C++ indexing&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">short_spec_name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span></div>
 
 
@@ -677,6 +740,18 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus.cast">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">cast</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a Nucleus from a string</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        obj : str or Nucleus</span>
+<span class="sd">            the object to cast.  If it is a `Nucleus`, then we simply return</span>
+<span class="sd">            it.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Nucleus</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">obj</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -688,6 +763,23 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus.cast_list">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">cast_list</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">lst</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">allow_None</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_single</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a list of objects into a list of Nucleus objects</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        lst : list</span>
+<span class="sd">            a list of `str` or `Nucleus`</span>
+<span class="sd">        allow_None : bool</span>
+<span class="sd">            allow lst = None and simply return None</span>
+<span class="sd">        allow_single : bool</span>
+<span class="sd">            allow lst to be a single `str` or `Nucleus` instead</span>
+<span class="sd">            of a `list`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">if</span> <span class="n">allow_None</span> <span class="ow">and</span> <span class="n">lst</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">lst</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)):</span>
@@ -702,8 +794,24 @@ document.write(`
 <div class="viewcode-block" id="get_nuclei_in_range">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.nucleus.get_nuclei_in_range">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_nuclei_in_range</span><span class="p">(</span><span class="n">zmin</span><span class="p">,</span> <span class="n">zmax</span><span class="p">,</span> <span class="n">amin</span><span class="p">,</span> <span class="n">amax</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;given a range of Z = [zmin, zmax], and A = [amin, amax],</span>
-<span class="sd">    return a list of Nucleus objects for all nuclei in this range&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Given a range of Z = [zmin, zmax], and A = [amin, amax],</span>
+<span class="sd">    return a list of Nucleus objects for all nuclei in this range</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    zmin : int</span>
+<span class="sd">        minimum atomic number</span>
+<span class="sd">    zmax : int</span>
+<span class="sd">        maximum atomic number</span>
+<span class="sd">    amin : int</span>
+<span class="sd">        minimum atomic weight</span>
+<span class="sd">    amax : int</span>
+<span class="sd">        maximum atomic weight</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">nuc_list</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">assert</span> <span class="n">zmax</span> <span class="o">&gt;=</span> <span class="n">zmin</span><span class="p">,</span> <span class="s2">&quot;zmax must be &gt;= zmin&quot;</span>
@@ -722,7 +830,12 @@ document.write(`
 <div class="viewcode-block" id="get_all_nuclei">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.html#pynucastro.nucdata.nucleus.get_all_nuclei">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_all_nuclei</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a list will every Nucleus that has a known mass&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a list with every Nucleus that has a known mass</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">nuc_list</span> <span class="o">=</span> <span class="p">[]</span>
 

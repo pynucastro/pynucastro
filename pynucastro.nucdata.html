@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.nucdata package &#8212; pynucastro 2.5.0.post18+gebee7864 documentation</title>
+    <title>pynucastro.nucdata package &#8212; pynucastro 2.5.0.post19+g62c46828 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=03f077fa"></script>
+    <script src="_static/documentation_options.js?v=d4953e4c"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -520,6 +520,22 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.nucdata.nucleus">pynucastro.nucdata.nucleus module</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus"><code class="docutils literal notranslate"><span class="pre">Nucleus</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.Z"><code class="docutils literal notranslate"><span class="pre">Nucleus.Z</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.N"><code class="docutils literal notranslate"><span class="pre">Nucleus.N</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.A"><code class="docutils literal notranslate"><span class="pre">Nucleus.A</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.short_spec_name"><code class="docutils literal notranslate"><span class="pre">Nucleus.short_spec_name</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.caps_name"><code class="docutils literal notranslate"><span class="pre">Nucleus.caps_name</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.el"><code class="docutils literal notranslate"><span class="pre">Nucleus.el</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.pretty"><code class="docutils literal notranslate"><span class="pre">Nucleus.pretty</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.dm"><code class="docutils literal notranslate"><span class="pre">Nucleus.dm</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.nucbind"><code class="docutils literal notranslate"><span class="pre">Nucleus.nucbind</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.A_nuc"><code class="docutils literal notranslate"><span class="pre">Nucleus.A_nuc</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.mass"><code class="docutils literal notranslate"><span class="pre">Nucleus.mass</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.tau"><code class="docutils literal notranslate"><span class="pre">Nucleus.tau</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.spin_states"><code class="docutils literal notranslate"><span class="pre">Nucleus.spin_states</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.partition_function"><code class="docutils literal notranslate"><span class="pre">Nucleus.partition_function</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.dummy"><code class="docutils literal notranslate"><span class="pre">Nucleus.dummy</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.nse"><code class="docutils literal notranslate"><span class="pre">Nucleus.nse</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.c"><code class="docutils literal notranslate"><span class="pre">Nucleus.c()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.cast"><code class="docutils literal notranslate"><span class="pre">Nucleus.cast()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.cast_list"><code class="docutils literal notranslate"><span class="pre">Nucleus.cast_list()</span></code></a></li>
@@ -663,59 +679,281 @@ variable is not provided, then mass_excess2020.txt is considered by default.</p>
 <dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.nucleus.</span></span><span class="sig-name descname"><span class="pre">Nucleus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dummy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/nucleus.html#Nucleus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>a nucleus that participates in a reaction – we store it in a
-class to hold its properties, define a sorting, and give it a
-pretty printing string.</p>
+<p>A nucleus that participates in a reaction.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Z</strong> – atomic number</p></li>
-<li><p><strong>N</strong> – neutron number</p></li>
-<li><p><strong>A</strong> – atomic mass</p></li>
-<li><p><strong>nucbind</strong> – nuclear binding energy (MeV / nucleon)</p></li>
-<li><p><strong>short_spec_name</strong> – nucleus abbreviation (e.g. “he4”)</p></li>
-<li><p><strong>caps_name</strong> – capitalized short species name (e.g. “He4”)</p></li>
-<li><p><strong>el</strong> – element name (e.g. “he”)</p></li>
-<li><p><strong>pretty</strong> – LaTeX formatted version of the nucleus name</p></li>
-<li><p><strong>dm</strong> – mass excess (MeV)</p></li>
-<li><p><strong>A_nuc</strong> – nuclear mass (amu)</p></li>
-<li><p><strong>mass</strong> – nuclear mass (MeV)</p></li>
-<li><p><strong>tau</strong> – half life (s)</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – name of the nucleus (e.g. “c12”)</p></li>
+<li><p><strong>dummy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – a dummy nucleus is one that we can use where
+a nucleus is needed, but it is not considered
+to be part of the network</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.Z">
+<span class="sig-name descname"><span class="pre">Z</span></span><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.Z" title="Link to this definition">#</a></dt>
+<dd><p>atomic number</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.N">
+<span class="sig-name descname"><span class="pre">N</span></span><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.N" title="Link to this definition">#</a></dt>
+<dd><p>neutron number</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.A">
+<span class="sig-name descname"><span class="pre">A</span></span><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.A" title="Link to this definition">#</a></dt>
+<dd><p>atomic mass</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.short_spec_name">
+<span class="sig-name descname"><span class="pre">short_spec_name</span></span><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.short_spec_name" title="Link to this definition">#</a></dt>
+<dd><p>nucleus abbreviation (e.g. “he4”)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.caps_name">
+<span class="sig-name descname"><span class="pre">caps_name</span></span><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.caps_name" title="Link to this definition">#</a></dt>
+<dd><p>capitalized short species name (e.g. “He4”)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.el">
+<span class="sig-name descname"><span class="pre">el</span></span><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.el" title="Link to this definition">#</a></dt>
+<dd><p>element name (e.g. “he”)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.pretty">
+<span class="sig-name descname"><span class="pre">pretty</span></span><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.pretty" title="Link to this definition">#</a></dt>
+<dd><p>LaTeX formatted version of the nucleus name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.dm">
+<span class="sig-name descname"><span class="pre">dm</span></span><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.dm" title="Link to this definition">#</a></dt>
+<dd><p>mass excess (MeV)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.nucbind">
+<span class="sig-name descname"><span class="pre">nucbind</span></span><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.nucbind" title="Link to this definition">#</a></dt>
+<dd><p>nuclear binding energy (MeV / nucleon)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.A_nuc">
+<span class="sig-name descname"><span class="pre">A_nuc</span></span><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.A_nuc" title="Link to this definition">#</a></dt>
+<dd><p>nuclear mass (amu)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.mass">
+<span class="sig-name descname"><span class="pre">mass</span></span><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.mass" title="Link to this definition">#</a></dt>
+<dd><p>nuclear mass (MeV)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.tau">
+<span class="sig-name descname"><span class="pre">tau</span></span><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.tau" title="Link to this definition">#</a></dt>
+<dd><p>half life (s)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.spin_states">
+<span class="sig-name descname"><span class="pre">spin_states</span></span><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.spin_states" title="Link to this definition">#</a></dt>
+<dd><p>the ground state spin</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.partition_function">
+<span class="sig-name descname"><span class="pre">partition_function</span></span><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.partition_function" title="Link to this definition">#</a></dt>
+<dd><p>the <cite>PartitionFunction</cite> object for this nucleus, which
+allows for the evaluation of the temperature-dependent
+partition function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pynucastro.nucdata.partition_function.PartitionFunction" title="pynucastro.nucdata.partition_function.PartitionFunction">PartitionFunction</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.dummy">
+<span class="sig-name descname"><span class="pre">dummy</span></span><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.dummy" title="Link to this definition">#</a></dt>
+<dd><p>is this a dummy nucleus</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.nse">
+<span class="sig-name descname"><span class="pre">nse</span></span><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.nse" title="Link to this definition">#</a></dt>
+<dd><p>an NSE proton has the same properties
+as a proton but compares as being distinct</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.c">
 <span class="sig-name descname"><span class="pre">c</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/nucleus.html#Nucleus.c"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.c" title="Link to this definition">#</a></dt>
-<dd><p>return the capitalized-style name</p>
+<dd><p>Return the capitalized-style name</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.cast">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/nucleus.html#Nucleus.cast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.cast" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Create a Nucleus from a string</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>obj</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><a class="reference internal" href="#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a>) – the object to cast.  If it is a <cite>Nucleus</cite>, then we simply return
+it.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus">Nucleus</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.cast_list">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cast_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_None</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_single</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/nucleus.html#Nucleus.cast_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.cast_list" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Convert a list of objects into a list of Nucleus objects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lst</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – a list of <cite>str</cite> or <cite>Nucleus</cite></p></li>
+<li><p><strong>allow_None</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – allow lst = None and simply return None</p></li>
+<li><p><strong>allow_single</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – allow lst to be a single <cite>str</cite> or <cite>Nucleus</cite> instead
+of a <cite>list</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.cindex">
 <span class="sig-name descname"><span class="pre">cindex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/nucleus.html#Nucleus.cindex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.cindex" title="Link to this definition">#</a></dt>
-<dd><p>return the name for C++ indexing</p>
+<dd><p>Return the name for C++ indexing</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.from_Z_A">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_Z_A</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dummy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/nucleus.html#Nucleus.from_Z_A"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.from_Z_A" title="Link to this definition">#</a></dt>
-<dd><p>creates a nucleus given Z and A</p>
+<dd><p>Create a nucleus given Z and A</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – atomic number</p></li>
+<li><p><strong>A</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – atomic weight</p></li>
+<li><p><strong>dummy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – a dummy nucleus is one that we can use where
+a nucleus is needed, but it is not considered
+to be part of the network</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus">Nucleus</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.Nucleus.from_cache">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dummy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/nucleus.html#Nucleus.from_cache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.nucleus.Nucleus.from_cache" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Check if we’ve already created this nucleus, and if so,
+return a reference to it from the cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – name of the nucleus (e.g. “c12”)</p></li>
+<li><p><strong>dummy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – a dummy nucleus is one that we can use where
+a nucleus is needed, but it is not considered
+to be part of the network</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus">Nucleus</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -728,14 +966,32 @@ pretty printing string.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.get_all_nuclei">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.nucleus.</span></span><span class="sig-name descname"><span class="pre">get_all_nuclei</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/nucleus.html#get_all_nuclei"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.nucleus.get_all_nuclei" title="Link to this definition">#</a></dt>
-<dd><p>Return a list will every Nucleus that has a known mass</p>
+<dd><p>Return a list with every Nucleus that has a known mass</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.get_nuclei_in_range">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.nucleus.</span></span><span class="sig-name descname"><span class="pre">get_nuclei_in_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amax</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/nucleus.html#get_nuclei_in_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.nucleus.get_nuclei_in_range" title="Link to this definition">#</a></dt>
-<dd><p>given a range of Z = [zmin, zmax], and A = [amin, amax],
+<dd><p>Given a range of Z = [zmin, zmax], and A = [amin, amax],
 return a list of Nucleus objects for all nuclei in this range</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>zmin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – minimum atomic number</p></li>
+<li><p><strong>zmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – maximum atomic number</p></li>
+<li><p><strong>amin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – minimum atomic weight</p></li>
+<li><p><strong>amax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – maximum atomic weight</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -971,6 +1227,22 @@ where only intervals are given and the values measured by strong experimental ar
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.nucdata.nucleus">pynucastro.nucdata.nucleus module</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus"><code class="docutils literal notranslate"><span class="pre">Nucleus</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.Z"><code class="docutils literal notranslate"><span class="pre">Nucleus.Z</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.N"><code class="docutils literal notranslate"><span class="pre">Nucleus.N</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.A"><code class="docutils literal notranslate"><span class="pre">Nucleus.A</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.short_spec_name"><code class="docutils literal notranslate"><span class="pre">Nucleus.short_spec_name</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.caps_name"><code class="docutils literal notranslate"><span class="pre">Nucleus.caps_name</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.el"><code class="docutils literal notranslate"><span class="pre">Nucleus.el</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.pretty"><code class="docutils literal notranslate"><span class="pre">Nucleus.pretty</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.dm"><code class="docutils literal notranslate"><span class="pre">Nucleus.dm</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.nucbind"><code class="docutils literal notranslate"><span class="pre">Nucleus.nucbind</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.A_nuc"><code class="docutils literal notranslate"><span class="pre">Nucleus.A_nuc</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.mass"><code class="docutils literal notranslate"><span class="pre">Nucleus.mass</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.tau"><code class="docutils literal notranslate"><span class="pre">Nucleus.tau</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.spin_states"><code class="docutils literal notranslate"><span class="pre">Nucleus.spin_states</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.partition_function"><code class="docutils literal notranslate"><span class="pre">Nucleus.partition_function</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.dummy"><code class="docutils literal notranslate"><span class="pre">Nucleus.dummy</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.nse"><code class="docutils literal notranslate"><span class="pre">Nucleus.nse</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.c"><code class="docutils literal notranslate"><span class="pre">Nucleus.c()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.cast"><code class="docutils literal notranslate"><span class="pre">Nucleus.cast()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.Nucleus.cast_list"><code class="docutils literal notranslate"><span class="pre">Nucleus.cast_list()</span></code></a></li>
