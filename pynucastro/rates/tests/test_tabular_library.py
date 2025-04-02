@@ -1,5 +1,4 @@
 import pytest
-from pytest import approx
 
 import pynucastro as pyna
 
