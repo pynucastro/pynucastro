@@ -696,6 +696,7 @@ class TabularLibrary(Library):
     """Load all of the tabular rates known and return a Library"""
 
     lib_path = Path(__file__).parents[1]/"library/tabular"
+    skip_wildcards = ["ffn"]
 
     def __init__(self):
         # find all of the tabular rates that pynucastro knows about
@@ -703,10 +704,15 @@ class TabularLibrary(Library):
 
         trates = []
 
-        for _, _, filenames in sorted(walk(self.lib_path)):
+        for root, _, filenames in sorted(walk(self.lib_path)):
             for f in sorted(filenames):
                 if f.endswith("-toki"):
-                    trates.append(TabularRate(rfile=f))
+                    add_rate = True
+                    for wild in self.skip_wildcards:
+                        if wild in root:
+                            add_rate = False
+                    if add_rate:
+                        trates.append(TabularRate(rfile=f))
 
         Library.__init__(self, rates=trates)
 

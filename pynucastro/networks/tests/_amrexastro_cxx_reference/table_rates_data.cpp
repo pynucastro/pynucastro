@@ -34,7 +34,7 @@ void init_tabular()
     j_Na23_Ne23_meta.nvars = 6;
     j_Na23_Ne23_meta.nheader = 7;
 
-    init_tab_info(j_Na23_Ne23_meta, "23na-23ne_electroncapture.dat", j_Na23_Ne23_rhoy, j_Na23_Ne23_temp, j_Na23_Ne23_data);
+    init_tab_info(j_Na23_Ne23_meta, "suzuki-23na-23ne_electroncapture.dat", j_Na23_Ne23_rhoy, j_Na23_Ne23_temp, j_Na23_Ne23_data);
 
 
     j_Ne23_Na23_meta.ntemp = 39;
@@ -42,7 +42,7 @@ void init_tabular()
     j_Ne23_Na23_meta.nvars = 6;
     j_Ne23_Na23_meta.nheader = 5;
 
-    init_tab_info(j_Ne23_Na23_meta, "23ne-23na_betadecay.dat", j_Ne23_Na23_rhoy, j_Ne23_Na23_temp, j_Ne23_Na23_data);
+    init_tab_info(j_Ne23_Na23_meta, "suzuki-23ne-23na_betadecay.dat", j_Ne23_Na23_rhoy, j_Ne23_Na23_temp, j_Ne23_Na23_data);
 
 
 

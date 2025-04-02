@@ -23,16 +23,14 @@ from pynucastro.screening import get_screening_map
 
 
 class BaseCxxNetwork(ABC, RateCollection):
-    """Interpret the collection of rates and nuclei and produce the
-    C++ code needed to integrate the network.
+    """Initialize the C++ network.  This takes the same arguments as
+    `RateCollection` and interprets the collection of rates
+    and nuclei and produce the C++ code needed to integrate the
+    network.
 
     """
 
     def __init__(self, *args, **kwargs):
-        """Initialize the C++ network.  We take a single argument: a list
-        of rate files that will make up the network
-
-        """
 
         super().__init__(*args, **kwargs)
 
@@ -57,6 +55,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<nrat_reaclib>'] = self._nrat_reaclib
         self.ftags['<nrat_tabular>'] = self._nrat_tabular
         self.ftags['<nrxn>'] = self._nrxn
+        self.ftags['<nrxn_enum_type>'] = self._nrxn_enum_type
         self.ftags['<rate_names>'] = self._rate_names
         self.ftags['<ebind>'] = self._ebind
         self.ftags['<compute_screening_factors>'] = self._compute_screening_factors
@@ -89,14 +88,26 @@ class BaseCxxNetwork(ABC, RateCollection):
         return []
 
     def get_indent_amt(self, l, k):
-        """determine the amount of spaces to indent a line"""
+        """Determine the amount of spaces to indent a line.  This looks
+        for a string of the form "<key>(#)", where # is the a number that
+        is the amount of indent.
+
+        Parameters
+        ----------
+        l : str
+            a line
+        k : str
+            a keyword of the form "<key>" that appears in the line
+        """
+
         rem = re.match(r'\A'+k+r'\(([0-9]*)\)\Z', l)
         return int(rem.group(1))
 
     def _write_network(self, odir=None):
-        """
-        This writes the RHS, jacobian and ancillary files for the system of ODEs that
-        this network describes, using the template files.
+        """This writes the RHS, jacobian and ancillary files for the
+        system of ODEs that this network describes, using the template
+        files.
+
         """
         # pylint: disable=arguments-differ
 
@@ -278,6 +289,16 @@ class BaseCxxNetwork(ABC, RateCollection):
         for i, r in enumerate(self.all_rates):
             of.write(f'{self.indent*n_indent}k_{r.cname()} = {i+1},\n')
         of.write(f'{self.indent*n_indent}NumRates = k_{self.all_rates[-1].cname()}\n')
+
+    def _nrxn_enum_type(self, n_indent, of):
+        nrxn = len(self.all_rates)
+        dtype = "std::uint32_t"
+        # we need 1 additional int for NumRates
+        if nrxn < 255:
+            dtype = "std::uint8_t"
+        elif nrxn < 65535:
+            dtype = "std::unit16_t"
+        of.write(f'{self.indent*n_indent}{dtype}\n')
 
     def _rate_names(self, n_indent, of):
         for i, r in enumerate(self.all_rates):

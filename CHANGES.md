@@ -1,5 +1,88 @@
 # Changelog
 
+## 2.5.0
+
+  * fix the zenodo authors (#898) and automate the zenodo bibtex in
+    the docs (#880)
+
+  * codespell fixes (#897)
+
+  * AmrexAstroCxxNetwork now ifdefs out neutrinos (#884)
+  
+  * officially support python 3.13 (#860)
+
+  * update package requirements (#896)
+
+  * Implement Debye-Huckel screening (#870)
+
+  * Fix a CODATA constants inconsistency between Nubase and SciPy
+    (#877) and compatibility with SciPy < 1.15.0 (#889)
+
+  * Address a new warning in matplotlib 3.10.0 (#879, #885)
+
+  * Bump up jinja2 version (#871)
+
+  * Added the ability to approximate A(n,gamma)X(n,gamma)B into an
+    effective rate A(nn,gamma)B (#818)
+
+  * `SimpleCxxNetwork` now includes electron screening using the
+    prescription in Chugunov 2007 (#844)
+
+  * added "NSE protons" that evaluate the same as a proton but can be
+    used to decouple light and heavy reactions (#853, #854, #862, #863)
+
+  * `modify_products` was moved to the base `Rate` class all rate classes
+    can use it (#851)
+
+  * Fix an issue with AMD HIP/ROCm memory access on the GPU in the
+    partition functions (#859)
+
+  * A `FortranNetwork` is now available that provides a wrapper around
+    `SimpleCxxNetwork` with Fortran interfaces. (#841, #847)
+
+  * `Nucleus` objects can now be added and subtracted (#835)
+
+  * Fix a compiler issue with `SimpleCxxNetwork` and ReacLib weak rates
+    (#846)
+
+  * Documentation improvements (#782, #831, #832, #843, #848, #852,
+    #855, #858, #861, #864, #866, #867, #874, #881, #887, #888),
+    including new examples (#783, #800, #826) and build enhancements
+    (#893)
+
+  * Clean-up unused class data in `SimpleCxxNetwork` (#845)
+
+  * Clean up the rate module by separating it into submodules (#840, #842)
+
+  * Add the ability to label edges in network plots (#837)
+
+  * Clean-up the `make_ap_pg_approx` code (#830, #850)
+
+  * `PartitionFunction.eval` now returns a python float instead of a
+    numpy float (#839)
+
+  * Rates now store their source from publications (#822, #834)
+
+  * Change some methods to properties in `Composition`, `Library`, and
+    `Rate` (#829)
+
+  * `PythonNetwork` rates now can take rho and Y. (#828)
+
+  * CI fixes and updates (#827, #890)
+
+  * Child rates in `ApproximateRate` are now stored as a dictionary
+    (#824) + additional cleaning (#812)
+
+  * Allow the identical particle factor in `Rate` to be disabled (#821)
+
+  * `Rate.eval()` now take rho and comp (#820)
+
+  * Update Zenodo authors (#815)
+
+  * Use python's `pathlib.Path` throughout (#811)
+
+  * `Nucleus` now stores the halflife (#801)
+
 ## 2.4.0
 
   * expanded documentation on exporting networks (#805) and physical
@@ -49,7 +132,7 @@
 
   * `AmrexAstroCxxNetwork` now create a ydot_weak function that
     evaluates the weak rate contributions to compute dYe/dt (#739)
-
+   
 ## 2.2.1
 
   * numpy 2.0 support added (#748)

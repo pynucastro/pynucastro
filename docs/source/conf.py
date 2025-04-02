@@ -47,6 +47,7 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx_math_dollar',
     'sphinx_mdinclude',
     'myst_nb',
+    'sphinx.ext.napoleon',
     'IPython.sphinxext.ipython_console_highlighting']
 
 # bibtex
@@ -60,12 +61,17 @@ linkcheck_retries = 3
 linkcheck_timeout = 100
 linkcheck_allow_unauthorized = True
 
+autosummary_generate = True
+
+# docstrings
+autodoc_typehints = "none"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
 # always execute notebooks
 env_skip_execute = os.getenv("SKIP_EXECUTE")
+
 
 if not env_skip_execute:
     nb_execution_mode = "force"
@@ -129,6 +135,7 @@ todo_include_todos = False
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'matplotlib': ('https://matplotlib.org/stable', None),
+    'numpy': ('https://numpy.org/doc/stable/', None),
 }
 
 

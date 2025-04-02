@@ -106,13 +106,13 @@ class RateEval:
 
 # note: we cannot make the TableInterpolator global, since numba doesn't like global jitclass
 # load data for Na23 --> Ne23
-Na23__Ne23_rate = TabularRate(rfile='na23--ne23-toki')
+Na23__Ne23_rate = TabularRate(rfile='suzuki-na23--ne23-toki')
 Na23__Ne23_info = (Na23__Ne23_rate.table_rhoy_lines,
                   Na23__Ne23_rate.table_temp_lines,
                   Na23__Ne23_rate.tabular_data_table)
 
 # load data for Ne23 --> Na23
-Ne23__Na23_rate = TabularRate(rfile='ne23--na23-toki')
+Ne23__Na23_rate = TabularRate(rfile='suzuki-ne23--na23-toki')
 Ne23__Na23_info = (Ne23__Na23_rate.table_rhoy_lines,
                   Ne23__Na23_rate.table_temp_lines,
                   Ne23__Na23_rate.tabular_data_table)
@@ -254,50 +254,48 @@ def rhs_eq(t, Y, rho, T, screen_func):
     dYdt = np.zeros((nnuc), dtype=np.float64)
 
     dYdt[jn] = (
-       -Y[jn]*rate_eval.n__p__weak__wc12
-       +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23
+          -Y[jn]*rate_eval.n__p__weak__wc12  +
+          +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23
        )
 
     dYdt[jp] = (
-       +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__p_Na23
-       +Y[jn]*rate_eval.n__p__weak__wc12
+          +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__p_Na23  +
+          +Y[jn]*rate_eval.n__p__weak__wc12
        )
 
     dYdt[jhe4] = (
-       -rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12__O16
-       -3*1.66666666666667e-01*rho**2*Y[jhe4]**3*rate_eval.He4_He4_He4__C12
-       +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__He4_Ne20
+          +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__He4_Ne20  +
+          -rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12__O16  +
+          + -3*1.66666666666667e-01*rho**2*Y[jhe4]**3*rate_eval.He4_He4_He4__C12
        )
 
     dYdt[jc12] = (
-       -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__He4_Ne20
-       -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23
-       -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__p_Na23
-       -rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12__O16
-       +1.66666666666667e-01*rho**2*Y[jhe4]**3*rate_eval.He4_He4_He4__C12
+          + -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__He4_Ne20  +
+          + -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__p_Na23  +
+          -rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12__O16  +
+          +1.66666666666667e-01*rho**2*Y[jhe4]**3*rate_eval.He4_He4_He4__C12  +
+          + -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23
        )
 
     dYdt[jo16] = (
-       +rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12__O16
+          +rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12__O16
        )
 
     dYdt[jne20] = (
-       +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__He4_Ne20
+          +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__He4_Ne20
        )
 
     dYdt[jne23] = (
-       -Y[jne23]*rate_eval.Ne23__Na23
-       +Y[jna23]*rate_eval.Na23__Ne23
+          ( -Y[jne23]*rate_eval.Ne23__Na23 +Y[jna23]*rate_eval.Na23__Ne23 )
        )
 
     dYdt[jna23] = (
-       -Y[jna23]*rate_eval.Na23__Ne23
-       +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__p_Na23
-       +Y[jne23]*rate_eval.Ne23__Na23
+          +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__p_Na23  +
+          ( +Y[jne23]*rate_eval.Ne23__Na23 -Y[jna23]*rate_eval.Na23__Ne23 )
        )
 
     dYdt[jmg23] = (
-       +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23
+          +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23
        )
 
     return dYdt
