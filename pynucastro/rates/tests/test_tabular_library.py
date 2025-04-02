@@ -44,3 +44,13 @@ class TestTabularLibrary:
         # total number of rates
         assert len(suzuki_rates) + len(langanke_rates) + len(ffn_rates) == len(tl_new.get_rates())
 
+    def test_sources(self):
+
+        ffn_lib = pyna.FFNLibrary()
+        assert ffn_lib.get_rates()[0].source["Label"] == "ffn"
+
+        suzuki_lib = pyna.SuzukiLibrary()
+        assert suzuki_lib.get_rates()[0].source["Label"] == "suzuki"
+
+        langanke_lib = pyna.LangankeLibrary()
+        assert langanke_lib.get_rates()[0].source["Label"] == "langanke"
