@@ -30,32 +30,62 @@ class UnsupportedNucleus(Exception):
 
 
 class Nucleus:
-    """
-    a nucleus that participates in a reaction -- we store it in a
-    class to hold its properties, define a sorting, and give it a
-    pretty printing string.
+    """A nucleus that participates in a reaction.
 
-    :var Z:               atomic number
-    :var N:               neutron number
-    :var A:               atomic mass
-    :var nucbind:         nuclear binding energy (MeV / nucleon)
-    :var short_spec_name: nucleus abbreviation (e.g. "he4")
-    :var caps_name:       capitalized short species name (e.g. "He4")
-    :var el:              element name (e.g. "he")
-    :var pretty:          LaTeX formatted version of the nucleus name
-    :var dm:              mass excess (MeV)
-    :var A_nuc:           nuclear mass (amu)
-    :var mass:            nuclear mass (MeV)
-    :var tau:             half life (s)
+    Parameters
+    ----------
+    name : str
+        name of the nucleus (e.g. "c12")
+    dummy : bool
+        a dummy nucleus is one that we can use where
+        a nucleus is needed, but it is not considered
+        to be part of the network
+
+    Attributes
+    ----------
+    Z : float
+        atomic number
+    N : float
+        neutron number
+    A : float
+        atomic mass
+    short_spec_name : str
+        nucleus abbreviation (e.g. "he4")
+    caps_name : str
+        capitalized short species name (e.g. "He4")
+    el : str
+        element name (e.g. "he")
+    pretty : str
+        LaTeX formatted version of the nucleus name
+    dm : float
+        mass excess (MeV)
+    nucbind : float
+        nuclear binding energy (MeV / nucleon)
+    A_nuc : float
+        nuclear mass (amu)
+    mass : float
+        nuclear mass (MeV)
+    tau : float
+        half life (s)
+    spin_states : int
+        the ground state spin
+    partition_function : PartitionFunction
+        the `PartitionFunction` object for this nucleus, which
+        allows for the evaluation of the temperature-dependent
+        partition function.
+    dummy : bool
+        is this a dummy nucleus
+    nse : bool
+        an NSE proton has the same properties
+        as a proton but compares as being distinct
     """
+
     _cache = {}
 
     def __init__(self, name, dummy=False):
         name = name.lower()
         self.raw = name
 
-        # a dummy nucleus is one that we can use where a nucleus is needed
-        # but it is not considered to be part of the network
         self.dummy = dummy
         self.nse = False
 
@@ -171,6 +201,23 @@ class Nucleus:
 
     @classmethod
     def from_cache(cls, name, dummy=False):
+        """Check if we've already created this nucleus, and if so,
+        return a reference to it from the cache.
+
+        Parameters
+        ----------
+        name : str
+            name of the nucleus (e.g. "c12")
+        dummy : bool
+            a dummy nucleus is one that we can use where
+            a nucleus is needed, but it is not considered
+            to be part of the network
+
+        Returns
+        -------
+        Nucleus
+        """
+
         key = (name.lower(), dummy)
         if key not in cls._cache:
             cls._cache[key] = cls(name, dummy)
@@ -178,7 +225,23 @@ class Nucleus:
 
     @classmethod
     def from_Z_A(cls, Z, A, dummy=False):
-        """creates a nucleus given Z and A"""
+        """Create a nucleus given Z and A
+
+        Parameters
+        ----------
+        Z : int
+            atomic number
+        A : int
+            atomic weight
+        dummy : bool
+            a dummy nucleus is one that we can use where
+            a nucleus is needed, but it is not considered
+            to be part of the network
+
+        Returns
+        -------
+        Nucleus
+        """
 
         # checks if Z and A are valid inputs
         if not (isinstance(Z, int) and isinstance(A, int)):
@@ -209,11 +272,11 @@ class Nucleus:
         return hash((self.Z, self.A))
 
     def c(self):
-        """return the capitalized-style name"""
+        """Return the capitalized-style name"""
         return self.caps_name
 
     def cindex(self):
-        """return the name for C++ indexing"""
+        """Return the name for C++ indexing"""
         return self.short_spec_name.capitalize()
 
     def __eq__(self, other):
@@ -244,6 +307,18 @@ class Nucleus:
 
     @classmethod
     def cast(cls, obj):
+        """Create a Nucleus from a string
+
+        Parameters
+        ----------
+        obj : str or Nucleus
+            the object to cast.  If it is a `Nucleus`, then we simply return
+            it.
+
+        Returns
+        -------
+        Nucleus
+        """
         if isinstance(obj, cls):
             return obj
         if isinstance(obj, str):
@@ -252,6 +327,23 @@ class Nucleus:
 
     @classmethod
     def cast_list(cls, lst, *, allow_None=False, allow_single=False):
+        """Convert a list of objects into a list of Nucleus objects
+
+        Parameters
+        ----------
+        lst : list
+            a list of `str` or `Nucleus`
+        allow_None : bool
+            allow lst = None and simply return None
+        allow_single : bool
+            allow lst to be a single `str` or `Nucleus` instead
+            of a `list`
+
+        Returns
+        -------
+        list
+        """
+
         if allow_None and lst is None:
             return lst
         if isinstance(lst, (str, cls)):
@@ -262,8 +354,24 @@ class Nucleus:
 
 
 def get_nuclei_in_range(zmin, zmax, amin, amax):
-    """given a range of Z = [zmin, zmax], and A = [amin, amax],
-    return a list of Nucleus objects for all nuclei in this range"""
+    """Given a range of Z = [zmin, zmax], and A = [amin, amax],
+    return a list of Nucleus objects for all nuclei in this range
+
+    Parameters
+    ----------
+    zmin : int
+        minimum atomic number
+    zmax : int
+        maximum atomic number
+    amin : int
+        minimum atomic weight
+    amax : int
+        maximum atomic weight
+
+    Returns
+    -------
+    list
+    """
 
     nuc_list = []
     assert zmax >= zmin, "zmax must be >= zmin"
@@ -279,7 +387,12 @@ def get_nuclei_in_range(zmin, zmax, amin, amax):
 
 
 def get_all_nuclei():
-    """Return a list will every Nucleus that has a known mass"""
+    """Return a list with every Nucleus that has a known mass
+
+    Returns
+    -------
+    list
+    """
 
     nuc_list = []
 

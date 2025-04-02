@@ -52,6 +52,7 @@ codes.
    library-examples.ipynb
    duplicate-rates.ipynb
    validate-example.ipynb
+   tabulated-weak-rates.ipynb
    electron-capture-example.ipynb
    electron-captures.ipynb
    alternate-rates.ipynb
