@@ -730,7 +730,12 @@ class RateCollection:
         return reverse_rates
 
     def find_reverse(self, forward_rate, reverse_rates=None):
-        """given a forward rate, locate the rate that is its reverse"""
+        """Given a forward rate, locate the rate that is its reverse.
+
+        Returns
+        -------
+        Rate
+        """
 
         if reverse_rates is None:
             reverse_rates = self.get_reverse_rates()
@@ -844,8 +849,20 @@ class RateCollection:
         return sorted(nuclei_pfs)
 
     def dedupe_partition_function_temperatures(self):
-        """return a list of unique temperature arrays, along with a dictionary
-        mapping each Nucleus to the corresponding index into that list"""
+        """Return a list of unique temperature arrays needed by
+        partition function tables, along with a dictionary mapping
+        each Nucleus to the corresponding index into that list
+
+        Returns
+        -------
+        temp_arrays : list
+            a list of NumPy ndarray specifying the temperature values
+            for a particular partition function tabulation.
+        temp_indices : dict
+            a dictionary that keyed on Nucleus that maps a nucleus to
+            the index in temp_arrays containing the temperature array
+            for its partition function data.
+        """
 
         nuclei = self.get_nuclei_needing_partition_functions()
         temp_arrays = []
@@ -898,7 +915,16 @@ class RateCollection:
         self._build_collection()
 
     def add_rates(self, rates):
-        """add the Rate objects in rates from the network."""
+        """Add new rates to the network.  If the rate already exists,
+        it will not be added.  The network is then regenerated using
+        the updated rates
+
+        Parameters
+        ----------
+        rates : Rate, list
+             a single Rate object or a list of Rate objects specifying the
+             rates to be added to the network.
+        """
 
         if isinstance(rates, Rate):
             if rates not in self.rates:
@@ -1275,14 +1301,20 @@ class RateCollection:
         return passed_validation
 
     def find_duplicate_links(self):
-        """report on an rates where another rate exists that has the
-        same reactants and products.  These may not be the same Rate
-        object (e.g., one could be tabular the other a simple decay),
-        but they will present themselves in the network as the same
-        link.
+        """Check the network to see if there are multiple rates that
+        share the same reactants and products.  These may not be the
+        same Rate object (e.g., one could be tabular the other a
+        simple decay), but they will present themselves in the network
+        as the same link.
 
         We return a list, where each entry is a list of all the rates
-        that share the same link"""
+        that share the same link.
+
+        Returns
+        -------
+        list
+
+        """
 
         duplicates = find_duplicate_rates(self.get_rates())
 
@@ -1299,12 +1331,27 @@ class RateCollection:
         return duplicates
 
     def find_unimportant_rates(self, states, cutoff_ratio, screen_func=None):
-        """evaluate the rates at multiple thermodynamic states, and find the
+        """Evaluate the rates at multiple thermodynamic states, and find the
         rates that are always less than `cutoff_ratio` times the fastest rate
-        for each state
+        for each state.  This returns a dict keyed by Rate giving the
+        ratio of the rate to the largest rate.
 
-        Here, states is a list of tuple of the form (density, temperature, composition),
-        where composition is of type `Composition`.
+        Parameters
+        ----------
+        states : list, tuple
+             A tuple of the form (density, temperature, composition),
+             where composition is a Composition object
+        cutoff_ratio : float
+             The ratio of a rate to the fastest rate, below which we
+             consider this rate to be unimportant.
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the evaluated rates will include the screening
+            correction.
+
+        Return
+        ------
+        dict
         """
         largest_ratio = {r: 0 for r in self.rates}
         for rho, T, comp in states:
@@ -1315,8 +1362,23 @@ class RateCollection:
         return {r: ratio for r, ratio in largest_ratio.items() if ratio < cutoff_ratio}
 
     def evaluate_screening(self, rho, T, composition, screen_func):
-        """Evaluate the screening factors for each rate, using one of the
-        methods in :py:mod:`pynucastro.screening`"""
+        """Evaluate the screening factors for each rate.
+
+        Parameters
+        ----------
+        rho : float
+            density used to evaluate screening
+        T : float
+            temperature used to evaluate screening
+        composition : Composition
+            composition used to evaluate screening
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+
+        Returns
+        -------
+        dict
+        """
         # this follows the same logic as BaseCxxNetwork._compute_screening_factors()
         factors = {}
         ys = composition.get_molar()
@@ -1465,8 +1527,27 @@ class RateCollection:
         return enuc
 
     def evaluate_activity(self, rho, T, composition, screen_func=None):
-        """sum over all of the terms contributing to ydot,
-        neglecting sign"""
+        """Compute the activity for each nucleus--the sum of
+        |creation rate| + |destruction rate|, i.e., this neglects the
+        sign of the terms.
+
+        Parameters
+        ----------
+        rho : float
+            density used to evaluate rates
+        T : float
+            temperature used to evaluate rates
+        composition : Composition
+            composition used to evaluate rates
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the evaluated rates will include the screening
+            correction.
+
+        Returns
+        -------
+        dict
+        """
 
         rvals = self.evaluate_rates(rho, T, composition, screen_func)
         act = {}
