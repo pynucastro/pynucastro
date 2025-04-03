@@ -797,17 +797,33 @@ class RateCollection:
         return rate_pairs
 
     def get_nuclei(self):
-        """ get all the nuclei that are part of the network """
+        """Get all the nuclei that are part of the network.
+
+        Returns
+        -------
+        list
+        """
         return self.unique_nuclei
 
     def linking_nuclei(self, nuclei, return_type=None, **kwargs):
-        """
-        Return a new RateCollection/Network object containing only rates linking the
-        given nuclei (parameter *nuclei*). Nuclei can be provided as an iterable of Nucleus
-        objects or a list of abbreviations. The *return_type* parameter allows the caller to
-        specify a different constructor (e.g. superclass constructor) if the current class does
-        not take a 'libraries' keyword. See method of same name in Library class for valid
-        keyword arguments.
+        """Return a new network containing only rates linking the
+        given nuclei.
+
+        Parameters
+        ----------
+        nuclei : list, tuple
+            An iterable of Nucleus objects or string names of nuclei.
+        return_type : Callable
+            A different constructor (e.g., a superclass constructor)
+            to use if the current class does not take a `libraries`
+            keyword.
+        kwargs : dict
+            Additional arguments to pass onto the library linking_nuclei
+            method.  See :py:mod:`pynucastro.rates.library.Library.linking_nuclei`.
+
+        Returns
+        -------
+        RateCollection, return_type
         """
 
         if return_type is None:
@@ -953,8 +969,19 @@ class RateCollection:
         self._build_collection()
 
     def make_ap_pg_approx(self, intermediate_nuclei=None):
-        """combine the rates A(a,g)B and A(a,p)X(p,g)B (and the reverse) into a single
-        effective approximate rate."""
+        """Combine the rates A(a,g)B and A(a,p)X(p,g)B (and the
+        reverse) into a single effective approximate rate.  The new
+        approximate rates will be added to the network and the original
+        rates will be removed (although they are still carried by the
+        ApproximateRate object.
+
+        Parameters
+        ----------
+        intermediate_nuclei : list, tuple
+            an iterable of Nucleus objects or string names representing
+            the intermediate nucleus we wish to approximate out.
+
+        """
 
         # make sure that the intermediate_nuclei list are Nuclei objects
         intermediate_nuclei = Nucleus.cast_list(intermediate_nuclei, allow_None=True)
@@ -1030,7 +1057,18 @@ class RateCollection:
         self._build_collection()
 
     def make_nn_g_approx(self, intermediate_nuclei=None):
-        """combine the rates A(n,g)X(n,g)B into a single effective rate."""
+        """Combine the rates A(n,g)X(n,g)B into a single effective
+        rate. The new approximate rates will be added to the network
+        and the original rates will be removed (although they are
+        still carried by the ApproximateRate object.
+
+        Parameters
+        ----------
+        intermediate_nuclei : list, tuple
+            an iterable of Nucleus objects or string names representing
+            the intermediate nucleus we wish to approximate out.
+
+        """
 
         # make sure that the intermediate_nuclei list are Nuclei objects
         intermediate_nuclei = Nucleus.cast_list(intermediate_nuclei, allow_None=True)
@@ -1543,7 +1581,7 @@ class RateCollection:
 
     def evaluate_activity(self, rho, T, composition, screen_func=None):
         """Compute the activity for each nucleus--the sum of
-        |creation rate| + |destruction rate|, i.e., this neglects the
+        abs(creation rate) + abs(destruction rate), i.e., this neglects the
         sign of the terms.
 
         Parameters
@@ -1601,7 +1639,15 @@ class RateCollection:
         return nc
 
     def network_overview(self):
-        """ return a verbose network overview """
+        """Return a verbose network overview showing for each nucleus
+        which rates consume it and which produce it.
+
+        Returns
+        -------
+        str
+
+        """
+
         ostr = ""
         for n in self.unique_nuclei:
             ostr += f"{n}\n"
@@ -1617,7 +1663,15 @@ class RateCollection:
         return ostr
 
     def rate_pair_overview(self):
-        """ return a verbose network overview in terms of forward-reverse pairs"""
+        """Return a verbose network overview in terms of
+        forward-reverse pairs
+
+        Returns
+        -------
+        str
+
+        """
+
         ostr = ""
         for n in self.unique_nuclei:
             ostr += f"{n}\n"
