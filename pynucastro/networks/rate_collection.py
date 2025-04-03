@@ -2255,9 +2255,9 @@ class RateCollection:
         nuclei = self.unique_nuclei
         if filter_function is not None:
             nuclei = list(filter(filter_function, nuclei))
-            Ns = np.array([n.N for n in nuclei])
-            Zs = np.array([n.Z for n in nuclei])
-            As = Ns + Zs
+        Ns = np.array([n.N for n in nuclei])
+        Zs = np.array([n.Z for n in nuclei])
+        As = Ns + Zs
 
         # Compute weights
         color_field = color_field.lower()
