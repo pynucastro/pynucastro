@@ -714,7 +714,14 @@ class RateCollection:
         return combined_library
 
     def get_forward_rates(self):
-        """return a list of the forward (exothermic) rates"""
+        """Return a list of the forward (exothermic) rates in the
+        network
+
+        Returns
+        -------
+        list
+
+        """
 
         # first handle the ones that have Q defined
         forward_rates = [r for r in self.rates if r.Q >= 0.0]
@@ -722,7 +729,15 @@ class RateCollection:
         return forward_rates
 
     def get_reverse_rates(self):
-        """return a list of the reverse (endothermic) rates)"""
+        """Return a list of the reverse (endothermic) rates).  Note
+        these may not be the same as the reverse rates idenified by
+        ReacLib.
+
+        Returns
+        -------
+        list
+
+        """
 
         # first handle the ones that have Q defined
         reverse_rates = [r for r in self.rates if r.Q < 0.0]
