@@ -143,7 +143,7 @@ class PythonNetwork(RateCollection):
         return ostr
 
     def screening_string(self, indent=""):
-        """Create a string containing the python code that sets up the 
+        """Create a string containing the python code that sets up the
         screening (PlasmaState) and calls the screening function on
         every set of reactants in our network, and updating the reaction
         rate values stored in the network.
