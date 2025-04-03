@@ -10,39 +10,39 @@ class NumpyNetwork(RateCollection):
     Cached arrays
     -------------
 
-    .. py:attribute:: coef_arr
+    coef_arr
 
        Reaclib rate coefficient array, with shape ``(number_of_rates,
        number_of_sets, 7)``.
 
-    .. py:attribute:: coef_mask
+    coef_mask
 
        Boolean mask array determining how many sets to include in the final
        rate evaluation, with shape ``(number_of_rates, number_of_sets)``.
 
-    .. py:attribute:: nuc_prod_count
+    nuc_prod_count
 
        Array storing the count of each nucleus in rates producing that nucleus,
        with shape ``(number_of_species, number_of_rates)``.
 
-    .. py:attribute:: nuc_cons_count
+    nuc_cons_count
 
        Array storing the count of each nucleus in rates consuming that nucleus,
        with shape ``(number_of_species, number_of_rates)``.
 
-    .. py:attribute:: nuc_used
+    nuc_used
 
        A boolean matrix of whether the nucleus is involved in the reaction
        or not, with shape ``(number_of_species, number_of_rates)``.
 
-    .. py:attribute:: yfac
+    yfac
 
        Array storing the molar fraction component of each rate (Y of each
        reactant raised to the appropriate power).
 
        Depends on composition only.
 
-    .. py:attribute:: prefac
+    prefac
 
        Array storing the prefactor for each rate, which includes both the
        statistical prefactor and mass density raised to the corresponding

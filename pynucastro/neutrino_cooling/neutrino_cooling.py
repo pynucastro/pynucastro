@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from .sneut5 import sneut5
+from pynucastro.neutrino_cooling import sneut5
 
 
 class NeutrinoCooling:
