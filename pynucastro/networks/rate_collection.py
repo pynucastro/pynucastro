@@ -730,7 +730,7 @@ class RateCollection:
 
     def get_reverse_rates(self):
         """Return a list of the reverse (endothermic) rates).  Note
-        these may not be the same as the reverse rates idenified by
+        these may not be the same as the reverse rates identified by
         ReacLib.
 
         Returns
