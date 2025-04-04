@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.5.0.post24+g72443091 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.5.0.post25+g0b946025 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=51aa0a93"></script>
+    <script src="../../../_static/documentation_options.js?v=04784414"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -522,7 +522,7 @@ document.write(`
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    nuclei : (list, tuple)</span>
+<span class="sd">    nuclei : list, tuple</span>
 <span class="sd">        an iterable of Nucleus objects</span>
 <span class="sd">    small : float</span>
 <span class="sd">        a floor for nuclei mass fractions, used as the default value</span>
@@ -649,7 +649,7 @@ document.write(`
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        arr : (list, tuple, numpy.ndarray)</span>
+<span class="sd">        arr : list, tuple, numpy.ndarray</span>
 <span class="sd">            input values of mass fractions</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -685,7 +685,7 @@ document.write(`
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        alpha : (list, tuple, numpy.ndarray)</span>
+<span class="sd">        alpha : list, tuple, numpy.ndarray</span>
 <span class="sd">            distribution length for the Dirichlet distribution</span>
 <span class="sd">        seed : float</span>
 <span class="sd">            seed for the random number generator</span>
@@ -982,15 +982,15 @@ document.write(`
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    rate_files : (str, list, tuple)</span>
+<span class="sd">    rate_files : str, list, tuple</span>
 <span class="sd">        a string or iterable of strings of file names that define valid</span>
 <span class="sd">        rates. This can include Reaclib library files storing multiple</span>
 <span class="sd">        rates.</span>
-<span class="sd">    libraries : (Library, list, tuple)</span>
+<span class="sd">    libraries : Library, list, tuple</span>
 <span class="sd">        a Library or iterable of Library objects</span>
-<span class="sd">    rates : (Rate, list, tuple)</span>
+<span class="sd">    rates : Rate, list, tuple</span>
 <span class="sd">        a Rate or iterable of Rate objects</span>
-<span class="sd">    inert_nuclei : (list, tuple)</span>
+<span class="sd">    inert_nuclei : list, tuple</span>
 <span class="sd">        an iterable of Nuclei that should be part of the collection but</span>
 <span class="sd">        are not linked via reactions to the other Nuclei in the network.</span>
 <span class="sd">    symmetric_screening : bool</span>
@@ -3024,7 +3024,7 @@ document.write(`
         <span class="k">for</span> <span class="n">nuc</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
 
             <span class="n">square</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">((</span><span class="n">nuc</span><span class="o">.</span><span class="n">N</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                    <span class="n">facecolor</span><span class="o">=</span><span class="n">cmap</span><span class="p">(</span><span class="n">weight</span><span class="p">),</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">)</span>
+                                   <span class="n">facecolor</span><span class="o">=</span><span class="n">cmap</span><span class="p">(</span><span class="n">weight</span><span class="p">),</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">)</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">square</span><span class="p">)</span>
 
         <span class="c1"># Set limits</span>
@@ -3125,7 +3125,21 @@ document.write(`
 <div class="viewcode-block" id="Explorer">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Explorer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Explorer</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; interactively explore a rate collection &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple class that enables interactive exploration a RateCollection,</span>
+<span class="sd">    presenting density and temperature sliders to update the reaction rate</span>
+<span class="sd">    values.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rc : RateCollection</span>
+<span class="sd">        The RateCollection we will visualize.</span>
+<span class="sd">    comp : Composition</span>
+<span class="sd">        A composition that will be used for evaluating the rates</span>
+<span class="sd">    kwargs : dict</span>
+<span class="sd">        Additional parameters that will be passed through to the</span>
+<span class="sd">        RateCollection plot() function.  Note that &quot;T&quot; and &quot;rho&quot;</span>
+<span class="sd">        will be ignored.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rc</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; take a RateCollection and a composition &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="n">rc</span>
@@ -3143,7 +3157,21 @@ document.write(`
 <div class="viewcode-block" id="Explorer.explore">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.Explorer.explore">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">explore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logrho</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="n">logT</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform interactive exploration of the network structure.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the interactive visualization.  This uses ipywidgets.interact</span>
+<span class="sd">        to create an interactive visualization.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        logrho : list, tuple</span>
+<span class="sd">            a tuple of (starting log(rho), ending log(rho), dlogrho) that</span>
+<span class="sd">            defines the range of densities to explore with an interactive</span>
+<span class="sd">            slider.</span>
+<span class="sd">        logT : list, tuple</span>
+<span class="sd">            a tuple of (starting log(T), ending log(T), dlogT) that</span>
+<span class="sd">            defines the range of temperatures to explore with an interactive</span>
+<span class="sd">            slider.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">interact</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_make_plot</span><span class="p">,</span> <span class="n">logrho</span><span class="o">=</span><span class="n">logrho</span><span class="p">,</span> <span class="n">logT</span><span class="o">=</span><span class="n">logT</span><span class="p">)</span></div>
 </div>
 
