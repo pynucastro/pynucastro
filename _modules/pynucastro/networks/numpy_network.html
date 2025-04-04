@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.numpy_network &#8212; pynucastro 2.5.0.post23+g4a117955 documentation</title>
+    <title>pynucastro.networks.numpy_network &#8212; pynucastro 2.5.0.post24+g72443091 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=5bdae801"></script>
+    <script src="../../../_static/documentation_options.js?v=51aa0a93"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -247,7 +247,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../changes.html">Changelog</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../modules.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../pynucastro.html">pynucastro package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.constants.html">pynucastro.constants package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.networks.html">pynucastro.networks package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.neutrino_cooling.html">pynucastro.neutrino_cooling package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.nucdata.html">pynucastro.nucdata package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.rates.html">pynucastro.rates package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.reduction.html">pynucastro.reduction package</a></li>
@@ -423,34 +425,6 @@ document.write(`
 <span class="k">class</span><span class="w"> </span><span class="nc">NumpyNetwork</span><span class="p">(</span><span class="n">RateCollection</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A network that uses numpy arrays to evaluate rates more efficiently.</span>
 
-<span class="sd">    Cached arrays</span>
-<span class="sd">    -------------</span>
-
-<span class="sd">    .. py:attribute:: coef_arr</span>
-
-<span class="sd">       Reaclib rate coefficient array, with shape ``(number_of_rates,</span>
-<span class="sd">       number_of_sets, 7)``.</span>
-
-<span class="sd">    .. py:attribute:: coef_mask</span>
-
-<span class="sd">       Boolean mask array determining how many sets to include in the final</span>
-<span class="sd">       rate evaluation, with shape ``(number_of_rates, number_of_sets)``.</span>
-
-<span class="sd">    .. py:attribute:: nuc_prod_count</span>
-
-<span class="sd">       Array storing the count of each nucleus in rates producing that nucleus,</span>
-<span class="sd">       with shape ``(number_of_species, number_of_rates)``.</span>
-
-<span class="sd">    .. py:attribute:: nuc_cons_count</span>
-
-<span class="sd">       Array storing the count of each nucleus in rates consuming that nucleus,</span>
-<span class="sd">       with shape ``(number_of_species, number_of_rates)``.</span>
-
-<span class="sd">    .. py:attribute:: nuc_used</span>
-
-<span class="sd">       A boolean matrix of whether the nucleus is involved in the reaction</span>
-<span class="sd">       or not, with shape ``(number_of_species, number_of_rates)``.</span>
-
 <span class="sd">    .. py:attribute:: yfac</span>
 
 <span class="sd">       Array storing the molar fraction component of each rate (Y of each</span>
@@ -492,26 +466,41 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">nuc_prod_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Array storing the count of each nucleus in rates producing</span>
+<span class="sd">       that nucleus, with shape ``(number_of_species,</span>
+<span class="sd">       number_of_rates)``</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuc_prod_count</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_calc_count_matrices</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuc_prod_count</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">nuc_cons_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Array storing the count of each nucleus in rates consuming</span>
+<span class="sd">        that nucleus, with shape ``(number_of_species,</span>
+<span class="sd">        number_of_rates)``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuc_cons_count</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_calc_count_matrices</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuc_cons_count</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">nuc_used</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A boolean matrix of whether the nucleus is involved in the</span>
+<span class="sd">        reaction or not, with shape ``(number_of_species,</span>
+<span class="sd">        number_of_rates)``</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuc_used</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_calc_count_matrices</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuc_used</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_calc_count_matrices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute and store 3 count matrices that can be used for vectorized rate</span>
-<span class="sd">        calculations.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute and store 3 count matrices that can be used for</span>
+<span class="sd">        vectorized rate calculations.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Rate -&gt; index mapping</span>
@@ -540,12 +529,21 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">coef_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reaclib rate coefficient array, with shape</span>
+<span class="sd">       ``(number_of_rates, number_of_sets, 7)``</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coef_arr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_update_rate_coef_arr</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coef_arr</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">coef_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Boolean mask array determining how many sets to include in</span>
+<span class="sd">        the final rate evaluation, with shape ``(number_of_rates,</span>
+<span class="sd">        number_of_sets)``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coef_mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_update_rate_coef_arr</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coef_mask</span>

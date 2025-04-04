@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks package &#8212; pynucastro 2.5.0.post23+g4a117955 documentation</title>
+    <title>pynucastro.networks package &#8212; pynucastro 2.5.0.post24+g72443091 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=5bdae801"></script>
+    <script src="_static/documentation_options.js?v=51aa0a93"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -49,8 +49,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'pynucastro.networks';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pynucastro.nucdata package" href="pynucastro.nucdata.html" />
-    <link rel="prev" title="pynucastro package" href="pynucastro.html" />
+    <link rel="next" title="pynucastro.neutrino_cooling package" href="pynucastro.neutrino_cooling.html" />
+    <link rel="prev" title="pynucastro.constants package" href="pynucastro.constants.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -248,7 +248,9 @@
 <li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="modules.html">API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.constants.html">pynucastro.constants package</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">pynucastro.networks package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.neutrino_cooling.html">pynucastro.neutrino_cooling package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a></li>
@@ -524,17 +526,17 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.networks.numpy_network">pynucastro.networks.numpy_network module</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.coef_arr"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.coef_arr</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.coef_mask"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.coef_mask</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_prod_count"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.nuc_prod_count</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_cons_count"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.nuc_cons_count</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_used"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.nuc_used</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.yfac"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.yfac</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.prefac"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.prefac</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.clear_arrays"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.clear_arrays()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.coef_arr"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.coef_arr</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.coef_mask"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.coef_mask</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.evaluate_activity_arr"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.evaluate_activity_arr()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.evaluate_rates_arr"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.evaluate_rates_arr()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.evaluate_ydots_arr"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.evaluate_ydots_arr()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_cons_count"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.nuc_cons_count</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_prod_count"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.nuc_prod_count</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_used"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.nuc_used</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.update_prefac_arr()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.update_yfac_arr()</span></code></a></li>
 </ul>
@@ -845,43 +847,6 @@ want the nuclei output into the NSE table file.</p></li>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.networks.numpy_network.</span></span><span class="sig-name descname"><span class="pre">NumpyNetwork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">libraries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inert_nuclei</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetric_screening</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_screening</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/numpy_network.html#NumpyNetwork"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">RateCollection</span></code></a></p>
 <p>A network that uses numpy arrays to evaluate rates more efficiently.</p>
-<section id="cached-arrays">
-<h3>Cached arrays<a class="headerlink" href="#cached-arrays" title="Link to this heading">#</a></h3>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.coef_arr">
-<span class="sig-name descname"><span class="pre">coef_arr</span></span><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.coef_arr" title="Link to this definition">#</a></dt>
-<dd><p>Reaclib rate coefficient array, with shape <code class="docutils literal notranslate"><span class="pre">(number_of_rates,</span>
-<span class="pre">number_of_sets,</span> <span class="pre">7)</span></code>.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.coef_mask">
-<span class="sig-name descname"><span class="pre">coef_mask</span></span><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.coef_mask" title="Link to this definition">#</a></dt>
-<dd><p>Boolean mask array determining how many sets to include in the final
-rate evaluation, with shape <code class="docutils literal notranslate"><span class="pre">(number_of_rates,</span> <span class="pre">number_of_sets)</span></code>.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.nuc_prod_count">
-<span class="sig-name descname"><span class="pre">nuc_prod_count</span></span><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_prod_count" title="Link to this definition">#</a></dt>
-<dd><p>Array storing the count of each nucleus in rates producing that nucleus,
-with shape <code class="docutils literal notranslate"><span class="pre">(number_of_species,</span> <span class="pre">number_of_rates)</span></code>.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.nuc_cons_count">
-<span class="sig-name descname"><span class="pre">nuc_cons_count</span></span><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_cons_count" title="Link to this definition">#</a></dt>
-<dd><p>Array storing the count of each nucleus in rates consuming that nucleus,
-with shape <code class="docutils literal notranslate"><span class="pre">(number_of_species,</span> <span class="pre">number_of_rates)</span></code>.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.nuc_used">
-<span class="sig-name descname"><span class="pre">nuc_used</span></span><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_used" title="Link to this definition">#</a></dt>
-<dd><p>A boolean matrix of whether the nucleus is involved in the reaction
-or not, with shape <code class="docutils literal notranslate"><span class="pre">(number_of_species,</span> <span class="pre">number_of_rates)</span></code>.</p>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.yfac">
 <span class="sig-name descname"><span class="pre">yfac</span></span><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.yfac" title="Link to this definition">#</a></dt>
@@ -904,6 +869,21 @@ density exponent.</p>
 <span class="sig-name descname"><span class="pre">clear_arrays</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/numpy_network.html#NumpyNetwork.clear_arrays"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.clear_arrays" title="Link to this definition">#</a></dt>
 <dd><p>Clear all cached arrays stored by the <a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr" title="pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update_yfac_arr()</span></code></a> and
 <a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr" title="pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update_prefac_arr()</span></code></a> member functions, freeing up memory.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.coef_arr">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coef_arr</span></span><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.coef_arr" title="Link to this definition">#</a></dt>
+<dd><p>Reaclib rate coefficient array, with shape
+<code class="docutils literal notranslate"><span class="pre">(number_of_rates,</span> <span class="pre">number_of_sets,</span> <span class="pre">7)</span></code></p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.coef_mask">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coef_mask</span></span><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.coef_mask" title="Link to this definition">#</a></dt>
+<dd><p>Boolean mask array determining how many sets to include in
+the final rate evaluation, with shape <code class="docutils literal notranslate"><span class="pre">(number_of_rates,</span>
+<span class="pre">number_of_sets)</span></code>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -951,6 +931,30 @@ performance between the two varies based on the setup. See
 <a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.clear_arrays" title="pynucastro.networks.numpy_network.NumpyNetwork.clear_arrays"><code class="xref py py-meth docutils literal notranslate"><span class="pre">clear_arrays()</span></code></a> for freeing memory post calculation.</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.nuc_cons_count">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nuc_cons_count</span></span><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_cons_count" title="Link to this definition">#</a></dt>
+<dd><p>Array storing the count of each nucleus in rates consuming
+that nucleus, with shape <code class="docutils literal notranslate"><span class="pre">(number_of_species,</span>
+<span class="pre">number_of_rates)</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.nuc_prod_count">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nuc_prod_count</span></span><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_prod_count" title="Link to this definition">#</a></dt>
+<dd><p>Array storing the count of each nucleus in rates producing
+that nucleus, with shape <code class="docutils literal notranslate"><span class="pre">(number_of_species,</span>
+<span class="pre">number_of_rates)</span></code></p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.nuc_used">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nuc_used</span></span><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_used" title="Link to this definition">#</a></dt>
+<dd><p>A boolean matrix of whether the nucleus is involved in the
+reaction or not, with shape <code class="docutils literal notranslate"><span class="pre">(number_of_species,</span>
+<span class="pre">number_of_rates)</span></code></p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr">
 <span class="sig-name descname"><span class="pre">update_prefac_arr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/numpy_network.html#NumpyNetwork.update_prefac_arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr" title="Link to this definition">#</a></dt>
@@ -967,7 +971,6 @@ reactant raised to the appropriate power). The results are stored in
 the <a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.yfac" title="pynucastro.networks.numpy_network.NumpyNetwork.yfac"><code class="xref py py-attr docutils literal notranslate"><span class="pre">yfac</span></code></a> array.</p>
 </dd></dl>
 
-</section>
 </dd></dl>
 
 </section>
@@ -1955,20 +1958,20 @@ the ydot term for nuclide y_i.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="pynucastro.html"
+       href="pynucastro.constants.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">pynucastro package</p>
+        <p class="prev-next-title">pynucastro.constants package</p>
       </div>
     </a>
     <a class="right-next"
-       href="pynucastro.nucdata.html"
+       href="pynucastro.neutrino_cooling.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pynucastro.nucdata package</p>
+        <p class="prev-next-title">pynucastro.neutrino_cooling package</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -2020,17 +2023,17 @@ the ydot term for nuclide y_i.</p>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.networks.numpy_network">pynucastro.networks.numpy_network module</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.coef_arr"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.coef_arr</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.coef_mask"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.coef_mask</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_prod_count"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.nuc_prod_count</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_cons_count"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.nuc_cons_count</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_used"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.nuc_used</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.yfac"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.yfac</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.prefac"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.prefac</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.clear_arrays"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.clear_arrays()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.coef_arr"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.coef_arr</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.coef_mask"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.coef_mask</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.evaluate_activity_arr"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.evaluate_activity_arr()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.evaluate_rates_arr"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.evaluate_rates_arr()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.evaluate_ydots_arr"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.evaluate_ydots_arr()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_cons_count"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.nuc_cons_count</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_prod_count"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.nuc_prod_count</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_used"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.nuc_used</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.update_prefac_arr()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork.update_yfac_arr()</span></code></a></li>
 </ul>

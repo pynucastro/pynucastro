@@ -1,0 +1,1279 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pynucastro.neutrino_cooling.sneut5_mod &#8212; pynucastro 2.5.0.post24+g72443091 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/myfile.css?v=15ab05d9" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=51aa0a93"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pynucastro/neutrino_cooling/sneut5_mod';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt=""/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt=""/>`);</script>
+  
+  
+    <p class="title logo__title">pynucastro 2.5</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rate_types.html">Reaction Rate Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Properties</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../sources.html">Third Party Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nucleus.html">Nuclear Properties</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Exploring Networks in Python</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-examples.html">pynucastro Usage Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plot-types.html">Plotting Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-integration.html">Integrating a Network</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../duplicate-rates.html">Dealing with Duplicate Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../validate-example.html">Checking Your Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../electron-capture-example.html">Tabulated Weak Rate Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../alternate-rates.html"><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code></a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Rate Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../screening-examples.html">Screening Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modify-example.html">Modifying Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../custom-rates.html">Creating a Custom Rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../partition-function.html">Reverse Rates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../approximate-rates.html">Approximate Rates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../alpha-gamma-approx.html">Approximating alpha-capture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../double-n-capture.html">Approximating double n-capture</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nse-protons.html">Using NSE Protons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../unimportant-rates.html">Removing Unimportant Rates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../NSE-example.html">Solving for Nuclear Statistical Equilibrium</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nse_table.html">Creating an NSE table</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../neutrino-cooling.html">Neutrino Cooling</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Exporting Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../networks.html">Exporting Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../python-network.html">Python network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../simple-cxx-network.html">Simple C++ network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../fortran-network.html">Fortran Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../amrex-astro-cxx-networks.html">AMReX Astro Microphysics Networks</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../julia.html">Integrating using DifferentialEquations.jl</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installing-diffeqpy-julia.html">Installing <code class="docutils literal notranslate"><span class="pre">diffeqpy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../Example-Integrating-Network-diffeqpy.html">Example of Integrating a Network</a></li>
+
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../he-burning-example.html">A He-burning Network</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/binding-energy.html">Binding Energy per Nucleon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/pp-cno.html">p-p chain vs. CNO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/hot-CNO-breakout-example.html">hot-CNO and breakout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/triple_alpha_eval.html">Computing the Screened Triple-alpha rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/he-burning.html">Ratio of C/O from He burning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/supernova-lightcurve.html">A Supernova Lightcurve</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changes.html">Changelog</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../modules.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../pynucastro.html">pynucastro package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.constants.html">pynucastro.constants package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.networks.html">pynucastro.networks package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.neutrino_cooling.html">pynucastro.neutrino_cooling package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.nucdata.html">pynucastro.nucdata package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.rates.html">pynucastro.rates package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.reduction.html">pynucastro.reduction package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.screening.html">pynucastro.screening package</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../zreferences.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Index</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../py-modindex.html">Module Index</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2F_modules/pynucastro/neutrino_cooling/sneut5_mod.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pynucastro.neutrino_cooling.sneut5_mod</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<div class="viewcode-block" id="NeutrinoComponents">
+<a class="viewcode-back" href="../../../pynucastro.neutrino_cooling.html#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NeutrinoComponents</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;a simple container that holds the individual components to the</span>
+<span class="sd">    neutrino cooling&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">splas</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spair</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sphot</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sbrem</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sreco</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;splas: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">splas</span><span class="si">}</span><span class="s2">; spair: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spair</span><span class="si">}</span><span class="s2">; sphot: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sphot</span><span class="si">}</span><span class="s2">; sbrem: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sbrem</span><span class="si">}</span><span class="s2">; sreco: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sreco</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="ifermi12">
+<a class="viewcode-back" href="../../../pynucastro.neutrino_cooling.html#pynucastro.neutrino_cooling.sneut5_mod.ifermi12">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ifermi12</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;apply a rational function expansion to get the inverse</span>
+<span class="sd">    fermi-dirac integral of order 1/2 when it is equal to f.</span>
+<span class="sd">    maximum error is 4.19e-9_rt.</span>
+<span class="sd">    reference: Antia ApJS 84,101 1993&quot;&quot;&quot;</span>
+
+    <span class="c1"># coefficients of the expansion from Table 8 of Antia</span>
+
+    <span class="n">m1</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">k1</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">m2</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">k2</span> <span class="o">=</span> <span class="mi">4</span>
+
+    <span class="n">a1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.999266880833e4</span><span class="p">,</span> <span class="mf">5.702479099336e3</span><span class="p">,</span> <span class="mf">6.610132843877e2</span><span class="p">,</span> <span class="mf">3.818838129486e1</span><span class="p">,</span> <span class="mf">1.0e0</span><span class="p">])</span>
+
+    <span class="n">b1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.771804140488e4</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.014785161019e3</span><span class="p">,</span> <span class="mf">9.130355392717e1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.670718177489e0</span><span class="p">])</span>
+
+    <span class="n">a2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.277060388085e-2</span><span class="p">,</span>
+                   <span class="mf">7.187946804945e-2</span><span class="p">,</span>
+                   <span class="o">-</span><span class="mf">4.262314235106e-1</span><span class="p">,</span>
+                   <span class="mf">4.997559426872e-1</span><span class="p">,</span>
+                   <span class="o">-</span><span class="mf">1.285579118012e0</span><span class="p">,</span>
+                   <span class="o">-</span><span class="mf">3.930805454272e-1</span><span class="p">,</span>
+                   <span class="mf">1.0e0</span><span class="p">])</span>
+
+    <span class="n">b2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">9.745794806288e-3</span><span class="p">,</span>
+                   <span class="mf">5.485432756838e-2</span><span class="p">,</span>
+                   <span class="o">-</span><span class="mf">3.299466243260e-1</span><span class="p">,</span>
+                   <span class="mf">4.077841975923e-1</span><span class="p">,</span>
+                   <span class="o">-</span><span class="mf">1.145531476975e0</span><span class="p">,</span>
+                   <span class="o">-</span><span class="mf">6.067091689181e-2</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">f</span> <span class="o">&lt;</span> <span class="mf">4.0</span><span class="p">:</span>
+
+        <span class="c1"># build sum_{i=0, m1} a_i x**i.  This is the numerator</span>
+        <span class="c1"># in Eq. 4 of Antia.</span>
+        <span class="c1">#</span>
+        <span class="c1"># with our 1-based indexing, this expression is</span>
+        <span class="c1"># a[1] + a[2] * f + a[3] * f**2 + ... a[m1+1] * f**m1</span>
+        <span class="c1">#</span>
+        <span class="c1"># we do the sum starting with the largest term and working</span>
+        <span class="c1"># on a single power of f each iteration.</span>
+        <span class="c1">#</span>
+        <span class="c1"># in the starting rn here, the leading f is actually</span>
+        <span class="c1"># a1(m1+1) * f, but that element is 1</span>
+
+        <span class="n">rn</span> <span class="o">=</span> <span class="n">f</span> <span class="o">+</span> <span class="n">a1</span><span class="p">[</span><span class="n">m1</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">m1</span><span class="p">)):</span>
+            <span class="n">rn</span> <span class="o">=</span> <span class="n">rn</span> <span class="o">*</span> <span class="n">f</span> <span class="o">+</span> <span class="n">a1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="c1"># now we do the denominator in Eq. 4.  None of the coefficients</span>
+        <span class="c1"># are 1, so we loop over all</span>
+
+        <span class="n">den</span> <span class="o">=</span> <span class="n">b1</span><span class="p">[</span><span class="n">k1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">k1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
+            <span class="n">den</span> <span class="o">=</span> <span class="n">den</span> <span class="o">*</span> <span class="n">f</span> <span class="o">+</span> <span class="n">b1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="c1"># Eq. 6 of Antia</span>
+
+        <span class="n">ifermi12r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">f</span> <span class="o">*</span> <span class="n">rn</span> <span class="o">/</span> <span class="n">den</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="c1"># this construction is the same as above, but using the</span>
+        <span class="c1"># second set of coefficients</span>
+
+        <span class="n">an</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="n">ff</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">f</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">an</span><span class="p">))</span>
+
+        <span class="n">rn</span> <span class="o">=</span> <span class="n">ff</span> <span class="o">+</span> <span class="n">a2</span><span class="p">[</span><span class="n">m2</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">m2</span><span class="p">)):</span>
+            <span class="n">rn</span> <span class="o">=</span> <span class="n">rn</span> <span class="o">*</span> <span class="n">ff</span> <span class="o">+</span> <span class="n">a2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="n">den</span> <span class="o">=</span> <span class="n">b2</span><span class="p">[</span><span class="n">k2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">k2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
+            <span class="n">den</span> <span class="o">=</span> <span class="n">den</span> <span class="o">*</span> <span class="n">ff</span> <span class="o">+</span> <span class="n">b2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="n">ifermi12r</span> <span class="o">=</span> <span class="n">rn</span> <span class="o">/</span> <span class="p">(</span><span class="n">den</span> <span class="o">*</span> <span class="n">ff</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ifermi12r</span></div>
+
+
+
+<div class="viewcode-block" id="sneut5">
+<a class="viewcode-back" href="../../../pynucastro.neutrino_cooling.html#pynucastro.neutrino_cooling.sneut5_mod.sneut5">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sneut5</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">abar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">zbar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+           <span class="n">full_output</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compute thermal neutrino losses from the analytic fits of Itoh</span>
+<span class="sd">    et al. ApJS 102, 411, 1996.  Note that either a Composition object</span>
+<span class="sd">    of abar/zbar need to be provided.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># input:</span>
+    <span class="c1"># T = temperature</span>
+    <span class="c1"># rho  = density</span>
+    <span class="c1"># abar = mean atomic weight</span>
+    <span class="c1"># zbar = mean charge</span>
+
+    <span class="c1"># output:</span>
+    <span class="c1"># snu    = total neutrino loss rate in erg/g/sec</span>
+
+    <span class="k">if</span> <span class="n">abar</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">zbar</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">abar</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">abar</span>
+        <span class="n">zbar</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">zbar</span>
+
+    <span class="c1"># numerical constants</span>
+
+    <span class="n">fac1</span> <span class="o">=</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">3.0</span>
+    <span class="n">fac2</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+    <span class="n">fac3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">5.0</span>
+    <span class="n">oneth</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">3.0</span>
+    <span class="n">twoth</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="mf">3.0</span>
+    <span class="n">con1</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">5.9302e0</span>
+    <span class="n">sixth</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">6.0</span>
+
+    <span class="c1"># theta is sin**2(theta_weinberg) = 0.2319 plus/minus 0.00005 (1996)</span>
+    <span class="c1"># xnufam is the number of neutrino flavors = 3.02 plus/minus 0.005 (1998)</span>
+    <span class="c1"># change theta and xnufam if need be, and the changes will automatically</span>
+    <span class="c1"># propagate through the routine. cv and ca are the vector and axial currents.</span>
+
+    <span class="n">theta</span> <span class="o">=</span> <span class="mf">0.2319</span>
+    <span class="n">xnufam</span> <span class="o">=</span> <span class="mf">3.0</span>
+    <span class="n">cv</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">theta</span>
+    <span class="n">cvp</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">cv</span>
+    <span class="n">ca</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">cap</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">ca</span>
+    <span class="n">tfac1</span> <span class="o">=</span> <span class="n">cv</span> <span class="o">*</span> <span class="n">cv</span> <span class="o">+</span> <span class="n">ca</span> <span class="o">*</span> <span class="n">ca</span> <span class="o">+</span> <span class="p">(</span><span class="n">xnufam</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">cvp</span> <span class="o">*</span> <span class="n">cvp</span> <span class="o">+</span> <span class="n">cap</span> <span class="o">*</span> <span class="n">cap</span><span class="p">)</span>
+    <span class="n">tfac2</span> <span class="o">=</span> <span class="n">cv</span> <span class="o">*</span> <span class="n">cv</span> <span class="o">-</span> <span class="n">ca</span> <span class="o">*</span> <span class="n">ca</span> <span class="o">+</span> <span class="p">(</span><span class="n">xnufam</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">cvp</span> <span class="o">*</span> <span class="n">cvp</span> <span class="o">-</span> <span class="n">cap</span> <span class="o">*</span> <span class="n">cap</span><span class="p">)</span>
+    <span class="n">tfac3</span> <span class="o">=</span> <span class="n">tfac2</span> <span class="o">/</span> <span class="n">tfac1</span>
+    <span class="n">tfac4</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">tfac1</span>
+    <span class="n">tfac5</span> <span class="o">=</span> <span class="mf">0.5e0</span> <span class="o">*</span> <span class="n">tfac2</span>
+    <span class="n">tfac6</span> <span class="o">=</span> <span class="n">cv</span> <span class="o">*</span> <span class="n">cv</span> <span class="o">+</span> <span class="mf">1.5e0</span> <span class="o">*</span> <span class="n">ca</span> <span class="o">*</span> <span class="n">ca</span> <span class="o">+</span> <span class="p">(</span><span class="n">xnufam</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">cvp</span> <span class="o">*</span> <span class="n">cvp</span> <span class="o">+</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">cap</span> <span class="o">*</span> <span class="n">cap</span><span class="p">)</span>
+
+    <span class="n">snu</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">if</span> <span class="n">T</span> <span class="o">&lt;</span> <span class="mf">1.0e7</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">snu</span>
+
+    <span class="c1"># to avoid lots of divisions</span>
+
+    <span class="n">deni</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">rho</span>
+    <span class="n">tempi</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">T</span>
+    <span class="n">abari</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">abar</span>
+
+    <span class="c1"># some composition variables</span>
+
+    <span class="n">ye</span> <span class="o">=</span> <span class="n">zbar</span> <span class="o">*</span> <span class="n">abari</span>
+
+    <span class="c1"># some frequent factors</span>
+
+    <span class="n">t9</span> <span class="o">=</span> <span class="n">T</span> <span class="o">*</span> <span class="mf">1.0e-9</span>
+    <span class="n">xl</span> <span class="o">=</span> <span class="n">t9</span> <span class="o">*</span> <span class="n">con1</span>
+    <span class="n">xlp5</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xl</span><span class="p">)</span>
+    <span class="n">xl2</span> <span class="o">=</span> <span class="n">xl</span> <span class="o">*</span> <span class="n">xl</span>
+    <span class="n">xl3</span> <span class="o">=</span> <span class="n">xl2</span> <span class="o">*</span> <span class="n">xl</span>
+    <span class="n">xl4</span> <span class="o">=</span> <span class="n">xl3</span> <span class="o">*</span> <span class="n">xl</span>
+    <span class="n">xl5</span> <span class="o">=</span> <span class="n">xl4</span> <span class="o">*</span> <span class="n">xl</span>
+    <span class="n">xl6</span> <span class="o">=</span> <span class="n">xl5</span> <span class="o">*</span> <span class="n">xl</span>
+    <span class="n">xl7</span> <span class="o">=</span> <span class="n">xl6</span> <span class="o">*</span> <span class="n">xl</span>
+    <span class="n">xl8</span> <span class="o">=</span> <span class="n">xl7</span> <span class="o">*</span> <span class="n">xl</span>
+    <span class="n">xl9</span> <span class="o">=</span> <span class="n">xl8</span> <span class="o">*</span> <span class="n">xl</span>
+    <span class="n">xlm1</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">xl</span>
+    <span class="n">xlm2</span> <span class="o">=</span> <span class="n">xlm1</span> <span class="o">*</span> <span class="n">xlm1</span>
+    <span class="n">xlm3</span> <span class="o">=</span> <span class="n">xlm1</span> <span class="o">*</span> <span class="n">xlm2</span>
+
+    <span class="n">rm</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">ye</span>
+    <span class="n">rmi</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">rm</span>
+
+    <span class="n">a0</span> <span class="o">=</span> <span class="n">rm</span> <span class="o">*</span> <span class="mf">1.0e-9</span>
+    <span class="n">a1</span> <span class="o">=</span> <span class="n">a0</span><span class="o">**</span><span class="n">oneth</span>
+    <span class="n">zeta</span> <span class="o">=</span> <span class="n">a1</span> <span class="o">*</span> <span class="n">xlm1</span>
+    <span class="n">zeta2</span> <span class="o">=</span> <span class="n">zeta</span> <span class="o">*</span> <span class="n">zeta</span>
+    <span class="n">zeta3</span> <span class="o">=</span> <span class="n">zeta2</span> <span class="o">*</span> <span class="n">zeta</span>
+
+    <span class="c1"># pair neutrino section</span>
+    <span class="c1"># for reactions like e+ + e- =&gt; nu_e + nubar_e</span>
+
+    <span class="c1"># equation 2.8</span>
+
+    <span class="n">gl</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="mf">13.04</span> <span class="o">*</span> <span class="n">xl2</span> <span class="o">+</span> <span class="mf">133.5</span> <span class="o">*</span> <span class="n">xl4</span> <span class="o">+</span> <span class="mf">1534.0</span> <span class="o">*</span> <span class="n">xl6</span> <span class="o">+</span> <span class="mf">918.6</span> <span class="o">*</span> <span class="n">xl8</span>
+
+    <span class="c1"># equation 2.7</span>
+
+    <span class="n">a1</span> <span class="o">=</span> <span class="mf">6.002e19</span> <span class="o">+</span> <span class="mf">2.084e20</span> <span class="o">*</span> <span class="n">zeta</span> <span class="o">+</span> <span class="mf">1.872e21</span> <span class="o">*</span> <span class="n">zeta2</span>
+
+    <span class="k">if</span> <span class="n">t9</span> <span class="o">&lt;</span> <span class="mf">10.0</span><span class="p">:</span>
+        <span class="n">b1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">5.5924</span> <span class="o">*</span> <span class="n">zeta</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">b1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">4.9924</span> <span class="o">*</span> <span class="n">zeta</span><span class="p">)</span>
+
+    <span class="n">xnum</span> <span class="o">=</span> <span class="n">a1</span> <span class="o">*</span> <span class="n">b1</span>
+
+    <span class="k">if</span> <span class="n">t9</span> <span class="o">&lt;</span> <span class="mf">10.0</span><span class="p">:</span>
+        <span class="n">a1</span> <span class="o">=</span> <span class="mf">9.383e-1</span> <span class="o">*</span> <span class="n">xlm1</span> <span class="o">-</span> <span class="mf">4.141e-1</span> <span class="o">*</span> <span class="n">xlm2</span> <span class="o">+</span> <span class="mf">5.829e-2</span> <span class="o">*</span> <span class="n">xlm3</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">a1</span> <span class="o">=</span> <span class="mf">1.2383</span> <span class="o">*</span> <span class="n">xlm1</span> <span class="o">-</span> <span class="mf">8.141e-1</span> <span class="o">*</span> <span class="n">xlm2</span>
+
+    <span class="n">xden</span> <span class="o">=</span> <span class="n">zeta3</span> <span class="o">+</span> <span class="n">a1</span>
+
+    <span class="n">a1</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">xden</span>
+    <span class="n">fpair</span> <span class="o">=</span> <span class="n">xnum</span> <span class="o">*</span> <span class="n">a1</span>
+
+    <span class="c1"># equation 2.6</span>
+
+    <span class="n">a1</span> <span class="o">=</span> <span class="mf">10.7480</span> <span class="o">*</span> <span class="n">xl2</span> <span class="o">+</span> <span class="mf">0.3967</span> <span class="o">*</span> <span class="n">xlp5</span> <span class="o">+</span> <span class="mf">1.005</span>
+    <span class="n">xnum</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">a1</span>
+
+    <span class="n">a1</span> <span class="o">=</span> <span class="mf">7.692e7</span> <span class="o">*</span> <span class="n">xl3</span> <span class="o">+</span> <span class="mf">9.715e6</span> <span class="o">*</span> <span class="n">xlp5</span>
+
+    <span class="n">c</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">a1</span>
+    <span class="n">b1</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">rm</span> <span class="o">*</span> <span class="n">c</span>
+
+    <span class="n">xden</span> <span class="o">=</span> <span class="n">b1</span><span class="o">**-</span><span class="mf">0.3</span>
+
+    <span class="n">qpair</span> <span class="o">=</span> <span class="n">xnum</span> <span class="o">*</span> <span class="n">xden</span>
+
+    <span class="c1"># equation 2.5</span>
+
+    <span class="n">a1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">xlm1</span><span class="p">)</span>
+
+    <span class="n">spair</span> <span class="o">=</span> <span class="n">a1</span> <span class="o">*</span> <span class="n">fpair</span>
+
+    <span class="n">a1</span> <span class="o">=</span> <span class="n">spair</span>
+    <span class="n">spair</span> <span class="o">=</span> <span class="n">gl</span> <span class="o">*</span> <span class="n">a1</span>
+
+    <span class="n">a1</span> <span class="o">=</span> <span class="n">tfac4</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">tfac3</span> <span class="o">*</span> <span class="n">qpair</span><span class="p">)</span>
+
+    <span class="n">a3</span> <span class="o">=</span> <span class="n">spair</span>
+    <span class="n">spair</span> <span class="o">=</span> <span class="n">a1</span> <span class="o">*</span> <span class="n">a3</span>
+
+    <span class="c1"># plasma neutrino section</span>
+    <span class="c1"># for collective reactions like gamma_plasmon =&gt; nu_e + nubar_e</span>
+    <span class="c1"># equation 4.6</span>
+
+    <span class="n">a1</span> <span class="o">=</span> <span class="mf">1.019e-6</span> <span class="o">*</span> <span class="n">rm</span>
+    <span class="n">a2</span> <span class="o">=</span> <span class="n">a1</span><span class="o">**</span><span class="n">twoth</span>
+    <span class="n">b1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">a2</span><span class="p">)</span>
+
+    <span class="n">c00</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="n">T</span> <span class="o">*</span> <span class="n">b1</span><span class="p">)</span>
+
+    <span class="n">gl2</span> <span class="o">=</span> <span class="mf">1.1095e11</span> <span class="o">*</span> <span class="n">rm</span> <span class="o">*</span> <span class="n">c00</span>
+
+    <span class="n">gl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">gl2</span><span class="p">)</span>
+    <span class="n">gl12</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">gl</span><span class="p">)</span>
+    <span class="n">gl32</span> <span class="o">=</span> <span class="n">gl</span> <span class="o">*</span> <span class="n">gl12</span>
+    <span class="n">gl72</span> <span class="o">=</span> <span class="n">gl2</span> <span class="o">*</span> <span class="n">gl32</span>
+    <span class="n">gl6</span> <span class="o">=</span> <span class="n">gl2</span> <span class="o">*</span> <span class="n">gl2</span> <span class="o">*</span> <span class="n">gl2</span>
+
+    <span class="c1"># equation 4.7</span>
+
+    <span class="n">ft</span> <span class="o">=</span> <span class="mf">2.4</span> <span class="o">+</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">gl12</span> <span class="o">+</span> <span class="mf">0.51</span> <span class="o">*</span> <span class="n">gl</span> <span class="o">+</span> <span class="mf">1.25</span> <span class="o">*</span> <span class="n">gl32</span>
+
+    <span class="c1"># equation 4.8</span>
+
+    <span class="n">a1</span> <span class="o">=</span> <span class="mf">8.6</span> <span class="o">*</span> <span class="n">gl2</span> <span class="o">+</span> <span class="mf">1.35</span> <span class="o">*</span> <span class="n">gl72</span>
+
+    <span class="n">b1</span> <span class="o">=</span> <span class="mf">225.0</span> <span class="o">-</span> <span class="mf">17.0</span> <span class="o">*</span> <span class="n">gl</span> <span class="o">+</span> <span class="n">gl2</span>
+
+    <span class="n">c</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">b1</span>
+    <span class="n">fl</span> <span class="o">=</span> <span class="n">a1</span> <span class="o">*</span> <span class="n">c</span>
+
+    <span class="c1"># equation 4.9 and 4.10</span>
+
+    <span class="n">cc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">rm</span><span class="p">)</span>
+    <span class="n">xlnt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+
+    <span class="n">xnum</span> <span class="o">=</span> <span class="n">sixth</span> <span class="o">*</span> <span class="p">(</span><span class="mf">17.5</span> <span class="o">+</span> <span class="n">cc</span> <span class="o">-</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">xlnt</span><span class="p">)</span>
+    <span class="n">xden</span> <span class="o">=</span> <span class="n">sixth</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">24.5</span> <span class="o">+</span> <span class="n">cc</span> <span class="o">+</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">xlnt</span><span class="p">)</span>
+
+    <span class="c1"># equation 4.11</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">xnum</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.7</span> <span class="ow">or</span> <span class="n">xden</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">fxy</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">a1</span> <span class="o">=</span> <span class="mf">0.39</span> <span class="o">-</span> <span class="mf">1.25</span> <span class="o">*</span> <span class="n">xnum</span> <span class="o">-</span> <span class="mf">0.35</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mf">4.5</span> <span class="o">*</span> <span class="n">xnum</span><span class="p">)</span>
+
+        <span class="n">b1</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mf">4.5</span> <span class="o">*</span> <span class="n">xnum</span> <span class="o">+</span> <span class="mf">0.9</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">c</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">xden</span> <span class="o">-</span> <span class="mf">1.6</span> <span class="o">+</span> <span class="mf">1.25</span> <span class="o">*</span> <span class="n">xnum</span><span class="p">)</span>
+
+        <span class="n">d</span> <span class="o">=</span> <span class="mf">0.57</span> <span class="o">-</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">xnum</span>
+        <span class="n">a3</span> <span class="o">=</span> <span class="n">c</span> <span class="o">/</span> <span class="n">d</span>
+        <span class="n">c00</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">a3</span> <span class="o">*</span> <span class="n">a3</span><span class="p">)</span>
+
+        <span class="n">fxy</span> <span class="o">=</span> <span class="mf">1.05</span> <span class="o">+</span> <span class="p">(</span><span class="n">a1</span> <span class="o">-</span> <span class="n">b1</span><span class="p">)</span> <span class="o">*</span> <span class="n">c00</span>
+
+    <span class="c1"># equation 4.1 and 4.5</span>
+
+    <span class="n">splas</span> <span class="o">=</span> <span class="p">(</span><span class="n">ft</span> <span class="o">+</span> <span class="n">fl</span><span class="p">)</span> <span class="o">*</span> <span class="n">fxy</span>
+
+    <span class="n">a2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">gl</span><span class="p">)</span>
+
+    <span class="n">a1</span> <span class="o">=</span> <span class="n">splas</span>
+    <span class="n">splas</span> <span class="o">=</span> <span class="n">a2</span> <span class="o">*</span> <span class="n">a1</span>
+
+    <span class="n">a2</span> <span class="o">=</span> <span class="n">gl6</span>
+
+    <span class="n">a1</span> <span class="o">=</span> <span class="n">splas</span>
+    <span class="n">splas</span> <span class="o">=</span> <span class="n">a2</span> <span class="o">*</span> <span class="n">a1</span>
+
+    <span class="n">a2</span> <span class="o">=</span> <span class="mf">0.93153</span> <span class="o">*</span> <span class="mf">3.0e21</span> <span class="o">*</span> <span class="n">xl9</span>
+
+    <span class="n">a1</span> <span class="o">=</span> <span class="n">splas</span>
+    <span class="n">splas</span> <span class="o">=</span> <span class="n">a2</span> <span class="o">*</span> <span class="n">a1</span>
+
+    <span class="c1"># photoneutrino process section for reactions like e- + gamma =&gt;</span>
+    <span class="c1"># e- + nu_e + nubar_e e+ + gamma =&gt; e+ + nu_e + nubar_e equation</span>
+    <span class="c1"># 3.8 for tau, equation 3.6 for cc, and table 2 written out for</span>
+    <span class="c1"># speed</span>
+
+    <span class="k">if</span> <span class="n">T</span> <span class="o">&lt;</span> <span class="mf">1.0e8</span><span class="p">:</span>
+
+        <span class="c1"># note: we already bailed above for T &lt; 1.e7, so this is</span>
+        <span class="c1"># really 1.e7 &lt;= T &lt; 1.e8</span>
+
+        <span class="n">tau</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="mf">1.0e-7</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="mf">0.5654</span> <span class="o">+</span> <span class="n">tau</span>
+        <span class="n">c00</span> <span class="o">=</span> <span class="mf">1.008e11</span>
+        <span class="n">c01</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">c02</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">c03</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">c04</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">c05</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">c06</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">c10</span> <span class="o">=</span> <span class="mf">8.156e10</span>
+        <span class="n">c11</span> <span class="o">=</span> <span class="mf">9.728e8</span>
+        <span class="n">c12</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.806e9</span>
+        <span class="n">c13</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.384e9</span>
+        <span class="n">c14</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.774e9</span>
+        <span class="n">c15</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.249e9</span>
+        <span class="n">c16</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.153e9</span>
+        <span class="n">c20</span> <span class="o">=</span> <span class="mf">1.067e11</span>
+        <span class="n">c21</span> <span class="o">=</span> <span class="o">-</span><span class="mf">9.782e9</span>
+        <span class="n">c22</span> <span class="o">=</span> <span class="o">-</span><span class="mf">7.193e9</span>
+        <span class="n">c23</span> <span class="o">=</span> <span class="o">-</span><span class="mf">6.936e9</span>
+        <span class="n">c24</span> <span class="o">=</span> <span class="o">-</span><span class="mf">6.893e9</span>
+        <span class="n">c25</span> <span class="o">=</span> <span class="o">-</span><span class="mf">7.041e9</span>
+        <span class="n">c26</span> <span class="o">=</span> <span class="o">-</span><span class="mf">7.193e9</span>
+        <span class="n">dd01</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">dd02</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">dd03</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">dd04</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">dd05</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">dd11</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.879e10</span>
+        <span class="n">dd12</span> <span class="o">=</span> <span class="o">-</span><span class="mf">9.667e9</span>
+        <span class="n">dd13</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.602e9</span>
+        <span class="n">dd14</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.370e9</span>
+        <span class="n">dd15</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.825e9</span>
+        <span class="n">dd21</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.919e10</span>
+        <span class="n">dd22</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.185e10</span>
+        <span class="n">dd23</span> <span class="o">=</span> <span class="o">-</span><span class="mf">7.270e9</span>
+        <span class="n">dd24</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.222e9</span>
+        <span class="n">dd25</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.560e9</span>
+
+    <span class="k">elif</span> <span class="mf">1.0e8</span> <span class="o">&lt;=</span> <span class="n">T</span> <span class="o">&lt;</span> <span class="mf">1.0e9</span><span class="p">:</span>
+
+        <span class="n">tau</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="mf">1.0e-8</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="mf">1.5654</span>
+        <span class="n">c00</span> <span class="o">=</span> <span class="mf">9.889e10</span>
+        <span class="n">c01</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.524e8</span>
+        <span class="n">c02</span> <span class="o">=</span> <span class="o">-</span><span class="mf">6.088e6</span>
+        <span class="n">c03</span> <span class="o">=</span> <span class="mf">4.269e7</span>
+        <span class="n">c04</span> <span class="o">=</span> <span class="mf">5.172e7</span>
+        <span class="n">c05</span> <span class="o">=</span> <span class="mf">4.910e7</span>
+        <span class="n">c06</span> <span class="o">=</span> <span class="mf">4.388e7</span>
+        <span class="n">c10</span> <span class="o">=</span> <span class="mf">1.813e11</span>
+        <span class="n">c11</span> <span class="o">=</span> <span class="o">-</span><span class="mf">7.556e9</span>
+        <span class="n">c12</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.304e9</span>
+        <span class="n">c13</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.031e9</span>
+        <span class="n">c14</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.764e9</span>
+        <span class="n">c15</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.851e9</span>
+        <span class="n">c16</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.928e9</span>
+        <span class="n">c20</span> <span class="o">=</span> <span class="mf">9.750e10</span>
+        <span class="n">c21</span> <span class="o">=</span> <span class="mf">3.484e10</span>
+        <span class="n">c22</span> <span class="o">=</span> <span class="mf">5.199e9</span>
+        <span class="n">c23</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.695e9</span>
+        <span class="n">c24</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.865e9</span>
+        <span class="n">c25</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.395e9</span>
+        <span class="n">c26</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.418e9</span>
+        <span class="n">dd01</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.135e8</span>
+        <span class="n">dd02</span> <span class="o">=</span> <span class="mf">1.256e8</span>
+        <span class="n">dd03</span> <span class="o">=</span> <span class="mf">5.149e7</span>
+        <span class="n">dd04</span> <span class="o">=</span> <span class="mf">3.436e7</span>
+        <span class="n">dd05</span> <span class="o">=</span> <span class="mf">1.005e7</span>
+        <span class="n">dd11</span> <span class="o">=</span> <span class="mf">1.652e9</span>
+        <span class="n">dd12</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.119e9</span>
+        <span class="n">dd13</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.839e9</span>
+        <span class="n">dd14</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.458e9</span>
+        <span class="n">dd15</span> <span class="o">=</span> <span class="o">-</span><span class="mf">8.956e8</span>
+        <span class="n">dd21</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.548e10</span>
+        <span class="n">dd22</span> <span class="o">=</span> <span class="o">-</span><span class="mf">9.338e9</span>
+        <span class="n">dd23</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.899e9</span>
+        <span class="n">dd24</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.035e9</span>
+        <span class="n">dd25</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.598e9</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="c1"># T &gt; 1.e9</span>
+
+        <span class="n">tau</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">t9</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="mf">1.5654</span>
+        <span class="n">c00</span> <span class="o">=</span> <span class="mf">9.581e10</span>
+        <span class="n">c01</span> <span class="o">=</span> <span class="mf">4.107e8</span>
+        <span class="n">c02</span> <span class="o">=</span> <span class="mf">2.305e8</span>
+        <span class="n">c03</span> <span class="o">=</span> <span class="mf">2.236e8</span>
+        <span class="n">c04</span> <span class="o">=</span> <span class="mf">1.580e8</span>
+        <span class="n">c05</span> <span class="o">=</span> <span class="mf">2.165e8</span>
+        <span class="n">c06</span> <span class="o">=</span> <span class="mf">1.721e8</span>
+        <span class="n">c10</span> <span class="o">=</span> <span class="mf">1.459e12</span>
+        <span class="n">c11</span> <span class="o">=</span> <span class="mf">1.314e11</span>
+        <span class="n">c12</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.169e11</span>
+        <span class="n">c13</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.765e11</span>
+        <span class="n">c14</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.867e11</span>
+        <span class="n">c15</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.983e11</span>
+        <span class="n">c16</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.896e11</span>
+        <span class="n">c20</span> <span class="o">=</span> <span class="mf">2.424e11</span>
+        <span class="n">c21</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.669e9</span>
+        <span class="n">c22</span> <span class="o">=</span> <span class="o">-</span><span class="mf">8.691e9</span>
+        <span class="n">c23</span> <span class="o">=</span> <span class="o">-</span><span class="mf">7.967e9</span>
+        <span class="n">c24</span> <span class="o">=</span> <span class="o">-</span><span class="mf">7.932e9</span>
+        <span class="n">c25</span> <span class="o">=</span> <span class="o">-</span><span class="mf">7.987e9</span>
+        <span class="n">c26</span> <span class="o">=</span> <span class="o">-</span><span class="mf">8.333e9</span>
+        <span class="n">dd01</span> <span class="o">=</span> <span class="mf">4.724e8</span>
+        <span class="n">dd02</span> <span class="o">=</span> <span class="mf">2.976e8</span>
+        <span class="n">dd03</span> <span class="o">=</span> <span class="mf">2.242e8</span>
+        <span class="n">dd04</span> <span class="o">=</span> <span class="mf">7.937e7</span>
+        <span class="n">dd05</span> <span class="o">=</span> <span class="mf">4.859e7</span>
+        <span class="n">dd11</span> <span class="o">=</span> <span class="o">-</span><span class="mf">7.094e11</span>
+        <span class="n">dd12</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.697e11</span>
+        <span class="n">dd13</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.189e11</span>
+        <span class="n">dd14</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.273e11</span>
+        <span class="n">dd15</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.705e10</span>
+        <span class="n">dd21</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.254e10</span>
+        <span class="n">dd22</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.551e10</span>
+        <span class="n">dd23</span> <span class="o">=</span> <span class="o">-</span><span class="mf">7.793e9</span>
+        <span class="n">dd24</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.489e9</span>
+        <span class="n">dd25</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.185e9</span>
+
+    <span class="c1"># equation 3.7, compute the expensive trig functions only one time</span>
+
+    <span class="n">cos1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fac1</span> <span class="o">*</span> <span class="n">tau</span><span class="p">)</span>
+    <span class="n">cos2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fac1</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">tau</span><span class="p">)</span>
+    <span class="n">cos3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fac1</span> <span class="o">*</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">tau</span><span class="p">)</span>
+    <span class="n">cos4</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fac1</span> <span class="o">*</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">tau</span><span class="p">)</span>
+    <span class="n">cos5</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fac1</span> <span class="o">*</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">tau</span><span class="p">)</span>
+    <span class="n">last</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">fac2</span> <span class="o">*</span> <span class="n">tau</span><span class="p">)</span>
+
+    <span class="n">sin1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">fac1</span> <span class="o">*</span> <span class="n">tau</span><span class="p">)</span>
+    <span class="n">sin2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">fac1</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">tau</span><span class="p">)</span>
+    <span class="n">sin3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">fac1</span> <span class="o">*</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">tau</span><span class="p">)</span>
+    <span class="n">sin4</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">fac1</span> <span class="o">*</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">tau</span><span class="p">)</span>
+    <span class="n">sin5</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">fac1</span> <span class="o">*</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">tau</span><span class="p">)</span>
+
+    <span class="n">a0</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">c00</span> <span class="o">+</span>
+          <span class="n">c01</span> <span class="o">*</span> <span class="n">cos1</span> <span class="o">+</span> <span class="n">dd01</span> <span class="o">*</span> <span class="n">sin1</span> <span class="o">+</span>
+          <span class="n">c02</span> <span class="o">*</span> <span class="n">cos2</span> <span class="o">+</span> <span class="n">dd02</span> <span class="o">*</span> <span class="n">sin2</span> <span class="o">+</span>
+          <span class="n">c03</span> <span class="o">*</span> <span class="n">cos3</span> <span class="o">+</span> <span class="n">dd03</span> <span class="o">*</span> <span class="n">sin3</span> <span class="o">+</span>
+          <span class="n">c04</span> <span class="o">*</span> <span class="n">cos4</span> <span class="o">+</span> <span class="n">dd04</span> <span class="o">*</span> <span class="n">sin4</span> <span class="o">+</span>
+          <span class="n">c05</span> <span class="o">*</span> <span class="n">cos5</span> <span class="o">+</span> <span class="n">dd05</span> <span class="o">*</span> <span class="n">sin5</span> <span class="o">+</span>
+          <span class="mf">0.5</span> <span class="o">*</span> <span class="n">c06</span> <span class="o">*</span> <span class="n">last</span><span class="p">)</span>
+
+    <span class="n">a1</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">c10</span> <span class="o">+</span>
+          <span class="n">c11</span> <span class="o">*</span> <span class="n">cos1</span> <span class="o">+</span> <span class="n">dd11</span> <span class="o">*</span> <span class="n">sin1</span> <span class="o">+</span>
+          <span class="n">c12</span> <span class="o">*</span> <span class="n">cos2</span> <span class="o">+</span> <span class="n">dd12</span> <span class="o">*</span> <span class="n">sin2</span> <span class="o">+</span>
+          <span class="n">c13</span> <span class="o">*</span> <span class="n">cos3</span> <span class="o">+</span> <span class="n">dd13</span> <span class="o">*</span> <span class="n">sin3</span> <span class="o">+</span>
+          <span class="n">c14</span> <span class="o">*</span> <span class="n">cos4</span> <span class="o">+</span> <span class="n">dd14</span> <span class="o">*</span> <span class="n">sin4</span> <span class="o">+</span>
+          <span class="n">c15</span> <span class="o">*</span> <span class="n">cos5</span> <span class="o">+</span> <span class="n">dd15</span> <span class="o">*</span> <span class="n">sin5</span> <span class="o">+</span>
+          <span class="mf">0.5</span> <span class="o">*</span> <span class="n">c16</span> <span class="o">*</span> <span class="n">last</span><span class="p">)</span>
+
+    <span class="n">a2</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">c20</span> <span class="o">+</span>
+          <span class="n">c21</span> <span class="o">*</span> <span class="n">cos1</span> <span class="o">+</span> <span class="n">dd21</span> <span class="o">*</span> <span class="n">sin1</span> <span class="o">+</span>
+          <span class="n">c22</span> <span class="o">*</span> <span class="n">cos2</span> <span class="o">+</span> <span class="n">dd22</span> <span class="o">*</span> <span class="n">sin2</span> <span class="o">+</span>
+          <span class="n">c23</span> <span class="o">*</span> <span class="n">cos3</span> <span class="o">+</span> <span class="n">dd23</span> <span class="o">*</span> <span class="n">sin3</span> <span class="o">+</span>
+          <span class="n">c24</span> <span class="o">*</span> <span class="n">cos4</span> <span class="o">+</span> <span class="n">dd24</span> <span class="o">*</span> <span class="n">sin4</span> <span class="o">+</span>
+          <span class="n">c25</span> <span class="o">*</span> <span class="n">cos5</span> <span class="o">+</span> <span class="n">dd25</span> <span class="o">*</span> <span class="n">sin5</span> <span class="o">+</span>
+          <span class="mf">0.5</span> <span class="o">*</span> <span class="n">c26</span> <span class="o">*</span> <span class="n">last</span><span class="p">)</span>
+
+    <span class="c1"># equation 3.4</span>
+
+    <span class="n">dum</span> <span class="o">=</span> <span class="n">a0</span> <span class="o">+</span> <span class="n">a1</span> <span class="o">*</span> <span class="n">zeta</span> <span class="o">+</span> <span class="n">a2</span> <span class="o">*</span> <span class="n">zeta2</span>
+
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">cc</span> <span class="o">*</span> <span class="n">zeta</span><span class="p">)</span>
+
+    <span class="n">xnum</span> <span class="o">=</span> <span class="n">dum</span> <span class="o">*</span> <span class="n">z</span>
+
+    <span class="n">xden</span> <span class="o">=</span> <span class="n">zeta3</span> <span class="o">+</span> <span class="mf">6.290e-3</span> <span class="o">*</span> <span class="n">xlm1</span> <span class="o">+</span> <span class="mf">7.483e-3</span> <span class="o">*</span> <span class="n">xlm2</span> <span class="o">+</span> <span class="mf">3.061e-4</span> <span class="o">*</span> <span class="n">xlm3</span>
+
+    <span class="n">dum</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">xden</span>
+    <span class="n">fphot</span> <span class="o">=</span> <span class="n">xnum</span> <span class="o">*</span> <span class="n">dum</span>
+
+    <span class="c1"># equation 3.3</span>
+
+    <span class="n">a0</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="mf">2.045</span> <span class="o">*</span> <span class="n">xl</span>
+    <span class="n">xnum</span> <span class="o">=</span> <span class="mf">0.666</span> <span class="o">*</span> <span class="n">a0</span><span class="o">**-</span><span class="mf">2.066</span>
+
+    <span class="n">dum</span> <span class="o">=</span> <span class="mf">1.875e8</span> <span class="o">*</span> <span class="n">xl</span> <span class="o">+</span> <span class="mf">1.653e8</span> <span class="o">*</span> <span class="n">xl2</span> <span class="o">+</span> <span class="mf">8.499e8</span> <span class="o">*</span> <span class="n">xl3</span> <span class="o">-</span> <span class="mf">1.604e8</span> <span class="o">*</span> <span class="n">xl4</span>
+
+    <span class="n">z</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">dum</span>
+    <span class="n">xden</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">rm</span> <span class="o">*</span> <span class="n">z</span>
+
+    <span class="n">z</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">xden</span>
+    <span class="n">qphot</span> <span class="o">=</span> <span class="n">xnum</span> <span class="o">*</span> <span class="n">z</span>
+
+    <span class="c1"># equation 3.2</span>
+
+    <span class="n">sphot</span> <span class="o">=</span> <span class="n">xl5</span> <span class="o">*</span> <span class="n">fphot</span>
+
+    <span class="n">a1</span> <span class="o">=</span> <span class="n">sphot</span>
+    <span class="n">sphot</span> <span class="o">=</span> <span class="n">rm</span> <span class="o">*</span> <span class="n">a1</span>
+
+    <span class="n">a1</span> <span class="o">=</span> <span class="n">tfac4</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">tfac3</span> <span class="o">*</span> <span class="n">qphot</span><span class="p">)</span>
+    <span class="n">a3</span> <span class="o">=</span> <span class="n">sphot</span>
+    <span class="n">sphot</span> <span class="o">=</span> <span class="n">a1</span> <span class="o">*</span> <span class="n">a3</span>
+
+    <span class="n">sphot</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">sphot</span><span class="p">)</span>
+
+    <span class="c1"># bremsstrahlung neutrino section</span>
+    <span class="c1"># for reactions like e- + (z,a) =&gt; e- + (z,a) + nu + nubar</span>
+    <span class="c1">#                    n  + n     =&gt; n + n + nu + nubar</span>
+    <span class="c1">#                    n  + p     =&gt; n + p + nu + nubar</span>
+    <span class="c1"># equation 4.3</span>
+
+    <span class="n">den6</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="mf">1.0e-6</span>
+    <span class="n">t8</span> <span class="o">=</span> <span class="n">T</span> <span class="o">*</span> <span class="mf">1.0e-8</span>
+    <span class="n">t812</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">t8</span><span class="p">)</span>
+    <span class="n">t832</span> <span class="o">=</span> <span class="n">t8</span> <span class="o">*</span> <span class="n">t812</span>
+    <span class="n">t82</span> <span class="o">=</span> <span class="n">t8</span> <span class="o">*</span> <span class="n">t8</span>
+    <span class="n">t83</span> <span class="o">=</span> <span class="n">t82</span> <span class="o">*</span> <span class="n">t8</span>
+    <span class="n">t85</span> <span class="o">=</span> <span class="n">t82</span> <span class="o">*</span> <span class="n">t83</span>
+    <span class="n">t86</span> <span class="o">=</span> <span class="n">t85</span> <span class="o">*</span> <span class="n">t8</span>
+    <span class="n">t8m1</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">t8</span>
+    <span class="n">t8m2</span> <span class="o">=</span> <span class="n">t8m1</span> <span class="o">*</span> <span class="n">t8m1</span>
+    <span class="n">t8m3</span> <span class="o">=</span> <span class="n">t8m2</span> <span class="o">*</span> <span class="n">t8m1</span>
+    <span class="n">t8m5</span> <span class="o">=</span> <span class="n">t8m3</span> <span class="o">*</span> <span class="n">t8m2</span>
+
+    <span class="n">tfermi</span> <span class="o">=</span> <span class="mf">5.9302e9</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="mf">1.018</span> <span class="o">*</span> <span class="p">(</span><span class="n">den6</span> <span class="o">*</span> <span class="n">ye</span><span class="p">)</span><span class="o">**</span><span class="n">twoth</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="c1"># &quot;weak&quot; degenerate electrons only</span>
+
+    <span class="k">if</span> <span class="n">T</span> <span class="o">&gt;</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">tfermi</span><span class="p">:</span>
+
+        <span class="c1"># equation 5.3</span>
+
+        <span class="n">dum</span> <span class="o">=</span> <span class="mf">7.05e6</span> <span class="o">*</span> <span class="n">t832</span> <span class="o">+</span> <span class="mf">5.12e4</span> <span class="o">*</span> <span class="n">t83</span>
+
+        <span class="n">z</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">dum</span>
+        <span class="n">eta</span> <span class="o">=</span> <span class="n">rm</span> <span class="o">*</span> <span class="n">z</span>
+
+        <span class="n">etam1</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">eta</span>
+        <span class="n">etam2</span> <span class="o">=</span> <span class="n">etam1</span> <span class="o">*</span> <span class="n">etam1</span>
+
+        <span class="c1"># equation 5.2</span>
+
+        <span class="n">a0</span> <span class="o">=</span> <span class="mf">23.5</span> <span class="o">+</span> <span class="mf">6.83e4</span> <span class="o">*</span> <span class="n">t8m2</span> <span class="o">+</span> <span class="mf">7.81e8</span> <span class="o">*</span> <span class="n">t8m5</span>
+        <span class="n">xnum</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">a0</span>
+
+        <span class="n">dum</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="mf">1.47</span> <span class="o">*</span> <span class="n">etam1</span> <span class="o">+</span> <span class="mf">3.29e-2</span> <span class="o">*</span> <span class="n">etam2</span>
+
+        <span class="n">c00</span> <span class="o">=</span> <span class="mf">1.26</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">etam1</span><span class="p">)</span>
+
+        <span class="n">z</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">dum</span>
+        <span class="n">xden</span> <span class="o">=</span> <span class="n">c00</span> <span class="o">*</span> <span class="n">z</span>
+
+        <span class="n">fbrem</span> <span class="o">=</span> <span class="n">xnum</span> <span class="o">+</span> <span class="n">xden</span>
+
+        <span class="c1"># equation 5.9</span>
+
+        <span class="n">a0</span> <span class="o">=</span> <span class="mf">230.0</span> <span class="o">+</span> <span class="mf">6.7e5</span> <span class="o">*</span> <span class="n">t8m2</span> <span class="o">+</span> <span class="mf">7.66e9</span> <span class="o">*</span> <span class="n">t8m5</span>
+
+        <span class="n">z</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">rm</span> <span class="o">*</span> <span class="mf">1.0e-9</span>
+        <span class="n">dum</span> <span class="o">=</span> <span class="n">a0</span> <span class="o">*</span> <span class="n">z</span>
+
+        <span class="n">xnum</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">dum</span>
+
+        <span class="n">c00</span> <span class="o">=</span> <span class="mf">7.75e5</span> <span class="o">*</span> <span class="n">t832</span> <span class="o">+</span> <span class="mf">247.0</span> <span class="o">*</span> <span class="n">t8</span><span class="o">**</span><span class="mf">3.85</span>
+        <span class="n">c01</span> <span class="o">=</span> <span class="mf">4.07</span> <span class="o">+</span> <span class="mf">0.0240</span> <span class="o">*</span> <span class="n">t8</span><span class="o">**</span><span class="mf">1.4</span>
+        <span class="n">c02</span> <span class="o">=</span> <span class="mf">4.59e-5</span> <span class="o">*</span> <span class="n">t8</span><span class="o">**-</span><span class="mf">0.110</span>
+
+        <span class="n">z</span> <span class="o">=</span> <span class="n">rho</span><span class="o">**</span><span class="mf">0.656</span>
+        <span class="n">dum</span> <span class="o">=</span> <span class="n">c00</span> <span class="o">*</span> <span class="n">rmi</span> <span class="o">+</span> <span class="n">c01</span> <span class="o">+</span> <span class="n">c02</span> <span class="o">*</span> <span class="n">z</span>
+
+        <span class="n">xden</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">dum</span>
+
+        <span class="n">gbrem</span> <span class="o">=</span> <span class="n">xnum</span> <span class="o">+</span> <span class="n">xden</span>
+
+        <span class="c1"># equation 5.1</span>
+        <span class="n">dum</span> <span class="o">=</span> <span class="mf">0.5738</span> <span class="o">*</span> <span class="n">zbar</span> <span class="o">*</span> <span class="n">ye</span> <span class="o">*</span> <span class="n">t86</span> <span class="o">*</span> <span class="n">rho</span>
+
+        <span class="n">z</span> <span class="o">=</span> <span class="n">tfac4</span> <span class="o">*</span> <span class="n">fbrem</span> <span class="o">-</span> <span class="n">tfac5</span> <span class="o">*</span> <span class="n">gbrem</span>
+        <span class="n">sbrem</span> <span class="o">=</span> <span class="n">dum</span> <span class="o">*</span> <span class="n">z</span>
+
+        <span class="c1"># liquid metal with c12 parameters (not too different for other elements)</span>
+        <span class="c1"># equation 5.18 and 5.16</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">u</span> <span class="o">=</span> <span class="n">fac3</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span> <span class="o">-</span> <span class="mf">3.0</span><span class="p">)</span>
+
+        <span class="c1"># compute the expensive trig functions of equation 5.21 only once</span>
+        <span class="n">cos1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">cos2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">u</span><span class="p">)</span>
+        <span class="n">cos3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">u</span><span class="p">)</span>
+        <span class="n">cos4</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">u</span><span class="p">)</span>
+        <span class="n">cos5</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mf">5.0</span> <span class="o">*</span> <span class="n">u</span><span class="p">)</span>
+
+        <span class="n">sin1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">sin2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">u</span><span class="p">)</span>
+        <span class="n">sin3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">u</span><span class="p">)</span>
+        <span class="n">sin4</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">u</span><span class="p">)</span>
+        <span class="c1"># sin5 = std::sin(5.0*u);</span>
+
+        <span class="c1"># equation 5.21</span>
+
+        <span class="n">fb</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="mf">0.17946</span> <span class="o">+</span> <span class="mf">0.00945</span> <span class="o">*</span> <span class="n">u</span> <span class="o">+</span> <span class="mf">0.34529</span> <span class="o">-</span>
+              <span class="mf">0.05821</span> <span class="o">*</span> <span class="n">cos1</span> <span class="o">-</span> <span class="mf">0.04969</span> <span class="o">*</span> <span class="n">sin1</span> <span class="o">-</span>
+              <span class="mf">0.01089</span> <span class="o">*</span> <span class="n">cos2</span> <span class="o">-</span> <span class="mf">0.01584</span> <span class="o">*</span> <span class="n">sin2</span> <span class="o">-</span>
+              <span class="mf">0.01147</span> <span class="o">*</span> <span class="n">cos3</span> <span class="o">-</span> <span class="mf">0.00504</span> <span class="o">*</span> <span class="n">sin3</span> <span class="o">-</span>
+              <span class="mf">0.00656</span> <span class="o">*</span> <span class="n">cos4</span> <span class="o">-</span> <span class="mf">0.00281</span> <span class="o">*</span> <span class="n">sin4</span> <span class="o">-</span>
+              <span class="mf">0.00519</span> <span class="o">*</span> <span class="n">cos5</span><span class="p">)</span>
+
+        <span class="c1"># equation 5.22</span>
+
+        <span class="n">ft</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="mf">0.06781</span> <span class="o">-</span> <span class="mf">0.02342</span> <span class="o">*</span> <span class="n">u</span> <span class="o">+</span> <span class="mf">0.24819</span> <span class="o">-</span>
+              <span class="mf">0.00944</span> <span class="o">*</span> <span class="n">cos1</span> <span class="o">-</span> <span class="mf">0.02213</span> <span class="o">*</span> <span class="n">sin1</span> <span class="o">-</span>
+              <span class="mf">0.01289</span> <span class="o">*</span> <span class="n">cos2</span> <span class="o">-</span> <span class="mf">0.01136</span> <span class="o">*</span> <span class="n">sin2</span> <span class="o">-</span>
+              <span class="mf">0.00589</span> <span class="o">*</span> <span class="n">cos3</span> <span class="o">-</span> <span class="mf">0.00467</span> <span class="o">*</span> <span class="n">sin3</span> <span class="o">-</span>
+              <span class="mf">0.00404</span> <span class="o">*</span> <span class="n">cos4</span> <span class="o">-</span> <span class="mf">0.00131</span> <span class="o">*</span> <span class="n">sin4</span> <span class="o">-</span>
+              <span class="mf">0.00330</span> <span class="o">*</span> <span class="n">cos5</span><span class="p">)</span>
+
+        <span class="c1"># equation 5.23</span>
+
+        <span class="n">gb</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="mf">0.00766</span> <span class="o">-</span> <span class="mf">0.01259</span> <span class="o">*</span> <span class="n">u</span> <span class="o">+</span> <span class="mf">0.07917</span> <span class="o">-</span>
+              <span class="mf">0.00710</span> <span class="o">*</span> <span class="n">cos1</span> <span class="o">+</span> <span class="mf">0.02300</span> <span class="o">*</span> <span class="n">sin1</span> <span class="o">-</span>
+              <span class="mf">0.00028</span> <span class="o">*</span> <span class="n">cos2</span> <span class="o">-</span> <span class="mf">0.01078</span> <span class="o">*</span> <span class="n">sin2</span> <span class="o">+</span>
+              <span class="mf">0.00232</span> <span class="o">*</span> <span class="n">cos3</span> <span class="o">+</span> <span class="mf">0.00118</span> <span class="o">*</span> <span class="n">sin3</span> <span class="o">+</span>
+              <span class="mf">0.00044</span> <span class="o">*</span> <span class="n">cos4</span> <span class="o">-</span> <span class="mf">0.00089</span> <span class="o">*</span> <span class="n">sin4</span> <span class="o">+</span>
+              <span class="mf">0.00158</span> <span class="o">*</span> <span class="n">cos5</span><span class="p">)</span>
+
+        <span class="c1"># equation 5.24</span>
+
+        <span class="n">gt</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="mf">0.00769</span> <span class="o">-</span> <span class="mf">0.00829</span> <span class="o">*</span> <span class="n">u</span> <span class="o">+</span> <span class="mf">0.05211</span> <span class="o">+</span>
+              <span class="mf">0.00356</span> <span class="o">*</span> <span class="n">cos1</span> <span class="o">+</span> <span class="mf">0.01052</span> <span class="o">*</span> <span class="n">sin1</span> <span class="o">-</span>
+              <span class="mf">0.00184</span> <span class="o">*</span> <span class="n">cos2</span> <span class="o">-</span> <span class="mf">0.00354</span> <span class="o">*</span> <span class="n">sin2</span> <span class="o">+</span>
+              <span class="mf">0.00146</span> <span class="o">*</span> <span class="n">cos3</span> <span class="o">-</span> <span class="mf">0.00014</span> <span class="o">*</span> <span class="n">sin3</span> <span class="o">+</span>
+              <span class="mf">0.00031</span> <span class="o">*</span> <span class="n">cos4</span> <span class="o">-</span> <span class="mf">0.00018</span> <span class="o">*</span> <span class="n">sin4</span> <span class="o">+</span>
+              <span class="mf">0.00069</span> <span class="o">*</span> <span class="n">cos5</span><span class="p">)</span>
+
+        <span class="n">dum</span> <span class="o">=</span> <span class="mf">2.275e-1</span> <span class="o">*</span> <span class="n">zbar</span> <span class="o">*</span> <span class="n">zbar</span> <span class="o">*</span> <span class="n">t8m1</span> <span class="o">*</span> <span class="p">(</span><span class="n">den6</span> <span class="o">*</span> <span class="n">abari</span><span class="p">)</span><span class="o">**</span><span class="n">oneth</span>
+
+        <span class="n">gm1</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">dum</span>
+        <span class="n">gm13</span> <span class="o">=</span> <span class="n">gm1</span><span class="o">**</span><span class="n">oneth</span>
+        <span class="n">gm23</span> <span class="o">=</span> <span class="n">gm13</span> <span class="o">*</span> <span class="n">gm13</span>
+
+        <span class="c1"># equation 5.25 and 5.26</span>
+
+        <span class="n">v</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.05483</span> <span class="o">-</span> <span class="mf">0.01946</span> <span class="o">*</span> <span class="n">gm13</span> <span class="o">+</span> <span class="mf">1.86310</span> <span class="o">*</span> <span class="n">gm23</span> <span class="o">-</span> <span class="mf">0.78873</span> <span class="o">*</span> <span class="n">gm1</span>
+
+        <span class="n">w</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.06711</span> <span class="o">+</span> <span class="mf">0.06859</span> <span class="o">*</span> <span class="n">gm13</span> <span class="o">+</span> <span class="mf">1.74360</span> <span class="o">*</span> <span class="n">gm23</span> <span class="o">-</span> <span class="mf">0.74498</span> <span class="o">*</span> <span class="n">gm1</span>
+
+        <span class="c1"># equation 5.19 and 5.20</span>
+
+        <span class="n">fliq</span> <span class="o">=</span> <span class="n">v</span> <span class="o">*</span> <span class="n">fb</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="n">ft</span>
+
+        <span class="n">gliq</span> <span class="o">=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">gb</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">w</span><span class="p">)</span> <span class="o">*</span> <span class="n">gt</span>
+
+        <span class="c1"># equation 5.17</span>
+
+        <span class="n">dum</span> <span class="o">=</span> <span class="mf">0.5738</span> <span class="o">*</span> <span class="n">zbar</span> <span class="o">*</span> <span class="n">ye</span> <span class="o">*</span> <span class="n">t86</span> <span class="o">*</span> <span class="n">rho</span>
+
+        <span class="n">z</span> <span class="o">=</span> <span class="n">tfac4</span> <span class="o">*</span> <span class="n">fliq</span> <span class="o">-</span> <span class="n">tfac5</span> <span class="o">*</span> <span class="n">gliq</span>
+        <span class="n">sbrem</span> <span class="o">=</span> <span class="n">dum</span> <span class="o">*</span> <span class="n">z</span>
+
+    <span class="c1"># recombination neutrino section</span>
+    <span class="c1"># for reactions like e- (continuum) =&gt; e- (bound) + nu_e + nubar_e</span>
+    <span class="c1"># equation 6.11 solved for nu</span>
+
+    <span class="n">xnum</span> <span class="o">=</span> <span class="mf">1.10520e8</span> <span class="o">*</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">ye</span> <span class="o">/</span> <span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">T</span><span class="p">))</span>
+
+    <span class="c1"># the chemical potential</span>
+
+    <span class="n">nu</span> <span class="o">=</span> <span class="n">ifermi12</span><span class="p">(</span><span class="n">xnum</span><span class="p">)</span>
+
+    <span class="n">nu2</span> <span class="o">=</span> <span class="n">nu</span> <span class="o">*</span> <span class="n">nu</span>
+    <span class="n">nu3</span> <span class="o">=</span> <span class="n">nu2</span> <span class="o">*</span> <span class="n">nu</span>
+
+    <span class="c1"># table 12</span>
+
+    <span class="k">if</span> <span class="mf">0.0</span> <span class="o">&gt;</span> <span class="n">nu</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mf">20.0</span><span class="p">:</span>
+        <span class="n">a1</span> <span class="o">=</span> <span class="mf">1.51e-2</span>
+        <span class="n">a2</span> <span class="o">=</span> <span class="mf">2.42e-1</span>
+        <span class="n">a3</span> <span class="o">=</span> <span class="mf">1.21</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="mf">3.71e-2</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="mf">9.06e-1</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="mf">9.28e-1</span>
+        <span class="n">f1</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">f2</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">f3</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">elif</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">nu</span> <span class="o">&lt;=</span> <span class="mf">10.0</span><span class="p">:</span>
+        <span class="n">a1</span> <span class="o">=</span> <span class="mf">1.23e-2</span>
+        <span class="n">a2</span> <span class="o">=</span> <span class="mf">2.66e-1</span>
+        <span class="n">a3</span> <span class="o">=</span> <span class="mf">1.30</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="mf">1.17e-1</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="mf">8.97e-1</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="mf">1.77e-1</span>
+        <span class="n">f1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.20e-2</span>
+        <span class="n">f2</span> <span class="o">=</span> <span class="mf">2.29e-2</span>
+        <span class="n">f3</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.04e-3</span>
+
+    <span class="c1"># equation 6.7, 6.13 and 6.14</span>
+
+    <span class="n">sreco</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">if</span> <span class="o">-</span><span class="mf">20.0</span> <span class="o">&lt;=</span> <span class="n">nu</span> <span class="o">&lt;=</span> <span class="mf">10.0</span><span class="p">:</span>
+
+        <span class="n">zeta</span> <span class="o">=</span> <span class="mf">1.579e5</span> <span class="o">*</span> <span class="n">zbar</span> <span class="o">*</span> <span class="n">zbar</span> <span class="o">*</span> <span class="n">tempi</span>
+
+        <span class="c1"># pylint: disable-next=possibly-used-before-assignment</span>
+        <span class="n">c00</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">f1</span> <span class="o">*</span> <span class="n">nu</span> <span class="o">+</span> <span class="n">f2</span> <span class="o">*</span> <span class="n">nu2</span> <span class="o">+</span> <span class="n">f3</span> <span class="o">*</span> <span class="n">nu3</span><span class="p">)</span>
+        <span class="n">dum</span> <span class="o">=</span> <span class="n">zeta</span> <span class="o">*</span> <span class="n">c00</span>
+
+        <span class="n">z</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">dum</span>
+        <span class="n">dd00</span> <span class="o">=</span> <span class="n">dum</span><span class="o">**-</span><span class="mf">2.25</span>
+        <span class="n">dd01</span> <span class="o">=</span> <span class="n">dum</span><span class="o">**-</span><span class="mf">4.55</span>
+        <span class="n">c00</span> <span class="o">=</span> <span class="n">a1</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="n">a2</span> <span class="o">*</span> <span class="n">dd00</span> <span class="o">+</span> <span class="n">a3</span> <span class="o">*</span> <span class="n">dd01</span>
+
+        <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="n">nu</span><span class="p">)</span>
+        <span class="c1"># pylint: disable-next=possibly-used-before-assignment</span>
+        <span class="n">dd00</span> <span class="o">=</span> <span class="n">b</span> <span class="o">*</span> <span class="n">z</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">d</span> <span class="o">*</span> <span class="n">dum</span><span class="p">)</span>
+        <span class="n">gum</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">dd00</span>
+
+        <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">nu</span><span class="p">)</span>
+        <span class="n">a1</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">gum</span>
+
+        <span class="n">bigj</span> <span class="o">=</span> <span class="n">c00</span> <span class="o">*</span> <span class="n">z</span> <span class="o">*</span> <span class="n">a1</span>
+
+        <span class="c1"># equation 6.5</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">zeta</span> <span class="o">+</span> <span class="n">nu</span><span class="p">)</span>
+        <span class="n">dum</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">z</span>
+        <span class="n">a1</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">dum</span>
+
+        <span class="n">sreco</span> <span class="o">=</span> <span class="n">tfac6</span> <span class="o">*</span> <span class="mf">2.649e-18</span> <span class="o">*</span> <span class="n">ye</span> <span class="o">*</span> <span class="n">zbar</span><span class="o">**</span><span class="mf">13.0</span> <span class="o">*</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">bigj</span> <span class="o">*</span> <span class="n">a1</span>
+
+    <span class="c1"># convert from erg/cm^3/s to erg/g/s</span>
+    <span class="c1"># comment these out to duplicate the itoh et al plots</span>
+
+    <span class="n">spair</span> <span class="o">=</span> <span class="n">spair</span> <span class="o">*</span> <span class="n">deni</span>
+    <span class="n">splas</span> <span class="o">=</span> <span class="n">splas</span> <span class="o">*</span> <span class="n">deni</span>
+    <span class="n">sphot</span> <span class="o">=</span> <span class="n">sphot</span> <span class="o">*</span> <span class="n">deni</span>
+    <span class="n">sbrem</span> <span class="o">=</span> <span class="n">sbrem</span> <span class="o">*</span> <span class="n">deni</span>
+    <span class="n">sreco</span> <span class="o">=</span> <span class="n">sreco</span> <span class="o">*</span> <span class="n">deni</span>
+
+    <span class="c1"># the total neutrino loss rate</span>
+    <span class="n">snu</span> <span class="o">=</span> <span class="n">splas</span> <span class="o">+</span> <span class="n">spair</span> <span class="o">+</span> <span class="n">sphot</span> <span class="o">+</span> <span class="n">sbrem</span> <span class="o">+</span> <span class="n">sreco</span>
+
+    <span class="k">if</span> <span class="n">full_output</span><span class="p">:</span>
+        <span class="n">comps</span> <span class="o">=</span> <span class="n">NeutrinoComponents</span><span class="p">()</span>
+        <span class="n">comps</span><span class="o">.</span><span class="n">splas</span> <span class="o">=</span> <span class="n">splas</span>
+        <span class="n">comps</span><span class="o">.</span><span class="n">spair</span> <span class="o">=</span> <span class="n">spair</span>
+        <span class="n">comps</span><span class="o">.</span><span class="n">sphot</span> <span class="o">=</span> <span class="n">sphot</span>
+        <span class="n">comps</span><span class="o">.</span><span class="n">sbrem</span> <span class="o">=</span> <span class="n">sbrem</span>
+        <span class="n">comps</span><span class="o">.</span><span class="n">sreco</span> <span class="o">=</span> <span class="n">sreco</span>
+
+        <span class="k">return</span> <span class="n">snu</span><span class="p">,</span> <span class="n">comps</span>
+
+    <span class="k">return</span> <span class="n">snu</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By pynucastro development team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, pynucastro development team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
