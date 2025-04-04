@@ -819,7 +819,7 @@ class RateCollection:
             keyword.
         kwargs : dict
             Additional arguments to pass onto the library linking_nuclei
-            method.  See :py:mod:`pynucastro.rates.library.Library.linking_nuclei`.
+            method.  linking_nuclei in the Library class.
 
         Returns
         -------
