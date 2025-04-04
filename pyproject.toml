@@ -51,6 +51,7 @@ pynucastro = [
   "library/tabular/*",
   "library/tabular/suzuki/*",
   "library/tabular/langanke/*",
+  "library/tabular/ffn/*",
   "templates/**/*",
   "nucdata/*",
   "nucdata/AtomicMassEvaluation/*",
@@ -140,3 +141,39 @@ filterwarnings = [
   "error",
   "ignore: ReacLib neutron decay rate",
 ]
+
+[tool.ruff]
+line-length = 132
+exclude = [
+  "docs/",
+  "examples/",
+  "pynucastro/networks/tests/_python_reference/",
+  "pynucastro/nucdata/AtomicMassEvaluation/",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "NPY", "PL", "RUF", "RET"]
+ignore = [
+  "E501",  # Line too long (82 &gt; 79 characters)
+  "E741",  # Do not use variables named 'I', 'O', or 'l'
+  "PLR0912",  # too-many-branches
+  "PLR0913",  # too-many-arguments
+  "PLR0915",  # too-many-statements
+  "RUF001",  # ambiguous-unicode-character-string
+  "RUF002",  # ambiguous-unicode-character-docstring
+  "RUF005",  # Consider {expr} instead of concatenation
+  "RUF012",  # Mutable class attributes should be annotated with `typing.ClassVar`
+  "RUF013",  # PEP 484 prohibits implicit `Optional`
+  "RUF015",  # Prefer `next({iterable})` over single element slice
+  "RET504",  # Unnecessary variable assignment before return statement
+  "RET505",  # no-else-return (handled by pylint)
+  # optional checkers, disabled by default
+  "PLC1901",  # compare-to-empty-string
+  "PLR0913",  # Too many arguments to function call
+  "PLR2004",  # Magic value used in comparison
+  "PLW2901",  # redefined-loop-name
+  "PLR5501",  # Use `elif` instead of `else` then `if`, to reduce indentation (check_elif extension)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
