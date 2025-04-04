@@ -21,8 +21,8 @@ T. Rauscher and F.-K.Thielemann, ADNDT 75 (2000) 1.
 and computed by using the finite range droplet model (FRDM model). This model
 is described in detail here:
 
-P. Möller, J. R. Nix, W. D. Myers, and W. J. Swiateki, Atomi Data Nul.
-Data Tabl. 59, 185 (1995), doi:10.1006/adnd.1995.1002
+P. Möller, J. R. Nix, W. D. Myers, and W. J. Swiateki, Atomic Data and Nuclear
+Data Tables, 59, 185 (1995), doi:10.1006/adnd.1995.1002
 
 The table `part_etfsiq.asc.txt` was not mentioned in the previous article, but
 the authors included their computed partition function values by using the
