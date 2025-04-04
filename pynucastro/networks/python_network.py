@@ -203,11 +203,12 @@ class PythonNetwork(RateCollection):
         return ostr
 
     def rates_string(self, indent=""):
-        """Create the python code that calls the evaluation function for each
-        rate.  Typically this is of the form `name(rate_eval, ...)`, where
-        `rate_eval` is the `PythonNetwork` class that stores the rate values.
-        This also calls `screening_string()` after the main rates are evaluated
-        but before the approximate rates are constructed.
+        """Create the python code that calls the evaluation function
+        for each rate.  Typically this is of the form
+        ``name(rate_eval, ...)``, where ``rate_eval`` is a container
+        class in the output network that stores the rate values.  This
+        also calls ``screening_string()`` after the main rates are
+        evaluated but before the approximate rates are constructed.
 
         Parameters
         ----------
@@ -219,6 +220,7 @@ class PythonNetwork(RateCollection):
         Returns
         -------
         str
+
         """
 
         def format_rate_call(r, use_tf=True):
@@ -269,7 +271,7 @@ class PythonNetwork(RateCollection):
     def _write_network(self, outfile: str | Path = None):
         """Create the entire python code representing this network.
         This includes defining the nuclei properties, evaluating
-        partition functions, defining the `rate_eval` class, defining
+        partition functions, defining the ``RateEval`` class, defining
         the tabular rate data, writing the functions that evaluate
         each of the rates, and then calling the functions that
         construct the RHS and Jacobian.
@@ -277,7 +279,7 @@ class PythonNetwork(RateCollection):
         Parameters
         ----------
         outfile : str, Path
-            The name of the output file to write to.  If this is `None`,
+            The name of the output file to write to.  If this is ``None``,
             then the output is written to stdout
 
         """
