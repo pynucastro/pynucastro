@@ -1,0 +1,5 @@
+[codespell]
+skip = .git,*.bib,*.ps
+ignore-words = .codespell-ignore-words
+
+
