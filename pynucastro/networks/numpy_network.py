@@ -7,42 +7,14 @@ from pynucastro.rates import Tfactors
 class NumpyNetwork(RateCollection):
     """A network that uses numpy arrays to evaluate rates more efficiently.
 
-    Cached arrays
-    -------------
-
-    coef_arr
-
-       Reaclib rate coefficient array, with shape ``(number_of_rates,
-       number_of_sets, 7)``.
-
-    coef_mask
-
-       Boolean mask array determining how many sets to include in the final
-       rate evaluation, with shape ``(number_of_rates, number_of_sets)``.
-
-    nuc_prod_count
-
-       Array storing the count of each nucleus in rates producing that nucleus,
-       with shape ``(number_of_species, number_of_rates)``.
-
-    nuc_cons_count
-
-       Array storing the count of each nucleus in rates consuming that nucleus,
-       with shape ``(number_of_species, number_of_rates)``.
-
-    nuc_used
-
-       A boolean matrix of whether the nucleus is involved in the reaction
-       or not, with shape ``(number_of_species, number_of_rates)``.
-
-    yfac
+    .. py:attribute:: yfac
 
        Array storing the molar fraction component of each rate (Y of each
        reactant raised to the appropriate power).
 
        Depends on composition only.
 
-    prefac
+    .. py:attribute:: prefac
 
        Array storing the prefactor for each rate, which includes both the
        statistical prefactor and mass density raised to the corresponding
@@ -76,26 +48,41 @@ class NumpyNetwork(RateCollection):
 
     @property
     def nuc_prod_count(self):
+        """Array storing the count of each nucleus in rates producing
+       that nucleus, with shape ``(number_of_species,
+       number_of_rates)``
+
+        """
+
         if self._nuc_prod_count is None:
             self._calc_count_matrices()
         return self._nuc_prod_count
 
     @property
     def nuc_cons_count(self):
+        """Array storing the count of each nucleus in rates consuming
+        that nucleus, with shape ``(number_of_species,
+        number_of_rates)``.
+        """
         if self._nuc_cons_count is None:
             self._calc_count_matrices()
         return self._nuc_cons_count
 
     @property
     def nuc_used(self):
+        """A boolean matrix of whether the nucleus is involved in the
+        reaction or not, with shape ``(number_of_species,
+        number_of_rates)``
+
+        """
         if self._nuc_used is None:
             self._calc_count_matrices()
         return self._nuc_used
 
     def _calc_count_matrices(self):
-        """
-        Compute and store 3 count matrices that can be used for vectorized rate
-        calculations.
+        """Compute and store 3 count matrices that can be used for
+        vectorized rate calculations.
+
         """
 
         # Rate -> index mapping
@@ -124,12 +111,21 @@ class NumpyNetwork(RateCollection):
 
     @property
     def coef_arr(self):
+        """Reaclib rate coefficient array, with shape
+       ``(number_of_rates, number_of_sets, 7)``
+
+        """
         if self._coef_arr is None:
             self._update_rate_coef_arr()
         return self._coef_arr
 
     @property
     def coef_mask(self):
+        """Boolean mask array determining how many sets to include in
+        the final rate evaluation, with shape ``(number_of_rates,
+        number_of_sets)``.
+
+        """
         if self._coef_mask is None:
             self._update_rate_coef_arr()
         return self._coef_mask
