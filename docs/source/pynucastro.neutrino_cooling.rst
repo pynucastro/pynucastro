@@ -17,10 +17,10 @@ pynucastro.neutrino\_cooling.neutrino\_cooling module
    :undoc-members:
    :show-inheritance:
 
-pynucastro.neutrino\_cooling.sneut5 module
-------------------------------------------
+pynucastro.neutrino\_cooling.sneut5\_mod module
+-----------------------------------------------
 
-.. automodule:: pynucastro.neutrino_cooling.sneut5
+.. automodule:: pynucastro.neutrino_cooling.sneut5_mod
    :members:
    :undoc-members:
    :show-inheritance:

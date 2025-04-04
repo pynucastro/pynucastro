@@ -3,4 +3,4 @@
 __all__ = ["neutrino_cooling", "sneut5"]
 
 from .neutrino_cooling import NeutrinoCooling
-from .sneut5 import sneut5
+from .sneut5_mod import sneut5
