@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.5.0.post22+g8159623f documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.5.0.post23+g4a117955 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=c2308704"></script>
+    <script src="../../../_static/documentation_options.js?v=5bdae801"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1174,7 +1174,14 @@ document.write(`
 <div class="viewcode-block" id="RateCollection.get_forward_rates">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_forward_rates">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_forward_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;return a list of the forward (exothermic) rates&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of the forward (exothermic) rates in the</span>
+<span class="sd">        network</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># first handle the ones that have Q defined</span>
         <span class="n">forward_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">]</span>
@@ -1185,7 +1192,15 @@ document.write(`
 <div class="viewcode-block" id="RateCollection.get_reverse_rates">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_reverse_rates">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_reverse_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;return a list of the reverse (endothermic) rates)&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of the reverse (endothermic) rates).  Note</span>
+<span class="sd">        these may not be the same as the reverse rates identified by</span>
+<span class="sd">        ReacLib.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># first handle the ones that have Q defined</span>
         <span class="n">reverse_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">Q</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">]</span>
@@ -1196,7 +1211,12 @@ document.write(`
 <div class="viewcode-block" id="RateCollection.find_reverse">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.find_reverse">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_reverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">forward_rate</span><span class="p">,</span> <span class="n">reverse_rates</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;given a forward rate, locate the rate that is its reverse&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given a forward rate, locate the rate that is its reverse.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Rate</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">reverse_rates</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">reverse_rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_reverse_rates</span><span class="p">()</span>
@@ -1249,20 +1269,36 @@ document.write(`
 <div class="viewcode-block" id="RateCollection.get_nuclei">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.get_nuclei">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; get all the nuclei that are part of the network &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all the nuclei that are part of the network.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span></div>
 
 
 <div class="viewcode-block" id="RateCollection.linking_nuclei">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.linking_nuclei">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">linking_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuclei</span><span class="p">,</span> <span class="n">return_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return a new RateCollection/Network object containing only rates linking the</span>
-<span class="sd">        given nuclei (parameter *nuclei*). Nuclei can be provided as an iterable of Nucleus</span>
-<span class="sd">        objects or a list of abbreviations. The *return_type* parameter allows the caller to</span>
-<span class="sd">        specify a different constructor (e.g. superclass constructor) if the current class does</span>
-<span class="sd">        not take a &#39;libraries&#39; keyword. See method of same name in Library class for valid</span>
-<span class="sd">        keyword arguments.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a new network containing only rates linking the</span>
+<span class="sd">        given nuclei.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nuclei : list, tuple</span>
+<span class="sd">            An iterable of Nucleus objects or string names of nuclei.</span>
+<span class="sd">        return_type : Callable</span>
+<span class="sd">            A different constructor (e.g., a superclass constructor)</span>
+<span class="sd">            to use if the current class does not take a `libraries`</span>
+<span class="sd">            keyword.</span>
+<span class="sd">        kwargs : dict</span>
+<span class="sd">            Additional arguments to pass onto the library linking_nuclei</span>
+<span class="sd">            method.  See :py:mod:`pynucastro.rates.library.Library.linking_nuclei`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        RateCollection</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">return_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1337,8 +1373,20 @@ document.write(`
 <div class="viewcode-block" id="RateCollection.dedupe_partition_function_temperatures">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.dedupe_partition_function_temperatures">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">dedupe_partition_function_temperatures</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;return a list of unique temperature arrays, along with a dictionary</span>
-<span class="sd">        mapping each Nucleus to the corresponding index into that list&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of unique temperature arrays needed by</span>
+<span class="sd">        partition function tables, along with a dictionary mapping</span>
+<span class="sd">        each Nucleus to the corresponding index into that list</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        temp_arrays : list</span>
+<span class="sd">            a list of NumPy ndarray specifying the temperature values</span>
+<span class="sd">            for a particular partition function tabulation.</span>
+<span class="sd">        temp_indices : dict</span>
+<span class="sd">            a dictionary that keyed on Nucleus that maps a nucleus to</span>
+<span class="sd">            the index in temp_arrays containing the temperature array</span>
+<span class="sd">            for its partition function data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">nuclei</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_nuclei_needing_partition_functions</span><span class="p">()</span>
         <span class="n">temp_arrays</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1400,7 +1448,16 @@ document.write(`
 <div class="viewcode-block" id="RateCollection.add_rates">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.add_rates">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rates</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;add the Rate objects in rates from the network.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add new rates to the network.  If the rate already exists,</span>
+<span class="sd">        it will not be added.  The network is then regenerated using</span>
+<span class="sd">        the updated rates</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rates : Rate, list</span>
+<span class="sd">             a single Rate object or a list of Rate objects specifying the</span>
+<span class="sd">             rates to be added to the network.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">Rate</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">rates</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
@@ -1417,8 +1474,19 @@ document.write(`
 <div class="viewcode-block" id="RateCollection.make_ap_pg_approx">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.make_ap_pg_approx">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">make_ap_pg_approx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intermediate_nuclei</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;combine the rates A(a,g)B and A(a,p)X(p,g)B (and the reverse) into a single</span>
-<span class="sd">        effective approximate rate.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Combine the rates A(a,g)B and A(a,p)X(p,g)B (and the</span>
+<span class="sd">        reverse) into a single effective approximate rate.  The new</span>
+<span class="sd">        approximate rates will be added to the network and the original</span>
+<span class="sd">        rates will be removed (although they are still carried by the</span>
+<span class="sd">        ApproximateRate object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        intermediate_nuclei : list, tuple</span>
+<span class="sd">            an iterable of Nucleus objects or string names representing</span>
+<span class="sd">            the intermediate nucleus we wish to approximate out.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># make sure that the intermediate_nuclei list are Nuclei objects</span>
         <span class="n">intermediate_nuclei</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">intermediate_nuclei</span><span class="p">,</span> <span class="n">allow_None</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1497,7 +1565,18 @@ document.write(`
 <div class="viewcode-block" id="RateCollection.make_nn_g_approx">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.make_nn_g_approx">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">make_nn_g_approx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intermediate_nuclei</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;combine the rates A(n,g)X(n,g)B into a single effective rate.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Combine the rates A(n,g)X(n,g)B into a single effective</span>
+<span class="sd">        rate. The new approximate rates will be added to the network</span>
+<span class="sd">        and the original rates will be removed (although they are</span>
+<span class="sd">        still carried by the ApproximateRate object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        intermediate_nuclei : list, tuple</span>
+<span class="sd">            an iterable of Nucleus objects or string names representing</span>
+<span class="sd">            the intermediate nucleus we wish to approximate out.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># make sure that the intermediate_nuclei list are Nuclei objects</span>
         <span class="n">intermediate_nuclei</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">intermediate_nuclei</span><span class="p">,</span> <span class="n">allow_None</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1798,14 +1877,20 @@ document.write(`
 <div class="viewcode-block" id="RateCollection.find_duplicate_links">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.find_duplicate_links">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_duplicate_links</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;report on an rates where another rate exists that has the</span>
-<span class="sd">        same reactants and products.  These may not be the same Rate</span>
-<span class="sd">        object (e.g., one could be tabular the other a simple decay),</span>
-<span class="sd">        but they will present themselves in the network as the same</span>
-<span class="sd">        link.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check the network to see if there are multiple rates that</span>
+<span class="sd">        share the same reactants and products.  These may not be the</span>
+<span class="sd">        same Rate object (e.g., one could be tabular the other a</span>
+<span class="sd">        simple decay), but they will present themselves in the network</span>
+<span class="sd">        as the same link.</span>
 
 <span class="sd">        We return a list, where each entry is a list of all the rates</span>
-<span class="sd">        that share the same link&quot;&quot;&quot;</span>
+<span class="sd">        that share the same link.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">duplicates</span> <span class="o">=</span> <span class="n">find_duplicate_rates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">())</span>
 
@@ -1825,12 +1910,27 @@ document.write(`
 <div class="viewcode-block" id="RateCollection.find_unimportant_rates">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.find_unimportant_rates">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_unimportant_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">cutoff_ratio</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;evaluate the rates at multiple thermodynamic states, and find the</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the rates at multiple thermodynamic states, and find the</span>
 <span class="sd">        rates that are always less than `cutoff_ratio` times the fastest rate</span>
-<span class="sd">        for each state</span>
+<span class="sd">        for each state.  This returns a dict keyed by Rate giving the</span>
+<span class="sd">        ratio of the rate to the largest rate.</span>
 
-<span class="sd">        Here, states is a list of tuple of the form (density, temperature, composition),</span>
-<span class="sd">        where composition is of type `Composition`.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        states : list, tuple</span>
+<span class="sd">             A tuple of the form (density, temperature, composition),</span>
+<span class="sd">             where composition is a Composition object</span>
+<span class="sd">        cutoff_ratio : float</span>
+<span class="sd">             The ratio of a rate to the fastest rate, below which we</span>
+<span class="sd">             consider this rate to be unimportant.</span>
+<span class="sd">        screen_func : Callable</span>
+<span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
+<span class="sd">            -- if provided, then the evaluated rates will include the screening</span>
+<span class="sd">            correction.</span>
+
+<span class="sd">        Return</span>
+<span class="sd">        ------</span>
+<span class="sd">        dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">largest_ratio</span> <span class="o">=</span> <span class="p">{</span><span class="n">r</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">}</span>
         <span class="k">for</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
@@ -1844,8 +1944,23 @@ document.write(`
 <div class="viewcode-block" id="RateCollection.evaluate_screening">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_screening">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_screening</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the screening factors for each rate, using one of the</span>
-<span class="sd">        methods in :py:mod:`pynucastro.screening`&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the screening factors for each rate.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            density used to evaluate screening</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature used to evaluate screening</span>
+<span class="sd">        composition : Composition</span>
+<span class="sd">            composition used to evaluate screening</span>
+<span class="sd">        screen_func : Callable</span>
+<span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># this follows the same logic as BaseCxxNetwork._compute_screening_factors()</span>
         <span class="n">factors</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">ys</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
@@ -2003,8 +2118,27 @@ document.write(`
 <div class="viewcode-block" id="RateCollection.evaluate_activity">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.evaluate_activity">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_activity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;sum over all of the terms contributing to ydot,</span>
-<span class="sd">        neglecting sign&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the activity for each nucleus--the sum of</span>
+<span class="sd">        abs(creation rate) + abs(destruction rate), i.e., this neglects the</span>
+<span class="sd">        sign of the terms.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            density used to evaluate rates</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature used to evaluate rates</span>
+<span class="sd">        composition : Composition</span>
+<span class="sd">            composition used to evaluate rates</span>
+<span class="sd">        screen_func : Callable</span>
+<span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
+<span class="sd">            -- if provided, then the evaluated rates will include the screening</span>
+<span class="sd">            correction.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">)</span>
         <span class="n">act</span> <span class="o">=</span> <span class="p">{}</span>
@@ -2046,7 +2180,15 @@ document.write(`
 <div class="viewcode-block" id="RateCollection.network_overview">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.network_overview">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">network_overview</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; return a verbose network overview &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a verbose network overview showing for each nucleus</span>
+<span class="sd">        which rates consume it and which produce it.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">ostr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -2065,7 +2207,15 @@ document.write(`
 <div class="viewcode-block" id="RateCollection.rate_pair_overview">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.rate_collection.RateCollection.rate_pair_overview">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">rate_pair_overview</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; return a verbose network overview in terms of forward-reverse pairs&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a verbose network overview in terms of</span>
+<span class="sd">        forward-reverse pairs</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">ostr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
