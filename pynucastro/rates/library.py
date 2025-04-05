@@ -351,7 +351,7 @@ class Library:
         for rid, r in other._rates.items():
             if rid in new_rates:
                 if r != new_rates[rid]:
-                    raise ValueError(f'rate {r} defined differently in libraries {self._library_file} and {other._library_file}')
+                    raise ValueError(f'rate {r} defined differently in libraries')
             else:
                 new_rates[rid] = r
         new_library = Library(rates=new_rates)
