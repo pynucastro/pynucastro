@@ -1,5 +1,5 @@
-Initializing AMReX (25.01-16-g92d35c2c8163)...
-AMReX (25.01-16-g92d35c2c8163) initialized
+Initializing AMReX (25.02-23-g06b4a5b105f5)...
+AMReX (25.02-23-g06b4a5b105f5) initialized
 starting the single zone burn...
 reading in network electron-capture / beta-decay tables...
 chemical potential of proton is -3
@@ -35,4 +35,4 @@ We're in NSE.
 change in T: 6000000000 6069004588
 change in abar: 6.978701522 6.210045924
 recovered energy: 2.785013196e+18 2.785013202e+18
-AMReX (25.01-16-g92d35c2c8163) finalized
+AMReX (25.02-23-g06b4a5b105f5) finalized

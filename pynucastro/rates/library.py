@@ -688,7 +688,7 @@ class ReacLibLibrary(Library):
     return a Library"""
 
     def __init__(self):
-        libfile = 'reaclib_default2_20220329'
+        libfile = 'reaclib_default2_20250330'
         Library.__init__(self, libfile=libfile)
 
 
