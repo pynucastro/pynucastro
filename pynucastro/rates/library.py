@@ -693,7 +693,24 @@ class ReacLibLibrary(Library):
 
 
 class TabularLibrary(Library):
-    """Load all of the tabular rates known and return a Library"""
+    """Load the tabular rates from multiple sources and return a
+    ``Library``
+
+    Parameters
+    ----------
+    ordering : tuple, list
+        an iterable of strings representing the sources of the rates
+        from lowest to highest precedence.  We will read from the
+        first source, and then for any later sources, for any
+        duplicate rates, we will replace the existing rate with the
+        version from the higher-priority library.  The default
+        ordering is ``["ffn", "langanke", "suzuki"]``
+
+    Returns
+    -------
+    Library
+
+    """
 
     lib_path = Path(__file__).parents[1]/"library/tabular"
 
