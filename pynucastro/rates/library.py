@@ -255,7 +255,6 @@ class Library:
 
         library_source_lines = collections.deque()
 
-
         with library_file.open("r") as flib:
             for line in flib:
                 ls = line.rstrip('\n')
