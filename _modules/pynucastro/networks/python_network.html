@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 2.5.0.post25+g0b946025 documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 2.5.0.post26+g8504e0ab documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=04784414"></script>
+    <script src="../../../_static/documentation_options.js?v=f1a533b9"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -431,12 +431,36 @@ document.write(`
 <div class="viewcode-block" id="PythonNetwork">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.python_network.PythonNetwork">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PythonNetwork</span><span class="p">(</span><span class="n">RateCollection</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A pure python reaction network.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A pure python reaction network.  This can create a python</span>
+<span class="sd">    module as a file that contains everything needed to evaluate the</span>
+<span class="sd">    reaction rates and construct the righthand side and Jacobian</span>
+<span class="sd">    functions.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PythonNetwork.full_ydot_string">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.python_network.PythonNetwork.full_ydot_string">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">full_ydot_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nucleus</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;construct the python form of dY(nucleus)/dt&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct a string containing the python code for</span>
+<span class="sd">        dY(nucleus)/dt by considering every reaction that involves</span>
+<span class="sd">        nucleus, adding terms that result in its creation and</span>
+<span class="sd">        subtracting terms representing its destruction.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nucleus : Nucleus</span>
+<span class="sd">            The nucleus we are constructing the time derivative</span>
+<span class="sd">            of.</span>
+<span class="sd">        indent : str</span>
+<span class="sd">            A string that will be prepended to each line of the output,</span>
+<span class="sd">            typically consisting of just spaces representing the amount</span>
+<span class="sd">            of indent desired.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">ostr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">nucleus</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">nucleus</span><span class="p">]:</span>
@@ -478,7 +502,26 @@ document.write(`
 <div class="viewcode-block" id="PythonNetwork.full_jacobian_element_string">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.python_network.PythonNetwork.full_jacobian_element_string">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">full_jacobian_element_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ydot_i_nucleus</span><span class="p">,</span> <span class="n">y_j_nucleus</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;return the Jacobian element dYdot(ydot_i_nucleus)/dY(y_j_nucleus)&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct a string containing the python code for a single</span>
+<span class="sd">        element of the Jacobian, dYdot(ydot_i_nucleus)/dY(y_j_nucleus)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ydot_i_nucleus: Nucleus</span>
+<span class="sd">            The nucleus representing the dY/dt term we are differentiating.</span>
+<span class="sd">            This is the row of the Jacobian.</span>
+<span class="sd">        ydot_j_nucleus: Nucleus</span>
+<span class="sd">            The nucleus we are differentiating with respect to.  This</span>
+<span class="sd">            is the column of the Jacobian.</span>
+<span class="sd">        indent : str</span>
+<span class="sd">            A string that will be prepended to each line of the output,</span>
+<span class="sd">            typically consisting of just spaces representing the amount</span>
+<span class="sd">            of indent desired.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># this is the jac(i,j) string</span>
         <span class="n">idx_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;jac[j</span><span class="si">{</span><span class="n">ydot_i_nucleus</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">, j</span><span class="si">{</span><span class="n">y_j_nucleus</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">]&quot;</span>
@@ -526,6 +569,23 @@ document.write(`
 <div class="viewcode-block" id="PythonNetwork.screening_string">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.python_network.PythonNetwork.screening_string">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">screening_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a string containing the python code that sets up the</span>
+<span class="sd">        screening (PlasmaState) and calls the screening function on</span>
+<span class="sd">        every set of reactants in our network, and updating the reaction</span>
+<span class="sd">        rate values stored in the network.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        indent : str</span>
+<span class="sd">            A string that will be prepended to each line of the output,</span>
+<span class="sd">            typically consisting of just spaces representing the amount</span>
+<span class="sd">            of indent desired.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">ostr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">plasma_state = PlasmaState(T, rho, Y, Z)</span><span class="se">\n</span><span class="s2">&quot;</span>
 
@@ -572,7 +632,25 @@ document.write(`
 <div class="viewcode-block" id="PythonNetwork.rates_string">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.python_network.PythonNetwork.rates_string">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">rates_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;section for evaluating the rates and storing them in rate_eval&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the python code that calls the evaluation function</span>
+<span class="sd">        for each rate.  Typically this is of the form</span>
+<span class="sd">        ``name(rate_eval, ...)``, where ``rate_eval`` is a container</span>
+<span class="sd">        class in the output network that stores the rate values.  This</span>
+<span class="sd">        also calls ``screening_string()`` after the main rates are</span>
+<span class="sd">        evaluated but before the approximate rates are constructed.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        indent : str</span>
+<span class="sd">            A string that will be prepended to each line of the output,</span>
+<span class="sd">            typically consisting of just spaces representing the amount</span>
+<span class="sd">            of indent desired.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">format_rate_call</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">use_tf</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
             <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;rate_eval&quot;</span><span class="p">]</span>
@@ -621,9 +699,19 @@ document.write(`
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outfile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This is the actual RHS for the system of ODEs that</span>
-<span class="sd">        this network describes.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the entire python code representing this network.</span>
+<span class="sd">        This includes defining the nuclei properties, evaluating</span>
+<span class="sd">        partition functions, defining the ``RateEval`` class, defining</span>
+<span class="sd">        the tabular rate data, writing the functions that evaluate</span>
+<span class="sd">        each of the rates, and then calling the functions that</span>
+<span class="sd">        construct the RHS and Jacobian.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        outfile : str, Path</span>
+<span class="sd">            The name of the output file to write to.  If this is ``None``,</span>
+<span class="sd">            then the output is written to stdout</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># pylint: disable=arguments-differ</span>
         <span class="k">if</span> <span class="n">outfile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
