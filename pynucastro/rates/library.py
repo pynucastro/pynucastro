@@ -16,7 +16,7 @@ from pynucastro.rates.tabular_rate import TabularRate
 
 
 def list_known_rates():
-    """ list the rates found in the library """
+    """Print a list of all of the rates found in the library """
 
     lib_path = Path(__file__).parents[1]/"library"
 
@@ -112,13 +112,18 @@ def capitalize_rid(rid, delimiter):
 
 
 class Library:
-    """
-    A Library is a Rate container that reads a single file
-    containing one or many Reaclib rates, possibly containing multiple
-    sets per rate.
+    """A Library is a container storing multiple rates that allows
+    for filtering rates based on rules, managing duplicate rates, and
+    selecting subsets of rates based on properties.  At its heart is
+    a ``dict`` of rates keyed by the rate id.
 
-    The Library class also implements searching based on rules
-    specified by RateFilter objects.
+    A library may contain rates from a single source, or be created by
+    adding or subtracting existing Library objects.
+
+    Parameters
+    ----------
+    libfile :
+    rates :
     """
 
     def __init__(self, libfile=None, rates=None):
@@ -142,11 +147,24 @@ class Library:
             self._read_library_file()
 
     def get_rates(self):
-        """ Return a list of the rates in this library."""
+        """Return a list of the rates in this library.
+
+        Returns
+        -------
+        list
+
+        """
         return list(self._rates.values())
 
     def get_rate(self, rid):
-        """ Return a rate matching the id provided. """
+        """Return a rate matching the id provided.
+
+        Returns
+        -------
+        Rate
+
+        """
+
         try:
             rid_mod = capitalize_rid(rid, " ")
             return self._rates[rid_mod]
@@ -162,10 +180,24 @@ class Library:
 
     @property
     def num_rates(self):
+        """Get the total number of rates in the Library
+
+        Returns
+        -------
+        int
+
+        """
         return len(self.get_rates())
 
     def add_rate(self, rate):
-        """Manually add a rate by giving a Rate object"""
+        """Manually add a rate to the library.
+
+        Parameters
+        ----------
+        rate : Rate
+            The rate to add
+
+        """
 
         if not isinstance(rate, Rate):
             raise TypeError(f"invalid Rate object {rate}")
@@ -176,7 +208,13 @@ class Library:
         self._rates[rid] = rate
 
     def add_rates(self, ratelist):
-        """ Add to the rate dictionary from the supplied list of Rate objects."""
+        """Add multiple rates to the library
+
+        Parameters
+        ----------
+        ratelist : list, tuple
+            an iterable of :py:mod:`Rate <pynucastro.rates.rate.Rate>` objects.
+        """
 
         for rate in ratelist:
             self.add_rate(rate)
@@ -684,8 +722,10 @@ class RateFilter:
 
 
 class ReacLibLibrary(Library):
-    """Load the latest stored version of the ReacLib library and
-    return a Library"""
+    """Create a :py:class:`Library` containing all of the rates in the
+    latest stored version of the ReacLib library.
+
+    """
 
     def __init__(self):
         libfile = 'reaclib_default2_20220329'
@@ -693,8 +733,8 @@ class ReacLibLibrary(Library):
 
 
 class TabularLibrary(Library):
-    """Load the tabular rates from multiple sources and return a
-    ``Library``
+    """Create a :py:class:`Library` containing all of the tabular
+    rates we know (excluding duplications) across multiple sources.
 
     Parameters
     ----------
@@ -705,10 +745,6 @@ class TabularLibrary(Library):
         duplicate rates, we will replace the existing rate with the
         version from the higher-priority library.  The default
         ordering is ``["ffn", "langanke", "suzuki"]``
-
-    Returns
-    -------
-    Library
 
     """
 
@@ -741,9 +777,9 @@ class TabularLibrary(Library):
 
 
 class SuzukiLibrary(TabularLibrary):
-    """
-    Load all of the tabular rates inside /library/tabular/suzuki/
-    and return a Library.
+    """Create a :py:class:`Library` containing all of the tabular
+    rates inside the "suzuki" subdirectory.
+
     """
 
     def __init__(self):
@@ -751,9 +787,9 @@ class SuzukiLibrary(TabularLibrary):
 
 
 class LangankeLibrary(TabularLibrary):
-    """
-    Load all of the tabular rates inside /library/tabular/langanke/
-    and return a Library.
+    """Create a :py:class:`Library` containing all of the tabular
+    rates inside the "langanke" subdirectory.
+
     """
 
     def __init__(self):
@@ -761,9 +797,9 @@ class LangankeLibrary(TabularLibrary):
 
 
 class FFNLibrary(TabularLibrary):
-    """
-    Load all of the tabular rates inside /library/tabular/ffn/
-    and return a Library.
+    """Create a :py:class:`Library` containing all of the tabular
+    rates inside the "ffn" subdirectory.
+
     """
 
     def __init__(self):
