@@ -112,18 +112,24 @@ def capitalize_rid(rid, delimiter):
 
 
 class Library:
-    """A Library is a container storing multiple rates that allows
-    for filtering rates based on rules, managing duplicate rates, and
-    selecting subsets of rates based on properties.  At its heart is
-    a ``dict`` of rates keyed by the rate id.
+    """A Library is a container storing multiple rates that allows for
+    filtering rates based on rules, managing duplicate rates, and
+    selecting subsets of rates based on properties.  At its heart is a
+    ``dict`` of rates keyed by the rate id.
 
     A library may contain rates from a single source, or be created by
     adding or subtracting existing Library objects.
 
     Parameters
     ----------
-    libfile :
-    rates :
+    libfile : str
+        a file contining a sequence of rates in a format that we
+        understand (for example a ReacLib database)
+    rates : list, set, dict, Rate
+        a single :py:class:`Rate <pynucastro.rates.rate.Rate>` or an
+        iterable of `Rate` objects.  If it is a dictionary, then it
+        should be keyed by the rate id.
+
     """
 
     def __init__(self, libfile=None, rates=None):
@@ -225,6 +231,11 @@ class Library:
         objects that match from the Library.  If there are multiple
         inputs, then a list of Rate objects is returned.
 
+        Returns
+        -------
+        rates : list, Rate
+            A single rate or a list of rates
+
         """
 
         rate_name_list = name
@@ -251,7 +262,14 @@ class Library:
 
     def remove_rate(self, rate):
         """Manually remove a rate from the library by supplying the
-        short name "A(x,y)B, a Rate object, or the rate id"""
+        short name "A(x,y)B, a Rate object, or the rate id
+
+        Parameters
+        ----------
+        rate : str, Rate
+            The rate to remove from the library.
+
+        """
 
         if isinstance(rate, Rate):
             rid = rate.id
@@ -264,11 +282,25 @@ class Library:
             self._rates.pop(rate)
 
     def get_nuclei(self):
-        """get the list of unique nuclei"""
+        """Get the list of unique nuclei in the library
+
+        Returns
+        -------
+        set
+
+        """
+
         return {nuc for r in self.get_rates() for nuc in r.reactants + r.products}
 
     def heaviest(self):
-        """ Return the heaviest nuclide in this library. """
+        """Return the heaviest nuclide in this library.
+
+        Returns
+        -------
+        Nucleus
+
+        """
+
         nuc = None
         for r in self.get_rates():
             rnuc = r.heaviest()
@@ -280,7 +312,14 @@ class Library:
         return nuc
 
     def lightest(self):
-        """ Return the lightest nuclide in this library. """
+        """Return the lightest nuclide in this library.
+
+        Returns
+        -------
+        Nucleus
+
+        """
+
         nuc = None
         for r in self.get_rates():
             rnuc = r.lightest()
