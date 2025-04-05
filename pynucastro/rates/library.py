@@ -693,26 +693,49 @@ class ReacLibLibrary(Library):
 
 
 class TabularLibrary(Library):
-    """Load all of the tabular rates known and return a Library"""
+    """Load the tabular rates from multiple sources and return a
+    ``Library``
+
+    Parameters
+    ----------
+    ordering : tuple, list
+        an iterable of strings representing the sources of the rates
+        from lowest to highest precedence.  We will read from the
+        first source, and then for any later sources, for any
+        duplicate rates, we will replace the existing rate with the
+        version from the higher-priority library.  The default
+        ordering is ``["ffn", "langanke", "suzuki"]``
+
+    Returns
+    -------
+    Library
+
+    """
 
     lib_path = Path(__file__).parents[1]/"library/tabular"
-    skip_wildcards = ["ffn"]
 
-    def __init__(self):
+    def __init__(self, ordering=None):
         # find all of the tabular rates that pynucastro knows about
         # we'll assume that these are of the form *-toki
 
+        if ordering is None:
+            ordering = ["ffn", "langanke", "suzuki"]
+
         trates = []
 
-        for root, _, filenames in sorted(walk(self.lib_path)):
-            for f in sorted(filenames):
-                if f.endswith("-toki"):
-                    add_rate = True
-                    for wild in self.skip_wildcards:
-                        if wild in root:
-                            add_rate = False
-                    if add_rate:
-                        trates.append(TabularRate(rfile=f))
+        for source in ordering:
+            for _, _, filenames in sorted(walk(self.lib_path / Path(source))):
+                for f in sorted(filenames):
+                    if f.endswith("-toki"):
+                        r = TabularRate(rfile=f)
+                        if r in trates:
+                            # we are looping over the various libraries in order
+                            # from lowest precedence to highest.  So if the rate
+                            # exists, then delete it and add this one.  Since
+                            # matching only looks at reactants and products, we
+                            # can use the new r for both deleting a adding
+                            trates.remove(r)
+                        trates.append(r)
 
         Library.__init__(self, rates=trates)
 
@@ -722,7 +745,9 @@ class SuzukiLibrary(TabularLibrary):
     Load all of the tabular rates inside /library/tabular/suzuki/
     and return a Library.
     """
-    lib_path = Path(__file__).parents[1]/"library/tabular/suzuki"
+
+    def __init__(self):
+        super().__init__(ordering=["suzuki"])
 
 
 class LangankeLibrary(TabularLibrary):
@@ -731,4 +756,15 @@ class LangankeLibrary(TabularLibrary):
     and return a Library.
     """
 
-    lib_path = Path(__file__).parents[1]/"library/tabular/langanke"
+    def __init__(self):
+        super().__init__(ordering=["langanke"])
+
+
+class FFNLibrary(TabularLibrary):
+    """
+    Load all of the tabular rates inside /library/tabular/ffn/
+    and return a Library.
+    """
+
+    def __init__(self):
+        super().__init__(ordering=["ffn"])

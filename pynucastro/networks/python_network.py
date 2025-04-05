@@ -13,10 +13,34 @@ from pynucastro.screening import get_screening_map
 
 
 class PythonNetwork(RateCollection):
-    """A pure python reaction network."""
+    """A pure python reaction network.  This can create a python
+    module as a file that contains everything needed to evaluate the
+    reaction rates and construct the righthand side and Jacobian
+    functions.
+
+    """
 
     def full_ydot_string(self, nucleus, indent=""):
-        """construct the python form of dY(nucleus)/dt"""
+        """Construct a string containing the python code for
+        dY(nucleus)/dt by considering every reaction that involves
+        nucleus, adding terms that result in its creation and
+        subtracting terms representing its destruction.
+
+        Parameters
+        ----------
+        nucleus : Nucleus
+            The nucleus we are constructing the time derivative
+            of.
+        indent : str
+            A string that will be prepended to each line of the output,
+            typically consisting of just spaces representing the amount
+            of indent desired.
+
+        Returns
+        -------
+        str
+
+        """
 
         ostr = ""
         if not self.nuclei_consumed[nucleus] + self.nuclei_produced[nucleus]:
@@ -55,7 +79,26 @@ class PythonNetwork(RateCollection):
         return ostr
 
     def full_jacobian_element_string(self, ydot_i_nucleus, y_j_nucleus, indent=""):
-        """return the Jacobian element dYdot(ydot_i_nucleus)/dY(y_j_nucleus)"""
+        """Construct a string containing the python code for a single
+        element of the Jacobian, dYdot(ydot_i_nucleus)/dY(y_j_nucleus)
+
+        Parameters
+        ----------
+        ydot_i_nucleus: Nucleus
+            The nucleus representing the dY/dt term we are differentiating.
+            This is the row of the Jacobian.
+        ydot_j_nucleus: Nucleus
+            The nucleus we are differentiating with respect to.  This
+            is the column of the Jacobian.
+        indent : str
+            A string that will be prepended to each line of the output,
+            typically consisting of just spaces representing the amount
+            of indent desired.
+
+        Returns
+        -------
+        str
+        """
 
         # this is the jac(i,j) string
         idx_str = f"jac[j{ydot_i_nucleus.raw}, j{y_j_nucleus.raw}]"
@@ -100,6 +143,23 @@ class PythonNetwork(RateCollection):
         return ostr
 
     def screening_string(self, indent=""):
+        """Create a string containing the python code that sets up the
+        screening (PlasmaState) and calls the screening function on
+        every set of reactants in our network, and updating the reaction
+        rate values stored in the network.
+
+        Parameters
+        ----------
+        indent : str
+            A string that will be prepended to each line of the output,
+            typically consisting of just spaces representing the amount
+            of indent desired.
+
+        Returns
+        -------
+        str
+        """
+
         ostr = ""
         ostr += f"{indent}plasma_state = PlasmaState(T, rho, Y, Z)\n"
 
@@ -143,7 +203,25 @@ class PythonNetwork(RateCollection):
         return ostr
 
     def rates_string(self, indent=""):
-        """section for evaluating the rates and storing them in rate_eval"""
+        """Create the python code that calls the evaluation function
+        for each rate.  Typically this is of the form
+        ``name(rate_eval, ...)``, where ``rate_eval`` is a container
+        class in the output network that stores the rate values.  This
+        also calls ``screening_string()`` after the main rates are
+        evaluated but before the approximate rates are constructed.
+
+        Parameters
+        ----------
+        indent : str
+            A string that will be prepended to each line of the output,
+            typically consisting of just spaces representing the amount
+            of indent desired.
+
+        Returns
+        -------
+        str
+
+        """
 
         def format_rate_call(r, use_tf=True):
             args = ["rate_eval"]
@@ -191,9 +269,19 @@ class PythonNetwork(RateCollection):
         return ostr
 
     def _write_network(self, outfile: str | Path = None):
-        """
-        This is the actual RHS for the system of ODEs that
-        this network describes.
+        """Create the entire python code representing this network.
+        This includes defining the nuclei properties, evaluating
+        partition functions, defining the ``RateEval`` class, defining
+        the tabular rate data, writing the functions that evaluate
+        each of the rates, and then calling the functions that
+        construct the RHS and Jacobian.
+
+        Parameters
+        ----------
+        outfile : str, Path
+            The name of the output file to write to.  If this is ``None``,
+            then the output is written to stdout
+
         """
         # pylint: disable=arguments-differ
         if outfile is None:

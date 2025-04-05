@@ -101,7 +101,7 @@ class Composition(collections.UserDict):
 
     Parameters
     ----------
-    nuclei : (list, tuple)
+    nuclei : list, tuple
         an iterable of Nucleus objects
     small : float
         a floor for nuclei mass fractions, used as the default value
@@ -214,7 +214,7 @@ class Composition(collections.UserDict):
 
         Parameters
         ----------
-        arr : (list, tuple, numpy.ndarray)
+        arr : list, tuple, numpy.ndarray
             input values of mass fractions
         """
         for i, k in enumerate(self):
@@ -241,7 +241,7 @@ class Composition(collections.UserDict):
 
         Parameters
         ----------
-        alpha : (list, tuple, numpy.ndarray)
+        alpha : list, tuple, numpy.ndarray
             distribution length for the Dirichlet distribution
         seed : float
             seed for the random number generator
@@ -522,15 +522,15 @@ class RateCollection:
 
     Parameters
     ----------
-    rate_files : (str, list, tuple)
+    rate_files : str, list, tuple
         a string or iterable of strings of file names that define valid
         rates. This can include Reaclib library files storing multiple
         rates.
-    libraries : (Library, list, tuple)
+    libraries : Library, list, tuple
         a Library or iterable of Library objects
-    rates : (Rate, list, tuple)
+    rates : Rate, list, tuple
         a Rate or iterable of Rate objects
-    inert_nuclei : (list, tuple)
+    inert_nuclei : list, tuple
         an iterable of Nuclei that should be part of the collection but
         are not linked via reactions to the other Nuclei in the network.
     symmetric_screening : bool
@@ -2457,7 +2457,7 @@ class RateCollection:
         for nuc, weight in zip(nuclei, weights):
 
             square = plt.Rectangle((nuc.N - 0.5, nuc.Z - 0.5), width=1, height=1,
-                    facecolor=cmap(weight), edgecolor=edgecolor)
+                                   facecolor=cmap(weight), edgecolor=edgecolor)
             ax.add_patch(square)
 
         # Set limits
@@ -2554,7 +2554,21 @@ class RateCollection:
 
 
 class Explorer:
-    """ interactively explore a rate collection """
+    """A simple class that enables interactive exploration a RateCollection,
+    presenting density and temperature sliders to update the reaction rate
+    values.
+
+    Parameters
+    ----------
+    rc : RateCollection
+        The RateCollection we will visualize.
+    comp : Composition
+        A composition that will be used for evaluating the rates
+    kwargs : dict
+        Additional parameters that will be passed through to the
+        RateCollection plot() function.  Note that "T" and "rho"
+        will be ignored.
+    """
     def __init__(self, rc, comp, **kwargs):
         """ take a RateCollection and a composition """
         self.rc = rc
@@ -2570,5 +2584,19 @@ class Explorer:
                      comp=self.comp, **self.kwargs)
 
     def explore(self, logrho=(2, 6, 0.1), logT=(7, 9, 0.1)):
-        """Perform interactive exploration of the network structure."""
+        """Create the interactive visualization.  This uses ipywidgets.interact
+        to create an interactive visualization.
+
+        Parameters
+        ----------
+        logrho : list, tuple
+            a tuple of (starting log(rho), ending log(rho), dlogrho) that
+            defines the range of densities to explore with an interactive
+            slider.
+        logT : list, tuple
+            a tuple of (starting log(T), ending log(T), dlogT) that
+            defines the range of temperatures to explore with an interactive
+            slider.
+        """
+
         interact(self._make_plot, logrho=logrho, logT=logT)
