@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Third Party Data &#8212; pynucastro 2.5.0.post26+g8504e0ab documentation</title>
+    <title>Third Party Data &#8212; pynucastro 2.5.0.post27+g7db7c6bc documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=f1a533b9"></script>
+    <script src="_static/documentation_options.js?v=710ebdc1"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -182,9 +182,13 @@
 <li class="toctree-l1"><a class="reference internal" href="plot-types.html">Plotting Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Integrating a Network</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Working with Libraries</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tabulated-weak-rates.html">Tabulated Weak Rate Sources</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="duplicate-rates.html">Dealing with Duplicate Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking Your Network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="electron-capture-example.html">Tabulated Weak Rate Example</a></li>
@@ -547,17 +551,32 @@ limits.  Instead, an extrapolation is done using the data at the edge of the tab
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The paper <span id="id3">[<a class="reference internal" href="zreferences.html#id10" title="Toshio Suzuki, Hiroshi Toki, and Ken’ichi Nomoto. Electron-capture and β-decay rates for sd-shell nuclei in stellar environments relevant to high-density o–ne–mg cores. The Astrophysical Journal, 817(2):163, January 2016. doi:10.3847/0004-637X/817/2/163.">Suzuki <em>et al.</em>, 2016</a>]</span> says that the rates are evaluated are in the range <span class="math notranslate nohighlight">\(8 \le \log_{10}(\rho Y_e) \le 11\)</span>,
-but the tables provided have the lower limit as <span class="math notranslate nohighlight">\(\log_{10}(\rho Y_e) = 7\)</span>.</p>
+<p>The paper <span id="id3">[<a class="reference internal" href="zreferences.html#id10" title="Toshio Suzuki, Hiroshi Toki, and Ken’ichi Nomoto. Electron-capture and β-decay rates for sd-shell nuclei in stellar environments relevant to high-density o–ne–mg cores. The Astrophysical Journal, 817(2):163, January 2016. doi:10.3847/0004-637X/817/2/163.">Suzuki <em>et al.</em>, 2016</a>]</span> says that the rates are evaluated
+are in the range <span class="math notranslate nohighlight">\(8 \le \log_{10}(\rho Y_e) \le 11\)</span>, but the
+tables provided have the lower limit as <span class="math notranslate nohighlight">\(\log_{10}(\rho Y_e) =
+7\)</span>.</p>
 </div>
 </li>
-<li><p>For nuclei with <span class="math notranslate nohighlight">\(A = 45\)</span> to <span class="math notranslate nohighlight">\(65\)</span> we use the weak rates from
-<span id="id4">Langanke and Martínez-Pinedo [<a class="reference internal" href="zreferences.html#id9" title="K. Langanke and G. Martínez-Pinedo. Rate tables for the weak processes of pf-shell nuclei in stellar environments. Atomic Data and Nuclear Data Tables, 79(1):1-46, 2001. doi:10.1006/adnd.2001.0865.">2001</a>]</span>.  That journal link includes the data tables.</p>
+<li><p>For nuclei with <span class="math notranslate nohighlight">\(A = 21\)</span> to <span class="math notranslate nohighlight">\(60\)</span> we can use the weak rates from
+<span id="id4">Fuller <em>et al.</em> [<a class="reference internal" href="zreferences.html#id31" title="G. M. Fuller, W. A. Fowler, and M. J. Newman. Stellar weak interaction rates for intermediate mass nuclei. III - Rate tables for the free nucleons and nuclei with A = 21 to A = 60. Astrophysical Journal Supplement, 48:279-319, March 1982. doi:10.1086/190779.">1982</a>]</span>.</p>
 <p>The density (g/cm<span class="math notranslate nohighlight">\(^3\)</span>) and temperature (K) ranges of the rates are:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(1 \le \log_{10}(\rho Y_e) \le 11\)</span></p></li>
 <li><p><span class="math notranslate nohighlight">\(7 \le \log_{10}(T) \le 11\)</span></p></li>
 </ul>
+</li>
+<li><p>For nuclei with <span class="math notranslate nohighlight">\(A = 45\)</span> to <span class="math notranslate nohighlight">\(65\)</span> we use the weak rates from
+<span id="id5">Langanke and Martínez-Pinedo [<a class="reference internal" href="zreferences.html#id9" title="K. Langanke and G. Martínez-Pinedo. Rate tables for the weak processes of pf-shell nuclei in stellar environments. Atomic Data and Nuclear Data Tables, 79(1):1-46, 2001. doi:10.1006/adnd.2001.0865.">2001</a>]</span>.  That journal link includes the data tables.</p>
+<p>The density (g/cm<span class="math notranslate nohighlight">\(^3\)</span>) and temperature (K) ranges of the rates are:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(1 \le \log_{10}(\rho Y_e) \le 11\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(7 \le \log_{10}(T) \le 11\)</span></p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>These rates should be preferred to the FFN rates where there is
+overlap.</p>
+</div>
 </li>
 </ul>
 </section>
@@ -566,12 +585,12 @@ but the tables provided have the lower limit as <span class="math notranslate no
 <h2>Physical constants<a class="headerlink" href="#physical-constants" title="Link to this heading">#</a></h2>
 <p>We use the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/constants.html">scipy.constants</a> module
 from SciPy to get all the physical constants.  This in turn gets the constants from the CODATA
-recommended values (for SciPy versions 1.14 and earlier, this is CODATA 2018, <span id="id5">Tiesinga <em>et al.</em> [<a class="reference internal" href="zreferences.html#id14" title="Eite Tiesinga, Peter J. Mohr, David B. Newell, and Barry N. Taylor. Codata recommended values of the fundamental physical constants: 2018. Journal of Physical and Chemical Reference Data, 50:033105, 2021. doi:10.1063/5.0064853.">2021</a>]</span>;
+recommended values (for SciPy versions 1.14 and earlier, this is CODATA 2018, <span id="id6">Tiesinga <em>et al.</em> [<a class="reference internal" href="zreferences.html#id14" title="Eite Tiesinga, Peter J. Mohr, David B. Newell, and Barry N. Taylor. Codata recommended values of the fundamental physical constants: 2018. Journal of Physical and Chemical Reference Data, 50:033105, 2021. doi:10.1063/5.0064853.">2021</a>]</span>;
 for SciPy 1.15 they are CODATA 2022).</p>
 </section>
 <section id="nuclei-properties">
 <h2>Nuclei properties<a class="headerlink" href="#nuclei-properties" title="Link to this heading">#</a></h2>
-<p>We get the basic nuclear properties from the Nubase 2020 evaluation <span id="id6">Kondev <em>et al.</em> [<a class="reference internal" href="zreferences.html#id20" title="F.G. Kondev, M. Wang, W.J. Huang, S. Naimi, and G. Audi. The nubase2020 evaluation of nuclear physics properties *. Chinese Physics C, 45(3):030001, mar 2021. URL: https://dx.doi.org/10.1088/1674-1137/abddae, doi:10.1088/1674-1137/abddae.">2021</a>]</span>.  This
+<p>We get the basic nuclear properties from the Nubase 2020 evaluation <span id="id7">Kondev <em>et al.</em> [<a class="reference internal" href="zreferences.html#id20" title="F.G. Kondev, M. Wang, W.J. Huang, S. Naimi, and G. Audi. The nubase2020 evaluation of nuclear physics properties *. Chinese Physics C, 45(3):030001, mar 2021. URL: https://dx.doi.org/10.1088/1674-1137/abddae, doi:10.1088/1674-1137/abddae.">2021</a>]</span>.  This
 is available online at <a class="reference external" href="https://www-nds.iaea.org/amdc/">Nuclear Data Services</a>.
 We are currently using the file <a class="reference external" href="https://www-nds.iaea.org/amdc/ame2020/nubase_4.mas20.txt">nubase_4.mas20.txt</a>.</p>
 <p>In particular, we get the mass excesses, <span class="math notranslate nohighlight">\(\Delta m\)</span>, and spins from there.  We then compute
@@ -583,7 +602,7 @@ mass of the nucleus as:</p>
 \[B = Z m_H + N m_n - (A m_u + \Delta m)\]</div>
 <p>where <span class="math notranslate nohighlight">\(m_H\)</span> is the mass of the hydrogen atom, computed from the mass
 excess of <code class="docutils literal notranslate"><span class="pre">1H</span></code> listed in the table.  This is consistent with the
-discussion in section 2 of the AME 2020 paper <span id="id7">[<a class="reference internal" href="zreferences.html#id17" title="W.J. Huang, Meng Wang, F.G. Kondev, G. Audi, and S. Naimi. The ame 2020 atomic mass evaluation (i). evaluation of input data, and adjustment procedures*. Chinese Physics C, 45(3):030002, mar 2021. URL: https://dx.doi.org/10.1088/1674-1137/abddb0, doi:10.1088/1674-1137/abddb0.">Huang <em>et al.</em>, 2021</a>]</span>, and
+discussion in section 2 of the AME 2020 paper <span id="id8">[<a class="reference internal" href="zreferences.html#id17" title="W.J. Huang, Meng Wang, F.G. Kondev, G. Audi, and S. Naimi. The ame 2020 atomic mass evaluation (i). evaluation of input data, and adjustment procedures*. Chinese Physics C, 45(3):030002, mar 2021. URL: https://dx.doi.org/10.1088/1674-1137/abddb0, doi:10.1088/1674-1137/abddb0.">Huang <em>et al.</em>, 2021</a>]</span>, and
 these numbers match the binding energies computed in the AME tables to
 the uncertainty in the nuclear masses.</p>
 <p>Binding energies are also computed and tablulated in the AME mass
@@ -601,8 +620,8 @@ Table I).</p>
 <h2>Partition functions<a class="headerlink" href="#partition-functions" title="Link to this heading">#</a></h2>
 <p>We use the tabulated partition functions from the following sources:</p>
 <ul class="simple">
-<li><p><span id="id8">Rauscher <em>et al.</em> [<a class="reference internal" href="zreferences.html#id21" title="Thomas Rauscher, Friedrich-Karl Thielemann, and Karl-Ludwig Kratz. Nuclear level density and the determination of thermonuclear rates for astrophysics. Phys. Rev. C, 56:1613–1625, September 1997. URL: https://link.aps.org/doi/10.1103/PhysRevC.56.1613, doi:10.1103/PhysRevC.56.1613.">1997</a>]</span></p></li>
-<li><p><span id="id9">Rauscher [<a class="reference internal" href="zreferences.html#id23" title="T. Rauscher. Nuclear partition functions at temperatures exceeding 10^10 K. The Astrophysical Journal Supplement Series, 147(2):403, August 2003. doi:10.1086/375733.">2003</a>]</span></p></li>
+<li><p><span id="id9">Rauscher <em>et al.</em> [<a class="reference internal" href="zreferences.html#id21" title="Thomas Rauscher, Friedrich-Karl Thielemann, and Karl-Ludwig Kratz. Nuclear level density and the determination of thermonuclear rates for astrophysics. Phys. Rev. C, 56:1613–1625, September 1997. URL: https://link.aps.org/doi/10.1103/PhysRevC.56.1613, doi:10.1103/PhysRevC.56.1613.">1997</a>]</span></p></li>
+<li><p><span id="id10">Rauscher [<a class="reference internal" href="zreferences.html#id23" title="T. Rauscher. Nuclear partition functions at temperatures exceeding 10^10 K. The Astrophysical Journal Supplement Series, 147(2):403, August 2003. doi:10.1086/375733.">2003</a>]</span></p></li>
 </ul>
 </section>
 </section>

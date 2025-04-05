@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.library &#8212; pynucastro 2.5.0.post26+g8504e0ab documentation</title>
+    <title>pynucastro.rates.library &#8212; pynucastro 2.5.0.post27+g7db7c6bc documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=f1a533b9"></script>
+    <script src="../../../_static/documentation_options.js?v=710ebdc1"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -179,9 +179,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../plot-types.html">Plotting Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-integration.html">Integrating a Network</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Working with Libraries</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tabulated-weak-rates.html">Tabulated Weak Rate Sources</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../duplicate-rates.html">Dealing with Duplicate Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../validate-example.html">Checking Your Network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../electron-capture-example.html">Tabulated Weak Rate Example</a></li>
@@ -1186,26 +1190,49 @@ document.write(`
 <div class="viewcode-block" id="TabularLibrary">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.TabularLibrary">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TabularLibrary</span><span class="p">(</span><span class="n">Library</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load all of the tabular rates known and return a Library&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the tabular rates from multiple sources and return a</span>
+<span class="sd">    ``Library``</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ordering : tuple, list</span>
+<span class="sd">        an iterable of strings representing the sources of the rates</span>
+<span class="sd">        from lowest to highest precedence.  We will read from the</span>
+<span class="sd">        first source, and then for any later sources, for any</span>
+<span class="sd">        duplicate rates, we will replace the existing rate with the</span>
+<span class="sd">        version from the higher-priority library.  The default</span>
+<span class="sd">        ordering is ``[&quot;ffn&quot;, &quot;langanke&quot;, &quot;suzuki&quot;]``</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Library</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">lib_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="s2">&quot;library/tabular&quot;</span>
-    <span class="n">skip_wildcards</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ffn&quot;</span><span class="p">]</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ordering</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># find all of the tabular rates that pynucastro knows about</span>
         <span class="c1"># we&#39;ll assume that these are of the form *-toki</span>
 
+        <span class="k">if</span> <span class="n">ordering</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ordering</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ffn&quot;</span><span class="p">,</span> <span class="s2">&quot;langanke&quot;</span><span class="p">,</span> <span class="s2">&quot;suzuki&quot;</span><span class="p">]</span>
+
         <span class="n">trates</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lib_path</span><span class="p">)):</span>
-            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">filenames</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;-toki&quot;</span><span class="p">):</span>
-                    <span class="n">add_rate</span> <span class="o">=</span> <span class="kc">True</span>
-                    <span class="k">for</span> <span class="n">wild</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">skip_wildcards</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">wild</span> <span class="ow">in</span> <span class="n">root</span><span class="p">:</span>
-                            <span class="n">add_rate</span> <span class="o">=</span> <span class="kc">False</span>
-                    <span class="k">if</span> <span class="n">add_rate</span><span class="p">:</span>
-                        <span class="n">trates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TabularRate</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="n">f</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">ordering</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lib_path</span> <span class="o">/</span> <span class="n">Path</span><span class="p">(</span><span class="n">source</span><span class="p">))):</span>
+                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">filenames</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;-toki&quot;</span><span class="p">):</span>
+                        <span class="n">r</span> <span class="o">=</span> <span class="n">TabularRate</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">trates</span><span class="p">:</span>
+                            <span class="c1"># we are looping over the various libraries in order</span>
+                            <span class="c1"># from lowest precedence to highest.  So if the rate</span>
+                            <span class="c1"># exists, then delete it and add this one.  Since</span>
+                            <span class="c1"># matching only looks at reactants and products, we</span>
+                            <span class="c1"># can use the new r for both deleting a adding</span>
+                            <span class="n">trates</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                        <span class="n">trates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
         <span class="n">Library</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="n">trates</span><span class="p">)</span></div>
 
@@ -1218,7 +1245,9 @@ document.write(`
 <span class="sd">    Load all of the tabular rates inside /library/tabular/suzuki/</span>
 <span class="sd">    and return a Library.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">lib_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="s2">&quot;library/tabular/suzuki&quot;</span></div>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ordering</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;suzuki&quot;</span><span class="p">])</span></div>
 
 
 
@@ -1230,7 +1259,21 @@ document.write(`
 <span class="sd">    and return a Library.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">lib_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="s2">&quot;library/tabular/langanke&quot;</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ordering</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;langanke&quot;</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="FFNLibrary">
+<a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.FFNLibrary">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FFNLibrary</span><span class="p">(</span><span class="n">TabularLibrary</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load all of the tabular rates inside /library/tabular/ffn/</span>
+<span class="sd">    and return a Library.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ordering</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ffn&quot;</span><span class="p">])</span></div>
 
 </pre></div>
 

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro package &#8212; pynucastro 2.5.0.post26+g8504e0ab documentation</title>
+    <title>pynucastro package &#8212; pynucastro 2.5.0.post27+g7db7c6bc documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=f1a533b9"></script>
+    <script src="_static/documentation_options.js?v=710ebdc1"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -180,9 +180,13 @@
 <li class="toctree-l1"><a class="reference internal" href="plot-types.html">Plotting Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Integrating a Network</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Working with Libraries</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tabulated-weak-rates.html">Tabulated Weak Rate Sources</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="duplicate-rates.html">Dealing with Duplicate Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking Your Network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="electron-capture-example.html">Tabulated Weak Rate Example</a></li>
@@ -918,10 +922,8 @@ a given choice of reaction rates.</p>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.rates.html#module-pynucastro.rates.library">pynucastro.rates.library module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.LangankeLibrary"><code class="docutils literal notranslate"><span class="pre">LangankeLibrary</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.LangankeLibrary.lib_path"><code class="docutils literal notranslate"><span class="pre">LangankeLibrary.lib_path</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.FFNLibrary"><code class="docutils literal notranslate"><span class="pre">FFNLibrary</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.LangankeLibrary"><code class="docutils literal notranslate"><span class="pre">LangankeLibrary</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library"><code class="docutils literal notranslate"><span class="pre">Library</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.add_rate"><code class="docutils literal notranslate"><span class="pre">Library.add_rate()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.Library.add_rates"><code class="docutils literal notranslate"><span class="pre">Library.add_rates()</span></code></a></li>
@@ -950,13 +952,9 @@ a given choice of reaction rates.</p>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.ReacLibLibrary"><code class="docutils literal notranslate"><span class="pre">ReacLibLibrary</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.SuzukiLibrary"><code class="docutils literal notranslate"><span class="pre">SuzukiLibrary</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.SuzukiLibrary.lib_path"><code class="docutils literal notranslate"><span class="pre">SuzukiLibrary.lib_path</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.SuzukiLibrary"><code class="docutils literal notranslate"><span class="pre">SuzukiLibrary</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.TabularLibrary"><code class="docutils literal notranslate"><span class="pre">TabularLibrary</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.TabularLibrary.lib_path"><code class="docutils literal notranslate"><span class="pre">TabularLibrary.lib_path</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.TabularLibrary.skip_wildcards"><code class="docutils literal notranslate"><span class="pre">TabularLibrary.skip_wildcards</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.library.capitalize_rid"><code class="docutils literal notranslate"><span class="pre">capitalize_rid()</span></code></a></li>
