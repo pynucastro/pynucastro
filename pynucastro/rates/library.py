@@ -125,7 +125,7 @@ class Library:
     libfile : str
         a file continuing a sequence of rates in a format that we
         understand (for example a ReacLib database)
-    rates : iterable, dict, Rate
+    rates : list, dict, Rate
         a single :py:class:`Rate <pynucastro.rates.rate.Rate>` or an
         iterable of `Rate` objects.  If it is a dictionary, then it
         should be keyed by the rate id.
@@ -218,7 +218,7 @@ class Library:
 
         Parameters
         ----------
-        ratelist : iterable of Rate
+        ratelist : list of Rate
             the list of rates to add to the library.
 
         """
@@ -234,7 +234,7 @@ class Library:
 
         Returns
         -------
-        rates : iterable, Rate
+        rates : list, Rate
             A single rate or a list of rates
 
         """
@@ -461,9 +461,9 @@ class Library:
 
         Parameters
         ----------
-        reactants : iterable of Nucleus or str
+        reactants : list of Nucleus or str
             the list of nuclei that serve as reactants.
-        products : iterable of Nucleus or str
+        products : list of Nucleus or str
             the list of nuclei that serve as products.
 
         Returns
@@ -520,7 +520,7 @@ class Library:
 
         Parameters
         ----------
-        nuclist : iterable of string names or Nucleus
+        nuclist : list of string names or Nucleus
             the nuclei to link
         with_reverse : bool
             do we include reverse rates?
@@ -816,7 +816,7 @@ class TabularLibrary(Library):
 
     Parameters
     ----------
-    ordering : iterable or str
+    ordering : list of str
         The list of sources of the rates from lowest to highest
         precedence.  We will read from the first source, and then for
         any later sources, for any duplicate rates, we will replace
