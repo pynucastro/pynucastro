@@ -520,8 +520,8 @@ class Library:
 
         Parameters
         ----------
-        nuclist : list of string names or Nucleus
-            the nuclei to link
+        nuclist : list of str or Nucleus
+            the nuclei to link (either the string names or the Nucleus objects)
         with_reverse : bool
             do we include reverse rates?
         print_warning : bool
