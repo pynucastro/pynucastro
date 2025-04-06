@@ -655,7 +655,7 @@ class Library:
         """Loop over all of the forward rates that can be used to
         derive inverse rates (as returned by
         :py:meth:`.forward_for_detailed_balance`) and derive the
-        inverses, potentially taking into acocunt the partition
+        inverses, potentially taking into account the partition
         function and recomputing Q.
 
         Parameters
