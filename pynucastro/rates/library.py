@@ -123,9 +123,9 @@ class Library:
     Parameters
     ----------
     libfile : str
-        a file contining a sequence of rates in a format that we
+        a file continuing a sequence of rates in a format that we
         understand (for example a ReacLib database)
-    rates : list, set, dict, Rate
+    rates : iterable, dict, Rate
         a single :py:class:`Rate <pynucastro.rates.rate.Rate>` or an
         iterable of `Rate` objects.  If it is a dictionary, then it
         should be keyed by the rate id.
@@ -218,8 +218,9 @@ class Library:
 
         Parameters
         ----------
-        ratelist : list, tuple
-            an iterable of :py:mod:`Rate <pynucastro.rates.rate.Rate>` objects.
+        ratelist : iterable of Rate
+            the list of rates to add to the library.
+
         """
 
         for rate in ratelist:
@@ -233,7 +234,7 @@ class Library:
 
         Returns
         -------
-        rates : list, Rate
+        rates : iterable, Rate
             A single rate or a list of rates
 
         """
@@ -391,11 +392,18 @@ class Library:
                     else:
                         self._rates[rid] = r
 
-    def write_to_file(self, filename, prepend_rates_dir=False):
-        """
-        Write the library out to a file of the given name in Reaclib format. Will be
-        automatically written to the pynucastro rate file directory if True is passed
-        in as the second argument.
+    def write_to_file(self, filename, *, prepend_rates_dir=False):
+        """Write the library out to a file of the given name in
+        Reaclib format.
+
+        Parameters
+        ----------
+        filename : str
+            The filename to use for the library
+        prepend_rates_dir : bool
+            If ``True``, then output to the pynucastro rate file
+            directory.
+
         """
 
         if prepend_rates_dir:
@@ -406,7 +414,7 @@ class Library:
                 rate.write_to_file(f)
 
     def __repr__(self):
-        """ Return a string containing the rates IDs in this library. """
+        """Return a string containing the rates IDs in this library."""
         rstrings = []
         tmp_rates = [v for k, v in self._rates.items()]
         for r in sorted(tmp_rates):
@@ -423,7 +431,10 @@ class Library:
         return '\n'.join(rstrings)
 
     def __add__(self, other):
-        """ Add two libraries to get a library containing rates from both. """
+        """Add two libraries to get a library containing rates from
+        both.
+
+        """
         new_rates = self._rates
         for rid, r in other._rates.items():
             if rid in new_rates:
@@ -435,15 +446,33 @@ class Library:
         return new_library
 
     def __sub__(self, other):
-        """Return a Library containing the rates in this library that are not
-        contained in other_library"""
+        """Return a Library containing the rates in this library that
+        are not contained in other_library
+
+        """
 
         diff_rates = set(self.get_rates()) - set(other.get_rates())
         new_library = Library(rates=diff_rates)
         return new_library
 
     def get_rate_by_nuclei(self, reactants, products):
-        """given a list of reactants and products, return any matching rates"""
+        """Given a list of reactants and products, return any matching
+        rates
+
+        Parameters
+        ----------
+        reactants : iterable of Nucleus or str
+            the list of nuclei that serve as reactants.
+        products : iterable of Nucleus or str
+            the list of nuclei that serve as products.
+
+        Returns
+        -------
+        nuclei: list, Nucleus
+            a list of nuclei or a single nucleus (if there is only one)
+
+        """
+
         reactants = sorted(Nucleus.cast_list(reactants))
         products = sorted(Nucleus.cast_list(products))
         _tmp = [r for r in self.get_rates() if
@@ -457,14 +486,18 @@ class Library:
         return _tmp
 
     def find_duplicate_links(self):
-        """report on an rates where another rate exists that has the
-        same reactants and products.  These may not be the same Rate
-        object (e.g., one could be tabular the other a simple decay),
-        but they will present themselves in the network as the same
-        link.
+        """Find instances of multiple rates having the same reactants
+        and products.  These may not be the same Rate object (e.g.,
+        one could be tabular the other a simple decay), but they will
+        present themselves in the network as the same link.
 
-        We return a list, where each entry is a list of all the rates
-        that share the same link"""
+        Returns
+        -------
+        duplicate_rates : list
+            a list where each entry is a list of all the rates
+            that share the same link.
+
+        """
 
         duplicates = find_duplicate_rates(self.get_rates())
 
@@ -480,15 +513,21 @@ class Library:
 
         return duplicates
 
-    def linking_nuclei(self, nuclist, with_reverse=True, print_warning=True):
-        """
-        Return a Library object containing the rates linking the
-        nuclei provided in the list of Nucleus objects or nucleus abbreviations 'nuclist'.
+    def linking_nuclei(self, nuclist, *, with_reverse=True,
+                       print_warning=True):
+        """Return a library containing the rates linking the
+        list of nuclei passed in.
 
-        If with_reverse is True, then include reverse rates. Otherwise
-        include only forward rates.
+        Parameters
+        ----------
+        nuclist : iterable of string names or Nucleus
+            the nuclei to link
+        with_reverse : bool
+            do we include reverse rates?
+        print_warning : bool
+            if ``True``, then print a warning if one of the input
+            nuclei is not linked.
 
-        If print_warning is True, then print out a warning if one of the input nuclei is not linked.
         """
 
         nucleus_set = set(Nucleus.cast_list(nuclist))
@@ -777,13 +816,13 @@ class TabularLibrary(Library):
 
     Parameters
     ----------
-    ordering : tuple, list
-        an iterable of strings representing the sources of the rates
-        from lowest to highest precedence.  We will read from the
-        first source, and then for any later sources, for any
-        duplicate rates, we will replace the existing rate with the
-        version from the higher-priority library.  The default
-        ordering is ``["ffn", "langanke", "suzuki"]``
+    ordering : iterable or str
+        The list of sources of the rates from lowest to highest
+        precedence.  We will read from the first source, and then for
+        any later sources, for any duplicate rates, we will replace
+        the existing rate with the version from the higher-priority
+        library.  The default ordering is ``["ffn", "langanke",
+        "suzuki"]``
 
     """
 
