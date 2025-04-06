@@ -515,8 +515,8 @@ class Library:
 
     def linking_nuclei(self, nuclist, *, with_reverse=True,
                        print_warning=True):
-        """Return a library containing the rates linking the
-        list of nuclei passed in.
+        """Return a library containing the rates linking the list of
+        nuclei passed in.
 
         Parameters
         ----------
@@ -527,6 +527,10 @@ class Library:
         print_warning : bool
             if ``True``, then print a warning if one of the input
             nuclei is not linked.
+
+        Returns
+        -------
+        Library
 
         """
 
@@ -562,12 +566,18 @@ class Library:
         return new_lib
 
     def filter(self, filter_spec):
-        """
-        filter_specs should be an iterable of RateFilter objects or a
-        single RateFilter object. Library.filter yields all rates
-        matching any RateFilter in filter_specs.  If RateFilter.exact,
-        then return rates with exactly the reactants or products
-        passed in as arguments.
+        """Filter the rates in the library based on a set of rules.
+
+        Parameters
+        ----------
+        filter_spec : RateFilter, list
+            a filter (or list of filters) to apply to the library
+            to define a subset of rates.
+
+        Returns
+        -------
+        Library
+
         """
         if isinstance(filter_spec, RateFilter):
             filter_specifications = [filter_spec]
@@ -584,9 +594,15 @@ class Library:
         return None
 
     def forward(self):
-        """
-        Select only the forward rates, discarding the inverse rates obtained
-        by detailed balance.
+        """Select only the forward rates, discarding the inverse rates
+        obtained by detailed balance.  Note: "forward" here means
+        that it is not a reverse rate derived from detailed balance,
+        and does not necessarily mean Q > 0.
+
+        Returns
+        -------
+        Library
+
         """
 
         only_fwd_filter = RateFilter(reverse=False)
@@ -594,28 +610,30 @@ class Library:
         return only_fwd
 
     def backward(self):
-        """
-        Select only the reverse rates, obtained by detailed balance.
+        """Select only the reverse rates, obtained by detailed
+        balance.  Note: "reverse" here means that it was derived
+        by detailed balance, and not that Q < 0.
+
+        Returns
+        -------
+        Library
+
         """
 
         only_bwd_filter = RateFilter(reverse=True)
         only_bwd = self.filter(only_bwd_filter)
         return only_bwd
 
-    def derived_forward(self):
-        """
-        In this library, we exclude the weak and tabular rates from the .forward() library which includes all
-        the ReacLib forward reactions.
+    def forward_for_detailed_balance(self):
+        """Loop over the forward rates (as filtered by
+        :py:meth:`.forward`) and return those that can be used to
+        derive reverse rates via detailed balance.  This means that
+        they cannot be tabular or weak rates.
 
-        In a future PR, we will classify forward reactions as exothermic (Q>0), and reverse by endothermic (Q<0).
-        However, ReacLib does not follow this path. If a reaction is measured experimentally (independent of Q),
-        they use detailed balance to get the opposite direction. Eventually, I want to classify forward and reverse
-        by positive Q and negative Q; however, for testing purposes, making this classification may eventually lead to
-        computing the detailed balance twice.
+        Returns
+        -------
+        Library
 
-        The idea of derived_forward is to eliminate the reverse and weak, and see if our job gives the same Reaclib
-        predictions, checking the NSE convergence with the pf functions. In the future, I want to move this function
-        in a unit test.
         """
 
         collect_rates = []
@@ -634,13 +652,27 @@ class Library:
         return list1
 
     def derived_backward(self, compute_Q=False, use_pf=False):
-        """
-        This library contains the detailed balance reverse reactions over the selected .derived_forward(),
-        computed by hand.
+        """Loop over all of the forward rates that can be used to
+        derive inverse rates (as returned by
+        :py:meth:`.forward_for_detailed_balance`) and derive the
+        inverses, potentially taking into acocunt the partition
+        function and recomputing Q.
+
+        Parameters
+        ----------
+        compute_Q : bool
+            do we recompute the Q value based on the masses?
+        use_pf : bool
+            do we use the temperature-dependent partition function?
+
+        Returns
+        -------
+        Library
+
         """
 
         derived_rates = []
-        onlyfwd = self.derived_forward()
+        onlyfwd = self.forward_for_detailed_balance()
 
         for r in onlyfwd.get_rates():
             try:
