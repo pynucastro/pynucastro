@@ -924,7 +924,7 @@ class RateCollection:
     def get_nuclei_needing_partition_functions(self):
         """Return a list of nuclei that require partition functions
         for one or more :py:class:`DerivedRate
-        <pynucastro.rate.derived_rate.DerivedRate>` in the collection
+        <pynucastro.rates.derived_rate.DerivedRate>` in the collection
 
         Returns
         -------
