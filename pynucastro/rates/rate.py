@@ -99,7 +99,7 @@ class Rate:
 
         self.tabular = False
 
-        self.reverse = None
+        self.derived_from_inverse = None
 
         self.rate_eval_needs_rho = False
         self.rate_eval_needs_comp = False
