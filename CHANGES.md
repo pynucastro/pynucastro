@@ -1,5 +1,46 @@
 # Changelog
 
+## 2.6.0
+
+  * `TabularLibrary()` now takes a keyword argument `ordering` that
+    can specify which sources to use and the order to read
+    them. (#922)
+
+  * Docstring updates (#892, #899, #926, #927, #928) and more API coverage
+    (#929)
+
+  * New codespell github action (#930)
+
+  * mailmap updates (#924)
+
+  * Add ruff settings to `pyproject.toml` (#923)
+
+  * Added the Fuller, Fowler, & Newman weak rates (#910)
+
+  * Updated the colors used for `RateCollection` plots (#921)
+
+  * Added the ability to show a legend on a `RateCollection` network
+    plot (#817)
+
+  * Documentation updates (#901, #902, #907, #913, #919, #920)
+
+  * `PythonNetwork` now pairs the forward and reverse rates when
+    summing the ydot term, mirroring what we do in C++ (#784)
+
+  * Highlighting of edges now uses better colors in `RateCollection`
+    network plots (#904)
+
+  * `AmrexAstroCxxNetwork` code cleaning (#909)
+
+  * `DerivedRate` now sets `reverse=True` (#915)
+
+  * Weak rate tables have been renamed to include the source in the
+    filename (#912)
+
+  * CI fixes (#905, #906)
+
+  * `RateCoillection` class cleaning (#900)
+
 ## 2.5.0
 
   * fix the zenodo authors (#898) and automate the zenodo bibtex in
@@ -8,7 +49,7 @@
   * codespell fixes (#897)
 
   * AmrexAstroCxxNetwork now ifdefs out neutrinos (#884)
-  
+
   * officially support python 3.13 (#860)
 
   * update package requirements (#896)
@@ -132,7 +173,7 @@
 
   * `AmrexAstroCxxNetwork` now create a ydot_weak function that
     evaluates the weak rate contributions to compute dYe/dt (#739)
-   
+
 ## 2.2.1
 
   * numpy 2.0 support added (#748)
