@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.library &#8212; pynucastro 2.5.0.post28+g9fb092a5 documentation</title>
+    <title>pynucastro.rates.library &#8212; pynucastro 2.5.0.post29+g3bf305a5 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=dadf62f6"></script>
+    <script src="../../../_static/documentation_options.js?v=62346714"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -894,7 +894,7 @@ document.write(`
                 <span class="k">if</span> <span class="n">nuc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nucleus_set</span><span class="p">:</span>
                     <span class="n">include</span> <span class="o">=</span> <span class="kc">False</span>
                     <span class="k">break</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">with_reverse</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">derived_from_inverse</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">with_reverse</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">reverse</span><span class="p">:</span>
                 <span class="n">include</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">if</span> <span class="n">include</span><span class="p">:</span>
                 <span class="n">filtered_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
@@ -1030,7 +1030,7 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                 <span class="n">derived_from_inverse</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">reverse</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">min_products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filter_function</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new RateFilter with the given selection rules</span>
 
@@ -1047,7 +1047,7 @@ document.write(`
 <span class="sd">                         if False, then all products or reactants must be found</span>
 <span class="sd">                         in a comparison rate, but the comparison may contain</span>
 <span class="sd">                         additional products or reactants</span>
-<span class="sd">            derived_from_inverse  -- boolean,</span>
+<span class="sd">            reverse   -- boolean,</span>
 <span class="sd">                         if True, only match reverse-derived rates</span>
 <span class="sd">                         if False, only match directly-derived rates</span>
 <span class="sd">                         if None, you don&#39;t care, match both [default]</span>
@@ -1081,7 +1081,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exact</span> <span class="o">=</span> <span class="n">exact</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">=</span> <span class="n">derived_from_inverse</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="n">reverse</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_reactants</span> <span class="o">=</span> <span class="n">min_reactants</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_products</span> <span class="o">=</span> <span class="n">min_products</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_reactants</span> <span class="o">=</span> <span class="n">max_reactants</span>
@@ -1130,8 +1130,8 @@ document.write(`
         <span class="n">matches_min_products</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">matches_max_reactants</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">matches_max_products</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-            <span class="n">matches_reverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">==</span> <span class="n">r</span><span class="o">.</span><span class="n">derived_from_inverse</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reverse</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="n">matches_reverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">==</span> <span class="n">r</span><span class="o">.</span><span class="n">reverse</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_reactants</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="n">matches_min_reactants</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_reactants</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_products</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
@@ -1165,7 +1165,7 @@ document.write(`
         <span class="n">newfilter</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">,</span>
                                <span class="n">products</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span>
                                <span class="n">exact</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">exact</span><span class="p">,</span>
-                               <span class="n">derived_from_inverse</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span><span class="p">,</span>
+                               <span class="n">reverse</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reverse</span><span class="p">,</span>
                                <span class="n">min_reactants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_products</span><span class="p">,</span>
                                <span class="n">max_reactants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_products</span><span class="p">,</span>
                                <span class="n">min_products</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_reactants</span><span class="p">,</span>

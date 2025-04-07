@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Checking Your Network &#8212; pynucastro 2.5.0.post28+g9fb092a5 documentation</title>
+    <title>Checking Your Network &#8212; pynucastro 2.5.0.post29+g3bf305a5 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=dadf62f6"></script>
+    <script src="_static/documentation_options.js?v=62346714"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -566,19 +566,16 @@ He4 + He4 + He4 ⟶ C12 + 𝛾
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">rc</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">reaclib_library</span><span class="p">)</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:1316,</span> in <span class="ni">RateCollection.validate</span><span class="nt">(self, other_library, forward_only)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1313</span> <span class="n">passed_validation</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="g g-Whitespace">   </span><span class="mi">1315</span> <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="n">current_rates</span><span class="p">:</span>
-<span class="ne">-&gt; </span><span class="mi">1316</span>     <span class="k">if</span> <span class="n">rate</span><span class="o">.</span><span class="n">derived_from_inverse</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">1317</span>         <span class="k">continue</span>
-<span class="g g-Whitespace">   </span><span class="mi">1318</span>     <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
-
-<span class="ne">AttributeError</span>: &#39;ReacLibRate&#39; object has no attribute &#39;derived_from_inverse&#39;
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>validation: Ne20 produced in C12 + C12 ⟶ He4 + Ne20 never consumed.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>validation: missing He4 + He4 + He4 ⟶ p + B11 as alternative to He4 + He4 + He4 ⟶ C12 + 𝛾 (Q = -8.682 MeV).
+validation: missing He4 + He4 + He4 ⟶ n + C11 as alternative to He4 + He4 + He4 ⟶ C12 + 𝛾 (Q = -11.4466 MeV).
+validation: missing C12 + C12 ⟶ p + Na23 as alternative to C12 + C12 ⟶ He4 + Ne20 (Q = 2.242 MeV).
+validation: missing C12 + C12 ⟶ n + Mg23 as alternative to C12 + C12 ⟶ He4 + Ne20 (Q = -2.598 MeV).
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>False
 </pre></div>
 </div>
 </div>
@@ -618,19 +615,19 @@ He4 + He4 + He4 ⟶ C12 + 𝛾
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">rc</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">reaclib_library</span><span class="p">)</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:1316,</span> in <span class="ni">RateCollection.validate</span><span class="nt">(self, other_library, forward_only)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1313</span> <span class="n">passed_validation</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="g g-Whitespace">   </span><span class="mi">1315</span> <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="n">current_rates</span><span class="p">:</span>
-<span class="ne">-&gt; </span><span class="mi">1316</span>     <span class="k">if</span> <span class="n">rate</span><span class="o">.</span><span class="n">derived_from_inverse</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">1317</span>         <span class="k">continue</span>
-<span class="g g-Whitespace">   </span><span class="mi">1318</span>     <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
-
-<span class="ne">AttributeError</span>: &#39;ReacLibRate&#39; object has no attribute &#39;derived_from_inverse&#39;
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>validation: Ne20 produced in C12 + C12 ⟶ He4 + Ne20 never consumed.
+validation: Ne20 produced in Na23 + p ⟶ He4 + Ne20 never consumed.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>validation: missing He4 + He4 + He4 ⟶ p + B11 as alternative to He4 + He4 + He4 ⟶ C12 + 𝛾 (Q = -8.682 MeV).
+validation: missing He4 + He4 + He4 ⟶ n + C11 as alternative to He4 + He4 + He4 ⟶ C12 + 𝛾 (Q = -11.4466 MeV).
+validation: missing C12 + C12 ⟶ n + Mg23 as alternative to C12 + C12 ⟶ He4 + Ne20 (Q = -2.598 MeV).
+validation: missing C12 + C12 ⟶ n + Mg23 as alternative to C12 + C12 ⟶ p + Na23 (Q = -2.598 MeV).
+validation: missing Na23 + p ⟶ n + Mg23 as alternative to Na23 + p ⟶ He4 + Ne20 (Q = -4.839 MeV).
+validation: missing Na23 + p ⟶ Mg24 + 𝛾 as alternative to Na23 + p ⟶ He4 + Ne20 (Q = 11.6927 MeV).
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>False
 </pre></div>
 </div>
 </div>
@@ -669,19 +666,20 @@ He4 + He4 + He4 ⟶ C12 + 𝛾
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">rc</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">reaclib_library</span><span class="p">)</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:1316,</span> in <span class="ni">RateCollection.validate</span><span class="nt">(self, other_library, forward_only)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1313</span> <span class="n">passed_validation</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="g g-Whitespace">   </span><span class="mi">1315</span> <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="n">current_rates</span><span class="p">:</span>
-<span class="ne">-&gt; </span><span class="mi">1316</span>     <span class="k">if</span> <span class="n">rate</span><span class="o">.</span><span class="n">derived_from_inverse</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">1317</span>         <span class="k">continue</span>
-<span class="g g-Whitespace">   </span><span class="mi">1318</span>     <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
-
-<span class="ne">AttributeError</span>: &#39;ReacLibRate&#39; object has no attribute &#39;derived_from_inverse&#39;
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>validation: Mg24 produced in Ne20 + He4 ⟶ Mg24 + 𝛾 never consumed.
+validation: Mg24 produced in Na23 + p ⟶ Mg24 + 𝛾 never consumed.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>validation: missing He4 + He4 + He4 ⟶ p + B11 as alternative to He4 + He4 + He4 ⟶ C12 + 𝛾 (Q = -8.682 MeV).
+validation: missing He4 + He4 + He4 ⟶ n + C11 as alternative to He4 + He4 + He4 ⟶ C12 + 𝛾 (Q = -11.4466 MeV).
+validation: missing C12 + C12 ⟶ n + Mg23 as alternative to C12 + C12 ⟶ He4 + Ne20 (Q = -2.598 MeV).
+validation: missing C12 + C12 ⟶ n + Mg23 as alternative to C12 + C12 ⟶ p + Na23 (Q = -2.598 MeV).
+validation: missing Ne20 + He4 ⟶ n + Mg23 as alternative to Ne20 + He4 ⟶ Mg24 + 𝛾 (Q = -7.21457 MeV).
+validation: missing Na23 + p ⟶ n + Mg23 as alternative to Na23 + p ⟶ He4 + Ne20 (Q = -4.839 MeV).
+validation: missing Na23 + p ⟶ n + Mg23 as alternative to Na23 + p ⟶ Mg24 + 𝛾 (Q = -4.839 MeV).
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>False
 </pre></div>
 </div>
 </div>
