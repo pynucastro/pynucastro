@@ -766,8 +766,14 @@ class RateCollection:
         return reverse
 
     def get_rate_pairs(self):
-        """ return a list of RatePair objects, grouping the rates together
-            by forward and reverse"""
+        """Find pairs of forward (Q > 0) and reverse (Q < 0) rates for the
+        same link between nuclei.
+
+        Return
+        ------
+        list(RatePair)
+
+        """
 
         rate_pairs = []
 
@@ -801,7 +807,8 @@ class RateCollection:
 
         Returns
         -------
-        list
+        list(Nucleus)
+
         """
         return self.unique_nuclei
 
@@ -824,6 +831,7 @@ class RateCollection:
         Returns
         -------
         RateCollection
+
         """
 
         if return_type is None:
@@ -832,12 +840,29 @@ class RateCollection:
         return return_type(libraries=lib.linking_nuclei(nuclei, **kwargs))
 
     def get_rates(self):
-        """ get a list of the reaction rates in this network"""
+        """Get a list of the reaction rates in this network.
+
+        Returns
+        -------
+        list(Rate)
+
+        """
         return self.rates
 
     def get_rate(self, rid):
-        """ Return a rate matching the id provided.  Here rid should be
-        the string return by Rate.fname"""
+        """Return a rate matching the id provided.  Here rid should be
+        the string return by Rate.fname
+
+        Parameters
+        ----------
+        rid : str
+            The id of the rate
+
+        Returns
+        -------
+        Rate
+
+        """
         try:
             rid_mod = capitalize_rid(rid, "_")
             return [r for r in self.rates if r.fname == rid_mod][0]
@@ -845,7 +870,7 @@ class RateCollection:
             raise LookupError(f"rate identifier {rid!r} does not match a rate in this network.") from None
 
     def get_rate_by_nuclei(self, reactants, products):
-        """given a list of reactants and products, return any matching rates"""
+        """Given a list of reactants and products, return any matching rates"""
         reactants = sorted(Nucleus.cast_list(reactants))
         products = sorted(Nucleus.cast_list(products))
         _tmp = [r for r in self.rates if
