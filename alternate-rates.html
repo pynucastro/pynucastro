@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>alternate_rates &#8212; pynucastro 2.5.0.post27+g7db7c6bc documentation</title>
+    <title>alternate_rates &#8212; pynucastro 2.5.0.post28+g9fb092a5 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=710ebdc1"></script>
+    <script src="_static/documentation_options.js?v=dadf62f6"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -595,7 +595,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f388e3bdf10&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f2a49628fd0&gt;
 </pre></div>
 </div>
 <img alt="_images/825e4d6b03088a9664984ed9e8a7e5c4a687c70048dc0bcf22f3c6a67475e6b3.png" src="_images/825e4d6b03088a9664984ed9e8a7e5c4a687c70048dc0bcf22f3c6a67475e6b3.png" />
@@ -653,15 +653,21 @@ Here’s a simple He-burning network.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C12 + He4 ⟶ O16 + 𝛾       : 2.7441793e-03
-O16 + He4 ⟶ Ne20 + 𝛾      : 1.1385847e+00
-Ne20 + He4 ⟶ Mg24 + 𝛾     : 4.1265513e-01
-Na23 + p ⟶ Mg24 + 𝛾       : 6.9202360e+05
-C12 + C12 ⟶ p + Na23      : 1.1970613e-09
-C12 + C12 ⟶ He4 + Ne20    : 1.4808559e-09
-O16 + C12 ⟶ He4 + Mg24    : 5.5470507e-15
-Na23 + p ⟶ He4 + Ne20     : 8.9374939e+06
-He4 + He4 + He4 ⟶ C12 + 𝛾 : 2.5845076e-03
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">11</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">lib</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="n">with_reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">])</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">rates</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/pynucastro/rates/library.py:431,</span> in <span class="ni">Library.linking_nuclei</span><span class="nt">(self, nuclist, with_reverse, print_warning)</span>
+<span class="g g-Whitespace">    </span><span class="mi">429</span>         <span class="n">include</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="g g-Whitespace">    </span><span class="mi">430</span>         <span class="k">break</span>
+<span class="ne">--&gt; </span><span class="mi">431</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">with_reverse</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">derived_from_inverse</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">432</span>     <span class="n">include</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="g g-Whitespace">    </span><span class="mi">433</span> <span class="k">if</span> <span class="n">include</span><span class="p">:</span>
+
+<span class="ne">AttributeError</span>: &#39;ReacLibRate&#39; object has no attribute &#39;derived_from_inverse&#39;
 </pre></div>
 </div>
 </div>
@@ -677,6 +683,17 @@ He4 + He4 + He4 ⟶ C12 + 𝛾 : 2.5845076e-03
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">12</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">lib</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">c12_rl</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">lib</span><span class="o">.</span><span class="n">add_rate</span><span class="p">(</span><span class="n">c12_deboer</span><span class="p">)</span>
+
+<span class="ne">NameError</span>: name &#39;lib&#39; is not defined
+</pre></div>
+</div>
+</div>
 </div>
 <p>and recreate the new <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code></p>
 <div class="cell docutils container">
@@ -689,15 +706,14 @@ He4 + He4 + He4 ⟶ C12 + 𝛾 : 2.5845076e-03
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>O16 + He4 ⟶ Ne20 + 𝛾      : 1.1385847e+00
-Ne20 + He4 ⟶ Mg24 + 𝛾     : 4.1265513e-01
-Na23 + p ⟶ Mg24 + 𝛾       : 6.9202360e+05
-C12 + C12 ⟶ p + Na23      : 1.1970613e-09
-C12 + C12 ⟶ He4 + Ne20    : 1.4808559e-09
-O16 + C12 ⟶ He4 + Mg24    : 5.5470507e-15
-Na23 + p ⟶ He4 + Ne20     : 8.9374939e+06
-He4 + He4 + He4 ⟶ C12 + 𝛾 : 2.5845076e-03
-C12 + He4 ⟶ O16 + 𝛾       : 2.2040004e-03
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">13</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">rc2</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">])</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">rates</span> <span class="o">=</span> <span class="n">rc2</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="k">for</span> <span class="n">rr</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">rates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+<span class="ne">NameError</span>: name &#39;lib&#39; is not defined
 </pre></div>
 </div>
 </div>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Selecting Rates from a Library &#8212; pynucastro 2.5.0.post27+g7db7c6bc documentation</title>
+    <title>Selecting Rates from a Library &#8212; pynucastro 2.5.0.post28+g9fb092a5 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=710ebdc1"></script>
+    <script src="_static/documentation_options.js?v=dadf62f6"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -567,11 +567,38 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">cno_library</span> <span class="o">=</span> <span class="n">mylibrary</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">all_nuclei</span><span class="p">,</span> <span class="n">with_reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/pynucastro/rates/library.py:431,</span> in <span class="ni">Library.linking_nuclei</span><span class="nt">(self, nuclist, with_reverse, print_warning)</span>
+<span class="g g-Whitespace">    </span><span class="mi">429</span>         <span class="n">include</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="g g-Whitespace">    </span><span class="mi">430</span>         <span class="k">break</span>
+<span class="ne">--&gt; </span><span class="mi">431</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">with_reverse</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">derived_from_inverse</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">432</span>     <span class="n">include</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="g g-Whitespace">    </span><span class="mi">433</span> <span class="k">if</span> <span class="n">include</span><span class="p">:</span>
+
+<span class="ne">AttributeError</span>: &#39;ReacLibRate&#39; object has no attribute &#39;derived_from_inverse&#39;
+</pre></div>
+</div>
+</div>
 </div>
 <p>Now we can create a network (here we’ll do a <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code>) as:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cno_network</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">networks</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">cno_library</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">cno_network</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">networks</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">cno_library</span><span class="p">)</span>
+
+<span class="ne">NameError</span>: name &#39;cno_library&#39; is not defined
 </pre></div>
 </div>
 </div>
@@ -588,7 +615,14 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/fd611dc8d544faef93a8f324ff0ae69109163b0d385bdae516ff908bc82cd55e.png" src="_images/fd611dc8d544faef93a8f324ff0ae69109163b0d385bdae516ff908bc82cd55e.png" />
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">cno_network</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
+<span class="ne">NameError</span>: name &#39;cno_network&#39; is not defined
+</pre></div>
+</div>
 </div>
 </div>
 <p>Note that the above network also includes the triple-alpha rate from Reaclib.</p>
@@ -596,6 +630,16 @@ document.write(`
 <div class="cell tag_nbval-skip docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cno_network</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s1">&#39;network_module.py&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">cno_network</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s1">&#39;network_module.py&#39;</span><span class="p">)</span>
+
+<span class="ne">NameError</span>: name &#39;cno_network&#39; is not defined
 </pre></div>
 </div>
 </div>

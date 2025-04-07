@@ -81,8 +81,10 @@ The ReacLib database lists the source / reference of each rate with a 6 characte
   If the weak flag, ``w`` is set, then ``ReacLibRate.weak`` will be ``True``.
 
 * The 6th character indicates it the rate is a derived reverse rate,
-  by the presence of a `v`.  This is stored in both ``SingleSet`` and
-  ``ReacLibRate`` as the ``.reverse`` attribute.
+  by the presence of a `v`.  Note that this is not necessarily a
+  reverse rate ($Q < 0$), so in pynucastro, we call it "derived from
+  inverse".  This is stored in both ``SingleSet`` and ``ReacLibRate``
+  as the ``.derived_from_inverse`` attribute.
 
 
 Weak rates
