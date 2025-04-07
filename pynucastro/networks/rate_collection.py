@@ -1313,14 +1313,14 @@ class RateCollection:
         passed_validation = True
 
         for rate in current_rates:
-            if rate.derived_from_inverse:
+            if rate.reverse:
                 continue
             for p in rate.products:
                 found = False
                 for orate in current_rates:
                     if orate == rate:
                         continue
-                    if orate.derived_from_inverse:
+                    if orate.reverse:
                         continue
                     if p in orate.reactants:
                         found = True
@@ -1337,7 +1337,7 @@ class RateCollection:
             other_by_reactants[tuple(sorted(rate.reactants))].append(rate)
 
         for rate in current_rates:
-            if forward_only and rate.derived_from_inverse:
+            if forward_only and rate.reverse:
                 continue
 
             key = tuple(sorted(rate.reactants))
