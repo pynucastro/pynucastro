@@ -719,7 +719,7 @@ class RateCollection:
 
         Returns
         -------
-        list
+        list(Rate)
 
         """
 
@@ -735,7 +735,7 @@ class RateCollection:
 
         Returns
         -------
-        list
+        list(Rate)
 
         """
 
@@ -1013,7 +1013,7 @@ class RateCollection:
 
         Parameters
         ----------
-        rates : Rate, list
+        rates : Rate, list(Rate)
              a single Rate object or a list of Rate objects specifying the
              rates to be added to the network.
         """
@@ -1126,8 +1126,9 @@ class RateCollection:
         Parameters
         ----------
         intermediate_nuclei : list, tuple
-            an iterable of Nucleus objects or string names representing
-            the intermediate nucleus we wish to approximate out.
+            an iterable of `Nucleus <pynucastro.nucdata.nucleus.Nucleus>`
+            or string names representing the intermediate nucleus we
+            wish to approximate out.
 
         """
 
@@ -1262,13 +1263,13 @@ class RateCollection:
         rate as dY/dt, where Y is the molar fraction.  For a 2 body
         reaction, a + b, this will be of the form:
 
-        rho Y_a Y_b N_A <sigma v> / (1 + delta_{ab})
+        ρ Y_a Y_b N_A <σv> / (1 + δ_{ab})
 
-        where delta is the Kronecker delta that accounts for a = b.
+        where δ is the Kronecker delta that accounts for a = b.
 
         If you want dn/dt, where n is the number density (so you get
-        n_a n_b <sigma v>), then you need to multiply the results here
-        by rho N_A (where N_A is Avogadro's number).
+        n_a n_b <σv>), then you need to multiply the results here
+        by ρ N_A (where N_A is Avogadro's number).
 
         Parameters
         ----------
@@ -1285,7 +1286,8 @@ class RateCollection:
 
         Returns
         -------
-        dict
+        dict(Rate)
+
         """
 
         rvals = {}
@@ -1325,6 +1327,7 @@ class RateCollection:
         Returns
         -------
         numpy.ndarray
+
         """
 
         # the rate.eval_jacobian_term does not compute the screening,
@@ -1359,11 +1362,24 @@ class RateCollection:
         return jac
 
     def validate(self, other_library, *, forward_only=True):
-        """perform various checks on the library, comparing to other_library,
-        to ensure that we are not missing important rates.  The idea
-        is that self should be a reduced library where we filtered out
-        a few rates and then we want to compare to the larger
-        other_library to see if we missed something important.
+        """Perform various checks on the library, comparing to
+        ``other_library``, to ensure that we are not missing important
+        rates.  The idea is that the current library should be a
+        reduced library (perhaps the result of filtering) and then we
+        want to compare to the larger ``other_library`` to see if we
+        missed something important.
+
+        Parameters
+        ----------
+        other_library : Library
+            the library to compare to
+        forward_only : bool
+            do we only check the forward rates?
+
+        Returns
+        -------
+        bool
+
         """
 
         current_rates = sorted(self.get_rates())
@@ -1445,10 +1461,10 @@ class RateCollection:
         return duplicates
 
     def find_unimportant_rates(self, states, cutoff_ratio, screen_func=None):
-        """Evaluate the rates at multiple thermodynamic states, and find the
-        rates that are always less than `cutoff_ratio` times the fastest rate
-        for each state.  This returns a dict keyed by Rate giving the
-        ratio of the rate to the largest rate.
+        """Evaluate the rates at multiple thermodynamic states, and
+        find the rates that are always less than `cutoff_ratio` times
+        the fastest rate for each state.  This returns a dict keyed by
+        Rate giving the ratio of the rate to the largest rate.
 
         Parameters
         ----------
@@ -1465,7 +1481,8 @@ class RateCollection:
 
         Return
         ------
-        dict
+        dict(Rate)
+
         """
         largest_ratio = {r: 0 for r in self.rates}
         for rho, T, comp in states:
@@ -1491,7 +1508,8 @@ class RateCollection:
 
         Returns
         -------
-        dict
+        dict(Rate)
+
         """
         # this follows the same logic as BaseCxxNetwork._compute_screening_factors()
         factors = {}
@@ -1535,8 +1553,8 @@ class RateCollection:
 
     def evaluate_ydots(self, rho, T, composition,
                        screen_func=None, rate_filter=None):
-        """evaluate net rate of change of molar abundance for each nucleus
-        for a specific density, temperature, and composition
+        """Evaluate net rate of change of molar abundance for each
+        nucleus for a specific density, temperature, and composition
 
         Parameters
         ----------
@@ -1550,12 +1568,13 @@ class RateCollection:
             a function from :py:mod:`pynucastro.screening` used to compute the
             screening enhancement for the rates.
         rate_filter : Callable
-            a function that takes a `Rate` object and returns True
-            or False if it is to be shown as an edge.
+            a function that takes a :py:class:`Rate <pynucastro.rates.rate.Rate>`
+            and returns `True` or `False` if it is to be evaluated.
 
         Returns
         -------
-        dict
+        dict(Rate)
+
         """
 
         rvals = self.evaluate_rates(rho, T, composition, screen_func)
@@ -1610,6 +1629,7 @@ class RateCollection:
             the energy generation rate
         enu : float
             the neutrino loss rate from weak reactions
+
         """
 
         ydots = self.evaluate_ydots(rho, T, composition, screen_func)
@@ -1660,7 +1680,8 @@ class RateCollection:
 
         Returns
         -------
-        dict
+        dict(Nucleus)
+
         """
 
         rvals = self.evaluate_rates(rho, T, composition, screen_func)
@@ -1683,7 +1704,8 @@ class RateCollection:
         return act
 
     def _get_network_chart(self, rho, T, composition):
-        """a network chart is a dict, keyed by rate that holds a list of tuples (Nucleus, ydot)"""
+        """a network chart is a dict, keyed by rate that holds a list
+        of tuples (Nucleus, ydot)"""
 
         rvals = self.evaluate_rates(rho, T, composition)
 
@@ -1741,7 +1763,13 @@ class RateCollection:
         return ostr
 
     def get_nuclei_latex_string(self):
-        """return a string listing the nuclei in latex format"""
+        """Return a string listing the nuclei in latex format
+
+        Returns
+        -------
+        str
+
+        """
 
         ostr = ""
         for i, n in enumerate(self.unique_nuclei):
@@ -1751,6 +1779,16 @@ class RateCollection:
         return ostr
 
     def get_rates_latex_table_string(self):
+        """Return a string giving the rows of a LaTeX table with
+        forward rates in the first column and reverse rates in the
+        second column.
+
+        Returns
+        -------
+        str
+
+        """
+
         ostr = ""
         for rp in sorted(self.get_rate_pairs()):
             if rp.forward:
@@ -1768,14 +1806,23 @@ class RateCollection:
         return ostr
 
     def write_network(self, *args, **kwargs):
-        """Before writing the network, check to make sure the rates
-        are distinguishable by name."""
+        """Write out the network.  For :py:class:`RateCollection`
+        this is a no-op.  But derived classes will use this to
+        create the network in a file (or files).
+
+        We do a find check here that the rates in the network
+        are distinguishable.
+
+        """
         assert self._distinguishable_rates(), "ERROR: Rates not uniquely identified by Rate.fname"
         self._write_network(*args, **kwargs)
 
     def _distinguishable_rates(self):
-        """Every Rate in this RateCollection should have a unique Rate.fname,
-        as the network writers distinguish the rates on this basis."""
+        """Every Rate in this RateCollection should have a unique
+        Rate.fname, as the network writers distinguish the rates on
+        this basis.
+
+        """
         names = [r.fname for r in self.rates]
         for n, r in zip(names, self.rates):
             k = names.count(n)
@@ -1786,8 +1833,10 @@ class RateCollection:
         return len(set(names)) == len(self.rates)
 
     def _write_network(self, *args, **kwargs):
-        """A stub for function to output the network -- this is implementation
-        dependent."""
+        """A stub for function to output the network -- this is
+        implementation dependent.
+
+        """
         # pylint: disable=unused-argument
         print('To create network integration source code, use a class that implements a specific network type.')
 
