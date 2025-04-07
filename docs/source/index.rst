@@ -44,12 +44,20 @@ codes.
    plot-types.ipynb
    pynucastro-integration.ipynb
 
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Working with Libraries
+   :hidden:
+
+   library-examples.ipynb
+   tabulated-weak-rates.ipynb
+
 .. toctree::
    :maxdepth: 1
    :caption: Building Networks
    :hidden:
 
-   library-examples.ipynb
    duplicate-rates.ipynb
    validate-example.ipynb
    electron-capture-example.ipynb

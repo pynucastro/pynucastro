@@ -101,7 +101,7 @@ class Composition(collections.UserDict):
 
     Parameters
     ----------
-    nuclei : (list, tuple)
+    nuclei : list, tuple
         an iterable of Nucleus objects
     small : float
         a floor for nuclei mass fractions, used as the default value
@@ -214,7 +214,7 @@ class Composition(collections.UserDict):
 
         Parameters
         ----------
-        arr : (list, tuple, numpy.ndarray)
+        arr : list, tuple, numpy.ndarray
             input values of mass fractions
         """
         for i, k in enumerate(self):
@@ -241,7 +241,7 @@ class Composition(collections.UserDict):
 
         Parameters
         ----------
-        alpha : (list, tuple, numpy.ndarray)
+        alpha : list, tuple, numpy.ndarray
             distribution length for the Dirichlet distribution
         seed : float
             seed for the random number generator
@@ -522,15 +522,15 @@ class RateCollection:
 
     Parameters
     ----------
-    rate_files : (str, list, tuple)
+    rate_files : str, list, tuple
         a string or iterable of strings of file names that define valid
         rates. This can include Reaclib library files storing multiple
         rates.
-    libraries : (Library, list, tuple)
+    libraries : Library, list, tuple
         a Library or iterable of Library objects
-    rates : (Rate, list, tuple)
+    rates : Rate, list, tuple
         a Rate or iterable of Rate objects
-    inert_nuclei : (list, tuple)
+    inert_nuclei : list, tuple
         an iterable of Nuclei that should be part of the collection but
         are not linked via reactions to the other Nuclei in the network.
     symmetric_screening : bool
@@ -766,8 +766,14 @@ class RateCollection:
         return reverse
 
     def get_rate_pairs(self):
-        """ return a list of RatePair objects, grouping the rates together
-            by forward and reverse"""
+        """Find pairs of forward (Q > 0) and reverse (Q < 0) rates for the
+        same link between nuclei.
+
+        Return
+        ------
+        list(RatePair)
+
+        """
 
         rate_pairs = []
 
@@ -801,7 +807,8 @@ class RateCollection:
 
         Returns
         -------
-        list
+        list(Nucleus)
+
         """
         return self.unique_nuclei
 
@@ -824,6 +831,7 @@ class RateCollection:
         Returns
         -------
         RateCollection
+
         """
 
         if return_type is None:
@@ -832,12 +840,29 @@ class RateCollection:
         return return_type(libraries=lib.linking_nuclei(nuclei, **kwargs))
 
     def get_rates(self):
-        """ get a list of the reaction rates in this network"""
+        """Get a list of the reaction rates in this network.
+
+        Returns
+        -------
+        list(Rate)
+
+        """
         return self.rates
 
     def get_rate(self, rid):
-        """ Return a rate matching the id provided.  Here rid should be
-        the string return by Rate.fname"""
+        """Return a rate matching the id provided.  Here rid should be
+        the string return by Rate.fname
+
+        Parameters
+        ----------
+        rid : str
+            The id of the rate
+
+        Returns
+        -------
+        Rate
+
+        """
         try:
             rid_mod = capitalize_rid(rid, "_")
             return [r for r in self.rates if r.fname == rid_mod][0]
@@ -845,7 +870,25 @@ class RateCollection:
             raise LookupError(f"rate identifier {rid!r} does not match a rate in this network.") from None
 
     def get_rate_by_nuclei(self, reactants, products):
-        """given a list of reactants and products, return any matching rates"""
+        """Given a list of reactants and products, return any matching rates
+
+        Parameters
+        ----------
+        reactants : list(Nucleus), list(str)
+            the reactants for the reaction.  These can either be string
+            names or :py:class:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>`
+            objects.
+        products : list(Nucleus), list(str)
+            the products for the reaction.  These can either be string
+            names or :py:class:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>`
+            objects.
+
+        Returns
+        -------
+        rates : Rate, list(Rate)
+            any matching rates
+
+        """
         reactants = sorted(Nucleus.cast_list(reactants))
         products = sorted(Nucleus.cast_list(products))
         _tmp = [r for r in self.rates if
@@ -859,7 +902,18 @@ class RateCollection:
         return _tmp
 
     def get_rate_by_name(self, name):
-        """given a rate in the form 'A(x,y)B' return the Rate"""
+        """Given a rate in the form 'A(x,y)B' return the rate
+
+        Parameters
+        ----------
+        name : str
+            the name of the rate, in the form "A(x,y)B"
+
+        Returns
+        -------
+        Rate
+
+        """
 
         reactants, products = _rate_name_to_nuc(name)
         _r = self.get_rate_by_nuclei(reactants, products)
@@ -868,8 +922,15 @@ class RateCollection:
         return _r
 
     def get_nuclei_needing_partition_functions(self):
-        """return a list of Nuclei that require partition functions for one or
-        more DerivedRates in the collection"""
+        """Return a list of nuclei that require partition functions
+        for one or more :py:class:`DerivedRate
+        <pynucastro.rate.derived_rate.DerivedRate>` in the collection
+
+        Returns
+        -------
+        list(Nucleus)
+
+        """
 
         nuclei_pfs = set()
         for r in self.all_rates:
@@ -2457,7 +2518,7 @@ class RateCollection:
         for nuc, weight in zip(nuclei, weights):
 
             square = plt.Rectangle((nuc.N - 0.5, nuc.Z - 0.5), width=1, height=1,
-                    facecolor=cmap(weight), edgecolor=edgecolor)
+                                   facecolor=cmap(weight), edgecolor=edgecolor)
             ax.add_patch(square)
 
         # Set limits
@@ -2554,7 +2615,21 @@ class RateCollection:
 
 
 class Explorer:
-    """ interactively explore a rate collection """
+    """A simple class that enables interactive exploration a RateCollection,
+    presenting density and temperature sliders to update the reaction rate
+    values.
+
+    Parameters
+    ----------
+    rc : RateCollection
+        The RateCollection we will visualize.
+    comp : Composition
+        A composition that will be used for evaluating the rates
+    kwargs : dict
+        Additional parameters that will be passed through to the
+        RateCollection plot() function.  Note that "T" and "rho"
+        will be ignored.
+    """
     def __init__(self, rc, comp, **kwargs):
         """ take a RateCollection and a composition """
         self.rc = rc
@@ -2570,5 +2645,19 @@ class Explorer:
                      comp=self.comp, **self.kwargs)
 
     def explore(self, logrho=(2, 6, 0.1), logT=(7, 9, 0.1)):
-        """Perform interactive exploration of the network structure."""
+        """Create the interactive visualization.  This uses ipywidgets.interact
+        to create an interactive visualization.
+
+        Parameters
+        ----------
+        logrho : list, tuple
+            a tuple of (starting log(rho), ending log(rho), dlogrho) that
+            defines the range of densities to explore with an interactive
+            slider.
+        logT : list, tuple
+            a tuple of (starting log(T), ending log(T), dlogT) that
+            defines the range of temperatures to explore with an interactive
+            slider.
+        """
+
         interact(self._make_plot, logrho=logrho, logT=logT)
