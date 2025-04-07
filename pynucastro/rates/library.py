@@ -473,7 +473,7 @@ class Library:
         by detailed balance.
         """
 
-        only_fwd_filter = RateFilter(reverse=False)
+        only_fwd_filter = RateFilter(derived_from_inverse=False)
         only_fwd = self.filter(only_fwd_filter)
         return only_fwd
 
@@ -482,7 +482,7 @@ class Library:
         Select only the reverse rates, obtained by detailed balance.
         """
 
-        only_bwd_filter = RateFilter(reverse=True)
+        only_bwd_filter = RateFilter(derived_from_inverse=True)
         only_bwd = self.filter(only_bwd_filter)
         return only_bwd
 
