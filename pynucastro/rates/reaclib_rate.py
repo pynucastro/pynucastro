@@ -10,22 +10,22 @@ from pynucastro.rates.rate import Rate, RateSource, Tfactors
 
 
 class SingleSet:
-    """ a set in Reaclib is one piece of a rate, in the form
+    """A single ReacLib set for a reaction in the form:
 
-        lambda = exp[ a_0 + sum_{i=1}^5  a_i T_9**(2i-5)/3  + a_6 log T_9]
+    λ = exp[ a_0 + sum_{i=1}^5  a_i T_9**(2i-5)/3  + a_6 log T_9]
 
-    A single rate in Reaclib can be composed of multiple sets
+    A single rate in Reaclib can be composed of multiple sets.
 
-    :param a: the coefficients of the exponential fit
-    :param labelprops: a collection of flags that classify a ReacLib rate
+    Parameters
+    ----------
+    a : list, numpy.ndarray
+        the coefficients of the exponential fit
+    labelprops : str
+         a collection of flags that classify a ReacLib rate
 
     """
 
     def __init__(self, a, labelprops):
-        """here a is iterable (e.g., list or numpy array), storing the
-           coefficients, a0, ..., a6
-
-        """
         self.a = a
         self.labelprops = labelprops
         self.label = None
@@ -36,8 +36,10 @@ class SingleSet:
         self._update_label_properties()
 
     def _update_label_properties(self):
-        """ Set label and flags indicating Set is resonant,
-            weak, or reverse. """
+        """Set label and flags indicating Set is resonant, weak, or
+            reverse.
+
+        """
         assert isinstance(self.labelprops, str)
         assert len(self.labelprops) == 6
 
@@ -47,7 +49,6 @@ class SingleSet:
         self.reverse = self.labelprops[5] == 'v'
 
     def __eq__(self, other):
-        """ Determine whether two SingleSet objects are equal to each other. """
         x = True
 
         for ai, aj in zip(self.a, other.a):
@@ -60,8 +61,14 @@ class SingleSet:
         return x
 
     def f(self):
-        """ return a function for rate(tf) where tf is a Tfactors
-        object """
+        """Return a function for ``rate(tf)`` where ``tf`` is a
+        :py:class:`Tfactors <pynucastro.rates.rate.Tfactors>` object
+
+        Returns
+        -------
+        Callable
+
+        """
         return lambda tf: float(np.exp(self.a[0] +
                                        self.a[1]*tf.T9i +
                                        self.a[2]*tf.T913i +
@@ -71,8 +78,11 @@ class SingleSet:
                                        self.a[6]*tf.lnT9))
 
     def dfdT(self):
-        """ return a function for this dratedT(tf), where tf is a
-        Tfactors object """
+        """Return a function for the temperature derivative of the
+        set, ``dratedT(tf)``, where ``tf`` is a :py:class:`Tfactors
+        <pynucastro.rates.rate.Tfactors>` object
+
+        """
 
         # we have lambda = exp(f(T_9))
         # so dlambda/dT9 = lambda * df/dT9
@@ -85,9 +95,21 @@ class SingleSet:
                                           (5./3.) * self.a[5] * tf.T913 * tf.T913 +
                                           self.a[6] * tf.T9i) / 1.e9
 
-    def set_string_py(self, prefix="set", plus_equal=False):
-        """
-        return a string containing the python code for this set
+    def set_string_py(self, *, prefix="set", plus_equal=False):
+        """Generate the python code needed to evaluate the set.
+
+        Parameters
+        ----------
+        prefix : str
+            variable name used to store the set
+        plus_equal : bool
+            do we add to the existing set? or create a new
+            variable and initialize it to this set?
+
+        Returns
+        -------
+        str
+
         """
         if plus_equal:
             string = f"{prefix} += np.exp( "
@@ -112,9 +134,27 @@ class SingleSet:
         string += ")"
         return string
 
-    def set_string_cxx(self, prefix="set", plus_equal=False, with_exp=True):
+    def set_string_cxx(self, *, prefix="set", plus_equal=False,
+                       with_exp=True):
         """
-        return a string containing the C++ code for this set
+        Generate the C++ code needed to evaluate the set.
+
+        Parameters
+        ----------
+        prefix : str
+            variable name used to store the set
+        plus_equal : bool
+            do we add to the existing set? or create a new
+            variable and initialize it to this set?
+        with_exp : bool
+            to we compute the set (``True``) or the log of the
+            set (``False``).  The later is useful if we also
+            are computing the derivative.
+
+        Returns
+        -------
+        str
+
         """
         if plus_equal:
             string = f"{prefix} += "
@@ -146,9 +186,22 @@ class SingleSet:
             string += "\namrex::ignore_unused(tfactors);"
         return string
 
-    def dln_set_string_dT9_cxx(self, prefix="dset_dT", plus_equal=False):
-        """
-        return a string containing the C++ code for d/dT9 ln(set)
+    def dln_set_string_dT9_cxx(self, *, prefix="dset_dT",
+                               plus_equal=False):
+        """Generate the C++ code to evaluate d/dT9 ln(set).
+
+        Parameters
+        ----------
+        prefix : str
+            variable name used to store the set
+        plus_equal : bool
+            do we add to the existing set? or create a new
+            variable and initialize it to this set?
+
+        Returns
+        -------
+        str
+
         """
         if plus_equal:
             string = f"{prefix} += "
