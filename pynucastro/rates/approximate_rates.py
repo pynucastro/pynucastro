@@ -87,7 +87,7 @@ class ApproximateRate(Rate):
     approx_type : str
         The type of approximation to do.  Currently supported are
         "ap_pg" and "nn_g"
-    use_idenitical_particle_factor : bool
+    use_identical_particle_factor : bool
         Usually if a rate has 2 reactants of the same type, we
         divide by 2, since the order doesn't matter.  However, for
         some approximations, like A(n,g)X(n,g)B -> A(nn,g), we
