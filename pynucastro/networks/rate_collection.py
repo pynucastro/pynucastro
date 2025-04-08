@@ -2457,28 +2457,45 @@ class RateCollection:
             'Y' (molar abundance), 'Xdot' (time derivative of X), 'Ydot' (time
             derivative of Y), or 'activity' (sum of contributions to Ydot of
             all rates, ignoring sign).
-        kwargs: dict
-         - "scale" -- One of 'linear', 'log', and 'symlog'. Linear by default.
-         - "small" -- If using logarithmic scaling, zeros will be replaced with
-           this value. 1e-30 by default.
-         - "linthresh" -- Linearity threshold for symlog scaling.
-         - "linscale" --  The number of decades to use for each half of the linear
-           range. Stretches linear range relative to the logarithmic range.
-         - "filter_function" -- A callable to filter `Nucleus` objects with. Should
-           return True if the nuclide should be plotted.
-         - "outfile" -- Output file to save the plot to. The plot will be shown if
-           not specified.
-         - "dpi" -- DPI to save the image file at.
-         - "cmap" -- Name of the matplotlib colormap to use. Default is 'magma'.
-         - "edgecolor" -- Color of grid cell edges.
-         - "area" -- Area of the figure without the colorbar, in square inches. 64
-           by default.
-         - "no_axes" -- Set to True to omit axis spines.
-         - "no_ticks" -- Set to True to omit tickmarks.
-         - "no_cbar" -- Set to True to omit colorbar.
-         - "cbar_label" -- Colorbar label.
-         - "cbar_bounds" -- Explicit colorbar bounds.
-         - "cbar_format" -- Format string or Formatter object for the colorbar ticks.
+        scale : str
+            One of 'linear', 'log', and 'symlog'. Linear by default.
+        small : float
+            If using logarithmic scaling, zeros will be replaced with
+            this value. 1e-30 by default.
+        linthresh : float
+            Linearity threshold for symlog scaling.
+        linscale : float
+            The number of decades to use for each half of the linear
+            range. Stretches linear range relative to the logarithmic range.
+        filter_function : Callable
+            A callable to filter :py:class:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>`
+            objects with. Should return `True` if the nuclide should be plotted.
+        outfile : str
+            Output file to save the plot to. The plot will be shown if
+            not specified.
+        dpi : float
+            DPI to save the image file at.
+        cmap : str
+            Name of the matplotlib colormap to use. Default is 'magma'.
+        edgecolor : str
+            Color of grid cell edges.
+        area : float
+            Area of the figure without the colorbar, in square inches. 64
+            by default.
+        no_axes : bool
+            Set to True to omit axis spines.
+        no_ticks : bool
+            Set to True to omit tickmarks.
+        no_cbar : bool
+            Set to True to omit colorbar.
+        cbar_label : str
+            Colorbar label.
+        cbar_bounds : list, tuple
+             Explicit colorbar bounds.
+        cbar_format : str, matplotlib.ticker.Formatter
+             Format string or formatter object for the colorbar ticks.
+        cbar_ticks : int
+             Number of ticks to use on the colorbar
 
         Returns
         -------
