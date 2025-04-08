@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 2.5.0.post29+g3bf305a5 documentation</title>
+    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 2.5.0.post30+g6b69498d documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=62346714"></script>
+    <script src="../../../_static/documentation_options.js?v=4fe4ee69"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -445,10 +445,11 @@ document.write(`
 <div class="viewcode-block" id="BaseCxxNetwork">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_cxx_network.BaseCxxNetwork">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BaseCxxNetwork</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">RateCollection</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize the C++ network.  This takes the same arguments as</span>
-<span class="sd">    `RateCollection` and interprets the collection of rates</span>
-<span class="sd">    and nuclei and produce the C++ code needed to integrate the</span>
-<span class="sd">    network.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for a C++ network.  This takes the same arguments as</span>
+<span class="sd">    :py:class:`RateCollection</span>
+<span class="sd">    &lt;pynucastro.networks.rate_collection.RateCollection&gt;` and</span>
+<span class="sd">    interprets the collection of rates and nuclei to produce the C++</span>
+<span class="sd">    code needed to integrate the network.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -512,16 +513,21 @@ document.write(`
 <div class="viewcode-block" id="BaseCxxNetwork.get_indent_amt">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_cxx_network.BaseCxxNetwork.get_indent_amt">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_indent_amt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine the amount of spaces to indent a line.  This looks</span>
-<span class="sd">        for a string of the form &quot;&lt;key&gt;(#)&quot;, where # is the a number that</span>
-<span class="sd">        is the amount of indent.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine the amount of spaces to indent a line.  This</span>
+<span class="sd">        looks for a string of the form &quot;&lt;key&gt;(#)&quot;, where # is the a</span>
+<span class="sd">        number that is the amount of indent.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        l : str</span>
-<span class="sd">            a line</span>
+<span class="sd">            a line from a template file to check for an indent</span>
 <span class="sd">        k : str</span>
 <span class="sd">            a keyword of the form &quot;&lt;key&gt;&quot; that appears in the line</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">rem</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\A&#39;</span><span class="o">+</span><span class="n">k</span><span class="o">+</span><span class="sa">r</span><span class="s1">&#39;\(([0-9]*)\)\Z&#39;</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
@@ -580,12 +586,14 @@ document.write(`
 <div class="viewcode-block" id="BaseCxxNetwork.compose_ydot">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_cxx_network.BaseCxxNetwork.compose_ydot">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compose_ydot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;create the expressions for dYdt for the nuclei, where Y is the</span>
-<span class="sd">        molar fraction.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the expressions for dY/dt for each nucleus, where Y</span>
+<span class="sd">        is the molar fraction.</span>
 
+<span class="sd">        This stores the result in a dict where the key is a</span>
+<span class="sd">        :py:class:`Nucleus &lt;pynucastro.nucdata.nucleus.Nucleus&gt;`, and</span>
+<span class="sd">        the value is a list of tuples, with the forward-reverse pairs</span>
+<span class="sd">        of a rate</span>
 
-<span class="sd">        This will take the form of a dict, where the key is a nucleus, and the</span>
-<span class="sd">        value is a list of tuples, with the forward-reverse pairs of a rate</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">ydot</span> <span class="o">=</span> <span class="p">{}</span>
@@ -615,7 +623,13 @@ document.write(`
 <div class="viewcode-block" id="BaseCxxNetwork.compose_jacobian">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.base_cxx_network.BaseCxxNetwork.compose_jacobian">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compose_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the Jacobian matrix, df/dY&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the Jacobian matrix, df/dY, where f is a dY/dt and Y</span>
+<span class="sd">        is a molar fraction</span>
+
+<span class="sd">        The Jacobian is stored as a list with each entry representing</span>
+<span class="sd">        a Jacobian element.  We also store whether the entry is null.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">jac_null</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">jac_sym</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">nj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>

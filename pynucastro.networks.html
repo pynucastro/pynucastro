@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks package &#8212; pynucastro 2.5.0.post29+g3bf305a5 documentation</title>
+    <title>pynucastro.networks package &#8212; pynucastro 2.5.0.post30+g6b69498d documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=62346714"></script>
+    <script src="_static/documentation_options.js?v=4fe4ee69"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -705,37 +705,45 @@ comprised of the rates that are passed in.</p>
 <dt class="sig sig-object py" id="pynucastro.networks.base_cxx_network.BaseCxxNetwork">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.networks.base_cxx_network.</span></span><span class="sig-name descname"><span class="pre">BaseCxxNetwork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_cxx_network.html#BaseCxxNetwork"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.base_cxx_network.BaseCxxNetwork" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a>, <a class="reference internal" href="#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">RateCollection</span></code></a></p>
-<p>Initialize the C++ network.  This takes the same arguments as
-<cite>RateCollection</cite> and interprets the collection of rates
-and nuclei and produce the C++ code needed to integrate the
-network.</p>
+<p>Base class for a C++ network.  This takes the same arguments as
+<a class="reference internal" href="#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">RateCollection</span></code></a> and
+interprets the collection of rates and nuclei to produce the C++
+code needed to integrate the network.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.base_cxx_network.BaseCxxNetwork.compose_jacobian">
 <span class="sig-name descname"><span class="pre">compose_jacobian</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_cxx_network.html#BaseCxxNetwork.compose_jacobian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.base_cxx_network.BaseCxxNetwork.compose_jacobian" title="Link to this definition">#</a></dt>
-<dd><p>Create the Jacobian matrix, df/dY</p>
+<dd><p>Create the Jacobian matrix, df/dY, where f is a dY/dt and Y
+is a molar fraction</p>
+<p>The Jacobian is stored as a list with each entry representing
+a Jacobian element.  We also store whether the entry is null.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.base_cxx_network.BaseCxxNetwork.compose_ydot">
 <span class="sig-name descname"><span class="pre">compose_ydot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_cxx_network.html#BaseCxxNetwork.compose_ydot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.base_cxx_network.BaseCxxNetwork.compose_ydot" title="Link to this definition">#</a></dt>
-<dd><p>create the expressions for dYdt for the nuclei, where Y is the
-molar fraction.</p>
-<p>This will take the form of a dict, where the key is a nucleus, and the
-value is a list of tuples, with the forward-reverse pairs of a rate</p>
+<dd><p>Create the expressions for dY/dt for each nucleus, where Y
+is the molar fraction.</p>
+<p>This stores the result in a dict where the key is a
+<a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><code class="xref py py-class docutils literal notranslate"><span class="pre">Nucleus</span></code></a>, and
+the value is a list of tuples, with the forward-reverse pairs
+of a rate</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.base_cxx_network.BaseCxxNetwork.get_indent_amt">
 <span class="sig-name descname"><span class="pre">get_indent_amt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_cxx_network.html#BaseCxxNetwork.get_indent_amt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.base_cxx_network.BaseCxxNetwork.get_indent_amt" title="Link to this definition">#</a></dt>
-<dd><p>Determine the amount of spaces to indent a line.  This looks
-for a string of the form “&lt;key&gt;(#)”, where # is the a number that
-is the amount of indent.</p>
+<dd><p>Determine the amount of spaces to indent a line.  This
+looks for a string of the form “&lt;key&gt;(#)”, where # is the a
+number that is the amount of indent.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>l</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – a line</p></li>
+<li><p><strong>l</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – a line from a template file to check for an indent</p></li>
 <li><p><strong>k</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – a keyword of the form “&lt;key&gt;” that appears in the line</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
