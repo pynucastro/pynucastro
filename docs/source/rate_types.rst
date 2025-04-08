@@ -62,8 +62,10 @@ The ReacLib database lists the source / reference of each rate with a 6 characte
 * The first 4 characters are the label that gives the source of the rate, according to:
   https://reaclib.jinaweb.org/labels.php
 
-  This is stored in both ``SingleSet`` and ``ReacLibRate`` as the
-  ``.label`` attribute.
+  This is stored in both :py:class:`SingleSet
+  <pynucastro.rates.reaclib_rate.SingleSet>` and
+  :py:class:`ReacLibRate <pynucastro.rates.reaclib_rate.ReacLibRate>`
+  as the ``.label`` attribute.
 
 * The next character is ``n`` for a non-resonant set, ``r`` for a
   resonance, or ``w`` to indicate that it is a weak rate.
@@ -81,10 +83,16 @@ The ReacLib database lists the source / reference of each rate with a 6 characte
   If the weak flag, ``w`` is set, then ``ReacLibRate.weak`` will be ``True``.
 
 * The 6th character indicates it the rate is a derived reverse rate,
-  by the presence of a `v`.  Note that this is not necessarily a
-  reverse rate ($Q < 0$), so in pynucastro, we call it "derived from
-  inverse".  This is stored in both ``SingleSet`` and ``ReacLibRate``
-  as the ``.derived_from_inverse`` attribute.
+  by the presence of a `v`.
+
+  This is stored in both :py:class:`SingleSet <pynucastro.rates.reaclib_rate.SingleSet>`
+  and :py:class:`ReacLibRate <pynucastro.rates.reaclib_rate.ReacLibRate>` as the
+  ``.derived_from_inverse`` attribute.
+
+  .. note::
+
+     This is not necessarily a reverse rate ($Q < 0$), so in
+     pynucastro, we call it "derived from inverse".  
 
 
 Weak rates
