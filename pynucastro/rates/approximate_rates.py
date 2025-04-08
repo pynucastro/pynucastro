@@ -313,10 +313,8 @@ class ApproximateRate(Rate):
             the temperature to evaluate the rate at
         rho : float
             the density to evaluate the rate at
-        comp : float
-            the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
-            to evaluate the rate with.
+        comp : Composition
+            the composition to evaluate the rate with
 
         Returns
         -------
