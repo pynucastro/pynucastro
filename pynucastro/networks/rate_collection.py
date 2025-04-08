@@ -850,13 +850,12 @@ class RateCollection:
         return self.rates
 
     def get_rate(self, rid):
-        """Return a rate matching the id provided.  Here rid should be
-        the string return by Rate.fname
+        """Return a rate matching the id provided.
 
         Parameters
         ----------
         rid : str
-            The id of the rate
+            The id of the rate, as returned by Rate.fname
 
         Returns
         -------
