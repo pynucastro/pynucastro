@@ -35,6 +35,7 @@ mpl.rcParams['figure.dpi'] = 100
 # the tuple is (dZ, dN)
 RATE_LINES = {r"$(\alpha, p)$": (1, 2),
               r"$(\alpha, \gamma)$": (2, 2),
+              r"$(\alpha, n)$": (2, 1),
               r"$(p, \gamma)$": (1, 0),
               r"$(n, \gamma)$": (0, 1),
               r"$\beta^-$": (1, -1),
@@ -2097,7 +2098,7 @@ class RateCollection:
                     ax.arrow(legend_coord[0], legend_coord[1],
                              dZ, dN-dZ, width=0.04,
                              length_includes_head=True)
-                    ax.text(legend_coord[0]+dZ+eps, legend_coord[1]+dN-dZ+eps,
+                    ax.text(legend_coord[0]+dZ+eps, legend_coord[1]+dN-dZ+np.sign(dN-dZ)*eps,
                             label, fontsize="small")
                 else:
                     ax.arrow(legend_coord[1], legend_coord[0],
