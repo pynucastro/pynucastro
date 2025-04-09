@@ -84,7 +84,7 @@ nbsphinx_timeout = 1000
 # myst-nb control of notebooks
 nb_execution_timeout = 500
 nb_execution_allow_errors = True
-
+myst_enable_extensions = ["dollarmath"]
 
 
 # The suffix(es) of source filenames.
