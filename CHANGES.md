@@ -2,12 +2,17 @@
 
 ## 2.6.0
 
+  * Clean up `Library` (#932)
+
+  * Fix the binding energy notebook example -- we don't want to show
+    negative binding energies (#939)
+
   * `TabularLibrary()` now takes a keyword argument `ordering` that
     can specify which sources to use and the order to read
     them. (#922)
 
-  * Docstring updates (#892, #899, #926, #927, #928) and more API coverage
-    (#929)
+  * Docstring updates (#892, #899, #926, #927, #928, #934) and more
+    API coverage (#929)
 
   * New codespell github action (#930)
 
