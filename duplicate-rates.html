@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Dealing with Duplicate Rates &#8212; pynucastro 2.5.0.post32+g259df967 documentation</title>
+    <title>Dealing with Duplicate Rates &#8212; pynucastro 2.5.0.post33+g491b68e0 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=6e8a57e2"></script>
+    <script src="_static/documentation_options.js?v=78839cce"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -502,7 +502,7 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="dealing-with-duplicate-rates">
+  <section class="tex2jax_ignore mathjax_ignore" id="dealing-with-duplicate-rates">
 <h1>Dealing with Duplicate Rates<a class="headerlink" href="#dealing-with-duplicate-rates" title="Link to this heading">#</a></h1>
 <p>Sometimes we combine multiple sources of rates into a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> or network, and we run the risk of
 having the same rate sequence duplicated, even though the rate itself may be different (i.e., a different
@@ -623,12 +623,10 @@ For the tabular rates, we take the approach that the sequences:</p>
 <p>The first duplicate is neutron decay.  ReacLib simply has the decay constant, with no density or temperature
 dependence.  The tabulated rate in this case comes from the Langanke paper and is accurate at high densities / temperatures when degeneracy effects are important.</p>
 <p>For the second rate, note that in the <code class="docutils literal notranslate"><span class="pre">TabularRate</span></code> we combine the rates:</p>
-<p><div class="math notranslate nohighlight">
+<div class="math notranslate nohighlight">
 \[(Z, A) \rightarrow (Z -1, A) + e^+ + \nu_e\]</div>
-</p>
-<p><div class="math notranslate nohighlight">
+<div class="math notranslate nohighlight">
 \[(Z, A) + e^- \rightarrow (Z - 1, A) + \bar{\nu}_e\]</div>
-</p>
 <p>into a single effective rate.  This means that our <code class="docutils literal notranslate"><span class="pre">TabularRate</span></code> version
 of the <span class="math notranslate nohighlight">\({}^{23}\mathrm{Mg}\)</span> decay will contain both the <span class="math notranslate nohighlight">\(\beta+\)</span> decay and electron capture.  Furthermore, the tabular rates have both the density and temperature dependence, and thus should be preferred to the <code class="docutils literal notranslate"><span class="pre">ReacLibRates</span></code> when we have a duplicate.</p>
 <p>Here we loop over the duplicates and store the rates (the ReacLib versions) that we wish to <em>remove</em> in a list</p>

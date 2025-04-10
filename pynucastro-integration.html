@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Integrating a Network &#8212; pynucastro 2.5.0.post32+g259df967 documentation</title>
+    <title>Integrating a Network &#8212; pynucastro 2.5.0.post33+g491b68e0 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=6e8a57e2"></script>
+    <script src="_static/documentation_options.js?v=78839cce"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -516,7 +516,7 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="integrating-a-network">
+  <section class="tex2jax_ignore mathjax_ignore" id="integrating-a-network">
 <h1>Integrating a Network<a class="headerlink" href="#integrating-a-network" title="Link to this heading">#</a></h1>
 <p>This notebook illustrates how to create a python network and integrate
 it with the scipy library.</p>
@@ -1243,9 +1243,8 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 <h2>Energy release<a class="headerlink" href="#energy-release" title="Link to this heading">#</a></h2>
 <p>We can get the energy release from the change in molar abundances, <span class="math notranslate nohighlight">\(\Delta Y\)</span>.
 This will be computed as:</p>
-<p><div class="math notranslate nohighlight">
+<div class="math notranslate nohighlight">
 \[\Delta E = -N_A \sum_i \Delta Y_i M_i\]</div>
-</p>
 <p>Here <span class="math notranslate nohighlight">\(M_i\)</span> is the mass of the nucleus <span class="math notranslate nohighlight">\(i\)</span> (this is tabulated in
 the network as <code class="docutils literal notranslate"><span class="pre">mass[]</span></code>).</p>
 <div class="cell docutils container">
@@ -1263,9 +1262,8 @@ the network as <code class="docutils literal notranslate"><span class="pre">mass
 </div>
 <p>This result is in erg/g</p>
 <p>We can compute the instantaneous energy generation rate as well,</p>
-<p><div class="math notranslate nohighlight">
+<div class="math notranslate nohighlight">
 \[\epsilon = -N_A \sum_i \frac{dY_i}{dt} M_i\]</div>
-</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">cno</span><span class="o">.</span><span class="n">energy_release</span><span class="p">(</span><span class="n">cno</span><span class="o">.</span><span class="n">rhs</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">))</span>

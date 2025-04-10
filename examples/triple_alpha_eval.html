@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Computing the Screened Triple-alpha rate &#8212; pynucastro 2.5.0.post32+g259df967 documentation</title>
+    <title>Computing the Screened Triple-alpha rate &#8212; pynucastro 2.5.0.post33+g491b68e0 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../_static/documentation_options.js?v=6e8a57e2"></script>
+    <script src="../_static/documentation_options.js?v=78839cce"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,7 +513,7 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="computing-the-screened-triple-alpha-rate">
+  <section class="tex2jax_ignore mathjax_ignore" id="computing-the-screened-triple-alpha-rate">
 <h1>Computing the Screened Triple-alpha rate<a class="headerlink" href="#computing-the-screened-triple-alpha-rate" title="Link to this heading">#</a></h1>
 <p>We want to evaluate the 3-<span class="math notranslate nohighlight">\(\alpha\)</span> rate with screening to understand how temperature sensitive it is.
 We’ll do this 2 different ways (but both will get the same answer).</p>
@@ -610,9 +610,8 @@ We’ll do this 2 different ways (but both will get the same answer).</p>
 </div>
 <p>This shows that our our thermodynamic conditions, screening speeds up the rate by almost <span class="math notranslate nohighlight">\(6\times\)</span>.</p>
 <p>Now, the total rate is:</p>
-<p><div class="math notranslate nohighlight">
+<div class="math notranslate nohighlight">
 \[r = f \rho^2 [Y({}^4\mathrm{He})]^3 \frac{N_A^2 \langle \sigma v \rangle}{3!}\]</div>
-</p>
 <p>where <span class="math notranslate nohighlight">\(f\)</span> is the screening factor and the <span class="math notranslate nohighlight">\(3!\)</span> is because there are 3 identical particles appearing in the reation.</p>
 <p>We get <span class="math notranslate nohighlight">\(N_A^2 \langle \sigma v \rangle\)</span> by evaluating the temperature sensitivity of the rate from ReacLib.</p>
 <div class="cell docutils container">

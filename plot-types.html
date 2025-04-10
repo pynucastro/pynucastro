@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Plotting Examples &#8212; pynucastro 2.5.0.post32+g259df967 documentation</title>
+    <title>Plotting Examples &#8212; pynucastro 2.5.0.post33+g491b68e0 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=6e8a57e2"></script>
+    <script src="_static/documentation_options.js?v=78839cce"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -521,7 +521,7 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="plotting-examples">
+  <section class="tex2jax_ignore mathjax_ignore" id="plotting-examples">
 <h1>Plotting Examples<a class="headerlink" href="#plotting-examples" title="Link to this heading">#</a></h1>
 <p>There are a variety of methods that can be used to visualize a network, which we demonstrate below.  For most plots, <a class="reference external" href="https://networkx.org/">NetworkX</a> is used to create the structure of the network and <a class="reference external" href="https://matplotlib.org/">matplotlib</a> manages the drawing.</p>
 <div class="admonition tip">
@@ -702,14 +702,14 @@ document.write(`
 <section id="plotting-the-jacobian">
 <h2>Plotting the Jacobian<a class="headerlink" href="#plotting-the-jacobian" title="Link to this heading">#</a></h2>
 <p>For implicit integration, we solve:</p>
-<p><div class="math notranslate nohighlight">
+<div class="math notranslate nohighlight">
 \[\dot{\bf Y} = {\bf f}({\bf Y})\]</div>
-</p>
 <p>and the Jacobian, <span class="math notranslate nohighlight">\({\bf J} = \partial {\bf f} / \partial {\bf Y}\)</span> plays an important role
 in solving for the update.</p>
 <p>We can visualize the Jacobian of our network easily.  By default, we will show all elements
 where</p>
-<p>$$\frac{\mathrm{max}<em>{i,j} (|J</em>{ij}|)}{|J_{ij}|} &gt; 10^{10}$$</p>
+<div class="math notranslate nohighlight">
+\[\frac{\mathrm{max}_{i,j} (|J_{ij}|)}{|J_{ij}|} &gt; 10^{10}\]</div>
 <p>but this ratio can be set via the <code class="docutils literal notranslate"><span class="pre">rate_scaling</span></code> keyword argument.</p>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
