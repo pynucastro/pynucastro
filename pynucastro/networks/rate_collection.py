@@ -835,6 +835,17 @@ class RateCollection:
         """ get a list of the reaction rates in this network"""
         return self.rates
 
+    def get_hidden_rates(self):
+        """Get a list of all of the rates approximated out of the network"""
+        hidden_rates = []
+        for r in self.get_rates():
+            if isinstance(r, ApproximateRate):
+                for c in r.get_child_rates():
+                    if c.removed:
+                        hidden_rates.append(c)
+
+        return set(hidden_rates)
+
     def get_rate(self, rid):
         """ Return a rate matching the id provided.  Here rid should be
         the string return by Rate.fname"""
