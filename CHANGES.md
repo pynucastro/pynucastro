@@ -27,7 +27,8 @@
   * Added the ability to show a legend on a `RateCollection` network
     plot (#817)
 
-  * Documentation updates (#901, #902, #907, #913, #919, #920)
+  * Documentation updates (#901, #902, #907, #913, #919, #920) and
+    fixes (#941)
 
   * `PythonNetwork` now pairs the forward and reverse rates when
     summing the ydot term, mirroring what we do in C++ (#784)
