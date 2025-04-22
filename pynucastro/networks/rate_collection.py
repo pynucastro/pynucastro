@@ -1844,6 +1844,7 @@ class RateCollection:
              size=(800, 600), dpi=100, title=None,
              ydot_cutoff_value=None, show_small_ydot=False,
              node_size=1000, node_font_size=12, node_color="#444444", node_shape="o",
+             nuclei_custom_labels=None,
              curved_edges=False,
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False,
@@ -1886,6 +1887,10 @@ class RateCollection:
             color to make the nodes
         node_shape : str
             shape of the node (using matplotlib marker names)
+        nuclei_custom_labels : dict
+            a dict of the form {Nucleus: str} that provides alternate
+            labels for nodes (instead of using the `pretty` attribute
+            of the Nucleus.
         curved_edges : bool
             do we use arcs to connect the nodes?
         N_range : (tuple, list)
@@ -1945,6 +1950,9 @@ class RateCollection:
         if not always_show_alpha:
             hidden_nuclei.append("he4")
 
+        if nuclei_custom_labels is None:
+            nuclei_custom_labels = {}
+
         # nodes -- the node nuclei will be all of the heavies
         # add all the nuclei into G.node
         node_nuclei = []
@@ -1981,7 +1989,10 @@ class RateCollection:
                 G.position[n] = (n.Z, n.A - 2*n.Z)
             else:
                 G.position[n] = (n.N, n.Z)
-            G.labels[n] = fr"${n.pretty}$"
+            if n in nuclei_custom_labels:
+                G.labels[n] = nuclei_custom_labels[n]
+            else:
+                G.labels[n] = fr"${n.pretty}$"
 
         # get the rates for each reaction
         if rho is not None and T is not None and comp is not None:
