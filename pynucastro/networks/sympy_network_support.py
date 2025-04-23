@@ -31,9 +31,21 @@ class SympyRates:
         self.float_explicit_num_digits = 17
 
     def ydot_term_symbol(self, rate, y_i):
-        """
-        return a sympy expression containing this rate's contribution to
-        the ydot term for nuclide y_i.
+        """Construct a sympy expression containing this rate's
+        contribution to the ydot term for nuclide y_i.
+
+        Parameters
+        ----------
+        rate : Rate
+            the reaction rate we are working with
+        y_i : Nucleus
+            the nucleus for which we want to construct the
+            dY/dt term corresponding to ``rate``.
+
+        Returns
+        -------
+        sympy object
+
         """
         key = (rate.cname(), y_i)
         if key in self._ydot_term_cache:
