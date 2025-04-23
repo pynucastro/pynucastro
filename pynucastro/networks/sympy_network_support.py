@@ -48,7 +48,18 @@ class SympyRates:
             ydot_sym = float(sympy.sympify(0.0))
         else:
             # y_i appears as a product or reactant
-            ydot_sym = (c_prod - c_reac) * srate
+            if rate.stoichiometry:
+                # custom stoichiometry is not supported when
+                # the same nucleus appears on both the left
+                # and right side of the reaction
+                assert c_reac == 0 or c_prod == 0
+                if c_reac > 0:
+                    c = -rate.stoichiometry[y_i]
+                else:
+                    c = rate.stoichiometry[y_i]
+            else:
+                c = c_prod - c_reac
+            ydot_sym = c * srate
         result = ydot_sym.evalf(n=self.float_explicit_num_digits)
         self._ydot_term_cache[key] = result
         return result
