@@ -244,9 +244,14 @@ class Rate:
                     rhs_other.append("nubar")
 
         for n, r in enumerate(treactants):
-            self.string += f"{r.c()}"
-            self.rid += f"{r}"
-            self.pretty_string += fr"{r.pretty}"
+            factor = ""
+            if self.stoichiometry:
+                c = self.stoichiometry[r]
+                if c != 1:
+                    factor = f"{c} "
+            self.string += f"{factor}{r.c()}"
+            self.rid += f"{factor}{r}"
+            self.pretty_string += fr"{factor}{r.pretty}"
             if not n == len(self.reactants)-1:
                 self.string += " + "
                 self.rid += " + "
@@ -262,9 +267,14 @@ class Rate:
         self.pretty_string += r" \rightarrow "
 
         for n, p in enumerate(self.products):
-            self.string += f"{p.c()}"
-            self.rid += f"{p}"
-            self.pretty_string += fr"{p.pretty}"
+            factor = ""
+            if self.stoichiometry:
+                c = self.stoichiometry[p]
+                if c != 1:
+                    factor = f"{c} "
+            self.string += f"{factor}{p.c()}"
+            self.rid += f"{factor}{p}"
+            self.pretty_string += fr"{factor}{p.pretty}"
             if not n == len(self.products)-1:
                 self.string += " + "
                 self.rid += " + "
