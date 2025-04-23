@@ -2,6 +2,10 @@
 
 ## 2.6.0
 
+  * Added a new network method, `get_hidden_rates()` that returns the
+    rates that are not explicitly linked in the network but instead
+    are used internally by `ApproximateRate` rates. (#943)
+
   * Clean up `Library` (#932)
 
   * Fix the binding energy notebook example -- we don't want to show
@@ -11,8 +15,8 @@
     can specify which sources to use and the order to read
     them. (#922)
 
-  * Docstring updates (#892, #899, #926, #927, #928, #934) and more
-    API coverage (#929)
+  * Docstring updates (#892, #899, #926, #927, #928, #934, #935) and
+    more API coverage (#929)
 
   * New codespell github action (#930)
 
