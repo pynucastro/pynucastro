@@ -104,6 +104,10 @@ class Rate:
         self.rate_eval_needs_rho = False
         self.rate_eval_needs_comp = False
 
+        # some subclasses might define a stoichmetry as a dict{Nucleus}
+        # that gives the numbers for the dY/dt equations
+        self.stoichiometry = None
+
     def __repr__(self):
         return self.string
 
@@ -413,13 +417,17 @@ class Rate:
 
     def ydot_string_py(self):
         """
-        Return a string containing the term in a dY/dt equation
+        Construct the string containing the term in a dY/dt equation
         in a reaction network corresponding to this rate.
+
+        Returns
+        -------
+        str
         """
 
         ydot_string_components = []
 
-        # prefactor
+        # prefactor (for double counting)
         if self.prefactor != 1.0:
             ydot_string_components.append(f"{self.prefactor:1.14e}")
 

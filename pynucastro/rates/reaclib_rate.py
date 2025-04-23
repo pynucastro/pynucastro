@@ -267,6 +267,10 @@ class ReacLibRate(Rate):
         self._set_screening()
         self._set_print_representation()
 
+        # some subclasses might define a stoichmetry as a dict{Nucleus}
+        # that gives the numbers for the dY/dt equations
+        self.stoichiometry = None
+
     def _set_print_representation(self):
         """ compose the string representations of this Rate. """
 
