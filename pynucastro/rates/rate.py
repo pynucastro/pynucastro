@@ -93,6 +93,10 @@ class Rate:
         # disable it.
         self.use_identical_particle_factor = use_identical_particle_factor
 
+        # some subclasses might define a stoichmetry as a dict{Nucleus}
+        # that gives the numbers for the dY/dt equations
+        self.stoichiometry = None
+
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
@@ -103,10 +107,6 @@ class Rate:
 
         self.rate_eval_needs_rho = False
         self.rate_eval_needs_comp = False
-
-        # some subclasses might define a stoichmetry as a dict{Nucleus}
-        # that gives the numbers for the dY/dt equations
-        self.stoichiometry = None
 
     def __repr__(self):
         return self.string
