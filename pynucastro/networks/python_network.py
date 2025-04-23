@@ -70,8 +70,6 @@ class PythonNetwork(RateCollection):
                         else:
                             c = rate.stoichiometry[nucleus]
                     else:
-                        c_reac = rate.reactants.count(nucleus)
-                        c_prod = rate.products.count(nucleus)
                         c = c_prod - c_reac
                     if c == 1:
                         ostr += f"+{rate.ydot_string_py()} "
