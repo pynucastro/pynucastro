@@ -271,7 +271,6 @@ class ReacLibRate(Rate):
         self._set_screening()
         self._set_print_representation()
 
-
     def _set_print_representation(self):
         """ compose the string representations of this Rate. """
 
