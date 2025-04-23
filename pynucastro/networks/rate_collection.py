@@ -850,7 +850,14 @@ class RateCollection:
         return self.rates
 
     def get_hidden_rates(self):
-        """Get a list of all of the rates approximated out of the network"""
+        """Get a list of all of the rates approximated out of the
+        network
+
+        Returns
+        -------
+        list(Rate)
+
+        """
         hidden_rates = []
         for r in self.get_rates():
             if isinstance(r, ApproximateRate):
