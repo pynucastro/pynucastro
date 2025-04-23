@@ -44,7 +44,7 @@ class SympyRates:
 
         Returns
         -------
-        sympy object
+        sympy.core.mul.Mul
 
         """
         key = (rate.cname(), y_i)
