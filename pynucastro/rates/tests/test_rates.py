@@ -252,7 +252,7 @@ class TestRate:
         c12ag.stoichiometry = {Nucleus("he4"): 1.5,
                                Nucleus("c12"): 1,
                                Nucleus("o16"): 1}
-        c12ag._set_print_representation()
+        c12ag._set_print_representation()  # pylint: disable=protected-access
 
         assert repr(c12ag) == "C12 + 1.5 He4 ⟶ O16 + 𝛾"
         assert c12ag.rid == "C12 + 1.5 He4 --> O16"
