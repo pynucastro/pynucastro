@@ -71,7 +71,7 @@ def p_C13__N14(rate_eval, tf):
         ostr2 = """
 @numba.njit()
 def p_p_He4__He3_He3(rate_eval, tf):
-    # p + p + He4 --> He3 + He3
+    # 2 p + He4 --> 2 He3
     rate = 0.0
 
     # nacrn
@@ -84,7 +84,7 @@ def p_p_He4__He3_He3(rate_eval, tf):
         ostr3 = """
 @numba.njit()
 def n_p_He4_He4__He3_Li7(rate_eval, tf):
-    # n + p + He4 + He4 --> He3 + Li7
+    # n + p + 2 He4 --> He3 + Li7
     rate = 0.0
 
     # mafon
@@ -97,7 +97,7 @@ def n_p_He4_He4__He3_Li7(rate_eval, tf):
         ostr4 = """
 @numba.njit()
 def p_p__d__weak__electron_capture(rate_eval, tf):
-    # p + p --> d
+    # 2 p --> d
     rate = 0.0
 
     # bet+w

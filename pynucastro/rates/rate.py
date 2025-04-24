@@ -243,16 +243,17 @@ class Rate:
                     rhs_other.append("e-")
                     rhs_other.append("nubar")
 
-        for n, r in enumerate(treactants):
+        # this produces a sorted list with no dupes
+        react_set = list(dict.fromkeys(treactants))
+        for n, r in enumerate(react_set):
             factor = ""
-            if self.stoichiometry:
-                c = self.stoichiometry[r]
-                if c != 1:
-                    factor = f"{c} "
+            c = self.reactant_count(r)
+            if c != 1:
+                factor = f"{c} "
             self.string += f"{factor}{r.c()}"
             self.rid += f"{factor}{r}"
             self.pretty_string += fr"{factor}{r.pretty}"
-            if not n == len(self.reactants)-1:
+            if not n == len(react_set)-1:
                 self.string += " + "
                 self.rid += " + "
                 self.pretty_string += r" + "
@@ -266,16 +267,16 @@ class Rate:
         self.rid += " --> "
         self.pretty_string += r" \rightarrow "
 
-        for n, p in enumerate(self.products):
+        prod_set = list(dict.fromkeys(self.products))
+        for n, p in enumerate(prod_set):
             factor = ""
-            if self.stoichiometry:
-                c = self.stoichiometry[p]
-                if c != 1:
-                    factor = f"{c} "
+            c = self.product_count(p)
+            if c != 1:
+                factor = f"{c} "
             self.string += f"{factor}{p.c()}"
             self.rid += f"{factor}{p}"
             self.pretty_string += fr"{factor}{p.pretty}"
-            if not n == len(self.products)-1:
+            if not n == len(prod_set)-1:
                 self.string += " + "
                 self.rid += " + "
                 self.pretty_string += r" + "

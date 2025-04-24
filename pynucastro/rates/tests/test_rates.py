@@ -275,6 +275,21 @@ class TestRate:
 
         assert c12ag.reactant_count(Nucleus("he4")) == 1.5
 
+    def test_stoichiometry_3alpha(self, reaclib_library):
+
+        three_alpha = reaclib_library.get_rate_by_name("he4(aa,g)c12")
+        assert repr(three_alpha) == "3 He4 ⟶ C12 + 𝛾"
+        assert three_alpha.rid == "3 He4 --> C12"
+
+        three_alpha.stoichiometry = {Nucleus("he4"): 4,
+                                     Nucleus("c12"): 1}
+        three_alpha._set_print_representation()  # pylint: disable=protected-access
+
+        assert repr(three_alpha) == "4 He4 ⟶ C12 + 𝛾"
+        assert three_alpha.rid == "4 He4 --> C12"
+
+        assert three_alpha.reactant_count(Nucleus("he4")) == 4
+
 
 class TestDerivedRate:
 
@@ -288,8 +303,8 @@ class TestDerivedRate:
         reaction type.
         """
 
-        a_a_ag_c12 = reaclib_library.get_rate('he4 + he4 + he4 --> c12 <fy05_reaclib__>')
-        c12_ga_a_a_reaclib = reaclib_library.get_rate('c12 --> he4 + he4 + he4 <fy05_reaclib__reverse>')
+        a_a_ag_c12 = reaclib_library.get_rate_by_name("he4(aa,g)c12")
+        c12_ga_a_a_reaclib = reaclib_library.get_rate_by_name("c12(g,aa)he4")
         c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=False, use_pf=False)
 
         assert c12_ga_a_a_reaclib.eval(T=2.0e9) == approx(c12_ga_a_a_derived.eval(T=2.0e9), rel=2e-4)
@@ -300,7 +315,7 @@ class TestDerivedRate:
         functions on the range 1.0e9 to 100.0e9
         """
 
-        a_a_ag_c12 = reaclib_library.get_rate('he4 + he4 + he4 --> c12 <fy05_reaclib__>')
+        a_a_ag_c12 = reaclib_library.get_rate_by_name("he4(aa,g)c12")
         c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=False, use_pf=True)
 
         with pytest.warns(UserWarning, match="C12 partition function is not supported by tables"):
@@ -314,7 +329,7 @@ class TestDerivedRate:
         of the reaction rate.
         """
 
-        a_a_ag_c12 = reaclib_library.get_rate('he4 + he4 + he4 --> c12 <fy05_reaclib__>')
+        a_a_ag_c12 = reaclib_library.get_rate_by_name("he4(aa,g)c12")
         c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=True, use_pf=False)
 
         assert c12_ga_a_a_derived.eval(T=2.0e9) == approx(2.899642192191721e-07)

@@ -27,7 +27,7 @@ template <int do_T_derivatives>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void rate_C12_C12_to_He4_Ne20(const tf_t& tfactors, amrex::Real& rate, amrex::Real& drate_dT) {
 
-    // C12 + C12 --> He4 + Ne20
+    // 2 C12 --> He4 + Ne20
 
     rate = 0.0;
     drate_dT = 0.0;
@@ -59,7 +59,7 @@ template <int do_T_derivatives>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void rate_C12_C12_to_n_Mg23(const tf_t& tfactors, amrex::Real& rate, amrex::Real& drate_dT) {
 
-    // C12 + C12 --> n + Mg23
+    // 2 C12 --> n + Mg23
 
     rate = 0.0;
     drate_dT = 0.0;
@@ -91,7 +91,7 @@ template <int do_T_derivatives>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void rate_C12_C12_to_p_Na23(const tf_t& tfactors, amrex::Real& rate, amrex::Real& drate_dT) {
 
-    // C12 + C12 --> p + Na23
+    // 2 C12 --> p + Na23
 
     rate = 0.0;
     drate_dT = 0.0;
