@@ -182,6 +182,22 @@ class TestRate:
         assert self.rate9.products[1] == self.he3
         assert len(self.rate9.products) == 2
 
+    def test_count(self):
+        assert self.rate3.reactant_count(Nucleus("he6")) == 1
+        assert self.rate3.product_count(Nucleus("he6")) == 0
+
+        assert self.rate5.reactant_count(Nucleus("n15")) == 1
+        assert self.rate5.reactant_count(Nucleus("p")) == 1
+        assert self.rate5.reactant_count(Nucleus("a")) == 0
+        assert self.rate5.reactant_count(Nucleus("c12")) == 0
+
+        assert self.rate5.product_count(Nucleus("n15")) == 0
+        assert self.rate5.product_count(Nucleus("p")) == 0
+        assert self.rate5.product_count(Nucleus("a")) == 1
+        assert self.rate5.product_count(Nucleus("c12")) == 1
+
+        assert self.rate8.reactant_count(Nucleus("a")) == 3
+
     def test_prefactor(self):
         assert self.rate4.prefactor == 1.0
         assert self.rate8.prefactor == approx(0.16666666)
