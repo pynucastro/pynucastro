@@ -273,6 +273,7 @@ class TestRate:
         assert repr(c12ag) == "C12 + 1.5 He4 ⟶ O16 + 𝛾"
         assert c12ag.rid == "C12 + 1.5 He4 --> O16"
 
+        assert c12ag.reactant_count(Nucleus("he4")) == 1.5
 
 class TestDerivedRate:
 
