@@ -244,6 +244,19 @@ class TestRate:
 
         assert self.rate8.prefactor == 1.0
 
+    def test_stoichiometry(self, reaclib_library):
+        assert repr(self.rate4) == "C12 + He4 ⟶ O16 + 𝛾"
+
+        # create a separate version since rates are mutable
+        c12ag = reaclib_library.get_rate_by_name("c12(a,g)o16")
+        c12ag.stoichiometry = {Nucleus("he4"): 1.5,
+                               Nucleus("c12"): 1,
+                               Nucleus("o16"): 1}
+        c12ag._set_print_representation()
+
+        assert repr(c12ag) == "C12 + 1.5 He4 ⟶ O16 + 𝛾"
+        assert c12ag.rid == "C12 + 1.5 He4 --> O16"
+
 
 class TestDerivedRate:
 
