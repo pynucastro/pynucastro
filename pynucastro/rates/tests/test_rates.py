@@ -275,6 +275,7 @@ class TestRate:
 
         assert c12ag.reactant_count(Nucleus("he4")) == 1.5
 
+
 class TestDerivedRate:
 
     def a_a_ag_c12(self, reaclib_library):
