@@ -409,6 +409,48 @@ class Rate:
         self.fname = None    # reset so it will be updated
         self._set_print_representation()
 
+    def reactant_count(self, n):
+        """Return the number of times nucleus n appears as a reactant
+        in the rate.  Use the stoichiometry dict if present.
+
+        Parameters
+        ----------
+        n : Nucleus
+            the nucleus appearing as a reactant
+
+        Returns
+        -------
+        float
+
+        """
+
+        c_reac = self.reactants.count(n)
+
+        if self.stoichiometry and c_reac > 0:
+            return self.stoichiometry[n]
+        return c_reac
+
+    def product_count(self, n):
+        """Return the number of times nucleus n appears as a product
+        in the rate.  Use the stoichiometry dict if present.
+
+        Parameters
+        ----------
+        n : Nucleus
+            the nucleus appearing as a product
+
+        Returns
+        -------
+        float
+
+        """
+
+        c_prod = self.products.count(n)
+
+        if self.stoichiometry and c_prod > 0:
+            return self.stoichiometry[n]
+        return c_prod
+
     def modify_products(self, new_products):
         """
         change the products of the rate to new_products.  This will recompute

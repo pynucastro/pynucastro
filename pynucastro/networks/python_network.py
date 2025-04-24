@@ -58,19 +58,9 @@ class PythonNetwork(RateCollection):
                     ostr += "( "
 
                 for rate in rlist:
-                    c_reac = rate.reactants.count(nucleus)
-                    c_prod = rate.products.count(nucleus)
-                    if rate.stoichiometry:
-                        # custom stoichiometry is not supported when
-                        # the same nucleus appears on both the left
-                        # and right side of the reaction
-                        assert c_reac == 0 or c_prod == 0
-                        if c_reac > 0:
-                            c = -rate.stoichiometry[nucleus]
-                        else:
-                            c = rate.stoichiometry[nucleus]
-                    else:
-                        c = c_prod - c_reac
+                    c_reac = rate.reactant_count(nucleus)
+                    c_prod = rate.product_count(nucleus)
+                    c = c_prod - c_reac
                     if c == 1:
                         ostr += f"+{rate.ydot_string_py()} "
                     elif c == -1:

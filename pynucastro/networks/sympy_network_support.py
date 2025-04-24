@@ -53,24 +53,13 @@ class SympyRates:
         srate = self.specific_rate_symbol(rate)
 
         # Check if y_i is a reactant or product
-        c_reac = rate.reactants.count(y_i)
-        c_prod = rate.products.count(y_i)
+        c_reac = rate.reactant_count(y_i)
+        c_prod = rate.product_count(y_i)
         if c_reac == 0 and c_prod == 0:
             # The rate doesn't contribute to the ydot for this y_i
             ydot_sym = float(sympy.sympify(0.0))
         else:
-            # y_i appears as a product or reactant
-            if rate.stoichiometry:
-                # custom stoichiometry is not supported when
-                # the same nucleus appears on both the left
-                # and right side of the reaction
-                assert c_reac == 0 or c_prod == 0
-                if c_reac > 0:
-                    c = -rate.stoichiometry[y_i]
-                else:
-                    c = rate.stoichiometry[y_i]
-            else:
-                c = c_prod - c_reac
+            c = c_prod - c_reac
             ydot_sym = c * srate
         result = ydot_sym.evalf(n=self.float_explicit_num_digits)
         self._ydot_term_cache[key] = result
