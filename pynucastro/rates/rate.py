@@ -246,13 +246,19 @@ class Rate:
         # this produces a sorted list with no dupes
         react_set = list(dict.fromkeys(treactants))
         for n, r in enumerate(react_set):
-            factor = ""
             c = self.reactant_count(r)
-            if c != 1:
-                factor = f"{c} "
-            self.string += f"{factor}{r.c()}"
-            self.rid += f"{factor}{r}"
-            self.pretty_string += fr"{factor}{r.pretty}"
+            if c == 2:
+                # special case so we do C12 + C12 instead of 2 C12
+                self.string += f"{r.c()} + {r.c()}"
+                self.rid += f"{r} + {r}"
+                self.pretty_string += fr"{r.pretty} + {r.pretty}"
+            else:
+                factor = ""
+                if c != 1:
+                    factor = f"{c} "
+                self.string += f"{factor}{r.c()}"
+                self.rid += f"{factor}{r}"
+                self.pretty_string += fr"{factor}{r.pretty}"
             if not n == len(react_set)-1:
                 self.string += " + "
                 self.rid += " + "
@@ -269,13 +275,19 @@ class Rate:
 
         prod_set = list(dict.fromkeys(self.products))
         for n, p in enumerate(prod_set):
-            factor = ""
             c = self.product_count(p)
-            if c != 1:
-                factor = f"{c} "
-            self.string += f"{factor}{p.c()}"
-            self.rid += f"{factor}{p}"
-            self.pretty_string += fr"{factor}{p.pretty}"
+            if c == 2:
+                # special case for 2 species
+                self.string += f"{p.c()} + {p.c()}"
+                self.rid += f"{p} + {p}"
+                self.pretty_string += fr"{p.pretty} + {p.pretty}"
+            else:
+                factor = ""
+                if c != 1:
+                    factor = f"{c} "
+                self.string += f"{factor}{p.c()}"
+                self.rid += f"{factor}{p}"
+                self.pretty_string += fr"{factor}{p.pretty}"
             if not n == len(prod_set)-1:
                 self.string += " + "
                 self.rid += " + "

@@ -123,7 +123,7 @@ def ye(Y):
 
 @numba.njit()
 def C12_C12__He4_Ne20(rate_eval, tf):
-    # 2 C12 --> He4 + Ne20
+    # C12 + C12 --> He4 + Ne20
     rate = 0.0
 
     # cf88r
@@ -134,7 +134,7 @@ def C12_C12__He4_Ne20(rate_eval, tf):
 
 @numba.njit()
 def C12_C12__n_Mg23(rate_eval, tf):
-    # 2 C12 --> n + Mg23
+    # C12 + C12 --> n + Mg23
     rate = 0.0
 
     # cf88r
@@ -145,7 +145,7 @@ def C12_C12__n_Mg23(rate_eval, tf):
 
 @numba.njit()
 def C12_C12__p_Na23(rate_eval, tf):
-    # 2 C12 --> p + Na23
+    # C12 + C12 --> p + Na23
     rate = 0.0
 
     # cf88r
