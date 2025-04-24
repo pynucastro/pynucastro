@@ -59,8 +59,8 @@ class SympyRates:
             # The rate doesn't contribute to the ydot for this y_i
             ydot_sym = float(sympy.sympify(0.0))
         else:
-            c = c_prod - c_reac
-            ydot_sym = c * srate
+            # y_i appears as a product or reactant
+            ydot_sym = (c_prod - c_reac) * srate
         result = ydot_sym.evalf(n=self.float_explicit_num_digits)
         self._ydot_term_cache[key] = result
         return result
