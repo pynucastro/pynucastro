@@ -263,6 +263,40 @@ class Nucleus:
         name = i.abbreviation + str(A)
         return cls.from_cache(name, dummy)
 
+    def summary(self):
+        """print a summary of the nuclear properties"""
+
+        print(f"{self.caps_name} / {self.spec_name}:")
+        print(f"    A: {self.A}")
+        print(f"    N: {self.N}")
+        print(f"    Z: {self.Z}")
+
+        print("")
+        print(f"    mass: {self.mass:.5f} MeV")
+        print(f"    mass excess: {self.dm:.5f} MeV")
+        print(f"    binding energy: {self.nucbind:.5f} MeV")
+
+        print("")
+        if self.tau == "stable":
+            print(f"    half-life: {self.tau}")
+        else:
+            print(f"    half-life: {self.tau} s")
+
+        print("")
+        if self.partition_function:
+            print("    partition function: available")
+        else:
+            print("    partition function: not available")
+
+        if self.spin_states:
+            print(f"    spin states: {self.spin_states}")
+        else:
+            print("    spin states: not available")
+
+        print("")
+        print(f"    dummy: {self.dummy}")
+        print(f"    nse: {self.nse}")
+
     def __repr__(self):
         if self.raw not in ("p", "p_nse", "d", "t", "n"):
             return self.raw.capitalize()
