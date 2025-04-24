@@ -1,4 +1,5 @@
 import io
+
 import pytest
 
 import pynucastro as pyna
