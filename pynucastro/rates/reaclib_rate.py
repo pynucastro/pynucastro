@@ -247,6 +247,10 @@ class ReacLibRate(Rate):
         self.rate_eval_needs_rho = False
         self.rate_eval_needs_comp = False
 
+        # some subclasses might define a stoichmetry as a dict{Nucleus}
+        # that gives the numbers for the dY/dt equations
+        self.stoichiometry = None
+
         if isinstance(rfile, Path):
             # read in the file, parse the different sets and store them as
             # SingleSet objects in sets[]
