@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>A He-burning Network &#8212; pynucastro 2.5.0.post35+g6881c212 documentation</title>
+    <title>A He-burning Network &#8212; pynucastro 2.5.0.post36+g01bc278b documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=41fcb64d"></script>
+    <script src="_static/documentation_options.js?v=e5fbaeb3"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -609,7 +609,7 @@ reverse rates of <span class="math notranslate nohighlight">\({}^{12}\mathrm{C} 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>He4 + He4 + He4 ⟶ C12 + 𝛾      [Q =   7.28 MeV] (He4 + He4 + He4 --&gt; C12 &lt;fy05_reaclib__&gt;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3 He4 ⟶ C12 + 𝛾                [Q =   7.28 MeV] (3 He4 --&gt; C12 &lt;fy05_reaclib__&gt;)
 C12 + p ⟶ N13 + 𝛾              [Q =   1.94 MeV] (C12 + p --&gt; N13 &lt;ls09_reaclib__&gt;)
 C12 + He4 ⟶ O16 + 𝛾            [Q =   7.16 MeV] (C12 + He4 --&gt; O16 &lt;nac2_reaclib__&gt;)
 C12 + C12 ⟶ He4 + Ne20         [Q =   4.62 MeV] (C12 + C12 --&gt; He4 + Ne20 &lt;cf88_reaclib__&gt;)
@@ -660,7 +660,7 @@ Mn51 + He4 ⟶ Co55 + 𝛾          [Q =   8.21 MeV] (Mn51 + He4 --&gt; Co55 &lt
 Fe52 + He4 ⟶ p + Co55          [Q =   0.83 MeV] (Fe52 + He4 --&gt; p + Co55 &lt;ths8_reaclib__&gt;)
 Fe52 + He4 ⟶ Ni56 + 𝛾          [Q =   8.00 MeV] (Fe52 + He4 --&gt; Ni56 &lt;ths8_reaclib__&gt;)
 Co55 + p ⟶ Ni56 + 𝛾            [Q =   7.17 MeV] (Co55 + p --&gt; Ni56 &lt;ths8_reaclib__&gt;)
-C12 ⟶ He4 + He4 + He4          [Q =  -7.28 MeV] (C12 --&gt; He4 + He4 + He4 &lt;fy05_reaclib__reverse&gt;)
+C12 ⟶ 3 He4                    [Q =  -7.28 MeV] (C12 --&gt; 3 He4 &lt;fy05_reaclib__reverse&gt;)
 N13 ⟶ p + C12                  [Q =  -1.94 MeV] (N13 --&gt; p + C12 &lt;ls09_reaclib__reverse&gt;)
 O16 + p ⟶ He4 + N13            [Q =  -5.22 MeV] (O16 + p --&gt; He4 + N13 &lt;cf88_reaclib__reverse&gt;)
 O16 ⟶ He4 + C12                [Q =  -7.16 MeV] (O16 --&gt; He4 + C12 &lt;nac2_reaclib__reverse&gt;)
@@ -806,7 +806,7 @@ modifying Fe52 ⟶ He4 + Cr48 from Cr48 + He4 ⟶ Fe52 + 𝛾
 modifying Co55 ⟶ He4 + Mn51 from Mn51 + He4 ⟶ Co55 + 𝛾
 modifying Ni56 ⟶ p + Co55 from Co55 + p ⟶ Ni56 + 𝛾
 modifying Ni56 ⟶ He4 + Fe52 from Fe52 + He4 ⟶ Ni56 + 𝛾
-modifying C12 ⟶ He4 + He4 + He4 from He4 + He4 + He4 ⟶ C12 + 𝛾
+modifying C12 ⟶ 3 He4 from 3 He4 ⟶ C12 + 𝛾
 modifying O16 + p ⟶ He4 + N13 from N13 + He4 ⟶ p + O16
 modifying Ne20 + He4 ⟶ p + Na23 from Na23 + p ⟶ He4 + Ne20
 modifying Ne21 + p ⟶ He4 + F18 from F18 + He4 ⟶ p + Ne21
@@ -1056,7 +1056,7 @@ modifying p_Co56__n_Ni56__derived to use NSE protons
 <span class="n">fig</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="s2">&quot;subch_simple.png&quot;</span><span class="p">,</span>
                <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1500</span><span class="p">,</span> <span class="mi">450</span><span class="p">),</span>
-               <span class="n">node_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s2">&quot;#337dff&quot;</span><span class="p">,</span> <span class="n">node_shape</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">)</span>
+               <span class="n">node_size</span><span class="o">=</span><span class="mi">550</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1071,7 +1071,7 @@ modifying p_Co56__n_Ni56__derived to use NSE protons
   warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
 </pre></div>
 </div>
-<img alt="_images/f731d467923e452690547281da9689b64b6da23a57a97ce2a18a014f8ad51707.png" src="_images/f731d467923e452690547281da9689b64b6da23a57a97ce2a18a014f8ad51707.png" />
+<img alt="_images/448b1d6a8def98d546f89680af970a8adc0e52cc6566498152235f55876155d4.png" src="_images/448b1d6a8def98d546f89680af970a8adc0e52cc6566498152235f55876155d4.png" />
 </div>
 </div>
 </section>

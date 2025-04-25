@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates package &#8212; pynucastro 2.5.0.post35+g6881c212 documentation</title>
+    <title>pynucastro.rates package &#8212; pynucastro 2.5.0.post36+g01bc278b documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=41fcb64d"></script>
+    <script src="_static/documentation_options.js?v=e5fbaeb3"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -587,6 +587,8 @@ document.write(`
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.jacobian_string_py"><code class="docutils literal notranslate"><span class="pre">Rate.jacobian_string_py()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.lightest"><code class="docutils literal notranslate"><span class="pre">Rate.lightest()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.modify_products"><code class="docutils literal notranslate"><span class="pre">Rate.modify_products()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.product_count"><code class="docutils literal notranslate"><span class="pre">Rate.product_count()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.reactant_count"><code class="docutils literal notranslate"><span class="pre">Rate.reactant_count()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.swap_protons"><code class="docutils literal notranslate"><span class="pre">Rate.swap_protons()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.ydot_string_py"><code class="docutils literal notranslate"><span class="pre">Rate.ydot_string_py()</span></code></a></li>
 </ul>
@@ -1137,6 +1139,36 @@ the Q value and update the print representation.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.product_count">
+<span class="sig-name descname"><span class="pre">product_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.product_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.product_count" title="Link to this definition">#</a></dt>
+<dd><p>Return the number of times nucleus n appears as a product
+in the rate.  Use the stoichiometry dict if present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a>) – the nucleus appearing as a product</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.reactant_count">
+<span class="sig-name descname"><span class="pre">reactant_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.reactant_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.reactant_count" title="Link to this definition">#</a></dt>
+<dd><p>Return the number of times nucleus n appears as a reactant
+in the rate.  Use the stoichiometry dict if present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a>) – the nucleus appearing as a reactant</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.swap_protons">
 <span class="sig-name descname"><span class="pre">swap_protons</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.swap_protons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.swap_protons" title="Link to this definition">#</a></dt>
 <dd><p>Change any protons in the rate to NSE protons.  These
@@ -1147,8 +1179,13 @@ the network.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.ydot_string_py">
 <span class="sig-name descname"><span class="pre">ydot_string_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.ydot_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.ydot_string_py" title="Link to this definition">#</a></dt>
-<dd><p>Return a string containing the term in a dY/dt equation
+<dd><p>Construct the string containing the term in a dY/dt equation
 in a reaction network corresponding to this rate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1219,7 +1256,7 @@ Forward rates are those with Q &gt;= 0.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Tfactors.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.Tfactors#7f61ca958d90&lt;T9:float64,T9i:float64,T913:float64,T913i:float64,T953:float64,lnT9:float64&gt;</span></em><a class="headerlink" href="#pynucastro.rates.rate.Tfactors.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.Tfactors#7f63ec28fe90&lt;T9:float64,T9i:float64,T913:float64,T913i:float64,T953:float64,lnT9:float64&gt;</span></em><a class="headerlink" href="#pynucastro.rates.rate.Tfactors.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1420,7 +1457,7 @@ object</p>
 methods that allow us to interpolate a variable</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TableInterpolator.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.TableInterpolator#7f61c9b6f990&lt;data:array(float64,</span> <span class="pre">2d,</span> <span class="pre">A),table_rhoy_lines:int32,table_temp_lines:int32,rhoy:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),temp:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A)&gt;</span></em><a class="headerlink" href="#pynucastro.rates.tabular_rate.TableInterpolator.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.TableInterpolator#7f63eb325450&lt;data:array(float64,</span> <span class="pre">2d,</span> <span class="pre">A),table_rhoy_lines:int32,table_temp_lines:int32,rhoy:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),temp:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A)&gt;</span></em><a class="headerlink" href="#pynucastro.rates.tabular_rate.TableInterpolator.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1630,6 +1667,8 @@ non-resonant versions of reactions.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.jacobian_string_py"><code class="docutils literal notranslate"><span class="pre">Rate.jacobian_string_py()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.lightest"><code class="docutils literal notranslate"><span class="pre">Rate.lightest()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.modify_products"><code class="docutils literal notranslate"><span class="pre">Rate.modify_products()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.product_count"><code class="docutils literal notranslate"><span class="pre">Rate.product_count()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.reactant_count"><code class="docutils literal notranslate"><span class="pre">Rate.reactant_count()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.swap_protons"><code class="docutils literal notranslate"><span class="pre">Rate.swap_protons()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Rate.ydot_string_py"><code class="docutils literal notranslate"><span class="pre">Rate.ydot_string_py()</span></code></a></li>
 </ul>

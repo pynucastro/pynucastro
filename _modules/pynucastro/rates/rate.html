@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.5.0.post35+g6881c212 documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.5.0.post36+g01bc278b documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=41fcb64d"></script>
+    <script src="../../../_static/documentation_options.js?v=e5fbaeb3"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -518,6 +518,10 @@ document.write(`
         <span class="c1"># disable it.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">use_identical_particle_factor</span> <span class="o">=</span> <span class="n">use_identical_particle_factor</span>
 
+        <span class="c1"># some subclasses might define a stoichmetry as a dict{Nucleus}</span>
+        <span class="c1"># that gives the numbers for the dY/dt equations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stoichiometry</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_rhs_properties</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_screening</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span>
@@ -664,11 +668,23 @@ document.write(`
                     <span class="n">rhs_other</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;e-&quot;</span><span class="p">)</span>
                     <span class="n">rhs_other</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;nubar&quot;</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">treactants</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">c</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">rid</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">fr</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">n</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># this produces a sorted list with no dupes</span>
+        <span class="n">react_set</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">treactants</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">react_set</span><span class="p">):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactant_count</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="c1"># special case so we do C12 + C12 instead of 2 C12</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">c</span><span class="p">()</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">c</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rid</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">fr</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">factor</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">factor</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">factor</span><span class="si">}{</span><span class="n">r</span><span class="o">.</span><span class="n">c</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rid</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">factor</span><span class="si">}{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">fr</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">factor</span><span class="si">}{</span><span class="n">r</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">n</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">react_set</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot; + &quot;</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">rid</span> <span class="o">+=</span> <span class="s2">&quot; + &quot;</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot; + &quot;</span>
@@ -682,11 +698,22 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">rid</span> <span class="o">+=</span> <span class="s2">&quot; --&gt; &quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot; \rightarrow &quot;</span>
 
-        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">c</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">rid</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">fr</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">n</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">prod_set</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">prod_set</span><span class="p">):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">product_count</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="c1"># special case for 2 species</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">c</span><span class="p">()</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">c</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rid</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">fr</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">factor</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">factor</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">factor</span><span class="si">}{</span><span class="n">p</span><span class="o">.</span><span class="n">c</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rid</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">factor</span><span class="si">}{</span><span class="n">p</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">fr</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">factor</span><span class="si">}{</span><span class="n">p</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">n</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">prod_set</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot; + &quot;</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">rid</span> <span class="o">+=</span> <span class="s2">&quot; + &quot;</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot; + &quot;</span>
@@ -835,6 +862,54 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span></div>
 
 
+<div class="viewcode-block" id="Rate.reactant_count">
+<a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.reactant_count">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reactant_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of times nucleus n appears as a reactant</span>
+<span class="sd">        in the rate.  Use the stoichiometry dict if present.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n : Nucleus</span>
+<span class="sd">            the nucleus appearing as a reactant</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">c_reac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stoichiometry</span> <span class="ow">and</span> <span class="n">c_reac</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stoichiometry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">c_reac</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">c_reac</span></div>
+
+
+<div class="viewcode-block" id="Rate.product_count">
+<a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.product_count">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">product_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of times nucleus n appears as a product</span>
+<span class="sd">        in the rate.  Use the stoichiometry dict if present.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n : Nucleus</span>
+<span class="sd">            the nucleus appearing as a product</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">c_prod</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stoichiometry</span> <span class="ow">and</span> <span class="n">c_prod</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stoichiometry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">c_prod</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">c_prod</span></div>
+
+
 <div class="viewcode-block" id="Rate.modify_products">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.modify_products">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">modify_products</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_products</span><span class="p">):</span>
@@ -858,13 +933,17 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Rate.ydot_string_py">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ydot_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return a string containing the term in a dY/dt equation</span>
+<span class="sd">        Construct the string containing the term in a dY/dt equation</span>
 <span class="sd">        in a reaction network corresponding to this rate.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">ydot_string_components</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="c1"># prefactor</span>
+        <span class="c1"># prefactor (for double counting)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
             <span class="n">ydot_string_components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span><span class="si">:</span><span class="s2">1.14e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 

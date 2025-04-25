@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.sympy_network_support &#8212; pynucastro 2.5.0.post35+g6881c212 documentation</title>
+    <title>pynucastro.networks.sympy_network_support &#8212; pynucastro 2.5.0.post36+g01bc278b documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=41fcb64d"></script>
+    <script src="../../../_static/documentation_options.js?v=e5fbaeb3"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -455,9 +455,21 @@ document.write(`
 <div class="viewcode-block" id="SympyRates.ydot_term_symbol">
 <a class="viewcode-back" href="../../../pynucastro.networks.html#pynucastro.networks.sympy_network_support.SympyRates.ydot_term_symbol">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ydot_term_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        return a sympy expression containing this rate&#39;s contribution to</span>
-<span class="sd">        the ydot term for nuclide y_i.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct a sympy expression containing this rate&#39;s</span>
+<span class="sd">        contribution to the ydot term for nuclide y_i.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rate : Rate</span>
+<span class="sd">            the reaction rate we are working with</span>
+<span class="sd">        y_i : Nucleus</span>
+<span class="sd">            the nucleus for which we want to construct the</span>
+<span class="sd">            dY/dt term corresponding to ``rate``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sympy.core.mul.Mul</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">cname</span><span class="p">(),</span> <span class="n">y_i</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ydot_term_cache</span><span class="p">:</span>
@@ -465,8 +477,8 @@ document.write(`
         <span class="n">srate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">specific_rate_symbol</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
 
         <span class="c1"># Check if y_i is a reactant or product</span>
-        <span class="n">c_reac</span> <span class="o">=</span> <span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">y_i</span><span class="p">)</span>
-        <span class="n">c_prod</span> <span class="o">=</span> <span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">y_i</span><span class="p">)</span>
+        <span class="n">c_reac</span> <span class="o">=</span> <span class="n">rate</span><span class="o">.</span><span class="n">reactant_count</span><span class="p">(</span><span class="n">y_i</span><span class="p">)</span>
+        <span class="n">c_prod</span> <span class="o">=</span> <span class="n">rate</span><span class="o">.</span><span class="n">product_count</span><span class="p">(</span><span class="n">y_i</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">c_reac</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">c_prod</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># The rate doesn&#39;t contribute to the ydot for this y_i</span>
             <span class="n">ydot_sym</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sympy</span><span class="o">.</span><span class="n">sympify</span><span class="p">(</span><span class="mf">0.0</span><span class="p">))</span>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks package &#8212; pynucastro 2.5.0.post35+g6881c212 documentation</title>
+    <title>pynucastro.networks package &#8212; pynucastro 2.5.0.post36+g01bc278b documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=41fcb64d"></script>
+    <script src="_static/documentation_options.js?v=e5fbaeb3"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -2129,8 +2129,20 @@ in a reaction network corresponding to this rate.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.sympy_network_support.SympyRates.ydot_term_symbol">
 <span class="sig-name descname"><span class="pre">ydot_term_symbol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/sympy_network_support.html#SympyRates.ydot_term_symbol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.sympy_network_support.SympyRates.ydot_term_symbol" title="Link to this definition">#</a></dt>
-<dd><p>return a sympy expression containing this rate’s contribution to
-the ydot term for nuclide y_i.</p>
+<dd><p>Construct a sympy expression containing this rate’s
+contribution to the ydot term for nuclide y_i.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rate</strong> (<a class="reference internal" href="pynucastro.rates.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><em>Rate</em></a>) – the reaction rate we are working with</p></li>
+<li><p><strong>y_i</strong> (<a class="reference internal" href="pynucastro.nucdata.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a>) – the nucleus for which we want to construct the
+dY/dt term corresponding to <code class="docutils literal notranslate"><span class="pre">rate</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.sympy.org/latest/modules/core.html#sympy.core.mul.Mul" title="(in SymPy v1.13.3)">sympy.core.mul.Mul</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
