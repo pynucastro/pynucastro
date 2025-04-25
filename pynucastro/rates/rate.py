@@ -93,6 +93,10 @@ class Rate:
         # disable it.
         self.use_identical_particle_factor = use_identical_particle_factor
 
+        # some subclasses might define a stoichmetry as a dict{Nucleus}
+        # that gives the numbers for the dY/dt equations
+        self.stoichiometry = None
+
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
@@ -239,11 +243,23 @@ class Rate:
                     rhs_other.append("e-")
                     rhs_other.append("nubar")
 
-        for n, r in enumerate(treactants):
-            self.string += f"{r.c()}"
-            self.rid += f"{r}"
-            self.pretty_string += fr"{r.pretty}"
-            if not n == len(self.reactants)-1:
+        # this produces a sorted list with no dupes
+        react_set = list(dict.fromkeys(treactants))
+        for n, r in enumerate(react_set):
+            c = self.reactant_count(r)
+            if c == 2:
+                # special case so we do C12 + C12 instead of 2 C12
+                self.string += f"{r.c()} + {r.c()}"
+                self.rid += f"{r} + {r}"
+                self.pretty_string += fr"{r.pretty} + {r.pretty}"
+            else:
+                factor = ""
+                if c != 1:
+                    factor = f"{c} "
+                self.string += f"{factor}{r.c()}"
+                self.rid += f"{factor}{r}"
+                self.pretty_string += fr"{factor}{r.pretty}"
+            if not n == len(react_set)-1:
                 self.string += " + "
                 self.rid += " + "
                 self.pretty_string += r" + "
@@ -257,11 +273,22 @@ class Rate:
         self.rid += " --> "
         self.pretty_string += r" \rightarrow "
 
-        for n, p in enumerate(self.products):
-            self.string += f"{p.c()}"
-            self.rid += f"{p}"
-            self.pretty_string += fr"{p.pretty}"
-            if not n == len(self.products)-1:
+        prod_set = list(dict.fromkeys(self.products))
+        for n, p in enumerate(prod_set):
+            c = self.product_count(p)
+            if c == 2:
+                # special case for 2 species
+                self.string += f"{p.c()} + {p.c()}"
+                self.rid += f"{p} + {p}"
+                self.pretty_string += fr"{p.pretty} + {p.pretty}"
+            else:
+                factor = ""
+                if c != 1:
+                    factor = f"{c} "
+                self.string += f"{factor}{p.c()}"
+                self.rid += f"{factor}{p}"
+                self.pretty_string += fr"{factor}{p.pretty}"
+            if not n == len(prod_set)-1:
                 self.string += " + "
                 self.rid += " + "
                 self.pretty_string += r" + "
@@ -395,6 +422,48 @@ class Rate:
         self.fname = None    # reset so it will be updated
         self._set_print_representation()
 
+    def reactant_count(self, n):
+        """Return the number of times nucleus n appears as a reactant
+        in the rate.  Use the stoichiometry dict if present.
+
+        Parameters
+        ----------
+        n : Nucleus
+            the nucleus appearing as a reactant
+
+        Returns
+        -------
+        float
+
+        """
+
+        c_reac = self.reactants.count(n)
+
+        if self.stoichiometry and c_reac > 0:
+            return self.stoichiometry.get(n, c_reac)
+        return c_reac
+
+    def product_count(self, n):
+        """Return the number of times nucleus n appears as a product
+        in the rate.  Use the stoichiometry dict if present.
+
+        Parameters
+        ----------
+        n : Nucleus
+            the nucleus appearing as a product
+
+        Returns
+        -------
+        float
+
+        """
+
+        c_prod = self.products.count(n)
+
+        if self.stoichiometry and c_prod > 0:
+            return self.stoichiometry.get(n, c_prod)
+        return c_prod
+
     def modify_products(self, new_products):
         """
         change the products of the rate to new_products.  This will recompute
@@ -413,13 +482,17 @@ class Rate:
 
     def ydot_string_py(self):
         """
-        Return a string containing the term in a dY/dt equation
+        Construct the string containing the term in a dY/dt equation
         in a reaction network corresponding to this rate.
+
+        Returns
+        -------
+        str
         """
 
         ydot_string_components = []
 
-        # prefactor
+        # prefactor (for double counting)
         if self.prefactor != 1.0:
             ydot_string_components.append(f"{self.prefactor:1.14e}")
 
