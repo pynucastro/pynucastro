@@ -266,6 +266,11 @@ class PythonNetwork(RateCollection):
         for r in self.approx_rates:
             ostr += format_rate_call(r)
 
+        if self.modified_rates:
+            ostr += f"\n{indent}# modified rates\n"
+        for r in self.modified_rates:
+            ostr += format_rate_call(r)
+
         return ostr
 
     def _write_network(self, outfile: str | Path = None):
