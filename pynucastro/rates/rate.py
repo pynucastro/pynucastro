@@ -55,6 +55,7 @@ class Rate:
     """
     def __init__(self, reactants=None, products=None,
                  Q=None, weak_type="", label="generic",
+                 stoichiometry=None,
                  use_identical_particle_factor=True):
         """a generic Rate class that acts as a base class for specific
         sources.  Here we only specify the reactants and products and Q value"""
@@ -95,7 +96,7 @@ class Rate:
 
         # some subclasses might define a stoichmetry as a dict{Nucleus}
         # that gives the numbers for the dY/dt equations
-        self.stoichiometry = None
+        self.stoichiometry = stoichiometry
 
         self._set_rhs_properties()
         self._set_screening()
