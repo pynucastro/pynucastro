@@ -849,6 +849,24 @@ class RateCollection:
         """
         return self.rates
 
+    def get_hidden_rates(self):
+        """Get a list of all of the rates approximated out of the
+        network
+
+        Returns
+        -------
+        list(Rate)
+
+        """
+        hidden_rates = []
+        for r in self.get_rates():
+            if isinstance(r, ApproximateRate):
+                for c in r.get_child_rates():
+                    if c.removed:
+                        hidden_rates.append(c)
+
+        return set(hidden_rates)
+
     def get_rate(self, rid):
         """Return a rate matching the id provided.
 
@@ -1348,13 +1366,13 @@ class RateCollection:
 
                 for r in self.nuclei_consumed[n_i]:
                     # how many of n_i are destroyed by this reaction
-                    c = r.reactants.count(n_i)
+                    c = r.reactant_count(n_i)
                     jac[i, j] -= c * screen_factors.get(r, 1.0) *\
                         r.eval_jacobian_term(T, rho, comp, n_j)
 
                 for r in self.nuclei_produced[n_i]:
                     # how many of n_i are produced by this reaction
-                    c = r.products.count(n_i)
+                    c = r.product_count(n_i)
                     jac[i, j] += c * screen_factors.get(r, 1.0) *\
                         r.eval_jacobian_term(T, rho, comp, n_j)
 
@@ -1590,8 +1608,8 @@ class RateCollection:
                 producing_rates = [r for r in self.nuclei_produced[nuc] if rate_filter(r)]
 
             # Number of nuclei consumed / produced
-            nconsumed = (r.reactants.count(nuc) for r in consuming_rates)
-            nproduced = (r.products.count(nuc) for r in producing_rates)
+            nconsumed = (r.reactant_count(nuc) for r in consuming_rates)
+            nproduced = (r.product_count(nuc) for r in producing_rates)
 
             # Multiply each rate by the count
             consumed = (c * rvals[r] for c, r in zip(nconsumed, consuming_rates))
@@ -1692,8 +1710,8 @@ class RateCollection:
             consuming_rates = self.nuclei_consumed[nuc]
             producing_rates = self.nuclei_produced[nuc]
             # Number of nuclei consumed / produced
-            nconsumed = (r.reactants.count(nuc) for r in consuming_rates)
-            nproduced = (r.products.count(nuc) for r in producing_rates)
+            nconsumed = (r.reactant_count(nuc) for r in consuming_rates)
+            nproduced = (r.product_count(nuc) for r in producing_rates)
             # Multiply each rate by the count
             consumed = (c * rvals[r] for c, r in zip(nconsumed, consuming_rates))
             produced = (c * rvals[r] for c, r in zip(nproduced, producing_rates))
@@ -1713,9 +1731,9 @@ class RateCollection:
         for rate, rval in rvals.items():
             nucs = []
             for n in set(rate.reactants):
-                nucs.append((n, -rate.reactants.count(n) * rval))
+                nucs.append((n, -rate.reactant_count(n) * rval))
             for n in set(rate.products):
-                nucs.append((n, rate.products.count(n) * rval))
+                nucs.append((n, rate.product_count(n) * rval))
             nc[rate] = nucs
 
         return nc
@@ -1954,8 +1972,9 @@ class RateCollection:
                 node_nuclei.append(n)
                 colors.append(node_color)
             else:
+                # show hidden nuclei only if they react with themselves
                 for r in self.rates:
-                    if not isinstance(r, ApproximateRate) and r.reactants.count(n) > 1:
+                    if not isinstance(r, ApproximateRate) and r.reactant_count(n) > 1:
                         node_nuclei.append(n)
                         colors.append(node_color)
                         break
