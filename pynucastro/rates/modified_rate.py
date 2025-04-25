@@ -1,4 +1,3 @@
-from pynucastro.nucdata import Nucleus
 from pynucastro.rates.rate import Rate
 
 
