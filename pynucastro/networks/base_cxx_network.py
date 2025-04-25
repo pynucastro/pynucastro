@@ -23,10 +23,11 @@ from pynucastro.screening import get_screening_map
 
 
 class BaseCxxNetwork(ABC, RateCollection):
-    """Initialize the C++ network.  This takes the same arguments as
-    `RateCollection` and interprets the collection of rates
-    and nuclei and produce the C++ code needed to integrate the
-    network.
+    """Base class for a C++ network.  This takes the same arguments as
+    :py:class:`RateCollection
+    <pynucastro.networks.rate_collection.RateCollection>` and
+    interprets the collection of rates and nuclei to produce the C++
+    code needed to integrate the network.
 
     """
 
@@ -88,16 +89,21 @@ class BaseCxxNetwork(ABC, RateCollection):
         return []
 
     def get_indent_amt(self, l, k):
-        """Determine the amount of spaces to indent a line.  This looks
-        for a string of the form "<key>(#)", where # is the a number that
-        is the amount of indent.
+        """Determine the amount of spaces to indent a line.  This
+        looks for a string of the form "<key>(#)", where # is the a
+        number that is the amount of indent.
 
         Parameters
         ----------
         l : str
-            a line
+            a line from a template file to check for an indent
         k : str
             a keyword of the form "<key>" that appears in the line
+
+        Returns
+        -------
+        int
+
         """
 
         rem = re.match(r'\A'+k+r'\(([0-9]*)\)\Z', l)
@@ -153,12 +159,14 @@ class BaseCxxNetwork(ABC, RateCollection):
                     warnings.warn(UserWarning(f'Table data file {tr.table_file} not found.'))
 
     def compose_ydot(self):
-        """create the expressions for dYdt for the nuclei, where Y is the
-        molar fraction.
+        """Create the expressions for dY/dt for each nucleus, where Y
+        is the molar fraction.
 
+        This stores the result in a dict where the key is a
+        :py:class:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>`, and
+        the value is a list of tuples, with the forward-reverse pairs
+        of a rate
 
-        This will take the form of a dict, where the key is a nucleus, and the
-        value is a list of tuples, with the forward-reverse pairs of a rate
         """
 
         ydot = {}
@@ -185,7 +193,13 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.solved_ydot = True
 
     def compose_jacobian(self):
-        """Create the Jacobian matrix, df/dY"""
+        """Create the Jacobian matrix, df/dY, where f is a dY/dt and Y
+        is a molar fraction
+
+        The Jacobian is stored as a list with each entry representing
+        a Jacobian element.  We also store whether the entry is null.
+
+        """
         jac_null = []
         jac_sym = []
         for nj in self.unique_nuclei:

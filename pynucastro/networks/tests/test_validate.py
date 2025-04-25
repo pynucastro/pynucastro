@@ -6,8 +6,8 @@ import pynucastro as pyna
 ANSWER = \
 """validation: Ni56 produced in Fe52 + He4 ⟶ Ni56 + 𝛾 never consumed.
 validation: Ni56 produced in Co55 + p ⟶ Ni56 + 𝛾 never consumed.
-validation: missing He4 + He4 + He4 ⟶ p + B11 as alternative to He4 + He4 + He4 ⟶ C12 + 𝛾 (Q = -8.682 MeV).
-validation: missing He4 + He4 + He4 ⟶ n + C11 as alternative to He4 + He4 + He4 ⟶ C12 + 𝛾 (Q = -11.4466 MeV).
+validation: missing 3 He4 ⟶ p + B11 as alternative to 3 He4 ⟶ C12 + 𝛾 (Q = -8.682 MeV).
+validation: missing 3 He4 ⟶ n + C11 as alternative to 3 He4 ⟶ C12 + 𝛾 (Q = -11.4466 MeV).
 validation: missing C12 + He4 ⟶ p + N15 as alternative to C12 + He4 ⟶ O16 + 𝛾 (Q = -4.966 MeV).
 validation: missing C12 + He4 ⟶ n + O15 as alternative to C12 + He4 ⟶ O16 + 𝛾 (Q = -8.502 MeV).
 validation: missing C14 + He4 ⟶ n + O17 as alternative to C14 + He4 ⟶ O18 + 𝛾 (Q = -1.81745 MeV).
