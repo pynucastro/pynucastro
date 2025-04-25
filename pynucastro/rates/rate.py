@@ -439,7 +439,7 @@ class Rate:
 
         c_reac = self.reactants.count(n)
 
-        if self.stoichiometry:
+        if self.stoichiometry and c_reac > 0:
             return self.stoichiometry.get(n, c_reac)
         return c_reac
 
@@ -460,7 +460,7 @@ class Rate:
 
         c_prod = self.products.count(n)
 
-        if self.stoichiometry:
+        if self.stoichiometry and c_prod > 0:
             return self.stoichiometry.get(n, c_prod)
         return c_prod
 

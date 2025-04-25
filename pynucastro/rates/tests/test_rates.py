@@ -275,6 +275,9 @@ class TestRate:
 
         assert c12ag.reactant_count(Nucleus("he4")) == 1.5
 
+        # restore it so the library is unchanged
+        c12ag.stoichiometry = None
+
     def test_stoichiometry_3alpha(self, reaclib_library):
 
         three_alpha = reaclib_library.get_rate_by_name("he4(aa,g)c12")
@@ -290,6 +293,8 @@ class TestRate:
 
         assert three_alpha.reactant_count(Nucleus("he4")) == 4
 
+        three_alpha.stoichiometry = None
+
     def test_stoichiometry_dict(self, reaclib_library):
 
         c12c12 = reaclib_library.get_rate_by_name("c12(c12,a)ne20")
@@ -301,11 +306,13 @@ class TestRate:
         assert c12c12.rid == "C12 + C12 --> 4 He4 + Ne20"
 
         assert c12c12.reactant_count(Nucleus("he4")) == 0
-        assert c12c12.product_count(Nucleus("he4")) == 0
+        assert c12c12.product_count(Nucleus("he4")) == 4
 
         assert c12c12.reactant_count(Nucleus("c12")) == 2
 
         assert c12c12.product_count(Nucleus("ne20")) == 1
+
+        c12c12.stoichiometry = None
 
 
 class TestDerivedRate:
