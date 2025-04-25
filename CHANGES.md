@@ -2,6 +2,13 @@
 
 ## 2.6.0
 
+  * create a `Nucleus` `.summary()` method to display the information
+    we know about a nucleus. (#949)
+
+  * allow rates to support their own stoichiometry, instead of simply
+    relying on the number of nuclei in the reactants or products
+    list. (#947)
+
   * Added a new network method, `get_hidden_rates()` that returns the
     rates that are not explicitly linked in the network but instead
     are used internally by `ApproximateRate` rates. (#943)
