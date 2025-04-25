@@ -31,9 +31,21 @@ class SympyRates:
         self.float_explicit_num_digits = 17
 
     def ydot_term_symbol(self, rate, y_i):
-        """
-        return a sympy expression containing this rate's contribution to
-        the ydot term for nuclide y_i.
+        """Construct a sympy expression containing this rate's
+        contribution to the ydot term for nuclide y_i.
+
+        Parameters
+        ----------
+        rate : Rate
+            the reaction rate we are working with
+        y_i : Nucleus
+            the nucleus for which we want to construct the
+            dY/dt term corresponding to ``rate``.
+
+        Returns
+        -------
+        sympy.core.mul.Mul
+
         """
         key = (rate.cname(), y_i)
         if key in self._ydot_term_cache:
@@ -41,8 +53,8 @@ class SympyRates:
         srate = self.specific_rate_symbol(rate)
 
         # Check if y_i is a reactant or product
-        c_reac = rate.reactants.count(y_i)
-        c_prod = rate.products.count(y_i)
+        c_reac = rate.reactant_count(y_i)
+        c_prod = rate.product_count(y_i)
         if c_reac == 0 and c_prod == 0:
             # The rate doesn't contribute to the ydot for this y_i
             ydot_sym = float(sympy.sympify(0.0))

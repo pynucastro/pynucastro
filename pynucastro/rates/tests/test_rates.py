@@ -182,6 +182,22 @@ class TestRate:
         assert self.rate9.products[1] == self.he3
         assert len(self.rate9.products) == 2
 
+    def test_count(self):
+        assert self.rate3.reactant_count(Nucleus("he6")) == 1
+        assert self.rate3.product_count(Nucleus("he6")) == 0
+
+        assert self.rate5.reactant_count(Nucleus("n15")) == 1
+        assert self.rate5.reactant_count(Nucleus("p")) == 1
+        assert self.rate5.reactant_count(Nucleus("a")) == 0
+        assert self.rate5.reactant_count(Nucleus("c12")) == 0
+
+        assert self.rate5.product_count(Nucleus("n15")) == 0
+        assert self.rate5.product_count(Nucleus("p")) == 0
+        assert self.rate5.product_count(Nucleus("a")) == 1
+        assert self.rate5.product_count(Nucleus("c12")) == 1
+
+        assert self.rate8.reactant_count(Nucleus("a")) == 3
+
     def test_prefactor(self):
         assert self.rate4.prefactor == 1.0
         assert self.rate8.prefactor == approx(0.16666666)
@@ -244,6 +260,60 @@ class TestRate:
 
         assert self.rate8.prefactor == 1.0
 
+    def test_stoichiometry(self, reaclib_library):
+        assert repr(self.rate4) == "C12 + He4 ⟶ O16 + 𝛾"
+
+        # create a separate version since rates are mutable
+        c12ag = reaclib_library.get_rate_by_name("c12(a,g)o16")
+        c12ag.stoichiometry = {Nucleus("he4"): 1.5,
+                               Nucleus("c12"): 1,
+                               Nucleus("o16"): 1}
+        c12ag._set_print_representation()  # pylint: disable=protected-access
+
+        assert repr(c12ag) == "C12 + 1.5 He4 ⟶ O16 + 𝛾"
+        assert c12ag.rid == "C12 + 1.5 He4 --> O16"
+
+        assert c12ag.reactant_count(Nucleus("he4")) == 1.5
+
+        # restore it so the library is unchanged
+        c12ag.stoichiometry = None
+
+    def test_stoichiometry_3alpha(self, reaclib_library):
+
+        three_alpha = reaclib_library.get_rate_by_name("he4(aa,g)c12")
+        assert repr(three_alpha) == "3 He4 ⟶ C12 + 𝛾"
+        assert three_alpha.rid == "3 He4 --> C12"
+
+        three_alpha.stoichiometry = {Nucleus("he4"): 4,
+                                     Nucleus("c12"): 1}
+        three_alpha._set_print_representation()  # pylint: disable=protected-access
+
+        assert repr(three_alpha) == "4 He4 ⟶ C12 + 𝛾"
+        assert three_alpha.rid == "4 He4 --> C12"
+
+        assert three_alpha.reactant_count(Nucleus("he4")) == 4
+
+        three_alpha.stoichiometry = None
+
+    def test_stoichiometry_dict(self, reaclib_library):
+
+        c12c12 = reaclib_library.get_rate_by_name("c12(c12,a)ne20")
+
+        c12c12.stoichiometry = {Nucleus("he4"): 4}
+        c12c12._set_print_representation()  # pylint: disable=protected-access
+
+        assert repr(c12c12) == "C12 + C12 ⟶ 4 He4 + Ne20"
+        assert c12c12.rid == "C12 + C12 --> 4 He4 + Ne20"
+
+        assert c12c12.reactant_count(Nucleus("he4")) == 0
+        assert c12c12.product_count(Nucleus("he4")) == 4
+
+        assert c12c12.reactant_count(Nucleus("c12")) == 2
+
+        assert c12c12.product_count(Nucleus("ne20")) == 1
+
+        c12c12.stoichiometry = None
+
 
 class TestDerivedRate:
 
@@ -257,8 +327,8 @@ class TestDerivedRate:
         reaction type.
         """
 
-        a_a_ag_c12 = reaclib_library.get_rate('he4 + he4 + he4 --> c12 <fy05_reaclib__>')
-        c12_ga_a_a_reaclib = reaclib_library.get_rate('c12 --> he4 + he4 + he4 <fy05_reaclib__reverse>')
+        a_a_ag_c12 = reaclib_library.get_rate_by_name("he4(aa,g)c12")
+        c12_ga_a_a_reaclib = reaclib_library.get_rate_by_name("c12(g,aa)he4")
         c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=False, use_pf=False)
 
         assert c12_ga_a_a_reaclib.eval(T=2.0e9) == approx(c12_ga_a_a_derived.eval(T=2.0e9), rel=2e-4)
@@ -269,7 +339,7 @@ class TestDerivedRate:
         functions on the range 1.0e9 to 100.0e9
         """
 
-        a_a_ag_c12 = reaclib_library.get_rate('he4 + he4 + he4 --> c12 <fy05_reaclib__>')
+        a_a_ag_c12 = reaclib_library.get_rate_by_name("he4(aa,g)c12")
         c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=False, use_pf=True)
 
         with pytest.warns(UserWarning, match="C12 partition function is not supported by tables"):
@@ -283,7 +353,7 @@ class TestDerivedRate:
         of the reaction rate.
         """
 
-        a_a_ag_c12 = reaclib_library.get_rate('he4 + he4 + he4 --> c12 <fy05_reaclib__>')
+        a_a_ag_c12 = reaclib_library.get_rate_by_name("he4(aa,g)c12")
         c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=True, use_pf=False)
 
         assert c12_ga_a_a_derived.eval(T=2.0e9) == approx(2.899642192191721e-07)
