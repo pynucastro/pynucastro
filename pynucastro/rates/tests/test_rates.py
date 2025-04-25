@@ -290,6 +290,23 @@ class TestRate:
 
         assert three_alpha.reactant_count(Nucleus("he4")) == 4
 
+    def test_stoichiometry_dict(self, reaclib_library):
+
+        c12c12 = reaclib_library.get_rate_by_name("c12(c12,a)ne20")
+
+        c12c12.stoichiometry = {Nucleus("he4"): 4}
+        c12c12._set_print_representation()  # pylint: disable=protected-access
+
+        assert repr(c12c12) == "C12 + C12 ⟶ 4 He4 + Ne20"
+        assert c12c12.rid == "C12 + C12 --> 4 He4 + Ne20"
+
+        assert c12c12.reactant_count(Nucleus("he4")) == 0
+        assert c12c12.product_count(Nucleus("he4")) == 0
+
+        assert c12c12.reactant_count(Nucleus("c12")) == 2
+
+        assert c12c12.product_count(Nucleus("ne20")) == 1
+
 
 class TestDerivedRate:
 

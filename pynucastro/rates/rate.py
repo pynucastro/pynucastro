@@ -439,8 +439,8 @@ class Rate:
 
         c_reac = self.reactants.count(n)
 
-        if self.stoichiometry and c_reac > 0:
-            return self.stoichiometry[n]
+        if self.stoichiometry:
+            return self.stoichiometry.get(n, c_reac)
         return c_reac
 
     def product_count(self, n):
@@ -460,8 +460,8 @@ class Rate:
 
         c_prod = self.products.count(n)
 
-        if self.stoichiometry and c_prod > 0:
-            return self.stoichiometry[n]
+        if self.stoichiometry:
+            return self.stoichiometry.get(n, c_prod)
         return c_prod
 
     def modify_products(self, new_products):
