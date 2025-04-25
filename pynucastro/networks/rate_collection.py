@@ -22,9 +22,10 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 # Import Rate
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates import (ApproximateRate, DerivedRate, Library, ModifiedRate,
-                              Rate, RateFileError, RatePair, TabularRate,
-                              find_duplicate_rates, is_allowed_dupe, load_rate)
+from pynucastro.rates import (ApproximateRate, DerivedRate, Library,
+                              ModifiedRate, Rate, RateFileError, RatePair,
+                              TabularRate, find_duplicate_rates,
+                              is_allowed_dupe, load_rate)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_rid
 from pynucastro.screening import (get_screening_map, make_plasma_state,
                                   make_screen_factors)
