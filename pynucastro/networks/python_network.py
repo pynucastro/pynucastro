@@ -58,8 +58,8 @@ class PythonNetwork(RateCollection):
                     ostr += "( "
 
                 for rate in rlist:
-                    c_reac = rate.reactants.count(nucleus)
-                    c_prod = rate.products.count(nucleus)
+                    c_reac = rate.reactant_count(nucleus)
+                    c_prod = rate.product_count(nucleus)
                     c = c_prod - c_reac
                     if c == 1:
                         ostr += f"+{rate.ydot_string_py()} "
@@ -112,7 +112,7 @@ class PythonNetwork(RateCollection):
             ostr += f"{indent}{idx_str} = (\n"
             rate_terms_str = ""
             for r in self.nuclei_consumed[ydot_i_nucleus]:
-                c = r.reactants.count(ydot_i_nucleus)
+                c = r.reactant_count(ydot_i_nucleus)
 
                 jac_str = r.jacobian_string_py(y_j_nucleus)
                 if jac_str == "":
@@ -123,7 +123,7 @@ class PythonNetwork(RateCollection):
                 else:
                     rate_terms_str += f"{indent}   -{c}*{jac_str}\n"
             for r in self.nuclei_produced[ydot_i_nucleus]:
-                c = r.products.count(ydot_i_nucleus)
+                c = r.product_count(ydot_i_nucleus)
 
                 jac_str = r.jacobian_string_py(y_j_nucleus)
                 if jac_str == "":
