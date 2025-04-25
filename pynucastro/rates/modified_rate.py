@@ -16,7 +16,7 @@ class ModifiedRate(Rate):
         get the number of reactions / sec (with suitable volume
         scalings)
     stoichiometry : dict(Nucleus)
-        a custon set of coefficients to be used in the
+        a custom set of coefficients to be used in the
         evolution equations dY(Nucleus)/dt.  If this is not
         set, then simply the count of each nucleus in the
         list of reactants and products will be used.
