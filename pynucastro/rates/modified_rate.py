@@ -11,25 +11,30 @@ class ModifiedRate(Rate):
     Parameters
     ----------
     original_rate : Rate
-        the underlying rate we are evaluating numerically to
-        get the number of reactions / sec (with suitable volume
-        scalings)
+        the underlying rate we are evaluating numerically to get the
+        number of reactions / sec (with suitable volume scalings)
     stoichiometry : dict(Nucleus)
-        a custom set of coefficients to be used in the
-        evolution equations dY(Nucleus)/dt.  If this is not
-        set, then simply the count of each nucleus in the
-        list of reactants and products will be used.
+        a custom set of coefficients to be used in the evolution
+        equations dY(Nucleus)/dt.  If this is not set, then simply the
+        count of each nucleus in the list of reactants and products
+        will be used.
     new_products : list(Nucleus)
-        a list of nuclei that should be used as the product
-        of the modified rate, instead of the products from the
-        original rate.
+        a list of nuclei that should be used as the product of the
+        modified rate, instead of the products from the original rate.
+    update_screening : bool
+        do we reset the screening pairs for this rate to reflect any
+        new products or stoichiometry? or do we still screen based on
+        the underlying rate?
+
     """
 
     def __init__(self, original_rate, *,
                  stoichiometry=None,
-                 new_products=None):
+                 new_products=None,
+                 update_screening=False):
 
         self.original_rate = original_rate
+        self.update_screening = update_screening
 
         reactants = original_rate.reactants
         if new_products:
@@ -46,6 +51,52 @@ class ModifiedRate(Rate):
         # update the Q value
         if new_products:
             self._set_q()
+
+    def _set_screening(self):
+        """Determine if this rate is eligible for screening and the
+        nuclei to use.  In this case, we either use the original rate
+        or the modified rate, depending on the value of
+        update_screening.
+
+        """
+        # Tells if this rate is eligible for screening, and if it is
+        # then Rate.ion_screen is a 2-element (3 for 3-alpha) list of
+        # Nucleus objects for screening; otherwise it is set to none
+        self.ion_screen = []
+        if self.update_screening:
+            _reac = self.reactants
+        else:
+            _reac = self.original_rate.reactants
+        nucz = [q for q in _reac if q.Z != 0]
+        if len(nucz) > 1:
+            nucz.sort(key=lambda x: x.Z)
+            self.ion_screen = []
+            self.ion_screen.append(nucz[0])
+            self.ion_screen.append(nucz[1])
+            if len(nucz) == 3:
+                self.ion_screen.append(nucz[2])
+
+        # if the rate is a reverse rate (defined as Q < 0), then we
+        # might actually want to compute the screening based on the
+        # reactants of the forward rate that was used in the detailed
+        # balance.  Rate.symmetric_screen is what should be used in
+        # the screening in this case
+        self.symmetric_screen = []
+        if self.Q < 0:
+            if self.update_screening:
+                _prod = self.products
+            else:
+                _prod = self.original_rate.products
+            nucz = [q for q in _prod if q.Z != 0]
+            if len(nucz) > 1:
+                nucz.sort(key=lambda x: x.Z)
+                self.symmetric_screen = []
+                self.symmetric_screen.append(nucz[0])
+                self.symmetric_screen.append(nucz[1])
+                if len(nucz) == 3:
+                    self.symmetric_screen.append(nucz[2])
+        else:
+            self.symmetric_screen = self.ion_screen
 
     def eval(self, T, *, rho=None, comp=None):
         """Evaluate the modified rate.  This simply calls the
