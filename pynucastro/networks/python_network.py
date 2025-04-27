@@ -176,11 +176,13 @@ class PythonNetwork(RateCollection):
                 ostr += f"{indent}scor = screen_func(plasma_state, scn_fac)\n"
 
             if scr.name == "He4_He4_He4":
-                # we don't need to do anything here, but we want to avoid immediately applying the screening
+                # we don't need to do anything here, but we want to
+                # avoid immediately applying the screening
                 pass
 
             elif scr.name == "He4_He4_He4_dummy":
-                # make sure the previous iteration was the first part of 3-alpha
+                # make sure the previous iteration was the first part
+                # of 3-alpha
                 assert screening_map[i - 1].name == "He4_He4_He4"
                 # handle the second part of the screening for 3-alpha
                 ostr += f"{indent}scn_fac2 = ScreenFactors({scr.n1.Z}, {scr.n1.A}, {scr.n2.Z}, {scr.n2.A})\n"
@@ -255,6 +257,16 @@ class PythonNetwork(RateCollection):
         for r in self.custom_rates:
             ostr += format_rate_call(r)
 
+        # modified rates will have their own screening,
+        # either using the origina rate or any modified
+        # form.  Therefore we call them before applying
+        # screening factors.
+
+        if self.modified_rates:
+            ostr += f"\n{indent}# modified rates\n"
+        for r in self.modified_rates:
+            ostr += format_rate_call(r)
+
         ostr += "\n"
 
         # apply screening factors, if we're given a screening function
@@ -264,11 +276,6 @@ class PythonNetwork(RateCollection):
         if self.approx_rates:
             ostr += f"\n{indent}# approximate rates\n"
         for r in self.approx_rates:
-            ostr += format_rate_call(r)
-
-        if self.modified_rates:
-            ostr += f"\n{indent}# modified rates\n"
-        for r in self.modified_rates:
             ostr += format_rate_call(r)
 
         return ostr
