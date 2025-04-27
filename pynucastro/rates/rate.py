@@ -187,8 +187,13 @@ class Rate:
         # there should be the same number of protons on each side and
         # the same number of neutrons on each side
 
-        strong_test = sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) and \
-                      sum(n.A for n in self.reactants) == sum(n.A for n in self.products)
+        reactant_Zs = sum(n.Z * self.reactant_count(n) for n in set(self.reactants))
+        product_Zs = sum(n.Z * self.product_count(n) for n in set(self.products))
+
+        reactant_As = sum(n.A * self.reactant_count(n) for n in set(self.reactants))
+        product_As = sum(n.A * self.product_count(n) for n in set(self.products))
+
+        strong_test = reactant_Zs == product_Zs and reactant_As == product_As
 
         if strong_test:
             if len(self.products) == 1:
