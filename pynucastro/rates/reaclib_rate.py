@@ -566,7 +566,8 @@ class ReacLibRate(Rate):
         fstring += f"    rate_eval.{self.fname} = rate\n\n"
         return fstring
 
-    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False, extra_args=()):
+    def function_string_cxx(self, dtype="double", specifiers="inline",
+                            leave_open=False, extra_args=()):
         """
         Return a string containing C++ function that computes the
         rate

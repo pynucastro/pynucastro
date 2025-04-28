@@ -143,5 +143,17 @@ class ModifiedRate(Rate):
         approximate rate
         """
 
-        return self.function_string_cxx(dtype=dtype, specifiers=specifiers,
-                                        leave_open=leave_open, extra_args=extra_args)
+        args = ["const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+        fstring = ""
+        fstring = "template <int do_T_derivatives>\n"
+        fstring += f"{specifiers}\n"
+        fstring += f"void rate_{self.cname()}({', '.join(args)}) {{\n\n"
+
+        # first we need to get all of the rates that make this up
+        fstring += f"    // {self.rid} (calls the underlying rate)\n\n"
+        fstring += f"    rate_{self.original_rate.cname()}<do_T_derivatives>(tfactors, rate, drate_dT);\n"
+
+        if not leave_open:
+            fstring += "}\n\n"
+
+        return fstring
