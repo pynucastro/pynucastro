@@ -218,7 +218,7 @@ class Rate:
                 rhs_other.append("e-")
                 rhs_other.append("nubar")
 
-            elif "_pos_" in self.weak_type:
+            elif self.weak_type and "_pos_" in self.weak_type:
 
                 # we expect a positron on the right -- let's make sure
                 assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
@@ -226,7 +226,7 @@ class Rate:
                 rhs_other.append("e+")
                 rhs_other.append("nu")
 
-            elif "_neg_" in self.weak_type:
+            elif self.weak_type and "_neg_" in self.weak_type:
 
                 # we expect an electron on the right -- let's make sure
                 assert sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products)
