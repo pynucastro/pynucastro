@@ -57,6 +57,14 @@ pynucastro.rates.library module
    :undoc-members:
    :show-inheritance:
 
+pynucastro.rates.modified\_rate module
+--------------------------------------
+
+.. automodule:: pynucastro.rates.modified_rate
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pynucastro.rates.rate module
 ----------------------------
 
