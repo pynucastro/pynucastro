@@ -129,7 +129,12 @@ class ModifiedRate(Rate):
 
         """
 
-        return self.original_rate.function_string_py()
+        fstring = ""
+        fstring += "@numba.njit()\n"
+        fstring += f"def {self.fname}(rate_eval, tf):\n"
+        fstring += f"    # {self.rid}\n"
+        fstring += f"    rate_eval.{self.fname} = rate_eval.{self.original_rate.fname}\n\n"
+        return fstring
 
     def function_string_cxx(self, dtype="double", specifiers="inline",
                             leave_open=False, extra_args=()):
