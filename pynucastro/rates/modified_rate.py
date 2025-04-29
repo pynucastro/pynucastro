@@ -133,6 +133,7 @@ class ModifiedRate(Rate):
         fstring += "@numba.njit()\n"
         fstring += f"def {self.fname}(rate_eval, tf):\n"
         fstring += f"    # {self.rid}\n"
+        fstring += f"    {self.original_rate.fname}(rate_eval, tf)\n"
         fstring += f"    rate_eval.{self.fname} = rate_eval.{self.original_rate.fname}\n\n"
         return fstring
 
