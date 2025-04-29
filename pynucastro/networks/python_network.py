@@ -8,7 +8,7 @@ from pathlib import Path
 
 from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import RateCollection
-from pynucastro.rates import ApproximateRate
+from pynucastro.rates import ApproximateRate, ModifiedRate
 from pynucastro.screening import get_screening_map
 
 
@@ -424,6 +424,17 @@ class PythonNetwork(RateCollection):
                 # now write out the function that computes the
                 # approximate rate
                 of.write(r.function_string_py())
+            elif isinstance(r, ModifiedRate):
+                orig_rate = r.original_rate
+                if r in _rate_func_written:
+                    continue
+                of.write(orig_rate.function_string_py())
+                _rate_func_written.append(orig_rate)
+
+                # now write out the function that computes the
+                # modified rate
+                of.write(r.function_string_py())
+                _rate_func_written.append(r)
             else:
                 if r in _rate_func_written:
                     continue
