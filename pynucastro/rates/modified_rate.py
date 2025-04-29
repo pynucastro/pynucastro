@@ -116,7 +116,7 @@ class ModifiedRate(Rate):
 
         """
 
-        self.original_rate.eval(T, rho=rho, comp=comp)
+        return self.original_rate.eval(T, rho=rho, comp=comp)
 
     def function_string_py(self):
         """Return a string containing the python function that
