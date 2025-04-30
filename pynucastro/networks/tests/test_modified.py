@@ -107,7 +107,7 @@ class TestModifiedRate:
         new_net.write_network("test_modified_net.py")
         import test_modified_net as mn  # pylint: disable=import-outside-toplevel
 
-        Y = np.asarray(comp.get_molar().values())
+        Y = np.asarray(list(comp.get_molar().values()))
 
         module_ydots = mn.rhs(0.0, Y, rho, T)
 
