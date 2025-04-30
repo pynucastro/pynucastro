@@ -3,12 +3,11 @@
 # The second will create a proper ModifiedRate.  We test to make sure
 # that these give the same values for the rates.
 
+import numpy as np
 import pytest
 from pytest import approx
 
 import pynucastro as pyna
-
-import numpy as np
 
 
 class TestModifiedRate:
@@ -106,9 +105,9 @@ class TestModifiedRate:
         T = 2.e9
 
         new_net.write_network("test_modified_net.py")
-        import test_modified_net as mn
+        import test_modified_net as mn  # pylint: disable=import-outside-toplevel
 
-        Y = np.asarray([v for v in comp.get_molar().values()])
+        Y = np.asarray(comp.get_molar().values())
 
         module_ydots = mn.rhs(0.0, Y, rho, T)
 
