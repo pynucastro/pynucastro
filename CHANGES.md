@@ -12,7 +12,7 @@
 
   * allow rates to support their own stoichiometry, instead of simply
     relying on the number of nuclei in the reactants or products
-    list. (#947)
+    list. (#947, #952)
 
   * Added a new network method, `get_hidden_rates()` that returns the
     rates that are not explicitly linked in the network but instead
