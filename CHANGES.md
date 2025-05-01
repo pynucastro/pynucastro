@@ -2,6 +2,11 @@
 
 ## 2.6.0
 
+  * don't use std::pow in constexpr in a `SimpleCxxNetwork` as that is
+    C++23 and not yet widely supported.  (#953)
+
+  * allow the nodes in a network plot to have custom names (#946)
+
   * create a `Nucleus` `.summary()` method to display the information
     we know about a nucleus. (#949)
 
@@ -36,7 +41,7 @@
   * Updated the colors used for `RateCollection` plots (#921)
 
   * Added the ability to show a legend on a `RateCollection` network
-    plot (#817)
+    plot (#817, #942)
 
   * Documentation updates (#901, #902, #907, #913, #919, #920) and
     fixes (#941)
