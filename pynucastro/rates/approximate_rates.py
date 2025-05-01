@@ -69,7 +69,7 @@ class ApproximateRate(Rate):
         approximation we are creating.  For "ap_pg", this would be
         A(a, g)B.  For "nn_g", there is no unapproximated counterpart
         so we would pass in ``None``.
-    secondary_rates : list, tuple
+    secondary_rates : list(Rate)
         A list of :py:class:`Rate <pynucastro.rates.rate.Rate>` objects
         containing all of the other forward rates needed to make the
         approximation.
@@ -78,7 +78,7 @@ class ApproximateRate(Rate):
         approximation we are creating.  For "ap_pg", this would be
         B(g, a)A.  For "nn_g", there is no unapproximated counterpart,
         so we would pass in ``None``.
-    secondary_reverse : list, tuple
+    secondary_reverse : list(Rate)
         A list of :py:class:`Rate <pynucastro.rates.rate.Rate>` objects
         containing all of the other reverse rates needed to make the
         approximation.
@@ -87,7 +87,7 @@ class ApproximateRate(Rate):
     approx_type : str
         The type of approximation to do.  Currently supported are
         "ap_pg" and "nn_g"
-    use_idenitical_particle_factor : bool
+    use_identical_particle_factor : bool
         Usually if a rate has 2 reactants of the same type, we
         divide by 2, since the order doesn't matter.  However, for
         some approximations, like A(n,g)X(n,g)B -> A(nn,g), we
@@ -295,7 +295,7 @@ class ApproximateRate(Rate):
 
         Returns
         -------
-        list
+        list(Rate)
 
         """
         return list(self.rates.values())
@@ -313,10 +313,8 @@ class ApproximateRate(Rate):
             the temperature to evaluate the rate at
         rho : float
             the density to evaluate the rate at
-        comp : float
-            the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
-            to evaluate the rate with.
+        comp : Composition
+            the composition to evaluate the rate with
 
         Returns
         -------
@@ -465,7 +463,7 @@ class ApproximateRate(Rate):
             If ``true``, then we leave the function unclosed (no "}"
             at the end).  This can allow additional functions to add
             to this output.
-        extra_args : list, tuple
+        extra_args : list(str)
             A list of strings representing additional arguments that
             should be appended to the argument list when defining the
             function interface.
