@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.library &#8212; pynucastro 2.5.0.post43+g0abde2c5 documentation</title>
+    <title>pynucastro.rates.library &#8212; pynucastro 2.5.0.post44+g65b8304a documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=21d27cbc"></script>
+    <script src="../../../_static/documentation_options.js?v=555ad4c8"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -438,7 +438,7 @@ document.write(`
 <div class="viewcode-block" id="list_known_rates">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.list_known_rates">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">list_known_rates</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; list the rates found in the library &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print a list of all of the rates found in the library &quot;&quot;&quot;</span>
 
     <span class="n">lib_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="s2">&quot;library&quot;</span>
 
@@ -540,13 +540,24 @@ document.write(`
 <div class="viewcode-block" id="Library">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Library</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A Library is a Rate container that reads a single file</span>
-<span class="sd">    containing one or many Reaclib rates, possibly containing multiple</span>
-<span class="sd">    sets per rate.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Library is a container storing multiple rates that allows for</span>
+<span class="sd">    filtering rates based on rules, managing duplicate rates, and</span>
+<span class="sd">    selecting subsets of rates based on properties.  At its heart is a</span>
+<span class="sd">    ``dict`` of rates keyed by the rate id.</span>
 
-<span class="sd">    The Library class also implements searching based on rules</span>
-<span class="sd">    specified by RateFilter objects.</span>
+<span class="sd">    A library may contain rates from a single source, or be created by</span>
+<span class="sd">    adding or subtracting existing Library objects.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    libfile : str</span>
+<span class="sd">        a file containing a sequence of rates in a format that we</span>
+<span class="sd">        understand (for example a ReacLib database)</span>
+<span class="sd">    rates : list, dict, Rate</span>
+<span class="sd">        a single :py:class:`Rate &lt;pynucastro.rates.rate.Rate&gt;` or an</span>
+<span class="sd">        iterable of `Rate` objects.  If it is a dictionary, then it</span>
+<span class="sd">        should be keyed by the rate id.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -569,14 +580,27 @@ document.write(`
 <div class="viewcode-block" id="Library.get_rates">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.get_rates">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Return a list of the rates in this library.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of the rates in this library.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="Library.get_rate">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.get_rate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rid</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Return a rate matching the id provided. &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a rate matching the id provided.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Rate</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">try</span><span class="p">:</span>
             <span class="n">rid_mod</span> <span class="o">=</span> <span class="n">capitalize_rid</span><span class="p">(</span><span class="n">rid</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">[</span><span class="n">rid_mod</span><span class="p">]</span>
@@ -593,12 +617,26 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">num_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the total number of rates in the Library</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">())</span>
 
 <div class="viewcode-block" id="Library.add_rate">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.add_rate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Manually add a rate by giving a Rate object&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Manually add a rate to the library.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rate : Rate</span>
+<span class="sd">            The rate to add</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rate</span><span class="p">,</span> <span class="n">Rate</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;invalid Rate object </span><span class="si">{</span><span class="n">rate</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -612,7 +650,14 @@ document.write(`
 <div class="viewcode-block" id="Library.add_rates">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.add_rates">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratelist</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Add to the rate dictionary from the supplied list of Rate objects.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add multiple rates to the library</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ratelist : list of Rate</span>
+<span class="sd">            the list of rates to add to the library.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="n">ratelist</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add_rate</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span></div>
@@ -625,6 +670,11 @@ document.write(`
 <span class="sd">        (or a list of strings for multiple rates) return the Rate</span>
 <span class="sd">        objects that match from the Library.  If there are multiple</span>
 <span class="sd">        inputs, then a list of Rate objects is returned.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        rates : list, Rate</span>
+<span class="sd">            A single rate or a list of rates</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -655,7 +705,14 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.remove_rate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">remove_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Manually remove a rate from the library by supplying the</span>
-<span class="sd">        short name &quot;A(x,y)B, a Rate object, or the rate id&quot;&quot;&quot;</span>
+<span class="sd">        short name &quot;A(x,y)B&quot;, a Rate object, or the rate id</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rate : str, Rate</span>
+<span class="sd">            The rate to remove from the library.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rate</span><span class="p">,</span> <span class="n">Rate</span><span class="p">):</span>
             <span class="n">rid</span> <span class="o">=</span> <span class="n">rate</span><span class="o">.</span><span class="n">id</span>
@@ -671,14 +728,28 @@ document.write(`
 <div class="viewcode-block" id="Library.get_nuclei">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.get_nuclei">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;get the list of unique nuclei&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the list of unique nuclei in the library</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        set</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">return</span> <span class="p">{</span><span class="n">nuc</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="Library.heaviest">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.heaviest">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">heaviest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Return the heaviest nuclide in this library. &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the heaviest nuclide in this library.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Nucleus</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">nuc</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
             <span class="n">rnuc</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">heaviest</span><span class="p">()</span>
@@ -693,7 +764,14 @@ document.write(`
 <div class="viewcode-block" id="Library.lightest">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.lightest">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">lightest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Return the lightest nuclide in this library. &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the lightest nuclide in this library.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Nucleus</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">nuc</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
             <span class="n">rnuc</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">lightest</span><span class="p">()</span>
@@ -770,11 +848,18 @@ document.write(`
 
 <div class="viewcode-block" id="Library.write_to_file">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.write_to_file">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">prepend_rates_dir</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Write the library out to a file of the given name in Reaclib format. Will be</span>
-<span class="sd">        automatically written to the pynucastro rate file directory if True is passed</span>
-<span class="sd">        in as the second argument.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prepend_rates_dir</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the library out to a file of the given name in</span>
+<span class="sd">        Reaclib format.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            The filename to use for the library</span>
+<span class="sd">        prepend_rates_dir : bool</span>
+<span class="sd">            If ``True``, then output to the pynucastro rate file</span>
+<span class="sd">            directory.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">prepend_rates_dir</span><span class="p">:</span>
@@ -786,7 +871,7 @@ document.write(`
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Return a string containing the rates IDs in this library. &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string containing the rates IDs in this library.&quot;&quot;&quot;</span>
         <span class="n">rstrings</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">tmp_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">tmp_rates</span><span class="p">):</span>
@@ -803,7 +888,10 @@ document.write(`
         <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rstrings</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Add two libraries to get a library containing rates from both. &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add two libraries to get a library containing rates from</span>
+<span class="sd">        both.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">new_rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span>
         <span class="k">for</span> <span class="n">rid</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">_rates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">rid</span> <span class="ow">in</span> <span class="n">new_rates</span><span class="p">:</span>
@@ -815,8 +903,10 @@ document.write(`
         <span class="k">return</span> <span class="n">new_library</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a Library containing the rates in this library that are not</span>
-<span class="sd">        contained in other_library&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a Library containing the rates in this library that</span>
+<span class="sd">        are not contained in other_library</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">diff_rates</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">get_rates</span><span class="p">())</span>
         <span class="n">new_library</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">diff_rates</span><span class="p">)</span>
@@ -825,7 +915,23 @@ document.write(`
 <div class="viewcode-block" id="Library.get_rate_by_nuclei">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.get_rate_by_nuclei">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_rate_by_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;given a list of reactants and products, return any matching rates&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given a list of reactants and products, return any matching</span>
+<span class="sd">        rates</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        reactants : list of Nucleus or str</span>
+<span class="sd">            the list of nuclei that serve as reactants.</span>
+<span class="sd">        products : list of Nucleus or str</span>
+<span class="sd">            the list of nuclei that serve as products.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Rate, list(Rate)</span>
+<span class="sd">            a list of Rate object or a single Rate (if there is only one)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">reactants</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">reactants</span><span class="p">))</span>
         <span class="n">products</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">products</span><span class="p">))</span>
         <span class="n">_tmp</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span> <span class="k">if</span>
@@ -842,14 +948,18 @@ document.write(`
 <div class="viewcode-block" id="Library.find_duplicate_links">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.find_duplicate_links">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_duplicate_links</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;report on an rates where another rate exists that has the</span>
-<span class="sd">        same reactants and products.  These may not be the same Rate</span>
-<span class="sd">        object (e.g., one could be tabular the other a simple decay),</span>
-<span class="sd">        but they will present themselves in the network as the same</span>
-<span class="sd">        link.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find instances of multiple rates having the same reactants</span>
+<span class="sd">        and products.  These may not be the same Rate object (e.g.,</span>
+<span class="sd">        one could be tabular the other a simple decay), but they will</span>
+<span class="sd">        present themselves in the network as the same link.</span>
 
-<span class="sd">        We return a list, where each entry is a list of all the rates</span>
-<span class="sd">        that share the same link&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        duplicate_rates : list</span>
+<span class="sd">            a list where each entry is a list of all the rates</span>
+<span class="sd">            that share the same link.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">duplicates</span> <span class="o">=</span> <span class="n">find_duplicate_rates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">())</span>
 
@@ -868,15 +978,25 @@ document.write(`
 
 <div class="viewcode-block" id="Library.linking_nuclei">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.linking_nuclei">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">linking_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuclist</span><span class="p">,</span> <span class="n">with_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">print_warning</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return a Library object containing the rates linking the</span>
-<span class="sd">        nuclei provided in the list of Nucleus objects or nucleus abbreviations &#39;nuclist&#39;.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">linking_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuclist</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">with_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">print_warning</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a library containing the rates linking the list of</span>
+<span class="sd">        nuclei passed in.</span>
 
-<span class="sd">        If with_reverse is True, then include reverse rates. Otherwise</span>
-<span class="sd">        include only forward rates.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nuclist : list of str or Nucleus</span>
+<span class="sd">            the nuclei to link (either the string names or the Nucleus objects)</span>
+<span class="sd">        with_reverse : bool</span>
+<span class="sd">            do we include reverse rates?</span>
+<span class="sd">        print_warning : bool</span>
+<span class="sd">            if ``True``, then print a warning if one of the input</span>
+<span class="sd">            nuclei is not linked.</span>
 
-<span class="sd">        If print_warning is True, then print out a warning if one of the input nuclei is not linked.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Library</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">nucleus_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">nuclist</span><span class="p">))</span>
@@ -914,12 +1034,18 @@ document.write(`
 <div class="viewcode-block" id="Library.filter">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.filter">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_spec</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        filter_specs should be an iterable of RateFilter objects or a</span>
-<span class="sd">        single RateFilter object. Library.filter yields all rates</span>
-<span class="sd">        matching any RateFilter in filter_specs.  If RateFilter.exact,</span>
-<span class="sd">        then return rates with exactly the reactants or products</span>
-<span class="sd">        passed in as arguments.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Filter the rates in the library based on a set of rules.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filter_spec : RateFilter, list</span>
+<span class="sd">            a filter (or list of filters) to apply to the library</span>
+<span class="sd">            to define a subset of rates.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Library</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filter_spec</span><span class="p">,</span> <span class="n">RateFilter</span><span class="p">):</span>
             <span class="n">filter_specifications</span> <span class="o">=</span> <span class="p">[</span><span class="n">filter_spec</span><span class="p">]</span>
@@ -939,9 +1065,15 @@ document.write(`
 <div class="viewcode-block" id="Library.forward">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Select only the forward rates, discarding the inverse rates obtained</span>
-<span class="sd">        by detailed balance.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Select only the forward rates, discarding the inverse rates</span>
+<span class="sd">        obtained by detailed balance.  Note: &quot;forward&quot; here means</span>
+<span class="sd">        that it is not a reverse rate derived from detailed balance,</span>
+<span class="sd">        and does not necessarily mean Q &gt; 0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Library</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">only_fwd_filter</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -952,8 +1084,14 @@ document.write(`
 <div class="viewcode-block" id="Library.backward">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.backward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Select only the reverse rates, obtained by detailed balance.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Select only the reverse rates, obtained by detailed</span>
+<span class="sd">        balance.  Note: &quot;reverse&quot; here means that it was derived</span>
+<span class="sd">        by detailed balance, and not that Q &lt; 0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Library</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">only_bwd_filter</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -961,22 +1099,18 @@ document.write(`
         <span class="k">return</span> <span class="n">only_bwd</span></div>
 
 
-<div class="viewcode-block" id="Library.derived_forward">
-<a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.derived_forward">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">derived_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        In this library, we exclude the weak and tabular rates from the .forward() library which includes all</span>
-<span class="sd">        the ReacLib forward reactions.</span>
+<div class="viewcode-block" id="Library.forward_for_detailed_balance">
+<a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.forward_for_detailed_balance">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward_for_detailed_balance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Loop over the forward rates (as filtered by</span>
+<span class="sd">        :py:meth:`.forward`) and return those that can be used to</span>
+<span class="sd">        derive reverse rates via detailed balance.  This means that</span>
+<span class="sd">        they cannot be tabular or weak rates.</span>
 
-<span class="sd">        In a future PR, we will classify forward reactions as exothermic (Q&gt;0), and reverse by endothermic (Q&lt;0).</span>
-<span class="sd">        However, ReacLib does not follow this path. If a reaction is measured experimentally (independent of Q),</span>
-<span class="sd">        they use detailed balance to get the opposite direction. Eventually, I want to classify forward and reverse</span>
-<span class="sd">        by positive Q and negative Q; however, for testing purposes, making this classification may eventually lead to</span>
-<span class="sd">        computing the detailed balance twice.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Library</span>
 
-<span class="sd">        The idea of derived_forward is to eliminate the reverse and weak, and see if our job gives the same Reaclib</span>
-<span class="sd">        predictions, checking the NSE convergence with the pf functions. In the future, I want to move this function</span>
-<span class="sd">        in a unit test.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">collect_rates</span> <span class="o">=</span> <span class="p">[]</span>
@@ -998,13 +1132,27 @@ document.write(`
 <div class="viewcode-block" id="Library.derived_backward">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.Library.derived_backward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">derived_backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This library contains the detailed balance reverse reactions over the selected .derived_forward(),</span>
-<span class="sd">        computed by hand.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Loop over all of the forward rates that can be used to</span>
+<span class="sd">        derive inverse rates (as returned by</span>
+<span class="sd">        :py:meth:`.forward_for_detailed_balance`) and derive the</span>
+<span class="sd">        inverses, potentially taking into account the partition</span>
+<span class="sd">        function and recomputing Q.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        compute_Q : bool</span>
+<span class="sd">            do we recompute the Q value based on the masses?</span>
+<span class="sd">        use_pf : bool</span>
+<span class="sd">            do we use the temperature-dependent partition function?</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Library</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">derived_rates</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">onlyfwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_forward</span><span class="p">()</span>
+        <span class="n">onlyfwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_for_detailed_balance</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">onlyfwd</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
             <span class="k">try</span><span class="p">:</span>
@@ -1177,8 +1325,10 @@ document.write(`
 <div class="viewcode-block" id="ReacLibLibrary">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.ReacLibLibrary">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ReacLibLibrary</span><span class="p">(</span><span class="n">Library</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the latest stored version of the ReacLib library and</span>
-<span class="sd">    return a Library&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a :py:class:`Library` containing all of the rates in the</span>
+<span class="sd">    latest stored version of the ReacLib library.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">libfile</span> <span class="o">=</span> <span class="s1">&#39;reaclib_default2_20250330&#39;</span>
@@ -1189,22 +1339,18 @@ document.write(`
 <div class="viewcode-block" id="TabularLibrary">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.TabularLibrary">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TabularLibrary</span><span class="p">(</span><span class="n">Library</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the tabular rates from multiple sources and return a</span>
-<span class="sd">    ``Library``</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a :py:class:`Library` containing all of the tabular</span>
+<span class="sd">    rates we know (excluding duplications) across multiple sources.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    ordering : tuple, list</span>
-<span class="sd">        an iterable of strings representing the sources of the rates</span>
-<span class="sd">        from lowest to highest precedence.  We will read from the</span>
-<span class="sd">        first source, and then for any later sources, for any</span>
-<span class="sd">        duplicate rates, we will replace the existing rate with the</span>
-<span class="sd">        version from the higher-priority library.  The default</span>
-<span class="sd">        ordering is ``[&quot;ffn&quot;, &quot;langanke&quot;, &quot;suzuki&quot;]``</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    Library</span>
+<span class="sd">    ordering : list of str</span>
+<span class="sd">        The list of sources of the rates from lowest to highest</span>
+<span class="sd">        precedence.  We will read from the first source, and then for</span>
+<span class="sd">        any later sources, for any duplicate rates, we will replace</span>
+<span class="sd">        the existing rate with the version from the higher-priority</span>
+<span class="sd">        library.  The default ordering is ``[&quot;ffn&quot;, &quot;langanke&quot;,</span>
+<span class="sd">        &quot;suzuki&quot;]``</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -1240,9 +1386,9 @@ document.write(`
 <div class="viewcode-block" id="SuzukiLibrary">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.SuzukiLibrary">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SuzukiLibrary</span><span class="p">(</span><span class="n">TabularLibrary</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Load all of the tabular rates inside /library/tabular/suzuki/</span>
-<span class="sd">    and return a Library.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a :py:class:`Library` containing all of the tabular</span>
+<span class="sd">    rates inside the &quot;suzuki&quot; subdirectory.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1253,9 +1399,9 @@ document.write(`
 <div class="viewcode-block" id="LangankeLibrary">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.LangankeLibrary">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">LangankeLibrary</span><span class="p">(</span><span class="n">TabularLibrary</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Load all of the tabular rates inside /library/tabular/langanke/</span>
-<span class="sd">    and return a Library.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a :py:class:`Library` containing all of the tabular</span>
+<span class="sd">    rates inside the &quot;langanke&quot; subdirectory.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1266,9 +1412,9 @@ document.write(`
 <div class="viewcode-block" id="FFNLibrary">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.library.FFNLibrary">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FFNLibrary</span><span class="p">(</span><span class="n">TabularLibrary</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Load all of the tabular rates inside /library/tabular/ffn/</span>
-<span class="sd">    and return a Library.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a :py:class:`Library` containing all of the tabular</span>
+<span class="sd">    rates inside the &quot;ffn&quot; subdirectory.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
