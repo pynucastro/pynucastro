@@ -22,9 +22,10 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 # Import Rate
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
-                              RateFileError, RatePair, TabularRate,
-                              find_duplicate_rates, is_allowed_dupe, load_rate)
+from pynucastro.rates import (ApproximateRate, DerivedRate, Library,
+                              ModifiedRate, Rate, RateFileError, RatePair,
+                              TabularRate, find_duplicate_rates,
+                              is_allowed_dupe, load_rate)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_rid
 from pynucastro.screening import (get_screening_map, make_plasma_state,
                                   make_screen_factors)
@@ -637,43 +638,72 @@ class RateCollection:
         self.custom_rates = []
         self.approx_rates = []
         self.derived_rates = []
+        self.modified_rates = []
 
         for r in self.rates:
             if isinstance(r, ApproximateRate):
                 self.approx_rates.append(r)
                 for cr in r.get_child_rates():
                     assert cr.chapter != "t"
-                    # child rates may be ReacLibRates or DerivedRates
-                    # make sure we don't double count
+
+                    # Check whether this child rate is removed or not.
+                    # "removed" means that this rate is never used on
+                    # its own to connect two nuclei in the network it
+                    # is only used in one or more ApproximateRate or
+                    # ModifiedRate
+                    if cr not in self.rates:
+                        cr.removed = True
+                    else:
+                        cr.removed = False
+
+                    cr.fname = None
+                    # pylint: disable-next=protected-access
+                    cr._set_print_representation()
+
+                    # child rates may be ReacLibRates, ModifiedRates,
+                    # or DerivedRates.  Make sure we don't double
+                    # count
                     if isinstance(cr, DerivedRate):
-
-                        # Here we check whether this child rate is removed or not.
-                        # removed means that this rate is never used on its own to connect two nuclei in the network
-                        # it is only used in one or more ApproximateRate.
-                        if cr not in self.rates:
-                            cr.removed = True
-                        else:
-                            cr.removed = False
-
-                        cr.fname = None
-                        # pylint: disable-next=protected-access
-                        cr._set_print_representation()
-
                         if cr not in self.derived_rates:
                             self.derived_rates.append(cr)
-
+                    elif isinstance(cr, ModifiedRate):
+                        if cr not in self.derived_rates:
+                            self.modified_rates.append(cr)
                     else:
-                        if cr not in self.rates:
-                            cr.removed = True
-                        else:
-                            cr.removed = False
-
-                        cr.fname = None
-                        # pylint: disable-next=protected-access
-                        cr._set_print_representation()
-
                         if cr not in self.reaclib_rates:
                             self.reaclib_rates.append(cr)
+
+            elif isinstance(r, ModifiedRate):
+                self.modified_rates.append(r)
+
+                cr = r.original_rate
+
+                # Check whether this child rate is removed or not.
+                # "removed" means that this rate is never used on
+                # its own to connect two nuclei in the network it
+                # is only used in one or more ApproximateRate or
+                # ModifiedRate
+                if cr not in self.rates:
+                    cr.removed = True
+                else:
+                    cr.removed = False
+
+                cr.fname = None
+                # pylint: disable-next=protected-access
+                cr._set_print_representation()
+
+                # child rates may be ReacLibRates, ModifiedRates,
+                # or DerivedRates.  Make sure we don't double
+                # count
+                if isinstance(cr, DerivedRate):
+                    if cr not in self.derived_rates:
+                        self.derived_rates.append(cr)
+                elif isinstance(cr, ModifiedRate):
+                    if cr not in self.derived_rates:
+                        self.modified_rates.append(cr)
+                else:
+                    if cr not in self.reaclib_rates:
+                        self.reaclib_rates.append(cr)
 
             elif r.chapter == 't':
                 self.tabular_rates.append(r)
@@ -692,7 +722,8 @@ class RateCollection:
                 raise NotImplementedError(f"Chapter type unknown for rate chapter {r.chapter}")
 
         self.all_rates = (self.reaclib_rates + self.custom_rates +
-                          self.tabular_rates + self.approx_rates + self.derived_rates)
+                          self.tabular_rates + self.approx_rates +
+                          self.modified_rates + self.derived_rates)
 
         # finally check for duplicate rates -- these are not
         # allowed
@@ -865,7 +896,9 @@ class RateCollection:
                 for c in r.get_child_rates():
                     if c.removed:
                         hidden_rates.append(c)
-
+            elif isinstance(r, ModifiedRate):
+                if r.original_rate.removed:
+                    hidden_rates.append(r)
         return set(hidden_rates)
 
     def get_rate(self, rid):
@@ -1274,6 +1307,32 @@ class RateCollection:
                     rp.reverse.swap_protons()
 
         self._build_collection()
+
+    def summary(self):
+        print("Network summary")
+        print("---------------")
+        print(f"  explicitly carried nuclei: {len(self.unique_nuclei)}")
+        print(f"  approximated-out nuclei: {len(self.approx_nuclei)}")
+        if self.inert_nuclei:
+            print(f"  inert nuclei (included in carried): {len(self.inert_nuclei)}")
+        else:
+            print("  inert nuclei (included in carried): 0")
+
+        print("")
+
+        print(f"  total number of rates: {len(self.all_rates)}")
+        print("")
+
+        print(f"  rates explicitly connecting nuclei: {len(self.rates)}")
+        print(f"  hidden rates: {len(self.get_hidden_rates())}")
+        print("")
+
+        print(f"  reaclib rates: {len(self.reaclib_rates)}")
+        print(f"  tabular rates: {len(self.tabular_rates)}")
+        print(f"  approximate rates: {len(self.approx_rates)}")
+        print(f"  derived rates: {len(self.derived_rates)}")
+        print(f"  modified rates: {len(self.modified_rates)}")
+        print(f"  custom rates: {len(self.custom_rates)}")
 
     def evaluate_rates(self, rho, T, composition, screen_func=None):
         """evaluate the rates for a specific density, temperature, and

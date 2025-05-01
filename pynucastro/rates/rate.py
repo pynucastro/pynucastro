@@ -55,6 +55,7 @@ class Rate:
     """
     def __init__(self, reactants=None, products=None,
                  Q=None, weak_type="", label="generic",
+                 stoichiometry=None,
                  use_identical_particle_factor=True):
         """a generic Rate class that acts as a base class for specific
         sources.  Here we only specify the reactants and products and Q value"""
@@ -95,7 +96,7 @@ class Rate:
 
         # some subclasses might define a stoichmetry as a dict{Nucleus}
         # that gives the numbers for the dY/dt equations
-        self.stoichiometry = None
+        self.stoichiometry = stoichiometry
 
         self._set_rhs_properties()
         self._set_screening()
@@ -330,12 +331,11 @@ class Rate:
             self.dens_exp = self.dens_exp + 1
 
     def _set_screening(self):
-        """ determine if this rate is eligible for screening and the nuclei to use. """
-        # Tells if this rate is eligible for screening
-        # using screenz.f90 provided by StarKiller Microphysics.
-        # If not eligible for screening, set to None
-        # If eligible for screening, then
-        # Rate.ion_screen is a 2-element (3 for 3-alpha) list of Nucleus objects for screening
+        """Determine if this rate is eligible for screening and the
+        nuclei to use."""
+        # Tells if this rate is eligible for screening, and if it is
+        # then Rate.ion_screen is a 2-element (3 for 3-alpha) list of
+        # Nucleus objects for screening; otherwise it is set to none
         self.ion_screen = []
         nucz = [q for q in self.reactants if q.Z != 0]
         if len(nucz) > 1:
