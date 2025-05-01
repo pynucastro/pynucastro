@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Dealing with Duplicate Rates &#8212; pynucastro 2.5.0.post37+g50ff3873 documentation</title>
+    <title>Dealing with Duplicate Rates &#8212; pynucastro 2.5.0.post38+g14bea0cf documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=babb7559"></script>
+    <script src="_static/documentation_options.js?v=5ed7050e"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -557,7 +557,7 @@ warning: Mg24 was not able to be linked
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:689: UserWarning: ReacLib neutron decay rate (&lt;n_to_p_weak_wc12&gt;) does not account for degeneracy at high densities. Consider using tabular rate from Langanke.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:690: UserWarning: ReacLib neutron decay rate (&lt;n_to_p_weak_wc12&gt;) does not account for degeneracy at high densities. Consider using tabular rate from Langanke.
   warnings.warn(msg)
 </pre></div>
 </div>
@@ -566,16 +566,16 @@ warning: Mg24 was not able to be linked
 <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
 <span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">])</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:585,</span> in <span class="ni">RateCollection.__init__</span><span class="nt">(self, rate_files, libraries, rates, inert_nuclei, symmetric_screening, do_screening)</span>
-<span class="g g-Whitespace">    </span><span class="mi">581</span>         <span class="n">combined_library</span> <span class="o">+=</span> <span class="n">lib</span>
-<span class="g g-Whitespace">    </span><span class="mi">583</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">+</span> <span class="n">combined_library</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
-<span class="ne">--&gt; </span><span class="mi">585</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:586,</span> in <span class="ni">RateCollection.__init__</span><span class="nt">(self, rate_files, libraries, rates, inert_nuclei, symmetric_screening, do_screening)</span>
+<span class="g g-Whitespace">    </span><span class="mi">582</span>         <span class="n">combined_library</span> <span class="o">+=</span> <span class="n">lib</span>
+<span class="g g-Whitespace">    </span><span class="mi">584</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">+</span> <span class="n">combined_library</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
+<span class="ne">--&gt; </span><span class="mi">586</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:699,</span> in <span class="ni">RateCollection._build_collection</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">696</span> <span class="c1"># finally check for duplicate rates -- these are not</span>
-<span class="g g-Whitespace">    </span><span class="mi">697</span> <span class="c1"># allowed</span>
-<span class="g g-Whitespace">    </span><span class="mi">698</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">():</span>
-<span class="ne">--&gt; </span><span class="mi">699</span>     <span class="k">raise</span> <span class="n">RateDuplicationError</span><span class="p">(</span><span class="s2">&quot;Duplicate rates found&quot;</span><span class="p">)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:700,</span> in <span class="ni">RateCollection._build_collection</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">    </span><span class="mi">697</span> <span class="c1"># finally check for duplicate rates -- these are not</span>
+<span class="g g-Whitespace">    </span><span class="mi">698</span> <span class="c1"># allowed</span>
+<span class="g g-Whitespace">    </span><span class="mi">699</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">():</span>
+<span class="ne">--&gt; </span><span class="mi">700</span>     <span class="k">raise</span> <span class="n">RateDuplicationError</span><span class="p">(</span><span class="s2">&quot;Duplicate rates found&quot;</span><span class="p">)</span>
 
 <span class="ne">RateDuplicationError</span>: Duplicate rates found
 </pre></div>
