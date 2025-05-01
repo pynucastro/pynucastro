@@ -35,6 +35,7 @@ mpl.rcParams['figure.dpi'] = 100
 # the tuple is (dZ, dN)
 RATE_LINES = {r"$(\alpha, p)$": (1, 2),
               r"$(\alpha, \gamma)$": (2, 2),
+              r"$(\alpha, n)$": (2, 1),
               r"$(p, \gamma)$": (1, 0),
               r"$(n, \gamma)$": (0, 1),
               r"$\beta^-$": (1, -1),
@@ -1366,13 +1367,13 @@ class RateCollection:
 
                 for r in self.nuclei_consumed[n_i]:
                     # how many of n_i are destroyed by this reaction
-                    c = r.reactants.count(n_i)
+                    c = r.reactant_count(n_i)
                     jac[i, j] -= c * screen_factors.get(r, 1.0) *\
                         r.eval_jacobian_term(T, rho, comp, n_j)
 
                 for r in self.nuclei_produced[n_i]:
                     # how many of n_i are produced by this reaction
-                    c = r.products.count(n_i)
+                    c = r.product_count(n_i)
                     jac[i, j] += c * screen_factors.get(r, 1.0) *\
                         r.eval_jacobian_term(T, rho, comp, n_j)
 
@@ -1608,8 +1609,8 @@ class RateCollection:
                 producing_rates = [r for r in self.nuclei_produced[nuc] if rate_filter(r)]
 
             # Number of nuclei consumed / produced
-            nconsumed = (r.reactants.count(nuc) for r in consuming_rates)
-            nproduced = (r.products.count(nuc) for r in producing_rates)
+            nconsumed = (r.reactant_count(nuc) for r in consuming_rates)
+            nproduced = (r.product_count(nuc) for r in producing_rates)
 
             # Multiply each rate by the count
             consumed = (c * rvals[r] for c, r in zip(nconsumed, consuming_rates))
@@ -1710,8 +1711,8 @@ class RateCollection:
             consuming_rates = self.nuclei_consumed[nuc]
             producing_rates = self.nuclei_produced[nuc]
             # Number of nuclei consumed / produced
-            nconsumed = (r.reactants.count(nuc) for r in consuming_rates)
-            nproduced = (r.products.count(nuc) for r in producing_rates)
+            nconsumed = (r.reactant_count(nuc) for r in consuming_rates)
+            nproduced = (r.product_count(nuc) for r in producing_rates)
             # Multiply each rate by the count
             consumed = (c * rvals[r] for c, r in zip(nconsumed, consuming_rates))
             produced = (c * rvals[r] for c, r in zip(nproduced, producing_rates))
@@ -1731,9 +1732,9 @@ class RateCollection:
         for rate, rval in rvals.items():
             nucs = []
             for n in set(rate.reactants):
-                nucs.append((n, -rate.reactants.count(n) * rval))
+                nucs.append((n, -rate.reactant_count(n) * rval))
             for n in set(rate.products):
-                nucs.append((n, rate.products.count(n) * rval))
+                nucs.append((n, rate.product_count(n) * rval))
             nc[rate] = nucs
 
         return nc
@@ -1862,6 +1863,7 @@ class RateCollection:
              size=(800, 600), dpi=100, title=None,
              ydot_cutoff_value=None, show_small_ydot=False,
              node_size=1000, node_font_size=12, node_color="#444444", node_shape="o",
+             nuclei_custom_labels=None,
              curved_edges=False,
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False,
@@ -1904,6 +1906,10 @@ class RateCollection:
             color to make the nodes
         node_shape : str
             shape of the node (using matplotlib marker names)
+        nuclei_custom_labels : dict
+            a dict of the form {Nucleus: str} that provides alternate
+            labels for nodes (instead of using the `pretty` attribute
+            of the Nucleus.
         curved_edges : bool
             do we use arcs to connect the nodes?
         N_range : (tuple, list)
@@ -1963,6 +1969,9 @@ class RateCollection:
         if not always_show_alpha:
             hidden_nuclei.append("he4")
 
+        if nuclei_custom_labels is None:
+            nuclei_custom_labels = {}
+
         # nodes -- the node nuclei will be all of the heavies
         # add all the nuclei into G.node
         node_nuclei = []
@@ -1972,8 +1981,9 @@ class RateCollection:
                 node_nuclei.append(n)
                 colors.append(node_color)
             else:
+                # show hidden nuclei only if they react with themselves
                 for r in self.rates:
-                    if not isinstance(r, ApproximateRate) and r.reactants.count(n) > 1:
+                    if not isinstance(r, ApproximateRate) and r.reactant_count(n) > 1:
                         node_nuclei.append(n)
                         colors.append(node_color)
                         break
@@ -1999,7 +2009,10 @@ class RateCollection:
                 G.position[n] = (n.Z, n.A - 2*n.Z)
             else:
                 G.position[n] = (n.N, n.Z)
-            G.labels[n] = fr"${n.pretty}$"
+            if n in nuclei_custom_labels:
+                G.labels[n] = nuclei_custom_labels[n]
+            else:
+                G.labels[n] = fr"${n.pretty}$"
 
         # get the rates for each reaction
         if rho is not None and T is not None and comp is not None:
@@ -2224,7 +2237,7 @@ class RateCollection:
                     ax.arrow(legend_coord[0], legend_coord[1],
                              dZ, dN-dZ, width=0.04,
                              length_includes_head=True)
-                    ax.text(legend_coord[0]+dZ+eps, legend_coord[1]+dN-dZ+eps,
+                    ax.text(legend_coord[0]+dZ+eps, legend_coord[1]+dN-dZ+np.sign(dN-dZ)*eps,
                             label, fontsize="small")
                 else:
                     ax.arrow(legend_coord[1], legend_coord[0],

@@ -180,7 +180,7 @@ def n__p__weak__wc12(rate_eval, tf):
 
 @numba.njit()
 def He4_He4_He4__C12(rate_eval, tf):
-    # He4 + He4 + He4 --> C12
+    # 3 He4 --> C12
     rate = 0.0
 
     # fy05r
