@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.approximate_rates &#8212; pynucastro 2.5.0.post41+gb64687df documentation</title>
+    <title>pynucastro.rates.approximate_rates &#8212; pynucastro 2.5.0.post42+g52960afe documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=99c41ea3"></script>
+    <script src="../../../_static/documentation_options.js?v=5b1e6b61"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -425,8 +425,24 @@ document.write(`
 <div class="viewcode-block" id="create_double_neutron_capture">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.approximate_rates.create_double_neutron_capture">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_double_neutron_capture</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="n">reactant</span><span class="p">,</span> <span class="n">product</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;a helper function that will return an ApproximateRate object</span>
-<span class="sd">    for the &quot;nn_g&quot; approximation&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A helper function that will return a pair of</span>
+<span class="sd">    :py:class:`ApproximateRate` objects for the A(n,g)X(n,g)B -&gt;</span>
+<span class="sd">    A(nn,g)B approximation</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lib : Library</span>
+<span class="sd">         A Library object containing the neutron-capture rates</span>
+<span class="sd">    reactant : Nucleus, str</span>
+<span class="sd">         The reactant, A, in the sequence A(n,g)X(n,g)B</span>
+<span class="sd">    product: Nucleus, str</span>
+<span class="sd">         The product, B, in the sequence A(n,g)X(n,g)B</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ApproximateRate, ApproximateRate</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reactant</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">reactant</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">reactant</span><span class="p">)</span>
@@ -459,17 +475,56 @@ document.write(`
 <div class="viewcode-block" id="ApproximateRate">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.approximate_rates.ApproximateRate">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ApproximateRate</span><span class="p">(</span><span class="n">Rate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An approximation to a rate sequence.  Two approximations are</span>
+<span class="sd">    currently supported:</span>
 
+<span class="sd">    * &quot;ap_pg&quot; : combine the A(a, g)B and A(a, p)X(p, g)B sequences</span>
+<span class="sd">      into a single, effective A(a, g)B rate.</span>
+
+<span class="sd">    * &quot;nn_g&quot; : replace the sequence A(n, g)X(n, g)B with an</span>
+<span class="sd">      effective A(nn, g)B rate.</span>
+
+<span class="sd">    This class stores all of the rates needed to implement these</span>
+<span class="sd">    approximations.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    primary_rate : Rate</span>
+<span class="sd">        An existing rate that represents the same sequence as the</span>
+<span class="sd">        approximation we are creating.  For &quot;ap_pg&quot;, this would be</span>
+<span class="sd">        A(a, g)B.  For &quot;nn_g&quot;, there is no unapproximated counterpart</span>
+<span class="sd">        so we would pass in ``None``.</span>
+<span class="sd">    secondary_rates : list(Rate)</span>
+<span class="sd">        A list of :py:class:`Rate &lt;pynucastro.rates.rate.Rate&gt;` objects</span>
+<span class="sd">        containing all of the other forward rates needed to make the</span>
+<span class="sd">        approximation.</span>
+<span class="sd">    primary_reverse : Rate</span>
+<span class="sd">        An existing rate that represents the reverse of the same</span>
+<span class="sd">        approximation we are creating.  For &quot;ap_pg&quot;, this would be</span>
+<span class="sd">        B(g, a)A.  For &quot;nn_g&quot;, there is no unapproximated counterpart,</span>
+<span class="sd">        so we would pass in ``None``.</span>
+<span class="sd">    secondary_reverse : list(Rate)</span>
+<span class="sd">        A list of :py:class:`Rate &lt;pynucastro.rates.rate.Rate&gt;` objects</span>
+<span class="sd">        containing all of the other reverse rates needed to make the</span>
+<span class="sd">        approximation.</span>
+<span class="sd">    is_reverse : bool</span>
+<span class="sd">        Are we creating the effective A(x,y)B or B(y, x)A?</span>
+<span class="sd">    approx_type : str</span>
+<span class="sd">        The type of approximation to do.  Currently supported are</span>
+<span class="sd">        &quot;ap_pg&quot; and &quot;nn_g&quot;</span>
+<span class="sd">    use_identical_particle_factor : bool</span>
+<span class="sd">        Usually if a rate has 2 reactants of the same type, we</span>
+<span class="sd">        divide by 2, since the order doesn&#39;t matter.  However, for</span>
+<span class="sd">        some approximations, like A(n,g)X(n,g)B -&gt; A(nn,g), we</span>
+<span class="sd">        don&#39;t want this factor, since the neutron captures are</span>
+<span class="sd">        sequential.  This option allows the double counting</span>
+<span class="sd">        factor to be disabled.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">primary_rate</span><span class="p">,</span> <span class="n">secondary_rates</span><span class="p">,</span>
                  <span class="n">primary_reverse</span><span class="p">,</span> <span class="n">secondary_reverse</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                  <span class="n">is_reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;ap_pg&quot;</span><span class="p">,</span>
                  <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;the primary rate has the same reactants and products as the</span>
-<span class="sd">        final approximate rate would have.  It can be None.  The</span>
-<span class="sd">        secondary rates are ordered such that together they would give</span>
-<span class="sd">        the same sequence</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># this will hold all of the rates</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="p">{}</span>
@@ -662,7 +717,14 @@ document.write(`
 <div class="viewcode-block" id="ApproximateRate.get_child_rates">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.approximate_rates.ApproximateRate.get_child_rates">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_child_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;return a list of all of the rates that are used in this approximation&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of all of the rates that are used in this</span>
+<span class="sd">        approximation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list(Rate)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
 
 
@@ -673,7 +735,21 @@ document.write(`
 <div class="viewcode-block" id="ApproximateRate.eval">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.approximate_rates.ApproximateRate.eval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;evaluate the approximate rate&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the approximate rate.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        T : float</span>
+<span class="sd">            the temperature to evaluate the rate at</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            the density to evaluate the rate at</span>
+<span class="sd">        comp : Composition</span>
+<span class="sd">            the composition to evaluate the rate with</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">==</span> <span class="s2">&quot;ap_pg&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reverse</span><span class="p">:</span>  <span class="c1"># pylint: disable=no-else-return</span>
@@ -727,9 +803,13 @@ document.write(`
 <div class="viewcode-block" id="ApproximateRate.function_string_py">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.approximate_rates.ApproximateRate.function_string_py">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">function_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return a string containing python function that computes the</span>
-<span class="sd">        approximate rate</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string containing the python function that</span>
+<span class="sd">        computes the approximate rate.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">==</span> <span class="s2">&quot;ap_pg&quot;</span><span class="p">:</span>
@@ -803,11 +883,35 @@ document.write(`
 
 <div class="viewcode-block" id="ApproximateRate.function_string_cxx">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.approximate_rates.ApproximateRate.function_string_cxx">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">&quot;inline&quot;</span><span class="p">,</span> <span class="n">leave_open</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="p">()):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return a string containing C++ function that computes the</span>
-<span class="sd">        approximate rate</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">&quot;inline&quot;</span><span class="p">,</span>
+                            <span class="n">leave_open</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string containing the C++ function that computes</span>
+<span class="sd">        the approximate rate</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dtype : str</span>
+<span class="sd">            The C++ datatype to use for all declarations</span>
+<span class="sd">        specifiers : str</span>
+<span class="sd">            C++ specifiers to add before each function declaration</span>
+<span class="sd">            (i.e. &quot;inline&quot;)</span>
+<span class="sd">        leave_open : bool</span>
+<span class="sd">            If ``true``, then we leave the function unclosed (no &quot;}&quot;</span>
+<span class="sd">            at the end).  This can allow additional functions to add</span>
+<span class="sd">            to this output.</span>
+<span class="sd">        extra_args : list(str)</span>
+<span class="sd">            A list of strings representing additional arguments that</span>
+<span class="sd">            should be appended to the argument list when defining the</span>
+<span class="sd">            function interface.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">extra_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">extra_args</span> <span class="o">=</span> <span class="p">()</span>
 
         <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;amrex::Real&quot;</span><span class="p">:</span>
             <span class="n">array_type</span> <span class="o">=</span> <span class="s2">&quot;amrex::Array1D&quot;</span>
