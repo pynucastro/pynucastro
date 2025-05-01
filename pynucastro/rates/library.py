@@ -123,7 +123,7 @@ class Library:
     Parameters
     ----------
     libfile : str
-        a file continuing a sequence of rates in a format that we
+        a file containing a sequence of rates in a format that we
         understand (for example a ReacLib database)
     rates : list, dict, Rate
         a single :py:class:`Rate <pynucastro.rates.rate.Rate>` or an
@@ -260,7 +260,7 @@ class Library:
 
     def remove_rate(self, rate):
         """Manually remove a rate from the library by supplying the
-        short name "A(x,y)B, a Rate object, or the rate id
+        short name "A(x,y)B", a Rate object, or the rate id
 
         Parameters
         ----------
@@ -467,7 +467,7 @@ class Library:
 
         Returns
         -------
-        nuclei: list, Nucleus
+        Rate, list(Rate)
             a list of nuclei or a single nucleus (if there is only one)
 
         """
