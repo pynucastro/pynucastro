@@ -642,7 +642,7 @@ class ReacLibRate(Rate):
         return fstring
 
     def eval(self, T, *, rho=None, comp=None):
-        """Evauate the reaction rate for temperature T
+        """Evaluate the reaction rate for temperature T
 
         Parameters
         ----------
@@ -671,7 +671,7 @@ class ReacLibRate(Rate):
         return r
 
     def eval_deriv(self, T, *, rho=None, comp=None):
-        """ evauate the derivative of reaction rate with respect to T """
+        """Evaluate the derivative of reaction rate with respect to T """
         _ = rho  # unused by this subclass
         _ = comp  # unused by this subclass
 
