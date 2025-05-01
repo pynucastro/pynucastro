@@ -468,7 +468,7 @@ class Library:
         Returns
         -------
         Rate, list(Rate)
-            a list of nuclei or a single nucleus (if there is only one)
+            a list of Rate object or a single Rate (if there is only one)
 
         """
 
