@@ -2,6 +2,8 @@
 
 ## 2.6.0
 
+  * update to the latest ReacLib database (#917)
+
   * don't use std::pow in constexpr in a `SimpleCxxNetwork` as that is
     C++23 and not yet widely supported.  (#953)
 
@@ -27,8 +29,8 @@
     can specify which sources to use and the order to read
     them. (#922)
 
-  * Docstring updates (#892, #899, #926, #927, #928, #934, #935) and
-    more API coverage (#929)
+  * Docstring updates (#892, #899, #926, #927, #928, #931, #934, #935)
+    and more API coverage (#929)
 
   * New codespell github action (#930)
 
