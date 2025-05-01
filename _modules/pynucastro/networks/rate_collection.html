@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.5.0.post38+g14bea0cf documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.5.0.post39+g3869978a documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=5ed7050e"></script>
+    <script src="../../../_static/documentation_options.js?v=c856c177"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -2428,6 +2428,7 @@ document.write(`
              <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_small_ydot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">node_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s2">&quot;#444444&quot;</span><span class="p">,</span> <span class="n">node_shape</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+             <span class="n">nuclei_custom_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">curved_edges</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">N_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Z_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">always_show_p</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">always_show_alpha</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -2470,6 +2471,10 @@ document.write(`
 <span class="sd">            color to make the nodes</span>
 <span class="sd">        node_shape : str</span>
 <span class="sd">            shape of the node (using matplotlib marker names)</span>
+<span class="sd">        nuclei_custom_labels : dict</span>
+<span class="sd">            a dict of the form {Nucleus: str} that provides alternate</span>
+<span class="sd">            labels for nodes (instead of using the `pretty` attribute</span>
+<span class="sd">            of the Nucleus.</span>
 <span class="sd">        curved_edges : bool</span>
 <span class="sd">            do we use arcs to connect the nodes?</span>
 <span class="sd">        N_range : (tuple, list)</span>
@@ -2529,6 +2534,9 @@ document.write(`
         <span class="k">if</span> <span class="ow">not</span> <span class="n">always_show_alpha</span><span class="p">:</span>
             <span class="n">hidden_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">nuclei_custom_labels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">nuclei_custom_labels</span> <span class="o">=</span> <span class="p">{}</span>
+
         <span class="c1"># nodes -- the node nuclei will be all of the heavies</span>
         <span class="c1"># add all the nuclei into G.node</span>
         <span class="n">node_nuclei</span> <span class="o">=</span> <span class="p">[]</span>
@@ -2566,7 +2574,10 @@ document.write(`
                 <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span>
-            <span class="n">G</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="sa">fr</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">n</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">$&quot;</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nuclei_custom_labels</span><span class="p">:</span>
+                <span class="n">G</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">nuclei_custom_labels</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">G</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="sa">fr</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">n</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">$&quot;</span>
 
         <span class="c1"># get the rates for each reaction</span>
         <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">T</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">comp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
