@@ -1311,11 +1311,11 @@ class RateCollection:
         print("Network summary")
         print("---------------")
         print(f"  explicitly carried nuclei: {len(self.unique_nuclei)}")
-        print(f"  approximated out nuclei: {len(self.approx_nuclei)}")
+        print(f"  approximated-out nuclei: {len(self.approx_nuclei)}")
         if self.inert_nuclei:
             print(f"  inert nuclei (included in carried): {len(self.inert_nuclei)}")
         else:
-            print(f"  inert nuclei (included in carried): 0")
+            print("  inert nuclei (included in carried): 0")
 
         print("")
 
