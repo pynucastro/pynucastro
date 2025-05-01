@@ -16,7 +16,7 @@ from pynucastro.rates.tabular_rate import TabularRate
 
 
 def list_known_rates():
-    """ list the rates found in the library """
+    """Print a list of all of the rates found in the library """
 
     lib_path = Path(__file__).parents[1]/"library"
 
@@ -112,17 +112,27 @@ def capitalize_rid(rid, delimiter):
 
 
 class Library:
-    """
-    A Library is a Rate container that reads a single file
-    containing one or many Reaclib rates, possibly containing multiple
-    sets per rate.
+    """A Library is a container storing multiple rates that allows for
+    filtering rates based on rules, managing duplicate rates, and
+    selecting subsets of rates based on properties.  At its heart is a
+    ``dict`` of rates keyed by the rate id.
 
-    The Library class also implements searching based on rules
-    specified by RateFilter objects.
+    A library may contain rates from a single source, or be created by
+    adding or subtracting existing Library objects.
+
+    Parameters
+    ----------
+    libfile : str
+        a file containing a sequence of rates in a format that we
+        understand (for example a ReacLib database)
+    rates : list, dict, Rate
+        a single :py:class:`Rate <pynucastro.rates.rate.Rate>` or an
+        iterable of `Rate` objects.  If it is a dictionary, then it
+        should be keyed by the rate id.
+
     """
 
     def __init__(self, libfile=None, rates=None):
-        self._library_file = libfile
         self._rates = {}
 
         if rates:
@@ -135,18 +145,29 @@ class Library:
             else:
                 raise TypeError("rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.id")
 
-        self._library_source_lines = collections.deque()
-
-        if self._library_file:
-            self._library_file = _find_rate_file(self._library_file)
-            self._read_library_file()
+        if libfile:
+            library_file = _find_rate_file(libfile)
+            self._read_library_file(library_file)
 
     def get_rates(self):
-        """ Return a list of the rates in this library."""
+        """Return a list of the rates in this library.
+
+        Returns
+        -------
+        list
+
+        """
         return list(self._rates.values())
 
     def get_rate(self, rid):
-        """ Return a rate matching the id provided. """
+        """Return a rate matching the id provided.
+
+        Returns
+        -------
+        Rate
+
+        """
+
         try:
             rid_mod = capitalize_rid(rid, " ")
             return self._rates[rid_mod]
@@ -162,10 +183,24 @@ class Library:
 
     @property
     def num_rates(self):
+        """Get the total number of rates in the Library
+
+        Returns
+        -------
+        int
+
+        """
         return len(self.get_rates())
 
     def add_rate(self, rate):
-        """Manually add a rate by giving a Rate object"""
+        """Manually add a rate to the library.
+
+        Parameters
+        ----------
+        rate : Rate
+            The rate to add
+
+        """
 
         if not isinstance(rate, Rate):
             raise TypeError(f"invalid Rate object {rate}")
@@ -176,7 +211,14 @@ class Library:
         self._rates[rid] = rate
 
     def add_rates(self, ratelist):
-        """ Add to the rate dictionary from the supplied list of Rate objects."""
+        """Add multiple rates to the library
+
+        Parameters
+        ----------
+        ratelist : list of Rate
+            the list of rates to add to the library.
+
+        """
 
         for rate in ratelist:
             self.add_rate(rate)
@@ -186,6 +228,11 @@ class Library:
         (or a list of strings for multiple rates) return the Rate
         objects that match from the Library.  If there are multiple
         inputs, then a list of Rate objects is returned.
+
+        Returns
+        -------
+        rates : list, Rate
+            A single rate or a list of rates
 
         """
 
@@ -213,7 +260,14 @@ class Library:
 
     def remove_rate(self, rate):
         """Manually remove a rate from the library by supplying the
-        short name "A(x,y)B, a Rate object, or the rate id"""
+        short name "A(x,y)B", a Rate object, or the rate id
+
+        Parameters
+        ----------
+        rate : str, Rate
+            The rate to remove from the library.
+
+        """
 
         if isinstance(rate, Rate):
             rid = rate.id
@@ -226,11 +280,25 @@ class Library:
             self._rates.pop(rate)
 
     def get_nuclei(self):
-        """get the list of unique nuclei"""
+        """Get the list of unique nuclei in the library
+
+        Returns
+        -------
+        set
+
+        """
+
         return {nuc for r in self.get_rates() for nuc in r.reactants + r.products}
 
     def heaviest(self):
-        """ Return the heaviest nuclide in this library. """
+        """Return the heaviest nuclide in this library.
+
+        Returns
+        -------
+        Nucleus
+
+        """
+
         nuc = None
         for r in self.get_rates():
             rnuc = r.heaviest()
@@ -242,7 +310,14 @@ class Library:
         return nuc
 
     def lightest(self):
-        """ Return the lightest nuclide in this library. """
+        """Return the lightest nuclide in this library.
+
+        Returns
+        -------
+        Nucleus
+
+        """
+
         nuc = None
         for r in self.get_rates():
             rnuc = r.lightest()
@@ -253,46 +328,48 @@ class Library:
                 nuc = rnuc
         return nuc
 
-    def _read_library_file(self):
+    def _read_library_file(self, library_file):
         # loop through library file, read lines
 
-        with self._library_file.open("r") as flib:
+        library_source_lines = collections.deque()
+
+        with library_file.open("r") as flib:
             for line in flib:
                 ls = line.rstrip('\n')
                 if ls.strip():
-                    self._library_source_lines.append(ls)
+                    library_source_lines.append(ls)
 
         # identify distinct rates from library lines
         current_chapter = None
         while True:
-            if len(self._library_source_lines) == 0:
+            if len(library_source_lines) == 0:
                 break
 
             # Check to see if there is a chapter ID, if not then use current_chapter
             # (for Reaclib v1 formatted library files)
-            line = self._library_source_lines[0].strip()
+            line = library_source_lines[0].strip()
             chapter = None
             if line in ('t', 'T'):
                 chapter = 't'
-                self._library_source_lines.popleft()
+                library_source_lines.popleft()
             else:
                 try:
                     chapter = int(line)
                 except (TypeError, ValueError):
                     # we can't interpret line as a chapter so use current_chapter
-                    assert current_chapter, f'malformed library file {self._library_file}, cannot identify chapter.'
+                    assert current_chapter, f'malformed library file {library_file}, cannot identify chapter.'
                     chapter = current_chapter
                 else:
-                    self._library_source_lines.popleft()
+                    library_source_lines.popleft()
             current_chapter = chapter
 
             rlines = None
             rate_type = None
             if chapter == 't':
-                rlines = [self._library_source_lines.popleft() for i in range(5)]
+                rlines = [library_source_lines.popleft() for i in range(5)]
                 rate_type = "tabular"
             elif isinstance(chapter, int):
-                rlines = [self._library_source_lines.popleft() for i in range(3)]
+                rlines = [library_source_lines.popleft() for i in range(3)]
                 rate_type = "reaclib"
             if rlines:
                 sio = io.StringIO('\n'.join([f'{chapter}'] +
@@ -314,11 +391,18 @@ class Library:
                     else:
                         self._rates[rid] = r
 
-    def write_to_file(self, filename, prepend_rates_dir=False):
-        """
-        Write the library out to a file of the given name in Reaclib format. Will be
-        automatically written to the pynucastro rate file directory if True is passed
-        in as the second argument.
+    def write_to_file(self, filename, *, prepend_rates_dir=False):
+        """Write the library out to a file of the given name in
+        Reaclib format.
+
+        Parameters
+        ----------
+        filename : str
+            The filename to use for the library
+        prepend_rates_dir : bool
+            If ``True``, then output to the pynucastro rate file
+            directory.
+
         """
 
         if prepend_rates_dir:
@@ -329,7 +413,7 @@ class Library:
                 rate.write_to_file(f)
 
     def __repr__(self):
-        """ Return a string containing the rates IDs in this library. """
+        """Return a string containing the rates IDs in this library."""
         rstrings = []
         tmp_rates = [v for k, v in self._rates.items()]
         for r in sorted(tmp_rates):
@@ -346,27 +430,48 @@ class Library:
         return '\n'.join(rstrings)
 
     def __add__(self, other):
-        """ Add two libraries to get a library containing rates from both. """
+        """Add two libraries to get a library containing rates from
+        both.
+
+        """
         new_rates = self._rates
         for rid, r in other._rates.items():
             if rid in new_rates:
                 if r != new_rates[rid]:
-                    raise ValueError(f'rate {r} defined differently in libraries {self._library_file} and {other._library_file}')
+                    raise ValueError(f'rate {r} defined differently in libraries')
             else:
                 new_rates[rid] = r
         new_library = Library(rates=new_rates)
         return new_library
 
     def __sub__(self, other):
-        """Return a Library containing the rates in this library that are not
-        contained in other_library"""
+        """Return a Library containing the rates in this library that
+        are not contained in other_library
+
+        """
 
         diff_rates = set(self.get_rates()) - set(other.get_rates())
         new_library = Library(rates=diff_rates)
         return new_library
 
     def get_rate_by_nuclei(self, reactants, products):
-        """given a list of reactants and products, return any matching rates"""
+        """Given a list of reactants and products, return any matching
+        rates
+
+        Parameters
+        ----------
+        reactants : list of Nucleus or str
+            the list of nuclei that serve as reactants.
+        products : list of Nucleus or str
+            the list of nuclei that serve as products.
+
+        Returns
+        -------
+        Rate, list(Rate)
+            a list of Rate object or a single Rate (if there is only one)
+
+        """
+
         reactants = sorted(Nucleus.cast_list(reactants))
         products = sorted(Nucleus.cast_list(products))
         _tmp = [r for r in self.get_rates() if
@@ -380,14 +485,18 @@ class Library:
         return _tmp
 
     def find_duplicate_links(self):
-        """report on an rates where another rate exists that has the
-        same reactants and products.  These may not be the same Rate
-        object (e.g., one could be tabular the other a simple decay),
-        but they will present themselves in the network as the same
-        link.
+        """Find instances of multiple rates having the same reactants
+        and products.  These may not be the same Rate object (e.g.,
+        one could be tabular the other a simple decay), but they will
+        present themselves in the network as the same link.
 
-        We return a list, where each entry is a list of all the rates
-        that share the same link"""
+        Returns
+        -------
+        duplicate_rates : list
+            a list where each entry is a list of all the rates
+            that share the same link.
+
+        """
 
         duplicates = find_duplicate_rates(self.get_rates())
 
@@ -403,15 +512,25 @@ class Library:
 
         return duplicates
 
-    def linking_nuclei(self, nuclist, with_reverse=True, print_warning=True):
-        """
-        Return a Library object containing the rates linking the
-        nuclei provided in the list of Nucleus objects or nucleus abbreviations 'nuclist'.
+    def linking_nuclei(self, nuclist, *, with_reverse=True,
+                       print_warning=True):
+        """Return a library containing the rates linking the list of
+        nuclei passed in.
 
-        If with_reverse is True, then include reverse rates. Otherwise
-        include only forward rates.
+        Parameters
+        ----------
+        nuclist : list of str or Nucleus
+            the nuclei to link (either the string names or the Nucleus objects)
+        with_reverse : bool
+            do we include reverse rates?
+        print_warning : bool
+            if ``True``, then print a warning if one of the input
+            nuclei is not linked.
 
-        If print_warning is True, then print out a warning if one of the input nuclei is not linked.
+        Returns
+        -------
+        Library
+
         """
 
         nucleus_set = set(Nucleus.cast_list(nuclist))
@@ -446,12 +565,18 @@ class Library:
         return new_lib
 
     def filter(self, filter_spec):
-        """
-        filter_specs should be an iterable of RateFilter objects or a
-        single RateFilter object. Library.filter yields all rates
-        matching any RateFilter in filter_specs.  If RateFilter.exact,
-        then return rates with exactly the reactants or products
-        passed in as arguments.
+        """Filter the rates in the library based on a set of rules.
+
+        Parameters
+        ----------
+        filter_spec : RateFilter, list
+            a filter (or list of filters) to apply to the library
+            to define a subset of rates.
+
+        Returns
+        -------
+        Library
+
         """
         if isinstance(filter_spec, RateFilter):
             filter_specifications = [filter_spec]
@@ -468,9 +593,15 @@ class Library:
         return None
 
     def forward(self):
-        """
-        Select only the forward rates, discarding the inverse rates obtained
-        by detailed balance.
+        """Select only the forward rates, discarding the inverse rates
+        obtained by detailed balance.  Note: "forward" here means
+        that it is not a reverse rate derived from detailed balance,
+        and does not necessarily mean Q > 0.
+
+        Returns
+        -------
+        Library
+
         """
 
         only_fwd_filter = RateFilter(reverse=False)
@@ -478,28 +609,30 @@ class Library:
         return only_fwd
 
     def backward(self):
-        """
-        Select only the reverse rates, obtained by detailed balance.
+        """Select only the reverse rates, obtained by detailed
+        balance.  Note: "reverse" here means that it was derived
+        by detailed balance, and not that Q < 0.
+
+        Returns
+        -------
+        Library
+
         """
 
         only_bwd_filter = RateFilter(reverse=True)
         only_bwd = self.filter(only_bwd_filter)
         return only_bwd
 
-    def derived_forward(self):
-        """
-        In this library, we exclude the weak and tabular rates from the .forward() library which includes all
-        the ReacLib forward reactions.
+    def forward_for_detailed_balance(self):
+        """Loop over the forward rates (as filtered by
+        :py:meth:`.forward`) and return those that can be used to
+        derive reverse rates via detailed balance.  This means that
+        they cannot be tabular or weak rates.
 
-        In a future PR, we will classify forward reactions as exothermic (Q>0), and reverse by endothermic (Q<0).
-        However, ReacLib does not follow this path. If a reaction is measured experimentally (independent of Q),
-        they use detailed balance to get the opposite direction. Eventually, I want to classify forward and reverse
-        by positive Q and negative Q; however, for testing purposes, making this classification may eventually lead to
-        computing the detailed balance twice.
+        Returns
+        -------
+        Library
 
-        The idea of derived_forward is to eliminate the reverse and weak, and see if our job gives the same Reaclib
-        predictions, checking the NSE convergence with the pf functions. In the future, I want to move this function
-        in a unit test.
         """
 
         collect_rates = []
@@ -518,13 +651,27 @@ class Library:
         return list1
 
     def derived_backward(self, compute_Q=False, use_pf=False):
-        """
-        This library contains the detailed balance reverse reactions over the selected .derived_forward(),
-        computed by hand.
+        """Loop over all of the forward rates that can be used to
+        derive inverse rates (as returned by
+        :py:meth:`.forward_for_detailed_balance`) and derive the
+        inverses, potentially taking into account the partition
+        function and recomputing Q.
+
+        Parameters
+        ----------
+        compute_Q : bool
+            do we recompute the Q value based on the masses?
+        use_pf : bool
+            do we use the temperature-dependent partition function?
+
+        Returns
+        -------
+        Library
+
         """
 
         derived_rates = []
-        onlyfwd = self.derived_forward()
+        onlyfwd = self.forward_for_detailed_balance()
 
         for r in onlyfwd.get_rates():
             try:
@@ -684,51 +831,85 @@ class RateFilter:
 
 
 class ReacLibLibrary(Library):
-    """Load the latest stored version of the ReacLib library and
-    return a Library"""
+    """Create a :py:class:`Library` containing all of the rates in the
+    latest stored version of the ReacLib library.
+
+    """
 
     def __init__(self):
-        libfile = 'reaclib_default2_20220329'
+        libfile = 'reaclib_default2_20250330'
         Library.__init__(self, libfile=libfile)
 
 
 class TabularLibrary(Library):
-    """Load all of the tabular rates known and return a Library"""
+    """Create a :py:class:`Library` containing all of the tabular
+    rates we know (excluding duplications) across multiple sources.
+
+    Parameters
+    ----------
+    ordering : list of str
+        The list of sources of the rates from lowest to highest
+        precedence.  We will read from the first source, and then for
+        any later sources, for any duplicate rates, we will replace
+        the existing rate with the version from the higher-priority
+        library.  The default ordering is ``["ffn", "langanke",
+        "suzuki"]``
+
+    """
 
     lib_path = Path(__file__).parents[1]/"library/tabular"
-    skip_wildcards = ["ffn"]
 
-    def __init__(self):
+    def __init__(self, ordering=None):
         # find all of the tabular rates that pynucastro knows about
         # we'll assume that these are of the form *-toki
 
+        if ordering is None:
+            ordering = ["ffn", "langanke", "suzuki"]
+
         trates = []
 
-        for root, _, filenames in sorted(walk(self.lib_path)):
-            for f in sorted(filenames):
-                if f.endswith("-toki"):
-                    add_rate = True
-                    for wild in self.skip_wildcards:
-                        if wild in root:
-                            add_rate = False
-                    if add_rate:
-                        trates.append(TabularRate(rfile=f))
+        for source in ordering:
+            for _, _, filenames in sorted(walk(self.lib_path / Path(source))):
+                for f in sorted(filenames):
+                    if f.endswith("-toki"):
+                        r = TabularRate(rfile=f)
+                        if r in trates:
+                            # we are looping over the various libraries in order
+                            # from lowest precedence to highest.  So if the rate
+                            # exists, then delete it and add this one.  Since
+                            # matching only looks at reactants and products, we
+                            # can use the new r for both deleting a adding
+                            trates.remove(r)
+                        trates.append(r)
 
         Library.__init__(self, rates=trates)
 
 
 class SuzukiLibrary(TabularLibrary):
+    """Create a :py:class:`Library` containing all of the tabular
+    rates inside the "suzuki" subdirectory.
+
     """
-    Load all of the tabular rates inside /library/tabular/suzuki/
-    and return a Library.
-    """
-    lib_path = Path(__file__).parents[1]/"library/tabular/suzuki"
+
+    def __init__(self):
+        super().__init__(ordering=["suzuki"])
 
 
 class LangankeLibrary(TabularLibrary):
-    """
-    Load all of the tabular rates inside /library/tabular/langanke/
-    and return a Library.
+    """Create a :py:class:`Library` containing all of the tabular
+    rates inside the "langanke" subdirectory.
+
     """
 
-    lib_path = Path(__file__).parents[1]/"library/tabular/langanke"
+    def __init__(self):
+        super().__init__(ordering=["langanke"])
+
+
+class FFNLibrary(TabularLibrary):
+    """Create a :py:class:`Library` containing all of the tabular
+    rates inside the "ffn" subdirectory.
+
+    """
+
+    def __init__(self):
+        super().__init__(ordering=["ffn"])

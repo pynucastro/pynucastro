@@ -247,6 +247,10 @@ class ReacLibRate(Rate):
         self.rate_eval_needs_rho = False
         self.rate_eval_needs_comp = False
 
+        # some subclasses might define a stoichmetry as a dict{Nucleus}
+        # that gives the numbers for the dY/dt equations
+        self.stoichiometry = None
+
         if isinstance(rfile, Path):
             # read in the file, parse the different sets and store them as
             # SingleSet objects in sets[]
@@ -541,9 +545,13 @@ class ReacLibRate(Rate):
         return f'{self.rid} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
 
     def function_string_py(self):
-        """
-        Return a string containing python function that computes the
-        rate
+        """Return a string containing the python function that
+        computes the rate
+
+        Returns
+        -------
+        str
+
         """
 
         fstring = ""
@@ -562,11 +570,35 @@ class ReacLibRate(Rate):
         fstring += f"    rate_eval.{self.fname} = rate\n\n"
         return fstring
 
-    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False, extra_args=()):
+    def function_string_cxx(self, dtype="double", specifiers="inline",
+                            leave_open=False, extra_args=None):
+        """Return a string containing the C++ function that computes
+        the rate
+
+        Parameters
+        ----------
+        dtype : str
+            The C++ datatype to use for all declarations
+        specifiers : str
+            C++ specifiers to add before each function declaration
+            (i.e. "inline")
+        leave_open : bool
+            If ``true``, then we leave the function unclosed (no "}"
+            at the end).  This can allow additional functions to add
+            to this output.
+        extra_args : list, tuple
+            A list of strings representing additional arguments that
+            should be appended to the argument list when defining the
+            function interface.
+
+        Returns
+        -------
+        str
+
         """
-        Return a string containing C++ function that computes the
-        rate
-        """
+
+        if extra_args is None:
+            extra_args = ()
 
         args = ["const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
@@ -610,7 +642,25 @@ class ReacLibRate(Rate):
         return fstring
 
     def eval(self, T, *, rho=None, comp=None):
-        """ evauate the reaction rate for temperature T """
+        """Evaluate the reaction rate for temperature T
+
+        Parameters
+        ----------
+        T : float
+            the temperature to evaluate the rate at
+        rho : float
+            the density to evaluate the rate at (not needed for ReacLib
+            rates).
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            to evaluate the rate with (not needed for ReacLib rates).
+
+        Returns
+        -------
+        float
+
+        """
 
         tf = Tfactors(T)
         r = 0.0
@@ -621,7 +671,7 @@ class ReacLibRate(Rate):
         return r
 
     def eval_deriv(self, T, *, rho=None, comp=None):
-        """ evauate the derivative of reaction rate with respect to T """
+        """Evaluate the derivative of reaction rate with respect to T """
         _ = rho  # unused by this subclass
         _ = comp  # unused by this subclass
 
