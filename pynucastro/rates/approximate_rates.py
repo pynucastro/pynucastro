@@ -3,8 +3,24 @@ from pynucastro.rates.rate import Rate
 
 
 def create_double_neutron_capture(lib, reactant, product):
-    """a helper function that will return an ApproximateRate object
-    for the "nn_g" approximation"""
+    """A helper function that will return a pair of
+    :py:class:`ApproximateRate` objects for the A(n,g)X(n,g)B ->
+    A(nn,g)B approximation
+
+    Parameters
+    ----------
+    lib : Library
+         A Library object containing the neutron-capture rates
+    reactant : Nucleus, str
+         The reactant, A, in the sequence A(n,g)X(n,g)B
+    product: Nucleus, str
+         The product, B, in the sequence A(n,g)X(n,g)B
+
+    Returns
+    -------
+    ApproximateRate, ApproximateRate
+
+    """
 
     if isinstance(reactant, str):
         reactant = Nucleus(reactant)
@@ -34,17 +50,56 @@ def create_double_neutron_capture(lib, reactant, product):
 
 
 class ApproximateRate(Rate):
+    """An approximation to a rate sequence.  Two approximations are
+    currently supported:
 
+    * "ap_pg" : combine the A(a, g)B and A(a, p)X(p, g)B sequences
+      into a single, effective A(a, g)B rate.
+
+    * "nn_g" : replace the sequence A(n, g)X(n, g)B with an
+      effective A(nn, g)B rate.
+
+    This class stores all of the rates needed to implement these
+    approximations.
+
+    Parameters
+    ----------
+    primary_rate : Rate
+        An existing rate that represents the same sequence as the
+        approximation we are creating.  For "ap_pg", this would be
+        A(a, g)B.  For "nn_g", there is no unapproximated counterpart
+        so we would pass in ``None``.
+    secondary_rates : list(Rate)
+        A list of :py:class:`Rate <pynucastro.rates.rate.Rate>` objects
+        containing all of the other forward rates needed to make the
+        approximation.
+    primary_reverse : Rate
+        An existing rate that represents the reverse of the same
+        approximation we are creating.  For "ap_pg", this would be
+        B(g, a)A.  For "nn_g", there is no unapproximated counterpart,
+        so we would pass in ``None``.
+    secondary_reverse : list(Rate)
+        A list of :py:class:`Rate <pynucastro.rates.rate.Rate>` objects
+        containing all of the other reverse rates needed to make the
+        approximation.
+    is_reverse : bool
+        Are we creating the effective A(x,y)B or B(y, x)A?
+    approx_type : str
+        The type of approximation to do.  Currently supported are
+        "ap_pg" and "nn_g"
+    use_identical_particle_factor : bool
+        Usually if a rate has 2 reactants of the same type, we
+        divide by 2, since the order doesn't matter.  However, for
+        some approximations, like A(n,g)X(n,g)B -> A(nn,g), we
+        don't want this factor, since the neutron captures are
+        sequential.  This option allows the double counting
+        factor to be disabled.
+
+    """
     def __init__(self, primary_rate, secondary_rates,
                  primary_reverse, secondary_reverse, *,
                  is_reverse=False, approx_type="ap_pg",
                  use_identical_particle_factor=True):
-        """the primary rate has the same reactants and products as the
-        final approximate rate would have.  It can be None.  The
-        secondary rates are ordered such that together they would give
-        the same sequence
-
-        """
 
         # this will hold all of the rates
         self.rates = {}
@@ -235,7 +290,14 @@ class ApproximateRate(Rate):
         self._set_q()
 
     def get_child_rates(self):
-        """return a list of all of the rates that are used in this approximation"""
+        """Return a list of all of the rates that are used in this
+        approximation.
+
+        Returns
+        -------
+        list(Rate)
+
+        """
         return list(self.rates.values())
 
     def _set_screening(self):
@@ -243,7 +305,21 @@ class ApproximateRate(Rate):
         pass
 
     def eval(self, T, *, rho=None, comp=None):
-        """evaluate the approximate rate"""
+        """Evaluate the approximate rate.
+
+        Parameters
+        ----------
+        T : float
+            the temperature to evaluate the rate at
+        rho : float
+            the density to evaluate the rate at
+        comp : Composition
+            the composition to evaluate the rate with
+
+        Returns
+        -------
+        float
+        """
 
         if self.approx_type == "ap_pg":
             if not self.is_reverse:  # pylint: disable=no-else-return
@@ -294,9 +370,13 @@ class ApproximateRate(Rate):
         raise NotImplementedError(f"approximation type {self.approx_type} not supported")
 
     def function_string_py(self):
-        """
-        Return a string containing python function that computes the
-        approximate rate
+        """Return a string containing the python function that
+        computes the approximate rate.
+
+        Returns
+        -------
+        str
+
         """
 
         if self.approx_type == "ap_pg":
@@ -367,11 +447,35 @@ class ApproximateRate(Rate):
 
         raise NotImplementedError("don't know how to work with this approximation")
 
-    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False, extra_args=()):
+    def function_string_cxx(self, dtype="double", specifiers="inline",
+                            leave_open=False, extra_args=None):
+        """Return a string containing the C++ function that computes
+        the approximate rate
+
+        Parameters
+        ----------
+        dtype : str
+            The C++ datatype to use for all declarations
+        specifiers : str
+            C++ specifiers to add before each function declaration
+            (i.e. "inline")
+        leave_open : bool
+            If ``true``, then we leave the function unclosed (no "}"
+            at the end).  This can allow additional functions to add
+            to this output.
+        extra_args : list(str)
+            A list of strings representing additional arguments that
+            should be appended to the argument list when defining the
+            function interface.
+
+        Returns
+        -------
+        str
+
         """
-        Return a string containing C++ function that computes the
-        approximate rate
-        """
+
+        if extra_args is None:
+            extra_args = ()
 
         if dtype == "amrex::Real":
             array_type = "amrex::Array1D"
