@@ -47,7 +47,7 @@ fill_plasma_state(plasma_state_t& state, const Real& temp,
     state.n_e = zbar * rr * C::n_A;
 
     // precomputed part of Gamma_e, from Chugunov 2009 eq. 6
-    constexpr Real gamma_e_constants =
+    Real gamma_e_constants =
         C::q_e*C::q_e/C::k_B * std::pow(4.0_rt/3.0_rt*M_PI, 1.0_rt/3.0_rt);
     state.gamma_e_fac = gamma_e_constants * std::cbrt(state.n_e);
 }
