@@ -8,7 +8,6 @@ import math
 
 import scipy.constants as physical_constants
 
-
 #: atomic mass unit in g
 m_u = physical_constants.value("unified atomic mass unit") * physical_constants.kilo
 
