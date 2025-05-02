@@ -23,10 +23,7 @@ Subpackages
 Submodules
 ----------
 
-pynucastro.numba\_util module
------------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: pynucastro.numba_util
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   pynucastro.numba_util
