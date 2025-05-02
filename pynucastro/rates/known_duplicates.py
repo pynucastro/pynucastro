@@ -9,7 +9,19 @@ ALLOWED_DUPLICATES = [
 
 
 def find_duplicate_rates(rate_list):
-    """given a list of rates, return a list of groups of duplicate rates"""
+    """Given a list of rates, return a list of groups of duplicate
+    rates
+
+    Parameters
+    ----------
+    rate_list : list(Rate)
+        the input list of rates
+
+    Returns
+    -------
+    list(Rate)
+
+    """
 
     # Group the rates into lists of potential duplicates, keyed by their
     # reactants and products.
@@ -25,8 +37,22 @@ def find_duplicate_rates(rate_list):
 
 
 def is_allowed_dupe(rate_list):
-    """rate_list is a list of rates that provide the same connection
-    in a network.  Return True if this is an allowed duplicate"""
+    """Some duplicates may be allowed since they represent distinct
+    processes between the same endpoints (those rates are listed in
+    ``ALLOWED_DUPLICATES``).  Return `True` is the input set of rates
+    is an allowed duplicate.
+
+    Parameters
+    ----------
+    rate_list : list(Rate)
+        a group of rates represented the same sequence that may be
+        allowed duplicates.
+
+    Returns
+    -------
+    bool
+
+    """
 
     # make rate_list into a set of strings in the same format as
     # ALLOWED_DUPLICATES, then check if it matches any of the allowed sets
