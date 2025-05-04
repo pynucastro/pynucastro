@@ -19,10 +19,10 @@
 #
 import os
 import sys
-from pathlib import Path
 from importlib.metadata import version as importlib_version
+from pathlib import Path
 
-sys.path.insert(0, Path.cwd().parent)
+sys.path.insert(0, str(Path.cwd().parents[1]))
 
 
 # -- General configuration ------------------------------------------------
@@ -136,7 +136,9 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'matplotlib': ('https://matplotlib.org/stable', None),
     'numpy': ('https://numpy.org/doc/stable/', None),
-    'sympy': ('https://docs.sympy.org/latest/', None)
+    'sympy': ('https://docs.sympy.org/latest/', None),
+    'yt': ('https://yt-project.org/doc', None),
+    'unyt': ('https://unyt.readthedocs.io/en/stable', None),
 }
 
 
