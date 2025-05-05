@@ -51,6 +51,8 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
+#ifndef DISABLE_SCREENING
+
     // Evaluating screening factors
 
     Real scor;
@@ -74,6 +76,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     rate_eval.screened_rates(k_He4_C12_to_O16) *= scor;
 
+#endif
 
     // Fill approximate rates
 
