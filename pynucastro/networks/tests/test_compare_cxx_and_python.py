@@ -65,7 +65,7 @@ class TestNetworkCompare:
         pynet = pyna.PythonNetwork(libraries=[lib])
         pynet.write_network("compare_net.py")
 
-        import compare_net as cn  # pylint: disable=import-outside-toplevel
+        import compare_net as cn  # pylint: disable=import-outside-toplevel,import-error
 
         rho = 2.e8
         T = 1.e9
