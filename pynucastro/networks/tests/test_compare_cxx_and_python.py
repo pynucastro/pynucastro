@@ -15,17 +15,6 @@ from pytest import approx
 import pynucastro as pyna
 
 
-def run(string):
-    prog = shlex.split(string)
-    p0 = subprocess.Popen(prog, stdin=None, stdout=subprocess.PIPE,
-                          stderr=subprocess.PIPE)
-    stdout0, stderr0 = p0.communicate()
-    rc = p0.returncode
-    p0.stdout.close()
-    p0.stderr.close()
-    return rc, stdout0.decode("utf-8"), stderr0.decode("utf-8")
-
-
 class TestNetworkCompare:
 
     @pytest.fixture(scope="class")
@@ -46,10 +35,12 @@ class TestNetworkCompare:
         cxx_net = pyna.SimpleCxxNetwork(libraries=[lib])
         cxx_net.write_network()
 
-        rc, _, _ = run("make DISABLE_SCREENING=TRUE")
-        assert rc == 0
+        subprocess.run("make DISABLE_SCREENING=TRUE", capture_output=False,
+                       shell=True, check=True)
 
-        _, stdout, _ = run("./main")
+        cp = subprocess.run("./main", capture_output=True,
+                            shell=True, check=True, text=True)
+        stdout = cp.stdout
 
         ydot_re = re.compile(r"(Ydot)\((\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
                              re.IGNORECASE | re.DOTALL)
