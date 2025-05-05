@@ -25,6 +25,7 @@ def run(string):
     p0.stderr.close()
     return rc, stdout0.decode("utf-8"), stderr0.decode("utf-8")
 
+
 class TestNetworkCompare:
 
     @pytest.fixture(scope="class")
@@ -51,7 +52,7 @@ class TestNetworkCompare:
         _, stdout, _ = run("./main")
 
         ydot_re = re.compile(r"(Ydot)\((\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
-                             re.IGNORECASE|re.DOTALL)
+                             re.IGNORECASE | re.DOTALL)
 
         ydots_cxx = {}
         for line in stdout.split("\n"):
