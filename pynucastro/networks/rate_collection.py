@@ -1902,7 +1902,7 @@ class RateCollection:
             size of a node (in networkx units)
         node_font_size : float
             size of the font used to write the isotope in the node
-        node_color : str, callable
+        node_color : str, Callable
             color to make the nodes. May be a callable that takes a Nucleus
             object and returns a color.
         node_shape : str
