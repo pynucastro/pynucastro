@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates &#8212; pynucastro 2.5.0.post45+gdbcb4fa2 documentation</title>
+    <title>pynucastro.yt_utils &#8212; pynucastro 2.5.0.post45+gdbcb4fa2 documentation</title>
   
   
   
@@ -45,7 +45,7 @@
     <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pynucastro/rates';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pynucastro/yt_utils';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -339,7 +339,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2F_modules/pynucastro/rates.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2F_modules/pynucastro/yt_utils.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -417,37 +417,84 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for pynucastro.rates</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;The core routines needed to read and interpret nuclear reaction rates&quot;&quot;&quot;</span>
+  <h1>Source code for pynucastro.yt_utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnsupportedNucleus</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">.approximate_rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApproximateRate</span><span class="p">,</span> <span class="n">create_double_neutron_capture</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.derived_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">DerivedRate</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.files</span><span class="w"> </span><span class="kn">import</span> <span class="n">RateFileError</span><span class="p">,</span> <span class="n">_find_rate_file</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.known_duplicates</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_duplicate_rates</span><span class="p">,</span> <span class="n">is_allowed_dupe</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.library</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">FFNLibrary</span><span class="p">,</span> <span class="n">LangankeLibrary</span><span class="p">,</span> <span class="n">Library</span><span class="p">,</span> <span class="n">RateFilter</span><span class="p">,</span>
-                      <span class="n">ReacLibLibrary</span><span class="p">,</span> <span class="n">SuzukiLibrary</span><span class="p">,</span> <span class="n">TabularLibrary</span><span class="p">,</span>
-                      <span class="n">list_known_rates</span><span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">RatePair</span><span class="p">,</span> <span class="n">Tfactors</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.reaclib_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">SingleSet</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.tabular_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">TableIndex</span><span class="p">,</span> <span class="n">TableInterpolator</span><span class="p">,</span> <span class="n">TabularRate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks</span><span class="w"> </span><span class="kn">import</span> <span class="n">Composition</span>
 
 
-<div class="viewcode-block" id="load_rate">
-<a class="viewcode-back" href="../../pynucastro.rates.html#pynucastro.rates.load_rate">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">load_rate</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Try to load a rate of any type.</span>
+<div class="viewcode-block" id="get_point">
+<a class="viewcode-back" href="../../pynucastro.html#pynucastro.yt_utils.get_point">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_point</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper for getting a specific point from a yt dataset object.</span>
 
-<span class="sd">    :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`</span>
+<span class="sd">    Field values can be extracted by subscripting: ``point[&#39;Temp&#39;]``.</span>
+
+<span class="sd">    Works around various annoyances with the argument handling in</span>
+<span class="sd">    ``ds.point()``, so things like ``get_point(ds, ds.all_data().argmax(&#39;enuc&#39;))``</span>
+<span class="sd">    work as expected for all coordinate systems.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    ds : yt.data_objects.static_output.Dataset</span>
+<span class="sd">        a yt dataset</span>
+<span class="sd">    pos : Iterable(float, ~unyt.array.unyt_quantity)</span>
+<span class="sd">        The position to get; must have at least ``ds.dimensionality`` elements.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    yt.data_objects.selection_objects.point.YTPoint</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># lazy import so we don&#39;t add a hard dependency on unyt</span>
+    <span class="c1"># pylint: disable=import-outside-toplevel</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">unyt</span>
 
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">rate</span> <span class="o">=</span> <span class="n">TabularRate</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="n">rfile</span><span class="p">)</span>
-    <span class="k">except</span> <span class="p">(</span><span class="n">RateFileError</span><span class="p">,</span> <span class="n">UnsupportedNucleus</span><span class="p">):</span>
-        <span class="n">rate</span> <span class="o">=</span> <span class="n">ReacLibRate</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="n">rfile</span><span class="p">)</span>
+    <span class="c1"># for a cylindrical dataset, ds.all_data().argmax(f) returns a tuple of</span>
+    <span class="c1"># unyt_quantity objects with units (code_length, code_length, dimensionless),</span>
+    <span class="c1"># which ds.point() doesn&#39;t like, so convert everything to floats</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_value</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">unyt</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">unyt_quantity</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">is_dimensionless</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">p</span><span class="o">.</span><span class="n">to_value</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">p</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">code_length</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">rate</span></div>
+    <span class="n">pos</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">to_value</span><span class="p">,</span> <span class="n">pos</span><span class="p">))</span>
+    <span class="c1"># ds.point() requires a position with 3 coordinate values, regardless of</span>
+    <span class="c1"># the dimensionality</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ds</span><span class="o">.</span><span class="n">dimensionality</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;need at least </span><span class="si">{</span><span class="n">ds</span><span class="o">.</span><span class="n">dimensionality</span><span class="si">}</span><span class="s2"> coordinate values in pos&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">pos</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">domain_center</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">pos</span><span class="p">):]</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">code_length</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">ds</span><span class="o">.</span><span class="n">point</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="to_conditions">
+<a class="viewcode-back" href="../../pynucastro.html#pynucastro.yt_utils.to_conditions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_conditions</span><span class="p">(</span><span class="n">point</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract the thermodynamic conditions needed to evaluate a network from a</span>
+<span class="sd">    :py:class:`~yt.data_objects.selection_objects.point.YTPoint` object.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    :</span>
+<span class="sd">        tuple of (rho, T, composition)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rho</span> <span class="o">=</span> <span class="n">point</span><span class="p">[</span><span class="s2">&quot;density&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="s2">&quot;g/cm**3&quot;</span><span class="p">)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">point</span><span class="p">[</span><span class="s2">&quot;temperature&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="s2">&quot;K&quot;</span><span class="p">)</span>
+    <span class="n">comp</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">([])</span>
+    <span class="n">pat</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;X\(([a-zA-Z]+\d+)\)&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ns</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">point</span><span class="o">.</span><span class="n">ds</span><span class="o">.</span><span class="n">field_list</span><span class="p">:</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">pat</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">m</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">comp</span><span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">point</span><span class="p">[</span><span class="n">ns</span><span class="p">,</span> <span class="n">field</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_value</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span></div>
 
 </pre></div>
 

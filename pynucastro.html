@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro package &#8212; pynucastro 2.5.0.post44+g65b8304a documentation</title>
+    <title>pynucastro package &#8212; pynucastro 2.5.0.post45+gdbcb4fa2 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=555ad4c8"></script>
+    <script src="_static/documentation_options.js?v=5444fd65"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -507,6 +507,11 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subpackages">Subpackages</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.numba_util">pynucastro.numba_util module</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.yt_utils">pynucastro.yt_utils module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.yt_utils.get_point"><code class="docutils literal notranslate"><span class="pre">get_point()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.yt_utils.to_conditions"><code class="docutils literal notranslate"><span class="pre">to_conditions()</span></code></a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -1140,6 +1145,42 @@ a given choice of reaction rates.</p>
 <span id="pynucastro-numba-util-module"></span><h2>pynucastro.numba_util module<a class="headerlink" href="#module-pynucastro.numba_util" title="Link to this heading">#</a></h2>
 <p>Drop-in for numba that provides no-op stubs if numba isn’t installed.</p>
 </section>
+<section id="module-pynucastro.yt_utils">
+<span id="pynucastro-yt-utils-module"></span><h2>pynucastro.yt_utils module<a class="headerlink" href="#module-pynucastro.yt_utils" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pynucastro.yt_utils.get_point">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.yt_utils.</span></span><span class="sig-name descname"><span class="pre">get_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/yt_utils.html#get_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.yt_utils.get_point" title="Link to this definition">#</a></dt>
+<dd><p>Helper for getting a specific point from a yt dataset object.</p>
+<p>Field values can be extracted by subscripting: <code class="docutils literal notranslate"><span class="pre">point['Temp']</span></code>.</p>
+<p>Works around various annoyances with the argument handling in
+<code class="docutils literal notranslate"><span class="pre">ds.point()</span></code>, so things like <code class="docutils literal notranslate"><span class="pre">get_point(ds,</span> <span class="pre">ds.all_data().argmax('enuc'))</span></code>
+work as expected for all coordinate systems.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ds</strong> (<a class="reference external" href="https://yt-project.org/doc/reference/api/yt.data_objects.static_output.html#yt.data_objects.static_output.Dataset" title="(in The yt Project v4.4)"><em>yt.data_objects.static_output.Dataset</em></a>) – a yt dataset</p></li>
+<li><p><strong>pos</strong> (<em>Iterable</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><a class="reference external" href="https://unyt.readthedocs.io/en/stable/modules/unyt.array.html#unyt.array.unyt_quantity" title="(in unyt v3.0.4)"><em>unyt_quantity</em></a><em>)</em>) – The position to get; must have at least <code class="docutils literal notranslate"><span class="pre">ds.dimensionality</span></code> elements.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://yt-project.org/doc/reference/api/yt.data_objects.selection_objects.point.html#yt.data_objects.selection_objects.point.YTPoint" title="(in The yt Project v4.4)">yt.data_objects.selection_objects.point.YTPoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pynucastro.yt_utils.to_conditions">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.yt_utils.</span></span><span class="sig-name descname"><span class="pre">to_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/yt_utils.html#to_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.yt_utils.to_conditions" title="Link to this definition">#</a></dt>
+<dd><p>Extract the thermodynamic conditions needed to evaluate a network from a
+<a class="reference external" href="https://yt-project.org/doc/reference/api/yt.data_objects.selection_objects.point.html#yt.data_objects.selection_objects.point.YTPoint" title="(in The yt Project v4.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">YTPoint</span></code></a> object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of (rho, T, composition)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 </section>
 
 
@@ -1196,6 +1237,11 @@ a given choice of reaction rates.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subpackages">Subpackages</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.numba_util">pynucastro.numba_util module</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.yt_utils">pynucastro.yt_utils module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.yt_utils.get_point"><code class="docutils literal notranslate"><span class="pre">get_point()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.yt_utils.to_conditions"><code class="docutils literal notranslate"><span class="pre">to_conditions()</span></code></a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
