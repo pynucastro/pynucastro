@@ -3,6 +3,7 @@
 #include <actual_rhs.H>
 
 #include <iostream>
+#include <iomanip>
 
 int main() {
 
@@ -17,6 +18,8 @@ int main() {
 
     Array1D<Real, 1, NumSpec> ydot;
     actual_rhs(state, ydot);
+
+    std::cout << std::setprecision(12);
 
     for (int n = 1; n <= NumSpec; ++n) {
         std::cout << "Ydot(" << spec_names[n-1] << ") = " << ydot(n) << std::endl;
