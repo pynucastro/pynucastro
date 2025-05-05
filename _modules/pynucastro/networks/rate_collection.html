@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.5.0.post45+gdbcb4fa2 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.5.0.post46+g0b4d364e documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=5444fd65"></script>
+    <script src="../../../_static/documentation_options.js?v=62e56d9a"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -2467,8 +2467,9 @@ document.write(`
 <span class="sd">            size of a node (in networkx units)</span>
 <span class="sd">        node_font_size : float</span>
 <span class="sd">            size of the font used to write the isotope in the node</span>
-<span class="sd">        node_color : str</span>
-<span class="sd">            color to make the nodes</span>
+<span class="sd">        node_color : str, Callable</span>
+<span class="sd">            color to make the nodes. May be a callable that takes a Nucleus</span>
+<span class="sd">            object and returns a color.</span>
 <span class="sd">        node_shape : str</span>
 <span class="sd">            shape of the node (using matplotlib marker names)</span>
 <span class="sd">        nuclei_custom_labels : dict</span>
@@ -2541,16 +2542,23 @@ document.write(`
         <span class="c1"># add all the nuclei into G.node</span>
         <span class="n">node_nuclei</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">node_color</span><span class="p">):</span>
+            <span class="n">get_node_color</span> <span class="o">=</span> <span class="n">node_color</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">get_node_color</span><span class="p">(</span><span class="n">_nuc</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">node_color</span>
+
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">raw</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">hidden_nuclei</span><span class="p">:</span>
                 <span class="n">node_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-                <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_color</span><span class="p">)</span>
+                <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_node_color</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># show hidden nuclei only if they react with themselves</span>
                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ApproximateRate</span><span class="p">)</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">reactant_count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                         <span class="n">node_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-                        <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_color</span><span class="p">)</span>
+                        <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_node_color</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
                         <span class="k">break</span>
 
         <span class="c1"># approx nuclei are given a different color</span>
@@ -2566,7 +2574,7 @@ document.write(`
                 <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_nuclei</span><span class="p">:</span>
                     <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#888888&quot;</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_color</span><span class="p">)</span>
+                    <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_node_color</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
 
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">:</span>
             <span class="n">G</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>

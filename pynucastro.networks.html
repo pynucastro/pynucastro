@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks package &#8212; pynucastro 2.5.0.post45+gdbcb4fa2 documentation</title>
+    <title>pynucastro.networks package &#8212; pynucastro 2.5.0.post46+g0b4d364e documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=5444fd65"></script>
+    <script src="_static/documentation_options.js?v=62e56d9a"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1934,7 +1934,8 @@ line corresponding to a rate</p></li>
 <li><p><strong>show_small_ydot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – show visible dashed lines for rates below ydot_cutoff_value</p></li>
 <li><p><strong>node_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – size of a node (in networkx units)</p></li>
 <li><p><strong>node_font_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – size of the font used to write the isotope in the node</p></li>
-<li><p><strong>node_color</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – color to make the nodes</p></li>
+<li><p><strong>node_color</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>Callable</em>) – color to make the nodes. May be a callable that takes a Nucleus
+object and returns a color.</p></li>
 <li><p><strong>node_shape</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – shape of the node (using matplotlib marker names)</p></li>
 <li><p><strong>nuclei_custom_labels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – a dict of the form {Nucleus: str} that provides alternate
 labels for nodes (instead of using the <cite>pretty</cite> attribute
