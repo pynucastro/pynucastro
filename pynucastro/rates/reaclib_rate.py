@@ -147,8 +147,8 @@ class SingleSet:
             do we add to the existing set? or create a new
             variable and initialize it to this set?
         with_exp : bool
-            to we compute the set (``True``) or the log of the
-            set (``False``).  The later is useful if we also
+            do we compute the set (``True``) or the log of the
+            set (``False``)?  The later is useful if we also
             are computing the derivative.
 
         Returns
