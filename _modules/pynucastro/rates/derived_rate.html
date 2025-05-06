@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.derived_rate &#8212; pynucastro 2.5.0.post47+gcbcfd57c documentation</title>
+    <title>pynucastro.rates.derived_rate &#8212; pynucastro 2.5.0.post48+gad0cee0b documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=1cc9c291"></script>
+    <script src="../../../_static/documentation_options.js?v=c8c6355d"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -434,9 +434,17 @@ document.write(`
 <div class="viewcode-block" id="DerivedRate">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.derived_rate.DerivedRate">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DerivedRate</span><span class="p">(</span><span class="n">ReacLibRate</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;This class is a derived class from `Rate` with the purpose of</span>
-<span class="sd">    computing the inverse rate by the application of detailed balance</span>
-<span class="sd">    to the forward reactions.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A reverse rate computed from a forward rate via detailed</span>
+<span class="sd">    balance.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rate : Rate</span>
+<span class="sd">        The forward rate that will be used to derive the reverse</span>
+<span class="sd">    compute_Q : bool</span>
+<span class="sd">        Do we recompute the Q-value of the rate from the masses?</span>
+<span class="sd">    use_pf : bool</span>
+<span class="sd">        Do we apply the partition function?</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -464,7 +472,8 @@ document.write(`
             <span class="n">a</span> <span class="o">=</span> <span class="n">ssets</span><span class="o">.</span><span class="n">a</span>
             <span class="n">prefactor</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="n">Q</span> <span class="o">=</span> <span class="mf">0.0</span>
-            <span class="n">prefactor</span> <span class="o">+=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">N_A</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">))</span>
+            <span class="n">prefactor</span> <span class="o">+=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">N_A</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">-</span>
+                                                   <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">))</span>
 
             <span class="k">for</span> <span class="n">nucr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
                 <span class="n">prefactor</span> <span class="o">+=</span> <span class="mf">1.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nucr</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nucr</span><span class="o">.</span><span class="n">spin_states</span><span class="p">)</span>
@@ -484,7 +493,8 @@ document.write(`
                 <span class="n">prefactor</span> <span class="o">+=</span> <span class="mf">0.0</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">F</span> <span class="o">=</span> <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">m_u_C18</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">k</span> <span class="o">*</span> <span class="mf">1.0e9</span> <span class="o">/</span>
-                     <span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">constants</span><span class="o">.</span><span class="n">hbar</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="mf">1.5</span><span class="o">*</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">)))</span>
+                     <span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">constants</span><span class="o">.</span><span class="n">hbar</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="mf">1.5</span><span class="o">*</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">-</span>
+                                                           <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">)))</span>
                 <span class="n">prefactor</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
 
             <span class="n">a_rev</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
@@ -494,13 +504,15 @@ document.write(`
             <span class="n">a_rev</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
             <span class="n">a_rev</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
             <span class="n">a_rev</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
-            <span class="n">a_rev</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.5</span><span class="o">*</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">))</span>
+            <span class="n">a_rev</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.5</span><span class="o">*</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">-</span>
+                                   <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">))</span>
             <span class="n">sset_d</span> <span class="o">=</span> <span class="n">SingleSet</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="n">a_rev</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="n">rate</span><span class="o">.</span><span class="n">labelprops</span><span class="p">)</span>
             <span class="n">derived_sets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sset_d</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">rfile</span><span class="p">,</span> <span class="n">chapter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">chapter</span><span class="p">,</span>
                          <span class="n">original_source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">original_source</span><span class="p">,</span>
-                         <span class="n">reactants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span>
+                         <span class="n">reactants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">,</span>
+                         <span class="n">products</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span>
                          <span class="n">sets</span><span class="o">=</span><span class="n">derived_sets</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="s2">&quot;derived&quot;</span><span class="p">,</span> <span class="n">Q</span><span class="o">=-</span><span class="n">Q</span><span class="p">)</span>
 
         <span class="c1"># explicitly mark it as reverse</span>
@@ -515,6 +527,22 @@ document.write(`
 <div class="viewcode-block" id="DerivedRate.eval">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.derived_rate.DerivedRate.eval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the derived reverse rate.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        T : float</span>
+<span class="sd">            the temperature to evaluate the rate at</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            the density to evaluate the rate at</span>
+<span class="sd">        comp : Composition</span>
+<span class="sd">            the composition to evaluate the rate with</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">r</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
         <span class="n">z_r</span> <span class="o">=</span> <span class="mf">1.0</span>
@@ -541,9 +569,9 @@ document.write(`
 <div class="viewcode-block" id="DerivedRate.function_string_py">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.derived_rate.DerivedRate.function_string_py">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">function_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return a string containing python function that computes the</span>
-<span class="sd">        rate</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string containing python function that computes</span>
+<span class="sd">        the rate.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_warn_about_missing_pf_tables</span><span class="p">()</span>
@@ -580,19 +608,46 @@ document.write(`
 
 <div class="viewcode-block" id="DerivedRate.function_string_cxx">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.derived_rate.DerivedRate.function_string_cxx">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">&quot;inline&quot;</span><span class="p">,</span> <span class="n">leave_open</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="p">()):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return a string containing C++ function that computes the</span>
-<span class="sd">        rate</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">&quot;inline&quot;</span><span class="p">,</span>
+                            <span class="n">leave_open</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string containing the C++ function that computes</span>
+<span class="sd">        the derived reverse rate</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dtype : str</span>
+<span class="sd">            The C++ datatype to use for all declarations</span>
+<span class="sd">        specifiers : str</span>
+<span class="sd">            C++ specifiers to add before each function declaration</span>
+<span class="sd">            (i.e. &quot;inline&quot;)</span>
+<span class="sd">        leave_open : bool</span>
+<span class="sd">            If ``true``, then we leave the function unclosed (no &quot;}&quot;</span>
+<span class="sd">            at the end).  This can allow additional functions to add</span>
+<span class="sd">            to this output.</span>
+<span class="sd">        extra_args : list(str)</span>
+<span class="sd">            A list of strings representing additional arguments that</span>
+<span class="sd">            should be appended to the argument list when defining the</span>
+<span class="sd">            function interface.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">extra_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">extra_args</span> <span class="o">=</span> <span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_warn_about_missing_pf_tables</span><span class="p">()</span>
 
         <span class="n">extra_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;[[maybe_unused]] part_fun::pf_cache_t&amp; pf_cache&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_args</span><span class="p">]</span>
-        <span class="n">fstring</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">function_string_cxx</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="n">specifiers</span><span class="p">,</span> <span class="n">leave_open</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="n">extra_args</span><span class="p">)</span>
+        <span class="n">fstring</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">function_string_cxx</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                                              <span class="n">specifiers</span><span class="o">=</span><span class="n">specifiers</span><span class="p">,</span>
+                                              <span class="n">leave_open</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                              <span class="n">extra_args</span><span class="o">=</span><span class="n">extra_args</span><span class="p">)</span>
 
-        <span class="c1"># right now we have rate and drate_dT without the partition function</span>
-        <span class="c1"># now the partition function corrections</span>
+        <span class="c1"># right now we have rate and drate_dT without the partition</span>
+        <span class="c1"># function now the partition function corrections</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_pf</span><span class="p">:</span>
 
@@ -650,12 +705,16 @@ document.write(`
 <div class="viewcode-block" id="DerivedRate.counter_factors">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.derived_rate.DerivedRate.counter_factors">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">counter_factors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This function returns the nucr! = nucr_1! * ... * nucr_r!</span>
-<span class="sd">        for each repeated nucr reactant and nucp! = nucp_1! * ... *</span>
-<span class="sd">        nucp_p! for each reactant nucp product in a ordered pair</span>
-<span class="sd">        (nucr!, nucp!). The factors nucr! and nucp! avoid overcounting</span>
-<span class="sd">        when more than one nuclei is involve in the reaction,</span>
-<span class="sd">        otherwise it will return 1.0.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the multiplicity factor, nucr! = nucr_1! * ... *</span>
+<span class="sd">        nucr_r!, for each repeated nucr reactant and nucp! = nucp_1! *</span>
+<span class="sd">        ... * nucp_p! for each nucp product in a ordered pair (nucr!,</span>
+<span class="sd">        nucp!). The factors nucr! and nucp! avoid overcounting when</span>
+<span class="sd">        more than one nuclei is involve in the reaction.  If there is</span>
+<span class="sd">        no multiplicity, then the factor is 1.0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple(float, float)</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 

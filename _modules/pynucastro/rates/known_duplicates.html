@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.known_duplicates &#8212; pynucastro 2.5.0.post47+gcbcfd57c documentation</title>
+    <title>pynucastro.rates.known_duplicates &#8212; pynucastro 2.5.0.post48+gad0cee0b documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=1cc9c291"></script>
+    <script src="../../../_static/documentation_options.js?v=c8c6355d"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -431,7 +431,19 @@ document.write(`
 <div class="viewcode-block" id="find_duplicate_rates">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.known_duplicates.find_duplicate_rates">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">find_duplicate_rates</span><span class="p">(</span><span class="n">rate_list</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;given a list of rates, return a list of groups of duplicate rates&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Given a list of rates, return a list of groups of duplicate</span>
+<span class="sd">    rates</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rate_list : list(Rate)</span>
+<span class="sd">        the input list of rates</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list(Rate)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Group the rates into lists of potential duplicates, keyed by their</span>
     <span class="c1"># reactants and products.</span>
@@ -450,8 +462,22 @@ document.write(`
 <div class="viewcode-block" id="is_allowed_dupe">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.known_duplicates.is_allowed_dupe">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_allowed_dupe</span><span class="p">(</span><span class="n">rate_list</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;rate_list is a list of rates that provide the same connection</span>
-<span class="sd">    in a network.  Return True if this is an allowed duplicate&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Some duplicates may be allowed since they represent distinct</span>
+<span class="sd">    processes between the same endpoints (those rates are listed in</span>
+<span class="sd">    ``ALLOWED_DUPLICATES``).  Return `True` is the input set of rates</span>
+<span class="sd">    is an allowed duplicate.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rate_list : list(Rate)</span>
+<span class="sd">        a group of rates represented the same sequence that may be</span>
+<span class="sd">        allowed duplicates.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># make rate_list into a set of strings in the same format as</span>
     <span class="c1"># ALLOWED_DUPLICATES, then check if it matches any of the allowed sets</span>
