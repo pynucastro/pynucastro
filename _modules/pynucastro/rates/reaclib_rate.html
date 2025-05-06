@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.reaclib_rate &#8212; pynucastro 2.5.0.post48+gad0cee0b documentation</title>
+    <title>pynucastro.rates.reaclib_rate &#8212; pynucastro 2.5.0.post49+g0cadcdf9 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=c8c6355d"></script>
+    <script src="../../../_static/documentation_options.js?v=ce9eb692"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -432,22 +432,22 @@ document.write(`
 <div class="viewcode-block" id="SingleSet">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.reaclib_rate.SingleSet">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SingleSet</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; a set in Reaclib is one piece of a rate, in the form</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A single ReacLib set for a reaction in the form:</span>
 
-<span class="sd">        lambda = exp[ a_0 + sum_{i=1}^5  a_i T_9**(2i-5)/3  + a_6 log T_9]</span>
+<span class="sd">    λ = exp[ a_0 + sum_{i=1}^5  a_i T_9**(2i-5)/3  + a_6 log T_9]</span>
 
-<span class="sd">    A single rate in Reaclib can be composed of multiple sets</span>
+<span class="sd">    A single rate in Reaclib can be composed of multiple sets.</span>
 
-<span class="sd">    :param a: the coefficients of the exponential fit</span>
-<span class="sd">    :param labelprops: a collection of flags that classify a ReacLib rate</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    a : list, numpy.ndarray</span>
+<span class="sd">        the coefficients of the exponential fit</span>
+<span class="sd">    labelprops : str</span>
+<span class="sd">         a collection of flags that classify a ReacLib rate</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">labelprops</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;here a is iterable (e.g., list or numpy array), storing the</span>
-<span class="sd">           coefficients, a0, ..., a6</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">a</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="n">labelprops</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="kc">None</span>
@@ -458,8 +458,10 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_label_properties</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_update_label_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Set label and flags indicating Set is resonant,</span>
-<span class="sd">            weak, or reverse. &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set label and flags indicating Set is resonant, weak, or</span>
+<span class="sd">            reverse.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span>
 
@@ -469,7 +471,6 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;v&#39;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Determine whether two SingleSet objects are equal to each other. &quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">for</span> <span class="n">ai</span><span class="p">,</span> <span class="n">aj</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">a</span><span class="p">):</span>
@@ -484,8 +485,14 @@ document.write(`
 <div class="viewcode-block" id="SingleSet.f">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.reaclib_rate.SingleSet.f">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; return a function for rate(tf) where tf is a Tfactors</span>
-<span class="sd">        object &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a function for ``rate(tf)`` where ``tf`` is a</span>
+<span class="sd">        :py:class:`Tfactors &lt;pynucastro.rates.rate.Tfactors&gt;` object</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Callable</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="k">lambda</span> <span class="n">tf</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span>
                                        <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">tf</span><span class="o">.</span><span class="n">T9i</span> <span class="o">+</span>
                                        <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">tf</span><span class="o">.</span><span class="n">T913i</span> <span class="o">+</span>
@@ -498,8 +505,11 @@ document.write(`
 <div class="viewcode-block" id="SingleSet.dfdT">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.reaclib_rate.SingleSet.dfdT">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">dfdT</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; return a function for this dratedT(tf), where tf is a</span>
-<span class="sd">        Tfactors object &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a function for the temperature derivative of the</span>
+<span class="sd">        set, ``dratedT(tf)``, where ``tf`` is a :py:class:`Tfactors</span>
+<span class="sd">        &lt;pynucastro.rates.rate.Tfactors&gt;` object</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># we have lambda = exp(f(T_9))</span>
         <span class="c1"># so dlambda/dT9 = lambda * df/dT9</span>
@@ -515,9 +525,21 @@ document.write(`
 
 <div class="viewcode-block" id="SingleSet.set_string_py">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.reaclib_rate.SingleSet.set_string_py">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;set&quot;</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        return a string containing the python code for this set</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;set&quot;</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the python code needed to evaluate the set.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prefix : str</span>
+<span class="sd">            variable name used to store the set</span>
+<span class="sd">        plus_equal : bool</span>
+<span class="sd">            do we add to the existing set? or create a new</span>
+<span class="sd">            variable and initialize it to this set?</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">plus_equal</span><span class="p">:</span>
             <span class="n">string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> += np.exp( &quot;</span>
@@ -545,9 +567,27 @@ document.write(`
 
 <div class="viewcode-block" id="SingleSet.set_string_cxx">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.reaclib_rate.SingleSet.set_string_cxx">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;set&quot;</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">with_exp</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;set&quot;</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                       <span class="n">with_exp</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        return a string containing the C++ code for this set</span>
+<span class="sd">        Generate the C++ code needed to evaluate the set.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prefix : str</span>
+<span class="sd">            variable name used to store the set</span>
+<span class="sd">        plus_equal : bool</span>
+<span class="sd">            do we add to the existing set? or create a new</span>
+<span class="sd">            variable and initialize it to this set?</span>
+<span class="sd">        with_exp : bool</span>
+<span class="sd">            do we compute the set (``True``) or the log of the</span>
+<span class="sd">            set (``False``)?  The later is useful if we also</span>
+<span class="sd">            are computing the derivative.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">plus_equal</span><span class="p">:</span>
             <span class="n">string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> += &quot;</span>
@@ -582,9 +622,22 @@ document.write(`
 
 <div class="viewcode-block" id="SingleSet.dln_set_string_dT9_cxx">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.reaclib_rate.SingleSet.dln_set_string_dT9_cxx">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">dln_set_string_dT9_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;dset_dT&quot;</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        return a string containing the C++ code for d/dT9 ln(set)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dln_set_string_dT9_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;dset_dT&quot;</span><span class="p">,</span>
+                               <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the C++ code to evaluate d/dT9 ln(set).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prefix : str</span>
+<span class="sd">            variable name used to store the set</span>
+<span class="sd">        plus_equal : bool</span>
+<span class="sd">            do we add to the existing set? or create a new</span>
+<span class="sd">            variable and initialize it to this set?</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">plus_equal</span><span class="p">:</span>
             <span class="n">string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> += &quot;</span>
