@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.constants package &#8212; pynucastro 2.5.0.post49+g0cadcdf9 documentation</title>
+    <title>pynucastro.constants package &#8212; pynucastro 2.5.0.post50+gd5569237 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=ce9eb692"></script>
+    <script src="_static/documentation_options.js?v=cdb198b4"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -499,7 +499,30 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.constants.constants">pynucastro.constants.constants module</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.constants.constants">pynucastro.constants.constants module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.MeV2erg"><code class="docutils literal notranslate"><span class="pre">MeV2erg</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.N_A"><code class="docutils literal notranslate"><span class="pre">N_A</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.c_light"><code class="docutils literal notranslate"><span class="pre">c_light</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.erg2MeV"><code class="docutils literal notranslate"><span class="pre">erg2MeV</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.h"><code class="docutils literal notranslate"><span class="pre">h</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.hbar"><code class="docutils literal notranslate"><span class="pre">hbar</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.k"><code class="docutils literal notranslate"><span class="pre">k</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.k_MeV"><code class="docutils literal notranslate"><span class="pre">k_MeV</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_e"><code class="docutils literal notranslate"><span class="pre">m_e</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_e_MeV"><code class="docutils literal notranslate"><span class="pre">m_e_MeV</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_n"><code class="docutils literal notranslate"><span class="pre">m_n</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_n_C18"><code class="docutils literal notranslate"><span class="pre">m_n_C18</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_n_MeV"><code class="docutils literal notranslate"><span class="pre">m_n_MeV</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_n_MeV_C18"><code class="docutils literal notranslate"><span class="pre">m_n_MeV_C18</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_p"><code class="docutils literal notranslate"><span class="pre">m_p</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_p_MeV"><code class="docutils literal notranslate"><span class="pre">m_p_MeV</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_u"><code class="docutils literal notranslate"><span class="pre">m_u</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_u_C18"><code class="docutils literal notranslate"><span class="pre">m_u_C18</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_u_MeV"><code class="docutils literal notranslate"><span class="pre">m_u_MeV</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_u_MeV_C18"><code class="docutils literal notranslate"><span class="pre">m_u_MeV_C18</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.q_e"><code class="docutils literal notranslate"><span class="pre">q_e</span></code></a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -519,6 +542,134 @@ document.write(`
 </section>
 <section id="module-pynucastro.constants.constants">
 <span id="pynucastro-constants-constants-module"></span><h2>pynucastro.constants.constants module<a class="headerlink" href="#module-pynucastro.constants.constants" title="Link to this heading">#</a></h2>
+<p>Fundamental constants used throughout pynucastro.  Most of these
+come from <code class="docutils literal notranslate"><span class="pre">scipy.constants</span></code>.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.MeV2erg">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">MeV2erg</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.6021766339999998e-06</span></em><a class="headerlink" href="#pynucastro.constants.constants.MeV2erg" title="Link to this definition">#</a></dt>
+<dd><p>conversion factor from MeV to erg</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.N_A">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">N_A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6.02214076e+23</span></em><a class="headerlink" href="#pynucastro.constants.constants.N_A" title="Link to this definition">#</a></dt>
+<dd><p>Avogadro’s number</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.c_light">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">c_light</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">29979245800.0</span></em><a class="headerlink" href="#pynucastro.constants.constants.c_light" title="Link to this definition">#</a></dt>
+<dd><p>speed of light in cm / s</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.erg2MeV">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">erg2MeV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">624150.9074460763</span></em><a class="headerlink" href="#pynucastro.constants.constants.erg2MeV" title="Link to this definition">#</a></dt>
+<dd><p>conversion factor from erg to MeV</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.h">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">h</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6.62607015e-27</span></em><a class="headerlink" href="#pynucastro.constants.constants.h" title="Link to this definition">#</a></dt>
+<dd><p>Planck constant in erg s</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.hbar">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">hbar</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0545718176461565e-27</span></em><a class="headerlink" href="#pynucastro.constants.constants.hbar" title="Link to this definition">#</a></dt>
+<dd><p>Planck constant / 2 pi in erg s</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.k">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">k</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.3806490000000002e-16</span></em><a class="headerlink" href="#pynucastro.constants.constants.k" title="Link to this definition">#</a></dt>
+<dd><p>Boltzmann constant in erg/K</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.k_MeV">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">k_MeV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8.61733326214518e-11</span></em><a class="headerlink" href="#pynucastro.constants.constants.k_MeV" title="Link to this definition">#</a></dt>
+<dd><p>Boltzmann constant in MeV/K</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.m_e">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">m_e</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">9.1093837139e-28</span></em><a class="headerlink" href="#pynucastro.constants.constants.m_e" title="Link to this definition">#</a></dt>
+<dd><p>electron mass in g</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.m_e_MeV">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">m_e_MeV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.51099895069</span></em><a class="headerlink" href="#pynucastro.constants.constants.m_e_MeV" title="Link to this definition">#</a></dt>
+<dd><p>electron mass in MeV</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.m_n">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">m_n</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.6749275005600003e-24</span></em><a class="headerlink" href="#pynucastro.constants.constants.m_n" title="Link to this definition">#</a></dt>
+<dd><p>neutron mass in g</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.m_n_C18">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">m_n_C18</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.67492749804e-24</span></em><a class="headerlink" href="#pynucastro.constants.constants.m_n_C18" title="Link to this definition">#</a></dt>
+<dd><p>neutron mass in g from CODATA 2018</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.m_n_MeV">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">m_n_MeV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">939.56542194</span></em><a class="headerlink" href="#pynucastro.constants.constants.m_n_MeV" title="Link to this definition">#</a></dt>
+<dd><p>neutron mass in MeV</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.m_n_MeV_C18">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">m_n_MeV_C18</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">939.56542052</span></em><a class="headerlink" href="#pynucastro.constants.constants.m_n_MeV_C18" title="Link to this definition">#</a></dt>
+<dd><p>neutron mass in MeV from CODATA 2018</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.m_p">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">m_p</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.67262192595e-24</span></em><a class="headerlink" href="#pynucastro.constants.constants.m_p" title="Link to this definition">#</a></dt>
+<dd><p>proton mass in g</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.m_p_MeV">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">m_p_MeV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">938.27208943</span></em><a class="headerlink" href="#pynucastro.constants.constants.m_p_MeV" title="Link to this definition">#</a></dt>
+<dd><p>proton mass in MeV</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.m_u">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">m_u</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.66053906892e-24</span></em><a class="headerlink" href="#pynucastro.constants.constants.m_u" title="Link to this definition">#</a></dt>
+<dd><p>atomic mass unit in g</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.m_u_C18">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">m_u_C18</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.6605390666e-24</span></em><a class="headerlink" href="#pynucastro.constants.constants.m_u_C18" title="Link to this definition">#</a></dt>
+<dd><p>atomic mass unit in g from CODATA 2018</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.m_u_MeV">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">m_u_MeV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">931.49410372</span></em><a class="headerlink" href="#pynucastro.constants.constants.m_u_MeV" title="Link to this definition">#</a></dt>
+<dd><p>atomic mass unit in MeV</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.m_u_MeV_C18">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">m_u_MeV_C18</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">931.49410242</span></em><a class="headerlink" href="#pynucastro.constants.constants.m_u_MeV_C18" title="Link to this definition">#</a></dt>
+<dd><p>atomic mass unit in MeV from CODATA 2018</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pynucastro.constants.constants.q_e">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.constants.constants.</span></span><span class="sig-name descname"><span class="pre">q_e</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4.803204712570263e-10</span></em><a class="headerlink" href="#pynucastro.constants.constants.q_e" title="Link to this definition">#</a></dt>
+<dd><p>elementary charge in stat-Coulomb</p>
+</dd></dl>
+
 </section>
 </section>
 
@@ -568,7 +719,30 @@ document.write(`
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.constants.constants">pynucastro.constants.constants module</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.constants.constants">pynucastro.constants.constants module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.MeV2erg"><code class="docutils literal notranslate"><span class="pre">MeV2erg</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.N_A"><code class="docutils literal notranslate"><span class="pre">N_A</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.c_light"><code class="docutils literal notranslate"><span class="pre">c_light</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.erg2MeV"><code class="docutils literal notranslate"><span class="pre">erg2MeV</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.h"><code class="docutils literal notranslate"><span class="pre">h</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.hbar"><code class="docutils literal notranslate"><span class="pre">hbar</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.k"><code class="docutils literal notranslate"><span class="pre">k</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.k_MeV"><code class="docutils literal notranslate"><span class="pre">k_MeV</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_e"><code class="docutils literal notranslate"><span class="pre">m_e</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_e_MeV"><code class="docutils literal notranslate"><span class="pre">m_e_MeV</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_n"><code class="docutils literal notranslate"><span class="pre">m_n</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_n_C18"><code class="docutils literal notranslate"><span class="pre">m_n_C18</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_n_MeV"><code class="docutils literal notranslate"><span class="pre">m_n_MeV</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_n_MeV_C18"><code class="docutils literal notranslate"><span class="pre">m_n_MeV_C18</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_p"><code class="docutils literal notranslate"><span class="pre">m_p</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_p_MeV"><code class="docutils literal notranslate"><span class="pre">m_p_MeV</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_u"><code class="docutils literal notranslate"><span class="pre">m_u</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_u_C18"><code class="docutils literal notranslate"><span class="pre">m_u_C18</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_u_MeV"><code class="docutils literal notranslate"><span class="pre">m_u_MeV</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.m_u_MeV_C18"><code class="docutils literal notranslate"><span class="pre">m_u_MeV_C18</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.constants.constants.q_e"><code class="docutils literal notranslate"><span class="pre">q_e</span></code></a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
