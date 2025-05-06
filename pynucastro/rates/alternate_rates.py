@@ -3,7 +3,10 @@ from pynucastro.rates.reaclib_rate import ReacLibRate, SingleSet
 
 
 class DeBoerC12agO16(ReacLibRate):
+    """A drop-in replacement for "C12(a,g)O16" from ReacLib that uses
+    the formulation from DeBoer et al. 2017
 
+    """
     def __init__(self):
 
         labelprops = "deboer"
