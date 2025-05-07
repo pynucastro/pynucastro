@@ -2,6 +2,16 @@
 
 ## 2.6.0
 
+  * `SimpleCxxNetwork` now allows for screening to be disabled
+    (compile with `DISABLE_SCREENING=TRUE`.  It also prints more
+    precision in the test (#963)
+
+  * Node colors in the `RateCollection` `plot()` can now be customized
+    (#962)
+
+  * Some helper functions for working with yt datasets have been added
+    (#961)
+
   * update to the latest ReacLib database (#917)
 
   * don't use std::pow in constexpr in a `SimpleCxxNetwork` as that is
@@ -29,8 +39,8 @@
     can specify which sources to use and the order to read
     them. (#922)
 
-  * Docstring updates (#892, #899, #926, #927, #928, #931, #934, #935)
-    and more API coverage (#929)
+  * Docstring updates (#892, #899, #926, #927, #928, #931, #933, #934,
+    #935, #937, #956, #957) and more API coverage (#929)
 
   * New codespell github action (#930)
 
