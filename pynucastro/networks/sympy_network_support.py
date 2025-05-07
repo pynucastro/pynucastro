@@ -55,12 +55,13 @@ class SympyRates:
         # Check if y_i is a reactant or product
         c_reac = rate.reactant_count(y_i)
         c_prod = rate.product_count(y_i)
-        if c_reac == 0 and c_prod == 0:
+        if c_prod - c_reac == 0:
             # The rate doesn't contribute to the ydot for this y_i
             ydot_sym = float(sympy.sympify(0.0))
-        else:
-            # y_i appears as a product or reactant
-            ydot_sym = (c_prod - c_reac) * srate
+            return None
+
+        # y_i appears as a product or reactant
+        ydot_sym = (c_prod - c_reac) * srate
         result = ydot_sym.evalf(n=self.float_explicit_num_digits)
         self._ydot_term_cache[key] = result
         return result
@@ -115,10 +116,16 @@ class SympyRates:
         """
         ydot_sym = self.ydot_term_symbol(rate, ydot_j)
         deriv_sym = sympy.symbols(f'Y__j{y_i}__')
-        jac_sym = sympy.diff(ydot_sym, deriv_sym)
         symbol_is_null = False
-        if jac_sym.equals(0):
+        if ydot_sym is None:
+            # the rate may be null if the same nucleus appears
+            # both as a reactant and product
+            jac_sym = sympy.sympify(0.0)
             symbol_is_null = True
+        else:
+            jac_sym = sympy.diff(ydot_sym, deriv_sym)
+            if jac_sym.equals(0):
+                symbol_is_null = True
         return (jac_sym.evalf(n=self.float_explicit_num_digits), symbol_is_null)
 
     def cxxify(self, s):
