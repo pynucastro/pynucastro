@@ -2,8 +2,11 @@
 
 ## 2.6.0
 
+  * Added a new CI test that directly compares a `PythonNetwork` and
+    `SimpleCxxNetwork`  evaluation of dY/dt (#964)
+
   * `SimpleCxxNetwork` now allows for screening to be disabled
-    (compile with `DISABLE_SCREENING=TRUE`.  It also prints more
+    (compile with `DISABLE_SCREENING=TRUE`).  It also prints more
     precision in the test (#963)
 
   * Node colors in the `RateCollection` `plot()` can now be customized
