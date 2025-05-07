@@ -2,7 +2,6 @@
 # and have them both compute dY/dt and compares to make sure that they
 # agree.  Note: screening is not considered.
 
-import os
 import re
 import subprocess
 from pathlib import Path
@@ -47,8 +46,6 @@ class TestNetworkCompare:
         for line in stdout.split("\n"):
             if match := ydot_re.search(line.strip()):
                 ydots_cxx[match.group(2)] = float(match.group(6))
-
-        os.chdir("../")
 
         # python
         pynet = pyna.PythonNetwork(libraries=[lib])
