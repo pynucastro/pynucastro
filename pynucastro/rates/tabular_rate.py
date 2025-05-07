@@ -14,7 +14,10 @@ from pynucastro.rates.rate import Rate, RateSource
 
 
 class TableIndex(Enum):
-    """a simple enum-like container for indexing the electron-capture tables"""
+    """An enum-like container for indexing the electron-capture
+    tables
+
+    """
     RHOY = 0
     T = 1
     MU = 2
@@ -33,8 +36,21 @@ class TableIndex(Enum):
     ('temp', numba.float64[:])
 ])
 class TableInterpolator:
-    """A simple class that holds a pointer to the table data and
-    methods that allow us to interpolate a variable"""
+    """A class that holds a pointer to the table data and
+    methods that allow us to interpolate a variable
+
+    Parameters
+    ----------
+    table_rhoy_lines : numpy.ndarray
+        a 1D array giving the (ρ Y_e) values where the rate is tabulated
+    table_temp_lines : numpy.ndarray
+        a 1D array guving the T values where the rate is tabulated
+    table_data : numpy.ndarray
+        a 2D array giving the tabulated rate data of the form (index,
+        component) where index is a 1D flattened representation of
+        (rhoY, T).
+
+    """
 
     def __init__(self, table_rhoy_lines, table_temp_lines, table_data):
 
@@ -47,20 +63,39 @@ class TableInterpolator:
         self.temp = self.data[0:self.table_temp_lines, TableIndex.T.value]
 
     def _get_logT_idx(self, logt0):
-        """return the index into the temperatures such that
-        T[i-1] < t0 <= T[i].  We return i-1 here, corresponding to
-        the lower value.
+        """Find the index into the temperatures such that T[i-1] < t0 <= T[i].
+        We return i-1 here, corresponding to the lower value.
+
         Note: we work in terms of log10()
+
+        Parameters
+        ----------
+        logt0 : float
+            log10(temperature) to interpolate at
+
+        Returns
+        -------
+        int
+
         """
 
         max_idx = len(self.temp) - 1
         return max(0, min(max_idx, np.searchsorted(self.temp, logt0)) - 1)
 
     def _get_logrhoy_idx(self, logrhoy0):
-        """return the index into rho*Y such that
-        rhoY[i-1] < rhoy0 <= rhoY[i].  We return i-1 here,
-        corresponding to the lower value.
+        """Feturn the index into rhoY such that rhoY[i-1] < rhoy0 <= rhoY[i].
+        We return i-1 here, corresponding to the lower value.
+
         Note: we work in terms of log10()
+
+        Parameters
+        ----------
+        logrhoy0 : float
+            log10(ρ Y_e) to interpolate at
+
+        Returns
+        -------
+        int
 
         """
 
@@ -68,8 +103,16 @@ class TableInterpolator:
         return max(0, min(max_idx, np.searchsorted(self.rhoy, logrhoy0)) - 1)
 
     def _rhoy_T_to_idx(self, irhoy, jtemp):
-        """given a pair (irhoy, jtemp) into the table, return the 1-d index
-        into the underlying data array assuming row-major ordering"""
+        """Given a pair (irhoy, jtemp) into the table, return the 1D
+        index into the underlying data array assuming row-major
+        ordering
+
+        Parameters
+        ----------
+        irhoy : int
+            the index for 
+
+        """
 
         return irhoy * self.table_temp_lines + jtemp
 
