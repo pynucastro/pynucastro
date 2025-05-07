@@ -201,7 +201,7 @@ class TabularRate(Rate):
 
     Parameters
     ----------
-    rfile : str, Path, io.StringIO
+    rfile : str, pathlib.Path, io.StringIO
         the file containing the data table
 
     """
