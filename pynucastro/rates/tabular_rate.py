@@ -110,15 +110,37 @@ class TableInterpolator:
         Parameters
         ----------
         irhoy : int
-            the index for 
+            the index in the (ρ Y_e) dimension
+        ijtemp : int
+            the index into the T dimension
+
+        Returns
+        -------
+        int
 
         """
 
         return irhoy * self.table_temp_lines + jtemp
 
     def interpolate(self, logrhoy, logT, component):
-        """given logrhoy and logT, do bilinear interpolation to
-        find the value of the data component in the table"""
+        """Given logrhoy and logT, do bilinear interpolation to
+        find the value of the data component in the table
+
+        Parameters
+        ----------
+        logrhoy : float
+            log10(ρ Y_e) to interpolate at
+        logT : float
+            log10(T) to interpolate at
+        component : int
+            the component from the data table we are interpolating.
+            This should correspond to a :py:class:`TableIndex` component.
+
+        Returns
+        -------
+        float
+
+        """
 
         # We are going to do bilinear interpolation.  We create a
         # polynomial of the form:
