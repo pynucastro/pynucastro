@@ -27,18 +27,17 @@ class TestNetworkCompare:
         test_path = Path("_test_compare/")
 
         test_path.mkdir(parents=True, exist_ok=True)
-        os.chdir(test_path)
 
         # C++
 
         cxx_net = pyna.SimpleCxxNetwork(libraries=[lib])
-        cxx_net.write_network()
+        cxx_net.write_network(odir=test_path)
 
         subprocess.run("make DISABLE_SCREENING=TRUE", capture_output=False,
-                       shell=True, check=True)
+                       shell=True, check=True, cwd=test_path)
 
         cp = subprocess.run("./main", capture_output=True,
-                            shell=True, check=True, text=True)
+                            shell=True, check=True, text=True, cwd=test_path)
         stdout = cp.stdout
 
         ydot_re = re.compile(r"(Ydot)\((\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
