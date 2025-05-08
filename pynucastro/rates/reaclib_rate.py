@@ -232,9 +232,20 @@ class SingleSet:
 
 
 class ReacLibRate(Rate):
-    """A single reaction rate.  Currently, this is a ReacLib rate, which
-    can be composed of multiple sets, or a tabulated electron capture
-    rate.
+    """A single reaction rate from the ReacLib library, which
+    can be composed of multiple sets.
+
+    Parameters
+    ----------
+    rfile : str, pathlib.Path, io.StringIO
+        the data file or string containing the rate in ReacLib format.
+    chapter : int
+        the ReacLib chapter describing the number of reactants and products
+    reactants : list(str), list(Nucleus)
+        the reactants for the reaction
+    products : list(str), list(Nucleus)
+        the products for the reaction
+
 
     :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
     """
