@@ -254,8 +254,11 @@ class ReacLibRate(Rate):
             self.rfile_path = _find_rate_file(rfile)
             self.rfile = rfile.name
 
-        self.chapter = chapter    # the Reaclib chapter for this reaction
-        self.original_source = original_source   # the contents of the original rate file
+        # the Reaclib chapter for this reaction
+        self.chapter = chapter
+
+        # the contents of the original rate file
+        self.original_source = None
         self.fname = None
 
         if reactants:
