@@ -279,7 +279,7 @@ class Composition(collections.UserDict):
         for k in self:
             self[k] /= X_sum
 
-    @property
+
     def ye(self):
         """Return the electron fraction of the composition
 
@@ -290,7 +290,7 @@ class Composition(collections.UserDict):
         electron_frac = math.fsum(self[n] * n.Z / n.A for n in self) / self.get_sum_X()
         return electron_frac
 
-    @property
+
     def abar(self):
         """Return the mean molecular weight
 
@@ -301,7 +301,7 @@ class Composition(collections.UserDict):
         abar = math.fsum(self[n] / n.A for n in self)
         return 1. / abar
 
-    @property
+
     def zbar(self):
         """Return the mean charge, Zbar
 
