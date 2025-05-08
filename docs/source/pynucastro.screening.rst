@@ -9,18 +9,8 @@ pynucastro.screening package
 Submodules
 ----------
 
-pynucastro.screening.screen module
-----------------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: pynucastro.screening.screen
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pynucastro.screening.screening\_util module
--------------------------------------------
-
-.. automodule:: pynucastro.screening.screening_util
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   pynucastro.screening.screen
+   pynucastro.screening.screening_util
