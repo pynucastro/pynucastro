@@ -2265,6 +2265,13 @@ class RateCollection:
             if Z_range is not None:
                 ax.set_xlim(Z_range[0], Z_range[1])
 
+        # if we are rotated and all nuclei have Z = A, then make
+        # the vertical axis symmetric
+        if rotated:
+            ZA = np.array([n.A - 2 * n.Z for n in node_nuclei])
+            if ZA.min() == ZA.max():
+                ax.set_ylim(ZA.min() - 0.5, ZA.min() + 0.5)
+
         if not rotated:
             ax.set_aspect("equal", "datalim")
 
