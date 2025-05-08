@@ -369,8 +369,7 @@ class TabularRate(Rate):
         return f'{self.rid} <{self.label.strip()}_{ssrc}>'
 
     def function_string_py(self):
-        """
-        Construct the python function that computes the rate.
+        """Construct the python function that computes the rate.
 
         Returns
         -------
@@ -446,12 +445,11 @@ class TabularRate(Rate):
         T : float
             the temperature to evaluate the rate at
         rho : float
-            the density to evaluate the rate at (not needed for ReacLib
-            rates).
+            the density to evaluate the rate at.
         comp : float
             the composition (of type
             :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
-            to evaluate the rate with (not needed for ReacLib rates).
+            to evaluate the rate with.
 
         Returns
         -------
@@ -466,16 +464,27 @@ class TabularRate(Rate):
 
     def plot(self, *, Tmin=None, Tmax=None, rhoYmin=None, rhoYmax=None,
              color_field='rate', figsize=(10, 10)):
-        """plot the rate's temperature sensitivity vs temperature
+        """Plot the rate or neutrino loss in the log10(ρ Y_e) and
+        log10(T) plane.
 
-        :param float Tmin:    minimum temperature for plot
-        :param float Tmax:    maximum temperature for plot
-        :param float rhoYmin: minimum electron density to plot (e-capture rates only)
-        :param float rhoYmax: maximum electron density to plot (e-capture rates only)
-        :param tuple figsize: figure size specification for matplotlib
+        Parameters
+        ----------
+        Tmin : float
+            minimum temperature for the plot
+        Tmax : float
+            maximum temperature for the plot
+        rhoYmin : float
+            minimum (ρ Y_e) for the plto
+        rhoYmax : float
+            maximum (ρ Y_e) for the plto
+        color_field : str
+            the field to plot.  Possible values are "rate" or "nu_loss"
+        figsize : tuple
+            the horizontal, vertical size (in inches) for the plot
 
-        :return: a matplotlib figure object
-        :rtype: matplotlib.figure.Figure
+        Returns
+        -------
+        matplotlib.figure.Figure
 
         """
 
