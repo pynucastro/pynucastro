@@ -8,7 +8,7 @@ class TestPythonDerivedNetwork:
     @pytest.fixture(scope='class')
     def pynet(self, reaclib_library):
 
-        fwd_reactions = reaclib_library.derived_forward()
+        fwd_reactions = reaclib_library.forward_for_detailed_balance()
 
         intermediate_nuclei = ['cr48', 'mn51', 'fe52', 'ni56', 'p', 'n', 'he4', 'co55']
         beta_decay_modes = ['fe54', 'fe55', 'fe54', 'fe56', 'cr56', 'mn56']
