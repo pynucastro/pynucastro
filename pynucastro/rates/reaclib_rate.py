@@ -241,6 +241,10 @@ class ReacLibRate(Rate):
         the data file or string containing the rate in ReacLib format.
     chapter : int
         the ReacLib chapter describing the number of reactants and products
+    original_source : string
+        the original source.  This is usually set automatically when
+        reading ``rfile``, but can be manually provided when adding
+        rates together.
     reactants : list(str), list(Nucleus)
         the reactants for the reaction
     products : list(str), list(Nucleus)
