@@ -1,5 +1,5 @@
-"""
-Functions for dealing with the rate data directories.
+"""Functions for finding and working with the rate data directories.
+
 """
 from pathlib import Path
 
@@ -16,10 +16,26 @@ _dirs = [
 
 
 def get_rates_dir():
+    """Return the top-level directory containing rate files
+
+    Returns
+    -------
+    pathlib.Path
+
+    """
+
     return _pynucastro_rates_dir
 
 
 def get_tabular_dir():
+    """Return the top-level directory containing the tabulated rates
+
+    Returns
+    -------
+    pathlib.Path
+
+    """
+
     return _pynucastro_tabular_dir
 
 
