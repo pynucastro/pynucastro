@@ -259,7 +259,7 @@ class ReacLibRate(Rate):
     Raises
     ------
     RateFileError
-        If the rate file is not correctly formated.
+        If the rate file is not correctly formatted.
     UnsupportedNucleus
         If the nucleus is unknown to pynucastro
 
