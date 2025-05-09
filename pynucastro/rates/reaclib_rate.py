@@ -21,7 +21,7 @@ class SingleSet:
     a : list, numpy.ndarray
         the coefficients of the exponential fit
     labelprops : str
-         a collection of flags that classify a ReacLib rate
+        a collection of flags that classify a ReacLib rate
 
     """
 
@@ -241,7 +241,7 @@ class ReacLibRate(Rate):
         the data file or string containing the rate in ReacLib format.
     chapter : int
         the ReacLib chapter describing the number of reactants and products
-    original_source : string
+    original_source : str
         the original source.  This is usually set automatically when
         reading ``rfile``, but can be manually provided when adding
         rates together.
@@ -249,14 +249,23 @@ class ReacLibRate(Rate):
         the reactants for the reaction
     products : list(str), list(Nucleus)
         the products for the reaction
+    sets : list(SingleSet)
+        the sets that make up the rate
+    labelprops : str
+        a collection of flags that classify a ReacLib rate
+    Q : float
+        the energy release (in MeV)
 
+    Raises
+    ------
+    RateFileError
+        If the rate file is not correctly formated.
+    UnsupportedNucleus
+        If the nucleus is unknown to pynucastro
 
-    :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
     """
     def __init__(self, rfile=None, chapter=None, original_source=None,
                  reactants=None, products=None, sets=None, labelprops=None, Q=None):
-        """ rfile can be either a string specifying the path to a rate file or
-        an io.StringIO object from which to read rate information. """
         # pylint: disable=super-init-not-called
 
         self.rfile_path = None
@@ -340,7 +349,7 @@ class ReacLibRate(Rate):
         self._set_print_representation()
 
     def _set_print_representation(self):
-        """ compose the string representations of this Rate. """
+        """Compose the string representations of this Rate."""
 
         super()._set_print_representation()
 
@@ -366,9 +375,12 @@ class ReacLibRate(Rate):
         return hash(self.__repr__())
 
     def __eq__(self, other):
-        """ Determine whether two Rate objects are equal.
-        They are equal if they contain identical reactants and products and
-        if they contain the same SingleSet sets and if their chapters are equal."""
+        """Determine whether two Rate objects are equal.  They are
+        equal if they contain identical reactants and products and if
+        they contain the same SingleSet sets and if their chapters are
+        equal.
+
+        """
 
         if not isinstance(other, ReacLibRate):
             return False
@@ -392,8 +404,10 @@ class ReacLibRate(Rate):
         return x
 
     def __add__(self, other):
-        """Combine the sets of two Rate objects if they describe the same
-           reaction. Must be Reaclib rates."""
+        """Combine the sets of two Rate objects if they describe the
+           same reaction. Must be Reaclib rates.
+
+        """
         assert self.reactants == other.reactants
         assert self.products == other.products
         assert self.chapter == other.chapter
@@ -416,8 +430,10 @@ class ReacLibRate(Rate):
         return new_rate
 
     def _set_label_properties(self, labelprops=None):
-        """ Calls _update_resonance_combined and then
-            _update_label_properties. """
+        """Calls _update_resonance_combined and then
+            _update_label_properties.
+
+        """
         if labelprops:
             self.labelprops = labelprops
 
@@ -427,22 +443,25 @@ class ReacLibRate(Rate):
         self._update_label_properties()
 
     def _update_resonance_combined(self):
-        """ Checks the Sets in this Rate and updates the
-            resonance_combined flag as well as
-            self.labelprops[4] """
+        """Checks the Sets in this Rate and updates the
+            resonance_combined flag as well as self.labelprops[4]
+
+        """
         sres = [s.resonant for s in self.sets]
         if True in sres and False in sres:
             self._labelprops_combine_resonance()
 
     def _labelprops_combine_resonance(self):
-        """ Update self.labelprops[4] = 'c'"""
+        """Update self.labelprops[4] = 'c'"""
         llp = list(self.labelprops)
         llp[4] = 'c'
         self.labelprops = ''.join(llp)
 
     def _update_label_properties(self):
-        """ Set label and flags indicating Rate is resonant,
-            weak, or reverse. """
+        """Set label and flags indicating Rate is resonant, weak, or
+            reverse.
+
+        """
         assert isinstance(self.labelprops, str)
         if self.labelprops == "approx":
             self.label = "approx"
@@ -472,7 +491,13 @@ class ReacLibRate(Rate):
             self.source = RateSource.source(self.label)
 
     def _read_from_file(self, f):
-        """ given a file object, read rate data from the file. """
+        """Given a file object, read rate data from the file.
+
+        Parameters
+        ----------
+        f : io.TextIOWrapper, io.StringIO
+
+        """
         lines = f.readlines()
         f.close()
 
@@ -584,7 +609,13 @@ class ReacLibRate(Rate):
             self._set_label_properties(labelprops)
 
     def write_to_file(self, f):
-        """ Given a file object, write rate data to the file. """
+        """Given a file object, write rate data to the file.
+
+        Parameters
+        ----------
+        f : io.TextIOWrapper, io.StringIO
+
+        """
 
         if self.original_source is None:
             raise NotImplementedError(
@@ -596,9 +627,15 @@ class ReacLibRate(Rate):
         print(self.original_source, file=f)
 
     def get_rate_id(self):
-        """ Get an identifying string for this rate.
-        Don't include resonance state since we combine resonant and
-        non-resonant versions of reactions. """
+        """Get an identifying string for this rate.  Don't include
+        resonance state since we combine resonant and non-resonant
+        versions of reactions.
+
+        Returns
+        -------
+        str
+
+        """
 
         srev = ''
         if self.reverse:
@@ -614,7 +651,7 @@ class ReacLibRate(Rate):
 
     def function_string_py(self):
         """Return a string containing the python function that
-        computes the rate
+        computes the rate.
 
         Returns
         -------
@@ -739,7 +776,27 @@ class ReacLibRate(Rate):
         return r
 
     def eval_deriv(self, T, *, rho=None, comp=None):
-        """Evaluate the derivative of reaction rate with respect to T """
+        """Evaluate the derivative of reaction rate with respect to T
+
+
+        Parameters
+        ----------
+        T : float
+            the temperature to evaluate the rate at
+        rho : float
+            the density to evaluate the rate at (not needed for ReacLib
+            rates).
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            to evaluate the rate with (not needed for ReacLib rates).
+
+        Returns
+        -------
+        float
+
+        """
+
         _ = rho  # unused by this subclass
         _ = comp  # unused by this subclass
 
@@ -752,9 +809,18 @@ class ReacLibRate(Rate):
         return drdT
 
     def get_rate_exponent(self, T0):
-        """
-        for a rate written as a power law, r = r_0 (T/T0)**nu, return
-        nu corresponding to T0
+        """For a rate written as a power law, r = r_0 (T/T0)**nu,
+        return nu corresponding to T0
+
+        Parameters
+        ----------
+        T0 : float
+            the temperature to base the power law from
+
+        Returns
+        -------
+        float
+
         """
 
         # nu = dln r /dln T, so we need dr/dT
@@ -767,16 +833,24 @@ class ReacLibRate(Rate):
 
     def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9,
              figsize=(10, 10)):
-        """plot the rate's temperature sensitivity vs temperature
+        """Plot the rate's temperature sensitivity vs temperature
 
-        :param float Tmin:    minimum temperature for plot
-        :param float Tmax:    maximum temperature for plot
-        :param float rhoYmin: minimum electron density to plot (e-capture rates only)
-        :param float rhoYmax: maximum electron density to plot (e-capture rates only)
-        :param tuple figsize: figure size specification for matplotlib
+        Parameters
+        ----------
+        Tmin : float
+            minimum temperature for the plot
+        Tmax : float
+            maximum temperature for the plot
+        rhoYmin : float
+            unused for ReacLib rates
+        rhoYmax : float
+            unused for ReacLib rates
+        figsize : tuple
+            the horizontal, vertical size (in inches) for the plot
 
-        :return: a matplotlib figure object
-        :rtype: matplotlib.figure.Figure
+        Returns
+        -------
+        matplotlib.figure.Figure
 
         """
         _ = (rhoYmin, rhoYmax)  # unused by this subclass
