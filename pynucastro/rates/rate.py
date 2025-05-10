@@ -13,6 +13,10 @@ from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import _find_rate_file
 
 
+class BaryonConservationError(Exception):
+    pass
+
+
 @jitclass([
     ('T9', numba.float64),
     ('T9i', numba.float64),
@@ -97,6 +101,15 @@ class Rate:
         # some subclasses might define a stoichmetry as a dict{Nucleus}
         # that gives the numbers for the dY/dt equations
         self.stoichiometry = stoichiometry
+
+        # ensure that baryon number is conserved
+        test = (
+            sum(n.A * self.reactant_count(n) for n in set(self.reactants)) ==
+            sum(n.A * self.product_count(n) for n in set(self.products))
+        )
+
+        if not test:
+            raise BaryonConservationError("baryon number not conserved")
 
         self._set_rhs_properties()
         self._set_screening()
