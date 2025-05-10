@@ -102,6 +102,10 @@ class Rate:
         # that gives the numbers for the dY/dt equations
         self.stoichiometry = stoichiometry
 
+        self._set_rhs_properties()
+        self._set_screening()
+        self._set_print_representation()
+
         # ensure that baryon number is conserved
         test = (
             sum(n.A * self.reactant_count(n) for n in set(self.reactants)) ==
@@ -109,11 +113,7 @@ class Rate:
         )
 
         if not test:
-            raise BaryonConservationError("baryon number not conserved")
-
-        self._set_rhs_properties()
-        self._set_screening()
-        self._set_print_representation()
+            raise BaryonConservationError(f"baryon number not conserved in rate {self}")
 
         self.tabular = False
 
