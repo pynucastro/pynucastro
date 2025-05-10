@@ -18,8 +18,11 @@ class ModifiedRate(Rate):
         equations dY(Nucleus)/dt.  If this is not set, then simply the
         count of each nucleus in the list of reactants and products
         will be used.
+    new_reactants : list(Nucleus)
+        a list of nuclei that should be used as the reactants of the
+        modified rate, instead of the reactants from the original rate.
     new_products : list(Nucleus)
-        a list of nuclei that should be used as the product of the
+        a list of nuclei that should be used as the products of the
         modified rate, instead of the products from the original rate.
     update_screening : bool
         do we reset the screening pairs for this rate to reflect any
@@ -30,13 +33,17 @@ class ModifiedRate(Rate):
 
     def __init__(self, original_rate, *,
                  stoichiometry=None,
-                 new_products=None,
+                 new_reactants=None, new_products=None,
                  update_screening=False):
 
         self.original_rate = original_rate
         self.update_screening = update_screening
 
-        reactants = original_rate.reactants
+        if new_reactants:
+            reactants = new_reactants
+        else:
+            reactants = original_rate.reactants
+
         if new_products:
             products = new_products
         else:
@@ -49,7 +56,7 @@ class ModifiedRate(Rate):
         self.chapter = "m"
 
         # update the Q value
-        if new_products:
+        if new_products or new_reactants:
             self._set_q()
 
     def _set_screening(self):
