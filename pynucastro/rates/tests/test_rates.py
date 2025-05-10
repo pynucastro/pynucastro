@@ -6,7 +6,7 @@ from pytest import approx
 
 from pynucastro import Composition, Rate, rates
 from pynucastro.nucdata import Nucleus
-from pynucastro.rate import BaryonConservationError
+from pynucastro.rates import BaryonConservationError
 
 
 class TestTfactors:
@@ -319,13 +319,13 @@ class TestRate:
 
         # this will raise an exception
         with pytest.raises(BaryonConservationError):
-            r = Rate(reactants=[Nucleus("n14"), Nucleus("he4")],
+            _ = Rate(reactants=[Nucleus("n14"), Nucleus("he4")],
                      products=[Nucleus("ne20")])
 
         # this conserves baryon number
-        r = Rate(reactants=[Nucleus("n14"), Nucleus("he4")],
-                      products=[Nucleus("ne20")],
-                      stoichiometry={Nucleus("he4"): 1.5})
+        _ = Rate(reactants=[Nucleus("n14"), Nucleus("he4")],
+                 products=[Nucleus("ne20")],
+                 stoichiometry={Nucleus("he4"): 1.5})
 
 
 class TestDerivedRate:

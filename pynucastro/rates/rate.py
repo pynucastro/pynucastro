@@ -104,7 +104,7 @@ class Rate:
 
         # ensure that baryon number is conserved
         test = (
-            sum(n.A * self.reactant_count(n) for n in set(self.reactants)) == \
+            sum(n.A * self.reactant_count(n) for n in set(self.reactants)) ==
             sum(n.A * self.product_count(n) for n in set(self.products))
         )
 
