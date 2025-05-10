@@ -103,17 +103,10 @@ class Rate:
         self.stoichiometry = stoichiometry
 
         # ensure that baryon number is conserved
-        if self.stoichiometry:
-            test = (
-                sum(n.A * self.reactant_count(n) for n in set(self.reactants)) == \
-                sum(n.A * self.product_count(n) for n in set(self.products))
-            )
-
-        else:
-            test = (
-                sum(n.A for n in self.reactants) ==
-                sum(n.A for n in self.products)
-            )
+        test = (
+            sum(n.A * self.reactant_count(n) for n in set(self.reactants)) == \
+            sum(n.A * self.product_count(n) for n in set(self.products))
+        )
 
         if not test:
             raise BaryonConservationError("baryon number not conserved")
