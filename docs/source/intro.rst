@@ -48,6 +48,10 @@ The main classes are:
     * converting $A(n,\gamma)X(n,\gamma)B$ into $A(nn,\gamma)B$
       by assuming equilibrium of $X$.
 
+  * :func:`ModifiedRate <pynucastro.rates.modified_rate.ModifiedRate>`:
+    A container for a single rate that allows for different stoichiometry
+    or products.
+
   * :func:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>`: A
     derived rate uses detailed balance to recompute a reverse rate from the forward rate.
 
