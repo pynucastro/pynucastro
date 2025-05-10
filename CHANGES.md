@@ -2,6 +2,9 @@
 
 ## 2.6.0
 
+  * Add a new BaryonConservationError exception to `Rate` that
+    ensures a rate is balanced with respect to baryons. (#975)
+
   * Added a new CI test that directly compares a `PythonNetwork` and
     `SimpleCxxNetwork`  evaluation of dY/dt (#964)
 
