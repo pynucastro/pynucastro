@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.5.0.post51+gce4d774e documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.5.0.post52+g5484a765 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=7f10e2cf"></script>
+    <script src="../../../_static/documentation_options.js?v=fe273bf9"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -433,6 +433,13 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.files</span><span class="w"> </span><span class="kn">import</span> <span class="n">_find_rate_file</span>
 
 
+<div class="viewcode-block" id="BaryonConservationError">
+<a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.BaryonConservationError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaryonConservationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+
 <div class="viewcode-block" id="Tfactors">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.rate.Tfactors">[docs]</a>
 <span class="nd">@jitclass</span><span class="p">([</span>
@@ -480,6 +487,7 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weak_type</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;generic&quot;</span><span class="p">,</span>
+                 <span class="n">stoichiometry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;a generic Rate class that acts as a base class for specific</span>
 <span class="sd">        sources.  Here we only specify the reactants and products and Q value&quot;&quot;&quot;</span>
@@ -520,11 +528,20 @@ document.write(`
 
         <span class="c1"># some subclasses might define a stoichmetry as a dict{Nucleus}</span>
         <span class="c1"># that gives the numbers for the dY/dt equations</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stoichiometry</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stoichiometry</span> <span class="o">=</span> <span class="n">stoichiometry</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_rhs_properties</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_screening</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span>
+
+        <span class="c1"># ensure that baryon number is conserved</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">sum</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactant_count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))</span> <span class="o">==</span>
+            <span class="nb">sum</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">product_count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">))</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">test</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">BaryonConservationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;baryon number not conserved in rate </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span> <span class="o">=</span> <span class="kc">False</span>
 
