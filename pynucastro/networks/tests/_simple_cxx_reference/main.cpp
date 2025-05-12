@@ -5,13 +5,32 @@
 #include <iostream>
 #include <iomanip>
 
-int main() {
+int main(int argc, char* argv[]) {
+
+    // we can do
+    //   ./main rho T
+    // to pass in the density and temperature.
+    // composition will always be uniform.
+
+    // defaults
+    double T{1.e9};
+    double rho{2.e8};
+
+    if (argc == 3) {
+        rho = std::atof(argv[1]);
+        T = std::atof(argv[2]);
+    } else if (argc != 1) {
+        std::cout << "Error: invalid inputs" << std::endl;
+        std::exit(1);
+    }
+
+    std::cout << "(rho, T) = " << rho << " " << T << std::endl;
 
     actual_network_init();
 
     burn_t state;
-    state.T = 1.e9;
-    state.rho = 2.e8;
+    state.T = T;
+    state.rho = rho;
     for (int n = 0; n < NumSpec; ++n) {
         state.xn[n] = 1.0 / static_cast<Real>(NumSpec);
     }
