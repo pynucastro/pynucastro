@@ -1,5 +1,5 @@
-"""
-Classes and methods to interface with files storing rate data.
+"""Classes and methods to interface with files storing rate data.
+
 """
 
 import math
