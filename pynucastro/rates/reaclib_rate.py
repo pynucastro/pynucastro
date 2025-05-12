@@ -10,22 +10,22 @@ from pynucastro.rates.rate import Rate, RateSource, Tfactors
 
 
 class SingleSet:
-    """ a set in Reaclib is one piece of a rate, in the form
+    """A single ReacLib set for a reaction in the form:
 
-        lambda = exp[ a_0 + sum_{i=1}^5  a_i T_9**(2i-5)/3  + a_6 log T_9]
+    λ = exp[ a_0 + sum_{i=1}^5  a_i T_9**(2i-5)/3  + a_6 log T_9]
 
-    A single rate in Reaclib can be composed of multiple sets
+    A single rate in Reaclib can be composed of multiple sets.
 
-    :param a: the coefficients of the exponential fit
-    :param labelprops: a collection of flags that classify a ReacLib rate
+    Parameters
+    ----------
+    a : list, numpy.ndarray
+        the coefficients of the exponential fit
+    labelprops : str
+        a collection of flags that classify a ReacLib rate
 
     """
 
     def __init__(self, a, labelprops):
-        """here a is iterable (e.g., list or numpy array), storing the
-           coefficients, a0, ..., a6
-
-        """
         self.a = a
         self.labelprops = labelprops
         self.label = None
@@ -36,8 +36,10 @@ class SingleSet:
         self._update_label_properties()
 
     def _update_label_properties(self):
-        """ Set label and flags indicating Set is resonant,
-            weak, or reverse. """
+        """Set label and flags indicating Set is resonant, weak, or
+            reverse.
+
+        """
         assert isinstance(self.labelprops, str)
         assert len(self.labelprops) == 6
 
@@ -47,7 +49,6 @@ class SingleSet:
         self.derived_from_inverse = self.labelprops[5] == 'v'
 
     def __eq__(self, other):
-        """ Determine whether two SingleSet objects are equal to each other. """
         x = True
 
         for ai, aj in zip(self.a, other.a):
@@ -60,8 +61,14 @@ class SingleSet:
         return x
 
     def f(self):
-        """ return a function for rate(tf) where tf is a Tfactors
-        object """
+        """Return a function for ``rate(tf)`` where ``tf`` is a
+        :py:class:`Tfactors <pynucastro.rates.rate.Tfactors>` object
+
+        Returns
+        -------
+        Callable
+
+        """
         return lambda tf: float(np.exp(self.a[0] +
                                        self.a[1]*tf.T9i +
                                        self.a[2]*tf.T913i +
@@ -71,8 +78,11 @@ class SingleSet:
                                        self.a[6]*tf.lnT9))
 
     def dfdT(self):
-        """ return a function for this dratedT(tf), where tf is a
-        Tfactors object """
+        """Return a function for the temperature derivative of the
+        set, ``dratedT(tf)``, where ``tf`` is a :py:class:`Tfactors
+        <pynucastro.rates.rate.Tfactors>` object
+
+        """
 
         # we have lambda = exp(f(T_9))
         # so dlambda/dT9 = lambda * df/dT9
@@ -85,9 +95,21 @@ class SingleSet:
                                           (5./3.) * self.a[5] * tf.T913 * tf.T913 +
                                           self.a[6] * tf.T9i) / 1.e9
 
-    def set_string_py(self, prefix="set", plus_equal=False):
-        """
-        return a string containing the python code for this set
+    def set_string_py(self, *, prefix="set", plus_equal=False):
+        """Generate the python code needed to evaluate the set.
+
+        Parameters
+        ----------
+        prefix : str
+            variable name used to store the set
+        plus_equal : bool
+            do we add to the existing set? or create a new
+            variable and initialize it to this set?
+
+        Returns
+        -------
+        str
+
         """
         if plus_equal:
             string = f"{prefix} += np.exp( "
@@ -112,9 +134,27 @@ class SingleSet:
         string += ")"
         return string
 
-    def set_string_cxx(self, prefix="set", plus_equal=False, with_exp=True):
+    def set_string_cxx(self, *, prefix="set", plus_equal=False,
+                       with_exp=True):
         """
-        return a string containing the C++ code for this set
+        Generate the C++ code needed to evaluate the set.
+
+        Parameters
+        ----------
+        prefix : str
+            variable name used to store the set
+        plus_equal : bool
+            do we add to the existing set? or create a new
+            variable and initialize it to this set?
+        with_exp : bool
+            do we compute the set (``True``) or the log of the
+            set (``False``)?  The later is useful if we also
+            are computing the derivative.
+
+        Returns
+        -------
+        str
+
         """
         if plus_equal:
             string = f"{prefix} += "
@@ -146,9 +186,22 @@ class SingleSet:
             string += "\namrex::ignore_unused(tfactors);"
         return string
 
-    def dln_set_string_dT9_cxx(self, prefix="dset_dT", plus_equal=False):
-        """
-        return a string containing the C++ code for d/dT9 ln(set)
+    def dln_set_string_dT9_cxx(self, *, prefix="dset_dT",
+                               plus_equal=False):
+        """Generate the C++ code to evaluate d/dT9 ln(set).
+
+        Parameters
+        ----------
+        prefix : str
+            variable name used to store the set
+        plus_equal : bool
+            do we add to the existing set? or create a new
+            variable and initialize it to this set?
+
+        Returns
+        -------
+        str
+
         """
         if plus_equal:
             string = f"{prefix} += "
@@ -179,16 +232,40 @@ class SingleSet:
 
 
 class ReacLibRate(Rate):
-    """A single reaction rate.  Currently, this is a ReacLib rate, which
-    can be composed of multiple sets, or a tabulated electron capture
-    rate.
+    """A single reaction rate from the ReacLib library, which
+    can be composed of multiple sets.
 
-    :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
+    Parameters
+    ----------
+    rfile : str, pathlib.Path, io.StringIO
+        the data file or string containing the rate in ReacLib format.
+    chapter : int
+        the ReacLib chapter describing the number of reactants and products
+    original_source : str
+        the original source.  This is usually set automatically when
+        reading ``rfile``, but can be manually provided when adding
+        rates together.
+    reactants : list(str), list(Nucleus)
+        the reactants for the reaction
+    products : list(str), list(Nucleus)
+        the products for the reaction
+    sets : list(SingleSet)
+        the sets that make up the rate
+    labelprops : str
+        a collection of flags that classify a ReacLib rate
+    Q : float
+        the energy release (in MeV)
+
+    Raises
+    ------
+    RateFileError
+        If the rate file is not correctly formatted.
+    UnsupportedNucleus
+        If the nucleus is unknown to pynucastro
+
     """
     def __init__(self, rfile=None, chapter=None, original_source=None,
                  reactants=None, products=None, sets=None, labelprops=None, Q=None):
-        """ rfile can be either a string specifying the path to a rate file or
-        an io.StringIO object from which to read rate information. """
         # pylint: disable=super-init-not-called
 
         self.rfile_path = None
@@ -272,7 +349,7 @@ class ReacLibRate(Rate):
         self._set_print_representation()
 
     def _set_print_representation(self):
-        """ compose the string representations of this Rate. """
+        """Compose the string representations of this Rate."""
 
         super()._set_print_representation()
 
@@ -298,9 +375,12 @@ class ReacLibRate(Rate):
         return hash(self.__repr__())
 
     def __eq__(self, other):
-        """ Determine whether two Rate objects are equal.
-        They are equal if they contain identical reactants and products and
-        if they contain the same SingleSet sets and if their chapters are equal."""
+        """Determine whether two Rate objects are equal.  They are
+        equal if they contain identical reactants and products and if
+        they contain the same SingleSet sets and if their chapters are
+        equal.
+
+        """
 
         if not isinstance(other, ReacLibRate):
             return False
@@ -324,8 +404,10 @@ class ReacLibRate(Rate):
         return x
 
     def __add__(self, other):
-        """Combine the sets of two Rate objects if they describe the same
-           reaction. Must be Reaclib rates."""
+        """Combine the sets of two Rate objects if they describe the
+           same reaction. Must be Reaclib rates.
+
+        """
         assert self.reactants == other.reactants
         assert self.products == other.products
         assert self.chapter == other.chapter
@@ -348,8 +430,10 @@ class ReacLibRate(Rate):
         return new_rate
 
     def _set_label_properties(self, labelprops=None):
-        """ Calls _update_resonance_combined and then
-            _update_label_properties. """
+        """Calls _update_resonance_combined and then
+            _update_label_properties.
+
+        """
         if labelprops:
             self.labelprops = labelprops
 
@@ -359,22 +443,25 @@ class ReacLibRate(Rate):
         self._update_label_properties()
 
     def _update_resonance_combined(self):
-        """ Checks the Sets in this Rate and updates the
-            resonance_combined flag as well as
-            self.labelprops[4] """
+        """Checks the Sets in this Rate and updates the
+            resonance_combined flag as well as self.labelprops[4]
+
+        """
         sres = [s.resonant for s in self.sets]
         if True in sres and False in sres:
             self._labelprops_combine_resonance()
 
     def _labelprops_combine_resonance(self):
-        """ Update self.labelprops[4] = 'c'"""
+        """Update self.labelprops[4] = 'c'"""
         llp = list(self.labelprops)
         llp[4] = 'c'
         self.labelprops = ''.join(llp)
 
     def _update_label_properties(self):
-        """ Set label and flags indicating Rate is resonant,
-            weak, or reverse. """
+        """Set label and flags indicating Rate is resonant, weak, or
+            reverse.
+
+        """
         assert isinstance(self.labelprops, str)
         if self.labelprops == "approx":
             self.label = "approx"
@@ -404,7 +491,13 @@ class ReacLibRate(Rate):
             self.source = RateSource.source(self.label)
 
     def _read_from_file(self, f):
-        """ given a file object, read rate data from the file. """
+        """Given a file object, read rate data from the file.
+
+        Parameters
+        ----------
+        f : io.TextIOWrapper, io.StringIO
+
+        """
         lines = f.readlines()
         f.close()
 
@@ -516,7 +609,13 @@ class ReacLibRate(Rate):
             self._set_label_properties(labelprops)
 
     def write_to_file(self, f):
-        """ Given a file object, write rate data to the file. """
+        """Given a file object, write rate data to the file.
+
+        Parameters
+        ----------
+        f : io.TextIOWrapper, io.StringIO
+
+        """
 
         if self.original_source is None:
             raise NotImplementedError(
@@ -528,9 +627,15 @@ class ReacLibRate(Rate):
         print(self.original_source, file=f)
 
     def get_rate_id(self):
-        """ Get an identifying string for this rate.
-        Don't include resonance state since we combine resonant and
-        non-resonant versions of reactions. """
+        """Get an identifying string for this rate.  Don't include
+        resonance state since we combine resonant and non-resonant
+        versions of reactions.
+
+        Returns
+        -------
+        str
+
+        """
 
         srev = ''
         if self.derived_from_inverse:
@@ -546,7 +651,7 @@ class ReacLibRate(Rate):
 
     def function_string_py(self):
         """Return a string containing the python function that
-        computes the rate
+        computes the rate.
 
         Returns
         -------
@@ -671,7 +776,27 @@ class ReacLibRate(Rate):
         return r
 
     def eval_deriv(self, T, *, rho=None, comp=None):
-        """Evaluate the derivative of reaction rate with respect to T """
+        """Evaluate the derivative of reaction rate with respect to T
+
+
+        Parameters
+        ----------
+        T : float
+            the temperature to evaluate the rate at
+        rho : float
+            the density to evaluate the rate at (not needed for ReacLib
+            rates).
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            to evaluate the rate with (not needed for ReacLib rates).
+
+        Returns
+        -------
+        float
+
+        """
+
         _ = rho  # unused by this subclass
         _ = comp  # unused by this subclass
 
@@ -684,9 +809,18 @@ class ReacLibRate(Rate):
         return drdT
 
     def get_rate_exponent(self, T0):
-        """
-        for a rate written as a power law, r = r_0 (T/T0)**nu, return
-        nu corresponding to T0
+        """For a rate written as a power law, r = r_0 (T/T0)**nu,
+        return nu corresponding to T0
+
+        Parameters
+        ----------
+        T0 : float
+            the temperature to base the power law from
+
+        Returns
+        -------
+        float
+
         """
 
         # nu = dln r /dln T, so we need dr/dT
@@ -699,16 +833,24 @@ class ReacLibRate(Rate):
 
     def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9,
              figsize=(10, 10)):
-        """plot the rate's temperature sensitivity vs temperature
+        """Plot the rate's temperature sensitivity vs temperature
 
-        :param float Tmin:    minimum temperature for plot
-        :param float Tmax:    maximum temperature for plot
-        :param float rhoYmin: minimum electron density to plot (e-capture rates only)
-        :param float rhoYmax: maximum electron density to plot (e-capture rates only)
-        :param tuple figsize: figure size specification for matplotlib
+        Parameters
+        ----------
+        Tmin : float
+            minimum temperature for the plot
+        Tmax : float
+            maximum temperature for the plot
+        rhoYmin : float
+            unused for ReacLib rates
+        rhoYmax : float
+            unused for ReacLib rates
+        figsize : tuple
+            the horizontal, vertical size (in inches) for the plot
 
-        :return: a matplotlib figure object
-        :rtype: matplotlib.figure.Figure
+        Returns
+        -------
+        matplotlib.figure.Figure
 
         """
         _ = (rhoYmin, rhoYmax)  # unused by this subclass

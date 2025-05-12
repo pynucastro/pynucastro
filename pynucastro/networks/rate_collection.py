@@ -542,7 +542,6 @@ class RateCollection:
         should we consider screening at all -- this mainly affects
         whether we build the screening map
     """
-    # pylint: disable=too-many-public-methods
 
     pynucastro_dir = Path(__file__).parents[1]
 
@@ -1902,8 +1901,9 @@ class RateCollection:
             size of a node (in networkx units)
         node_font_size : float
             size of the font used to write the isotope in the node
-        node_color : str
-            color to make the nodes
+        node_color : str, Callable
+            color to make the nodes. May be a callable that takes a Nucleus
+            object and returns a color.
         node_shape : str
             shape of the node (using matplotlib marker names)
         nuclei_custom_labels : dict
@@ -1976,16 +1976,23 @@ class RateCollection:
         # add all the nuclei into G.node
         node_nuclei = []
         colors = []
+
+        if callable(node_color):
+            get_node_color = node_color
+        else:
+            def get_node_color(_nuc):
+                return node_color
+
         for n in self.unique_nuclei:
             if n.raw not in hidden_nuclei:
                 node_nuclei.append(n)
-                colors.append(node_color)
+                colors.append(get_node_color(n))
             else:
                 # show hidden nuclei only if they react with themselves
                 for r in self.rates:
                     if not isinstance(r, ApproximateRate) and r.reactant_count(n) > 1:
                         node_nuclei.append(n)
-                        colors.append(node_color)
+                        colors.append(get_node_color(n))
                         break
 
         # approx nuclei are given a different color
@@ -2001,7 +2008,7 @@ class RateCollection:
                 if n in self.approx_nuclei:
                     colors.append("#888888")
                 else:
-                    colors.append(node_color)
+                    colors.append(get_node_color(n))
 
         for n in node_nuclei:
             G.add_node(n)
