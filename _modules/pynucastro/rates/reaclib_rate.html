@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.reaclib_rate &#8212; pynucastro 2.5.0.post53+g41c02647 documentation</title>
+    <title>pynucastro.rates.reaclib_rate &#8212; pynucastro 2.5.0.post54+g28a63bc4 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=e965a454"></script>
+    <script src="../../../_static/documentation_options.js?v=88b84912"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -443,7 +443,7 @@ document.write(`
 <span class="sd">    a : list, numpy.ndarray</span>
 <span class="sd">        the coefficients of the exponential fit</span>
 <span class="sd">    labelprops : str</span>
-<span class="sd">         a collection of flags that classify a ReacLib rate</span>
+<span class="sd">        a collection of flags that classify a ReacLib rate</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -672,16 +672,40 @@ document.write(`
 <div class="viewcode-block" id="ReacLibRate">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.reaclib_rate.ReacLibRate">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ReacLibRate</span><span class="p">(</span><span class="n">Rate</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A single reaction rate.  Currently, this is a ReacLib rate, which</span>
-<span class="sd">    can be composed of multiple sets, or a tabulated electron capture</span>
-<span class="sd">    rate.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A single reaction rate from the ReacLib library, which</span>
+<span class="sd">    can be composed of multiple sets.</span>
 
-<span class="sd">    :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rfile : str, pathlib.Path, io.StringIO</span>
+<span class="sd">        the data file or string containing the rate in ReacLib format.</span>
+<span class="sd">    chapter : int</span>
+<span class="sd">        the ReacLib chapter describing the number of reactants and products</span>
+<span class="sd">    original_source : str</span>
+<span class="sd">        the original source.  This is usually set automatically when</span>
+<span class="sd">        reading ``rfile``, but can be manually provided when adding</span>
+<span class="sd">        rates together.</span>
+<span class="sd">    reactants : list(str), list(Nucleus)</span>
+<span class="sd">        the reactants for the reaction</span>
+<span class="sd">    products : list(str), list(Nucleus)</span>
+<span class="sd">        the products for the reaction</span>
+<span class="sd">    sets : list(SingleSet)</span>
+<span class="sd">        the sets that make up the rate</span>
+<span class="sd">    labelprops : str</span>
+<span class="sd">        a collection of flags that classify a ReacLib rate</span>
+<span class="sd">    Q : float</span>
+<span class="sd">        the energy release (in MeV)</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    RateFileError</span>
+<span class="sd">        If the rate file is not correctly formatted.</span>
+<span class="sd">    UnsupportedNucleus</span>
+<span class="sd">        If the nucleus is unknown to pynucastro</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">chapter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">original_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; rfile can be either a string specifying the path to a rate file or</span>
-<span class="sd">        an io.StringIO object from which to read rate information. &quot;&quot;&quot;</span>
         <span class="c1"># pylint: disable=super-init-not-called</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span> <span class="o">=</span> <span class="kc">None</span>
@@ -765,7 +789,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_print_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; compose the string representations of this Rate. &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compose the string representations of this Rate.&quot;&quot;&quot;</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span>
 
@@ -791,9 +815,12 @@ document.write(`
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Determine whether two Rate objects are equal.</span>
-<span class="sd">        They are equal if they contain identical reactants and products and</span>
-<span class="sd">        if they contain the same SingleSet sets and if their chapters are equal.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine whether two Rate objects are equal.  They are</span>
+<span class="sd">        equal if they contain identical reactants and products and if</span>
+<span class="sd">        they contain the same SingleSet sets and if their chapters are</span>
+<span class="sd">        equal.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">ReacLibRate</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
@@ -817,8 +844,10 @@ document.write(`
         <span class="k">return</span> <span class="n">x</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Combine the sets of two Rate objects if they describe the same</span>
-<span class="sd">           reaction. Must be Reaclib rates.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Combine the sets of two Rate objects if they describe the</span>
+<span class="sd">           same reaction. Must be Reaclib rates.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">reactants</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">products</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">chapter</span>
@@ -841,8 +870,10 @@ document.write(`
         <span class="k">return</span> <span class="n">new_rate</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_label_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Calls _update_resonance_combined and then</span>
-<span class="sd">            _update_label_properties. &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calls _update_resonance_combined and then</span>
+<span class="sd">            _update_label_properties.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">labelprops</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="n">labelprops</span>
 
@@ -852,22 +883,25 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_label_properties</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_update_resonance_combined</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Checks the Sets in this Rate and updates the</span>
-<span class="sd">            resonance_combined flag as well as</span>
-<span class="sd">            self.labelprops[4] &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks the Sets in this Rate and updates the</span>
+<span class="sd">            resonance_combined flag as well as self.labelprops[4]</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sres</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">resonant</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="p">]</span>
         <span class="k">if</span> <span class="kc">True</span> <span class="ow">in</span> <span class="n">sres</span> <span class="ow">and</span> <span class="kc">False</span> <span class="ow">in</span> <span class="n">sres</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_labelprops_combine_resonance</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_labelprops_combine_resonance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Update self.labelprops[4] = &#39;c&#39;&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update self.labelprops[4] = &#39;c&#39;&quot;&quot;&quot;</span>
         <span class="n">llp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">)</span>
         <span class="n">llp</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;c&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">llp</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_update_label_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Set label and flags indicating Rate is resonant,</span>
-<span class="sd">            weak, or reverse. &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set label and flags indicating Rate is resonant, weak, or</span>
+<span class="sd">            reverse.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">==</span> <span class="s2">&quot;approx&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;approx&quot;</span>
@@ -897,7 +931,13 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">RateSource</span><span class="o">.</span><span class="n">source</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_read_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; given a file object, read rate data from the file. &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given a file object, read rate data from the file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        f : io.TextIOWrapper, io.StringIO</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
@@ -1011,7 +1051,13 @@ document.write(`
 <div class="viewcode-block" id="ReacLibRate.write_to_file">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.reaclib_rate.ReacLibRate.write_to_file">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Given a file object, write rate data to the file. &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given a file object, write rate data to the file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        f : io.TextIOWrapper, io.StringIO</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
@@ -1026,9 +1072,15 @@ document.write(`
 <div class="viewcode-block" id="ReacLibRate.get_rate_id">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.reaclib_rate.ReacLibRate.get_rate_id">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_rate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get an identifying string for this rate.</span>
-<span class="sd">        Don&#39;t include resonance state since we combine resonant and</span>
-<span class="sd">        non-resonant versions of reactions. &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get an identifying string for this rate.  Don&#39;t include</span>
+<span class="sd">        resonance state since we combine resonant and non-resonant</span>
+<span class="sd">        versions of reactions.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">srev</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span><span class="p">:</span>
@@ -1047,7 +1099,7 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.reaclib_rate.ReacLibRate.function_string_py">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">function_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string containing the python function that</span>
-<span class="sd">        computes the rate</span>
+<span class="sd">        computes the rate.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1181,7 +1233,27 @@ document.write(`
 <div class="viewcode-block" id="ReacLibRate.eval_deriv">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.reaclib_rate.ReacLibRate.eval_deriv">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">eval_deriv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the derivative of reaction rate with respect to T &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the derivative of reaction rate with respect to T</span>
+
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        T : float</span>
+<span class="sd">            the temperature to evaluate the rate at</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            the density to evaluate the rate at (not needed for ReacLib</span>
+<span class="sd">            rates).</span>
+<span class="sd">        comp : float</span>
+<span class="sd">            the composition (of type</span>
+<span class="sd">            :py:class:`Composition &lt;pynucastro.networks.rate_collection.Composition&gt;`)</span>
+<span class="sd">            to evaluate the rate with (not needed for ReacLib rates).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">_</span> <span class="o">=</span> <span class="n">rho</span>  <span class="c1"># unused by this subclass</span>
         <span class="n">_</span> <span class="o">=</span> <span class="n">comp</span>  <span class="c1"># unused by this subclass</span>
 
@@ -1197,9 +1269,18 @@ document.write(`
 <div class="viewcode-block" id="ReacLibRate.get_rate_exponent">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.reaclib_rate.ReacLibRate.get_rate_exponent">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_rate_exponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        for a rate written as a power law, r = r_0 (T/T0)**nu, return</span>
-<span class="sd">        nu corresponding to T0</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;For a rate written as a power law, r = r_0 (T/T0)**nu,</span>
+<span class="sd">        return nu corresponding to T0</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        T0 : float</span>
+<span class="sd">            the temperature to base the power law from</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># nu = dln r /dln T, so we need dr/dT</span>
@@ -1215,16 +1296,24 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.reaclib_rate.ReacLibRate.plot">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Tmin</span><span class="o">=</span><span class="mf">1.e8</span><span class="p">,</span> <span class="n">Tmax</span><span class="o">=</span><span class="mf">1.6e9</span><span class="p">,</span> <span class="n">rhoYmin</span><span class="o">=</span><span class="mf">3.9e8</span><span class="p">,</span> <span class="n">rhoYmax</span><span class="o">=</span><span class="mf">2.e9</span><span class="p">,</span>
              <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;plot the rate&#39;s temperature sensitivity vs temperature</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the rate&#39;s temperature sensitivity vs temperature</span>
 
-<span class="sd">        :param float Tmin:    minimum temperature for plot</span>
-<span class="sd">        :param float Tmax:    maximum temperature for plot</span>
-<span class="sd">        :param float rhoYmin: minimum electron density to plot (e-capture rates only)</span>
-<span class="sd">        :param float rhoYmax: maximum electron density to plot (e-capture rates only)</span>
-<span class="sd">        :param tuple figsize: figure size specification for matplotlib</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Tmin : float</span>
+<span class="sd">            minimum temperature for the plot</span>
+<span class="sd">        Tmax : float</span>
+<span class="sd">            maximum temperature for the plot</span>
+<span class="sd">        rhoYmin : float</span>
+<span class="sd">            unused for ReacLib rates</span>
+<span class="sd">        rhoYmax : float</span>
+<span class="sd">            unused for ReacLib rates</span>
+<span class="sd">        figsize : tuple</span>
+<span class="sd">            the horizontal, vertical size (in inches) for the plot</span>
 
-<span class="sd">        :return: a matplotlib figure object</span>
-<span class="sd">        :rtype: matplotlib.figure.Figure</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matplotlib.figure.Figure</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_</span> <span class="o">=</span> <span class="p">(</span><span class="n">rhoYmin</span><span class="p">,</span> <span class="n">rhoYmax</span><span class="p">)</span>  <span class="c1"># unused by this subclass</span>

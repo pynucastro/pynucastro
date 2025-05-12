@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.files &#8212; pynucastro 2.5.0.post53+g41c02647 documentation</title>
+    <title>pynucastro.rates.files &#8212; pynucastro 2.5.0.post54+g28a63bc4 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=e965a454"></script>
+    <script src="../../../_static/documentation_options.js?v=88b84912"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -418,8 +418,8 @@ document.write(`
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.rates.files</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Functions for dealing with the rate data directories.</span>
+<span></span><span class="sd">&quot;&quot;&quot;Functions for finding and working with the rate data directories.</span>
+
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
@@ -438,6 +438,14 @@ document.write(`
 <div class="viewcode-block" id="get_rates_dir">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.files.get_rates_dir">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_rates_dir</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the top-level directory containing rate files</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pathlib.Path</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">return</span> <span class="n">_pynucastro_rates_dir</span></div>
 
 
@@ -445,6 +453,14 @@ document.write(`
 <div class="viewcode-block" id="get_tabular_dir">
 <a class="viewcode-back" href="../../../pynucastro.rates.html#pynucastro.rates.files.get_tabular_dir">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_tabular_dir</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the top-level directory containing the tabulated rates</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pathlib.Path</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">return</span> <span class="n">_pynucastro_tabular_dir</span></div>
 
 
