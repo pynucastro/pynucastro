@@ -144,6 +144,9 @@ void rhs_nuc(const burn_t& state,
 inline
 void actual_rhs (burn_t& state, Array1D<Real, 1, NumSpec>& ydot)
 {
+
+    compute_ye(state);
+
     for (int i = 1; i <= NumSpec; ++i) {
         ydot(i) = 0.0_rt;
     }
@@ -253,8 +256,10 @@ void jac_nuc(const burn_t& state,
 
 template<class MatrixType>
 inline
-void actual_jac(const burn_t& state, MatrixType& jac)
+void actual_jac(burn_t& state, MatrixType& jac)
 {
+
+    compute_ye(state);
 
     // Set molar abundances
     Array1D<Real, 1, NumSpec> Y;

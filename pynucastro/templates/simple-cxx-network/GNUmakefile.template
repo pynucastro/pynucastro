@@ -8,7 +8,7 @@ ifeq ($(DISABLE_SCREENING),TRUE)
    DEFINES += -DDISABLE_SCREENING
 endif
 
-%.o: %.cpp
+%.o: %.cpp $(HEADERS)
 	g++ -I. $(DEFINES) -c $<
 
 main: $(OBJECTS) $(HEADERS)
