@@ -542,7 +542,6 @@ class RateCollection:
         should we consider screening at all -- this mainly affects
         whether we build the screening map
     """
-    # pylint: disable=too-many-public-methods
 
     pynucastro_dir = Path(__file__).parents[1]
 

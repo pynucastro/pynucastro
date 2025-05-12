@@ -1,5 +1,5 @@
-"""
-Classes and methods to interface with files storing rate data.
+"""Classes and methods to interface with files storing rate data.
+
 """
 
 import math
@@ -11,6 +11,10 @@ import pynucastro.numba_util as numba
 from pynucastro.nucdata import Nucleus
 from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import _find_rate_file
+
+
+class BaryonConservationError(Exception):
+    pass
 
 
 @jitclass([
@@ -84,6 +88,7 @@ class Rate:
     """
     def __init__(self, reactants=None, products=None,
                  Q=None, weak_type="", label="generic",
+                 stoichiometry=None,
                  use_identical_particle_factor=True):
 
         if reactants:
@@ -122,11 +127,20 @@ class Rate:
 
         # some subclasses might define a stoichmetry as a dict{Nucleus}
         # that gives the numbers for the dY/dt equations
-        self.stoichiometry = None
+        self.stoichiometry = stoichiometry
 
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
+
+        # ensure that baryon number is conserved
+        test = (
+            sum(n.A * self.reactant_count(n) for n in set(self.reactants)) ==
+            sum(n.A * self.product_count(n) for n in set(self.products))
+        )
+
+        if not test:
+            raise BaryonConservationError(f"baryon number not conserved in rate {self}")
 
         self.tabular = False
 
