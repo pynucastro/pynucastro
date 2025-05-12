@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Simple C++ network &#8212; pynucastro 2.5.0.post60+g0bbcb857 documentation</title>
+    <title>Simple C++ network &#8212; pynucastro 2.5.0.post61+g8167231f documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=1bbaaa99"></script>
+    <script src="_static/documentation_options.js?v=c8bdfb3d"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -613,15 +613,30 @@ needed throughout the network.</p></li>
 for a single thermodynamic state and compute the energy release.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">network_properties.H</span></code> : a header providing the properties of the nuclei.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">reaclib_rates.H</span></code> : the functions that evaluate the ReacLib reaction rates.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">screen_data.H</span></code> : this defines some functions used in precomputing common
+screening factors.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">screen.H</span></code> : the actual implementation of the Chugunov 2007 screening.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">tfactors.H</span></code> : a struct that stores the various temperature powers needed
 to compute reaction rates.</p></li>
 </ul>
-<p>The test driver can be built by simply doing:</p>
+<p>## Test driver</p>
+<p>A test driver can be built by simply doing:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
 span.prompt1:before {
   content: "$ ";
 }
 </style><span class="prompt1">make</span>
+</pre></div></div><p>and run as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">./main</span>
+</pre></div></div><p>This will simply evaluate the righthand side and Jacobian at a single
+thermodynamic state and print out the output.  It is intended to show
+how to work with the interfaces provided by pynucastro.</p>
+<p>To change the density and temperature, you can pass values as arguments
+(both must be specified if you are overriding the defaults), e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">./main<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="m">1</span>.e7</span>
+</pre></div></div><p>would use <span class="math notranslate nohighlight">\(\rho = 100~\mathrm{g~cm^{-3}}\)</span> and <span class="math notranslate nohighlight">\(T = 10^7~\mathrm{K}\)</span>.</p>
+<p>By default screening is included.  To disable screening, compile as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">make<span class="w"> </span><span class="nv">DISABLE_SCREENING</span><span class="o">=</span>TRUE</span>
 </pre></div></div></section>
 
 
