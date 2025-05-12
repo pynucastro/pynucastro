@@ -14,7 +14,10 @@ from pynucastro.rates.rate import Rate, RateSource
 
 
 class TableIndex(Enum):
-    """a simple enum-like container for indexing the electron-capture tables"""
+    """An enum-like container for indexing the electron-capture
+    tables
+
+    """
     RHOY = 0
     T = 1
     MU = 2
@@ -33,8 +36,21 @@ class TableIndex(Enum):
     ('temp', numba.float64[:])
 ])
 class TableInterpolator:
-    """A simple class that holds a pointer to the table data and
-    methods that allow us to interpolate a variable"""
+    """A class that holds a pointer to the table data and
+    methods that allow us to interpolate a variable
+
+    Parameters
+    ----------
+    table_rhoy_lines : int
+        the number of the (ρ Y_e) values where the rate is tabulated
+    table_temp_lines : int
+        the number of T values where the rate is tabulated
+    table_data : numpy.ndarray
+        a 2D array giving the tabulated rate data of the form (index,
+        component) where index is a 1D flattened representation of
+        (rhoY, T).
+
+    """
 
     def __init__(self, table_rhoy_lines, table_temp_lines, table_data):
 
@@ -47,20 +63,39 @@ class TableInterpolator:
         self.temp = self.data[0:self.table_temp_lines, TableIndex.T.value]
 
     def _get_logT_idx(self, logt0):
-        """return the index into the temperatures such that
-        T[i-1] < t0 <= T[i].  We return i-1 here, corresponding to
-        the lower value.
+        """Find the index into the temperatures such that T[i-1] < t0 <= T[i].
+        We return i-1 here, corresponding to the lower value.
+
         Note: we work in terms of log10()
+
+        Parameters
+        ----------
+        logt0 : float
+            log10(temperature) to interpolate at
+
+        Returns
+        -------
+        int
+
         """
 
         max_idx = len(self.temp) - 1
         return max(0, min(max_idx, np.searchsorted(self.temp, logt0)) - 1)
 
     def _get_logrhoy_idx(self, logrhoy0):
-        """return the index into rho*Y such that
-        rhoY[i-1] < rhoy0 <= rhoY[i].  We return i-1 here,
-        corresponding to the lower value.
+        """Return the index into rhoY such that rhoY[i-1] < rhoy0 <= rhoY[i].
+        We return i-1 here, corresponding to the lower value.
+
         Note: we work in terms of log10()
+
+        Parameters
+        ----------
+        logrhoy0 : float
+            log10(ρ Y_e) to interpolate at
+
+        Returns
+        -------
+        int
 
         """
 
@@ -68,14 +103,44 @@ class TableInterpolator:
         return max(0, min(max_idx, np.searchsorted(self.rhoy, logrhoy0)) - 1)
 
     def _rhoy_T_to_idx(self, irhoy, jtemp):
-        """given a pair (irhoy, jtemp) into the table, return the 1-d index
-        into the underlying data array assuming row-major ordering"""
+        """Given a pair (irhoy, jtemp) into the table, return the 1D
+        index into the underlying data array assuming row-major
+        ordering
+
+        Parameters
+        ----------
+        irhoy : int
+            the index in the (ρ Y_e) dimension
+        ijtemp : int
+            the index into the T dimension
+
+        Returns
+        -------
+        int
+
+        """
 
         return irhoy * self.table_temp_lines + jtemp
 
     def interpolate(self, logrhoy, logT, component):
-        """given logrhoy and logT, do bilinear interpolation to
-        find the value of the data component in the table"""
+        """Given logrhoy and logT, do bilinear interpolation to
+        find the value of the data component in the table
+
+        Parameters
+        ----------
+        logrhoy : float
+            log10(ρ Y_e) to interpolate at
+        logT : float
+            log10(T) to interpolate at
+        component : int
+            the component from the data table we are interpolating.
+            This should correspond to a :py:class:`TableIndex` component.
+
+        Returns
+        -------
+        float
+
+        """
 
         # We are going to do bilinear interpolation.  We create a
         # polynomial of the form:
@@ -132,13 +197,15 @@ class TableInterpolator:
 
 
 class TabularRate(Rate):
-    """A tabular rate.
+    """A rate tabulated in terms of log10(ρ Y_e) and log10(T).
 
-    :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
+    Parameters
+    ----------
+    rfile : str, pathlib.Path, io.StringIO
+        the file containing the data table
+
     """
     def __init__(self, rfile=None):
-        """ rfile can be either a string specifying the path to a rate file or
-        an io.StringIO object from which to read rate information. """
         super().__init__()
         self.rate_eval_needs_rho = True
         self.rate_eval_needs_comp = True
@@ -197,8 +264,10 @@ class TabularRate(Rate):
         return hash(self.__repr__())
 
     def __eq__(self, other):
-        """ Determine whether two Rate objects are equal.
-        They are equal if they contain identical reactants and products."""
+        """Determine whether two Rate objects are equal.  They are
+        equal if they contain identical reactants and products.
+
+        """
 
         if not isinstance(other, TabularRate):
             return False
@@ -209,7 +278,14 @@ class TabularRate(Rate):
         raise NotImplementedError("addition not defined for tabular rates")
 
     def _read_from_file(self, f):
-        """ given a file object, read rate data from the file. """
+        """Given a file object, read rate data from the file.
+
+        Parameters
+        ----------
+        f : io.TextIOWrapper
+            The file object
+
+        """
         lines = f.readlines()
         f.close()
 
@@ -256,7 +332,8 @@ class TabularRate(Rate):
         self._set_q()
 
     def _set_rhs_properties(self):
-        """ compute statistical prefactor and density exponent from the reactants. """
+        """Compute statistical prefactor and density exponent from the
+        reactants."""
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
         self.inv_prefactor = 1
         if self.use_identical_particle_factor:
@@ -266,7 +343,8 @@ class TabularRate(Rate):
         self.dens_exp = len(self.reactants)-1
 
     def _set_screening(self):
-        """ tabular rates are not currently screened (they are e-capture or beta-decay)"""
+        """Tabular rates are not currently screened (they are
+        e-capture or beta-decay)"""
         self.ion_screen = []
         self.symmetric_screen = []
 
@@ -279,18 +357,24 @@ class TabularRate(Rate):
             self.fname = f'{reactants_str}__{products_str}'
 
     def get_rate_id(self):
-        """ Get an identifying string for this rate.
-        Don't include resonance state since we combine resonant and
-        non-resonant versions of reactions. """
+        """Get an identifying string for this rate.
+
+        Returns
+        -------
+        str
+        """
 
         ssrc = 'tabular'
 
         return f'{self.rid} <{self.label.strip()}_{ssrc}>'
 
     def function_string_py(self):
-        """
-        Return a string containing python function that computes the
-        rate
+        """Construct the python function that computes the rate.
+
+        Returns
+        -------
+        str
+
         """
 
         fstring = ""
@@ -307,7 +391,7 @@ class TabularRate(Rate):
         return fstring
 
     def get_tabular_rate(self):
-        """read the rate data from .dat file """
+        """Read the rate data from .dat file """
 
         # find .dat file and read it
         self.table_path = _find_rate_file(self.table_file)
@@ -328,14 +412,51 @@ class TabularRate(Rate):
         self.tabular_data_table = np.array(t_data2d, dtype=np.float64)
 
     def eval(self, T, *, rho=None, comp=None):
-        """ evauate the reaction rate for temperature T """
+        """Evaluate the reaction rate.
+
+        Parameters
+        ----------
+        T : float
+            the temperature to evaluate the rate at
+        rho : float
+            the density to evaluate the rate at (not needed for ReacLib
+            rates).
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            to evaluate the rate with (not needed for ReacLib rates).
+
+        Returns
+        -------
+        float
+
+        """
+
         rhoY = rho * comp.ye
         r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
                                           TableIndex.RATE.value)
         return 10.0**r
 
     def get_nu_loss(self, T, *, rho=None, comp=None):
-        """ get the neutrino loss rate for the reaction if tabulated"""
+        """Evaluate the neutrino loss for the rate.
+
+        Parameters
+        ----------
+        T : float
+            the temperature to evaluate the rate at
+        rho : float
+            the density to evaluate the rate at.
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            to evaluate the rate with.
+
+        Returns
+        -------
+        float
+
+        """
+
         rhoY = rho * comp.ye
         r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
                                           TableIndex.NU.value)
@@ -343,16 +464,27 @@ class TabularRate(Rate):
 
     def plot(self, *, Tmin=None, Tmax=None, rhoYmin=None, rhoYmax=None,
              color_field='rate', figsize=(10, 10)):
-        """plot the rate's temperature sensitivity vs temperature
+        """Plot the rate or neutrino loss in the log10(ρ Y_e) and
+        log10(T) plane.
 
-        :param float Tmin:    minimum temperature for plot
-        :param float Tmax:    maximum temperature for plot
-        :param float rhoYmin: minimum electron density to plot (e-capture rates only)
-        :param float rhoYmax: maximum electron density to plot (e-capture rates only)
-        :param tuple figsize: figure size specification for matplotlib
+        Parameters
+        ----------
+        Tmin : float
+            minimum temperature for the plot
+        Tmax : float
+            maximum temperature for the plot
+        rhoYmin : float
+            minimum (ρ Y_e) for the plto
+        rhoYmax : float
+            maximum (ρ Y_e) for the plto
+        color_field : str
+            the field to plot.  Possible values are "rate" or "nu_loss"
+        figsize : tuple
+            the horizontal, vertical size (in inches) for the plot
 
-        :return: a matplotlib figure object
-        :rtype: matplotlib.figure.Figure
+        Returns
+        -------
+        matplotlib.figure.Figure
 
         """
 
