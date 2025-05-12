@@ -51,6 +51,8 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
+#ifndef DISABLE_SCREENING
+
     // Evaluating screening factors
 
     Real scor;
@@ -82,6 +84,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     rate_eval.screened_rates(k_He4_Ne20_to_Mg24) *= scor;
 
+#endif
 
     // Fill approximate rates
 
@@ -141,6 +144,9 @@ void rhs_nuc(const burn_t& state,
 inline
 void actual_rhs (burn_t& state, Array1D<Real, 1, NumSpec>& ydot)
 {
+
+    compute_ye(state);
+
     for (int i = 1; i <= NumSpec; ++i) {
         ydot(i) = 0.0_rt;
     }
@@ -250,8 +256,10 @@ void jac_nuc(const burn_t& state,
 
 template<class MatrixType>
 inline
-void actual_jac(const burn_t& state, MatrixType& jac)
+void actual_jac(burn_t& state, MatrixType& jac)
 {
+
+    compute_ye(state);
 
     // Set molar abundances
     Array1D<Real, 1, NumSpec> Y;
