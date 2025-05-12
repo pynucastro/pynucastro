@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.tabular_rate &#8212; pynucastro 2.5.0.post61+g8167231f documentation</title>
+    <title>pynucastro.rates.tabular_rate &#8212; pynucastro 2.5.0.post62+g2bc00f2e documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=c8bdfb3d"></script>
+    <script src="../../../_static/documentation_options.js?v=3f533c59"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -487,7 +487,10 @@ document.write(`
 <div class="viewcode-block" id="TableIndex">
 <a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TableIndex">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TableIndex</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;a simple enum-like container for indexing the electron-capture tables&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An enum-like container for indexing the electron-capture</span>
+<span class="sd">    tables</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">RHOY</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">T</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">MU</span> <span class="o">=</span> <span class="mi">2</span>
@@ -509,8 +512,21 @@ document.write(`
     <span class="p">(</span><span class="s1">&#39;temp&#39;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">[:])</span>
 <span class="p">])</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">TableInterpolator</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple class that holds a pointer to the table data and</span>
-<span class="sd">    methods that allow us to interpolate a variable&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class that holds a pointer to the table data and</span>
+<span class="sd">    methods that allow us to interpolate a variable</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    table_rhoy_lines : int</span>
+<span class="sd">        the number of the (ρ Y_e) values where the rate is tabulated</span>
+<span class="sd">    table_temp_lines : int</span>
+<span class="sd">        the number of T values where the rate is tabulated</span>
+<span class="sd">    table_data : numpy.ndarray</span>
+<span class="sd">        a 2D array giving the tabulated rate data of the form (index,</span>
+<span class="sd">        component) where index is a 1D flattened representation of</span>
+<span class="sd">        (rhoY, T).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_rhoy_lines</span><span class="p">,</span> <span class="n">table_temp_lines</span><span class="p">,</span> <span class="n">table_data</span><span class="p">):</span>
 
@@ -523,20 +539,39 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">table_temp_lines</span><span class="p">,</span> <span class="n">TableIndex</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_logT_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logt0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;return the index into the temperatures such that</span>
-<span class="sd">        T[i-1] &lt; t0 &lt;= T[i].  We return i-1 here, corresponding to</span>
-<span class="sd">        the lower value.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the index into the temperatures such that T[i-1] &lt; t0 &lt;= T[i].</span>
+<span class="sd">        We return i-1 here, corresponding to the lower value.</span>
+
 <span class="sd">        Note: we work in terms of log10()</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        logt0 : float</span>
+<span class="sd">            log10(temperature) to interpolate at</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">max_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="p">,</span> <span class="n">logt0</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_logrhoy_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logrhoy0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;return the index into rho*Y such that</span>
-<span class="sd">        rhoY[i-1] &lt; rhoy0 &lt;= rhoY[i].  We return i-1 here,</span>
-<span class="sd">        corresponding to the lower value.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the index into rhoY such that rhoY[i-1] &lt; rhoy0 &lt;= rhoY[i].</span>
+<span class="sd">        We return i-1 here, corresponding to the lower value.</span>
+
 <span class="sd">        Note: we work in terms of log10()</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        logrhoy0 : float</span>
+<span class="sd">            log10(ρ Y_e) to interpolate at</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -544,14 +579,44 @@ document.write(`
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="p">,</span> <span class="n">logrhoy0</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_rhoy_T_to_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">irhoy</span><span class="p">,</span> <span class="n">jtemp</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;given a pair (irhoy, jtemp) into the table, return the 1-d index</span>
-<span class="sd">        into the underlying data array assuming row-major ordering&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given a pair (irhoy, jtemp) into the table, return the 1D</span>
+<span class="sd">        index into the underlying data array assuming row-major</span>
+<span class="sd">        ordering</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        irhoy : int</span>
+<span class="sd">            the index in the (ρ Y_e) dimension</span>
+<span class="sd">        ijtemp : int</span>
+<span class="sd">            the index into the T dimension</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="n">irhoy</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_temp_lines</span> <span class="o">+</span> <span class="n">jtemp</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logrhoy</span><span class="p">,</span> <span class="n">logT</span><span class="p">,</span> <span class="n">component</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;given logrhoy and logT, do bilinear interpolation to</span>
-<span class="sd">        find the value of the data component in the table&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given logrhoy and logT, do bilinear interpolation to</span>
+<span class="sd">        find the value of the data component in the table</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        logrhoy : float</span>
+<span class="sd">            log10(ρ Y_e) to interpolate at</span>
+<span class="sd">        logT : float</span>
+<span class="sd">            log10(T) to interpolate at</span>
+<span class="sd">        component : int</span>
+<span class="sd">            the component from the data table we are interpolating.</span>
+<span class="sd">            This should correspond to a :py:class:`TableIndex` component.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># We are going to do bilinear interpolation.  We create a</span>
         <span class="c1"># polynomial of the form:</span>
@@ -611,13 +676,15 @@ document.write(`
 <div class="viewcode-block" id="TabularRate">
 <a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TabularRate</span><span class="p">(</span><span class="n">Rate</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A tabular rate.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A rate tabulated in terms of log10(ρ Y_e) and log10(T).</span>
 
-<span class="sd">    :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rfile : str, pathlib.Path, io.StringIO</span>
+<span class="sd">        the file containing the data table</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; rfile can be either a string specifying the path to a rate file or</span>
-<span class="sd">        an io.StringIO object from which to read rate information. &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_rho</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span> <span class="o">=</span> <span class="kc">True</span>
@@ -676,8 +743,10 @@ document.write(`
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Determine whether two Rate objects are equal.</span>
-<span class="sd">        They are equal if they contain identical reactants and products.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine whether two Rate objects are equal.  They are</span>
+<span class="sd">        equal if they contain identical reactants and products.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">TabularRate</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
@@ -688,7 +757,14 @@ document.write(`
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;addition not defined for tabular rates&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_read_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; given a file object, read rate data from the file. &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given a file object, read rate data from the file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        f : io.TextIOWrapper</span>
+<span class="sd">            The file object</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
@@ -735,7 +811,8 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_q</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_rhs_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; compute statistical prefactor and density exponent from the reactants. &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute statistical prefactor and density exponent from the</span>
+<span class="sd">        reactants.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># this is 1/2 for rates like a + a (double counting)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_identical_particle_factor</span><span class="p">:</span>
@@ -745,7 +822,8 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_screening</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; tabular rates are not currently screened (they are e-capture or beta-decay)&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tabular rates are not currently screened (they are</span>
+<span class="sd">        e-capture or beta-decay)&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screen</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -760,9 +838,12 @@ document.write(`
 <div class="viewcode-block" id="TabularRate.get_rate_id">
 <a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.get_rate_id">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_rate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get an identifying string for this rate.</span>
-<span class="sd">        Don&#39;t include resonance state since we combine resonant and</span>
-<span class="sd">        non-resonant versions of reactions. &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get an identifying string for this rate.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">ssrc</span> <span class="o">=</span> <span class="s1">&#39;tabular&#39;</span>
 
@@ -772,9 +853,12 @@ document.write(`
 <div class="viewcode-block" id="TabularRate.function_string_py">
 <a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.function_string_py">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">function_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return a string containing python function that computes the</span>
-<span class="sd">        rate</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the python function that computes the rate.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -794,7 +878,7 @@ document.write(`
 <div class="viewcode-block" id="TabularRate.get_tabular_rate">
 <a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.get_tabular_rate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_tabular_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;read the rate data from .dat file &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read the rate data from .dat file &quot;&quot;&quot;</span>
 
         <span class="c1"># find .dat file and read it</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table_path</span> <span class="o">=</span> <span class="n">_find_rate_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_file</span><span class="p">)</span>
@@ -818,7 +902,26 @@ document.write(`
 <div class="viewcode-block" id="TabularRate.eval">
 <a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.eval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; evauate the reaction rate for temperature T &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the reaction rate.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        T : float</span>
+<span class="sd">            the temperature to evaluate the rate at</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            the density to evaluate the rate at (not needed for ReacLib</span>
+<span class="sd">            rates).</span>
+<span class="sd">        comp : float</span>
+<span class="sd">            the composition (of type</span>
+<span class="sd">            :py:class:`Composition &lt;pynucastro.networks.rate_collection.Composition&gt;`)</span>
+<span class="sd">            to evaluate the rate with (not needed for ReacLib rates).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">rhoY</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">comp</span><span class="o">.</span><span class="n">ye</span>
         <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolator</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhoY</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">T</span><span class="p">),</span>
                                           <span class="n">TableIndex</span><span class="o">.</span><span class="n">RATE</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
@@ -828,7 +931,25 @@ document.write(`
 <div class="viewcode-block" id="TabularRate.get_nu_loss">
 <a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.get_nu_loss">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_nu_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; get the neutrino loss rate for the reaction if tabulated&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the neutrino loss for the rate.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        T : float</span>
+<span class="sd">            the temperature to evaluate the rate at</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            the density to evaluate the rate at.</span>
+<span class="sd">        comp : float</span>
+<span class="sd">            the composition (of type</span>
+<span class="sd">            :py:class:`Composition &lt;pynucastro.networks.rate_collection.Composition&gt;`)</span>
+<span class="sd">            to evaluate the rate with.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">rhoY</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">comp</span><span class="o">.</span><span class="n">ye</span>
         <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolator</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhoY</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">T</span><span class="p">),</span>
                                           <span class="n">TableIndex</span><span class="o">.</span><span class="n">NU</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
@@ -839,16 +960,27 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.plot">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">Tmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Tmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rhoYmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rhoYmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">color_field</span><span class="o">=</span><span class="s1">&#39;rate&#39;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;plot the rate&#39;s temperature sensitivity vs temperature</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the rate or neutrino loss in the log10(ρ Y_e) and</span>
+<span class="sd">        log10(T) plane.</span>
 
-<span class="sd">        :param float Tmin:    minimum temperature for plot</span>
-<span class="sd">        :param float Tmax:    maximum temperature for plot</span>
-<span class="sd">        :param float rhoYmin: minimum electron density to plot (e-capture rates only)</span>
-<span class="sd">        :param float rhoYmax: maximum electron density to plot (e-capture rates only)</span>
-<span class="sd">        :param tuple figsize: figure size specification for matplotlib</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Tmin : float</span>
+<span class="sd">            minimum temperature for the plot</span>
+<span class="sd">        Tmax : float</span>
+<span class="sd">            maximum temperature for the plot</span>
+<span class="sd">        rhoYmin : float</span>
+<span class="sd">            minimum (ρ Y_e) for the plto</span>
+<span class="sd">        rhoYmax : float</span>
+<span class="sd">            maximum (ρ Y_e) for the plto</span>
+<span class="sd">        color_field : str</span>
+<span class="sd">            the field to plot.  Possible values are &quot;rate&quot; or &quot;nu_loss&quot;</span>
+<span class="sd">        figsize : tuple</span>
+<span class="sd">            the horizontal, vertical size (in inches) for the plot</span>
 
-<span class="sd">        :return: a matplotlib figure object</span>
-<span class="sd">        :rtype: matplotlib.figure.Figure</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matplotlib.figure.Figure</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
