@@ -2,6 +2,13 @@
 
 ## 2.6.0
 
+  * Drop requirement for `sphinx_rtd_theme` (#969)
+
+  * `SimpleCxxNetwork` now stores and computes Y_e so it can work with
+    weak rates. (#965)
+
+  * Fix `README.md` logo for PyPI (#973)
+
   * Add a new BaryonConservationError exception to `Rate` that
     ensures a rate is balanced with respect to baryons. (#975)
 
@@ -46,7 +53,8 @@
     them. (#922)
 
   * Docstring updates (#892, #899, #926, #927, #928, #931, #933, #934,
-    #935, #937, #956, #957) and more API coverage (#929)
+    #935, #937, #956, #957, #966, #972) and more API coverage (#929)
+    and reorganization of the API docs (#955)
 
   * New codespell github action (#930)
 
@@ -62,7 +70,7 @@
     plot (#817, #942)
 
   * Documentation updates (#901, #902, #907, #913, #919, #920) and
-    fixes (#941)
+    fixes (#941, #976)
 
   * `PythonNetwork` now pairs the forward and reverse rates when
     summing the ydot term, mirroring what we do in C++ (#784)
