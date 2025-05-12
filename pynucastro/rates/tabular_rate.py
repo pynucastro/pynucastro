@@ -41,10 +41,10 @@ class TableInterpolator:
 
     Parameters
     ----------
-    table_rhoy_lines : numpy.ndarray
-        a 1D array giving the (ρ Y_e) values where the rate is tabulated
-    table_temp_lines : numpy.ndarray
-        a 1D array guving the T values where the rate is tabulated
+    table_rhoy_lines : int
+        the number of the (ρ Y_e) values where the rate is tabulated
+    table_temp_lines : int
+        the number of T values where the rate is tabulated
     table_data : numpy.ndarray
         a 2D array giving the tabulated rate data of the form (index,
         component) where index is a 1D flattened representation of
@@ -83,7 +83,7 @@ class TableInterpolator:
         return max(0, min(max_idx, np.searchsorted(self.temp, logt0)) - 1)
 
     def _get_logrhoy_idx(self, logrhoy0):
-        """Feturn the index into rhoY such that rhoY[i-1] < rhoy0 <= rhoY[i].
+        """Return the index into rhoY such that rhoY[i-1] < rhoy0 <= rhoY[i].
         We return i-1 here, corresponding to the lower value.
 
         Note: we work in terms of log10()
