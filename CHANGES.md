@@ -5,7 +5,8 @@
   * Drop requirement for `sphinx_rtd_theme` (#969)
 
   * `SimpleCxxNetwork` now stores and computes Y_e so it can work with
-    weak rates. (#965)
+    weak rates (#965), and it also can take commandline arguments for
+    rho and T (#970)
 
   * Fix `README.md` logo for PyPI (#973)
 
@@ -53,8 +54,8 @@
     them. (#922)
 
   * Docstring updates (#892, #899, #926, #927, #928, #931, #933, #934,
-    #935, #937, #956, #957, #966, #972) and more API coverage (#929)
-    and reorganization of the API docs (#955)
+    #935, #937, #956, #957, #960, #966, #967, #972) and more API
+    coverage (#929) and reorganization of the API docs (#955)
 
   * New codespell github action (#930)
 
