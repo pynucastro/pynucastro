@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.neutrino_cooling package &#8212; pynucastro 2.5.0.post58+ge0004df2 documentation</title>
+    <title>pynucastro.neutrino_cooling package &#8212; pynucastro 2.5.0.post59+g6905a2ea documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=ab2fcd13"></script>
+    <script src="_static/documentation_options.js?v=7f54e03c"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -49,8 +49,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'pynucastro.neutrino_cooling';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pynucastro.nucdata package" href="pynucastro.nucdata.html" />
-    <link rel="prev" title="pynucastro.networks package" href="pynucastro.networks.html" />
+    <link rel="next" title="pynucastro.neutrino_cooling.neutrino_cooling module" href="pynucastro.neutrino_cooling.neutrino_cooling.html" />
+    <link rel="prev" title="pynucastro.networks.sympy_network_support module" href="pynucastro.networks.sympy_network_support.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -252,13 +252,64 @@
 <li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="modules.html">API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.constants.html">pynucastro.constants package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">pynucastro.neutrino_cooling package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.screening.html">pynucastro.screening package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.constants.html">pynucastro.constants package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.constants.constants.html">pynucastro.constants.constants module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html">pynucastro.networks.amrexastro_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.base_cxx_network.html">pynucastro.networks.base_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.fortran_network.html">pynucastro.networks.fortran_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.nse_network.html">pynucastro.networks.nse_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.numpy_network.html">pynucastro.networks.numpy_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.python_network.html">pynucastro.networks.python_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.rate_collection.html">pynucastro.networks.rate_collection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.simple_cxx_network.html">pynucastro.networks.simple_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.sympy_network_support.html">pynucastro.networks.sympy_network_support module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 current active has-children"><a class="current reference internal" href="#">pynucastro.neutrino_cooling package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.neutrino_cooling.neutrino_cooling.html">pynucastro.neutrino_cooling.neutrino_cooling module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.neutrino_cooling.sneut5_mod.html">pynucastro.neutrino_cooling.sneut5_mod module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.elements.html">pynucastro.nucdata.elements module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.halflife_table.html">pynucastro.nucdata.halflife_table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.mass_table.html">pynucastro.nucdata.mass_table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.nucleus.html">pynucastro.nucdata.nucleus module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.partition_function.html">pynucastro.nucdata.partition_function module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.spin_table.html">pynucastro.nucdata.spin_table module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.library.html">pynucastro.rates.library module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.rate.html">pynucastro.rates.rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.reaclib_rate.html">pynucastro.rates.reaclib_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.tabular_rate.html">pynucastro.rates.tabular_rate module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep.html">pynucastro.reduction.drgep module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.generate_data.html">pynucastro.reduction.generate_data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.load_network.html">pynucastro.reduction.load_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.reduction.html">pynucastro.reduction.reduction module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.reduction_utils.html">pynucastro.reduction.reduction_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.sensitivity_analysis.html">pynucastro.reduction.sensitivity_analysis module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.screening.html">pynucastro.screening package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.screen.html">pynucastro.screening.screen module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.screening_util.html">pynucastro.screening.screening_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.numba_util.html">pynucastro.numba_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.yt_utils.html">pynucastro.yt_utils module</a></li>
 </ul>
 </details></li>
 </ul>
@@ -499,19 +550,6 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.neutrino_cooling.neutrino_cooling">pynucastro.neutrino_cooling.neutrino_cooling module</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling"><code class="docutils literal notranslate"><span class="pre">NeutrinoCooling</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling.plot"><code class="docutils literal notranslate"><span class="pre">NeutrinoCooling.plot()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.neutrino_cooling.sneut5_mod">pynucastro.neutrino_cooling.sneut5_mod module</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents"><code class="docutils literal notranslate"><span class="pre">NeutrinoComponents</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.ifermi12"><code class="docutils literal notranslate"><span class="pre">ifermi12()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.sneut5"><code class="docutils literal notranslate"><span class="pre">sneut5()</span></code></a></li>
-</ul>
-</li>
 </ul>
             </nav>
         </div>
@@ -528,54 +566,23 @@ document.write(`
 <p>Neutrino cooling routines</p>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
-</section>
-<section id="module-pynucastro.neutrino_cooling.neutrino_cooling">
-<span id="pynucastro-neutrino-cooling-neutrino-cooling-module"></span><h2>pynucastro.neutrino_cooling.neutrino_cooling module<a class="headerlink" href="#module-pynucastro.neutrino_cooling.neutrino_cooling" title="Link to this heading">#</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.neutrino_cooling.neutrino_cooling.</span></span><span class="sig-name descname"><span class="pre">NeutrinoCooling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">neutrino_function=&lt;function</span> <span class="pre">sneut5&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/neutrino_cooling/neutrino_cooling.html#NeutrinoCooling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>A class to provide an interface to explore neutrino cooling.
-This calls a specific implementation of the cooling that includes
-contributions from pairs, plasma, recombination, bremsstrahlung,
-and photoneutrinos.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhomin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhomax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npts_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npts_rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/neutrino_cooling/neutrino_cooling.html#NeutrinoCooling.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling.plot" title="Link to this definition">#</a></dt>
-<dd><p>given a fixed abar/zbar, make a plot of neutrino cooling over
-a range of density and temperature</p>
-</dd></dl>
-
-</dd></dl>
-
-</section>
-<section id="module-pynucastro.neutrino_cooling.sneut5_mod">
-<span id="pynucastro-neutrino-cooling-sneut5-mod-module"></span><h2>pynucastro.neutrino_cooling.sneut5_mod module<a class="headerlink" href="#module-pynucastro.neutrino_cooling.sneut5_mod" title="Link to this heading">#</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.neutrino_cooling.sneut5_mod.</span></span><span class="sig-name descname"><span class="pre">NeutrinoComponents</span></span><a class="reference internal" href="_modules/pynucastro/neutrino_cooling/sneut5_mod.html#NeutrinoComponents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>a simple container that holds the individual components to the
-neutrino cooling</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pynucastro.neutrino_cooling.sneut5_mod.ifermi12">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.neutrino_cooling.sneut5_mod.</span></span><span class="sig-name descname"><span class="pre">ifermi12</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/neutrino_cooling/sneut5_mod.html#ifermi12"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.neutrino_cooling.sneut5_mod.ifermi12" title="Link to this definition">#</a></dt>
-<dd><p>apply a rational function expansion to get the inverse
-fermi-dirac integral of order 1/2 when it is equal to f.
-maximum error is 4.19e-9_rt.
-reference: Antia ApJS 84,101 1993</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pynucastro.neutrino_cooling.sneut5_mod.sneut5">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.neutrino_cooling.sneut5_mod.</span></span><span class="sig-name descname"><span class="pre">sneut5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/neutrino_cooling/sneut5_mod.html#sneut5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.neutrino_cooling.sneut5_mod.sneut5" title="Link to this definition">#</a></dt>
-<dd><p>compute thermal neutrino losses from the analytic fits of Itoh
-et al. ApJS 102, 411, 1996.  Note that either a Composition object
-of abar/zbar need to be provided.</p>
-</dd></dl>
-
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro.neutrino_cooling.neutrino_cooling.html">pynucastro.neutrino_cooling.neutrino_cooling module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.neutrino_cooling.neutrino_cooling.html#pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling"><code class="docutils literal notranslate"><span class="pre">NeutrinoCooling</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.neutrino_cooling.neutrino_cooling.html#pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling.plot"><code class="docutils literal notranslate"><span class="pre">NeutrinoCooling.plot()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro.neutrino_cooling.sneut5_mod.html">pynucastro.neutrino_cooling.sneut5_mod module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.neutrino_cooling.sneut5_mod.html#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents"><code class="docutils literal notranslate"><span class="pre">NeutrinoComponents</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.neutrino_cooling.sneut5_mod.html#pynucastro.neutrino_cooling.sneut5_mod.ifermi12"><code class="docutils literal notranslate"><span class="pre">ifermi12()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.neutrino_cooling.sneut5_mod.html#pynucastro.neutrino_cooling.sneut5_mod.sneut5"><code class="docutils literal notranslate"><span class="pre">sneut5()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
 </section>
 </section>
 
@@ -591,20 +598,20 @@ of abar/zbar need to be provided.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="pynucastro.networks.html"
+       href="pynucastro.networks.sympy_network_support.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">pynucastro.networks package</p>
+        <p class="prev-next-title">pynucastro.networks.sympy_network_support module</p>
       </div>
     </a>
     <a class="right-next"
-       href="pynucastro.nucdata.html"
+       href="pynucastro.neutrino_cooling.neutrino_cooling.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pynucastro.nucdata package</p>
+        <p class="prev-next-title">pynucastro.neutrino_cooling.neutrino_cooling module</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -625,19 +632,6 @@ of abar/zbar need to be provided.</p>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.neutrino_cooling.neutrino_cooling">pynucastro.neutrino_cooling.neutrino_cooling module</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling"><code class="docutils literal notranslate"><span class="pre">NeutrinoCooling</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling.plot"><code class="docutils literal notranslate"><span class="pre">NeutrinoCooling.plot()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-pynucastro.neutrino_cooling.sneut5_mod">pynucastro.neutrino_cooling.sneut5_mod module</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents"><code class="docutils literal notranslate"><span class="pre">NeutrinoComponents</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.ifermi12"><code class="docutils literal notranslate"><span class="pre">ifermi12()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.sneut5"><code class="docutils literal notranslate"><span class="pre">sneut5()</span></code></a></li>
-</ul>
-</li>
 </ul>
   </nav></div>
 

@@ -9,18 +9,8 @@ pynucastro.neutrino\_cooling package
 Submodules
 ----------
 
-pynucastro.neutrino\_cooling.neutrino\_cooling module
------------------------------------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: pynucastro.neutrino_cooling.neutrino_cooling
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pynucastro.neutrino\_cooling.sneut5\_mod module
------------------------------------------------
-
-.. automodule:: pynucastro.neutrino_cooling.sneut5_mod
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   pynucastro.neutrino_cooling.neutrino_cooling
+   pynucastro.neutrino_cooling.sneut5_mod
