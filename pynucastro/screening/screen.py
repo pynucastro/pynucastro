@@ -7,8 +7,11 @@ from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
 from pynucastro.numba_util import jitclass, njit
 
-__all__ = ["PlasmaState", "ScreenFactors", "chugunov_2007", "chugunov_2009",
-           "debye_huckel", "make_plasma_state", "make_screen_factors",
+# jit-decorated functions should be listed here so they
+# get documented by sphinx
+__all__ = ["NseState", "PlasmaState", "ScreenFactors",
+           "chugunov_2007", "chugunov_2009", "debye_huckel",
+           "make_plasma_state", "make_screen_factors",
            "potekhin_1998", "screen5", "screening_check"]
 
 
