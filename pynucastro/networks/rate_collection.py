@@ -1308,6 +1308,34 @@ class RateCollection:
 
         self._build_collection()
 
+    def summary(self):
+        """Print a summary of the nuclei and rates for this network"""
+
+        print("Network summary")
+        print("---------------")
+        print(f"  explicitly carried nuclei: {len(self.unique_nuclei)}")
+        print(f"  approximated-out nuclei: {len(self.approx_nuclei)}")
+        if self.inert_nuclei:
+            print(f"  inert nuclei (included in carried): {len(self.inert_nuclei)}")
+        else:
+            print("  inert nuclei (included in carried): 0")
+
+        print("")
+
+        print(f"  total number of rates: {len(self.all_rates)}")
+        print("")
+
+        print(f"  rates explicitly connecting nuclei: {len(self.rates)}")
+        print(f"  hidden rates: {len(self.get_hidden_rates())}")
+        print("")
+
+        print(f"  reaclib rates: {len(self.reaclib_rates)}")
+        print(f"  tabular rates: {len(self.tabular_rates)}")
+        print(f"  approximate rates: {len(self.approx_rates)}")
+        print(f"  derived rates: {len(self.derived_rates)}")
+        print(f"  modified rates: {len(self.modified_rates)}")
+        print(f"  custom rates: {len(self.custom_rates)}")
+
     def evaluate_rates(self, rho, T, composition, screen_func=None):
         """evaluate the rates for a specific density, temperature, and
         composition, with optional screening.  Note: this returns that
