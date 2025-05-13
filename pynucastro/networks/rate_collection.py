@@ -1309,6 +1309,8 @@ class RateCollection:
         self._build_collection()
 
     def summary(self):
+        """Print a summary of the nuclei and rates for this network"""
+
         print("Network summary")
         print("---------------")
         print(f"  explicitly carried nuclei: {len(self.unique_nuclei)}")
