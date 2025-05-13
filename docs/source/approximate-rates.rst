@@ -1,5 +1,5 @@
-Approximate Rates
-=================
+Approximate and Modified Rates
+==============================
 
 For multidimensional simulation codes, it is common to approximate
 some rate sequences to reduce the number of nuclei while keeping the
@@ -14,3 +14,4 @@ pynucastro can do several rate approximations.
 
    alpha-gamma-approx.ipynb
    double-n-capture.ipynb
+   modified-rates.ipynb

@@ -22,9 +22,10 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 # Import Rate
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
-                              RateFileError, RatePair, TabularRate,
-                              find_duplicate_rates, is_allowed_dupe, load_rate)
+from pynucastro.rates import (ApproximateRate, DerivedRate, Library,
+                              ModifiedRate, Rate, RateFileError, RatePair,
+                              TabularRate, find_duplicate_rates,
+                              is_allowed_dupe, load_rate)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_rid
 from pynucastro.screening import (get_screening_map, make_plasma_state,
                                   make_screen_factors)
@@ -636,43 +637,73 @@ class RateCollection:
         self.custom_rates = []
         self.approx_rates = []
         self.derived_rates = []
+        self.modified_rates = []
 
         for r in self.rates:
             if isinstance(r, ApproximateRate):
                 self.approx_rates.append(r)
                 for cr in r.get_child_rates():
                     assert cr.chapter != "t"
-                    # child rates may be ReacLibRates or DerivedRates
-                    # make sure we don't double count
+
+                    # Check whether this child rate is removed or not.
+                    # "removed" means that this rate is never used on
+                    # its own to connect two nuclei in the network it
+                    # is only used in one or more ApproximateRate or
+                    # ModifiedRate
+                    if cr not in self.rates:
+                        cr.removed = True
+                    else:
+                        cr.removed = False
+
+                    cr.fname = None
+                    # pylint: disable-next=protected-access
+                    cr._set_print_representation()
+
+                    # child rates may be ReacLibRates, ModifiedRates,
+                    # or DerivedRates.  Make sure we don't double
+                    # count
                     if isinstance(cr, DerivedRate):
-
-                        # Here we check whether this child rate is removed or not.
-                        # removed means that this rate is never used on its own to connect two nuclei in the network
-                        # it is only used in one or more ApproximateRate.
-                        if cr not in self.rates:
-                            cr.removed = True
-                        else:
-                            cr.removed = False
-
-                        cr.fname = None
-                        # pylint: disable-next=protected-access
-                        cr._set_print_representation()
-
                         if cr not in self.derived_rates:
                             self.derived_rates.append(cr)
-
+                    elif isinstance(cr, ModifiedRate):
+                        if cr not in self.modified_rates:
+                            self.modified_rates.append(cr)
                     else:
-                        if cr not in self.rates:
-                            cr.removed = True
-                        else:
-                            cr.removed = False
-
-                        cr.fname = None
-                        # pylint: disable-next=protected-access
-                        cr._set_print_representation()
-
                         if cr not in self.reaclib_rates:
                             self.reaclib_rates.append(cr)
+
+            elif isinstance(r, ModifiedRate):
+                if r not in self.modified_rates:
+                    self.modified_rates.append(r)
+
+                cr = r.original_rate
+
+                # Check whether this child rate is removed or not.
+                # "removed" means that this rate is never used on
+                # its own to connect two nuclei in the network it
+                # is only used in one or more ApproximateRate or
+                # ModifiedRate
+                if cr not in self.rates:
+                    cr.removed = True
+                else:
+                    cr.removed = False
+
+                cr.fname = None
+                # pylint: disable-next=protected-access
+                cr._set_print_representation()
+
+                # child rates may be ReacLibRates, ModifiedRates,
+                # or DerivedRates.  Make sure we don't double
+                # count
+                if isinstance(cr, DerivedRate):
+                    if cr not in self.derived_rates:
+                        self.derived_rates.append(cr)
+                elif isinstance(cr, ModifiedRate):
+                    if cr not in self.modified_rates:
+                        self.modified_rates.append(cr)
+                else:
+                    if cr not in self.reaclib_rates:
+                        self.reaclib_rates.append(cr)
 
             elif r.chapter == 't':
                 self.tabular_rates.append(r)
@@ -691,7 +722,8 @@ class RateCollection:
                 raise NotImplementedError(f"Chapter type unknown for rate chapter {r.chapter}")
 
         self.all_rates = (self.reaclib_rates + self.custom_rates +
-                          self.tabular_rates + self.approx_rates + self.derived_rates)
+                          self.tabular_rates + self.approx_rates +
+                          self.modified_rates + self.derived_rates)
 
         # finally check for duplicate rates -- these are not
         # allowed
@@ -864,7 +896,9 @@ class RateCollection:
                 for c in r.get_child_rates():
                     if c.removed:
                         hidden_rates.append(c)
-
+            elif isinstance(r, ModifiedRate):
+                if r.original_rate.removed:
+                    hidden_rates.append(r.original_rate)
         return set(hidden_rates)
 
     def get_rate(self, rid):
@@ -1990,7 +2024,7 @@ class RateCollection:
             else:
                 # show hidden nuclei only if they react with themselves
                 for r in self.rates:
-                    if not isinstance(r, ApproximateRate) and r.reactant_count(n) > 1:
+                    if not isinstance(r, (ApproximateRate, ModifiedRate)) and r.reactant_count(n) > 1:
                         node_nuclei.append(n)
                         colors.append(get_node_color(n))
                         break
@@ -2230,6 +2264,13 @@ class RateCollection:
         else:
             if Z_range is not None:
                 ax.set_xlim(Z_range[0], Z_range[1])
+
+        # if we are rotated and all nuclei have Z = A, then make
+        # the vertical axis symmetric
+        if rotated:
+            ZA = np.array([n.A - 2 * n.Z for n in node_nuclei])
+            if ZA.min() == ZA.max():
+                ax.set_ylim(ZA.min() - 0.5, ZA.min() + 0.5)
 
         if not rotated:
             ax.set_aspect("equal", "datalim")
