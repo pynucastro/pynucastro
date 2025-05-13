@@ -1,5 +1,7 @@
-"""This is a module that interprets the rates, ydots, and Jacobian
-through sympy"""
+"""Support functions for interpreting the rates, ydots, and Jacobian
+through SymPy.
+
+"""
 
 import re
 
@@ -9,6 +11,7 @@ from pynucastro.rates import TabularRate
 
 
 class SympyRates:
+    """A collection of rates stored as SymPy objects."""
 
     def __init__(self):
 
@@ -66,11 +69,21 @@ class SympyRates:
         return result
 
     def specific_rate_symbol(self, rate):
-        """
-        return a sympy expression containing the term in a dY/dt equation
-        in a reaction network corresponding to this rate.
+        """Construct a SymPy expression containing this rate's term in
+        a dY/dt equation, e.g. ρ Y(A)Y(B) <σv> / (1 + ẟ_AB) for a
+        rate A + B
 
         Also enter the symbol and substitution in the lookup table.
+
+        Parameters
+        ----------
+        rate : Rate
+            the reaction rate to consider
+
+        Returns
+        -------
+        sympy.core.mul.Mul
+
         """
 
         # composition dependence
@@ -104,14 +117,24 @@ class SympyRates:
         return srate_sym
 
     def jacobian_term_symbol(self, rate, ydot_j, y_i):
-        """
-        return a sympy expression containing the term in a jacobian matrix
-        in a reaction network corresponding to this rate
+        """Construct a SymPy expression containing a single rate's
+        contribution to the Jacobian matrix element d(dY_j/dt)/dY_i.
+        We return both the SymPy expression and a bool indicating
+        whether the term is null.
 
-        Returns the derivative of the j-th YDOT wrt. the i-th Y
-        If the derivative is zero, returns 0.
+        Parameters
+        ----------
+        rate : Rate
+            the rate we are considering
+        ydot_j : Nucleus
+            the evolution equation, dY_j/dt we are working on
+        y_i : Nucleus
+            the nucleus we are differentiating with respect to.
 
-        ydot_j and y_i are objects of the class 'Nucleus'
+        Returns
+        -------
+        tuple(sympy.core.mul.Mul, bool)
+
         """
         ydot_sym = self.ydot_term_symbol(rate, ydot_j)
         deriv_sym = sympy.symbols(f'Y__j{y_i}__')
@@ -122,9 +145,19 @@ class SympyRates:
         return (jac_sym.evalf(n=self.float_explicit_num_digits), symbol_is_null)
 
     def cxxify(self, s):
-        """
-        Given string s, will replace the symbols appearing as keys in
-        self.symbol_ludict with their corresponding entries.
+        """Given string s, generated from a SymPy expression, replace
+        the placeholder symbols with the values maintained in the
+        `symbol_ludict` dictionary.
+
+        Parameters
+        ----------
+        s : str
+            the input string
+
+        Returns
+        -------
+        str
+
         """
         for k, v in self.symbol_ludict.items():
             s = s.replace(k, v)
