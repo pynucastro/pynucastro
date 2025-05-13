@@ -36,6 +36,7 @@ mpl.rcParams['figure.dpi'] = 100
 # the tuple is (dZ, dN)
 RATE_LINES = {r"$(\alpha, p)$": (1, 2),
               r"$(\alpha, \gamma)$": (2, 2),
+              r"$(\alpha, n)$": (2, 1),
               r"$(p, \gamma)$": (1, 0),
               r"$(n, \gamma)$": (0, 1),
               r"$\beta^-$": (1, -1),
@@ -542,7 +543,6 @@ class RateCollection:
         should we consider screening at all -- this mainly affects
         whether we build the screening map
     """
-    # pylint: disable=too-many-public-methods
 
     pynucastro_dir = Path(__file__).parents[1]
 
@@ -1921,6 +1921,7 @@ class RateCollection:
              size=(800, 600), dpi=100, title=None,
              ydot_cutoff_value=None, show_small_ydot=False,
              node_size=1000, node_font_size=12, node_color="#444444", node_shape="o",
+             nuclei_custom_labels=None,
              curved_edges=False,
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False,
@@ -1959,10 +1960,15 @@ class RateCollection:
             size of a node (in networkx units)
         node_font_size : float
             size of the font used to write the isotope in the node
-        node_color : str
-            color to make the nodes
+        node_color : str, Callable
+            color to make the nodes. May be a callable that takes a Nucleus
+            object and returns a color.
         node_shape : str
             shape of the node (using matplotlib marker names)
+        nuclei_custom_labels : dict
+            a dict of the form {Nucleus: str} that provides alternate
+            labels for nodes (instead of using the `pretty` attribute
+            of the Nucleus.
         curved_edges : bool
             do we use arcs to connect the nodes?
         N_range : (tuple, list)
@@ -2022,20 +2028,30 @@ class RateCollection:
         if not always_show_alpha:
             hidden_nuclei.append("he4")
 
+        if nuclei_custom_labels is None:
+            nuclei_custom_labels = {}
+
         # nodes -- the node nuclei will be all of the heavies
         # add all the nuclei into G.node
         node_nuclei = []
         colors = []
+
+        if callable(node_color):
+            get_node_color = node_color
+        else:
+            def get_node_color(_nuc):
+                return node_color
+
         for n in self.unique_nuclei:
             if n.raw not in hidden_nuclei:
                 node_nuclei.append(n)
-                colors.append(node_color)
+                colors.append(get_node_color(n))
             else:
                 # show hidden nuclei only if they react with themselves
                 for r in self.rates:
-                    if not isinstance(r, ApproximateRate) and r.reactant_count(n) > 1:
+                    if not isinstance(r, (ApproximateRate, ModifiedRate)) and r.reactant_count(n) > 1:
                         node_nuclei.append(n)
-                        colors.append(node_color)
+                        colors.append(get_node_color(n))
                         break
 
         # approx nuclei are given a different color
@@ -2051,7 +2067,7 @@ class RateCollection:
                 if n in self.approx_nuclei:
                     colors.append("#888888")
                 else:
-                    colors.append(node_color)
+                    colors.append(get_node_color(n))
 
         for n in node_nuclei:
             G.add_node(n)
@@ -2059,7 +2075,10 @@ class RateCollection:
                 G.position[n] = (n.Z, n.A - 2*n.Z)
             else:
                 G.position[n] = (n.N, n.Z)
-            G.labels[n] = fr"${n.pretty}$"
+            if n in nuclei_custom_labels:
+                G.labels[n] = nuclei_custom_labels[n]
+            else:
+                G.labels[n] = fr"${n.pretty}$"
 
         # get the rates for each reaction
         if rho is not None and T is not None and comp is not None:
@@ -2271,6 +2290,13 @@ class RateCollection:
             if Z_range is not None:
                 ax.set_xlim(Z_range[0], Z_range[1])
 
+        # if we are rotated and all nuclei have Z = A, then make
+        # the vertical axis symmetric
+        if rotated:
+            ZA = np.array([n.A - 2 * n.Z for n in node_nuclei])
+            if ZA.min() == ZA.max():
+                ax.set_ylim(ZA.min() - 0.5, ZA.min() + 0.5)
+
         if not rotated:
             ax.set_aspect("equal", "datalim")
 
@@ -2284,7 +2310,7 @@ class RateCollection:
                     ax.arrow(legend_coord[0], legend_coord[1],
                              dZ, dN-dZ, width=0.04,
                              length_includes_head=True)
-                    ax.text(legend_coord[0]+dZ+eps, legend_coord[1]+dN-dZ+eps,
+                    ax.text(legend_coord[0]+dZ+eps, legend_coord[1]+dN-dZ+np.sign(dN-dZ)*eps,
                             label, fontsize="small")
                 else:
                     ax.arrow(legend_coord[1], legend_coord[0],
