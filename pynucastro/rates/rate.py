@@ -48,21 +48,48 @@ class Tfactors:
 
     @property
     def array(self):
-        """return t factors as array in order of lambda function"""
-        return np.array([1, self.T9i, self.T913i, self.T913, self.T9, self.T953, self.lnT9])
+        """Compute the various T factors in the same order required by
+        the lambda fit used by ReacLib rates
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+        return np.array([1, self.T9i, self.T913i, self.T913,
+                         self.T9, self.T953, self.lnT9])
 
 
 class Rate:
     """The base reaction rate class.  Most rate types will subclass
     this and extend to their particular format.
 
+    Parameters
+    ----------
+    reactants : list(str), list(Nucleus)
+        the reactants for the reaction
+    products : list(str), list(Nucleus)
+        the products of the reactions
+    Q : float
+        the energy release (in MeV) for the rate
+    weak_type : str
+        the type of weak reaction the rate represents.
+        Possible values include "electron_capture", "beta_decay", or
+        may include "_pos_" or "_neg_".
+    label : str
+        A descriptive label for the rate (usually representative of the
+        source
+    use_identical_particle_factor : bool
+        For a rate that has the same nucleus multiple times as a reactant
+        we apply a multiplicity factor, N!, where N is the number of times
+        the nucleus appears.  This can be disabled by setting
+        use_identical_particle_factor = False
+
     """
     def __init__(self, reactants=None, products=None,
                  Q=None, weak_type="", label="generic",
                  stoichiometry=None,
                  use_identical_particle_factor=True):
-        """a generic Rate class that acts as a base class for specific
-        sources.  Here we only specify the reactants and products and Q value"""
 
         if reactants:
             self.reactants = Nucleus.cast_list(reactants)
@@ -379,13 +406,25 @@ class Rate:
             self.symmetric_screen = self.ion_screen
 
     def cname(self):
-        """a C++-safe version of the rate name"""
+        """A C++-safe version of the rate name
+
+        Returns
+        -------
+        str
+
+        """
         # replace the "__" separating reactants and products with "_to_"
         # and convert all other "__" to single "_"
         return self.fname.replace("__", "_to_", 1).replace("__", "_")
 
     def get_rate_id(self):
-        """ Get an identifying string for this rate."""
+        """An identifying string for this rate.
+
+        Returns
+        -------
+        str
+
+        """
         return f'{self.rid} <{self.label.strip()}>'
 
     @property
@@ -393,11 +432,14 @@ class Rate:
         return self.get_rate_id()
 
     def heaviest(self):
-        """
-        Return the heaviest nuclide in this Rate.
+        """Get the heaviest nuclide in this Rate.  If two nuclei are
+        tied in mass number, return the one with the lowest atomic
+        number.
 
-        If two nuclei are tied in mass number, return the one with the
-        lowest atomic number.
+        Returns
+        -------
+        Nucleus
+
         """
         nuc = self.reactants[0]
         for n in self.reactants + self.products:
@@ -406,11 +448,14 @@ class Rate:
         return nuc
 
     def lightest(self):
-        """
-        Return the lightest nuclide in this Rate.
+        """Get the lightest nuclide in this Rate.  If two nuclei are
+        tied in mass number, return the one with the highest atomic
+        number.
 
-        If two nuclei are tied in mass number, return the one with the
-        highest atomic number.
+        Returns
+        -------
+        Nucleus
+
         """
         nuc = self.reactants[0]
         for n in self.reactants + self.products:
@@ -484,9 +529,14 @@ class Rate:
         return c_prod
 
     def modify_products(self, new_products):
-        """
-        change the products of the rate to new_products.  This will recompute
-        the Q value and update the print representation.
+        """Change the products of the rate to new_products.  This will
+        recompute the Q value and update the print representation.
+
+        Parameters
+        ----------
+        new_products : list(Nucleus)
+            the new products to use with the rate.
+
         """
 
         self.products = Nucleus.cast_list(new_products, allow_single=True)
@@ -500,13 +550,13 @@ class Rate:
         self._set_print_representation()
 
     def ydot_string_py(self):
-        """
-        Construct the string containing the term in a dY/dt equation
-        in a reaction network corresponding to this rate.
+        """Construct the string containing the term in a dY/dt
+        equation in a reaction network corresponding to this rate.
 
         Returns
         -------
         str
+
         """
 
         ydot_string_components = []
@@ -539,15 +589,43 @@ class Rate:
         return "*".join(ydot_string_components)
 
     def eval(self, T, *, rho=None, comp=None):
+        """Evaluate the reaction rate for temperature T.  This is a stub
+        and should be implemented by the derived class.
+
+        Parameters
+        ----------
+        T : float
+            the temperature to evaluate the rate at
+        rho : float
+            the density to evaluate the rate at (not needed for ReacLib
+            rates).
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            to evaluate the rate with (not needed for ReacLib rates).
+
+        Raises
+        ------
+        NotImplementedError
+
+        """
+
         raise NotImplementedError("base Rate class does not know how to eval()")
 
     def jacobian_string_py(self, y_i):
-        """
-        Return a string containing the term in a jacobian matrix
-        in a reaction network corresponding to this rate differentiated
-        with respect to y_i
+        """Return a string containing the term in a jacobian matrix
+        in a reaction network corresponding to this rate
+        differentiated with respect to ``y_i``
 
-        y_i is an object of the class ``Nucleus``.
+        Parameters
+        ----------
+        y_i : Nucleus
+            the nucleus we are differentiating with respect to.
+
+        Returns
+        -------
+        str
+
         """
         if y_i not in self.reactants:
             return ""
@@ -593,13 +671,29 @@ class Rate:
         return "*".join(jac_string_components)
 
     def eval_jacobian_term(self, T, rho, comp, y_i):
-        """Evaluate drate/d(y_i), y_i is a Nucleus object.  This rate
-        term has the full composition and density dependence, i.e.:
+        """Evaluate drate/d(y_i), the derivative of the rate with
+        respect to ``y_i``.  This rate term has the full composition
+        and density dependence, i.e.:
 
           rate = rho**n Y1**a Y2**b ... N_A <sigma v>
 
         The derivative is only non-zero if this term depends on
-        nucleus y_i.
+        nucleus ``y_i``.
+
+        Parameters
+        ----------
+        T : float
+            the temperature to evaluate the rate with
+        rho : float
+            the density to evaluate the rate with
+        comp : Composition
+            the composition to use in the rate evaluation
+        y_i : Nucleus
+            the nucleus we are differentiating with respect to
+
+        Returns
+        -------
+        float
 
         """
         if y_i not in self.reactants:
@@ -674,11 +768,15 @@ class RateSource:
 
 
 class RatePair:
-    """the forward and reverse rates for a single reaction sequence.
-    Forward rates are those with Q >= 0.
+    """A pair of rates: the forward and reverse rates for a single
+    reaction sequence.  Forward rates are those with Q >= 0.
 
-    :var forward: the forward reaction Rate object
-    :var reverse: the reverse reaction Rate object
+    Parameters
+    ----------
+    forward : Rate
+        the forward rate
+    reverse : Rate
+        the reverse rate
 
     """
 
