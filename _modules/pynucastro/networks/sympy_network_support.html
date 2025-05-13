@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.sympy_network_support &#8212; pynucastro 2.5.0.post62+g2bc00f2e documentation</title>
+    <title>pynucastro.networks.sympy_network_support &#8212; pynucastro 2.5.0.post63+gb24c28ee documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=3f533c59"></script>
+    <script src="../../../_static/documentation_options.js?v=23d808f9"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -469,8 +469,10 @@ document.write(`
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.networks.sympy_network_support</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;This is a module that interprets the rates, ydots, and Jacobian</span>
-<span class="sd">through sympy&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Support functions for interpreting the rates, ydots, and Jacobian</span>
+<span class="sd">through SymPy.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 
@@ -482,6 +484,7 @@ document.write(`
 <div class="viewcode-block" id="SympyRates">
 <a class="viewcode-back" href="../../../pynucastro.networks.sympy_network_support.html#pynucastro.networks.sympy_network_support.SympyRates">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SympyRates</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A collection of rates stored as SymPy objects.&quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
@@ -519,7 +522,7 @@ document.write(`
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        sympy.core.mul.Mul</span>
+<span class="sd">        sympy.core.expr.Expr</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">cname</span><span class="p">(),</span> <span class="n">y_i</span><span class="p">)</span>
@@ -544,11 +547,21 @@ document.write(`
 <div class="viewcode-block" id="SympyRates.specific_rate_symbol">
 <a class="viewcode-back" href="../../../pynucastro.networks.sympy_network_support.html#pynucastro.networks.sympy_network_support.SympyRates.specific_rate_symbol">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">specific_rate_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        return a sympy expression containing the term in a dY/dt equation</span>
-<span class="sd">        in a reaction network corresponding to this rate.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct a SymPy expression containing this rate&#39;s term in</span>
+<span class="sd">        a dY/dt equation, e.g. ρ Y(A)Y(B) &lt;σv&gt; / (1 + ẟ_AB) for a</span>
+<span class="sd">        rate A + B</span>
 
 <span class="sd">        Also enter the symbol and substitution in the lookup table.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rate : Rate</span>
+<span class="sd">            the reaction rate to consider</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sympy.core.expr.Expr</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># composition dependence</span>
@@ -585,14 +598,24 @@ document.write(`
 <div class="viewcode-block" id="SympyRates.jacobian_term_symbol">
 <a class="viewcode-back" href="../../../pynucastro.networks.sympy_network_support.html#pynucastro.networks.sympy_network_support.SympyRates.jacobian_term_symbol">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">jacobian_term_symbol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">ydot_j</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        return a sympy expression containing the term in a jacobian matrix</span>
-<span class="sd">        in a reaction network corresponding to this rate</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct a SymPy expression containing a single rate&#39;s</span>
+<span class="sd">        contribution to the Jacobian matrix element d(dY_j/dt)/dY_i.</span>
+<span class="sd">        We return both the SymPy expression and a bool indicating</span>
+<span class="sd">        whether the term is null.</span>
 
-<span class="sd">        Returns the derivative of the j-th YDOT wrt. the i-th Y</span>
-<span class="sd">        If the derivative is zero, returns 0.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rate : Rate</span>
+<span class="sd">            the rate we are considering</span>
+<span class="sd">        ydot_j : Nucleus</span>
+<span class="sd">            the evolution equation, dY_j/dt we are working on</span>
+<span class="sd">        y_i : Nucleus</span>
+<span class="sd">            the nucleus we are differentiating with respect to.</span>
 
-<span class="sd">        ydot_j and y_i are objects of the class &#39;Nucleus&#39;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple(sympy.core.expr.Expr, bool)</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ydot_sym</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydot_term_symbol</span><span class="p">(</span><span class="n">rate</span><span class="p">,</span> <span class="n">ydot_j</span><span class="p">)</span>
         <span class="n">deriv_sym</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Y__j</span><span class="si">{</span><span class="n">y_i</span><span class="si">}</span><span class="s1">__&#39;</span><span class="p">)</span>
@@ -606,9 +629,19 @@ document.write(`
 <div class="viewcode-block" id="SympyRates.cxxify">
 <a class="viewcode-back" href="../../../pynucastro.networks.sympy_network_support.html#pynucastro.networks.sympy_network_support.SympyRates.cxxify">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">cxxify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Given string s, will replace the symbols appearing as keys in</span>
-<span class="sd">        self.symbol_ludict with their corresponding entries.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given string s, generated from a SymPy expression, replace</span>
+<span class="sd">        the placeholder symbols with the values maintained in the</span>
+<span class="sd">        `symbol_ludict` dictionary.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        s : str</span>
+<span class="sd">            the input string</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">symbol_ludict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>

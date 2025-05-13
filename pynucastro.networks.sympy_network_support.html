@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.sympy_network_support module &#8212; pynucastro 2.5.0.post62+g2bc00f2e documentation</title>
+    <title>pynucastro.networks.sympy_network_support module &#8212; pynucastro 2.5.0.post63+gb24c28ee documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=3f533c59"></script>
+    <script src="_static/documentation_options.js?v=23d808f9"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -569,35 +569,65 @@ document.write(`
                   
   <section id="module-pynucastro.networks.sympy_network_support">
 <span id="pynucastro-networks-sympy-network-support-module"></span><h1>pynucastro.networks.sympy_network_support module<a class="headerlink" href="#module-pynucastro.networks.sympy_network_support" title="Link to this heading">#</a></h1>
-<p>This is a module that interprets the rates, ydots, and Jacobian
-through sympy</p>
+<p>Support functions for interpreting the rates, ydots, and Jacobian
+through SymPy.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.networks.sympy_network_support.SympyRates">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.networks.sympy_network_support.</span></span><span class="sig-name descname"><span class="pre">SympyRates</span></span><a class="reference internal" href="_modules/pynucastro/networks/sympy_network_support.html#SympyRates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.sympy_network_support.SympyRates" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A collection of rates stored as SymPy objects.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.sympy_network_support.SympyRates.cxxify">
 <span class="sig-name descname"><span class="pre">cxxify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/sympy_network_support.html#SympyRates.cxxify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.sympy_network_support.SympyRates.cxxify" title="Link to this definition">#</a></dt>
-<dd><p>Given string s, will replace the symbols appearing as keys in
-self.symbol_ludict with their corresponding entries.</p>
+<dd><p>Given string s, generated from a SymPy expression, replace
+the placeholder symbols with the values maintained in the
+<cite>symbol_ludict</cite> dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>s</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – the input string</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.sympy_network_support.SympyRates.jacobian_term_symbol">
 <span class="sig-name descname"><span class="pre">jacobian_term_symbol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ydot_j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/sympy_network_support.html#SympyRates.jacobian_term_symbol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.sympy_network_support.SympyRates.jacobian_term_symbol" title="Link to this definition">#</a></dt>
-<dd><p>return a sympy expression containing the term in a jacobian matrix
-in a reaction network corresponding to this rate</p>
-<p>Returns the derivative of the j-th YDOT wrt. the i-th Y
-If the derivative is zero, returns 0.</p>
-<p>ydot_j and y_i are objects of the class ‘Nucleus’</p>
+<dd><p>Construct a SymPy expression containing a single rate’s
+contribution to the Jacobian matrix element d(dY_j/dt)/dY_i.
+We return both the SymPy expression and a bool indicating
+whether the term is null.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rate</strong> (<a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><em>Rate</em></a>) – the rate we are considering</p></li>
+<li><p><strong>ydot_j</strong> (<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a>) – the evolution equation, dY_j/dt we are working on</p></li>
+<li><p><strong>y_i</strong> (<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a>) – the nucleus we are differentiating with respect to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)">tuple</a>(<a class="reference external" href="https://docs.sympy.org/latest/modules/core.html#sympy.core.expr.Expr" title="(in SymPy v1.14.0)">sympy.core.expr.Expr</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a>)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.sympy_network_support.SympyRates.specific_rate_symbol">
 <span class="sig-name descname"><span class="pre">specific_rate_symbol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/sympy_network_support.html#SympyRates.specific_rate_symbol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.sympy_network_support.SympyRates.specific_rate_symbol" title="Link to this definition">#</a></dt>
-<dd><p>return a sympy expression containing the term in a dY/dt equation
-in a reaction network corresponding to this rate.</p>
+<dd><p>Construct a SymPy expression containing this rate’s term in
+a dY/dt equation, e.g. ρ Y(A)Y(B) &lt;σv&gt; / (1 + ẟ_AB) for a
+rate A + B</p>
 <p>Also enter the symbol and substitution in the lookup table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rate</strong> (<a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><em>Rate</em></a>) – the reaction rate to consider</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.sympy.org/latest/modules/core.html#sympy.core.expr.Expr" title="(in SymPy v1.14.0)">sympy.core.expr.Expr</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -614,7 +644,7 @@ dY/dt term corresponding to <code class="docutils literal notranslate"><span cla
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.sympy.org/latest/modules/core.html#sympy.core.mul.Mul" title="(in SymPy v1.14.0)">sympy.core.mul.Mul</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.sympy.org/latest/modules/core.html#sympy.core.expr.Expr" title="(in SymPy v1.14.0)">sympy.core.expr.Expr</a></p>
 </dd>
 </dl>
 </dd></dl>
