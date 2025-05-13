@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.nucdata.halflife_table &#8212; pynucastro 2.5.0.post64+gd755b75b documentation</title>
+    <title>pynucastro.rates.modified_rate &#8212; pynucastro 2.5.0.post64+gd755b75b documentation</title>
   
   
   
@@ -45,7 +45,7 @@
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pynucastro/nucdata/halflife_table';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pynucastro/rates/modified_rate';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -392,7 +392,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2F_modules/pynucastro/nucdata/halflife_table.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2F_modules/pynucastro/rates/modified_rate.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -470,52 +470,184 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for pynucastro.nucdata.halflife_table</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+  <h1>Source code for pynucastro.rates.modified_rate</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rate</span>
 
 
-<div class="viewcode-block" id="HalfLifeTable">
-<a class="viewcode-back" href="../../../pynucastro.nucdata.halflife_table.html#pynucastro.nucdata.halflife_table.HalfLifeTable">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">HalfLifeTable</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Read the table of halflives (in seconds) extracted from the Nubase</span>
-<span class="sd">    compilation in halflife2020.txt</span>
+<div class="viewcode-block" id="ModifiedRate">
+<a class="viewcode-back" href="../../../pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ModifiedRate</span><span class="p">(</span><span class="n">Rate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A modified rate takes an original rate and changes some</span>
+<span class="sd">    properties of it.  The evaluation of the original rate will still</span>
+<span class="sd">    be used for the actual rate, but the modified rate can have a</span>
+<span class="sd">    different products (and therefore Q value) or stoichiometric</span>
+<span class="sd">    coefficients</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    original_rate : Rate</span>
+<span class="sd">        the underlying rate we are evaluating numerically to get the</span>
+<span class="sd">        number of reactions / sec (with suitable volume scalings)</span>
+<span class="sd">    stoichiometry : dict(Nucleus)</span>
+<span class="sd">        a custom set of coefficients to be used in the evolution</span>
+<span class="sd">        equations dY(Nucleus)/dt.  If this is not set, then simply the</span>
+<span class="sd">        count of each nucleus in the list of reactants and products</span>
+<span class="sd">        will be used.</span>
+<span class="sd">    new_reactants : list(Nucleus)</span>
+<span class="sd">        a list of nuclei that should be used as the reactants of the</span>
+<span class="sd">        modified rate, instead of the reactants from the original rate.</span>
+<span class="sd">    new_products : list(Nucleus)</span>
+<span class="sd">        a list of nuclei that should be used as the products of the</span>
+<span class="sd">        modified rate, instead of the products from the original rate.</span>
+<span class="sd">    update_screening : bool</span>
+<span class="sd">        do we reset the screening pairs for this rate to reflect any</span>
+<span class="sd">        new products or stoichiometry? or do we still screen based on</span>
+<span class="sd">        the underlying rate?</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_rate</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                 <span class="n">stoichiometry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">new_reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">new_products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">update_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">halflife</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span> <span class="o">=</span> <span class="n">original_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_screening</span> <span class="o">=</span> <span class="n">update_screening</span>
 
-        <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_reactants</span><span class="p">:</span>
+            <span class="n">reactants</span> <span class="o">=</span> <span class="n">new_reactants</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">nucdata_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
-            <span class="n">datafile_name</span> <span class="o">=</span> <span class="s1">&#39;halflife2020.txt&#39;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">nucdata_dir</span><span class="o">/</span><span class="s1">&#39;AtomicMassEvaluation&#39;</span><span class="o">/</span><span class="n">datafile_name</span>
+            <span class="n">reactants</span> <span class="o">=</span> <span class="n">original_rate</span><span class="o">.</span><span class="n">reactants</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_read_table</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">new_products</span><span class="p">:</span>
+            <span class="n">products</span> <span class="o">=</span> <span class="n">new_products</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">products</span> <span class="o">=</span> <span class="n">original_rate</span><span class="o">.</span><span class="n">products</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_read_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="n">products</span><span class="p">,</span>
+                         <span class="n">label</span><span class="o">=</span><span class="s2">&quot;modified&quot;</span><span class="p">,</span>
+                         <span class="n">stoichiometry</span><span class="o">=</span><span class="n">stoichiometry</span><span class="p">)</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="c1"># skip the header</span>
-            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()[</span><span class="mi">5</span><span class="p">:]:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">=</span> <span class="s2">&quot;m&quot;</span>
 
-                <span class="n">A</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">tau</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[:</span><span class="mi">3</span><span class="p">]</span>
-                <span class="c1">#print(data_list)</span>
+        <span class="c1"># update the Q value</span>
+        <span class="k">if</span> <span class="n">new_products</span> <span class="ow">or</span> <span class="n">new_reactants</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_q</span><span class="p">()</span>
 
-                <span class="k">if</span> <span class="n">tau</span> <span class="o">!=</span> <span class="s2">&quot;stable&quot;</span><span class="p">:</span>
-                    <span class="n">tau</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_screening</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine if this rate is eligible for screening and the</span>
+<span class="sd">        nuclei to use.  In this case, we either use the original rate</span>
+<span class="sd">        or the modified rate, depending on the value of</span>
+<span class="sd">        update_screening.</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">halflife</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">A</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">Z</span><span class="p">)]</span> <span class="o">=</span> <span class="n">tau</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Tells if this rate is eligible for screening, and if it is</span>
+        <span class="c1"># then Rate.ion_screen is a 2-element (3 for 3-alpha) list of</span>
+        <span class="c1"># Nucleus objects for screening; otherwise it is set to none</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_screening</span><span class="p">:</span>
+            <span class="n">_reac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_reac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">reactants</span>
+        <span class="n">nucz</span> <span class="o">=</span> <span class="p">[</span><span class="n">q</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">_reac</span> <span class="k">if</span> <span class="n">q</span><span class="o">.</span><span class="n">Z</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nucz</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">nucz</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nucz</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nucz</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nucz</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nucz</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 
-<div class="viewcode-block" id="HalfLifeTable.get_halflife">
-<a class="viewcode-back" href="../../../pynucastro.nucdata.halflife_table.html#pynucastro.nucdata.halflife_table.HalfLifeTable.get_halflife">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_halflife</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">halflife</span><span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">z</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Nuclear halflife for A=</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2"> and Z=</span><span class="si">{</span><span class="n">z</span><span class="si">}</span><span class="s2"> not available&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span></div>
+        <span class="c1"># if the rate is a reverse rate (defined as Q &lt; 0), then we</span>
+        <span class="c1"># might actually want to compute the screening based on the</span>
+        <span class="c1"># reactants of the forward rate that was used in the detailed</span>
+        <span class="c1"># balance.  Rate.symmetric_screen is what should be used in</span>
+        <span class="c1"># the screening in this case</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screen</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_screening</span><span class="p">:</span>
+                <span class="n">_prod</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_prod</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">products</span>
+            <span class="n">nucz</span> <span class="o">=</span> <span class="p">[</span><span class="n">q</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">_prod</span> <span class="k">if</span> <span class="n">q</span><span class="o">.</span><span class="n">Z</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nucz</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">nucz</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screen</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nucz</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nucz</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nucz</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nucz</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span>
+
+<div class="viewcode-block" id="ModifiedRate.eval">
+<a class="viewcode-back" href="../../../pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate.eval">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the modified rate.  This simply calls the</span>
+<span class="sd">        evaluation of the underlying original rate.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        T : float</span>
+<span class="sd">            the temperature to evaluate the rate at</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            the density to evaluate the rate at</span>
+<span class="sd">        comp : Composition</span>
+<span class="sd">            the composition to evaluate the rate with</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ModifiedRate.function_string_py">
+<a class="viewcode-back" href="../../../pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate.function_string_py">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">function_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string containing the python function that</span>
+<span class="sd">        computes the rate -- in this case it is the underlying</span>
+<span class="sd">        original rate.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;@numba.njit()</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf):</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf)</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">fstring</span></div>
+
+
+<div class="viewcode-block" id="ModifiedRate.function_string_cxx">
+<a class="viewcode-back" href="../../../pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate.function_string_cxx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">&quot;inline&quot;</span><span class="p">,</span>
+                            <span class="n">leave_open</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="p">()):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a string containing C++ function that computes the</span>
+<span class="sd">        approximate rate</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;const tf_t&amp; tfactors&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; rate&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; drate_dT&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_args</span><span class="p">]</span>
+        <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;template &lt;int do_T_derivatives&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specifiers</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;void rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">) </span><span class="se">{{\n\n</span><span class="s2">&quot;</span>
+
+        <span class="c1"># first we need to get all of the rates that make this up</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    // </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="s2"> (calls the underlying rate)</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s2">&lt;do_T_derivatives&gt;(tfactors, rate, drate_dT);</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">leave_open</span><span class="p">:</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="n">fstring</span></div>
 </div>
 
 </pre></div>

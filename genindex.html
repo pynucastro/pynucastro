@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; pynucastro 2.5.0.post63+gb24c28ee documentation</title>
+    <title>Index &#8212; pynucastro 2.5.0.post64+gd755b75b documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=23d808f9"></script>
+    <script src="_static/documentation_options.js?v=21d35381"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -199,9 +199,10 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="approximate-rates.html">Approximate Rates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="approximate-rates.html">Approximate and Modified Rates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="alpha-gamma-approx.html">Approximating alpha-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="double-n-capture.html">Approximating double n-capture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modified-rates.html">Modified Rates</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
@@ -286,6 +287,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.library.html">pynucastro.rates.library module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.modified_rate.html">pynucastro.rates.modified_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.rate.html">pynucastro.rates.rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.reaclib_rate.html">pynucastro.rates.reaclib_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.tabular_rate.html">pynucastro.rates.tabular_rate module</a></li>
@@ -673,6 +675,8 @@ document.write(`
 </li>
         <li><a href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate.eval">(pynucastro.rates.derived_rate.DerivedRate method)</a>
 </li>
+        <li><a href="pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate.eval">(pynucastro.rates.modified_rate.ModifiedRate method)</a>
+</li>
         <li><a href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval">(pynucastro.rates.rate.Rate method)</a>
 </li>
         <li><a href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.eval">(pynucastro.rates.reaclib_rate.ReacLibRate method)</a>
@@ -680,10 +684,10 @@ document.write(`
         <li><a href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.eval">(pynucastro.rates.tabular_rate.TabularRate method)</a>
 </li>
       </ul></li>
-      <li><a href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.eval_deriv">eval_deriv() (pynucastro.rates.reaclib_rate.ReacLibRate method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.eval_deriv">eval_deriv() (pynucastro.rates.reaclib_rate.ReacLibRate method)</a>
+</li>
       <li><a href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval_jacobian_term">eval_jacobian_term() (pynucastro.rates.rate.Rate method)</a>
 </li>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_activity">evaluate_activity() (pynucastro.networks.rate_collection.RateCollection method)</a>
@@ -738,10 +742,10 @@ document.write(`
 </li>
       <li><a href="pynucastro.rates.library.html#pynucastro.rates.library.Library.forward">forward() (pynucastro.rates.library.Library method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.rates.library.html#pynucastro.rates.library.Library.forward_for_detailed_balance">forward_for_detailed_balance() (pynucastro.rates.library.Library method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus.from_cache">from_cache() (pynucastro.nucdata.nucleus.Nucleus class method)</a>
 </li>
       <li><a href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus.from_Z_A">from_Z_A() (pynucastro.nucdata.nucleus.Nucleus class method)</a>
@@ -755,6 +759,8 @@ document.write(`
       <ul>
         <li><a href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate.function_string_cxx">(pynucastro.rates.derived_rate.DerivedRate method)</a>
 </li>
+        <li><a href="pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate.function_string_cxx">(pynucastro.rates.modified_rate.ModifiedRate method)</a>
+</li>
         <li><a href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.function_string_cxx">(pynucastro.rates.reaclib_rate.ReacLibRate method)</a>
 </li>
       </ul></li>
@@ -762,6 +768,8 @@ document.write(`
 
       <ul>
         <li><a href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate.function_string_py">(pynucastro.rates.derived_rate.DerivedRate method)</a>
+</li>
+        <li><a href="pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate.function_string_py">(pynucastro.rates.modified_rate.ModifiedRate method)</a>
 </li>
         <li><a href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.function_string_py">(pynucastro.rates.reaclib_rate.ReacLibRate method)</a>
 </li>
@@ -1046,6 +1054,8 @@ document.write(`
 </li>
       <li><a href="pynucastro.constants.constants.html#pynucastro.constants.constants.MeV2erg">MeV2erg (in module pynucastro.constants.constants)</a>
 </li>
+      <li><a href="pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate">ModifiedRate (class in pynucastro.rates.modified_rate)</a>
+</li>
       <li><a href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.modify_products">modify_products() (pynucastro.rates.rate.Rate method)</a>
 </li>
       <li>
@@ -1113,6 +1123,8 @@ document.write(`
         <li><a href="pynucastro.rates.known_duplicates.html#module-pynucastro.rates.known_duplicates">pynucastro.rates.known_duplicates</a>
 </li>
         <li><a href="pynucastro.rates.library.html#module-pynucastro.rates.library">pynucastro.rates.library</a>
+</li>
+        <li><a href="pynucastro.rates.modified_rate.html#module-pynucastro.rates.modified_rate">pynucastro.rates.modified_rate</a>
 </li>
         <li><a href="pynucastro.rates.rate.html#module-pynucastro.rates.rate">pynucastro.rates.rate</a>
 </li>
@@ -1458,6 +1470,13 @@ document.write(`
 
       <ul>
         <li><a href="pynucastro.rates.library.html#module-pynucastro.rates.library">module</a>
+</li>
+      </ul></li>
+      <li>
+    pynucastro.rates.modified_rate
+
+      <ul>
+        <li><a href="pynucastro.rates.modified_rate.html#module-pynucastro.rates.modified_rate">module</a>
 </li>
       </ul></li>
       <li>

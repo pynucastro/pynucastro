@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.5.0.post63+gb24c28ee documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.5.0.post64+gd755b75b documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=23d808f9"></script>
+    <script src="../../../_static/documentation_options.js?v=21d35381"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -201,9 +201,10 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../approximate-rates.html">Approximate Rates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../approximate-rates.html">Approximate and Modified Rates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../alpha-gamma-approx.html">Approximating alpha-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../double-n-capture.html">Approximating double n-capture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modified-rates.html">Modified Rates</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../nse-protons.html">Using NSE Protons</a></li>
@@ -288,6 +289,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.library.html">pynucastro.rates.library module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.modified_rate.html">pynucastro.rates.modified_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.rate.html">pynucastro.rates.rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.reaclib_rate.html">pynucastro.rates.reaclib_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.tabular_rate.html">pynucastro.rates.tabular_rate module</a></li>
@@ -493,9 +495,10 @@ document.write(`
 <span class="c1"># Import Rate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">ApproximateRate</span><span class="p">,</span> <span class="n">DerivedRate</span><span class="p">,</span> <span class="n">Library</span><span class="p">,</span> <span class="n">Rate</span><span class="p">,</span>
-                              <span class="n">RateFileError</span><span class="p">,</span> <span class="n">RatePair</span><span class="p">,</span> <span class="n">TabularRate</span><span class="p">,</span>
-                              <span class="n">find_duplicate_rates</span><span class="p">,</span> <span class="n">is_allowed_dupe</span><span class="p">,</span> <span class="n">load_rate</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">ApproximateRate</span><span class="p">,</span> <span class="n">DerivedRate</span><span class="p">,</span> <span class="n">Library</span><span class="p">,</span>
+                              <span class="n">ModifiedRate</span><span class="p">,</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">RateFileError</span><span class="p">,</span> <span class="n">RatePair</span><span class="p">,</span>
+                              <span class="n">TabularRate</span><span class="p">,</span> <span class="n">find_duplicate_rates</span><span class="p">,</span>
+                              <span class="n">is_allowed_dupe</span><span class="p">,</span> <span class="n">load_rate</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.library</span><span class="w"> </span><span class="kn">import</span> <span class="n">_rate_name_to_nuc</span><span class="p">,</span> <span class="n">capitalize_rid</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">get_screening_map</span><span class="p">,</span> <span class="n">make_plasma_state</span><span class="p">,</span>
                                   <span class="n">make_screen_factors</span><span class="p">)</span>
@@ -1151,43 +1154,73 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">custom_rates</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">approx_rates</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">derived_rates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modified_rates</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ApproximateRate</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">approx_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">get_child_rates</span><span class="p">():</span>
                     <span class="k">assert</span> <span class="n">cr</span><span class="o">.</span><span class="n">chapter</span> <span class="o">!=</span> <span class="s2">&quot;t&quot;</span>
-                    <span class="c1"># child rates may be ReacLibRates or DerivedRates</span>
-                    <span class="c1"># make sure we don&#39;t double count</span>
+
+                    <span class="c1"># Check whether this child rate is removed or not.</span>
+                    <span class="c1"># &quot;removed&quot; means that this rate is never used on</span>
+                    <span class="c1"># its own to connect two nuclei in the network it</span>
+                    <span class="c1"># is only used in one or more ApproximateRate or</span>
+                    <span class="c1"># ModifiedRate</span>
+                    <span class="k">if</span> <span class="n">cr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+                        <span class="n">cr</span><span class="o">.</span><span class="n">removed</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">cr</span><span class="o">.</span><span class="n">removed</span> <span class="o">=</span> <span class="kc">False</span>
+
+                    <span class="n">cr</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="c1"># pylint: disable-next=protected-access</span>
+                    <span class="n">cr</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span>
+
+                    <span class="c1"># child rates may be ReacLibRates, ModifiedRates,</span>
+                    <span class="c1"># or DerivedRates.  Make sure we don&#39;t double</span>
+                    <span class="c1"># count</span>
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cr</span><span class="p">,</span> <span class="n">DerivedRate</span><span class="p">):</span>
-
-                        <span class="c1"># Here we check whether this child rate is removed or not.</span>
-                        <span class="c1"># removed means that this rate is never used on its own to connect two nuclei in the network</span>
-                        <span class="c1"># it is only used in one or more ApproximateRate.</span>
-                        <span class="k">if</span> <span class="n">cr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
-                            <span class="n">cr</span><span class="o">.</span><span class="n">removed</span> <span class="o">=</span> <span class="kc">True</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="n">cr</span><span class="o">.</span><span class="n">removed</span> <span class="o">=</span> <span class="kc">False</span>
-
-                        <span class="n">cr</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="kc">None</span>
-                        <span class="c1"># pylint: disable-next=protected-access</span>
-                        <span class="n">cr</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span>
-
                         <span class="k">if</span> <span class="n">cr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_rates</span><span class="p">:</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">derived_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
-
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cr</span><span class="p">,</span> <span class="n">ModifiedRate</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">cr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modified_rates</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">modified_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">cr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
-                            <span class="n">cr</span><span class="o">.</span><span class="n">removed</span> <span class="o">=</span> <span class="kc">True</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="n">cr</span><span class="o">.</span><span class="n">removed</span> <span class="o">=</span> <span class="kc">False</span>
-
-                        <span class="n">cr</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="kc">None</span>
-                        <span class="c1"># pylint: disable-next=protected-access</span>
-                        <span class="n">cr</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span>
-
                         <span class="k">if</span> <span class="n">cr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">:</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ModifiedRate</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">r</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modified_rates</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">modified_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+                <span class="n">cr</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">original_rate</span>
+
+                <span class="c1"># Check whether this child rate is removed or not.</span>
+                <span class="c1"># &quot;removed&quot; means that this rate is never used on</span>
+                <span class="c1"># its own to connect two nuclei in the network it</span>
+                <span class="c1"># is only used in one or more ApproximateRate or</span>
+                <span class="c1"># ModifiedRate</span>
+                <span class="k">if</span> <span class="n">cr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+                    <span class="n">cr</span><span class="o">.</span><span class="n">removed</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">cr</span><span class="o">.</span><span class="n">removed</span> <span class="o">=</span> <span class="kc">False</span>
+
+                <span class="n">cr</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="c1"># pylint: disable-next=protected-access</span>
+                <span class="n">cr</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span>
+
+                <span class="c1"># child rates may be ReacLibRates, ModifiedRates,</span>
+                <span class="c1"># or DerivedRates.  Make sure we don&#39;t double</span>
+                <span class="c1"># count</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cr</span><span class="p">,</span> <span class="n">DerivedRate</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">cr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_rates</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">derived_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cr</span><span class="p">,</span> <span class="n">ModifiedRate</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">cr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modified_rates</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">modified_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">cr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
 
             <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="s1">&#39;t&#39;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
@@ -1206,7 +1239,8 @@ document.write(`
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Chapter type unknown for rate chapter </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">chapter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_rates</span> <span class="o">+</span>
-                          <span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_rates</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_rates</span><span class="p">)</span>
+                          <span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_rates</span> <span class="o">+</span>
+                          <span class="bp">self</span><span class="o">.</span><span class="n">modified_rates</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_rates</span><span class="p">)</span>
 
         <span class="c1"># finally check for duplicate rates -- these are not</span>
         <span class="c1"># allowed</span>
@@ -1402,7 +1436,9 @@ document.write(`
                 <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">get_child_rates</span><span class="p">():</span>
                     <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">removed</span><span class="p">:</span>
                         <span class="n">hidden_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ModifiedRate</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">removed</span><span class="p">:</span>
+                    <span class="n">hidden_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">original_rate</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">hidden_rates</span><span class="p">)</span></div>
 
 
@@ -2606,7 +2642,7 @@ document.write(`
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># show hidden nuclei only if they react with themselves</span>
                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ApproximateRate</span><span class="p">)</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">reactant_count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="p">(</span><span class="n">ApproximateRate</span><span class="p">,</span> <span class="n">ModifiedRate</span><span class="p">))</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">reactant_count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                         <span class="n">node_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
                         <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_node_color</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
                         <span class="k">break</span>
@@ -2846,6 +2882,13 @@ document.write(`
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">Z_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">Z_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Z_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># if we are rotated and all nuclei have Z = A, then make</span>
+        <span class="c1"># the vertical axis symmetric</span>
+        <span class="k">if</span> <span class="n">rotated</span><span class="p">:</span>
+            <span class="n">ZA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">ZA</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">==</span> <span class="n">ZA</span><span class="o">.</span><span class="n">max</span><span class="p">():</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ZA</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">ZA</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">rotated</span><span class="p">:</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="s2">&quot;datalim&quot;</span><span class="p">)</span>
