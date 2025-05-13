@@ -47,7 +47,7 @@ class SympyRates:
 
         Returns
         -------
-        sympy.core.mul.Mul
+        sympy.core.expr.Expr
 
         """
         key = (rate.cname(), y_i)
@@ -82,7 +82,7 @@ class SympyRates:
 
         Returns
         -------
-        sympy.core.mul.Mul
+        sympy.core.expr.Expr
 
         """
 
@@ -133,7 +133,7 @@ class SympyRates:
 
         Returns
         -------
-        tuple(sympy.core.mul.Mul, bool)
+        tuple(sympy.core.expr.Expr, bool)
 
         """
         ydot_sym = self.ydot_term_symbol(rate, ydot_j)
