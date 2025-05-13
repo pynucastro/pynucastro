@@ -666,14 +666,15 @@ class RateCollection:
                         if cr not in self.derived_rates:
                             self.derived_rates.append(cr)
                     elif isinstance(cr, ModifiedRate):
-                        if cr not in self.derived_rates:
+                        if cr not in self.modified_rates:
                             self.modified_rates.append(cr)
                     else:
                         if cr not in self.reaclib_rates:
                             self.reaclib_rates.append(cr)
 
             elif isinstance(r, ModifiedRate):
-                self.modified_rates.append(r)
+                if r not in self.modified_rates:
+                    self.modified_rates.append(r)
 
                 cr = r.original_rate
 
@@ -698,7 +699,7 @@ class RateCollection:
                     if cr not in self.derived_rates:
                         self.derived_rates.append(cr)
                 elif isinstance(cr, ModifiedRate):
-                    if cr not in self.derived_rates:
+                    if cr not in self.modified_rates:
                         self.modified_rates.append(cr)
                 else:
                     if cr not in self.reaclib_rates:
@@ -897,7 +898,7 @@ class RateCollection:
                         hidden_rates.append(c)
             elif isinstance(r, ModifiedRate):
                 if r.original_rate.removed:
-                    hidden_rates.append(r)
+                    hidden_rates.append(r.original_rate)
         return set(hidden_rates)
 
     def get_rate(self, rid):
