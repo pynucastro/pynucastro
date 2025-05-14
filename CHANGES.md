@@ -2,6 +2,13 @@
 
 ## 2.6.0
 
+  * Added a `summary()` method to `RateCollection` that gives details
+    about the number of rates and nuclei (#954)
+
+  * Added a new `ModifiedRate` class that allows for altering
+    reactants, products, and stoichiometry while using an existing
+    underlying rate (#950)
+
   * Drop requirement for `sphinx_rtd_theme` (#969)
 
   * `SimpleCxxNetwork` now stores and computes Y_e so it can work with
@@ -54,7 +61,7 @@
     them. (#922)
 
   * Docstring updates (#892, #899, #926, #927, #928, #931, #933, #934,
-    #935, #937, #956, #957, #960, #966, #967, #972) and more API
+    #935, #937, #956, #957, #960, #966, #967, #972, #977) and more API
     coverage (#929) and reorganization of the API docs (#955)
 
   * New codespell github action (#930)
