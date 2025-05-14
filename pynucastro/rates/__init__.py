@@ -9,6 +9,7 @@ from .known_duplicates import find_duplicate_rates, is_allowed_dupe
 from .library import (FFNLibrary, LangankeLibrary, Library, RateFilter,
                       ReacLibLibrary, SuzukiLibrary, TabularLibrary,
                       list_known_rates)
+from .modified_rate import ModifiedRate
 from .rate import BaryonConservationError, Rate, RatePair, Tfactors
 from .reaclib_rate import ReacLibRate, SingleSet
 from .tabular_rate import TableIndex, TableInterpolator, TabularRate
