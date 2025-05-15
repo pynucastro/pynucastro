@@ -81,7 +81,8 @@ This will output the following files:
   to compute reaction rates.
 
 
-## Test driver
+Test driver
+-----------
 
 A test driver can be built by simply doing:
 
