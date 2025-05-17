@@ -18,6 +18,7 @@ Submodules
    pynucastro.rates.files
    pynucastro.rates.known_duplicates
    pynucastro.rates.library
+   pynucastro.rates.modified_rate
    pynucastro.rates.rate
    pynucastro.rates.reaclib_rate
    pynucastro.rates.tabular_rate
