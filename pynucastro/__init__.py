@@ -124,6 +124,13 @@ integration driver routines. pynucastro processes these template files
 by replacing tags of the form `<tag>` with generated code specific to
 a given choice of reaction rates.
 
+eos
+---
+
+eos provides the required toolbox to reconstruct the Helmholtz electron-positron
+equation of state table for the free energy and its derivatives for a particular
+network, and grid.
+
 """
 
 from ._version import version
@@ -132,6 +139,7 @@ __version__ = version
 
 
 import pynucastro.screening
+from pynucastro.eos import ElectronPositron
 from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
                                  Composition, Explorer, FortranNetwork,
                                  NSENetwork, NumpyNetwork, PythonNetwork,
