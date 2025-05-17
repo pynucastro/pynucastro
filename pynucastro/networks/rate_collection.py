@@ -2089,7 +2089,8 @@ class RateCollection:
         else:
             ydots = None
 
-        # Do not show rates on the graph if their corresponding ydot is less than ydot_cutoff_value
+        # Do not show rates on the graph if their corresponding ydot
+        # is less than ydot_cutoff_value
         invisible_rates = set()
         if ydot_cutoff_value is not None:
             for r in self.rates:
@@ -2108,6 +2109,14 @@ class RateCollection:
                 highlight = False
                 if highlight_filter_function is not None:
                     highlight = highlight_filter_function(r)
+
+                rtype = ""
+                if (Nucleus("he4") in r.reactants and
+                    len(r.reactants) == 2 and len(r.products) == 1):
+                    rtype = "ag"
+                elif (Nucleus("he4") in r.products and
+                      len(r.products) == 2 and len(r.reactants) == 1):
+                    rtype = "ag"
 
                 for p in r.products:
                     if p not in node_nuclei:
@@ -2128,7 +2137,7 @@ class RateCollection:
 
                     if ydots is None:
                         G.add_edges_from([(n, p)], weight=0.5,
-                                         real=1, highlight=highlight)
+                                         real=1, highlight=highlight, rtype=rtype)
                         continue
 
                     try:
@@ -2143,12 +2152,12 @@ class RateCollection:
                         if show_small_ydot:
                             # use real -1 for displaying rates that are below ydot_cutoff
                             G.add_edges_from([(n, p)], weight=rate_weight,
-                                             real=-1, highlight=highlight)
+                                             real=-1, highlight=highlight, rtype=rtype)
 
                         continue
 
                     G.add_edges_from([(n, p)], weight=rate_weight,
-                                     real=1, highlight=highlight)
+                                     real=1, highlight=highlight, rtype=rtype)
 
         # now consider the rates that are approximated out of the network
         rate_seen = []
@@ -2164,6 +2173,14 @@ class RateCollection:
                 if highlight_filter_function is not None:
                     highlight = highlight_filter_function(sr)
 
+                rtype = ""
+                if (Nucleus("he4") in sr.reactants and
+                    len(sr.reactants) == 2 and len(sr.products) == 1):
+                    rtype = "ag"
+                elif (Nucleus("he4") in sr.products and
+                      len(sr.products) == 2 and len(sr.reactants) == 1):
+                    rtype = "ag"
+
                 for n in sr.reactants:
                     if n not in node_nuclei:
                         continue
@@ -2177,10 +2194,12 @@ class RateCollection:
                         if hide_xp and _skip_xp(n, p, sr):
                             continue
 
-                        G.add_edges_from([(n, p)], weight=0, real=0, highlight=highlight)
+                        G.add_edges_from([(n, p)], weight=0, real=0,
+                                         highlight=highlight, rtype=rtype)
 
-        # It seems that networkx broke backwards compatibility, and 'zorder' is no longer a valid
-        # keyword argument. The 'linewidth' argument has also changed to 'linewidths'.
+        # It seems that networkx broke backwards compatibility, and
+        # 'zorder' is no longer a valid keyword argument. The
+        # 'linewidth' argument has also changed to 'linewidths'.
 
         nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
                                node_color=colors, alpha=1.0,
@@ -2194,7 +2213,8 @@ class RateCollection:
         if curved_edges:
             connectionstyle = "arc3, rad = 0.2"
         else:
-            connectionstyle = "arc3"
+            connectionstyle = ["arc3, rad=0.2" if e["rtype"]=="ag" else "arc3" for _, _, e in G.edges(data=True) if e["real"] == 1]
+        print(connectionstyle)
 
         real_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 1]
         real_weights = [e["weight"] for u, v, e in G.edges(data=True) if e["real"] == 1]
