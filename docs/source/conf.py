@@ -98,7 +98,7 @@ main_doc = 'index'
 
 # General information about the project.
 project = 'pynucastro'
-copyright = '2024, pynucastro development team'
+copyright = '2024-2025, pynucastro development team'
 author = 'pynucastro development team'
 
 #html_logo = "logo.png"
