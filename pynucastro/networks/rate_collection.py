@@ -1652,7 +1652,7 @@ class RateCollection:
 
         Returns
         -------
-        dict(Rate)
+        dict(Nucleus)
 
         """
 
@@ -1920,14 +1920,58 @@ class RateCollection:
         print('To create network integration source code, use a class that implements a specific network type.')
 
     def create_network_graph(self, node_nuclei, *,
-                             ydots=None, ydot_cutoff_value=None,
-                             hide_xalpha=False, hide_xp=False,
-                             show_small_ydot=False,
-                             rate_filter_function=None,
-                             highlight_filter_function=None,
+                             nuclei_custom_labels=None,
                              rotated=False,
-                             nuclei_custom_labels=None):
-        """Create a graph representation of the network using NetworkX"""
+                             ydots=None, ydot_cutoff_value=None,
+                             show_small_ydot=False,
+                             hide_xalpha=False, hide_xp=False,
+                             rate_filter_function=None,
+                             highlight_filter_function=None):
+        """Create a graph representation of the network using
+        NetworkX.  This arranges the nuclei as nodes on a grid
+        determined by their N and Z, and creates the edges that
+        connect the nuclei.  The various paramters control how
+        which edges are present and their weights.
+
+        Parameters
+        ----------
+        node_nuclei : Iterable(Nucleus)
+            the nuclei to represent as nodes in the graph
+        nuclei_custom_labels : dict(Nucleus, str)
+            a dictionary giving alternate labels for the nodes.  If not present
+            the nuclei's isotope symbol is used.
+        rotated : bool
+            arrange the nodes as A - 2Z vs. Z or the default Z vs. N?
+        ydots : dict(Rate)
+            the contribution of each rate to a nuclei's dY/dt evolution.
+            This can be obtained from :py:meth:`.evaluate_rates`
+        ydot_cutoff_value : float
+            rate threshold below which we do not add an edge connecting
+            nuclei.
+        show_small_ydot : bool
+            create edges for rates below ydot_cutoff_value.  They will have
+            the property "real" set to -1.
+        hide_xalpha : bool
+            don't create edges connecting alpha particles and heavy
+            nuclei in reactions of the form A(alpha,X)B or A(X,alpha)B,
+            except if alpha is the heaviest product.
+        hide_xp : bool
+            don't create edges connecting protons and heavy
+            nuclei in reactions of the form A(p,X)B or A(X,p)B.
+        rate_filter_function : Callable
+            a function that takes a `Rate` object and returns True
+            or False if an edge should be created for the nuclei
+            it links.
+        highlight_filter_function : Callable
+            a function that takes a `Rate` object and returns True or
+            False if we want to highlight the edge in the network.  This
+            sets the "highlight" property of the edge.
+
+        Returns
+        -------
+        networkx.classes.multidigraph.MultiDiGraph
+
+        """
 
         G = nx.MultiDiGraph()
         G.position = {}
@@ -2088,7 +2132,7 @@ class RateCollection:
             object and returns a color.
         node_shape : str
             shape of the node (using matplotlib marker names)
-        nuclei_custom_labels : dict
+        nuclei_custom_labels : dict(Nucleus, str)
             a dict of the form {Nucleus: str} that provides alternate
             labels for nodes (instead of using the `pretty` attribute
             of the Nucleus.
@@ -2107,11 +2151,11 @@ class RateCollection:
             include He4 as a node on the plot even if
             we don't have 3-alpha
         hide_xalpha : bool
-            dont connect the links to alpha for heavy
+            don't connect the links to alpha for heavy
             nuclei reactions of the form A(alpha,X)B or A(X,alpha)B,
             except if alpha is the heaviest product.
         hide_xp : bool
-            dont connect the links to p for heavy
+            don't connect the links to p for heavy
             nuclei reactions of the form A(p,X)B or A(X,p)B.
         edge_labels : dict
             a dictionary of the form {(n1, n2): "label"}
