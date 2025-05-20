@@ -2195,7 +2195,6 @@ class RateCollection:
         # nodes -- the node nuclei will be all of the heavies
         # add all the nuclei into G.node
         node_nuclei = []
-
         colors = []
 
         if callable(node_color):
