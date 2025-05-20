@@ -1919,6 +1919,126 @@ class RateCollection:
         # pylint: disable=unused-argument
         print('To create network integration source code, use a class that implements a specific network type.')
 
+    def create_network_graph(self, node_nuclei, *,
+                             ydots=None, ydot_cutoff_value=None,
+                             hide_xalpha=False, hide_xp=False,
+                             show_small_ydot=False,
+                             rate_filter_function=None,
+                             highlight_filter_function=None,
+                             rotated=False,
+                             nuclei_custom_labels=None):
+        """Create a graph representation of the network using NetworkX"""
+
+        G = nx.MultiDiGraph()
+        G.position = {}
+        G.labels = {}
+
+        if nuclei_custom_labels is None:
+            nuclei_custom_labels = {}
+
+        for n in node_nuclei:
+            G.add_node(n)
+            if rotated:
+                G.position[n] = (n.Z, n.A - 2*n.Z)
+            else:
+                G.position[n] = (n.N, n.Z)
+            if n in nuclei_custom_labels:
+                G.labels[n] = nuclei_custom_labels[n]
+            else:
+                G.labels[n] = fr"${n.pretty}$"
+
+        # Do not show rates on the graph if their corresponding ydot is less than ydot_cutoff_value
+        invisible_rates = set()
+        if ydot_cutoff_value is not None:
+            for r in self.rates:
+                if ydots[r] < ydot_cutoff_value:
+                    invisible_rates.add(r)
+
+        # edges for the rates that are explicitly in the network
+        for n in node_nuclei:
+            if n not in self.nuclei_consumed:
+                continue
+            for r in self.nuclei_consumed[n]:
+                if rate_filter_function is not None:
+                    if not rate_filter_function(r):
+                        continue
+
+                highlight = False
+                if highlight_filter_function is not None:
+                    highlight = highlight_filter_function(r)
+
+                for p in r.products:
+                    if p not in node_nuclei:
+                        continue
+
+                    if hide_xalpha and _skip_xalpha(n, p, r):
+                        continue
+
+                    if hide_xp and _skip_xp(n, p, r):
+                        continue
+
+                    # networkx doesn't seem to keep the edges in
+                    # any particular order, so we associate data
+                    # to the edges here directly, in this case,
+                    # the reaction rate, which will be used to
+                    # color it
+                    # here real means that it is not an approximate rate
+
+                    if ydots is None:
+                        G.add_edges_from([(n, p)], weight=0.5,
+                                         real=1, highlight=highlight)
+                        continue
+
+                    try:
+                        rate_weight = math.log10(ydots[r])
+                    except ValueError:
+                        # if ydots[r] is zero, then set the weight
+                        # to roughly the minimum exponent possible
+                        # for python floats
+                        rate_weight = -308
+
+                    if r in invisible_rates:
+                        if show_small_ydot:
+                            # use real -1 for displaying rates that are below ydot_cutoff
+                            G.add_edges_from([(n, p)], weight=rate_weight,
+                                             real=-1, highlight=highlight)
+
+                        continue
+
+                    G.add_edges_from([(n, p)], weight=rate_weight,
+                                     real=1, highlight=highlight)
+
+        # now consider the rates that are approximated out of the network
+        rate_seen = []
+        for r in self.rates:
+            if not isinstance(r, ApproximateRate):
+                continue
+            for sr in r.hidden_rates:
+                if sr in rate_seen:
+                    continue
+                rate_seen.append(sr)
+
+                highlight = False
+                if highlight_filter_function is not None:
+                    highlight = highlight_filter_function(sr)
+
+                for n in sr.reactants:
+                    if n not in node_nuclei:
+                        continue
+                    for p in sr.products:
+                        if p not in node_nuclei:
+                            continue
+
+                        if hide_xalpha and _skip_xalpha(n, p, sr):
+                            continue
+
+                        if hide_xp and _skip_xp(n, p, sr):
+                            continue
+
+                        G.add_edges_from([(n, p)], weight=0, real=0, highlight=highlight)
+
+        return G
+
     def plot(self, rho=None, T=None, comp=None, *,
              outfile=None,
              size=(800, 600), dpi=100, title=None,
@@ -2012,11 +2132,8 @@ class RateCollection:
         matplotlib.figure.Figure
         """
 
-        G = nx.MultiDiGraph()
-        G.position = {}
-        G.labels = {}
-
         fig, ax = plt.subplots()
+
         #divider = make_axes_locatable(ax)
         #cax = divider.append_axes('right', size='15%', pad=0.05)
 
@@ -2031,12 +2148,10 @@ class RateCollection:
         if not always_show_alpha:
             hidden_nuclei.append("he4")
 
-        if nuclei_custom_labels is None:
-            nuclei_custom_labels = {}
-
         # nodes -- the node nuclei will be all of the heavies
         # add all the nuclei into G.node
         node_nuclei = []
+
         colors = []
 
         if callable(node_color):
@@ -2072,112 +2187,20 @@ class RateCollection:
                 else:
                     colors.append(get_node_color(n))
 
-        for n in node_nuclei:
-            G.add_node(n)
-            if rotated:
-                G.position[n] = (n.Z, n.A - 2*n.Z)
-            else:
-                G.position[n] = (n.N, n.Z)
-            if n in nuclei_custom_labels:
-                G.labels[n] = nuclei_custom_labels[n]
-            else:
-                G.labels[n] = fr"${n.pretty}$"
-
         # get the rates for each reaction
         if rho is not None and T is not None and comp is not None:
             ydots = self.evaluate_rates(rho, T, comp)
         else:
             ydots = None
 
-        # Do not show rates on the graph if their corresponding ydot is less than ydot_cutoff_value
-        invisible_rates = set()
-        if ydot_cutoff_value is not None:
-            for r in self.rates:
-                if ydots[r] < ydot_cutoff_value:
-                    invisible_rates.add(r)
-
-        # edges for the rates that are explicitly in the network
-        for n in node_nuclei:
-            if n not in self.nuclei_consumed:
-                continue
-            for r in self.nuclei_consumed[n]:
-                if rate_filter_function is not None:
-                    if not rate_filter_function(r):
-                        continue
-
-                highlight = False
-                if highlight_filter_function is not None:
-                    highlight = highlight_filter_function(r)
-
-                for p in r.products:
-                    if p not in node_nuclei:
-                        continue
-
-                    if hide_xalpha and _skip_xalpha(n, p, r):
-                        continue
-
-                    if hide_xp and _skip_xp(n, p, r):
-                        continue
-
-                    # networkx doesn't seem to keep the edges in
-                    # any particular order, so we associate data
-                    # to the edges here directly, in this case,
-                    # the reaction rate, which will be used to
-                    # color it
-                    # here real means that it is not an approximate rate
-
-                    if ydots is None:
-                        G.add_edges_from([(n, p)], weight=0.5,
-                                         real=1, highlight=highlight)
-                        continue
-
-                    try:
-                        rate_weight = math.log10(ydots[r])
-                    except ValueError:
-                        # if ydots[r] is zero, then set the weight
-                        # to roughly the minimum exponent possible
-                        # for python floats
-                        rate_weight = -308
-
-                    if r in invisible_rates:
-                        if show_small_ydot:
-                            # use real -1 for displaying rates that are below ydot_cutoff
-                            G.add_edges_from([(n, p)], weight=rate_weight,
-                                             real=-1, highlight=highlight)
-
-                        continue
-
-                    G.add_edges_from([(n, p)], weight=rate_weight,
-                                     real=1, highlight=highlight)
-
-        # now consider the rates that are approximated out of the network
-        rate_seen = []
-        for r in self.rates:
-            if not isinstance(r, ApproximateRate):
-                continue
-            for sr in r.hidden_rates:
-                if sr in rate_seen:
-                    continue
-                rate_seen.append(sr)
-
-                highlight = False
-                if highlight_filter_function is not None:
-                    highlight = highlight_filter_function(sr)
-
-                for n in sr.reactants:
-                    if n not in node_nuclei:
-                        continue
-                    for p in sr.products:
-                        if p not in node_nuclei:
-                            continue
-
-                        if hide_xalpha and _skip_xalpha(n, p, sr):
-                            continue
-
-                        if hide_xp and _skip_xp(n, p, sr):
-                            continue
-
-                        G.add_edges_from([(n, p)], weight=0, real=0, highlight=highlight)
+        G = self.create_network_graph(node_nuclei,
+                                      ydots=ydots, ydot_cutoff_value=ydot_cutoff_value,
+                                      hide_xalpha=hide_xalpha, hide_xp=hide_xp,
+                                      show_small_ydot=show_small_ydot,
+                                      rate_filter_function=rate_filter_function,
+                                      highlight_filter_function=highlight_filter_function,
+                                      rotated=rotated,
+                                      nuclei_custom_labels=nuclei_custom_labels)
 
         # It seems that networkx broke backwards compatibility, and 'zorder' is no longer a valid
         # keyword argument. The 'linewidth' argument has also changed to 'linewidths'.
