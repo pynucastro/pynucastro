@@ -1930,7 +1930,7 @@ class RateCollection:
         """Create a graph representation of the network using
         NetworkX.  This arranges the nuclei as nodes on a grid
         determined by their N and Z, and creates the edges that
-        connect the nuclei.  The various paramters control how
+        connect the nuclei.  The various parameters control how
         which edges are present and their weights.
 
         Parameters
