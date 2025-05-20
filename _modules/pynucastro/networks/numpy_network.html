@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.numpy_network &#8212; pynucastro 2.6.0.post1+g38a270e2 documentation</title>
+    <title>pynucastro.networks.numpy_network &#8212; pynucastro 2.6.0.post2+g6806cfa3 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=04cc13a6"></script>
+    <script src="../../../_static/documentation_options.js?v=f401af8c"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -497,8 +497,6 @@ document.write(`
 
 <span class="sd">       Depends on composition and density.</span>
 
-<span class="sd">    Methods</span>
-<span class="sd">    -------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">libraries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -524,9 +522,8 @@ document.write(`
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">nuc_prod_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Array storing the count of each nucleus in rates producing</span>
-<span class="sd">       that nucleus, with shape ``(number_of_species,</span>
-<span class="sd">       number_of_rates)``</span>
-
+<span class="sd">        that nucleus, with shape ``(number_of_species,</span>
+<span class="sd">        number_of_rates)``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuc_prod_count</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -627,10 +624,15 @@ document.write(`
 <div class="viewcode-block" id="NumpyNetwork.update_yfac_arr">
 <a class="viewcode-back" href="../../../pynucastro.networks.numpy_network.html#pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_yfac_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculate and store molar fraction component of each rate (Y of each</span>
-<span class="sd">        reactant raised to the appropriate power). The results are stored in</span>
-<span class="sd">        the :attr:`.yfac` array.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate and store molar fraction component of each rate</span>
+<span class="sd">        (Y of each reactant raised to the appropriate power). The</span>
+<span class="sd">        results are stored in the :attr:`.yfac` array.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        composition : Composition</span>
+<span class="sd">            the composition we are considering</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># yfac must be evaluated each time composition changes, probably pretty cheap</span>
@@ -645,10 +647,18 @@ document.write(`
 <div class="viewcode-block" id="NumpyNetwork.update_prefac_arr">
 <a class="viewcode-back" href="../../../pynucastro.networks.numpy_network.html#pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_prefac_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculate and store rate prefactors, which include both statistical</span>
-<span class="sd">        prefactors and mass density raised to the corresponding density</span>
-<span class="sd">        exponents. The results are stored in the :attr:`.prefac` array.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate and store rate prefactors, which include both</span>
+<span class="sd">        statistical prefactors and mass density raised to the</span>
+<span class="sd">        corresponding density exponents. The results are stored in the</span>
+<span class="sd">        :attr:`.prefac` array.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            mass density</span>
+<span class="sd">        composition : Composition</span>
+<span class="sd">            composition to evaluate rates with</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">y_e</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">ye</span>
@@ -666,11 +676,11 @@ document.write(`
 <div class="viewcode-block" id="NumpyNetwork.evaluate_rates_arr">
 <a class="viewcode-back" href="../../../pynucastro.networks.numpy_network.html#pynucastro.networks.numpy_network.NumpyNetwork.evaluate_rates_arr">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_rates_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Evaluate the rates in the network for a specific temperature, assuming</span>
-<span class="sd">        necessary precalculations have been carried out (calling the methods</span>
-<span class="sd">        :meth:`.update_yfac_arr` and :meth:`.update_prefac_arr` to set the</span>
-<span class="sd">        composition and density).</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the rates in the network for a specific</span>
+<span class="sd">        temperature, assuming necessary precalculations have been</span>
+<span class="sd">        carried out (calling the methods :meth:`.update_yfac_arr` and</span>
+<span class="sd">        :meth:`.update_prefac_arr` to set the composition and</span>
+<span class="sd">        density).</span>
 
 <span class="sd">        This performs a vectorized calculation, and returns an array ordered by</span>
 <span class="sd">        the rates in the ``rates`` member variable. This does not support</span>
@@ -679,6 +689,16 @@ document.write(`
 <span class="sd">        See :meth:`.evaluate_rates` for the non-vectorized version. Relative</span>
 <span class="sd">        performance between the two varies based on the setup. See</span>
 <span class="sd">        :meth:`clear_arrays` for freeing memory post calculation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># T9 arr only needs to be evaluated when T changes</span>
@@ -692,19 +712,28 @@ document.write(`
 <div class="viewcode-block" id="NumpyNetwork.evaluate_ydots_arr">
 <a class="viewcode-back" href="../../../pynucastro.networks.numpy_network.html#pynucastro.networks.numpy_network.NumpyNetwork.evaluate_ydots_arr">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_ydots_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Evaluate net rate of change of molar abundance for each nucleus in the</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate net rate of change of molar abundance for each nucleus in the</span>
 <span class="sd">        network for a specific temperature, assuming necessary precalculations</span>
 <span class="sd">        have been carried out (calling the methods :meth:`.update_yfac_arr` and</span>
 <span class="sd">        :meth:`.update_prefac_arr` to set the composition and density).</span>
 
-<span class="sd">        This performs a vectorized calculation, and returns an array ordered by</span>
-<span class="sd">        the nuclei in the ``unique_nuclei`` member variable. This does not</span>
-<span class="sd">        support tabular rates.</span>
+<span class="sd">        This performs a vectorized calculation, and returns an array</span>
+<span class="sd">        ordered by the nuclei in the ``unique_nuclei`` member</span>
+<span class="sd">        variable. This does not support tabular rates.</span>
 
 <span class="sd">        See :meth:`.evaluate_ydots` for the non-vectorized version. Relative</span>
 <span class="sd">        performance between the two varies based on the setup. See</span>
 <span class="sd">        :meth:`.clear_arrays` for freeing memory post calculation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">rvals_arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates_arr</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
@@ -718,11 +747,11 @@ document.write(`
 <div class="viewcode-block" id="NumpyNetwork.evaluate_activity_arr">
 <a class="viewcode-back" href="../../../pynucastro.networks.numpy_network.html#pynucastro.networks.numpy_network.NumpyNetwork.evaluate_activity_arr">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_activity_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sum over all of the terms contributing to dY/dt for a specific</span>
-<span class="sd">        temperature, neglecting sign, assuming necessary precalculations have</span>
-<span class="sd">        been carried out (calling the methods :meth:`.update_yfac_arr` and</span>
-<span class="sd">        :meth:`.update_prefac_arr` to set the composition and density).</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sum over all of the terms contributing to dY/dt for a</span>
+<span class="sd">        specific temperature, neglecting sign, assuming necessary</span>
+<span class="sd">        precalculations have been carried out (calling the methods</span>
+<span class="sd">        :meth:`.update_yfac_arr` and :meth:`.update_prefac_arr` to set</span>
+<span class="sd">        the composition and density).</span>
 
 <span class="sd">        This performs a vectorized calculation, and returns an array ordered by</span>
 <span class="sd">        the nuclei in the ``unique_nuclei`` member variable. This does not</span>
@@ -731,6 +760,16 @@ document.write(`
 <span class="sd">        See :meth:`.evaluate_activity` for the non-vectorized version. Relative</span>
 <span class="sd">        performance between the two varies based on the setup. See</span>
 <span class="sd">        :meth:`.clear_arrays` for freeing memory post calculation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">rvals_arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates_arr</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
@@ -744,9 +783,10 @@ document.write(`
 <div class="viewcode-block" id="NumpyNetwork.clear_arrays">
 <a class="viewcode-back" href="../../../pynucastro.networks.numpy_network.html#pynucastro.networks.numpy_network.NumpyNetwork.clear_arrays">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">clear_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Clear all cached arrays stored by the :meth:`.update_yfac_arr` and</span>
-<span class="sd">        :meth:`.update_prefac_arr` member functions, freeing up memory.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear all cached arrays stored by the</span>
+<span class="sd">        :meth:`.update_yfac_arr` and :meth:`.update_prefac_arr` member</span>
+<span class="sd">        functions, freeing up memory.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nuc_prod_count</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nuc_cons_count</span> <span class="o">=</span> <span class="kc">None</span>

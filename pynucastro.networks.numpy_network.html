@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.numpy_network module &#8212; pynucastro 2.6.0.post1+g38a270e2 documentation</title>
+    <title>pynucastro.networks.numpy_network module &#8212; pynucastro 2.6.0.post2+g6806cfa3 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=04cc13a6"></script>
+    <script src="_static/documentation_options.js?v=f401af8c"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -605,8 +605,9 @@ density exponent.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.clear_arrays">
 <span class="sig-name descname"><span class="pre">clear_arrays</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/numpy_network.html#NumpyNetwork.clear_arrays"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.clear_arrays" title="Link to this definition">#</a></dt>
-<dd><p>Clear all cached arrays stored by the <a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr" title="pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update_yfac_arr()</span></code></a> and
-<a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr" title="pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update_prefac_arr()</span></code></a> member functions, freeing up memory.</p>
+<dd><p>Clear all cached arrays stored by the
+<a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr" title="pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update_yfac_arr()</span></code></a> and <a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr" title="pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update_prefac_arr()</span></code></a> member
+functions, freeing up memory.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -627,31 +628,49 @@ the final rate evaluation, with shape <code class="docutils literal notranslate"
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.evaluate_activity_arr">
 <span class="sig-name descname"><span class="pre">evaluate_activity_arr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/numpy_network.html#NumpyNetwork.evaluate_activity_arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.evaluate_activity_arr" title="Link to this definition">#</a></dt>
-<dd><p>Sum over all of the terms contributing to dY/dt for a specific
-temperature, neglecting sign, assuming necessary precalculations have
-been carried out (calling the methods <a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr" title="pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update_yfac_arr()</span></code></a> and
-<a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr" title="pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update_prefac_arr()</span></code></a> to set the composition and density).</p>
+<dd><p>Sum over all of the terms contributing to dY/dt for a
+specific temperature, neglecting sign, assuming necessary
+precalculations have been carried out (calling the methods
+<a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr" title="pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update_yfac_arr()</span></code></a> and <a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr" title="pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update_prefac_arr()</span></code></a> to set
+the composition and density).</p>
 <p>This performs a vectorized calculation, and returns an array ordered by
 the nuclei in the <code class="docutils literal notranslate"><span class="pre">unique_nuclei</span></code> member variable. This does not
 support tabular rates.</p>
 <p>See <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_activity" title="pynucastro.networks.rate_collection.RateCollection.evaluate_activity"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate_activity()</span></code></a> for the non-vectorized version. Relative
 performance between the two varies based on the setup. See
 <a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.clear_arrays" title="pynucastro.networks.numpy_network.NumpyNetwork.clear_arrays"><code class="xref py py-meth docutils literal notranslate"><span class="pre">clear_arrays()</span></code></a> for freeing memory post calculation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – temperature</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)">numpy.ndarray</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.evaluate_rates_arr">
 <span class="sig-name descname"><span class="pre">evaluate_rates_arr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/numpy_network.html#NumpyNetwork.evaluate_rates_arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.evaluate_rates_arr" title="Link to this definition">#</a></dt>
-<dd><p>Evaluate the rates in the network for a specific temperature, assuming
-necessary precalculations have been carried out (calling the methods
-<a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr" title="pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update_yfac_arr()</span></code></a> and <a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr" title="pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update_prefac_arr()</span></code></a> to set the
-composition and density).</p>
+<dd><p>Evaluate the rates in the network for a specific
+temperature, assuming necessary precalculations have been
+carried out (calling the methods <a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr" title="pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update_yfac_arr()</span></code></a> and
+<a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr" title="pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update_prefac_arr()</span></code></a> to set the composition and
+density).</p>
 <p>This performs a vectorized calculation, and returns an array ordered by
 the rates in the <code class="docutils literal notranslate"><span class="pre">rates</span></code> member variable. This does not support
 tabular rates.</p>
 <p>See <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_rates" title="pynucastro.networks.rate_collection.RateCollection.evaluate_rates"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate_rates()</span></code></a> for the non-vectorized version. Relative
 performance between the two varies based on the setup. See
 <a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.clear_arrays" title="pynucastro.networks.numpy_network.NumpyNetwork.clear_arrays"><code class="xref py py-meth docutils literal notranslate"><span class="pre">clear_arrays()</span></code></a> for freeing memory post calculation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – temperature</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)">numpy.ndarray</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -661,12 +680,20 @@ performance between the two varies based on the setup. See
 network for a specific temperature, assuming necessary precalculations
 have been carried out (calling the methods <a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr" title="pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update_yfac_arr()</span></code></a> and
 <a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr" title="pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update_prefac_arr()</span></code></a> to set the composition and density).</p>
-<p>This performs a vectorized calculation, and returns an array ordered by
-the nuclei in the <code class="docutils literal notranslate"><span class="pre">unique_nuclei</span></code> member variable. This does not
-support tabular rates.</p>
+<p>This performs a vectorized calculation, and returns an array
+ordered by the nuclei in the <code class="docutils literal notranslate"><span class="pre">unique_nuclei</span></code> member
+variable. This does not support tabular rates.</p>
 <p>See <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_ydots" title="pynucastro.networks.rate_collection.RateCollection.evaluate_ydots"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate_ydots()</span></code></a> for the non-vectorized version. Relative
 performance between the two varies based on the setup. See
 <a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.clear_arrays" title="pynucastro.networks.numpy_network.NumpyNetwork.clear_arrays"><code class="xref py py-meth docutils literal notranslate"><span class="pre">clear_arrays()</span></code></a> for freeing memory post calculation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – temperature</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)">numpy.ndarray</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
@@ -696,17 +723,31 @@ reaction or not, with shape <code class="docutils literal notranslate"><span cla
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr">
 <span class="sig-name descname"><span class="pre">update_prefac_arr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/numpy_network.html#NumpyNetwork.update_prefac_arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_prefac_arr" title="Link to this definition">#</a></dt>
-<dd><p>Calculate and store rate prefactors, which include both statistical
-prefactors and mass density raised to the corresponding density
-exponents. The results are stored in the <a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.prefac" title="pynucastro.networks.numpy_network.NumpyNetwork.prefac"><code class="xref py py-attr docutils literal notranslate"><span class="pre">prefac</span></code></a> array.</p>
+<dd><p>Calculate and store rate prefactors, which include both
+statistical prefactors and mass density raised to the
+corresponding density exponents. The results are stored in the
+<a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.prefac" title="pynucastro.networks.numpy_network.NumpyNetwork.prefac"><code class="xref py py-attr docutils literal notranslate"><span class="pre">prefac</span></code></a> array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – mass density</p></li>
+<li><p><strong>composition</strong> (<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><em>Composition</em></a>) – composition to evaluate rates with</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr">
 <span class="sig-name descname"><span class="pre">update_yfac_arr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">composition</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/numpy_network.html#NumpyNetwork.update_yfac_arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.update_yfac_arr" title="Link to this definition">#</a></dt>
-<dd><p>Calculate and store molar fraction component of each rate (Y of each
-reactant raised to the appropriate power). The results are stored in
-the <a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.yfac" title="pynucastro.networks.numpy_network.NumpyNetwork.yfac"><code class="xref py py-attr docutils literal notranslate"><span class="pre">yfac</span></code></a> array.</p>
+<dd><p>Calculate and store molar fraction component of each rate
+(Y of each reactant raised to the appropriate power). The
+results are stored in the <a class="reference internal" href="#pynucastro.networks.numpy_network.NumpyNetwork.yfac" title="pynucastro.networks.numpy_network.NumpyNetwork.yfac"><code class="xref py py-attr docutils literal notranslate"><span class="pre">yfac</span></code></a> array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>composition</strong> (<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><em>Composition</em></a>) – the composition we are considering</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
