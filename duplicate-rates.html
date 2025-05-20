@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Dealing with Duplicate Rates &#8212; pynucastro 2.6.0.post2+g6806cfa3 documentation</title>
+    <title>Dealing with Duplicate Rates &#8212; pynucastro 2.6.0.post3+g79f912dc documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=f401af8c"></script>
+    <script src="_static/documentation_options.js?v=7b231ad8"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -557,7 +557,7 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="dealing-with-duplicate-rates">
 <h1>Dealing with Duplicate Rates<a class="headerlink" href="#dealing-with-duplicate-rates" title="Link to this heading">#</a></h1>
-<p>Sometimes we combine multiple sources of rates into a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> or network, and we run the risk of
+<p>Sometimes we combine multiple sources of rates into a <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateCollection</span></code></a> or network, and we run the risk of
 having the same rate sequence duplicated, even though the rate itself may be different (i.e., a different
 source or tabulated vs. ReacLib).</p>
 <div class="cell docutils container">
@@ -636,7 +636,7 @@ warning: Mg24 was not able to be linked
 </div>
 </div>
 <p>We see that we get a <code class="docutils literal notranslate"><span class="pre">RateDuplicationError</span></code> because one or more rates has a duplicate.</p>
-<p>We can find the duplicates using the <code class="docutils literal notranslate"><span class="pre">find_duplicate_links()</span></code> method.  This will return a list of tuples of rates that all provide the same link.</p>
+<p>We can find the duplicates using the <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.find_duplicate_links" title="pynucastro.networks.rate_collection.RateCollection.find_duplicate_links"><code class="xref py py-func docutils literal notranslate"><span class="pre">find_duplicate_links</span></code></a> method.  This will return a list of lists of rates that all provide the same link.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lib</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">()</span>
@@ -671,10 +671,9 @@ dupe 1:
 </div>
 </div>
 </div>
-<p>In this case, we see that one is a <code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code> and the other is a <code class="docutils literal notranslate"><span class="pre">TabularRate</span></code>.
-For the tabular rates, we take the approach that the sequences:</p>
+<p>In this case, we see that one is a <a class="reference internal" href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate" title="pynucastro.rates.reaclib_rate.ReacLibRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a> and the other is a <a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate" title="pynucastro.rates.tabular_rate.TabularRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularRate</span></code></a>.</p>
 <p>The first duplicate is neutron decay.  ReacLib simply has the decay constant, with no density or temperature
-dependence.  The tabulated rate in this case comes from the Langanke paper and is accurate at high densities / temperatures when degeneracy effects are important.</p>
+dependence.  The tabulated rate in this case comes from the <span id="id1">Langanke and Martínez-Pinedo [<a class="reference internal" href="zreferences.html#id9" title="K. Langanke and G. Martínez-Pinedo. Rate tables for the weak processes of pf-shell nuclei in stellar environments. Atomic Data and Nuclear Data Tables, 79(1):1-46, 2001. doi:10.1006/adnd.2001.0865.">2001</a>]</span> and is accurate at high densities / temperatures when degeneracy effects are important.</p>
 <p>For the second rate, note that in the <code class="docutils literal notranslate"><span class="pre">TabularRate</span></code> we combine the rates:</p>
 <div class="math notranslate nohighlight">
 \[(Z, A) \rightarrow (Z -1, A) + e^+ + \nu_e\]</div>
