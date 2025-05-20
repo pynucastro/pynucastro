@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Changelog &#8212; pynucastro 2.6.0.post4+g26b84fb4 documentation</title>
+    <title>Changelog &#8212; pynucastro 2.6.0.post5+ga1b6a7b2 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=4b594b44"></script>
+    <script src="_static/documentation_options.js?v=657b8ff1"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -598,7 +598,7 @@ underlying rate (<a class="reference external" href="https://github.com/pynucast
 weak rates (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/965">#965</a>), and it also can take commandline arguments for
 rho and T (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/970">#970</a>)</p></li>
 <li><p>Fix <code class="docutils literal notranslate"><span class="pre">README.md</span></code> logo for PyPI (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/973">#973</a>)</p></li>
-<li><p>Add a new BaryonConservationError exception to <code class="docutils literal notranslate"><span class="pre">Rate</span></code> that
+<li><p>Add a new <code class="docutils literal notranslate"><span class="pre">BaryonConservationError</span></code> exception to <code class="docutils literal notranslate"><span class="pre">Rate</span></code> that
 ensures a rate is balanced with respect to baryons. (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/975">#975</a>)</p></li>
 <li><p>Added a new CI test that directly compares a <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> and
 <code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code>  evaluation of dY/dt (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/964">#964</a>)</p></li>
@@ -610,7 +610,7 @@ precision in the test (<a class="reference external" href="https://github.com/py
 <li><p>Some helper functions for working with yt datasets have been added
 (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/961">#961</a>)</p></li>
 <li><p>update to the latest ReacLib database (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/917">#917</a>)</p></li>
-<li><p>don’t use std::pow in constexpr in a <code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> as that is
+<li><p>don’t use <code class="docutils literal notranslate"><span class="pre">std::pow</span></code> in constexpr in a <code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> as that is
 C++23 and not yet widely supported.  (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/953">#953</a>)</p></li>
 <li><p>allow the nodes in a network plot to have custom names (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/946">#946</a>)</p></li>
 <li><p>create a <code class="docutils literal notranslate"><span class="pre">Nucleus</span></code> <code class="docutils literal notranslate"><span class="pre">.summary()</span></code> method to display the information
@@ -657,7 +657,7 @@ filename (<a class="reference external" href="https://github.com/pynucastro/pynu
 <li><p>fix the zenodo authors (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/898">#898</a>) and automate the zenodo bibtex in
 the docs (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/880">#880</a>)</p></li>
 <li><p>codespell fixes (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/897">#897</a>)</p></li>
-<li><p>AmrexAstroCxxNetwork now ifdefs out neutrinos (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/884">#884</a>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code> now ifdefs out neutrinos (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/884">#884</a>)</p></li>
 <li><p>officially support python 3.13 (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/860">#860</a>)</p></li>
 <li><p>update package requirements (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/896">#896</a>)</p></li>
 <li><p>Implement Debye-Huckel screening (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/870">#870</a>)</p></li>
@@ -685,7 +685,7 @@ partition functions (<a class="reference external" href="https://github.com/pynu
 including new examples (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/783">#783</a>, <a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/800">#800</a>, <a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/826">#826</a>) and build enhancements
 (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/893">#893</a>)</p></li>
 <li><p>Clean-up unused class data in <code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/845">#845</a>)</p></li>
-<li><p>Clean up the rate module by separating it into submodules (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/840">#840</a>, <a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/842">#842</a>)</p></li>
+<li><p>Clean up the <code class="docutils literal notranslate"><span class="pre">rate</span></code> module by separating it into submodules (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/840">#840</a>, <a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/842">#842</a>)</p></li>
 <li><p>Add the ability to label edges in network plots (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/837">#837</a>)</p></li>
 <li><p>Clean-up the <code class="docutils literal notranslate"><span class="pre">make_ap_pg_approx</span></code> code (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/830">#830</a>, <a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/850">#850</a>)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">PartitionFunction.eval</span></code> now returns a python float instead of a
@@ -751,7 +751,7 @@ evaluates the weak rate contributions to compute dYe/dt (<a class="reference ext
 <li><p>minor test fixes (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/729">#729</a>, <a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/735">#735</a>, <a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/740">#740</a>, <a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/745">#745</a>)</p></li>
 <li><p>doc fixes (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/737">#737</a>)</p></li>
 <li><p>pylint fixes (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/733">#733</a>)</p></li>
-<li><p>Composition now allows for direct key-value indexing (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/731">#731</a>),
+<li><p><code class="docutils literal notranslate"><span class="pre">Composition</span></code> now allows for direct key-value indexing (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/731">#731</a>),
 and has a new <code class="docutils literal notranslate"><span class="pre">set_random()</span></code> method (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/728">#728</a>)</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">screen5</span></code> screening routine has been added (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/730">#730</a>)</p></li>
 <li><p>C++ partition function interpolation is now cached (<a class="reference external" href="https://github.com/pynucastro/pynucastro/pull/726">#726</a>)</p></li>
