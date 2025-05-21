@@ -1922,7 +1922,7 @@ class RateCollection:
     def create_network_graph(self, node_nuclei, *,
                              nuclei_custom_labels=None,
                              rotated=False,
-                             ydots=None, ydot_cutoff_value=None,
+                             rate_ydots=None, ydot_cutoff_value=None,
                              show_small_ydot=False,
                              hide_xalpha=False, hide_xp=False,
                              rate_filter_function=None,
@@ -1942,7 +1942,7 @@ class RateCollection:
             the nuclei's isotope symbol is used.
         rotated : bool
             arrange the nodes as A - 2Z vs. Z or the default Z vs. N?
-        ydots : dict(Rate)
+        rate_ydots : dict(Rate)
             the contribution of each rate to a nuclei's dY/dt evolution.
             This can be obtained from :py:meth:`.evaluate_rates`
         ydot_cutoff_value : float
@@ -1995,7 +1995,7 @@ class RateCollection:
         invisible_rates = set()
         if ydot_cutoff_value is not None:
             for r in self.rates:
-                if ydots[r] < ydot_cutoff_value:
+                if rate_ydots[r] < ydot_cutoff_value:
                     invisible_rates.add(r)
 
         # edges for the rates that are explicitly in the network
@@ -2028,17 +2028,17 @@ class RateCollection:
                     # color it
                     # here real means that it is not an approximate rate
 
-                    if ydots is None:
+                    if rate_ydots is None:
                         G.add_edges_from([(n, p)], weight=0.5,
                                          real=1, highlight=highlight)
                         continue
 
                     try:
-                        rate_weight = math.log10(ydots[r])
+                        rate_weight = math.log10(rate_ydots[r])
                     except ValueError:
-                        # if ydots[r] is zero, then set the weight
-                        # to roughly the minimum exponent possible
-                        # for python floats
+                        # if rate_ydots[r] is zero, then set the
+                        # weight to roughly the minimum exponent
+                        # possible for python floats
                         rate_weight = -308
 
                     if r in invisible_rates:
@@ -2232,12 +2232,13 @@ class RateCollection:
 
         # get the rates for each reaction
         if rho is not None and T is not None and comp is not None:
-            ydots = self.evaluate_rates(rho, T, comp)
+            rate_ydots = self.evaluate_rates(rho, T, comp)
         else:
-            ydots = None
+            rate_ydots = None
 
         G = self.create_network_graph(node_nuclei,
-                                      ydots=ydots, ydot_cutoff_value=ydot_cutoff_value,
+                                      rate_ydots=rate_ydots,
+                                      ydot_cutoff_value=ydot_cutoff_value,
                                       hide_xalpha=hide_xalpha, hide_xp=hide_xp,
                                       show_small_ydot=show_small_ydot,
                                       rate_filter_function=rate_filter_function,
@@ -2265,7 +2266,7 @@ class RateCollection:
         real_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 1]
         real_weights = [e["weight"] for u, v, e in G.edges(data=True) if e["real"] == 1]
 
-        if ydots is None:
+        if rate_ydots is None:
             edge_color = "C0"
         else:
             edge_color = real_weights
@@ -2324,7 +2325,7 @@ class RateCollection:
                                          font_size=node_font_size,
                                          edge_labels=edge_labels)
 
-        if ydots is not None:
+        if rate_ydots is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
             pc.set_array(real_weights)
             if not rotated:
