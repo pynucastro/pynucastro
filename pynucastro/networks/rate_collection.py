@@ -1923,6 +1923,7 @@ class RateCollection:
                              nuclei_custom_labels=None,
                              rotated=False,
                              rate_ydots=None, ydot_cutoff_value=None,
+                             consuming_rate_threshold=None,
                              show_small_ydot=False,
                              hide_xalpha=False, hide_xp=False,
                              rate_filter_function=None,
@@ -1948,8 +1949,12 @@ class RateCollection:
         ydot_cutoff_value : float
             rate threshold below which we do not add an edge connecting
             nuclei.
+        consuming_rate_threshold : float
+            for a nucleus that has multiple rates that consume it, remove
+            any rates that are ``consuming_rate_threshold`` smaller than
+            the fastest rate consuming the nucleus.
         show_small_ydot : bool
-            create edges for rates below ydot_cutoff_value.  They will have
+            create edges for rates below ``ydot_cutoff_value``.  They will have
             the property "real" set to -1.
         hide_xalpha : bool
             don't create edges connecting alpha particles and heavy
@@ -1959,11 +1964,11 @@ class RateCollection:
             don't create edges connecting protons and heavy
             nuclei in reactions of the form A(p,X)B or A(X,p)B.
         rate_filter_function : Callable
-            a function that takes a `Rate` object and returns True
+            a function that takes a ``Rate`` object and returns True
             or False if an edge should be created for the nuclei
             it links.
         highlight_filter_function : Callable
-            a function that takes a `Rate` object and returns True or
+            a function that takes a ``Rate`` object and returns True or
             False if we want to highlight the edge in the network.  This
             sets the "highlight" property of the edge.
 
@@ -1991,12 +1996,29 @@ class RateCollection:
             else:
                 G.labels[n] = fr"${n.pretty}$"
 
-        # Do not show rates on the graph if their corresponding ydot is less than ydot_cutoff_value
+        # Do not show rates on the graph if their corresponding ydot
+        # is less than ydot_cutoff_value
         invisible_rates = set()
         if ydot_cutoff_value is not None:
             for r in self.rates:
                 if rate_ydots[r] < ydot_cutoff_value:
                     invisible_rates.add(r)
+
+        # Consider each nucleus heavier than He and all the rates that
+        # consume it.  If desired, only show rates that are within a
+        # threshold of the fastest rate consuming that nucleus
+        if consuming_rate_threshold is not None:
+            assert consuming_rate_threshold > 0.0
+            for n in node_nuclei:
+                if n.Z <= 2.0:
+                    continue
+                consump_rates = [r for r in self.rates if n in r.reactants]
+                if len(consump_rates) == 0:
+                    continue
+                max_rate = max(rate_ydots[r] for r in consump_rates)
+                for r in consump_rates:
+                    if rate_ydots[r] < consuming_rate_threshold * max_rate:
+                        invisible_rates.add(r)
 
         # edges for the rates that are explicitly in the network
         for n in node_nuclei:
@@ -2087,6 +2109,7 @@ class RateCollection:
              outfile=None,
              size=(800, 600), dpi=100, title=None,
              ydot_cutoff_value=None, show_small_ydot=False,
+             consuming_rate_threshold=None,
              node_size=1000, node_font_size=12, node_color="#444444", node_shape="o",
              nuclei_custom_labels=None,
              curved_edges=False,
@@ -2122,7 +2145,11 @@ class RateCollection:
             rate threshold below which we do not show a
             line corresponding to a rate
         show_small_ydot : bool
-            show visible dashed lines for rates below ydot_cutoff_value
+            show visible dashed lines for rates below ``ydot_cutoff_value``
+        consuming_rate_threshold : float
+            for a nucleus that has multiple rates that consume it, remove
+            any rates that are ``consuming_rate_threshold`` smaller than
+            the fastest rate consuming the nucleus.
         node_size : float
             size of a node (in networkx units)
         node_font_size : float
@@ -2138,9 +2165,9 @@ class RateCollection:
             of the Nucleus.
         curved_edges : bool
             do we use arcs to connect the nodes?
-        N_range : (tuple, list)
+        N_range : Iterable
             range of neutron number to zoom in on
-        Z_range : (tuple, list)
+        Z_range : Iterable
             range of proton number to zoom in on
         rotate : bool
             plot A - 2Z vs. Z instead of the default Z vs. N
@@ -2162,13 +2189,13 @@ class RateCollection:
             that gives labels for the edges in the network connecting
             nucleus n1 to n2.
         highlight_filter_function : Callable
-            a function that takes a `Rate` object and returns True or
+            a function that takes a ``Rate`` object and returns True or
             False if we want to highlight the rate edge.
         nucleus_filter_function : Callable
-            a function that takes a `Nucleus` object and returns
+            a function that takes a ``Nucleus`` object and returns
             True or False if it is to be shown as a node.
         rate_filter_function : Callable
-            a function that takes a `Rate` object
+            a function that takes a ``Rate`` object
             and returns True or False if it is to be shown as an edge.
 
         Returns
@@ -2241,6 +2268,7 @@ class RateCollection:
                                       ydot_cutoff_value=ydot_cutoff_value,
                                       hide_xalpha=hide_xalpha, hide_xp=hide_xp,
                                       show_small_ydot=show_small_ydot,
+                                      consuming_rate_threshold=consuming_rate_threshold,
                                       rate_filter_function=rate_filter_function,
                                       highlight_filter_function=highlight_filter_function,
                                       rotated=rotated,
