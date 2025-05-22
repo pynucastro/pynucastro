@@ -29,7 +29,8 @@ def load_rate(rfile=None):
 
     Raises
     ------
-    :class:`.RateFileError`, :class:`.UnsupportedNucleus`
+    :py:obj:`pynucastro.rates.files.RateFileError`,
+    :py:obj:`pynucastro.nucdata.nucleus.UnsupportedNucleus`
 
     """
 
