@@ -101,7 +101,7 @@ def capitalize_rid(rid, delimiter):
     rid : str
         the rate's id
     delimiter : str
-        the delimiiter used to split the rid into substrings
+        the delimiter used to split the rid into substrings
 
     Returns
     -------
