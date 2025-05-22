@@ -1652,7 +1652,7 @@ class RateCollection:
 
         Returns
         -------
-        dict(Rate)
+        dict(Nucleus)
 
         """
 
@@ -1919,158 +1919,66 @@ class RateCollection:
         # pylint: disable=unused-argument
         print('To create network integration source code, use a class that implements a specific network type.')
 
-    def plot(self, rho=None, T=None, comp=None, *,
-             outfile=None,
-             size=(800, 600), dpi=100, title=None,
-             ydot_cutoff_value=None, show_small_ydot=False,
-             node_size=1000, node_font_size=12, node_color="#444444", node_shape="o",
-             nuclei_custom_labels=None,
-             curved_edges=False,
-             N_range=None, Z_range=None, rotated=False,
-             always_show_p=False, always_show_alpha=False,
-             hide_xp=False, hide_xalpha=False,
-             edge_labels=None,
-             highlight_filter_function=None,
-             nucleus_filter_function=None, rate_filter_function=None,
-             legend_coord=None):
-        """Make a plot of the network structure showing the links between
-        nuclei.  If a full set of thermodymamic conditions are
-        provided (rho, T, comp), then the links are colored by rate
-        strength.
+    def create_network_graph(self, node_nuclei, *,
+                             nuclei_custom_labels=None,
+                             rotated=False,
+                             ydots=None, ydot_cutoff_value=None,
+                             show_small_ydot=False,
+                             hide_xalpha=False, hide_xp=False,
+                             rate_filter_function=None,
+                             highlight_filter_function=None):
+        """Create a graph representation of the network using
+        NetworkX.  This arranges the nuclei as nodes on a grid
+        determined by their N and Z, and creates the edges that
+        connect the nuclei.  The various parameters control how
+        which edges are present and their weights.
 
         Parameters
         ----------
-        rho : float
-           density to evaluate rates with
-        T : float
-            temperature to evaluate rates with
-        comp : Composition
-            composition to evaluate rates with
-        outfile : str
-            output name of the plot (extension determines the type)
-        size : (tuple, list)
-            (width, height) of the plot in pixels
-        dpi : int
-            dots per inch used with size to set output image size
-        title : str
-            title to display on the plot
+        node_nuclei : Iterable(Nucleus)
+            the nuclei to represent as nodes in the graph
+        nuclei_custom_labels : dict(Nucleus, str)
+            a dictionary giving alternate labels for the nodes.  If not present
+            the nuclei's isotope symbol is used.
+        rotated : bool
+            arrange the nodes as A - 2Z vs. Z or the default Z vs. N?
+        ydots : dict(Rate)
+            the contribution of each rate to a nuclei's dY/dt evolution.
+            This can be obtained from :py:meth:`.evaluate_rates`
         ydot_cutoff_value : float
-            rate threshold below which we do not show a
-            line corresponding to a rate
+            rate threshold below which we do not add an edge connecting
+            nuclei.
         show_small_ydot : bool
-            show visible dashed lines for rates below ydot_cutoff_value
-        node_size : float
-            size of a node (in networkx units)
-        node_font_size : float
-            size of the font used to write the isotope in the node
-        node_color : str, Callable
-            color to make the nodes. May be a callable that takes a Nucleus
-            object and returns a color.
-        node_shape : str
-            shape of the node (using matplotlib marker names)
-        nuclei_custom_labels : dict
-            a dict of the form {Nucleus: str} that provides alternate
-            labels for nodes (instead of using the `pretty` attribute
-            of the Nucleus.
-        curved_edges : bool
-            do we use arcs to connect the nodes?
-        N_range : (tuple, list)
-            range of neutron number to zoom in on
-        Z_range : (tuple, list)
-            range of proton number to zoom in on
-        rotate : bool
-            plot A - 2Z vs. Z instead of the default Z vs. N
-        always_show_p : bool
-            include p as a node on the plot even if we
-            don't have p+p reactions
-        always_show_alpha : bool
-            include He4 as a node on the plot even if
-            we don't have 3-alpha
+            create edges for rates below ydot_cutoff_value.  They will have
+            the property "real" set to -1.
         hide_xalpha : bool
-            dont connect the links to alpha for heavy
-            nuclei reactions of the form A(alpha,X)B or A(X,alpha)B,
+            don't create edges connecting alpha particles and heavy
+            nuclei in reactions of the form A(alpha,X)B or A(X,alpha)B,
             except if alpha is the heaviest product.
         hide_xp : bool
-            dont connect the links to p for heavy
-            nuclei reactions of the form A(p,X)B or A(X,p)B.
-        edge_labels : dict
-            a dictionary of the form {(n1, n2): "label"}
-            that gives labels for the edges in the network connecting
-            nucleus n1 to n2.
+            don't create edges connecting protons and heavy
+            nuclei in reactions of the form A(p,X)B or A(X,p)B.
+        rate_filter_function : Callable
+            a function that takes a `Rate` object and returns True
+            or False if an edge should be created for the nuclei
+            it links.
         highlight_filter_function : Callable
             a function that takes a `Rate` object and returns True or
-            False if we want to highlight the rate edge.
-        nucleus_filter_function : Callable
-            a function that takes a `Nucleus` object and returns
-            True or False if it is to be shown as a node.
-        rate_filter_function : Callable
-            a function that takes a `Rate` object
-            and returns True or False if it is to be shown as an edge.
+            False if we want to highlight the edge in the network.  This
+            sets the "highlight" property of the edge.
 
         Returns
         -------
-        matplotlib.figure.Figure
+        networkx.classes.multidigraph.MultiDiGraph
+
         """
 
         G = nx.MultiDiGraph()
         G.position = {}
         G.labels = {}
 
-        fig, ax = plt.subplots()
-        #divider = make_axes_locatable(ax)
-        #cax = divider.append_axes('right', size='15%', pad=0.05)
-
-        #ax.plot([0, 0], [8, 8], 'b-')
-
-        # in general, we do not show p, n, alpha,
-        # unless we have p + p, 3-a, etc.
-        hidden_nuclei = ["n"]
-        if not always_show_p:
-            hidden_nuclei.append("p")
-            hidden_nuclei.append("p_nse")
-        if not always_show_alpha:
-            hidden_nuclei.append("he4")
-
         if nuclei_custom_labels is None:
             nuclei_custom_labels = {}
-
-        # nodes -- the node nuclei will be all of the heavies
-        # add all the nuclei into G.node
-        node_nuclei = []
-        colors = []
-
-        if callable(node_color):
-            get_node_color = node_color
-        else:
-            def get_node_color(_nuc):
-                return node_color
-
-        for n in self.unique_nuclei:
-            if n.raw not in hidden_nuclei:
-                node_nuclei.append(n)
-                colors.append(get_node_color(n))
-            else:
-                # show hidden nuclei only if they react with themselves
-                for r in self.rates:
-                    if not isinstance(r, (ApproximateRate, ModifiedRate)) and r.reactant_count(n) > 1:
-                        node_nuclei.append(n)
-                        colors.append(get_node_color(n))
-                        break
-
-        # approx nuclei are given a different color
-        for n in self.approx_nuclei:
-            node_nuclei.append(n)
-            colors.append("#888888")
-
-        if nucleus_filter_function is not None:
-            node_nuclei = list(filter(nucleus_filter_function, node_nuclei))
-            # redo the colors:
-            colors = []
-            for n in node_nuclei:
-                if n in self.approx_nuclei:
-                    colors.append("#888888")
-                else:
-                    colors.append(get_node_color(n))
 
         for n in node_nuclei:
             G.add_node(n)
@@ -2082,12 +1990,6 @@ class RateCollection:
                 G.labels[n] = nuclei_custom_labels[n]
             else:
                 G.labels[n] = fr"${n.pretty}$"
-
-        # get the rates for each reaction
-        if rho is not None and T is not None and comp is not None:
-            ydots = self.evaluate_rates(rho, T, comp)
-        else:
-            ydots = None
 
         # Do not show rates on the graph if their corresponding ydot is less than ydot_cutoff_value
         invisible_rates = set()
@@ -2178,6 +2080,170 @@ class RateCollection:
                             continue
 
                         G.add_edges_from([(n, p)], weight=0, real=0, highlight=highlight)
+
+        return G
+
+    def plot(self, rho=None, T=None, comp=None, *,
+             outfile=None,
+             size=(800, 600), dpi=100, title=None,
+             ydot_cutoff_value=None, show_small_ydot=False,
+             node_size=1000, node_font_size=12, node_color="#444444", node_shape="o",
+             nuclei_custom_labels=None,
+             curved_edges=False,
+             N_range=None, Z_range=None, rotated=False,
+             always_show_p=False, always_show_alpha=False,
+             hide_xp=False, hide_xalpha=False,
+             edge_labels=None,
+             highlight_filter_function=None,
+             nucleus_filter_function=None, rate_filter_function=None,
+             legend_coord=None):
+        """Make a plot of the network structure showing the links between
+        nuclei.  If a full set of thermodymamic conditions are
+        provided (rho, T, comp), then the links are colored by rate
+        strength.
+
+        Parameters
+        ----------
+        rho : float
+           density to evaluate rates with
+        T : float
+            temperature to evaluate rates with
+        comp : Composition
+            composition to evaluate rates with
+        outfile : str
+            output name of the plot (extension determines the type)
+        size : (tuple, list)
+            (width, height) of the plot in pixels
+        dpi : int
+            dots per inch used with size to set output image size
+        title : str
+            title to display on the plot
+        ydot_cutoff_value : float
+            rate threshold below which we do not show a
+            line corresponding to a rate
+        show_small_ydot : bool
+            show visible dashed lines for rates below ydot_cutoff_value
+        node_size : float
+            size of a node (in networkx units)
+        node_font_size : float
+            size of the font used to write the isotope in the node
+        node_color : str, Callable
+            color to make the nodes. May be a callable that takes a Nucleus
+            object and returns a color.
+        node_shape : str
+            shape of the node (using matplotlib marker names)
+        nuclei_custom_labels : dict(Nucleus, str)
+            a dict of the form {Nucleus: str} that provides alternate
+            labels for nodes (instead of using the `pretty` attribute
+            of the Nucleus.
+        curved_edges : bool
+            do we use arcs to connect the nodes?
+        N_range : (tuple, list)
+            range of neutron number to zoom in on
+        Z_range : (tuple, list)
+            range of proton number to zoom in on
+        rotate : bool
+            plot A - 2Z vs. Z instead of the default Z vs. N
+        always_show_p : bool
+            include p as a node on the plot even if we
+            don't have p+p reactions
+        always_show_alpha : bool
+            include He4 as a node on the plot even if
+            we don't have 3-alpha
+        hide_xalpha : bool
+            don't connect the links to alpha for heavy
+            nuclei reactions of the form A(alpha,X)B or A(X,alpha)B,
+            except if alpha is the heaviest product.
+        hide_xp : bool
+            don't connect the links to p for heavy
+            nuclei reactions of the form A(p,X)B or A(X,p)B.
+        edge_labels : dict
+            a dictionary of the form {(n1, n2): "label"}
+            that gives labels for the edges in the network connecting
+            nucleus n1 to n2.
+        highlight_filter_function : Callable
+            a function that takes a `Rate` object and returns True or
+            False if we want to highlight the rate edge.
+        nucleus_filter_function : Callable
+            a function that takes a `Nucleus` object and returns
+            True or False if it is to be shown as a node.
+        rate_filter_function : Callable
+            a function that takes a `Rate` object
+            and returns True or False if it is to be shown as an edge.
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+        """
+
+        fig, ax = plt.subplots()
+
+        #divider = make_axes_locatable(ax)
+        #cax = divider.append_axes('right', size='15%', pad=0.05)
+
+        #ax.plot([0, 0], [8, 8], 'b-')
+
+        # in general, we do not show p, n, alpha,
+        # unless we have p + p, 3-a, etc.
+        hidden_nuclei = ["n"]
+        if not always_show_p:
+            hidden_nuclei.append("p")
+            hidden_nuclei.append("p_nse")
+        if not always_show_alpha:
+            hidden_nuclei.append("he4")
+
+        # nodes -- the node nuclei will be all of the heavies
+        # add all the nuclei into G.node
+        node_nuclei = []
+        colors = []
+
+        if callable(node_color):
+            get_node_color = node_color
+        else:
+            def get_node_color(_nuc):
+                return node_color
+
+        for n in self.unique_nuclei:
+            if n.raw not in hidden_nuclei:
+                node_nuclei.append(n)
+                colors.append(get_node_color(n))
+            else:
+                # show hidden nuclei only if they react with themselves
+                for r in self.rates:
+                    if not isinstance(r, (ApproximateRate, ModifiedRate)) and r.reactant_count(n) > 1:
+                        node_nuclei.append(n)
+                        colors.append(get_node_color(n))
+                        break
+
+        # approx nuclei are given a different color
+        for n in self.approx_nuclei:
+            node_nuclei.append(n)
+            colors.append("#888888")
+
+        if nucleus_filter_function is not None:
+            node_nuclei = list(filter(nucleus_filter_function, node_nuclei))
+            # redo the colors:
+            colors = []
+            for n in node_nuclei:
+                if n in self.approx_nuclei:
+                    colors.append("#888888")
+                else:
+                    colors.append(get_node_color(n))
+
+        # get the rates for each reaction
+        if rho is not None and T is not None and comp is not None:
+            ydots = self.evaluate_rates(rho, T, comp)
+        else:
+            ydots = None
+
+        G = self.create_network_graph(node_nuclei,
+                                      ydots=ydots, ydot_cutoff_value=ydot_cutoff_value,
+                                      hide_xalpha=hide_xalpha, hide_xp=hide_xp,
+                                      show_small_ydot=show_small_ydot,
+                                      rate_filter_function=rate_filter_function,
+                                      highlight_filter_function=highlight_filter_function,
+                                      rotated=rotated,
+                                      nuclei_custom_labels=nuclei_custom_labels)
 
         # It seems that networkx broke backwards compatibility, and 'zorder' is no longer a valid
         # keyword argument. The 'linewidth' argument has also changed to 'linewidths'.
