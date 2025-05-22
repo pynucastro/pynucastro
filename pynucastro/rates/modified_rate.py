@@ -146,9 +146,30 @@ class ModifiedRate(Rate):
 
     def function_string_cxx(self, dtype="double", specifiers="inline",
                             leave_open=False, extra_args=()):
-        """
-        Return a string containing C++ function that computes the
-        approximate rate
+        """Return a string containing the C++ function that computes
+        the rate.  For a ModifiedRate, this simply calls the
+        corresponding function for the underlying original rate.
+
+        Parameters
+        ----------
+        dtype : str
+            The C++ datatype to use for all declarations
+        specifiers : str
+            C++ specifiers to add before each function declaration
+            (i.e. "inline")
+        leave_open : bool
+            If ``true``, then we leave the function unclosed (no "}"
+            at the end).  This can allow additional functions to add
+            to this output.
+        extra_args : list, tuple
+            A list of strings representing additional arguments that
+            should be appended to the argument list when defining the
+            function interface.
+
+        Returns
+        -------
+        str
+
         """
 
         args = ["const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
