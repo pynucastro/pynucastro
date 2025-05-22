@@ -747,9 +747,6 @@ class RateFilter:
     def __init__(self, reactants=None, products=None, exact=True,
                  reverse=None, min_reactants=None, max_reactants=None,
                  min_products=None, max_products=None, filter_function=None):
-        """Create a new RateFilter with the given selection rules
-
-        """
         self.reactants = []
         self.products = []
         self.exact = exact
@@ -793,7 +790,18 @@ class RateFilter:
         return matches
 
     def matches(self, r):
-        """ Given a Rate r, see if it matches this RateFilter. """
+        """Given a Rate r, see if it matches this RateFilter.
+
+        Parameters
+        ----------
+        r : Rate
+            the rate we are looking for
+
+        Returns
+        -------
+        bool
+
+        """
         # do cheaper checks first
         matches_reverse = True
         matches_min_reactants = True
@@ -828,7 +836,13 @@ class RateFilter:
         return True
 
     def invert(self):
-        """ Return a RateFilter matching the inverse rate. """
+        """Return a RateFilter matching the inverse rate.
+
+        Returns
+        -------
+        RateFilter
+
+        """
         newfilter = RateFilter(reactants=self.products,
                                products=self.reactants,
                                exact=self.exact,
