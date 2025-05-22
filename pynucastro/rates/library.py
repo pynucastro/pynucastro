@@ -93,8 +93,21 @@ def _rate_name_to_nuc(name):
 
 
 def capitalize_rid(rid, delimiter):
-    # Used to capitalize rid or fname given the delimiter
-    # delimiter is usually either "_" or " "
+    """Capitalize a ``Rate`` ``rid`` or ``fname`` given the delimiter.
+    The delimiter is usually either "_" or " "
+
+    Parameters
+    ----------
+    rid : str
+        the rate's id
+    delimiter : str
+        the delimiiter used to split the rid into substrings
+
+    Returns
+    -------
+    str
+
+    """
 
     rid_nucs = rid.split(delimiter)
     rid_mod = []
