@@ -861,7 +861,8 @@ class TabularLibrary(Library):
 
     def __init__(self, ordering=None):
         # find all of the tabular rates that pynucastro knows about
-        # we'll assume that these are of the form *-toki
+        # we'll assume that these are of the form *betadecay.dat or
+        # *electroncapture.dat
 
         if ordering is None:
             ordering = ["ffn", "langanke", "suzuki"]
@@ -871,7 +872,7 @@ class TabularLibrary(Library):
         for source in ordering:
             for _, _, filenames in sorted(walk(self.lib_path / Path(source))):
                 for f in sorted(filenames):
-                    if f.endswith("-toki"):
+                    if f.endswith("electroncapture.dat") or f.endswith("betadecay.dat"):
                         r = TabularRate(rfile=f)
                         if r in trates:
                             # we are looping over the various libraries in order
