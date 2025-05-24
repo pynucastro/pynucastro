@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.6.0.post9+g46a71103 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.6.0.post10+g06c1c846 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=80483440"></script>
+    <script src="../../../_static/documentation_options.js?v=91f2861c"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -209,6 +209,7 @@
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../nse-protons.html">Using NSE Protons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../unimportant-rates.html">Removing Unimportant Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../network-cycles.html">Finding Cycles (with NetworkX)</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
@@ -2543,7 +2544,8 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">create_network_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_nuclei</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                              <span class="n">nuclei_custom_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                              <span class="n">rotated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                             <span class="n">ydots</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                             <span class="n">rate_ydots</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                             <span class="n">consuming_rate_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                              <span class="n">show_small_ydot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                              <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hide_xp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                              <span class="n">rate_filter_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -2563,14 +2565,18 @@ document.write(`
 <span class="sd">            the nuclei&#39;s isotope symbol is used.</span>
 <span class="sd">        rotated : bool</span>
 <span class="sd">            arrange the nodes as A - 2Z vs. Z or the default Z vs. N?</span>
-<span class="sd">        ydots : dict(Rate)</span>
+<span class="sd">        rate_ydots : dict(Rate)</span>
 <span class="sd">            the contribution of each rate to a nuclei&#39;s dY/dt evolution.</span>
 <span class="sd">            This can be obtained from :py:meth:`.evaluate_rates`</span>
 <span class="sd">        ydot_cutoff_value : float</span>
 <span class="sd">            rate threshold below which we do not add an edge connecting</span>
 <span class="sd">            nuclei.</span>
+<span class="sd">        consuming_rate_threshold : float</span>
+<span class="sd">            for a nucleus that has multiple rates that consume it, remove</span>
+<span class="sd">            any rates that are ``consuming_rate_threshold`` smaller than</span>
+<span class="sd">            the fastest rate consuming the nucleus.</span>
 <span class="sd">        show_small_ydot : bool</span>
-<span class="sd">            create edges for rates below ydot_cutoff_value.  They will have</span>
+<span class="sd">            create edges for rates below ``ydot_cutoff_value``.  They will have</span>
 <span class="sd">            the property &quot;real&quot; set to -1.</span>
 <span class="sd">        hide_xalpha : bool</span>
 <span class="sd">            don&#39;t create edges connecting alpha particles and heavy</span>
@@ -2580,11 +2586,11 @@ document.write(`
 <span class="sd">            don&#39;t create edges connecting protons and heavy</span>
 <span class="sd">            nuclei in reactions of the form A(p,X)B or A(X,p)B.</span>
 <span class="sd">        rate_filter_function : Callable</span>
-<span class="sd">            a function that takes a `Rate` object and returns True</span>
+<span class="sd">            a function that takes a ``Rate`` object and returns True</span>
 <span class="sd">            or False if an edge should be created for the nuclei</span>
 <span class="sd">            it links.</span>
 <span class="sd">        highlight_filter_function : Callable</span>
-<span class="sd">            a function that takes a `Rate` object and returns True or</span>
+<span class="sd">            a function that takes a ``Rate`` object and returns True or</span>
 <span class="sd">            False if we want to highlight the edge in the network.  This</span>
 <span class="sd">            sets the &quot;highlight&quot; property of the edge.</span>
 
@@ -2612,12 +2618,29 @@ document.write(`
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">G</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="sa">fr</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">n</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">$&quot;</span>
 
-        <span class="c1"># Do not show rates on the graph if their corresponding ydot is less than ydot_cutoff_value</span>
+        <span class="c1"># Do not show rates on the graph if their corresponding ydot</span>
+        <span class="c1"># is less than ydot_cutoff_value</span>
         <span class="n">invisible_rates</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">ydot_cutoff_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">ydots</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">ydot_cutoff_value</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">rate_ydots</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">ydot_cutoff_value</span><span class="p">:</span>
                     <span class="n">invisible_rates</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+        <span class="c1"># Consider each nucleus heavier than He and all the rates that</span>
+        <span class="c1"># consume it.  If desired, only show rates that are within a</span>
+        <span class="c1"># threshold of the fastest rate consuming that nucleus</span>
+        <span class="k">if</span> <span class="n">consuming_rate_threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">consuming_rate_threshold</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="o">&lt;=</span> <span class="mf">2.0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">consump_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">consump_rates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">max_rate</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">rate_ydots</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">consump_rates</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">consump_rates</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">rate_ydots</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">consuming_rate_threshold</span> <span class="o">*</span> <span class="n">max_rate</span><span class="p">:</span>
+                        <span class="n">invisible_rates</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
         <span class="c1"># edges for the rates that are explicitly in the network</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">:</span>
@@ -2649,17 +2672,17 @@ document.write(`
                     <span class="c1"># color it</span>
                     <span class="c1"># here real means that it is not an approximate rate</span>
 
-                    <span class="k">if</span> <span class="n">ydots</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">rate_ydots</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">)],</span> <span class="n">weight</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
                                          <span class="n">real</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">highlight</span><span class="o">=</span><span class="n">highlight</span><span class="p">)</span>
                         <span class="k">continue</span>
 
                     <span class="k">try</span><span class="p">:</span>
-                        <span class="n">rate_weight</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">ydots</span><span class="p">[</span><span class="n">r</span><span class="p">])</span>
+                        <span class="n">rate_weight</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rate_ydots</span><span class="p">[</span><span class="n">r</span><span class="p">])</span>
                     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                        <span class="c1"># if ydots[r] is zero, then set the weight</span>
-                        <span class="c1"># to roughly the minimum exponent possible</span>
-                        <span class="c1"># for python floats</span>
+                        <span class="c1"># if rate_ydots[r] is zero, then set the</span>
+                        <span class="c1"># weight to roughly the minimum exponent</span>
+                        <span class="c1"># possible for python floats</span>
                         <span class="n">rate_weight</span> <span class="o">=</span> <span class="o">-</span><span class="mi">308</span>
 
                     <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">invisible_rates</span><span class="p">:</span>
@@ -2711,6 +2734,7 @@ document.write(`
              <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_small_ydot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+             <span class="n">consuming_rate_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">node_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s2">&quot;#444444&quot;</span><span class="p">,</span> <span class="n">node_shape</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
              <span class="n">nuclei_custom_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">curved_edges</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -2746,7 +2770,11 @@ document.write(`
 <span class="sd">            rate threshold below which we do not show a</span>
 <span class="sd">            line corresponding to a rate</span>
 <span class="sd">        show_small_ydot : bool</span>
-<span class="sd">            show visible dashed lines for rates below ydot_cutoff_value</span>
+<span class="sd">            show visible dashed lines for rates below ``ydot_cutoff_value``</span>
+<span class="sd">        consuming_rate_threshold : float</span>
+<span class="sd">            for a nucleus that has multiple rates that consume it, remove</span>
+<span class="sd">            any rates that are ``consuming_rate_threshold`` smaller than</span>
+<span class="sd">            the fastest rate consuming the nucleus.</span>
 <span class="sd">        node_size : float</span>
 <span class="sd">            size of a node (in networkx units)</span>
 <span class="sd">        node_font_size : float</span>
@@ -2762,9 +2790,9 @@ document.write(`
 <span class="sd">            of the Nucleus.</span>
 <span class="sd">        curved_edges : bool</span>
 <span class="sd">            do we use arcs to connect the nodes?</span>
-<span class="sd">        N_range : (tuple, list)</span>
+<span class="sd">        N_range : Iterable</span>
 <span class="sd">            range of neutron number to zoom in on</span>
-<span class="sd">        Z_range : (tuple, list)</span>
+<span class="sd">        Z_range : Iterable</span>
 <span class="sd">            range of proton number to zoom in on</span>
 <span class="sd">        rotate : bool</span>
 <span class="sd">            plot A - 2Z vs. Z instead of the default Z vs. N</span>
@@ -2786,13 +2814,13 @@ document.write(`
 <span class="sd">            that gives labels for the edges in the network connecting</span>
 <span class="sd">            nucleus n1 to n2.</span>
 <span class="sd">        highlight_filter_function : Callable</span>
-<span class="sd">            a function that takes a `Rate` object and returns True or</span>
+<span class="sd">            a function that takes a ``Rate`` object and returns True or</span>
 <span class="sd">            False if we want to highlight the rate edge.</span>
 <span class="sd">        nucleus_filter_function : Callable</span>
-<span class="sd">            a function that takes a `Nucleus` object and returns</span>
+<span class="sd">            a function that takes a ``Nucleus`` object and returns</span>
 <span class="sd">            True or False if it is to be shown as a node.</span>
 <span class="sd">        rate_filter_function : Callable</span>
-<span class="sd">            a function that takes a `Rate` object</span>
+<span class="sd">            a function that takes a ``Rate`` object</span>
 <span class="sd">            and returns True or False if it is to be shown as an edge.</span>
 
 <span class="sd">        Returns</span>
@@ -2856,14 +2884,16 @@ document.write(`
 
         <span class="c1"># get the rates for each reaction</span>
         <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">T</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">comp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">ydots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+            <span class="n">rate_ydots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">ydots</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">rate_ydots</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">G</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_network_graph</span><span class="p">(</span><span class="n">node_nuclei</span><span class="p">,</span>
-                                      <span class="n">ydots</span><span class="o">=</span><span class="n">ydots</span><span class="p">,</span> <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="n">ydot_cutoff_value</span><span class="p">,</span>
+                                      <span class="n">rate_ydots</span><span class="o">=</span><span class="n">rate_ydots</span><span class="p">,</span>
+                                      <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="n">ydot_cutoff_value</span><span class="p">,</span>
                                       <span class="n">hide_xalpha</span><span class="o">=</span><span class="n">hide_xalpha</span><span class="p">,</span> <span class="n">hide_xp</span><span class="o">=</span><span class="n">hide_xp</span><span class="p">,</span>
                                       <span class="n">show_small_ydot</span><span class="o">=</span><span class="n">show_small_ydot</span><span class="p">,</span>
+                                      <span class="n">consuming_rate_threshold</span><span class="o">=</span><span class="n">consuming_rate_threshold</span><span class="p">,</span>
                                       <span class="n">rate_filter_function</span><span class="o">=</span><span class="n">rate_filter_function</span><span class="p">,</span>
                                       <span class="n">highlight_filter_function</span><span class="o">=</span><span class="n">highlight_filter_function</span><span class="p">,</span>
                                       <span class="n">rotated</span><span class="o">=</span><span class="n">rotated</span><span class="p">,</span>
@@ -2889,7 +2919,7 @@ document.write(`
         <span class="n">real_edges</span> <span class="o">=</span> <span class="p">[(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="s2">&quot;real&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
         <span class="n">real_weights</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="s2">&quot;weight&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="s2">&quot;real&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="n">ydots</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">rate_ydots</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">edge_color</span> <span class="o">=</span> <span class="s2">&quot;C0&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">edge_color</span> <span class="o">=</span> <span class="n">real_weights</span>
@@ -2948,7 +2978,7 @@ document.write(`
                                          <span class="n">font_size</span><span class="o">=</span><span class="n">node_font_size</span><span class="p">,</span>
                                          <span class="n">edge_labels</span><span class="o">=</span><span class="n">edge_labels</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">ydots</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">rate_ydots</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">pc</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">collections</span><span class="o">.</span><span class="n">PatchCollection</span><span class="p">(</span><span class="n">real_edges_lc</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">)</span>
             <span class="n">pc</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="n">real_weights</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">rotated</span><span class="p">:</span>

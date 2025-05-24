@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Installing diffeqpy &#8212; pynucastro 2.6.0.post10+g06c1c846 documentation</title>
+    <title>Finding Cycles (with NetworkX) &#8212; pynucastro 2.6.0.post10+g06c1c846 documentation</title>
   
   
   
@@ -46,11 +46,13 @@
     <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'installing-diffeqpy-julia';</script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'network-cycles';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Example of Integrating a Network" href="Example-Integrating-Network-diffeqpy.html" />
-    <link rel="prev" title="Integrating using DifferentialEquations.jl" href="julia.html" />
+    <link rel="next" title="Solving for Nuclear Statistical Equilibrium" href="NSE-example.html" />
+    <link rel="prev" title="Removing Unimportant Rates" href="unimportant-rates.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -201,7 +203,7 @@
 <li class="toctree-l1"><a class="reference internal" href="partition-function.html">Reverse Rates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="approximate-rates.html">Approximate and Modified Rates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="alpha-gamma-approx.html">Approximating alpha-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="double-n-capture.html">Approximating double n-capture</a></li>
@@ -210,7 +212,7 @@
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="unimportant-rates.html">Removing Unimportant Rates</a></li>
-<li class="toctree-l1"><a class="reference internal" href="network-cycles.html">Finding Cycles (with NetworkX)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Finding Cycles (with NetworkX)</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
@@ -222,14 +224,14 @@
 <li class="toctree-l1"><a class="reference internal" href="neutrino-cooling.html">Neutrino Cooling</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exporting Networks</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="networks.html">Exporting Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="python-network.html">Python network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simple-cxx-network.html">Simple C++ network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fortran-network.html">Fortran Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="amrex-astro-cxx-networks.html">AMReX Astro Microphysics Networks</a></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="julia.html">Integrating using DifferentialEquations.jl</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Installing <code class="docutils literal notranslate"><span class="pre">diffeqpy</span></code></a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="julia.html">Integrating using DifferentialEquations.jl</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="installing-diffeqpy-julia.html">Installing <code class="docutils literal notranslate"><span class="pre">diffeqpy</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="Example-Integrating-Network-diffeqpy.html">Example of Integrating a Network</a></li>
 
 </ul>
@@ -394,7 +396,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/installing-diffeqpy-julia.rst?plain=1" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/network-cycles.ipynb?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -411,7 +413,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/installing-diffeqpy-julia.rst" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/network-cycles.ipynb" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -428,7 +430,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Finstalling-diffeqpy-julia.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fnetwork-cycles.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -458,7 +460,7 @@
       
       
       
-      <li><a href="_sources/installing-diffeqpy-julia.rst" target="_blank"
+      <li><a href="_sources/network-cycles.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -468,7 +470,7 @@
 <span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="btn__text-container">.rst</span>
+<span class="btn__text-container">.ipynb</span>
 </a>
 </li>
       
@@ -529,7 +531,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -540,11 +544,25 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Installing diffeqpy</h1>
+    <h1>Finding Cycles (with NetworkX)</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-simple-cno-hot-cno-network">A simple CNO / hot-CNO network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#finding-all-cycles">Finding all cycles</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-thermodynamic-info-to-constrain-cycles">Using thermodynamic info to constrain cycles</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#first-attempt-cut-by-rate-value">First attempt: cut by rate value</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#second-attempt-cutting-by-branching">Second attempt: cutting by branching</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -554,26 +572,271 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="installing-diffeqpy">
-<h1>Installing <code class="docutils literal notranslate"><span class="pre">diffeqpy</span></code><a class="headerlink" href="#installing-diffeqpy" title="Link to this heading">#</a></h1>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>In order to use <code class="docutils literal notranslate"><span class="pre">diffeqpy</span></code>, julia must be installed and in the path, along with <code class="docutils literal notranslate"><span class="pre">DifferentialEquations.jl</span></code> and <code class="docutils literal notranslate"><span class="pre">PyCall.jl</span></code></p>
-</div>
-<p>From the julia prompt, we can install the needed packages:</p>
-<div class="highlight-Julia notranslate"><div class="highlight"><pre><span></span><span class="k">using</span><span class="w"> </span><span class="n">Pkg</span>
-<span class="n">Pkg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;DifferentialEquations&quot;</span><span class="p">)</span>
-<span class="n">Pkg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;PyCall&quot;</span><span class="p">)</span><span class="sb">`</span>
+  <section class="tex2jax_ignore mathjax_ignore" id="finding-cycles-with-networkx">
+<h1>Finding Cycles (with NetworkX)<a class="headerlink" href="#finding-cycles-with-networkx" title="Link to this heading">#</a></h1>
+<p>pynucastro uses <a class="reference external" href="https://networkx.org">NetworkX</a> internally for the main network plots.  The
+graph-representation of a network can be exported so any NetworkX methods can be used on
+the network.</p>
+<p>Here’s an example of finding cycles in a network.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
 </pre></div>
 </div>
-<p>We can then install <code class="docutils literal notranslate"><span class="pre">diffeqpy</span></code> via pip:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
-span.prompt1:before {
-  content: "$ ";
-}
-</style><span class="prompt1">pip<span class="w"> </span>install<span class="w"> </span>diffeqpy</span>
-</pre></div></div><p>It is also suggested that you have Numba installed for better performance.  Numba is a dependency
-of pynucastro so it is likely already installed.</p>
+</div>
+</div>
+<section id="a-simple-cno-hot-cno-network">
+<h2>A simple CNO / hot-CNO network<a class="headerlink" href="#a-simple-cno-hot-cno-network" title="Link to this heading">#</a></h2>
+<p>We’ll create a reaction network that includes CNO, hot-CNO, and some breakout</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;c13&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;n13&quot;</span><span class="p">,</span> <span class="s2">&quot;n14&quot;</span><span class="p">,</span> <span class="s2">&quot;n15&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;o14&quot;</span><span class="p">,</span> <span class="s2">&quot;o15&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;f17&quot;</span><span class="p">,</span> <span class="s2">&quot;f18&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lib</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="n">with_reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">lib</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/a946bfd34416800570564d5ec7184a3d1f965613b4a95b6af19b8e8fe37e4dbd.png" src="_images/a946bfd34416800570564d5ec7184a3d1f965613b4a95b6af19b8e8fe37e4dbd.png" />
+</div>
+</div>
+</section>
+<section id="finding-all-cycles">
+<h2>Finding all cycles<a class="headerlink" href="#finding-all-cycles" title="Link to this heading">#</a></h2>
+<p>Now we can use the <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.create_network_graph" title="pynucastro.networks.rate_collection.RateCollection.create_network_graph"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_network_graph</span></code></a> function to export a NetworkX graph object.  This function can take many of the same filtering options as <code class="docutils literal notranslate"><span class="pre">plot()</span></code>, which is useful for removing links that you don’t want NetworkX to consider.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">G</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">create_network_graph</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>networkx.classes.multidigraph.MultiDiGraph
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we’ll use the <a class="reference external" href="https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.cycles.simple_cycles.html">simple_cycles</a> algorithm to find the cycles.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cycles</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">simple_cycles</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cycles</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 [C12, N13, C13, N14, O15, N15]
+1 [C12, N13, C13, N14, F18, O15, N15]
+2 [C12, N13, O14, N14, O15, N15]
+3 [C12, N13, O14, N14, F18, O15, N15]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Cycle 0 is the traditional CNO cycle and cycle 2 is the hot-CNO cycle.</p>
+<p>Of course, which cycles are actually active depends on the values of the rates linking the nuclei, and therefore the thermodynamic state.  We can look at this.</p>
+</section>
+<section id="using-thermodynamic-info-to-constrain-cycles">
+<h2>Using thermodynamic info to constrain cycles<a class="headerlink" href="#using-thermodynamic-info-to-constrain-cycles" title="Link to this heading">#</a></h2>
+<p>Let’s pick a thermodynamic state this is not hot enough to expect breakout from hot-CNO</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e4</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mf">5.e7</span>
+<span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">set_equal</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rates</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
+<span class="n">rates</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{N13 ⟶ C13 + e⁺ + 𝜈: 7.4302131845073905e-06,
+ O14 ⟶ N14 + e⁺ + 𝜈: 5.8440350154741495e-05,
+ O15 ⟶ N15 + e⁺ + 𝜈: 3.1564204422233696e-05,
+ C12 + p ⟶ N13 + 𝛾: 9.694296692196057e-08,
+ C12 + He4 ⟶ O16 + 𝛾: 6.282274846725595e-28,
+ C13 + p ⟶ N14 + 𝛾: 2.9228808030548344e-07,
+ N13 + p ⟶ O14 + 𝛾: 4.690032675727115e-09,
+ N14 + p ⟶ O15 + 𝛾: 1.0422887941879326e-09,
+ N14 + He4 ⟶ F18 + 𝛾: 3.665206616458353e-33,
+ N15 + p ⟶ O16 + 𝛾: 2.5109263031043633e-08,
+ O16 + p ⟶ F17 + 𝛾: 8.575361649785872e-11,
+ N13 + He4 ⟶ p + O16: 1.6721043456697185e-24,
+ N15 + p ⟶ He4 + C12: 6.12942074025757e-05,
+ O14 + He4 ⟶ p + F17: 1.4505398114303725e-30,
+ F18 + p ⟶ He4 + O15: 1.3881422851714005e-07,
+ 3 He4 ⟶ C12 + 𝛾: 1.3506078675867418e-34}
+</pre></div>
+</div>
+</div>
+</div>
+<section id="first-attempt-cut-by-rate-value">
+<h3>First attempt: cut by rate value<a class="headerlink" href="#first-attempt-cut-by-rate-value" title="Link to this heading">#</a></h3>
+<p>Now we’ll disable any rates that are really small.  We can do this with <code class="docutils literal notranslate"><span class="pre">ydot_cutoff_value</span></code> — this same parameter is available in <code class="docutils literal notranslate"><span class="pre">plot()</span></code>, so we can test it there.</p>
+<p>Looking at the above, we’ll disable any rate that is smaller than <span class="math notranslate nohighlight">\(10^{-20}\)</span></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+              <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="mf">1.e-10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/cdd248775ded994c6fc7bbc0339383a17ca14d8195304ad337e284570ad115f1.png" src="_images/cdd248775ded994c6fc7bbc0339383a17ca14d8195304ad337e284570ad115f1.png" />
+</div>
+</div>
+<p>Now a lot of rates connecting to the <span class="math notranslate nohighlight">\(\mathrm{F}\)</span> isotopes are gone.</p>
+<p>Now let’s re-export the network graph and look for cycles</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">G</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">create_network_graph</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span>
+                            <span class="n">rate_ydots</span><span class="o">=</span><span class="n">rates</span><span class="p">,</span> <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="mf">1.e-20</span><span class="p">,</span>
+                            <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cycles</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">simple_cycles</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cycles</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 [C12, N13, C13, N14, O15, N15]
+1 [C12, N13, O14, N14, O15, N15]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we see that only the CNO and hot-CNO cycles exist for these conditions.</p>
+</section>
+<section id="second-attempt-cutting-by-branching">
+<h3>Second attempt: cutting by branching<a class="headerlink" href="#second-attempt-cutting-by-branching" title="Link to this heading">#</a></h3>
+<p>Instead of using the value of the rate, we can instead look at each nucleus and consider all the rates that consume it.  We can filter out any rates that are below a threshold compared to the maximum rate consuming that nucleus.  This is done via <code class="docutils literal notranslate"><span class="pre">consuming_rate_threshold</span></code>.</p>
+<p>First let’s visualize this.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+              <span class="n">consuming_rate_threshold</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/3b38ea0f3ab30bca005734f03b0a1bd15129400e1aec730b4264ddd18254216a.png" src="_images/3b38ea0f3ab30bca005734f03b0a1bd15129400e1aec730b4264ddd18254216a.png" />
+</div>
+</div>
+<p>We see that this has filtered out the proton capture on <span class="math notranslate nohighlight">\({}^{13}\mathrm{N}\)</span>, removing the hot-CNO cycle.</p>
+<p>Now let’s recreate the network graph using this filtering.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">G</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">create_network_graph</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span>
+                            <span class="n">rate_ydots</span><span class="o">=</span><span class="n">rates</span><span class="p">,</span> <span class="n">consuming_rate_threshold</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+                            <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cycles</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">simple_cycles</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cycles</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 [C12, N13, C13, N14, O15, N15]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now, as expected, only a single cycle is really dominate under these conditions — the CNO cycle.</p>
+<p>What happens if we make it hotter?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T</span> <span class="o">=</span> <span class="mf">5.e8</span>
+<span class="n">rates</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">G</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">create_network_graph</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span>
+                            <span class="n">rate_ydots</span><span class="o">=</span><span class="n">rates</span><span class="p">,</span> <span class="n">consuming_rate_threshold</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+                            <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cycles</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">simple_cycles</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cycles</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 [C12, N13, O14, N14, O15, N15]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we see that the hot-CNO cycle is the one that dominates!</p>
+</section>
+</section>
 </section>
 
 
@@ -588,20 +851,20 @@ of pynucastro so it is likely already installed.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="julia.html"
+       href="unimportant-rates.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Integrating using DifferentialEquations.jl</p>
+        <p class="prev-next-title">Removing Unimportant Rates</p>
       </div>
     </a>
     <a class="right-next"
-       href="Example-Integrating-Network-diffeqpy.html"
+       href="NSE-example.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Example of Integrating a Network</p>
+        <p class="prev-next-title">Solving for Nuclear Statistical Equilibrium</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -611,6 +874,27 @@ of pynucastro so it is likely already installed.</p>
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-simple-cno-hot-cno-network">A simple CNO / hot-CNO network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#finding-all-cycles">Finding all cycles</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-thermodynamic-info-to-constrain-cycles">Using thermodynamic info to constrain cycles</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#first-attempt-cut-by-rate-value">First attempt: cut by rate value</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#second-attempt-cutting-by-branching">Second attempt: cutting by branching</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
