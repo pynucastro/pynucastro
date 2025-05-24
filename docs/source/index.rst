@@ -82,6 +82,7 @@ codes.
    approximate-rates
    nse-protons.ipynb
    unimportant-rates.ipynb
+   network-cycles.ipynb
 
 .. toctree::
    :maxdepth: 1

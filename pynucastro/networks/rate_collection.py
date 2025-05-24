@@ -1922,7 +1922,8 @@ class RateCollection:
     def create_network_graph(self, node_nuclei, *,
                              nuclei_custom_labels=None,
                              rotated=False,
-                             ydots=None, ydot_cutoff_value=None,
+                             rate_ydots=None, ydot_cutoff_value=None,
+                             consuming_rate_threshold=None,
                              show_small_ydot=False,
                              hide_xalpha=False, hide_xp=False,
                              rate_filter_function=None,
@@ -1942,14 +1943,18 @@ class RateCollection:
             the nuclei's isotope symbol is used.
         rotated : bool
             arrange the nodes as A - 2Z vs. Z or the default Z vs. N?
-        ydots : dict(Rate)
+        rate_ydots : dict(Rate)
             the contribution of each rate to a nuclei's dY/dt evolution.
             This can be obtained from :py:meth:`.evaluate_rates`
         ydot_cutoff_value : float
             rate threshold below which we do not add an edge connecting
             nuclei.
+        consuming_rate_threshold : float
+            for a nucleus that has multiple rates that consume it, remove
+            any rates that are ``consuming_rate_threshold`` smaller than
+            the fastest rate consuming the nucleus.
         show_small_ydot : bool
-            create edges for rates below ydot_cutoff_value.  They will have
+            create edges for rates below ``ydot_cutoff_value``.  They will have
             the property "real" set to -1.
         hide_xalpha : bool
             don't create edges connecting alpha particles and heavy
@@ -1959,11 +1964,11 @@ class RateCollection:
             don't create edges connecting protons and heavy
             nuclei in reactions of the form A(p,X)B or A(X,p)B.
         rate_filter_function : Callable
-            a function that takes a `Rate` object and returns True
+            a function that takes a ``Rate`` object and returns True
             or False if an edge should be created for the nuclei
             it links.
         highlight_filter_function : Callable
-            a function that takes a `Rate` object and returns True or
+            a function that takes a ``Rate`` object and returns True or
             False if we want to highlight the edge in the network.  This
             sets the "highlight" property of the edge.
 
@@ -1991,12 +1996,29 @@ class RateCollection:
             else:
                 G.labels[n] = fr"${n.pretty}$"
 
-        # Do not show rates on the graph if their corresponding ydot is less than ydot_cutoff_value
+        # Do not show rates on the graph if their corresponding ydot
+        # is less than ydot_cutoff_value
         invisible_rates = set()
         if ydot_cutoff_value is not None:
             for r in self.rates:
-                if ydots[r] < ydot_cutoff_value:
+                if rate_ydots[r] < ydot_cutoff_value:
                     invisible_rates.add(r)
+
+        # Consider each nucleus heavier than He and all the rates that
+        # consume it.  If desired, only show rates that are within a
+        # threshold of the fastest rate consuming that nucleus
+        if consuming_rate_threshold is not None:
+            assert consuming_rate_threshold > 0.0
+            for n in node_nuclei:
+                if n.Z <= 2.0:
+                    continue
+                consump_rates = [r for r in self.rates if n in r.reactants]
+                if len(consump_rates) == 0:
+                    continue
+                max_rate = max(rate_ydots[r] for r in consump_rates)
+                for r in consump_rates:
+                    if rate_ydots[r] < consuming_rate_threshold * max_rate:
+                        invisible_rates.add(r)
 
         # edges for the rates that are explicitly in the network
         for n in node_nuclei:
@@ -2028,17 +2050,17 @@ class RateCollection:
                     # color it
                     # here real means that it is not an approximate rate
 
-                    if ydots is None:
+                    if rate_ydots is None:
                         G.add_edges_from([(n, p)], weight=0.5,
                                          real=1, highlight=highlight)
                         continue
 
                     try:
-                        rate_weight = math.log10(ydots[r])
+                        rate_weight = math.log10(rate_ydots[r])
                     except ValueError:
-                        # if ydots[r] is zero, then set the weight
-                        # to roughly the minimum exponent possible
-                        # for python floats
+                        # if rate_ydots[r] is zero, then set the
+                        # weight to roughly the minimum exponent
+                        # possible for python floats
                         rate_weight = -308
 
                     if r in invisible_rates:
@@ -2087,6 +2109,7 @@ class RateCollection:
              outfile=None,
              size=(800, 600), dpi=100, title=None,
              ydot_cutoff_value=None, show_small_ydot=False,
+             consuming_rate_threshold=None,
              node_size=1000, node_font_size=12, node_color="#444444", node_shape="o",
              nuclei_custom_labels=None,
              curved_edges=False,
@@ -2122,7 +2145,11 @@ class RateCollection:
             rate threshold below which we do not show a
             line corresponding to a rate
         show_small_ydot : bool
-            show visible dashed lines for rates below ydot_cutoff_value
+            show visible dashed lines for rates below ``ydot_cutoff_value``
+        consuming_rate_threshold : float
+            for a nucleus that has multiple rates that consume it, remove
+            any rates that are ``consuming_rate_threshold`` smaller than
+            the fastest rate consuming the nucleus.
         node_size : float
             size of a node (in networkx units)
         node_font_size : float
@@ -2138,9 +2165,9 @@ class RateCollection:
             of the Nucleus.
         curved_edges : bool
             do we use arcs to connect the nodes?
-        N_range : (tuple, list)
+        N_range : Iterable
             range of neutron number to zoom in on
-        Z_range : (tuple, list)
+        Z_range : Iterable
             range of proton number to zoom in on
         rotate : bool
             plot A - 2Z vs. Z instead of the default Z vs. N
@@ -2162,13 +2189,13 @@ class RateCollection:
             that gives labels for the edges in the network connecting
             nucleus n1 to n2.
         highlight_filter_function : Callable
-            a function that takes a `Rate` object and returns True or
+            a function that takes a ``Rate`` object and returns True or
             False if we want to highlight the rate edge.
         nucleus_filter_function : Callable
-            a function that takes a `Nucleus` object and returns
+            a function that takes a ``Nucleus`` object and returns
             True or False if it is to be shown as a node.
         rate_filter_function : Callable
-            a function that takes a `Rate` object
+            a function that takes a ``Rate`` object
             and returns True or False if it is to be shown as an edge.
 
         Returns
@@ -2232,14 +2259,16 @@ class RateCollection:
 
         # get the rates for each reaction
         if rho is not None and T is not None and comp is not None:
-            ydots = self.evaluate_rates(rho, T, comp)
+            rate_ydots = self.evaluate_rates(rho, T, comp)
         else:
-            ydots = None
+            rate_ydots = None
 
         G = self.create_network_graph(node_nuclei,
-                                      ydots=ydots, ydot_cutoff_value=ydot_cutoff_value,
+                                      rate_ydots=rate_ydots,
+                                      ydot_cutoff_value=ydot_cutoff_value,
                                       hide_xalpha=hide_xalpha, hide_xp=hide_xp,
                                       show_small_ydot=show_small_ydot,
+                                      consuming_rate_threshold=consuming_rate_threshold,
                                       rate_filter_function=rate_filter_function,
                                       highlight_filter_function=highlight_filter_function,
                                       rotated=rotated,
@@ -2265,7 +2294,7 @@ class RateCollection:
         real_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 1]
         real_weights = [e["weight"] for u, v, e in G.edges(data=True) if e["real"] == 1]
 
-        if ydots is None:
+        if rate_ydots is None:
             edge_color = "C0"
         else:
             edge_color = real_weights
@@ -2324,7 +2353,7 @@ class RateCollection:
                                          font_size=node_font_size,
                                          edge_labels=edge_labels)
 
-        if ydots is not None:
+        if rate_ydots is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
             pc.set_array(real_weights)
             if not rotated:
