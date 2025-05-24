@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.rate module &#8212; pynucastro 2.6.0.post10+g06c1c846 documentation</title>
+    <title>pynucastro.rates.rate module &#8212; pynucastro 2.6.0.post11+g44c21491 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=91f2861c"></script>
+    <script src="_static/documentation_options.js?v=fa2de4d1"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -664,9 +664,7 @@ to evaluate the rate with (not needed for ReacLib rates).</p></li>
 <dd><p>Evaluate drate/d(y_i), the derivative of the rate with
 respect to <code class="docutils literal notranslate"><span class="pre">y_i</span></code>.  This rate term has the full composition
 and density dependence, i.e.:</p>
-<blockquote>
-<div><p>rate = rho**n Y1**a Y2**b … N_A &lt;sigma v&gt;</p>
-</div></blockquote>
+<p>rate = ρ**n Y1**a Y2**b … N_A &lt;σv&gt;</p>
 <p>The derivative is only non-zero if this term depends on
 nucleus <code class="docutils literal notranslate"><span class="pre">y_i</span></code>.</p>
 <dl class="field-list simple">
@@ -711,7 +709,13 @@ number.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.id">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#pynucastro.rates.rate.Rate.id" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>the rate’s id string</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.jacobian_string_py">
@@ -841,6 +845,11 @@ reaction sequence.  Forward rates are those with Q &gt;= 0.</p>
 <dt class="sig sig-object py" id="pynucastro.rates.rate.RateSource.source">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#RateSource.source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.RateSource.source" title="Link to this definition">#</a></dt>
 <dd><p>Returns the source of a rate given its label, and None if not found.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -872,7 +881,7 @@ reaction sequence.  Forward rates are those with Q &gt;= 0.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Tfactors.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.Tfactors#7fbe9609a790&lt;T9:float64,T9i:float64,T913:float64,T913i:float64,T953:float64,lnT9:float64&gt;</span></em><a class="headerlink" href="#pynucastro.rates.rate.Tfactors.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.Tfactors#7f408a2d5f50&lt;T9:float64,T9i:float64,T913:float64,T913i:float64,T953:float64,lnT9:float64&gt;</span></em><a class="headerlink" href="#pynucastro.rates.rate.Tfactors.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

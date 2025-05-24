@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.6.0.post10+g06c1c846 documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.6.0.post11+g44c21491 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=91f2861c"></script>
+    <script src="../../../_static/documentation_options.js?v=fa2de4d1"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -916,6 +916,13 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;the rate&#39;s id string</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate_id</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Rate.heaviest">
@@ -1191,7 +1198,7 @@ document.write(`
 <span class="sd">        respect to ``y_i``.  This rate term has the full composition</span>
 <span class="sd">        and density dependence, i.e.:</span>
 
-<span class="sd">          rate = rho**n Y1**a Y2**b ... N_A &lt;sigma v&gt;</span>
+<span class="sd">        rate = ρ**n Y1**a Y2**b ... N_A &lt;σv&gt;</span>
 
 <span class="sd">        The derivative is only non-zero if this term depends on</span>
 <span class="sd">        nucleus ``y_i``.</span>
@@ -1284,7 +1291,12 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.RateSource.source">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">source</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the source of a rate given its label, and None if not found.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the source of a rate given its label, and None if not found.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        label : str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">labels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">label</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span></div>
 </div>

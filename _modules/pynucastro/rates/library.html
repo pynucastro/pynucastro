@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.library &#8212; pynucastro 2.6.0.post10+g06c1c846 documentation</title>
+    <title>pynucastro.rates.library &#8212; pynucastro 2.6.0.post11+g44c21491 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=91f2861c"></script>
+    <script src="../../../_static/documentation_options.js?v=fa2de4d1"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -572,8 +572,21 @@ document.write(`
 <div class="viewcode-block" id="capitalize_rid">
 <a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.capitalize_rid">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">capitalize_rid</span><span class="p">(</span><span class="n">rid</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">):</span>
-    <span class="c1"># Used to capitalize rid or fname given the delimiter</span>
-    <span class="c1"># delimiter is usually either &quot;_&quot; or &quot; &quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Capitalize a ``Rate`` ``rid`` or ``fname`` given the delimiter.</span>
+<span class="sd">    The delimiter is usually either &quot;_&quot; or &quot; &quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rid : str</span>
+<span class="sd">        the rate&#39;s id</span>
+<span class="sd">    delimiter : str</span>
+<span class="sd">        the delimiter used to split the rid into substrings</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">rid_nucs</span> <span class="o">=</span> <span class="n">rid</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">delimiter</span><span class="p">)</span>
     <span class="n">rid_mod</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1225,60 +1238,67 @@ document.write(`
 <div class="viewcode-block" id="RateFilter">
 <a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.RateFilter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RateFilter</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;RateFilter filters out a specified rate or set of rates</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A RateFilter filters out a specified rate or set of rates</span>
 <span class="sd">    A RateFilter stores selection rules specifying a rate or group of</span>
 <span class="sd">    rates to assist in searching for rates stored in a Library.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    reactants : str, Nucleus, Iterable(Nucleus, str)</span>
+<span class="sd">        the allowed reactant nuclei of the rates</span>
+<span class="sd">    products :  str, Nucleus, Iterable(Nucleus, str)</span>
+<span class="sd">        the allowed products of the rates</span>
+<span class="sd">    exact : bool</span>
+<span class="sd">        if ``True``, products or reactants must match exactly.</span>
+<span class="sd">        if ``False``, then all products or reactants must be found</span>
+<span class="sd">        in a comparison rate, but the comparison may contain</span>
+<span class="sd">        additional products or reactants</span>
+<span class="sd">    reverse : bool</span>
+<span class="sd">        if ``True``, only match reverse-derived rates</span>
+<span class="sd">        if ``False``, only match directly-derived rates</span>
+<span class="sd">        if None, you don&#39;t care, match both</span>
+<span class="sd">    min_reactants : int</span>
+<span class="sd">        match Rates that have at least this many reactants</span>
+<span class="sd">    min_products : int</span>
+<span class="sd">        match Rates that have at least this many products</span>
+<span class="sd">    max_reactants : int</span>
+<span class="sd">        match Rates that have no more than this many reactants</span>
+<span class="sd">    max_products : int</span>
+<span class="sd">        match Rates that have no more than this many products</span>
+<span class="sd">    filter_function : Callable</span>
+<span class="sd">        a function (``Rate`` -&gt; ``bool``) that can take a single rate</span>
+<span class="sd">        as an argument may be used to specify additional criteria,</span>
+<span class="sd">        returning ``True`` if the rate meets all of them, ``False``</span>
+<span class="sd">        otherwise</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Create a filter that finds all proton capture and proton-burning reactions</span>
+<span class="sd">    in a ``Library`` instance ``my_library``:</span>
+
+<span class="sd">    &gt;&gt;&gt; pcap_filter = RateFilter(reactants=&#39;p&#39;, exact=False)</span>
+<span class="sd">    &gt;&gt;&gt; pcap_library = my_library.filter(pcap_filter)</span>
+
+<span class="sd">    or you can use ``Nucleus``:</span>
+
+<span class="sd">    &gt;&gt;&gt; pcap_filter = RateFilter(reactants=Nucleus(&#39;p&#39;), exact=False)</span>
+<span class="sd">    &gt;&gt;&gt; pcap_library = my_library.filter(pcap_filter)</span>
+
+<span class="sd">    Create a filter that finds O16(g,a)C12.  Note:</span>
+
+<span class="sd">    * photons/gammas are not treated as nuclides, so they cannot be</span>
+<span class="sd">      a reactant or product</span>
+<span class="sd">    * this rate is in the ReacLib library used here as</span>
+<span class="sd">      O16 --&gt; He4 + C12 --- you need to know how your library treats rates</span>
+
+<span class="sd">    &gt;&gt;&gt; cago_filter = RateFilter(reactants=&#39;o16&#39;, products=[&#39;c12&#39;, &#39;a&#39;])</span>
+<span class="sd">    &gt;&gt;&gt; cago_library = my_library.filter(cago_filter)</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                  <span class="n">reverse</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">min_products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filter_function</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new RateFilter with the given selection rules</span>
-
-<span class="sd">        Keyword Arguments:</span>
-<span class="sd">            reactants -- Description of the reactants as one of:</span>
-<span class="sd">                1. a list of Nucleus objects</span>
-<span class="sd">                2. a list of string descriptions of reactant nuclides</span>
-<span class="sd">                   these strings must be parsable by Nucleus</span>
-<span class="sd">                3. a single reactant Nucleus</span>
-<span class="sd">                4. a single string description of the reactant nuclide</span>
-<span class="sd">            products  -- Description of the products in same form as above</span>
-<span class="sd">            exact     -- boolean,</span>
-<span class="sd">                         if True, products or reactants must match exactly [default]</span>
-<span class="sd">                         if False, then all products or reactants must be found</span>
-<span class="sd">                         in a comparison rate, but the comparison may contain</span>
-<span class="sd">                         additional products or reactants</span>
-<span class="sd">            reverse   -- boolean,</span>
-<span class="sd">                         if True, only match reverse-derived rates</span>
-<span class="sd">                         if False, only match directly-derived rates</span>
-<span class="sd">                         if None, you don&#39;t care, match both [default]</span>
-<span class="sd">            min_reactants -- int, match Rates that have at least this many reactants</span>
-<span class="sd">            min_products  -- int, match Rates that have at least this many products</span>
-<span class="sd">            max_reactants -- int, match Rates that have no more than this many reactants</span>
-<span class="sd">            max_products  -- int, match Rates that have no more than this many products</span>
-<span class="sd">            filter_function -- callable (Rate -&gt; bool),</span>
-<span class="sd">                               a callable that can take a single rate as an argument</span>
-<span class="sd">                               may be used to specify additional criteria, returning</span>
-<span class="sd">                               True if the rate meets all of them, False otherwise</span>
-
-<span class="sd">        Examples:</span>
-<span class="sd">            Create a filter that finds all proton capture and proton-burning reactions</span>
-<span class="sd">            in a Library instance my_library::</span>
-<span class="sd">                &gt;&gt;&gt; pcap_filter = RateFilter(reactants=&#39;p&#39;, exact=False)</span>
-<span class="sd">                &gt;&gt;&gt; pcap_library = my_library.filter(pcap_filter)</span>
-<span class="sd">            or you can use Nucleus::</span>
-<span class="sd">                &gt;&gt;&gt; pcap_filter = RateFilter(reactants=Nucleus(&#39;p&#39;), exact=False)</span>
-<span class="sd">                &gt;&gt;&gt; pcap_library = my_library.filter(pcap_filter)</span>
-
-<span class="sd">            Create a filter that finds C12 (a,g) O16</span>
-<span class="sd">            Notes:</span>
-<span class="sd">                + photons/gammas are not treated as nuclides, so they cannot be</span>
-<span class="sd">                a reactant or product</span>
-<span class="sd">                + this rate is in the ReacLib library used here as</span>
-<span class="sd">                O16 --&gt; He4 C12 -- you need to know how your library treats rates::</span>
-<span class="sd">                    &gt;&gt;&gt; cago_filter = RateFilter(reactants=&#39;o16&#39;, products=[&#39;c12&#39;, &#39;a&#39;])</span>
-<span class="sd">                    &gt;&gt;&gt; cago_library = my_library.filter(cago_filter)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exact</span> <span class="o">=</span> <span class="n">exact</span>
@@ -1324,7 +1344,18 @@ document.write(`
 <div class="viewcode-block" id="RateFilter.matches">
 <a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.RateFilter.matches">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Given a Rate r, see if it matches this RateFilter. &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given a Rate r, see if it matches this RateFilter.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        r : Rate</span>
+<span class="sd">            the rate we are looking for</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># do cheaper checks first</span>
         <span class="n">matches_reverse</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">matches_min_reactants</span> <span class="o">=</span> <span class="kc">True</span>
@@ -1362,7 +1393,13 @@ document.write(`
 <div class="viewcode-block" id="RateFilter.invert">
 <a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.RateFilter.invert">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">invert</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Return a RateFilter matching the inverse rate. &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a RateFilter matching the inverse rate.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        RateFilter</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">newfilter</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">,</span>
                                <span class="n">products</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span>
                                <span class="n">exact</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">exact</span><span class="p">,</span>

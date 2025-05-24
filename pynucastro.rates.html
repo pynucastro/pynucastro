@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates package &#8212; pynucastro 2.6.0.post10+g06c1c846 documentation</title>
+    <title>pynucastro.rates package &#8212; pynucastro 2.6.0.post11+g44c21491 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=91f2861c"></script>
+    <script src="_static/documentation_options.js?v=fa2de4d1"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -573,8 +573,17 @@ document.write(`
 <span class="sig-prename descclassname"><span class="pre">pynucastro.rates.</span></span><span class="sig-name descname"><span class="pre">load_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates.html#load_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.load_rate" title="Link to this definition">#</a></dt>
 <dd><p>Try to load a rate of any type.</p>
 <dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rfile</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – the name of a file containing the reaction rate parameterization.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate">Rate</a></p>
+</dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="pynucastro.rates.files.html#pynucastro.rates.files.RateFileError" title="pynucastro.rates.files.RateFileError"><code class="xref py py-class docutils literal notranslate"><span class="pre">RateFileError</span></code></a>, <a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.UnsupportedNucleus" title="pynucastro.nucdata.nucleus.UnsupportedNucleus"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnsupportedNucleus</span></code></a></p>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="pynucastro.rates.files.html#pynucastro.rates.files.RateFileError" title="pynucastro.rates.files.RateFileError"><strong>pynucastro.rates.files.RateFileError</strong></a> – </p></li>
+<li><p><a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.UnsupportedNucleus" title="pynucastro.nucdata.nucleus.UnsupportedNucleus"><strong>pynucastro.nucdata.nucleus.UnsupportedNucleus</strong></a> – </p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
