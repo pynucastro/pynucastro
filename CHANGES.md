@@ -17,7 +17,7 @@
 
   * Fix `README.md` logo for PyPI (#973)
 
-  * Add a new BaryonConservationError exception to `Rate` that
+  * Add a new `BaryonConservationError` exception to `Rate` that
     ensures a rate is balanced with respect to baryons. (#975)
 
   * Added a new CI test that directly compares a `PythonNetwork` and
@@ -35,7 +35,7 @@
 
   * update to the latest ReacLib database (#917)
 
-  * don't use std::pow in constexpr in a `SimpleCxxNetwork` as that is
+  * don't use `std::pow` in constexpr in a `SimpleCxxNetwork` as that is
     C++23 and not yet widely supported.  (#953)
 
   * allow the nodes in a network plot to have custom names (#946)
@@ -104,7 +104,7 @@
 
   * codespell fixes (#897)
 
-  * AmrexAstroCxxNetwork now ifdefs out neutrinos (#884)
+  * `AmrexAstroCxxNetwork` now ifdefs out neutrinos (#884)
 
   * officially support python 3.13 (#860)
 
@@ -149,7 +149,7 @@
 
   * Clean-up unused class data in `SimpleCxxNetwork` (#845)
 
-  * Clean up the rate module by separating it into submodules (#840, #842)
+  * Clean up the `rate` module by separating it into submodules (#840, #842)
 
   * Add the ability to label edges in network plots (#837)
 
@@ -244,7 +244,7 @@
 
   * pylint fixes (#733)
 
-  * Composition now allows for direct key-value indexing (#731),
+  * `Composition` now allows for direct key-value indexing (#731),
     and has a new `set_random()` method (#728)
 
   * The `screen5` screening routine has been added (#730)
