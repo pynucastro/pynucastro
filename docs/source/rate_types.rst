@@ -173,7 +173,7 @@ where :math:`n_A` is the number of nucleus :math:`A` in the reaction.
    is the responsibility of the network.
 
 
-Similarly,  :func:`jacobian_string_py <pynucastro.rates.rate.ReacLibRate.jacobian_string_py>`
+Similarly,  :func:`jacobian_string_py <pynucastro.rates.rate.Rate.jacobian_string_py>`
 outputs the contribution to the Jacobian for this rate.
 
 
