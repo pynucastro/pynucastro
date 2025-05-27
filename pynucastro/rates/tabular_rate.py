@@ -228,7 +228,7 @@ class TabularRate(Rate):
         # we should initialize this somehow
         self.weak_type = ""
 
-        self._read_from_file(rfile)
+        self._read_from_file(self.rfile_path)
 
         self._set_rhs_properties()
         self._set_screening()
