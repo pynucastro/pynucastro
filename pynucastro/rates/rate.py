@@ -428,6 +428,13 @@ class Rate:
 
     @property
     def id(self):
+        """the rate's id string
+
+        Returns
+        -------
+        str
+
+        """
         return self.get_rate_id()
 
     def heaviest(self):
@@ -674,7 +681,7 @@ class Rate:
         respect to ``y_i``.  This rate term has the full composition
         and density dependence, i.e.:
 
-          rate = rho**n Y1**a Y2**b ... N_A <sigma v>
+        rate = ρ**n Y1**a Y2**b ... N_A <σv>
 
         The derivative is only non-zero if this term depends on
         nucleus ``y_i``.
@@ -761,7 +768,12 @@ class RateSource:
 
     @classmethod
     def source(cls, label: str) -> dict[str, str] | None:
-        """Returns the source of a rate given its label, and None if not found."""
+        """Returns the source of a rate given its label, and None if not found.
+
+        Parameters
+        ----------
+        label : str
+        """
 
         return cls.labels.get(label.lower().strip())
 
