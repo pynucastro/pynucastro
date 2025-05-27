@@ -2,6 +2,7 @@ import io
 import math
 from enum import Enum
 from pathlib import Path
+import re
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -273,8 +274,6 @@ class TabularRate(Rate):
 
         """
 
-        print("trying to read", table_file)
-
         # just store the filename as the original source
         self.original_source = f"{table_file}"
 
@@ -296,11 +295,22 @@ class TabularRate(Rate):
         with open(table_file) as tabular_file:
             for i, line in enumerate(tabular_file):
                 if i == 0:
-                    # skip the initial "!" and split
-                    # this should give [reactant, "->", product, "other stuff"]
-                    fields = line[1:].split()
-                    reactant = fields[0]
-                    product = fields[2]
+                    try:
+                        # we have a line of the form:
+                        # !65ni -> 65co, e- capture
+                        # split it
+                        g = re.match(r"!([\da-zA-Z]*) \-\> ([\da-zA-Z]*)[\w,\-]*", line)
+                        reactant = g.group(1)
+                        product = g.group(2)
+                    except AttributeError:
+                        # we have a line including spins, of the form:
+                        # !17F (5/2+, 1/2+) -> 17O    e-capture   with screening effects
+                        # this is mainly Suzuki rates.  The stuff in the (...) giving
+                        # the spins can be complicated, but the key is that it is in
+                        # parentheses.
+                        g = re.match(r"!([\da-zA-Z]*)\s*\([\w\:\=\d/\+,\.\s\_\{\}]*\)\s+\-\> ([\da-zA-Z]*)[\w,\-]*", line)
+                        reactant = g.group(1)
+                        product = g.group(2)
                     continue
                 elif line.startswith("!"):
                     continue

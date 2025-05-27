@@ -870,10 +870,11 @@ class TabularLibrary(Library):
         trates = []
 
         for source in ordering:
-            for _, _, filenames in sorted(walk(self.lib_path / Path(source))):
+            source_dir = self.lib_path / Path(source)
+            for _, _, filenames in sorted(walk(source_dir)):
                 for f in sorted(filenames):
                     if f.endswith("electroncapture.dat") or f.endswith("betadecay.dat"):
-                        r = TabularRate(rfile=f)
+                        r = TabularRate(rfile=source_dir / f)
                         if r in trates:
                             # we are looping over the various libraries in order
                             # from lowest precedence to highest.  So if the rate
