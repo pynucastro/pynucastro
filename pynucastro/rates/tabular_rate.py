@@ -327,8 +327,8 @@ class TabularRate(Rate):
                 t_data2d.append(line.split())
 
         try:
-            self.reactants.append(Nucleus.from_cache(reactant))
-            self.products.append(Nucleus.from_cache(product))
+            self.reactants.append(Nucleus.from_cache(reactant.lower()))
+            self.products.append(Nucleus.from_cache(product.lower()))
         except UnsupportedNucleus as ex:
             raise RateFileError(f'Nucleus objects could not be identified in {self.original_source}') from ex
 
