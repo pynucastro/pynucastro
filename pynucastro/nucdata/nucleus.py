@@ -141,16 +141,15 @@ class Nucleus:
         else:
             if e := re.match(r"([a-zA-Z]+)(\d*)", name):
                 self.el = e.group(1).title()  # chemical symbol
-                assert self.el
                 self.A = int(e.group(2))
-                self.short_spec_name = name
             elif e := re.match(r"(\d*)([a-zA-Z]*)", name):
                 self.el = e.group(2).title()  # chemical symbol
-                assert self.el
                 self.A = int(e.group(1))
-                self.short_spec_name = f"{self.el}{self.A}"
-                self.raw = f"{self.el}{self.A}"
+
+            assert self.el
             assert self.A >= 0
+            self.short_spec_name = f"{self.el.lower()}{self.A}"
+            self.raw = f"{self.el.lower()}{self.A}"
             self.caps_name = self.short_spec_name.capitalize()
 
         # use lowercase element abbreviation regardless the case of the input
