@@ -294,6 +294,7 @@ class TabularRate(Rate):
         t_data2d = []
         reactant = None
         product = None
+        header_lines = 0
         with open(table_file) as tabular_file:
             for i, line in enumerate(tabular_file):
                 if i == 0:
@@ -313,8 +314,10 @@ class TabularRate(Rate):
                         g = re.match(r"!([\da-zA-Z]*)\s*\([\w\:\=\d/\+,\.\s\_\{\}]*\)\s+\-\> ([\da-zA-Z]*)[\w,\-]*", line)
                         reactant = g.group(1)
                         product = g.group(2)
+                    header_lines += 1
                     continue
                 if line.startswith("!"):
+                    header_lines += 1
                     continue
                 line = line.strip()
                 # skip empty lines
@@ -335,6 +338,7 @@ class TabularRate(Rate):
         self.tabular_data_table = np.array(t_data2d, dtype=np.float64)
 
         # get the number of rhoy lines
+        self.table_header_lines = header_lines
         self.table_rhoy_lines = len(np.unique(self.tabular_data_table[:, 0]))
         self.table_temp_lines = len(np.unique(self.tabular_data_table[:, 1]))
         self.table_num_vars = 6  # Hard-coded number of variables in tables for now.
