@@ -18,7 +18,20 @@ from .tabular_rate import TableIndex, TableInterpolator, TabularRate
 def load_rate(rfile=None):
     """Try to load a rate of any type.
 
-    :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
+    Parameters
+    ----------
+    rfile : str
+        the name of a file containing the reaction rate parameterization.
+
+    Returns
+    -------
+    Rate
+
+    Raises
+    ------
+    :py:obj:`pynucastro.rates.files.RateFileError`,
+    :py:obj:`pynucastro.nucdata.nucleus.UnsupportedNucleus`
+
     """
 
     try:
