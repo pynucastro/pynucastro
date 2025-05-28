@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Nuclear Properties &#8212; pynucastro 2.6.0.post11+g44c21491 documentation</title>
+    <title>Nuclear Properties &#8212; pynucastro 2.6.0.post12+g8e6005a3 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=fa2de4d1"></script>
+    <script src="_static/documentation_options.js?v=9265eb5b"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -592,6 +592,16 @@ mass are provided in <code class="docutils literal notranslate"><span class="pre
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">he4</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Nuclei names are case-insensitive and the atomic weight can come before or after the element name.
+All of these are equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ni56&quot;</span><span class="p">)</span>
+<span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;Ni56&quot;</span><span class="p">)</span>
+<span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;56ni&quot;</span><span class="p">)</span>
+</pre></div>
 </div>
 </div>
 <p>From this we can access the member data:</p>

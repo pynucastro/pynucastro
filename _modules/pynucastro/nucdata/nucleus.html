@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.nucdata.nucleus &#8212; pynucastro 2.6.0.post11+g44c21491 documentation</title>
+    <title>pynucastro.nucdata.nucleus &#8212; pynucastro 2.6.0.post12+g8e6005a3 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=fa2de4d1"></script>
+    <script src="../../../_static/documentation_options.js?v=9265eb5b"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -514,7 +514,8 @@ document.write(`
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    name : str</span>
-<span class="sd">        name of the nucleus (e.g. &quot;c12&quot;)</span>
+<span class="sd">        name of the nucleus (e.g. &quot;c12&quot; or &quot;12C&quot;).  This is</span>
+<span class="sd">        case-insensitive.</span>
 <span class="sd">    dummy : bool</span>
 <span class="sd">        a dummy nucleus is one that we can use where</span>
 <span class="sd">        a nucleus is needed, but it is not considered</span>
@@ -614,16 +615,21 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">pretty</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\mathrm</span><span class="si">{p}</span><span class="s2">_\mathrm</span><span class="si">{NSE}</span><span class="s2">&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">caps_name</span> <span class="o">=</span> <span class="s2">&quot;p_NSE&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nse</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;al-6&quot;</span><span class="p">,</span> <span class="s2">&quot;al*6&quot;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">UnsupportedNucleus</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;al-6&quot;</span><span class="p">,</span> <span class="s2">&quot;al*6&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">UnsupportedNucleus</span><span class="p">(</span><span class="s2">&quot;isomers of Al26 are not currently supported&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">e</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([a-zA-Z]*)(\d*)&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">el</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>  <span class="c1"># chemical symbol</span>
+            <span class="k">if</span> <span class="n">e</span> <span class="o">:=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([a-zA-Z]+)(\d*)&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">el</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>  <span class="c1"># chemical symbol</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">e</span> <span class="o">:=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(\d*)([a-zA-Z]*)&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">el</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>  <span class="c1"># chemical symbol</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">el</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">&gt;=</span> <span class="mi">0</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">short_spec_name</span> <span class="o">=</span> <span class="n">name</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">caps_name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">short_spec_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">caps_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">short_spec_name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
 
         <span class="c1"># use lowercase element abbreviation regardless the case of the input</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">el</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">el</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
