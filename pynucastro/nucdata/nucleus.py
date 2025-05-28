@@ -35,7 +35,8 @@ class Nucleus:
     Parameters
     ----------
     name : str
-        name of the nucleus (e.g. "c12")
+        name of the nucleus (e.g. "c12" or "12C").  This is
+        case-insensitive.
     dummy : bool
         a dummy nucleus is one that we can use where
         a nucleus is needed, but it is not considered
@@ -135,16 +136,21 @@ class Nucleus:
             self.pretty = r"\mathrm{p}_\mathrm{NSE}"
             self.caps_name = "p_NSE"
             self.nse = True
-        elif name.strip() in ("al-6", "al*6"):
-            raise UnsupportedNucleus()
+        elif name.lower().strip() in ("al-6", "al*6"):
+            raise UnsupportedNucleus("isomers of Al26 are not currently supported")
         else:
-            e = re.match(r"([a-zA-Z]*)(\d*)", name)
-            self.el = e.group(1).title()  # chemical symbol
+            if e := re.match(r"([a-zA-Z]+)(\d*)", name):
+                self.el = e.group(1).title()  # chemical symbol
+                self.A = int(e.group(2))
+            elif e := re.match(r"(\d*)([a-zA-Z]*)", name):
+                self.el = e.group(2).title()  # chemical symbol
+                self.A = int(e.group(1))
+
             assert self.el
-            self.A = int(e.group(2))
             assert self.A >= 0
-            self.short_spec_name = name
-            self.caps_name = name.capitalize()
+            self.short_spec_name = f"{self.el.lower()}{self.A}"
+            self.raw = f"{self.el.lower()}{self.A}"
+            self.caps_name = self.short_spec_name.capitalize()
 
         # use lowercase element abbreviation regardless the case of the input
         self.el = self.el.lower()
