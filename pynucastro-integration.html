@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Integrating a Network &#8212; pynucastro 2.6.0.post12+g8e6005a3 documentation</title>
+    <title>Integrating a Network &#8212; pynucastro 2.6.0.post13+g9d80bf24 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=9265eb5b"></script>
+    <script src="_static/documentation_options.js?v=a6421331"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -572,8 +572,8 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="integrating-a-network">
 <h1>Integrating a Network<a class="headerlink" href="#integrating-a-network" title="Link to this heading">#</a></h1>
-<p>This notebook illustrates how to create a python network and integrate
-it with the scipy library.</p>
+<p>Here we show how to create a python network and integrate
+it with the <a class="reference external" href="https://scipy.org">SciPy library</a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
@@ -619,7 +619,7 @@ and pass in the names of the rates in the form of a string <code class="docutils
 </div>
 </div>
 </div>
-<p>A <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> is based on a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> but has methods to write the RHS of the system of ODEs.</p>
+<p>A <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a> is based on a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> but has methods to write the RHS of the system of ODEs.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">rates</span><span class="p">)</span>
@@ -652,7 +652,7 @@ and pass in the names of the rates in the form of a string <code class="docutils
 </div>
 </div>
 </div>
-<p>a rate also knows what its contribution is to the <span class="math notranslate nohighlight">\(dY/dt\)</span> equation is:</p>
+<p>a rate also knows what its contribution is to the <span class="math notranslate nohighlight">\(dY/dt\)</span> equation is (through the <a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.ydot_string_py" title="pynucastro.rates.rate.Rate.ydot_string_py"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ydot_string_py</span></code></a> method):</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">ydot_string_py</span><span class="p">())</span>
@@ -665,7 +665,7 @@ and pass in the names of the rates in the form of a string <code class="docutils
 </div>
 </div>
 </div>
-<p>and the code needed to evaluate that rate (the T-dependent part) is output by the <code class="docutils literal notranslate"><span class="pre">Rate</span></code> class:</p>
+<p>and the python code needed to evaluate this rate (the T-dependent part) is constructed by the <code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code> class <a class="reference internal" href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.function_string_py" title="pynucastro.rates.reaclib_rate.ReacLibRate.function_string_py"><code class="xref py py-obj docutils literal notranslate"><span class="pre">function_string_py</span></code></a> method:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">function_string_py</span><span class="p">())</span>
@@ -697,8 +697,16 @@ def p_C13__N14(rate_eval, tf):
 <p class="admonition-title">Note</p>
 <p>The temperature-dependent rate evaluation functions take a <code class="docutils literal notranslate"><span class="pre">Tfactor</span></code> object, which precomputes most of the commonly-used temperature factors in the rates.</p>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">write_network()</span></code> method will output the python code needed to define the RHS of a network for integration with the SciPy integrators.</p>
-<p>Since python code can be slow, we use Numba to do just-in-time compilation of the functions to speed things up.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Other rate classes (like <a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate" title="pynucastro.rates.tabular_rate.TabularRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularRate</span></code></a>
+or <a class="reference internal" href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate" title="pynucastro.rates.approximate_rates.ApproximateRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ApproximateRate</span></code></a>) have their own implementations of <code class="docutils literal notranslate"><span class="pre">function_string_py()</span></code>.</p>
+</div>
+<p>The <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.write_network" title="pynucastro.networks.rate_collection.RateCollection.write_network"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_network</span></code></a> method will output the python code needed to define the RHS of a network for integration with the SciPy integrators.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Since python code can be slow, we use Numba to do just-in-time compilation of the functions to speed things up.  The <code class="docutils literal notranslate"><span class="pre">numba</span></code> package needs to be installed to take advantage of this.</p>
+</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;cno_test_integrate.py&quot;</span><span class="p">)</span>
@@ -1220,7 +1228,7 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 </div>
 <section id="integrating-the-network">
 <h2>Integrating the network<a class="headerlink" href="#integrating-the-network" title="Link to this heading">#</a></h2>
-<p>We can use the stiff ODE integration solvers that are part of SciPy to integrate this system now</p>
+<p>We can use the stiff ODE integration solvers that are part of SciPy <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html">solve_ivp</a> to integrate this system.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_ivp</span>
@@ -1245,7 +1253,7 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 </div>
 </div>
 </div>
-<p>Now we integrate.  We use the <code class="docutils literal notranslate"><span class="pre">BDF</span></code> method, since reaction networks are in general stiff</p>
+<p>Now we integrate.  For our stiff networks, the <code class="docutils literal notranslate"><span class="pre">BDF</span></code> method works well.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e20</span>

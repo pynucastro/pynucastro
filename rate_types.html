@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Reaction Rate Types &#8212; pynucastro 2.6.0.post12+g8e6005a3 documentation</title>
+    <title>Reaction Rate Types &#8212; pynucastro 2.6.0.post13+g9d80bf24 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=9265eb5b"></script>
+    <script src="_static/documentation_options.js?v=a6421331"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -742,14 +742,15 @@ is the responsibility of the network.</p>
 <h2>Tabulated Rates<a class="headerlink" href="#tabulated-rates" title="Link to this heading">#</a></h2>
 <p>For electron captures and beta-decays (which are of the form
 <span class="math notranslate nohighlight">\(\rm{A \rightarrow B}\)</span>), we use tabulated rates.  These are
-two-dimensional tables, in terms of <span class="math notranslate nohighlight">\(T\)</span> and <span class="math notranslate nohighlight">\(\rho Y_e\)</span>.</p>
+two-dimensional tables, in terms of <span class="math notranslate nohighlight">\(T\)</span> and <span class="math notranslate nohighlight">\(\rho Y_e\)</span>,
+and managed by the <a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate" title="pynucastro.rates.tabular_rate.TabularRate"><code class="xref py py-func docutils literal notranslate"><span class="pre">TabularRate</span></code></a> class.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If positron captures and decays are available, then these are
-included with the appropriate electron counterpart into a single
-rate.</p>
+<p>If positron captures and decays are available in the data source,
+then these are combined with the appropriate electron counterpart
+into a single rate.</p>
 </div>
-<p>A tabular rate is described by 2 files.  The first file mimics the
+<p>A <code class="docutils literal notranslate"><span class="pre">TabularRate</span></code> is described by 2 files.  The first file mimics the
 ReacLib header, with a chapter indicated as <code class="docutils literal notranslate"><span class="pre">t</span></code> and gives the name
 of the table and the number of columns, density, and temperature
 points.  For example,
