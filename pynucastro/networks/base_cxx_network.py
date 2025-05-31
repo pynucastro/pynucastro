@@ -389,16 +389,15 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _write_ydot_nuc(self, n_indent, of, ydot_nuc):
         # Helper function to write out ydot of a specific nuclei
 
-        for j, pair in enumerate(ydot_nuc):
+        valid_pairs = [q for q in ydot_nuc if q.count(None) != 2]
+        for j, pair in enumerate(valid_pairs):
             # pair here is the forward, reverse pair for a single rate as it affects
             # nucleus n
-
+            num = 0
             if pair.count(None) == 0:
                 num = 2
             elif pair.count(None) == 1:
                 num = 1
-            else:
-                raise NotImplementedError("a rate pair must contain at least one rate")
 
             of.write(f"{2*self.indent*n_indent}")
             if num == 2:
@@ -422,7 +421,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             if num == 2:
                 of.write(")")
 
-            if j == len(ydot_nuc)-1:
+            if j == len(valid_pairs)-1:
                 of.write(";\n\n")
             else:
                 of.write(" +\n")
