@@ -9,10 +9,7 @@ pynucastro.constants package
 Submodules
 ----------
 
-pynucastro.constants.constants module
--------------------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: pynucastro.constants.constants
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   pynucastro.constants.constants

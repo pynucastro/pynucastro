@@ -72,13 +72,46 @@ This will output the following files:
 
 * ``reaclib_rates.H`` : the functions that evaluate the ReacLib reaction rates.
 
+* ``screen_data.H`` : this defines some functions used in precomputing common
+  screening factors.
+
+* ``screen.H`` : the actual implementation of the Chugunov 2007 screening.
+
 * ``tfactors.H`` : a struct that stores the various temperature powers needed
   to compute reaction rates.
 
 
-The test driver can be built by simply doing:
+Test driver
+-----------
+
+A test driver can be built by simply doing:
 
 .. prompt:: bash
 
    make
+
+and run as:
+
+.. prompt:: bash
+
+   ./main
+
+This will simply evaluate the righthand side and Jacobian at a single
+thermodynamic state and print out the output.  It is intended to show
+how to work with the interfaces provided by pynucastro.
+
+To change the density and temperature, you can pass values as arguments
+(both must be specified if you are overriding the defaults), e.g.:
+
+.. prompt:: bash
+
+   ./main 100 1.e7
+
+would use $\rho = 100~\mathrm{g~cm^{-3}}$ and $T = 10^7~\mathrm{K}$.
+
+By default screening is included.  To disable screening, compile as:
+
+.. prompt:: bash
+
+   make DISABLE_SCREENING=TRUE
 

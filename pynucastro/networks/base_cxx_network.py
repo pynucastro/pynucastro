@@ -311,7 +311,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         if nrxn < 255:
             dtype = "std::uint8_t"
         elif nrxn < 65535:
-            dtype = "std::unit16_t"
+            dtype = "std::uint16_t"
         of.write(f'{self.indent*n_indent}{dtype}\n')
 
     def _rate_names(self, n_indent, of):
@@ -523,7 +523,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _reaclib_rate_functions(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"
-        for r in self.reaclib_rates + self.derived_rates:
+        for r in self.reaclib_rates + self.derived_rates + self.modified_rates:
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
 
     def _rate_struct(self, n_indent, of):
@@ -548,7 +548,10 @@ class BaseCxxNetwork(ABC, RateCollection):
         if self.derived_rates:
             of.write(f"{self.indent*n_indent}part_fun::pf_cache_t pf_cache{{}};\n\n")
 
-        for r in self.reaclib_rates + self.derived_rates:
+        # note: modified_rates needs to be on the end here, since they
+        # likely will call the underlying reaclib rate for the actual
+        # rate evaluation
+        for r in self.reaclib_rates + self.derived_rates + self.modified_rates:
             if isinstance(r, DerivedRate):
                 of.write(f"{self.indent*n_indent}rate_{r.cname()}<do_T_derivatives>(tfactors, rate, drate_dT, pf_cache);\n")
             else:

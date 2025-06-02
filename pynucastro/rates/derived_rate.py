@@ -12,9 +12,17 @@ from pynucastro.rates.tabular_rate import TabularRate
 
 
 class DerivedRate(ReacLibRate):
-    """This class is a derived class from `Rate` with the purpose of
-    computing the inverse rate by the application of detailed balance
-    to the forward reactions.
+    """A reverse rate computed from a forward rate via detailed
+    balance.
+
+    Parameters
+    ----------
+    rate : Rate
+        The forward rate that will be used to derive the reverse
+    compute_Q : bool
+        Do we recompute the Q-value of the rate from the masses?
+    use_pf : bool
+        Do we apply the partition function?
 
     """
 
@@ -42,7 +50,8 @@ class DerivedRate(ReacLibRate):
             a = ssets.a
             prefactor = 0.0
             Q = 0.0
-            prefactor += -np.log(constants.N_A) * (len(self.rate.reactants) - len(self.rate.products))
+            prefactor += -np.log(constants.N_A) * (len(self.rate.reactants) -
+                                                   len(self.rate.products))
 
             for nucr in self.rate.reactants:
                 prefactor += 1.5*np.log(nucr.A) + np.log(nucr.spin_states)
@@ -62,7 +71,8 @@ class DerivedRate(ReacLibRate):
                 prefactor += 0.0
             else:
                 F = (constants.m_u_C18 * constants.k * 1.0e9 /
-                     (2.0*np.pi*constants.hbar**2))**(1.5*(len(self.rate.reactants) - len(self.rate.products)))
+                     (2.0*np.pi*constants.hbar**2))**(1.5*(len(self.rate.reactants) -
+                                                           len(self.rate.products)))
                 prefactor += np.log(F)
 
             a_rev = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -72,13 +82,15 @@ class DerivedRate(ReacLibRate):
             a_rev[3] = a[3]
             a_rev[4] = a[4]
             a_rev[5] = a[5]
-            a_rev[6] = a[6] + 1.5*(len(self.rate.reactants) - len(self.rate.products))
+            a_rev[6] = a[6] + 1.5*(len(self.rate.reactants) -
+                                   len(self.rate.products))
             sset_d = SingleSet(a=a_rev, labelprops=rate.labelprops)
             derived_sets.append(sset_d)
 
         super().__init__(rfile=self.rate.rfile, chapter=self.rate.chapter,
                          original_source=self.rate.original_source,
-                         reactants=self.rate.products, products=self.rate.reactants,
+                         reactants=self.rate.products,
+                         products=self.rate.reactants,
                          sets=derived_sets, labelprops="derived", Q=-Q)
 
         # explicitly mark it as reverse
@@ -91,6 +103,22 @@ class DerivedRate(ReacLibRate):
                 warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set pf = 1.0 by default'))
 
     def eval(self, T, *, rho=None, comp=None):
+        """Evaluate the derived reverse rate.
+
+        Parameters
+        ----------
+        T : float
+            the temperature to evaluate the rate at
+        rho : float
+            the density to evaluate the rate at
+        comp : Composition
+            the composition to evaluate the rate with
+
+        Returns
+        -------
+        float
+
+        """
 
         r = super().eval(T=T, rho=rho, comp=comp)
         z_r = 1.0
@@ -114,9 +142,13 @@ class DerivedRate(ReacLibRate):
         return r
 
     def function_string_py(self):
-        """
-        Return a string containing python function that computes the
-        rate
+        """Return a string containing the python function that
+        computes the rate.
+
+        Returns
+        -------
+        str
+
         """
 
         self._warn_about_missing_pf_tables()
@@ -150,19 +182,46 @@ class DerivedRate(ReacLibRate):
 
         return fstring
 
-    def function_string_cxx(self, dtype="double", specifiers="inline", leave_open=False, extra_args=()):
+    def function_string_cxx(self, dtype="double", specifiers="inline",
+                            leave_open=False, extra_args=None):
+        """Return a string containing the C++ function that computes
+        the derived reverse rate
+
+        Parameters
+        ----------
+        dtype : str
+            The C++ datatype to use for all declarations
+        specifiers : str
+            C++ specifiers to add before each function declaration
+            (i.e. "inline")
+        leave_open : bool
+            If ``true``, then we leave the function unclosed (no "}"
+            at the end).  This can allow additional functions to add
+            to this output.
+        extra_args : list(str)
+            A list of strings representing additional arguments that
+            should be appended to the argument list when defining the
+            function interface.
+
+        Returns
+        -------
+        str
+
         """
-        Return a string containing C++ function that computes the
-        rate
-        """
+
+        if extra_args is None:
+            extra_args = ()
 
         self._warn_about_missing_pf_tables()
 
         extra_args = ["[[maybe_unused]] part_fun::pf_cache_t& pf_cache", *extra_args]
-        fstring = super().function_string_cxx(dtype=dtype, specifiers=specifiers, leave_open=True, extra_args=extra_args)
+        fstring = super().function_string_cxx(dtype=dtype,
+                                              specifiers=specifiers,
+                                              leave_open=True,
+                                              extra_args=extra_args)
 
-        # right now we have rate and drate_dT without the partition function
-        # now the partition function corrections
+        # right now we have rate and drate_dT without the partition
+        # function now the partition function corrections
 
         if self.use_pf:
 
@@ -217,12 +276,16 @@ class DerivedRate(ReacLibRate):
         return fstring
 
     def counter_factors(self):
-        """This function returns the nucr! = nucr_1! * ... * nucr_r!
-        for each repeated nucr reactant and nucp! = nucp_1! * ... *
-        nucp_p! for each reactant nucp product in a ordered pair
-        (nucr!, nucp!). The factors nucr! and nucp! avoid overcounting
-        when more than one nuclei is involve in the reaction,
-        otherwise it will return 1.0.
+        """Compute the multiplicity factor, nucr! = nucr_1! * ... *
+        nucr_r!, for each repeated nucr reactant and nucp! = nucp_1! *
+        ... * nucp_p! for each nucp product in a ordered pair (nucr!,
+        nucp!). The factors nucr! and nucp! avoid overcounting when
+        more than one nuclei is involve in the reaction.  If there is
+        no multiplicity, then the factor is 1.0.
+
+        Returns
+        -------
+        tuple(float, float)
 
         """
 

@@ -181,15 +181,16 @@ Tabulated Rates
 
 For electron captures and beta-decays (which are of the form
 :math:`\rm{A \rightarrow B}`), we use tabulated rates.  These are
-two-dimensional tables, in terms of :math:`T` and :math:`\rho Y_e`.
+two-dimensional tables, in terms of :math:`T` and :math:`\rho Y_e`,
+and managed by the :func:`TabularRate <pynucastro.rates.tabular_rate.TabularRate>` class.
 
 .. note::
 
-   If positron captures and decays are available, then these are
-   included with the appropriate electron counterpart into a single
-   rate.
+   If positron captures and decays are available in the data source,
+   then these are combined with the appropriate electron counterpart
+   into a single rate.
 
-A tabular rate is described by 2 files.  The first file mimics the
+A ``TabularRate`` is described by 2 files.  The first file mimics the
 ReacLib header, with a chapter indicated as ``t`` and gives the name
 of the table and the number of columns, density, and temperature
 points.  For example,
