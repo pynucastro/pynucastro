@@ -18,6 +18,7 @@ from matplotlib.patches import ConnectionPatch
 from matplotlib.scale import SymmetricalLogTransform
 from matplotlib.ticker import MaxNLocator
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from scipy.linalg import eigvals
 
 # Import Rate
 from pynucastro.constants import constants
@@ -1439,6 +1440,33 @@ class RateCollection:
                         r.eval_jacobian_term(T, rho, comp, n_j)
 
         return jac
+
+    def spectral_radius(self, rho, T, comp, screen_func=None):
+        """Compute the spectral radius of the Jacobian---this is the
+        max |e_i|, where e_i are the eigenvalues of the Jacobian.
+
+        Parameters
+        ----------
+        rho : float
+            density used to evaluate Jacobian terms
+        T : float
+            temperature used to evaluate Jacobian terms
+        comp : Composition
+            composition used to evaluate Jacobian terms
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the evaluated rates will include the screening
+            correction.
+
+        Returns
+        -------
+        float
+
+        """
+
+        J = self.evaluate_jacobian(rho, T, comp, screen_func=screen_func)
+        e = eigvals(J)
+        return np.max(np.abs(e))
 
     def validate(self, other_library, *, forward_only=True):
         """Perform various checks on the library, comparing to
