@@ -1443,7 +1443,7 @@ class RateCollection:
 
     def spectral_radius(self, rho, T, comp, screen_func=None):
         """Compute the spectral radius of the Jacobian---this is the
-        max |e_i|, where e_i are the eigenvalues of the Jacobian.
+        max |e|, where e are the eigenvalues of the Jacobian.
 
         Parameters
         ----------
