@@ -311,7 +311,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         if nrxn < 255:
             dtype = "std::uint8_t"
         elif nrxn < 65535:
-            dtype = "std::unit16_t"
+            dtype = "std::uint16_t"
         of.write(f'{self.indent*n_indent}{dtype}\n')
 
     def _rate_names(self, n_indent, of):
