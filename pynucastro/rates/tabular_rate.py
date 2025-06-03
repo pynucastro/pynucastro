@@ -1,5 +1,5 @@
-import io
 import math
+import re
 from enum import Enum
 from pathlib import Path
 
@@ -228,25 +228,11 @@ class TabularRate(Rate):
         # we should initialize this somehow
         self.weak_type = ""
 
-        if isinstance(rfile, Path):
-            # read in the file, parse the different sets and store them as
-            # SingleSet objects in sets[]
-            f = self.rfile_path.open()
-        elif isinstance(rfile, io.StringIO):
-            # Set f to the io.StringIO object
-            f = rfile
-        else:
-            f = None
-
-        if f:
-            self._read_from_file(f)
-            f.close()
+        self._read_from_file(self.rfile_path)
 
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
-
-        self.get_tabular_rate()
 
         # store the extrema of the thermodynamics
         _rhoy = self.tabular_data_table[::self.table_temp_lines, TableIndex.RHOY.value]
@@ -277,55 +263,87 @@ class TabularRate(Rate):
     def __add__(self, other):
         raise NotImplementedError("addition not defined for tabular rates")
 
-    def _read_from_file(self, f):
-        """Given a file object, read rate data from the file.
+    def _read_from_file(self, table_file):
+        """Given a filename, read rate data from the file.
 
         Parameters
         ----------
-        f : io.TextIOWrapper
-            The file object
+        table_file : str, pathlib.Path
+            The file object that contains the table data
 
         """
-        lines = f.readlines()
-        f.close()
 
-        self.original_source = "".join(lines)
+        # just store the filename as the original source
+        self.original_source = f"{table_file}"
 
-        # first line is the chapter
-        self.chapter = lines[0].strip()
-        if self.chapter != "t":
-            raise RateFileError(f"Invalid chapter for TabularRate ({self.chapter})")
+        # set weak type
+        if "electroncapture" in str(table_file):
+            self.weak_type = "electron_capture"
 
-        # remove any blank lines
-        set_lines = [line for line in lines[1:] if not line.strip() == ""]
+        elif "betadecay" in str(table_file):
+            self.weak_type = "beta_decay"
 
-        # e1 -> e2, Tabulated
-        s1 = set_lines.pop(0)
-        s2 = set_lines.pop(0)
-        s3 = set_lines.pop(0)
-        s4 = set_lines.pop(0)
-        s5 = set_lines.pop(0)
-        f = s1.split()
+        # for backwards compatibility, we'll set a chapter to "t"
+        self.chapter = "t"
+
+        # read in the table data
+        # there are a few header lines that start with "!", which we skip,
+        # expect for the very first, which defines the nuclei in the form
+        # reactant -> product
+
+        t_data2d = []
+        reactant = None
+        product = None
+        header_lines = 0
+        with open(table_file) as tabular_file:
+            for i, line in enumerate(tabular_file):
+                if i == 0:
+                    try:
+                        # we have a line of the form:
+                        # !65ni -> 65co, e- capture
+                        # split it
+                        g = re.match(r"!([\da-zA-Z]*) \-\> ([\da-zA-Z]*)[\w,\-]*", line)
+                        reactant = g.group(1)
+                        product = g.group(2)
+                    except AttributeError:
+                        # we have a line including spins, of the form:
+                        # !17F (5/2+, 1/2+) -> 17O    e-capture   with screening effects
+                        # this is mainly Suzuki rates.  The stuff in the (...) giving
+                        # the spins can be complicated, but the key is that it is in
+                        # parentheses.
+                        g = re.match(r"!([\da-zA-Z]*)\s*\([\w\:\=\d/\+,\.\s\_\{\}]*\)\s+\-\> ([\da-zA-Z]*)[\w,\-]*", line)
+                        reactant = g.group(1)
+                        product = g.group(2)
+                    header_lines += 1
+                    continue
+                if line.startswith("!"):
+                    header_lines += 1
+                    continue
+                line = line.strip()
+                # skip empty lines
+                if not line:
+                    continue
+                # split the column values on whitespace
+                t_data2d.append(line.split())
+
         try:
-            self.reactants.append(Nucleus.from_cache(f[0]))
-            self.products.append(Nucleus.from_cache(f[1]))
+            self.reactants.append(Nucleus.from_cache(reactant.lower()))
+            self.products.append(Nucleus.from_cache(product.lower()))
         except UnsupportedNucleus as ex:
             raise RateFileError(f'Nucleus objects could not be identified in {self.original_source}') from ex
 
-        self.table_file = s2.strip()
-        self.table_header_lines = int(s3.strip())
-        self.table_rhoy_lines = int(s4.strip())
-        self.table_temp_lines = int(s5.strip())
+        self.table_file = table_file
+
+        # convert the nested list of string values into a numpy float array
+        self.tabular_data_table = np.array(t_data2d, dtype=np.float64)
+
+        # get the number of rhoy lines
+        self.table_header_lines = header_lines
+        self.table_rhoy_lines = len(np.unique(self.tabular_data_table[:, 0]))
+        self.table_temp_lines = len(np.unique(self.tabular_data_table[:, 1]))
         self.table_num_vars = 6  # Hard-coded number of variables in tables for now.
         self.table_index_name = f'j_{self.reactants[0]}_{self.products[0]}'
         self.labelprops = 'tabular'
-
-        # set weak type
-        if "electroncapture" in self.table_file:
-            self.weak_type = "electron_capture"
-
-        elif "betadecay" in self.table_file:
-            self.weak_type = "beta_decay"
 
         # since the reactants and products were only now set, we need
         # to recompute Q -- this is used for finding rate pairs
@@ -389,27 +407,6 @@ class TabularRate(Rate):
         fstring += f"    rate_eval.{self.fname} = 10.0**r\n\n"
 
         return fstring
-
-    def get_tabular_rate(self):
-        """Read the rate data from .dat file """
-
-        # find .dat file and read it
-        self.table_path = _find_rate_file(self.table_file)
-        t_data2d = []
-        with self.table_path.open() as tabular_file:
-            for i, line in enumerate(tabular_file):
-                # skip header lines
-                if i < self.table_header_lines:
-                    continue
-                line = line.strip()
-                # skip empty lines
-                if not line:
-                    continue
-                # split the column values on whitespace
-                t_data2d.append(line.split())
-
-        # convert the nested list of string values into a numpy float array
-        self.tabular_data_table = np.array(t_data2d, dtype=np.float64)
 
     def eval(self, T, *, rho=None, comp=None):
         """Evaluate the reaction rate.
