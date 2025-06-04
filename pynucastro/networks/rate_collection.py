@@ -1388,7 +1388,8 @@ class RateCollection:
 
         return rvals
 
-    def evaluate_jacobian(self, rho, T, comp, screen_func=None):
+    def evaluate_jacobian(self, rho, T, comp, *,
+                          screen_func=None, exclude_rates=None):
         """return an array of the form J_ij = dYdot_i/dY_j for the network
 
         Parameters
@@ -1403,6 +1404,8 @@ class RateCollection:
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
             correction.
+        exclude_rates : Iterable(Rate)
+            a list of rates to omit from the construction of the Jacobian.
 
         Returns
         -------
@@ -1417,6 +1420,9 @@ class RateCollection:
         else:
             screen_factors = {}
 
+        if exclude_rates is None:
+            exclude_rates = []
+
         nnuc = len(self.unique_nuclei)
         jac = np.zeros((nnuc, nnuc), dtype=np.float64)
 
@@ -1428,12 +1434,18 @@ class RateCollection:
                 jac[i, j] = 0.0
 
                 for r in self.nuclei_consumed[n_i]:
+                    if r in exclude_rates:
+                        continue
+
                     # how many of n_i are destroyed by this reaction
                     c = r.reactant_count(n_i)
                     jac[i, j] -= c * screen_factors.get(r, 1.0) *\
                         r.eval_jacobian_term(T, rho, comp, n_j)
 
                 for r in self.nuclei_produced[n_i]:
+                    if r in exclude_rates:
+                        continue
+
                     # how many of n_i are produced by this reaction
                     c = r.product_count(n_i)
                     jac[i, j] += c * screen_factors.get(r, 1.0) *\
@@ -1441,7 +1453,8 @@ class RateCollection:
 
         return jac
 
-    def spectral_radius(self, rho, T, comp, screen_func=None):
+    def spectral_radius(self, rho, T, comp, *,
+                        screen_func=None, exclude_rates=None):
         """Compute the spectral radius of the Jacobian---this is the
         max{abs(e_i)}, where e_i are the eigenvalues of the Jacobian.
 
@@ -1457,6 +1470,10 @@ class RateCollection:
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
             correction.
+        exclude_rates : Iterable(Rate)
+            a list of rates to omit from the calculation.  This is useful
+            for testing how the spectral radius / stiffness is affected by
+            the different rates.
 
         Returns
         -------
@@ -1464,7 +1481,9 @@ class RateCollection:
 
         """
 
-        J = self.evaluate_jacobian(rho, T, comp, screen_func=screen_func)
+        J = self.evaluate_jacobian(rho, T, comp,
+                                   screen_func=screen_func,
+                                   exclude_rates=exclude_rates)
         e = eigvals(J)
         return np.max(np.abs(e))
 
