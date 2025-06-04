@@ -217,10 +217,8 @@ class NSENetwork(RateCollection):
         """
 
         Xs = self._nucleon_fraction_nse(u, u_c, state)
-
-        constraint_eqs = []
-        constraint_eqs.append(sum(Xs[nuc] for nuc in self.unique_nuclei) - 1.0)
-        constraint_eqs.append(sum(Xs[nuc] * nuc.Z / nuc.A for nuc in self.unique_nuclei) - state.ye)
+        constraint_eqs = [sum(Xs[nuc] for nuc in self.unique_nuclei) - 1.0,
+                          sum(Xs[nuc] * nuc.Z / nuc.A for nuc in self.unique_nuclei) - state.ye]
 
         return constraint_eqs
 
