@@ -85,54 +85,96 @@ class NSETableEntry:
 
 
 class NSENetwork(RateCollection):
-    """a network for solving for the NSE composition and outputting
+    """a network for solving the NSE composition and outputting
     tabulated NSE quantities"""
 
-    def _evaluate_n_e(self, state, Xs):
+    def _evaluate_mu_c(self, state, use_coulomb_corr=True):
+        """A helper function that finds the coulomb potential of each nuclide in NSE state.
+        The coulomb potential is evaluated using the Helmholtz free energy
+        following Eq. 28 from Chabrier & Potekhin 1998 DOI: 10.1103/PhysRevE.58.4941
+        Also see appendix in Calder 2007 DOI: 10.1086/510709
 
-        n_e = 0.0
-        for nuc in self.unique_nuclei:
-            n_e += nuc.Z * state.dens * Xs[nuc] / (nuc.A * constants.m_u_C18)
+        A1 = -0.9052
+        A2 = 0.6322
+        A3 = -sqrt(3) / 2 - A1 / sqrt(A2)
+        Γ = Z^{5/3} q_e^2 (4 π n_e / 3)^{1/3} / (k_B T)
+        u^c / (k_B T)=   A1 [ sqrt(Γ (A2 + Γ)) - A2 ln(sqrt(Γ / A2) + sqrt(1 + Γ / A2)) ]
+                       + 2 A3 [ sqrt(Γ) - atan(sqrt(Γ)) ]
 
-        return n_e
+        Parameters
+        ----------
+        state : NseState
+            NSE state
+        use_coulomb_corr: bool
+            whether to include coulomb correction terms
 
-    def _evaluate_mu_c(self, n_e, state, use_coulomb_corr=True):
-        """ A helper equation that finds the mass fraction of each nuclide in NSE state,
-        u[0] is chemical potential of proton  while u[1] is chemical potential of neutron"""
+        Returns
+        -------
+        u_c : dict
+            A dictionary of coulomb potential keyed by Nucleus.
+        """
 
-        # If there is proton included in network, upper limit of ye is 1
-        # And if neutron is included in network, lower limit of ye is 0.
-        # However, there are networks where either of them are included
-        # So here I add a general check to find the upper and lower limit of ye
-        # so the input doesn't go outside of the scope and the solver won't be able to converge if it did
-        ye_low = min(nuc.Z/nuc.A for nuc in self.unique_nuclei)
-        ye_max = max(nuc.Z/nuc.A for nuc in self.unique_nuclei)
-        assert state.ye >= ye_low and state.ye <= ye_max, "input electron fraction goes outside of scope for current network"
+        if not use_coulomb_corr:
+            u_c = {n: 0 for n in self.unique_nuclei}
+            return u_c
 
-        # u_c is the coulomb correction term for NSE
-        # Calculate the composition at NSE, equations found in appendix of Calder paper
         u_c = {}
+        n_e = state.ye * state.dens / constants.m_u_C18
+        A_1 = -0.9052
+        A_2 = 0.6322
+        A_3 = -0.5 * np.sqrt(3.0) - A_1 / np.sqrt(A_2)
+        Gamma_e = state.gamma_e_fac * n_e**(1.0/3.0) / state.temp
 
-        for nuc in set(list(self.unique_nuclei) + [Nucleus("p")]):
-            if use_coulomb_corr:
-                # These are three constants for calculating coulomb corrections of chemical energy, see Calders paper: iopscience 510709, appendix
-                A_1 = -0.9052
-                A_2 = 0.6322
-                A_3 = -0.5 * np.sqrt(3.0) - A_1 / np.sqrt(A_2)
-
-                Gamma = state.gamma_e_fac * n_e ** (1.0/3.0) * nuc.Z ** (5.0 / 3.0) / state.temp
-                u_c[nuc] = constants.erg2MeV * constants.k * state.temp * (A_1 * (np.sqrt(Gamma * (A_2 + Gamma)) - A_2 * np.log(np.sqrt(Gamma / A_2) +
-                                      np.sqrt(1.0 + Gamma / A_2))) + 2.0 * A_3 * (np.sqrt(Gamma) - np.arctan(np.sqrt(Gamma))))
-            else:
-                u_c[nuc] = 0.0
+        for nuc in self.unique_nuclei:
+            Gamma =  Gamma_e * nuc.Z**(5.0 / 3.0)
+            u_c[nuc] = constants.erg2MeV * constants.k * state.temp * \
+                (A_1 * (np.sqrt(Gamma * (A_2 + Gamma)) - A_2 * np.log(np.sqrt(Gamma / A_2) +
+                np.sqrt(1.0 + Gamma / A_2))) + 2.0 * A_3 * (np.sqrt(Gamma) - np.arctan(np.sqrt(Gamma))))
 
         return u_c
 
     def _nucleon_fraction_nse(self, u, u_c, state):
+        """A helper function that computes the NSE mass fraction for a given NSE state.
+
+        NSE condition says that the chemical potential of the i-th nuclei
+        is equal to the chemical potential of the free nucleon.
+
+        i.e. μ_i = Z_i μ_p + N_i μ_n
+
+        where μ_p and μ_n are the chemical potential of free proton and neutron,
+        which can be decomposed into the kinetic part μ^{id}, coulomb potential
+        part μ^c and its rest energy.
+
+        μ_p = μ^{id}_p + μ^{c}_p + m_p c^2
+        μ_n = μ^{id}_n           + m_n c^2
+
+        Assuming Boltzmann statistics and the NSE condition, we get:
+
+        X_i = m_i / ρ (2 J_i + 1) G_i (m_i k_B T / (2 π ℏ^2))^{3/2}
+            * exp{ Z_i (μ^{id}_p + μ^{c}_p) + N_i μ^{id}_n + B_i - μ^{c}_i}
+
+        See full derivation in appendix Smith Clark 2023 DOI: 10.3847/1538-4357/acbaff
+
+        Parameters
+        ----------
+        u : (ndarray, tuple, list)
+            chemical potentials of proton and neutron, where we choose
+            u[0] = μ^{id}_p + μ^{c}_p and u[1] = μ^{id}_n
+
+            One can make the choice of setting u[0] = μ^{id}_p only and
+            add μ^{c}_p as a separate constant. However it won't affect the end result.
+        u_c : dict
+            A dictionary of coulomb potential keyed by Nucleus.
+        state : NseState
+            NSE state
+
+        Returns
+        -------
+        Xs : dict
+            A dictionary of NSE mass fractions keyed by Nucleus.
+        """
 
         Xs = {}
-        up_c = u_c[Nucleus("p")]
-
         for nuc in self.unique_nuclei:
             if nuc.partition_function:
                 pf = nuc.partition_function.eval(state.temp)
@@ -142,27 +184,45 @@ class NSENetwork(RateCollection):
             if not nuc.spin_states:
                 raise ValueError(f"The spin of {nuc} is not implemented for now.")
 
-            nse_exponent = (nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.Z * up_c + nuc.nucbind * nuc.A) / (constants.k * state.temp * constants.erg2MeV)
+            nse_exponent = (nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.nucbind * nuc.A) / (constants.k_MeV * state.temp)
             nse_exponent = min(500.0, nse_exponent)
 
-            Xs[nuc] = constants.m_u * nuc.A_nuc * pf * nuc.spin_states / state.dens * (2.0 * np.pi * constants.m_u * nuc.A_nuc * constants.k * state.temp / constants.h**2) ** 1.5 \
-                    * np.exp(nse_exponent)
+            Xs[nuc] = nuc.A_nuc**2.5 * pf * nuc.spin_states / (state.dens*constants.N_A) * \
+                (constants.m_u_C18 * constants.k * state.temp /
+                 (2.0 * np.pi * constants.hbar**2))**1.5 * np.exp(nse_exponent)
 
         return Xs
 
     def _constraint_eq(self, u, u_c, state):
         """ Constraint Equations used to evaluate chemical potential for proton and neutron,
-        which is used when evaluating composition at NSE"""
+        which is used when evaluating composition at NSE.
 
-        # Don't use state.ye since it does automatic mass fraction normalization.
-        # However, we should force normalization through constraint eq1.
+        1) Conservation of Mass:   Σ_k X_k - 1 = 0
+        2) Conservation of Charge: Σ_k Z_k X_k / A_k - Y_e = 0
+
+        Parameters
+        ----------
+        u : (ndarray, tuple, list)
+            chemical potentials of proton and neutron.
+            u[0] = μ^{id}_p + μ^{c}_p and u[1] = μ^{id}_n
+        u_c : dict
+            A dictionary of coulomb potential keyed by Nucleus.
+        state : NseState
+            NSE state
+
+        Returns
+        -------
+        constraint_eqs : List
+            Constraint equations for NSE.
+        """
 
         Xs = self._nucleon_fraction_nse(u, u_c, state)
 
-        eq1 = sum(Xs[nuc] for nuc in self.unique_nuclei) - 1.0
-        eq2 = sum(Xs[nuc] * nuc.Z / nuc.A for nuc in self.unique_nuclei) - state.ye
+        constraint_eqs = []
+        constraint_eqs.append(sum(Xs[nuc] for nuc in self.unique_nuclei) - 1.0)
+        constraint_eqs.append(sum(Xs[nuc] * nuc.Z / nuc.A for nuc in self.unique_nuclei) - state.ye)
 
-        return [eq1, eq2]
+        return constraint_eqs
 
     def get_comp_nse(self, rho, T, ye, init_guess=(-3.5, -15),
                      tol=1.0e-11, use_coulomb_corr=False, return_sol=False):
@@ -179,7 +239,7 @@ class NSENetwork(RateCollection):
         ye : float
             prescribed electron fraction
         init_guess : (tuple, list)
-            initial guess of chemical potential of proton and neutron, [mu_p, mu_n]
+            initial guess of chemical potential of proton and neutron, [μ^{id}_p + μ^{c}_p, μ^{id}_n]
         tol : float
             tolerance of scipy.fsolve
         use_coulomb_corr : bool
@@ -195,16 +255,17 @@ class NSENetwork(RateCollection):
             the chemical potentials found by solving the nonlinear system.
         """
 
-        # From here we convert the init_guess list into a np.array object:
+        # Determine the upper and lower bound of possible ye for the current network.
+        # Make sure the prescribed ye are within this range.
+        ye_low = min(nuc.Z/nuc.A for nuc in self.unique_nuclei)
+        ye_max = max(nuc.Z/nuc.A for nuc in self.unique_nuclei)
+        assert ye >= ye_low and ye <= ye_max, "input electron fraction goes outside of scope for current network"
 
         init_guess = np.array(init_guess)
         state = NseState(T, rho, ye)
 
-        u_c = {}
-        for nuc in set(list(self.unique_nuclei) + [Nucleus("p")]):
-            u_c[nuc] = 0.0
-
-        Xs = {}
+        # Evaluate coulomb potential
+        u_c = self._evaluate_mu_c(state, use_coulomb_corr)
 
         j = 0
         is_pos_old = False
@@ -222,12 +283,9 @@ class NSENetwork(RateCollection):
                     warnings.filterwarnings("ignore", category=RuntimeWarning)
                     u = fsolve(self._constraint_eq, guess, args=(u_c, state), xtol=tol, maxfev=800)
                 Xs = self._nucleon_fraction_nse(u, u_c, state)
-                n_e = self._evaluate_n_e(state, Xs)
-                u_c = self._evaluate_mu_c(n_e, state, use_coulomb_corr)
-
                 res = self._constraint_eq(u, u_c, state)
                 is_pos_new = all(k > 0 for k in res)
-                found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1.0e-7, atol=1.0e-7))
+                found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1.0e-11, atol=1.0e-11))
 
                 if found_sol:
                     Xs = self._nucleon_fraction_nse(u, u_c, state)
