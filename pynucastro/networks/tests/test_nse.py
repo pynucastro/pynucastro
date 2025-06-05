@@ -31,7 +31,6 @@ class TestNSE:
 
         assert nse_Xs == pytest.approx(expected, rel=1.0e-10)
 
-
     def test_nse_no_coul(self, pynet):
 
         rho = 1.0e7
