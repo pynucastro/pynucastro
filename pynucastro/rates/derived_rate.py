@@ -57,7 +57,7 @@ class DerivedRate(ReacLibRate):
                 prefactor += 2.5*np.log(nucr.A_nuc) - np.log(nucr.A) + np.log(nucr.spin_states)
                 Q += nucr.A_nuc
             for nucp in self.rate.products:
-                prefactor += -2.5*np.log(nucp.A_nuc) + np.log(nucp.A)- np.log(nucp.spin_states)
+                prefactor += -2.5*np.log(nucp.A_nuc) + np.log(nucp.A) - np.log(nucp.spin_states)
                 Q -= nucp.A_nuc
 
             if self.compute_Q:

@@ -6,7 +6,6 @@ from scipy.optimize import fsolve
 from pynucastro._version import version
 from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import Composition, RateCollection
-from pynucastro.nucdata import Nucleus
 from pynucastro.rates import TabularRate
 from pynucastro.screening import NseState, potekhin_1998
 
@@ -126,7 +125,7 @@ class NSENetwork(RateCollection):
         Gamma_e = state.gamma_e_fac * n_e**(1.0/3.0) / state.temp
 
         for nuc in self.unique_nuclei:
-            Gamma =  Gamma_e * nuc.Z**(5.0 / 3.0)
+            Gamma = Gamma_e * nuc.Z**(5.0 / 3.0)
             u_c[nuc] = constants.erg2MeV * constants.k * state.temp * \
                 (A_1 * (np.sqrt(Gamma * (A_2 + Gamma)) - A_2 * np.log(np.sqrt(Gamma / A_2) +
                 np.sqrt(1.0 + Gamma / A_2))) + 2.0 * A_3 * (np.sqrt(Gamma) - np.arctan(np.sqrt(Gamma))))
