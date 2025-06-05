@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.6.0.post14+gff61a15f documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.6.0.post15+g314b7842 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=71d866e0"></script>
+    <script src="../../../_static/documentation_options.js?v=6f7ce330"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -492,6 +492,7 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.scale</span><span class="w"> </span><span class="kn">import</span> <span class="n">SymmetricalLogTransform</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.ticker</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaxNLocator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">mpl_toolkits.axes_grid1</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_axes_locatable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">eigvals</span>
 
 <span class="c1"># Import Rate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
@@ -1970,7 +1971,8 @@ document.write(`
 
 <div class="viewcode-block" id="RateCollection.evaluate_jacobian">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_jacobian">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                          <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude_rates</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;return an array of the form J_ij = dYdot_i/dY_j for the network</span>
 
 <span class="sd">        Parameters</span>
@@ -1985,6 +1987,8 @@ document.write(`
 <span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
 <span class="sd">            -- if provided, then the evaluated rates will include the screening</span>
 <span class="sd">            correction.</span>
+<span class="sd">        exclude_rates : Iterable(Rate)</span>
+<span class="sd">            a list of rates to omit from the construction of the Jacobian.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1999,6 +2003,9 @@ document.write(`
         <span class="k">else</span><span class="p">:</span>
             <span class="n">screen_factors</span> <span class="o">=</span> <span class="p">{}</span>
 
+        <span class="k">if</span> <span class="n">exclude_rates</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">exclude_rates</span> <span class="o">=</span> <span class="p">[]</span>
+
         <span class="n">nnuc</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
         <span class="n">jac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nnuc</span><span class="p">,</span> <span class="n">nnuc</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
@@ -2010,18 +2017,61 @@ document.write(`
                 <span class="n">jac</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 
                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">n_i</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">exclude_rates</span><span class="p">:</span>
+                        <span class="k">continue</span>
+
                     <span class="c1"># how many of n_i are destroyed by this reaction</span>
                     <span class="n">c</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">reactant_count</span><span class="p">(</span><span class="n">n_i</span><span class="p">)</span>
                     <span class="n">jac</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">-=</span> <span class="n">c</span> <span class="o">*</span> <span class="n">screen_factors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span>\
                         <span class="n">r</span><span class="o">.</span><span class="n">eval_jacobian_term</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">n_j</span><span class="p">)</span>
 
                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">n_i</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">exclude_rates</span><span class="p">:</span>
+                        <span class="k">continue</span>
+
                     <span class="c1"># how many of n_i are produced by this reaction</span>
                     <span class="n">c</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">product_count</span><span class="p">(</span><span class="n">n_i</span><span class="p">)</span>
                     <span class="n">jac</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">c</span> <span class="o">*</span> <span class="n">screen_factors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span>\
                         <span class="n">r</span><span class="o">.</span><span class="n">eval_jacobian_term</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">n_j</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">jac</span></div>
+
+
+<div class="viewcode-block" id="RateCollection.spectral_radius">
+<a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.spectral_radius">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">spectral_radius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                        <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude_rates</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the spectral radius of the Jacobian---this is the</span>
+<span class="sd">        max{abs(e_i)}, where e_i are the eigenvalues of the Jacobian.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            density used to evaluate Jacobian terms</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature used to evaluate Jacobian terms</span>
+<span class="sd">        comp : Composition</span>
+<span class="sd">            composition used to evaluate Jacobian terms</span>
+<span class="sd">        screen_func : Callable</span>
+<span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
+<span class="sd">            -- if provided, then the evaluated rates will include the screening</span>
+<span class="sd">            correction.</span>
+<span class="sd">        exclude_rates : Iterable(Rate)</span>
+<span class="sd">            a list of rates to omit from the calculation.  This is useful</span>
+<span class="sd">            for testing how the spectral radius / stiffness is affected by</span>
+<span class="sd">            the different rates.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">J</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_jacobian</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span>
+                                   <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">,</span>
+                                   <span class="n">exclude_rates</span><span class="o">=</span><span class="n">exclude_rates</span><span class="p">)</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">eigvals</span><span class="p">(</span><span class="n">J</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="RateCollection.validate">
