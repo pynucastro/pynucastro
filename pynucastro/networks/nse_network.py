@@ -256,7 +256,7 @@ class NSENetwork(RateCollection):
         # Make sure the prescribed ye are within this range.
         ye_low = min(nuc.Z/nuc.A for nuc in self.unique_nuclei)
         ye_max = max(nuc.Z/nuc.A for nuc in self.unique_nuclei)
-        assert ye >= ye_low and ye <= ye_max, "input electron fraction goes outside of scope for current network"
+        assert ye_low <= ye <= ye_max, "input electron fraction goes outside of scope for current network"
 
         init_guess = np.array(init_guess)
         state = NseState(T, rho, ye)
