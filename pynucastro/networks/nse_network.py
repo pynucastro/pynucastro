@@ -165,7 +165,7 @@ class NSENetwork(RateCollection):
         u_c : dict
             A dictionary of coulomb potential keyed by Nucleus.
         state : NseState
-            NSE state
+            NSE state.
 
         Returns
         -------
