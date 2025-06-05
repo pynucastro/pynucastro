@@ -357,7 +357,7 @@ class TestDerivedRate:
 
         with pytest.warns(UserWarning, match="C12 partition function is not supported by tables"):
             rval = c12_ga_a_a_derived.eval(T=2.0e9)
-        assert rval == approx(2.8953989705969484e-07)
+        assert rval == approx(2.909561626679576e-7)
 
     def test_a_a_ag_c12_with_Q(self, reaclib_library):
         """
@@ -369,7 +369,7 @@ class TestDerivedRate:
         a_a_ag_c12 = reaclib_library.get_rate_by_name("he4(aa,g)c12")
         c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=True, use_pf=False)
 
-        assert c12_ga_a_a_derived.eval(T=2.0e9) == approx(2.899642192191721e-07)
+        assert c12_ga_a_a_derived.eval(T=2.0e9) == approx(2.913825603717208e-07)
 
 
 class TestWeakRates:
