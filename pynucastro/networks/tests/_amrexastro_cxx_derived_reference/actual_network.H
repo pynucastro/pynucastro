@@ -55,7 +55,7 @@ namespace network
         constexpr amrex::Real A = NetworkProperties::aion(spec);
         constexpr amrex::Real Z = NetworkProperties::zion(spec);
 
-        return (A - Z) * C::Legacy::m_n + Z * (C::Legacy::m_p + C::Legacy::m_e) - bion<spec>() * C::Legacy::MeV2gr;
+        return (A - Z) * C::m_n + Z * (C::m_p + C::m_e) - bion<spec>() * C::MeV2gr;
     }
 
     // Legacy (non-templated) interfaces
