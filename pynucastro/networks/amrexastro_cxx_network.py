@@ -6,6 +6,7 @@ codes"""
 import re
 from pathlib import Path
 
+from pynucastro.constants import constants
 from pynucastro.networks.base_cxx_network import BaseCxxNetwork
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import ReacLibRate
@@ -71,7 +72,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
                 of.write(f"{self.indent*n_indent}if constexpr (spec == {nuc.cindex()}) {{\n")
             else:
                 of.write(f"{self.indent*n_indent}else if constexpr (spec == {nuc.cindex()}) {{\n")
-            of.write(f"{self.indent*(n_indent+1)}return {nuc.mass}_rt;\n")
+            of.write(f"{self.indent*(n_indent+1)}return {nuc.A_nuc * constants.m_u_C18}_rt;\n")
             of.write(f"{self.indent*(n_indent)}}}\n")
 
     def _cxxify(self, s):

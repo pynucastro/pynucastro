@@ -16,6 +16,7 @@ from pathlib import Path
 import numpy as np
 import sympy
 
+from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
 from pynucastro.rates import DerivedRate
@@ -329,7 +330,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _mion(self, n_indent, of):
         for nuc in self.unique_nuclei:
-            of.write(f'{self.indent*n_indent}mion({nuc.cindex()}) = {nuc.mass}_rt;\n')
+            of.write(f'{self.indent*n_indent}mion({nuc.cindex()}) = {nuc.A_nuc * constants.m_u_C18}_rt;\n')
 
     def _table_num(self, n_indent, of):
         of.write(f'{self.indent*n_indent}const int num_tables = {len(self.tabular_rates)};\n')
