@@ -42,7 +42,7 @@ void ener_gener_rate(T const& dydt, amrex::Real& enuc)
         enuc += dydt(n) * network::mion(n);
     }
 
-    enuc *= C::Legacy::enuc_conv2;
+    enuc *= C::enuc_conv2;
 }
 
 
