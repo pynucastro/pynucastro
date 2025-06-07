@@ -31,4 +31,4 @@ jac(3,5) = 0.310214898718
 jac(4,5) = 1.2369887515
 jac(5,5) = -1.54720365022
 
-instantaneous energy generation rate (erg/g/s) = 1.02874958576e+22
+instantaneous energy generation rate (erg/g/s) = 1.02874968013e+22

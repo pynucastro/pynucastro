@@ -23,8 +23,6 @@ void actual_network_init()
     }
 
     // Set the mass -- this will be in grams
-    for (int i = 1; i <= NumSpec; ++i) {
-        mion(i) = (aion[i-1] - zion[i-1]) * C::m_n + zion[i-1] * (C::m_p + C::m_e) - bion(i) * C::MeV2gr;
-    }
+    <mion>(1)
 
 }

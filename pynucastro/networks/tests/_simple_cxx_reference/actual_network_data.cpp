@@ -30,8 +30,13 @@ void actual_network_init()
     }
 
     // Set the mass -- this will be in grams
-    for (int i = 1; i <= NumSpec; ++i) {
-        mion(i) = (aion[i-1] - zion[i-1]) * C::m_n + zion[i-1] * (C::m_p + C::m_e) - bion(i) * C::MeV2gr;
-    }
+    mion(N) = 1.674927498034172e-24_rt;
+    mion(H1) = 1.6735328377636005e-24_rt;
+    mion(He4) = 6.646479071584587e-24_rt;
+    mion(C12) = 1.99264687992e-23_rt;
+    mion(O16) = 2.6560180592333686e-23_rt;
+    mion(Ne20) = 3.3198227947612416e-23_rt;
+    mion(Na23) = 3.817541002484691e-23_rt;
+    mion(Mg23) = 3.8182640828719474e-23_rt;
 
 }
