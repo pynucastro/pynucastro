@@ -59,6 +59,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<nrxn_enum_type>'] = self._nrxn_enum_type
         self.ftags['<rate_names>'] = self._rate_names
         self.ftags['<ebind>'] = self._ebind
+        self.ftags['<mion>'] = self._mion
         self.ftags['<compute_screening_factors>'] = self._compute_screening_factors
         self.ftags['<table_num>'] = self._table_num
         self.ftags['<declare_tables>'] = self._declare_tables
@@ -325,6 +326,10 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _ebind(self, n_indent, of):
         for nuc in self.unique_nuclei:
             of.write(f'{self.indent*n_indent}ebind_per_nucleon({nuc.cindex()}) = {nuc.nucbind}_rt;\n')
+
+    def _mion(self, n_indent, of):
+        for nuc in self.unique_nuclei:
+            of.write(f'{self.indent*n_indent}mion({nuc.cindex()}) = {nuc.mass}_rt;\n')
 
     def _table_num(self, n_indent, of):
         of.write(f'{self.indent*n_indent}const int num_tables = {len(self.tabular_rates)};\n')

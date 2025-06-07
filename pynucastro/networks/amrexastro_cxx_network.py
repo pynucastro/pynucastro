@@ -65,6 +65,15 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             of.write(f"{self.indent*(n_indent+1)}return {nuc.nucbind * nuc.A}_rt;\n")
             of.write(f"{self.indent*(n_indent)}}}\n")
 
+    def _mion(self, n_indent, of):
+        for n, nuc in enumerate(self.unique_nuclei):
+            if n == 0:
+                of.write(f"{self.indent*n_indent}if constexpr (spec == {nuc.cindex()}) {{\n")
+            else:
+                of.write(f"{self.indent*n_indent}else if constexpr (spec == {nuc.cindex()}) {{\n")
+            of.write(f"{self.indent*(n_indent+1)}return {nuc.mass}_rt;\n")
+            of.write(f"{self.indent*(n_indent)}}}\n")
+
     def _cxxify(self, s):
         # Replace std::pow(x, n) with amrex::Math::powi<n>(x) for amrexastro_cxx_network
 
