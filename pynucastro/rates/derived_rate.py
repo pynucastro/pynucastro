@@ -104,6 +104,11 @@ class DerivedRate(ReacLibRate):
         # explicitly mark it as reverse
         self.reverse = True
 
+        # Mark as modified if the forward rate is modified
+        self.modified = self.rate.modified
+
+        super()._set_print_representation()
+
     def _warn_about_missing_pf_tables(self):
         skip_nuclei = {Nucleus("h1"), Nucleus("n"), Nucleus("he4")}
         for nuc in set(self.rate.reactants + self.rate.products) - skip_nuclei:
