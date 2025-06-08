@@ -133,7 +133,7 @@ void rate_Ni56_to_He4_Fe52_derived(const tf_t& tfactors, amrex::Real& rate, amre
     amrex::Real set_rate{0.0};
 
     // ths8r
-    ln_set_rate =  91.62430485108335 + -92.80109932767355 * tfactors.T9i + -91.6819 * tfactors.T913i + -9.51885 * tfactors.T913
+    ln_set_rate =  91.62430485073777 + -92.80109932767355 * tfactors.T9i + -91.6819 * tfactors.T913i + -9.51885 * tfactors.T913
                          + -0.533014 * tfactors.T9 + 0.0892607 * tfactors.T953 + 0.833333 * tfactors.lnT9;
 
     if constexpr (do_T_derivatives) {
@@ -190,7 +190,7 @@ void rate_Ni56_to_p_Co55_derived(const tf_t& tfactors, amrex::Real& rate, amrex:
     amrex::Real set_rate{0.0};
 
     // ths8r
-    ln_set_rate =  63.151204042271196 + -83.14741674753726 * tfactors.T9i + -38.1053 * tfactors.T913i + -0.210947 * tfactors.T913
+    ln_set_rate =  63.15120404192562 + -83.14741674753726 * tfactors.T9i + -38.1053 * tfactors.T913i + -0.210947 * tfactors.T913
                          + -2.68377 * tfactors.T9 + 0.355814 * tfactors.T953 + 0.833333 * tfactors.lnT9;
 
     if constexpr (do_T_derivatives) {
