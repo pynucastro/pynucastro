@@ -55,6 +55,11 @@ class ModifiedRate(Rate):
 
         self.chapter = "m"
 
+        try:
+            self.weak = original_rate.weak
+        except ValueError:
+            self.weak = False
+
         # update the Q value
         if new_products or new_reactants:
             self._set_q()

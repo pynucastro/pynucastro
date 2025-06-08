@@ -9,6 +9,7 @@ from pynucastro.nucdata import Nucleus
 from pynucastro.rates.rate import Rate
 from pynucastro.rates.reaclib_rate import ReacLibRate, SingleSet
 from pynucastro.rates.tabular_rate import TabularRate
+from pynucastro.rates.modified_rate import ModifiedRate
 
 
 class DerivedRate(ReacLibRate):
@@ -46,7 +47,14 @@ class DerivedRate(ReacLibRate):
             raise ValueError('One of the products spin ground state, is not defined')
 
         derived_sets = []
-        for ssets in self.rate.sets:
+
+        # The original rate of the modified rate is assumed to be ReacLibRate
+        if isinstance(rate, ModifiedRate):
+            r = self.rate.original_rate
+        else:
+            r = self.rate
+
+        for ssets in r.sets:
             a = ssets.a
             prefactor = 0.0
             Q = 0.0
@@ -84,11 +92,11 @@ class DerivedRate(ReacLibRate):
             a_rev[5] = a[5]
             a_rev[6] = a[6] + 1.5*(len(self.rate.reactants) -
                                    len(self.rate.products))
-            sset_d = SingleSet(a=a_rev, labelprops=rate.labelprops)
+            sset_d = SingleSet(a=a_rev, labelprops=r.labelprops)
             derived_sets.append(sset_d)
 
-        super().__init__(rfile=self.rate.rfile, chapter=self.rate.chapter,
-                         original_source=self.rate.original_source,
+        super().__init__(rfile=r.rfile, chapter=r.chapter,
+                         original_source=r.original_source,
                          reactants=self.rate.products,
                          products=self.rate.reactants,
                          sets=derived_sets, labelprops="derived", Q=-Q)
