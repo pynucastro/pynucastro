@@ -16,6 +16,7 @@ from pathlib import Path
 import numpy as np
 import sympy
 
+from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
 from pynucastro.rates import DerivedRate
@@ -59,6 +60,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<nrxn_enum_type>'] = self._nrxn_enum_type
         self.ftags['<rate_names>'] = self._rate_names
         self.ftags['<ebind>'] = self._ebind
+        self.ftags['<mion>'] = self._mion
         self.ftags['<compute_screening_factors>'] = self._compute_screening_factors
         self.ftags['<table_num>'] = self._table_num
         self.ftags['<declare_tables>'] = self._declare_tables
@@ -326,6 +328,10 @@ class BaseCxxNetwork(ABC, RateCollection):
         for nuc in self.unique_nuclei:
             of.write(f'{self.indent*n_indent}ebind_per_nucleon({nuc.cindex()}) = {nuc.nucbind}_rt;\n')
 
+    def _mion(self, n_indent, of):
+        for nuc in self.unique_nuclei:
+            of.write(f'{self.indent*n_indent}mion({nuc.cindex()}) = {nuc.A_nuc * constants.m_u_C18}_rt;\n')
+
     def _table_num(self, n_indent, of):
         of.write(f'{self.indent*n_indent}const int num_tables = {len(self.tabular_rates)};\n')
 
@@ -358,7 +364,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f'{idnt}{r.table_index_name}_meta.nvars = {r.table_num_vars};\n')
             of.write(f'{idnt}{r.table_index_name}_meta.nheader = {r.table_header_lines};\n\n')
 
-            of.write(f'{idnt}init_tab_info({r.table_index_name}_meta, "{r.table_file}", {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data);\n\n')
+            of.write(f'{idnt}init_tab_info({r.table_index_name}_meta, "{r.rfile}", {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data);\n\n')
 
             of.write('\n')
 

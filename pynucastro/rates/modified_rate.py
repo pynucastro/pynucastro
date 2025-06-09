@@ -39,12 +39,12 @@ class ModifiedRate(Rate):
         self.original_rate = original_rate
         self.update_screening = update_screening
 
-        if new_reactants:
+        if new_reactants is not None:
             reactants = new_reactants
         else:
             reactants = original_rate.reactants
 
-        if new_products:
+        if new_products is not None:
             products = new_products
         else:
             products = original_rate.products
@@ -54,10 +54,6 @@ class ModifiedRate(Rate):
                          stoichiometry=stoichiometry)
 
         self.chapter = "m"
-
-        # update the Q value
-        if new_products or new_reactants:
-            self._set_q()
 
     def _set_screening(self):
         """Determine if this rate is eligible for screening and the

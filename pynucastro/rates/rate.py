@@ -111,11 +111,6 @@ class Rate:
         products_str = '_'.join([repr(nuc) for nuc in self.products])
         self.fname = f'{reactants_str}__{products_str}__{label}'
 
-        if Q is None:
-            self._set_q()
-        else:
-            self.Q = Q
-
         self.weak_type = weak_type
 
         # the identical particle factor scales the rate to prevent
@@ -128,6 +123,12 @@ class Rate:
         # some subclasses might define a stoichmetry as a dict{Nucleus}
         # that gives the numbers for the dY/dt equations
         self.stoichiometry = stoichiometry
+
+        # Set Q-value of the reaction rate. Needs to go after stoichiometry.
+        if Q is None:
+            self._set_q()
+        else:
+            self.Q = Q
 
         self._set_rhs_properties()
         self._set_screening()
@@ -194,10 +195,12 @@ class Rate:
         # from the masses of the nuclei, Q = M_products - M_reactants
 
         self.Q = 0
-        for n in self.reactants:
-            self.Q += n.mass
-        for n in self.products:
-            self.Q += -n.mass
+        for n in set(self.reactants):
+            c = self.reactant_count(n)
+            self.Q += c * n.mass
+        for n in set(self.products):
+            c = self.product_count(n)
+            self.Q += -c * n.mass
 
     def _set_print_representation(self):
 
