@@ -58,24 +58,26 @@ class DerivedRate(ReacLibRate):
         else:
             r = self.rate
 
+        Q = self.rate.Q
+        if self.compute_Q:
+            Q = 0.0
+            for n in set(self.rate.reactants):
+                c = r.reactant_count(n)
+                Q += c * n.A_nuc * constants.m_u_MeV_C18
+            for n in set(self.rate.products):
+                c = r.product_count(n)
+                Q += -c * n.A_nuc * constants.m_u_MeV_C18
+
         for ssets in r.sets:
             a = ssets.a
             prefactor = 0.0
-            Q = 0.0
             prefactor += -np.log(constants.N_A) * (len(self.rate.reactants) -
                                                    len(self.rate.products))
 
             for nucr in self.rate.reactants:
                 prefactor += 1.5*np.log(nucr.A) + np.log(nucr.spin_states)
-                Q += nucr.A_nuc
             for nucp in self.rate.products:
                 prefactor += -1.5*np.log(nucp.A) - np.log(nucp.spin_states)
-                Q -= nucp.A_nuc
-
-            if self.compute_Q:
-                Q = Q * constants.m_u_MeV_C18
-            else:
-                Q = self.rate.Q
 
             prefactor += np.log(self.counter_factors()[1]) - np.log(self.counter_factors()[0])
 
