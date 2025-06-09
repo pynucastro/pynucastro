@@ -52,7 +52,7 @@ pynucastro = [
   "library/tabular/suzuki/*",
   "library/tabular/langanke/*",
   "library/tabular/ffn/*",
-  "library/tabular/oda/*"
+  "library/tabular/oda/*",
   "templates/**/*",
   "nucdata/*",
   "nucdata/AtomicMassEvaluation/*",
