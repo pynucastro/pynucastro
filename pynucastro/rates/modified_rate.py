@@ -65,7 +65,7 @@ class ModifiedRate(Rate):
         if new_products or new_reactants:
             self._set_q()
 
-        super()._set_print_representation()
+        self._set_print_representation()
 
     def _set_screening(self):
         """Determine if this rate is eligible for screening and the

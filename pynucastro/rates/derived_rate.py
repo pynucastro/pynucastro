@@ -108,12 +108,10 @@ class DerivedRate(ReacLibRate):
         # explicitly mark it as reverse
         self.reverse = True
 
-        # Mark as modified if the forward rate is modified
-        # And update stoichiometry so that we are consistent in full ydot eqns
-        self.modified = self.rate.modified
+        # Update stoichiometry so that we are consistent in full ydot eqns
         self.stoichiometry = self.rate.stoichiometry
 
-        super()._set_print_representation()
+        self._set_print_representation()
 
     def _warn_about_missing_pf_tables(self):
         skip_nuclei = {Nucleus("h1"), Nucleus("n"), Nucleus("he4")}
