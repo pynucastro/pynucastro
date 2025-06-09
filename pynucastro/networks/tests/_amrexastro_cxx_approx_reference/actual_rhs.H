@@ -8,7 +8,9 @@
 #include <actual_network.H>
 #include <burn_type.H>
 #include <jacobian_utilities.H>
+#ifdef SCREENING
 #include <screen.H>
+#endif
 #include <microphysics_autodiff.H>
 #ifdef NEUTRINOS
 #include <sneut5.H>
@@ -40,7 +42,7 @@ void ener_gener_rate(T const& dydt, amrex::Real& enuc)
         enuc += dydt(n) * network::mion(n);
     }
 
-    enuc *= C::Legacy::enuc_conv2;
+    enuc *= C::enuc_conv2;
 }
 
 
@@ -66,15 +68,18 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
         // seed the dual number for temperature before calculating anything with it
         autodiff::seed(temp);
     }
+
+#ifdef SCREENING
     plasma_state_t<number_t> pstate{};
     fill_plasma_state(pstate, temp, state.rho, Y);
+#endif
 
     tf_t tfactors = evaluate_tfactors(state.T);
 
     fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
 
-
+#ifdef SCREENING
     // Evaluate screening factors
 
     amrex::Real ratraw, dratraw_dT;
@@ -185,6 +190,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
         rate_eval.dscreened_rates_dT(k_p_P31_to_He4_Si28_removed) = ratraw * dscor_dt + dratraw_dT * scor;
     }
 
+#endif
 
     // Fill approximate rates
 

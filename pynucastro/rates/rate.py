@@ -371,12 +371,11 @@ class Rate:
             self.dens_exp = self.dens_exp + 1
 
     def _set_screening(self):
-        """ determine if this rate is eligible for screening and the nuclei to use. """
-        # Tells if this rate is eligible for screening
-        # using screenz.f90 provided by StarKiller Microphysics.
-        # If not eligible for screening, set to None
-        # If eligible for screening, then
-        # Rate.ion_screen is a 2-element (3 for 3-alpha) list of Nucleus objects for screening
+        """Determine if this rate is eligible for screening and the
+        nuclei to use."""
+        # Tells if this rate is eligible for screening, and if it is
+        # then Rate.ion_screen is a 2-element (3 for 3-alpha) list of
+        # Nucleus objects for screening; otherwise it is set to none
         self.ion_screen = []
         nucz = [q for q in self.reactants if q.Z != 0]
         if len(nucz) > 1:
@@ -429,6 +428,13 @@ class Rate:
 
     @property
     def id(self):
+        """the rate's id string
+
+        Returns
+        -------
+        str
+
+        """
         return self.get_rate_id()
 
     def heaviest(self):
@@ -675,7 +681,7 @@ class Rate:
         respect to ``y_i``.  This rate term has the full composition
         and density dependence, i.e.:
 
-          rate = rho**n Y1**a Y2**b ... N_A <sigma v>
+        rate = ρ**n Y1**a Y2**b ... N_A <σv>
 
         The derivative is only non-zero if this term depends on
         nucleus ``y_i``.
@@ -762,7 +768,12 @@ class RateSource:
 
     @classmethod
     def source(cls, label: str) -> dict[str, str] | None:
-        """Returns the source of a rate given its label, and None if not found."""
+        """Returns the source of a rate given its label, and None if not found.
+
+        Parameters
+        ----------
+        label : str
+        """
 
         return cls.labels.get(label.lower().strip())
 

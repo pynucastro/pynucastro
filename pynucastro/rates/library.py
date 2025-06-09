@@ -93,8 +93,21 @@ def _rate_name_to_nuc(name):
 
 
 def capitalize_rid(rid, delimiter):
-    # Used to capitalize rid or fname given the delimiter
-    # delimiter is usually either "_" or " "
+    """Capitalize a ``Rate`` ``rid`` or ``fname`` given the delimiter.
+    The delimiter is usually either "_" or " "
+
+    Parameters
+    ----------
+    rid : str
+        the rate's id
+    delimiter : str
+        the delimiter used to split the rid into substrings
+
+    Returns
+    -------
+    str
+
+    """
 
     rid_nucs = rid.split(delimiter)
     rid_mod = []
@@ -686,60 +699,67 @@ class Library:
 
 
 class RateFilter:
-    """RateFilter filters out a specified rate or set of rates
+    """A RateFilter filters out a specified rate or set of rates
     A RateFilter stores selection rules specifying a rate or group of
     rates to assist in searching for rates stored in a Library.
+
+    Parameters
+    ----------
+    reactants : str, Nucleus, Iterable(Nucleus, str)
+        the allowed reactant nuclei of the rates
+    products :  str, Nucleus, Iterable(Nucleus, str)
+        the allowed products of the rates
+    exact : bool
+        if ``True``, products or reactants must match exactly.
+        if ``False``, then all products or reactants must be found
+        in a comparison rate, but the comparison may contain
+        additional products or reactants
+    reverse : bool
+        if ``True``, only match reverse-derived rates
+        if ``False``, only match directly-derived rates
+        if None, you don't care, match both
+    min_reactants : int
+        match Rates that have at least this many reactants
+    min_products : int
+        match Rates that have at least this many products
+    max_reactants : int
+        match Rates that have no more than this many reactants
+    max_products : int
+        match Rates that have no more than this many products
+    filter_function : Callable
+        a function (``Rate`` -> ``bool``) that can take a single rate
+        as an argument may be used to specify additional criteria,
+        returning ``True`` if the rate meets all of them, ``False``
+        otherwise
+
+    Examples
+    --------
+    Create a filter that finds all proton capture and proton-burning reactions
+    in a ``Library`` instance ``my_library``:
+
+    >>> pcap_filter = RateFilter(reactants='p', exact=False)
+    >>> pcap_library = my_library.filter(pcap_filter)
+
+    or you can use ``Nucleus``:
+
+    >>> pcap_filter = RateFilter(reactants=Nucleus('p'), exact=False)
+    >>> pcap_library = my_library.filter(pcap_filter)
+
+    Create a filter that finds O16(g,a)C12.  Note:
+
+    * photons/gammas are not treated as nuclides, so they cannot be
+      a reactant or product
+    * this rate is in the ReacLib library used here as
+      O16 --> He4 + C12 --- you need to know how your library treats rates
+
+    >>> cago_filter = RateFilter(reactants='o16', products=['c12', 'a'])
+    >>> cago_library = my_library.filter(cago_filter)
+
     """
 
     def __init__(self, reactants=None, products=None, exact=True,
                  reverse=None, min_reactants=None, max_reactants=None,
                  min_products=None, max_products=None, filter_function=None):
-        """Create a new RateFilter with the given selection rules
-
-        Keyword Arguments:
-            reactants -- Description of the reactants as one of:
-                1. a list of Nucleus objects
-                2. a list of string descriptions of reactant nuclides
-                   these strings must be parsable by Nucleus
-                3. a single reactant Nucleus
-                4. a single string description of the reactant nuclide
-            products  -- Description of the products in same form as above
-            exact     -- boolean,
-                         if True, products or reactants must match exactly [default]
-                         if False, then all products or reactants must be found
-                         in a comparison rate, but the comparison may contain
-                         additional products or reactants
-            reverse   -- boolean,
-                         if True, only match reverse-derived rates
-                         if False, only match directly-derived rates
-                         if None, you don't care, match both [default]
-            min_reactants -- int, match Rates that have at least this many reactants
-            min_products  -- int, match Rates that have at least this many products
-            max_reactants -- int, match Rates that have no more than this many reactants
-            max_products  -- int, match Rates that have no more than this many products
-            filter_function -- callable (Rate -> bool),
-                               a callable that can take a single rate as an argument
-                               may be used to specify additional criteria, returning
-                               True if the rate meets all of them, False otherwise
-
-        Examples:
-            Create a filter that finds all proton capture and proton-burning reactions
-            in a Library instance my_library::
-                >>> pcap_filter = RateFilter(reactants='p', exact=False)
-                >>> pcap_library = my_library.filter(pcap_filter)
-            or you can use Nucleus::
-                >>> pcap_filter = RateFilter(reactants=Nucleus('p'), exact=False)
-                >>> pcap_library = my_library.filter(pcap_filter)
-
-            Create a filter that finds C12 (a,g) O16
-            Notes:
-                + photons/gammas are not treated as nuclides, so they cannot be
-                a reactant or product
-                + this rate is in the ReacLib library used here as
-                O16 --> He4 C12 -- you need to know how your library treats rates::
-                    >>> cago_filter = RateFilter(reactants='o16', products=['c12', 'a'])
-                    >>> cago_library = my_library.filter(cago_filter)
-        """
         self.reactants = []
         self.products = []
         self.exact = exact
@@ -783,7 +803,18 @@ class RateFilter:
         return matches
 
     def matches(self, r):
-        """ Given a Rate r, see if it matches this RateFilter. """
+        """Given a Rate r, see if it matches this RateFilter.
+
+        Parameters
+        ----------
+        r : Rate
+            the rate we are looking for
+
+        Returns
+        -------
+        bool
+
+        """
         # do cheaper checks first
         matches_reverse = True
         matches_min_reactants = True
@@ -818,7 +849,13 @@ class RateFilter:
         return True
 
     def invert(self):
-        """ Return a RateFilter matching the inverse rate. """
+        """Return a RateFilter matching the inverse rate.
+
+        Returns
+        -------
+        RateFilter
+
+        """
         newfilter = RateFilter(reactants=self.products,
                                products=self.reactants,
                                exact=self.exact,
@@ -861,7 +898,8 @@ class TabularLibrary(Library):
 
     def __init__(self, ordering=None):
         # find all of the tabular rates that pynucastro knows about
-        # we'll assume that these are of the form *-toki
+        # we'll assume that these are of the form *betadecay.dat or
+        # *electroncapture.dat
 
         if ordering is None:
             ordering = ["ffn", "langanke", "suzuki"]
@@ -869,10 +907,11 @@ class TabularLibrary(Library):
         trates = []
 
         for source in ordering:
-            for _, _, filenames in sorted(walk(self.lib_path / Path(source))):
+            source_dir = self.lib_path / Path(source)
+            for _, _, filenames in sorted(walk(source_dir)):
                 for f in sorted(filenames):
-                    if f.endswith("-toki"):
-                        r = TabularRate(rfile=f)
+                    if f.endswith("electroncapture.dat") or f.endswith("betadecay.dat"):
+                        r = TabularRate(rfile=source_dir / f)
                         if r in trates:
                             # we are looping over the various libraries in order
                             # from lowest precedence to highest.  So if the rate

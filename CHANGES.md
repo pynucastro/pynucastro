@@ -1,5 +1,102 @@
 # Changelog
 
+## 2.6.0
+
+  * Added a `summary()` method to `RateCollection` that gives details
+    about the number of rates and nuclei (#954)
+
+  * Added a new `ModifiedRate` class that allows for altering
+    reactants, products, and stoichiometry while using an existing
+    underlying rate (#950)
+
+  * Drop requirement for `sphinx_rtd_theme` (#969)
+
+  * `SimpleCxxNetwork` now stores and computes Y_e so it can work with
+    weak rates (#965), and it also can take commandline arguments for
+    rho and T (#970)
+
+  * Fix `README.md` logo for PyPI (#973)
+
+  * Add a new `BaryonConservationError` exception to `Rate` that
+    ensures a rate is balanced with respect to baryons. (#975)
+
+  * Added a new CI test that directly compares a `PythonNetwork` and
+    `SimpleCxxNetwork`  evaluation of dY/dt (#964)
+
+  * `SimpleCxxNetwork` now allows for screening to be disabled
+    (compile with `DISABLE_SCREENING=TRUE`).  It also prints more
+    precision in the test (#963)
+
+  * Node colors in the `RateCollection` `plot()` can now be customized
+    (#962)
+
+  * Some helper functions for working with yt datasets have been added
+    (#961)
+
+  * update to the latest ReacLib database (#917)
+
+  * don't use `std::pow` in constexpr in a `SimpleCxxNetwork` as that is
+    C++23 and not yet widely supported.  (#953)
+
+  * allow the nodes in a network plot to have custom names (#946)
+
+  * create a `Nucleus` `.summary()` method to display the information
+    we know about a nucleus. (#949)
+
+  * allow rates to support their own stoichiometry, instead of simply
+    relying on the number of nuclei in the reactants or products
+    list. (#947, #952)
+
+  * Added a new network method, `get_hidden_rates()` that returns the
+    rates that are not explicitly linked in the network but instead
+    are used internally by `ApproximateRate` rates. (#943)
+
+  * Clean up `Library` (#932)
+
+  * Fix the binding energy notebook example -- we don't want to show
+    negative binding energies (#939)
+
+  * `TabularLibrary()` now takes a keyword argument `ordering` that
+    can specify which sources to use and the order to read
+    them. (#922)
+
+  * Docstring updates (#892, #899, #926, #927, #928, #931, #933, #934,
+    #935, #937, #956, #957, #960, #966, #967, #972, #977) and more API
+    coverage (#929) and reorganization of the API docs (#955)
+
+  * New codespell github action (#930)
+
+  * mailmap updates (#924)
+
+  * Add ruff settings to `pyproject.toml` (#923)
+
+  * Added the Fuller, Fowler, & Newman weak rates (#910)
+
+  * Updated the colors used for `RateCollection` plots (#921)
+
+  * Added the ability to show a legend on a `RateCollection` network
+    plot (#817, #942)
+
+  * Documentation updates (#901, #902, #907, #913, #919, #920) and
+    fixes (#941, #976)
+
+  * `PythonNetwork` now pairs the forward and reverse rates when
+    summing the ydot term, mirroring what we do in C++ (#784)
+
+  * Highlighting of edges now uses better colors in `RateCollection`
+    network plots (#904)
+
+  * `AmrexAstroCxxNetwork` code cleaning (#909)
+
+  * `DerivedRate` now sets `reverse=True` (#915)
+
+  * Weak rate tables have been renamed to include the source in the
+    filename (#912)
+
+  * CI fixes (#905, #906)
+
+  * `RateCoillection` class cleaning (#900)
+
 ## 2.5.0
 
   * fix the zenodo authors (#898) and automate the zenodo bibtex in
@@ -7,8 +104,8 @@
 
   * codespell fixes (#897)
 
-  * AmrexAstroCxxNetwork now ifdefs out neutrinos (#884)
-  
+  * `AmrexAstroCxxNetwork` now ifdefs out neutrinos (#884)
+
   * officially support python 3.13 (#860)
 
   * update package requirements (#896)
@@ -52,7 +149,7 @@
 
   * Clean-up unused class data in `SimpleCxxNetwork` (#845)
 
-  * Clean up the rate module by separating it into submodules (#840, #842)
+  * Clean up the `rate` module by separating it into submodules (#840, #842)
 
   * Add the ability to label edges in network plots (#837)
 
@@ -132,7 +229,7 @@
 
   * `AmrexAstroCxxNetwork` now create a ydot_weak function that
     evaluates the weak rate contributions to compute dYe/dt (#739)
-   
+
 ## 2.2.1
 
   * numpy 2.0 support added (#748)
@@ -147,7 +244,7 @@
 
   * pylint fixes (#733)
 
-  * Composition now allows for direct key-value indexing (#731),
+  * `Composition` now allows for direct key-value indexing (#731),
     and has a new `set_random()` method (#728)
 
   * The `screen5` screening routine has been added (#730)

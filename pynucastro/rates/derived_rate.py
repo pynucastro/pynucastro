@@ -142,8 +142,12 @@ class DerivedRate(ReacLibRate):
         return r
 
     def function_string_py(self):
-        """Return a string containing python function that computes
-        the rate.
+        """Return a string containing the python function that
+        computes the rate.
+
+        Returns
+        -------
+        str
 
         """
 
