@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.library &#8212; pynucastro 2.6.0.post18+ga596a83c documentation</title>
+    <title>pynucastro.rates.library &#8212; pynucastro 2.6.0.post19+g3150c920 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=57ce2ccb"></script>
+    <script src="../../../_static/documentation_options.js?v=7a6387aa"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1450,7 +1450,8 @@ document.write(`
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ordering</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># find all of the tabular rates that pynucastro knows about</span>
-        <span class="c1"># we&#39;ll assume that these are of the form *-toki</span>
+        <span class="c1"># we&#39;ll assume that these are of the form *betadecay.dat or</span>
+        <span class="c1"># *electroncapture.dat</span>
 
         <span class="k">if</span> <span class="n">ordering</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">ordering</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ffn&quot;</span><span class="p">,</span> <span class="s2">&quot;langanke&quot;</span><span class="p">,</span> <span class="s2">&quot;suzuki&quot;</span><span class="p">]</span>
@@ -1458,10 +1459,11 @@ document.write(`
         <span class="n">trates</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">ordering</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lib_path</span> <span class="o">/</span> <span class="n">Path</span><span class="p">(</span><span class="n">source</span><span class="p">))):</span>
+            <span class="n">source_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lib_path</span> <span class="o">/</span> <span class="n">Path</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">walk</span><span class="p">(</span><span class="n">source_dir</span><span class="p">)):</span>
                 <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">filenames</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;-toki&quot;</span><span class="p">):</span>
-                        <span class="n">r</span> <span class="o">=</span> <span class="n">TabularRate</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;electroncapture.dat&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;betadecay.dat&quot;</span><span class="p">):</span>
+                        <span class="n">r</span> <span class="o">=</span> <span class="n">TabularRate</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="n">source_dir</span> <span class="o">/</span> <span class="n">f</span><span class="p">)</span>
                         <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">trates</span><span class="p">:</span>
                             <span class="c1"># we are looping over the various libraries in order</span>
                             <span class="c1"># from lowest precedence to highest.  So if the rate</span>

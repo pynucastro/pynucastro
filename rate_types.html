@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Reaction Rate Types &#8212; pynucastro 2.6.0.post18+ga596a83c documentation</title>
+    <title>Reaction Rate Types &#8212; pynucastro 2.6.0.post19+g3150c920 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=57ce2ccb"></script>
+    <script src="_static/documentation_options.js?v=7a6387aa"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -564,7 +564,12 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ydot-term">ydot term</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabulated-rates">Tabulated Rates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabulated-rates">Tabulated Rates</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">ydot term</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#table-format">Table format</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Rate evaluation functions</a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -736,7 +741,8 @@ This is handled by <code class="docutils literal notranslate"><span class="pre">
 <p>The rate class does not include the stoichiometric factors – that
 is the responsibility of the network.</p>
 </div>
-<p>Similarly, <code class="docutils literal notranslate"><span class="pre">ReacLib.jacobian_string_py()</span></code> outputs the contribution to the Jacobian for this rate.</p>
+<p>Similarly,  <a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.jacobian_string_py" title="pynucastro.rates.rate.Rate.jacobian_string_py"><code class="xref py py-func docutils literal notranslate"><span class="pre">jacobian_string_py</span></code></a>
+outputs the contribution to the Jacobian for this rate.</p>
 </section>
 </section>
 <section id="tabulated-rates">
@@ -751,26 +757,37 @@ and managed by the <a class="reference internal" href="pynucastro.rates.tabular_
 then these are combined with the appropriate electron counterpart
 into a single rate.</p>
 </div>
-<p>A <code class="docutils literal notranslate"><span class="pre">TabularRate</span></code> is described by 2 files.  The first file mimics the
-ReacLib header, with a chapter indicated as <code class="docutils literal notranslate"><span class="pre">t</span></code> and gives the name
-of the table and the number of columns, density, and temperature
-points.  For example,
-<a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/suzuki-na23--ne23-toki">pynucastro/library/tabular/suzuki/suzuki-na23–ne23-toki</a> demonstrates the following
-format:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>t
-[parent nuclide]  [daughter nuclide]
-[rate table file name]
-[number of header lines before the first line of data]
-[number of density*ye values]
-[number of temperature values]
+<p>A tabular rate is described by a single file for each reaction
+(i.e., beta-decays and electron-captures are in separate files).</p>
+<p>The data reading and interpolation are managed by the
+<a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate" title="pynucastro.rates.tabular_rate.TabularRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularRate</span></code></a>
+class.</p>
+<section id="id1">
+<h3>ydot term<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p>The form of the reaction <span class="math notranslate nohighlight">\(A \rightarrow B\)</span> is:</p>
+<div class="math notranslate nohighlight">
+\[\dot{Y}_A = -Y(A) \lambda\]</div>
+<p>where <span class="math notranslate nohighlight">\(\lambda\)</span> is the rate returned from the table.</p>
+</section>
+<section id="table-format">
+<h3>Table format<a class="headerlink" href="#table-format" title="Link to this heading">#</a></h3>
+<p>Each rate table has a header (with lines starting with <code class="docutils literal notranslate"><span class="pre">!</span></code>), followed
+by the data.  An example can be seen as:
+<a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/suzuki-23na-23ne_electroncapture.dat">suzuki-23na-23ne_electroncapture.dat</a> in
+<code class="docutils literal notranslate"><span class="pre">pynucastro/library/tabular/suzuki</span></code></p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The first line header needs to include a line giving the reaction.
+It should take the form, e.g.,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>!65zn -&gt; 65cu, e- capture
 </pre></div>
 </div>
-<p>The second file is the table itself.  For now they must be in
-the form of, e.g. <a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/suzuki-23na-23ne_electroncapture.dat">suzuki-23na-23ne_electroncapture.dat</a> in
-<code class="docutils literal notranslate"><span class="pre">pynucastro/library/tabular/suzuki</span></code>, indexed by the product of density and
-electron fraction <span class="math notranslate nohighlight">\(\rm{\rho Y_e}\)</span> and temperature
-<span class="math notranslate nohighlight">\(\rm{T}\)</span>, with the same number and order of variables.
-The columns of the tables (and
+<p>where <code class="docutils literal notranslate"><span class="pre">!</span></code> is the comment character, <code class="docutils literal notranslate"><span class="pre">65zn</span></code> is the reactant, and <code class="docutils literal notranslate"><span class="pre">65cu</span></code> is
+the product.  Any additional information is ignored.</p>
+<p>An alternate form including the spins works as well, but the above
+it preferred.</p>
+</div>
+<p>The columns of the tables (and
 units) are:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\log_{10} (\rho Y_e)\)</span>: electron density in <span class="math notranslate nohighlight">\(\mathrm{g~cm^{-3}}\)</span></p></li>
@@ -785,12 +802,20 @@ For some rates, this is (<span class="math notranslate nohighlight">\(e^-\)</spa
 </ul>
 <p>and the data is ordered with <code class="docutils literal notranslate"><span class="pre">rhoY</span></code> varying the slowest (i.e., for a
 given <code class="docutils literal notranslate"><span class="pre">rhoY</span></code> we loop over all of the temperatures).</p>
-<p>pynucastro uses linear interpolation to return the rate given the
-temperature and electron density.</p>
-<p>The form of the reaction <span class="math notranslate nohighlight">\(A \rightarrow B\)</span></p>
-<div class="math notranslate nohighlight">
-\[\dot{Y}_A = -Y(A) \lambda\]</div>
-<p>where <span class="math notranslate nohighlight">\(\lambda\)</span> is the rate returned from the table.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The number of temperature and <span class="math notranslate nohighlight">\(\rho Y_e\)</span> points used in the tabulation
+is inferred from the data file itself.</p>
+</div>
+</section>
+<section id="id2">
+<h3>Rate evaluation functions<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p>Analogous to <code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code>, <code class="docutils literal notranslate"><span class="pre">TabularRate</span></code> provides functions to
+evaluate the rate and output the python code.  The function
+<a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.function_string_py" title="pynucastro.rates.tabular_rate.TabularRate.function_string_py"><code class="xref py py-func docutils literal notranslate"><span class="pre">function_string_py</span></code></a>
+outputs the python code for managing the interpolation of the data.
+For C++ networks, this interpolation is handled directly by the network class.</p>
+</section>
 </section>
 </section>
 
@@ -848,7 +873,12 @@ temperature and electron density.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ydot-term">ydot term</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabulated-rates">Tabulated Rates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabulated-rates">Tabulated Rates</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">ydot term</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#table-format">Table format</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Rate evaluation functions</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
