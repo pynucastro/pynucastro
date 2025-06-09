@@ -375,27 +375,27 @@ class TestDerivedRate:
 class TestWeakRates:
     @pytest.fixture(scope="class")
     def rate1(self):
-        return rates.TabularRate("suzuki-o18--f18-toki")
+        return rates.TabularRate("suzuki-18o-18f_betadecay.dat")
 
     @pytest.fixture(scope="class")
     def rate2(self):
-        return rates.TabularRate("suzuki-na22--ne22-toki")
+        return rates.TabularRate("suzuki-22na-22ne_electroncapture.dat")
 
     @pytest.fixture(scope="class")
     def rate3(self):
-        return rates.TabularRate("langanke-sc45--ca45-toki")
+        return rates.TabularRate("langanke-45sc-45ca_electroncapture.dat")
 
     @pytest.fixture(scope="class")
     def rate4(self):
-        return rates.TabularRate("langanke-ti45--sc45-toki")
+        return rates.TabularRate("langanke-45ti-45sc_electroncapture.dat")
 
     @pytest.fixture(scope="class")
     def rate5(self):
-        return rates.TabularRate("langanke-v45--ti45-toki")
+        return rates.TabularRate("langanke-45v-45ti_electroncapture.dat")
 
     @pytest.fixture(scope="class")
     def rate6(self):
-        return rates.TabularRate("langanke-ca45--sc45-toki")
+        return rates.TabularRate("langanke-45ca-45sc_betadecay.dat")
 
     def test_reactants(self, rate1, rate2, rate3, rate4, rate5, rate6):
 

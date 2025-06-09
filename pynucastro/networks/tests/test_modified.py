@@ -122,3 +122,12 @@ class TestModifiedRate:
 
         for n, k in enumerate(net_ydots):
             assert net_ydots[k] == approx(module_ydots[n], rel=1.e-11, abs=1.e-14)
+
+    def test_Q_value(self):
+        reaclib_lib = pyna.ReacLibLibrary()
+        r = reaclib_lib.get_rate_by_name("c12(a,g)o16")
+        mr_1 = pyna.ModifiedRate(r, new_reactants=["he4", "c12"],
+                                 new_products=["ne20"], stoichiometry={pyna.Nucleus("he4"): 2})
+        mr_2 = pyna.ModifiedRate(r, new_reactants=["he4", "he4", "c12"], new_products=["ne20"])
+
+        assert mr_1.Q == mr_2.Q
