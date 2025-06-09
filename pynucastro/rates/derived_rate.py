@@ -6,10 +6,10 @@ import numpy as np
 
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
+from pynucastro.rates.modified_rate import ModifiedRate
 from pynucastro.rates.rate import Rate
 from pynucastro.rates.reaclib_rate import ReacLibRate, SingleSet
 from pynucastro.rates.tabular_rate import TabularRate
-from pynucastro.rates.modified_rate import ModifiedRate
 
 
 class DerivedRate(ReacLibRate):
@@ -49,6 +49,10 @@ class DerivedRate(ReacLibRate):
         derived_sets = []
 
         # The original rate of the modified rate is assumed to be ReacLibRate
+        # Note: if dealing with ModifiedRate, the actual number of counts for
+        # reactants and products come from rates.reactants and rates.product.
+        # In the case of stoichiometry, this only affects the full ydot.
+        # So it doesn't affect detailed balance calculation.
         if isinstance(rate, ModifiedRate):
             r = self.rate.original_rate
         else:
