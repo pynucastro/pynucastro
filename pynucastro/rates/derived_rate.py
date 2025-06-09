@@ -63,10 +63,11 @@ class DerivedRate(ReacLibRate):
             Q = 0.0
             for n in set(self.rate.reactants):
                 c = r.reactant_count(n)
-                Q += c * n.A_nuc * constants.m_u_MeV_C18
+                Q += c * n.A_nuc
             for n in set(self.rate.products):
                 c = r.product_count(n)
-                Q += -c * n.A_nuc * constants.m_u_MeV_C18
+                Q += -c * n.A_nuc
+            Q *= constants.m_u_MeV_C18
 
         for ssets in r.sets:
             a = ssets.a
