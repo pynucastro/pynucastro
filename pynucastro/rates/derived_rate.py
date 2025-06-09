@@ -109,7 +109,9 @@ class DerivedRate(ReacLibRate):
         self.reverse = True
 
         # Mark as modified if the forward rate is modified
+        # And update stoichiometry so that we are consistent in full ydot eqns
         self.modified = self.rate.modified
+        self.stoichiometry = self.rate.stoichiometry
 
         super()._set_print_representation()
 
