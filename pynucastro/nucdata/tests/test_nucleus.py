@@ -168,7 +168,7 @@ class TestNucleus:
         assert Nucleus("ni56") == Nucleus("56ni")
 
         with raises(ValueError):
-            ni = Nucleus("ni56n")
+            _ = Nucleus("ni56n")
 
 
 class TestNSEProtons:
