@@ -953,6 +953,7 @@ class FFNLibrary(TabularLibrary):
     def __init__(self):
         super().__init__(ordering=["ffn"])
 
+
 class OdaLibrary(TabularLibrary):
     """Create a :py:class:`Library` containing all of the tabular
     rates inside the "oda" subdirectory.

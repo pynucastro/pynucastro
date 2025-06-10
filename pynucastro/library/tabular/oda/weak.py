@@ -4,6 +4,7 @@ import re
 import numpy as np
 import pandas as pd
 import scipy.constants as scp
+
 from pynucastro import Nucleus
 
 pd.set_option('display.max_colwidth', 100)
@@ -32,7 +33,6 @@ for loc in tables:
                 a = int(matches[0][2])
                 daughter_str = f"{a}{el}"
 
-
                 nuc = Nucleus(daughter_str)
                 d_z = nuc.Z + 1
                 d = Nucleus.from_Z_A(Z=d_z, A=a)
@@ -40,7 +40,6 @@ for loc in tables:
 
                 Qcap = Q
                 Qbeta = -Q
-
 
     # # Defining Output:
     # #=================

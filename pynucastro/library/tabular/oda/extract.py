@@ -16,7 +16,7 @@ with open('odarates.dat', 'r') as file:
         if s[0:2] == 'T9':
             if header == 0:
                 continue
-            header +=1
+            header += 1
             l2 = l
             continue
 

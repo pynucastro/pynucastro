@@ -7,7 +7,7 @@ from .derived_rate import DerivedRate
 from .files import RateFileError, _find_rate_file
 from .known_duplicates import find_duplicate_rates, is_allowed_dupe
 from .library import (FFNLibrary, LangankeLibrary, Library, RateFilter,
-                      ReacLibLibrary, SuzukiLibrary, TabularLibrary, OdaLibrary,
+                      ReacLibLibrary, SuzukiLibrary, OdaLibrary, TabularLibrary,
                       list_known_rates)
 from .modified_rate import ModifiedRate
 from .rate import BaryonConservationError, Rate, RatePair, Tfactors
