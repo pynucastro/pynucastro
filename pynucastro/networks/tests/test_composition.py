@@ -244,8 +244,8 @@ class TestCompBinning3:
     """an example where we exclude Ni56 from the binning."""
     @pytest.fixture(scope="class")
     def nuclei(self):
-        nuc_list = pyna.get_nuclei_in_range(26, 26, 52, 58)
-        nuc_list += pyna.get_nuclei_in_range(28, 28, 56, 58)
+        nuc_list = pyna.get_nuclei_in_range("Fe", A_range=[52, 58])
+        nuc_list += pyna.get_nuclei_in_range(Z_range=[28, 28], A_range=[56, 58])
         return nuc_list
 
     @pytest.fixture(scope="class")
