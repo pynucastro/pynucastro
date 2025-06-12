@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.nse_network &#8212; pynucastro 2.6.0.post22+gdbb76633 documentation</title>
+    <title>pynucastro.networks.nse_network &#8212; pynucastro 2.6.0.post23+g476e8dbc7 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=72fcbba3"></script>
+    <script src="../../../_static/documentation_options.js?v=85f39b98"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -214,7 +214,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../NSE-example.html">Solving for Nuclear Statistical Equilibrium</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../NSE-example.html">NSE Demonstrations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../nse_table.html">Creating an NSE table</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
@@ -481,7 +481,6 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro._version</span><span class="w"> </span><span class="kn">import</span> <span class="n">version</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.rate_collection</span><span class="w"> </span><span class="kn">import</span> <span class="n">Composition</span><span class="p">,</span> <span class="n">RateCollection</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">TabularRate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">NseState</span><span class="p">,</span> <span class="n">potekhin_1998</span>
 
@@ -568,54 +567,96 @@ document.write(`
 <div class="viewcode-block" id="NSENetwork">
 <a class="viewcode-back" href="../../../pynucastro.networks.nse_network.html#pynucastro.networks.nse_network.NSENetwork">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NSENetwork</span><span class="p">(</span><span class="n">RateCollection</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;a network for solving for the NSE composition and outputting</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;a network for solving the NSE composition and outputting</span>
 <span class="sd">    tabulated NSE quantities&quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_evaluate_n_e</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">Xs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_evaluate_mu_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">use_coulomb_corr</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A helper function that finds the coulomb potential of each nuclide in NSE state.</span>
+<span class="sd">        The coulomb potential is evaluated using the Helmholtz free energy</span>
+<span class="sd">        following Eq. 28 from Chabrier &amp; Potekhin 1998 DOI: 10.1103/PhysRevE.58.4941</span>
+<span class="sd">        Also see appendix in Calder 2007 DOI: 10.1086/510709</span>
 
-        <span class="n">n_e</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
-            <span class="n">n_e</span> <span class="o">+=</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">dens</span> <span class="o">*</span> <span class="n">Xs</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_C18</span><span class="p">)</span>
+<span class="sd">        A1 = -0.9052</span>
+<span class="sd">        A2 = 0.6322</span>
+<span class="sd">        A3 = -sqrt(3) / 2 - A1 / sqrt(A2)</span>
+<span class="sd">        Γ = Z^{5/3} q_e^2 (4 π n_e / 3)^{1/3} / (k_B T)</span>
+<span class="sd">        u^c / (k_B T)=   A1 [ sqrt(Γ (A2 + Γ)) - A2 ln(sqrt(Γ / A2) + sqrt(1 + Γ / A2)) ]</span>
+<span class="sd">                       + 2 A3 [ sqrt(Γ) - atan(sqrt(Γ)) ]</span>
 
-        <span class="k">return</span> <span class="n">n_e</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        state : NseState</span>
+<span class="sd">            NSE state</span>
+<span class="sd">        use_coulomb_corr: bool</span>
+<span class="sd">            whether to include coulomb correction terms</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_evaluate_mu_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_e</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">use_coulomb_corr</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; A helper equation that finds the mass fraction of each nuclide in NSE state,</span>
-<span class="sd">        u[0] is chemical potential of proton  while u[1] is chemical potential of neutron&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        u_c : dict</span>
+<span class="sd">            A dictionary of coulomb potential keyed by Nucleus.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># If there is proton included in network, upper limit of ye is 1</span>
-        <span class="c1"># And if neutron is included in network, lower limit of ye is 0.</span>
-        <span class="c1"># However, there are networks where either of them are included</span>
-        <span class="c1"># So here I add a general check to find the upper and lower limit of ye</span>
-        <span class="c1"># so the input doesn&#39;t go outside of the scope and the solver won&#39;t be able to converge if it did</span>
-        <span class="n">ye_low</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="o">/</span><span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
-        <span class="n">ye_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="o">/</span><span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">state</span><span class="o">.</span><span class="n">ye</span> <span class="o">&gt;=</span> <span class="n">ye_low</span> <span class="ow">and</span> <span class="n">state</span><span class="o">.</span><span class="n">ye</span> <span class="o">&lt;=</span> <span class="n">ye_max</span><span class="p">,</span> <span class="s2">&quot;input electron fraction goes outside of scope for current network&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">use_coulomb_corr</span><span class="p">:</span>
+            <span class="n">u_c</span> <span class="o">=</span> <span class="p">{</span><span class="n">n</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">}</span>
+            <span class="k">return</span> <span class="n">u_c</span>
 
-        <span class="c1"># u_c is the coulomb correction term for NSE</span>
-        <span class="c1"># Calculate the composition at NSE, equations found in appendix of Calder paper</span>
         <span class="n">u_c</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">n_e</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">ye</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">dens</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_C18</span>
+        <span class="n">A_1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.9052</span>
+        <span class="n">A_2</span> <span class="o">=</span> <span class="mf">0.6322</span>
+        <span class="n">A_3</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">A_1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A_2</span><span class="p">)</span>
+        <span class="n">Gamma_e</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">*</span> <span class="n">n_e</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span>
 
-        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)]):</span>
-            <span class="k">if</span> <span class="n">use_coulomb_corr</span><span class="p">:</span>
-                <span class="c1"># These are three constants for calculating coulomb corrections of chemical energy, see Calders paper: iopscience 510709, appendix</span>
-                <span class="n">A_1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.9052</span>
-                <span class="n">A_2</span> <span class="o">=</span> <span class="mf">0.6322</span>
-                <span class="n">A_3</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">A_1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A_2</span><span class="p">)</span>
-
-                <span class="n">Gamma</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">*</span> <span class="n">n_e</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">**</span> <span class="p">(</span><span class="mf">5.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span>
-                <span class="n">u_c</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">erg2MeV</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">k</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span> <span class="o">*</span> <span class="p">(</span><span class="n">A_1</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Gamma</span> <span class="o">*</span> <span class="p">(</span><span class="n">A_2</span> <span class="o">+</span> <span class="n">Gamma</span><span class="p">))</span> <span class="o">-</span> <span class="n">A_2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Gamma</span> <span class="o">/</span> <span class="n">A_2</span><span class="p">)</span> <span class="o">+</span>
-                                      <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">Gamma</span> <span class="o">/</span> <span class="n">A_2</span><span class="p">)))</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">A_3</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Gamma</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Gamma</span><span class="p">))))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">u_c</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+            <span class="n">Gamma</span> <span class="o">=</span> <span class="n">Gamma_e</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="o">**</span><span class="p">(</span><span class="mf">5.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span>
+            <span class="n">u_c</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">erg2MeV</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">k</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span> <span class="o">*</span> \
+                <span class="p">(</span><span class="n">A_1</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Gamma</span> <span class="o">*</span> <span class="p">(</span><span class="n">A_2</span> <span class="o">+</span> <span class="n">Gamma</span><span class="p">))</span> <span class="o">-</span> <span class="n">A_2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Gamma</span> <span class="o">/</span> <span class="n">A_2</span><span class="p">)</span> <span class="o">+</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">Gamma</span> <span class="o">/</span> <span class="n">A_2</span><span class="p">)))</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">A_3</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Gamma</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Gamma</span><span class="p">))))</span>
 
         <span class="k">return</span> <span class="n">u_c</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_nucleon_fraction_nse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">u_c</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A helper function that computes the NSE mass fraction for a given NSE state.</span>
+
+<span class="sd">        NSE condition says that the chemical potential of the i-th nuclei</span>
+<span class="sd">        is equal to the chemical potential of the free nucleon.</span>
+
+<span class="sd">        i.e. μ_i = Z_i μ_p + N_i μ_n</span>
+
+<span class="sd">        where μ_p and μ_n are the chemical potential of free proton and neutron,</span>
+<span class="sd">        which can be decomposed into the kinetic part μ^{id}, coulomb potential</span>
+<span class="sd">        part μ^c and its rest energy.</span>
+
+<span class="sd">        μ_p = μ^{id}_p + μ^{c}_p + m_p c^2</span>
+<span class="sd">        μ_n = μ^{id}_n           + m_n c^2</span>
+
+<span class="sd">        Assuming Boltzmann statistics and the NSE condition, we get:</span>
+
+<span class="sd">        X_i = m_i / ρ (2 J_i + 1) G_i (m_i k_B T / (2 π ℏ^2))^{3/2}</span>
+<span class="sd">            * exp{ Z_i (μ^{id}_p + μ^{c}_p) + N_i μ^{id}_n + B_i - μ^{c}_i}</span>
+
+<span class="sd">        See full derivation in appendix Smith Clark 2023 DOI: 10.3847/1538-4357/acbaff</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        u : (ndarray, tuple, list)</span>
+<span class="sd">            chemical potentials of proton and neutron, where we choose</span>
+<span class="sd">            u[0] = μ^{id}_p + μ^{c}_p and u[1] = μ^{id}_n</span>
+
+<span class="sd">            One can make the choice of setting u[0] = μ^{id}_p only and</span>
+<span class="sd">            add μ^{c}_p as a separate constant. However it won&#39;t affect the end result.</span>
+<span class="sd">        u_c : dict</span>
+<span class="sd">            A dictionary of coulomb potential keyed by Nucleus.</span>
+<span class="sd">        state : NseState</span>
+<span class="sd">            NSE state.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Xs : dict</span>
+<span class="sd">            A dictionary of NSE mass fractions keyed by Nucleus.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">Xs</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">up_c</span> <span class="o">=</span> <span class="n">u_c</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)]</span>
-
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">partition_function</span><span class="p">:</span>
                 <span class="n">pf</span> <span class="o">=</span> <span class="n">nuc</span><span class="o">.</span><span class="n">partition_function</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">temp</span><span class="p">)</span>
@@ -625,27 +666,42 @@ document.write(`
             <span class="k">if</span> <span class="ow">not</span> <span class="n">nuc</span><span class="o">.</span><span class="n">spin_states</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The spin of </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2"> is not implemented for now.&quot;</span><span class="p">)</span>
 
-            <span class="n">nse_exponent</span> <span class="o">=</span> <span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">*</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">nuc</span><span class="o">.</span><span class="n">N</span> <span class="o">*</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">u_c</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">+</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">*</span> <span class="n">up_c</span> <span class="o">+</span> <span class="n">nuc</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">k</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">erg2MeV</span><span class="p">)</span>
+            <span class="n">nse_exponent</span> <span class="o">=</span> <span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">*</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">nuc</span><span class="o">.</span><span class="n">N</span> <span class="o">*</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">u_c</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">+</span> <span class="n">nuc</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">k_MeV</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span><span class="p">)</span>
             <span class="n">nse_exponent</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mf">500.0</span><span class="p">,</span> <span class="n">nse_exponent</span><span class="p">)</span>
 
-            <span class="n">Xs</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A_nuc</span> <span class="o">*</span> <span class="n">pf</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">spin_states</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">dens</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A_nuc</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">k</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">h</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">1.5</span> \
-                    <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">nse_exponent</span><span class="p">)</span>
+            <span class="n">Xs</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">A_nuc</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_C18</span><span class="p">)</span><span class="o">**</span><span class="mf">2.5</span> <span class="o">*</span> <span class="n">pf</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">spin_states</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">dens</span> <span class="o">*</span> \
+                <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">k</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">hbar</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="mf">1.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">nse_exponent</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">Xs</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_constraint_eq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">u_c</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Constraint Equations used to evaluate chemical potential for proton and neutron,</span>
-<span class="sd">        which is used when evaluating composition at NSE&quot;&quot;&quot;</span>
+<span class="sd">        which is used when evaluating composition at NSE.</span>
 
-        <span class="c1"># Don&#39;t use state.ye since it does automatic mass fraction normalization.</span>
-        <span class="c1"># However, we should force normalization through constraint eq1.</span>
+<span class="sd">        1) Conservation of Mass:   Σ_k X_k - 1 = 0</span>
+<span class="sd">        2) Conservation of Charge: Σ_k Z_k X_k / A_k - Y_e = 0</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        u : (ndarray, tuple, list)</span>
+<span class="sd">            chemical potentials of proton and neutron.</span>
+<span class="sd">            u[0] = μ^{id}_p + μ^{c}_p and u[1] = μ^{id}_n</span>
+<span class="sd">        u_c : dict</span>
+<span class="sd">            A dictionary of coulomb potential keyed by Nucleus.</span>
+<span class="sd">        state : NseState</span>
+<span class="sd">            NSE state</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        constraint_eqs : List</span>
+<span class="sd">            Constraint equations for NSE.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">Xs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nucleon_fraction_nse</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">u_c</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+        <span class="n">constraint_eqs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">sum</span><span class="p">(</span><span class="n">Xs</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">,</span>
+                          <span class="nb">sum</span><span class="p">(</span><span class="n">Xs</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">/</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span> <span class="o">-</span> <span class="n">state</span><span class="o">.</span><span class="n">ye</span><span class="p">]</span>
 
-        <span class="n">eq1</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">Xs</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span>
-        <span class="n">eq2</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">Xs</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">/</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span> <span class="o">-</span> <span class="n">state</span><span class="o">.</span><span class="n">ye</span>
-
-        <span class="k">return</span> <span class="p">[</span><span class="n">eq1</span><span class="p">,</span> <span class="n">eq2</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">constraint_eqs</span>
 
 <div class="viewcode-block" id="NSENetwork.get_comp_nse">
 <a class="viewcode-back" href="../../../pynucastro.networks.nse_network.html#pynucastro.networks.nse_network.NSENetwork.get_comp_nse">[docs]</a>
@@ -664,7 +720,7 @@ document.write(`
 <span class="sd">        ye : float</span>
 <span class="sd">            prescribed electron fraction</span>
 <span class="sd">        init_guess : (tuple, list)</span>
-<span class="sd">            initial guess of chemical potential of proton and neutron, [mu_p, mu_n]</span>
+<span class="sd">            initial guess of chemical potential of proton and neutron, [μ^{id}_p + μ^{c}_p, μ^{id}_n]</span>
 <span class="sd">        tol : float</span>
 <span class="sd">            tolerance of scipy.fsolve</span>
 <span class="sd">        use_coulomb_corr : bool</span>
@@ -680,16 +736,17 @@ document.write(`
 <span class="sd">            the chemical potentials found by solving the nonlinear system.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># From here we convert the init_guess list into a np.array object:</span>
+        <span class="c1"># Determine the upper and lower bound of possible ye for the current network.</span>
+        <span class="c1"># Make sure the prescribed ye are within this range.</span>
+        <span class="n">ye_low</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="o">/</span><span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+        <span class="n">ye_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">Z</span><span class="o">/</span><span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">ye_low</span> <span class="o">&lt;=</span> <span class="n">ye</span> <span class="o">&lt;=</span> <span class="n">ye_max</span><span class="p">,</span> <span class="s2">&quot;input electron fraction goes outside of scope for current network&quot;</span>
 
         <span class="n">init_guess</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">init_guess</span><span class="p">)</span>
         <span class="n">state</span> <span class="o">=</span> <span class="n">NseState</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">ye</span><span class="p">)</span>
 
-        <span class="n">u_c</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)]):</span>
-            <span class="n">u_c</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
-
-        <span class="n">Xs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># Evaluate coulomb potential</span>
+        <span class="n">u_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_mu_c</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">use_coulomb_corr</span><span class="p">)</span>
 
         <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">is_pos_old</span> <span class="o">=</span> <span class="kc">False</span>
@@ -707,12 +764,9 @@ document.write(`
                     <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">RuntimeWarning</span><span class="p">)</span>
                     <span class="n">u</span> <span class="o">=</span> <span class="n">fsolve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constraint_eq</span><span class="p">,</span> <span class="n">guess</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">u_c</span><span class="p">,</span> <span class="n">state</span><span class="p">),</span> <span class="n">xtol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span> <span class="n">maxfev</span><span class="o">=</span><span class="mi">800</span><span class="p">)</span>
                 <span class="n">Xs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nucleon_fraction_nse</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">u_c</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
-                <span class="n">n_e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_n_e</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">Xs</span><span class="p">)</span>
-                <span class="n">u_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_mu_c</span><span class="p">(</span><span class="n">n_e</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">use_coulomb_corr</span><span class="p">)</span>
-
                 <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraint_eq</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">u_c</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
                 <span class="n">is_pos_new</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">k</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">res</span><span class="p">)</span>
-                <span class="n">found_sol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-7</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.0e-7</span><span class="p">))</span>
+                <span class="n">found_sol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-11</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.0e-11</span><span class="p">))</span>
 
                 <span class="k">if</span> <span class="n">found_sol</span><span class="p">:</span>
                     <span class="n">Xs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nucleon_fraction_nse</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">u_c</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>

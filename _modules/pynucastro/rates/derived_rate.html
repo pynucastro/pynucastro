@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.derived_rate &#8212; pynucastro 2.6.0.post22+gdbb76633 documentation</title>
+    <title>pynucastro.rates.derived_rate &#8212; pynucastro 2.6.0.post23+g476e8dbc7 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=72fcbba3"></script>
+    <script src="../../../_static/documentation_options.js?v=85f39b98"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -214,7 +214,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../NSE-example.html">Solving for Nuclear Statistical Equilibrium</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../NSE-example.html">NSE Demonstrations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../nse_table.html">Creating an NSE table</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
@@ -527,14 +527,14 @@ document.write(`
             <span class="n">a</span> <span class="o">=</span> <span class="n">ssets</span><span class="o">.</span><span class="n">a</span>
             <span class="n">prefactor</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="n">Q</span> <span class="o">=</span> <span class="mf">0.0</span>
-            <span class="n">prefactor</span> <span class="o">+=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">N_A</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">-</span>
-                                                   <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">))</span>
+            <span class="n">prefactor</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">m_u_C18</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">-</span>
+                                                      <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">))</span>
 
             <span class="k">for</span> <span class="n">nucr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
-                <span class="n">prefactor</span> <span class="o">+=</span> <span class="mf">1.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nucr</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nucr</span><span class="o">.</span><span class="n">spin_states</span><span class="p">)</span>
+                <span class="n">prefactor</span> <span class="o">+=</span> <span class="mf">2.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nucr</span><span class="o">.</span><span class="n">A_nuc</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nucr</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nucr</span><span class="o">.</span><span class="n">spin_states</span><span class="p">)</span>
                 <span class="n">Q</span> <span class="o">+=</span> <span class="n">nucr</span><span class="o">.</span><span class="n">A_nuc</span>
             <span class="k">for</span> <span class="n">nucp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
-                <span class="n">prefactor</span> <span class="o">+=</span> <span class="o">-</span><span class="mf">1.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nucp</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nucp</span><span class="o">.</span><span class="n">spin_states</span><span class="p">)</span>
+                <span class="n">prefactor</span> <span class="o">+=</span> <span class="o">-</span><span class="mf">2.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nucp</span><span class="o">.</span><span class="n">A_nuc</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nucp</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nucp</span><span class="o">.</span><span class="n">spin_states</span><span class="p">)</span>
                 <span class="n">Q</span> <span class="o">-=</span> <span class="n">nucp</span><span class="o">.</span><span class="n">A_nuc</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_Q</span><span class="p">:</span>
@@ -544,9 +544,7 @@ document.write(`
 
             <span class="n">prefactor</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">counter_factors</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">counter_factors</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
 
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">):</span>
-                <span class="n">prefactor</span> <span class="o">+=</span> <span class="mf">0.0</span>
-            <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">):</span>
                 <span class="n">F</span> <span class="o">=</span> <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">m_u_C18</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">k</span> <span class="o">*</span> <span class="mf">1.0e9</span> <span class="o">/</span>
                      <span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">constants</span><span class="o">.</span><span class="n">hbar</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="mf">1.5</span><span class="o">*</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">-</span>
                                                            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">)))</span>
