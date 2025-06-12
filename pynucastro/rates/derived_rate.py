@@ -50,14 +50,14 @@ class DerivedRate(ReacLibRate):
             a = ssets.a
             prefactor = 0.0
             Q = 0.0
-            prefactor += -np.log(constants.N_A) * (len(self.rate.reactants) -
-                                                   len(self.rate.products))
+            prefactor += np.log(constants.m_u_C18) * (len(self.rate.reactants) -
+                                                      len(self.rate.products))
 
             for nucr in self.rate.reactants:
-                prefactor += 1.5*np.log(nucr.A) + np.log(nucr.spin_states)
+                prefactor += 2.5*np.log(nucr.A_nuc) - np.log(nucr.A) + np.log(nucr.spin_states)
                 Q += nucr.A_nuc
             for nucp in self.rate.products:
-                prefactor += -1.5*np.log(nucp.A) - np.log(nucp.spin_states)
+                prefactor += -2.5*np.log(nucp.A_nuc) + np.log(nucp.A) - np.log(nucp.spin_states)
                 Q -= nucp.A_nuc
 
             if self.compute_Q:
@@ -67,9 +67,7 @@ class DerivedRate(ReacLibRate):
 
             prefactor += np.log(self.counter_factors()[1]) - np.log(self.counter_factors()[0])
 
-            if len(self.rate.reactants) == len(self.rate.products):
-                prefactor += 0.0
-            else:
+            if len(self.rate.reactants) != len(self.rate.products):
                 F = (constants.m_u_C18 * constants.k * 1.0e9 /
                      (2.0*np.pi*constants.hbar**2))**(1.5*(len(self.rate.reactants) -
                                                            len(self.rate.products)))

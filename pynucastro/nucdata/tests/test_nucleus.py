@@ -164,6 +164,12 @@ class TestNucleus:
         assert self.c12 + self.n == Nucleus("c13")
         assert self.d - self.n == self.h1
 
+    def test_parsing(self):
+        assert Nucleus("ni56") == Nucleus("56ni")
+
+        with raises(ValueError):
+            _ = Nucleus("ni56n")
+
 
 class TestNSEProtons:
     @classmethod

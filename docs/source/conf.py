@@ -143,6 +143,9 @@ intersphinx_mapping = {
     'unyt': ('https://unyt.readthedocs.io/en/stable', None),
 }
 
+# Don't include the extra CSS from sphinx-prompt when using the copy button
+copybutton_exclude = 'style'
+
 
 # -- Options for HTML output ----------------------------------------------
 
