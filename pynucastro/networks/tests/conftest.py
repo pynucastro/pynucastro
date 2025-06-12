@@ -28,6 +28,11 @@ def langanke_library():
 
 
 @pytest.fixture(scope="package")
+def oda_library():
+    return pyna.OdaLibrary()
+
+
+@pytest.fixture(scope="package")
 def compare_network_files(request):
     # this fixture returns a closure so we don't have to get the pytest config
     # in each test function and pass it through
