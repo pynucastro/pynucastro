@@ -54,6 +54,14 @@ class ModifiedRate(Rate):
                          stoichiometry=stoichiometry)
 
         self.chapter = "m"
+        self.modified = True
+
+        try:
+            self.weak = original_rate.weak
+        except ValueError:
+            self.weak = False
+
+        self._set_print_representation()
 
     def _set_screening(self):
         """Determine if this rate is eligible for screening and the
