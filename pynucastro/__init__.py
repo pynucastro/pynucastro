@@ -144,3 +144,4 @@ from pynucastro.rates import (ApproximateRate, DerivedRate, FFNLibrary,
                               SuzukiLibrary, TabularLibrary, Tfactors,
                               list_known_rates, load_rate)
 from pynucastro.screening import make_plasma_state, make_screen_factors
+from pynucastro.eos import FermiIntegrals
