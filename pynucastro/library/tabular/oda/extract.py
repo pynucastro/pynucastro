@@ -9,7 +9,7 @@ with open('odarates.dat', 'r') as file:
         if s[0:3] == 'pos':
             l1 = l
             matches = re.findall(r"([a-zA-Z]{1,3}\s[0-9]{1,3})", l1)
-            parent = matches[0]
+            daughter = matches[0]
             header += 1
             continue
 
@@ -21,12 +21,12 @@ with open('odarates.dat', 'r') as file:
             continue
 
         if header == 2:
-            with open(f'{parent}_table.dat', 'w') as output:
+            with open(f'{daughter}_table.dat', 'w') as output:
                 output.write(l1)
                 output.write(l2)
                 output.write(l)
                 header = 0
             continue
 
-        with open(f'{parent}_table.dat', 'a') as output:
+        with open(f'{daughter}_table.dat', 'a') as output:
             output.write(l)
