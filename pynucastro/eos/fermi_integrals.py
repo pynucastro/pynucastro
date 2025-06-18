@@ -11,6 +11,7 @@
 import numpy as np
 from scipy.special import roots_laguerre, roots_legendre
 
+
 class FermiIntegrals:
 
     def __init__(self, k, eta, beta, point_per_interval=50):
@@ -34,7 +35,7 @@ class FermiIntegrals:
                 denomi = 1/denom
                 kernel = 2*xdk*factor*denomi
             else:
-                xdk =  x**(2*k + 1)
+                xdk = x**(2*k + 1)
                 factor = np.sqrt(1 + (xsq*beta/2))
                 denomi = np.exp(eta - xsq)
                 kernel = 2*xdk*factor*denomi
@@ -59,7 +60,6 @@ class FermiIntegrals:
         f = kernel * weight
         return f
 
-
     def qdfermi_deta(self, x, first=False):
 
         eta = self.eta
@@ -69,20 +69,19 @@ class FermiIntegrals:
             xsq = x*x
             if ((xsq-eta) < 1.0e2):
                 factor = np.exp(xsq-eta)
-                denom =  1 + factor
+                denom = 1 + factor
                 weight = factor/denom
             else:
                 weight = 1
         else:
             if ((x-eta) < 1.0e2):
                 factor = np.exp(x-eta)
-                denom =  1 + factor
+                denom = 1 + factor
                 weight = factor/denom
             else:
                 weight = 1
         f = kernel * weight
         return f
-
 
     def qdfermi_dbeta(self, x, first=False):
 
@@ -97,7 +96,6 @@ class FermiIntegrals:
             weight = x / (4 + 2*beta*x)
         f = kernel * weight
         return f
-
 
     def fermi_points(self):
 
@@ -136,7 +134,6 @@ class FermiIntegrals:
         points = np.array(points, dtype=np.double)
 
         return points
-
 
     def dfermi_points(self):
 
@@ -183,8 +180,8 @@ class FermiIntegrals:
         integral = 0
 
         for i in range(len(roots)):
-            x_1 =  (a+b)/2 + (b-a)/2 * roots[i]
-            x_2 =  (a+b)/2 - (b-a)/2 * roots[i]
+            x_1 = (a+b)/2 + (b-a)/2 * roots[i]
+            x_2 = (a+b)/2 - (b-a)/2 * roots[i]
             fval_1 = function_fermi(x_1, first)
             fval_2 = function_fermi(x_2, first)
             integral += (fval_1 + fval_2) * weights[i]
