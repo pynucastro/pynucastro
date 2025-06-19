@@ -69,24 +69,24 @@ class DerivedRate(ReacLibRate):
                 Q += -c * n.A_nuc
             Q *= constants.m_u_MeV_C18
 
+        prefactor = np.log(constants.m_u_C18) * (len(self.rate.reactants) -
+                                                  len(self.rate.products))
+
+        for nucr in self.rate.reactants:
+            prefactor += 2.5*np.log(nucr.A_nuc) - np.log(nucr.A) + np.log(nucr.spin_states)
+        for nucp in self.rate.products:
+            prefactor += -2.5*np.log(nucp.A_nuc) + np.log(nucp.A) - np.log(nucp.spin_states)
+
+        prefactor += np.log(self.counter_factors()[1]) - np.log(self.counter_factors()[0])
+
+        if len(self.rate.reactants) != len(self.rate.products):
+            F = (constants.m_u_C18 * constants.k * 1.0e9 /
+                 (2.0*np.pi*constants.hbar**2))**(1.5*(len(self.rate.reactants) -
+                                                       len(self.rate.products)))
+            prefactor += np.log(F)
+
         for ssets in r.sets:
             a = ssets.a
-            prefactor = 0.0
-            prefactor += np.log(constants.m_u_C18) * (len(self.rate.reactants) -
-                                                      len(self.rate.products))
-
-            for nucr in self.rate.reactants:
-                prefactor += 2.5*np.log(nucr.A_nuc) - np.log(nucr.A) + np.log(nucr.spin_states)
-            for nucp in self.rate.products:
-                prefactor += -2.5*np.log(nucp.A_nuc) + np.log(nucp.A) - np.log(nucp.spin_states)
-
-            prefactor += np.log(self.counter_factors()[1]) - np.log(self.counter_factors()[0])
-
-            if len(self.rate.reactants) != len(self.rate.products):
-                F = (constants.m_u_C18 * constants.k * 1.0e9 /
-                     (2.0*np.pi*constants.hbar**2))**(1.5*(len(self.rate.reactants) -
-                                                           len(self.rate.products)))
-                prefactor += np.log(F)
 
             a_rev = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
             a_rev[0] = prefactor + a[0]
