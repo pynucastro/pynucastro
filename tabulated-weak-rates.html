@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Tabulated Weak Rate Sources &#8212; pynucastro 2.6.0.post25+g8b296f9f3 documentation</title>
+    <title>Tabulated Weak Rate Sources &#8212; pynucastro 2.6.0.post26+g2ec7f4387 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=5e44cb2c"></script>
+    <script src="_static/documentation_options.js?v=6c00c1f3"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -532,7 +532,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -548,6 +550,15 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#beta-decay-rates"><span class="math notranslate nohighlight">\(\beta\)</span>-decay rates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#e-capture-rates"><span class="math notranslate nohighlight">\(e^-\)</span>-capture rates</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -563,8 +574,9 @@ document.write(`
 just read in that source:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">FFNLibrary()</span></code> : from <span id="id1">Fuller <em>et al.</em> [<a class="reference internal" href="zreferences.html#id31" title="G. M. Fuller, W. A. Fowler, and M. J. Newman. Stellar weak interaction rates for intermediate mass nuclei. III - Rate tables for the free nucleons and nuclei with A = 21 to A = 60. Astrophysical Journal Supplement, 48:279-319, March 1982. doi:10.1086/190779.">1982</a>]</span> covering <span class="math notranslate nohighlight">\(21 \le A \le 60\)</span></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">LangankeLibrary()</span></code> : from <span id="id2">Langanke and Martínez-Pinedo [<a class="reference internal" href="zreferences.html#id9" title="K. Langanke and G. Martínez-Pinedo. Rate tables for the weak processes of pf-shell nuclei in stellar environments. Atomic Data and Nuclear Data Tables, 79(1):1-46, 2001. doi:10.1006/adnd.2001.0865.">2001</a>]</span> covering <span class="math notranslate nohighlight">\(45 \le A \le 65\)</span></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">SuzukiLibrary()</span></code> : from <span id="id3">Suzuki <em>et al.</em> [<a class="reference internal" href="zreferences.html#id10" title="Toshio Suzuki, Hiroshi Toki, and Ken’ichi Nomoto. Electron-capture and β-decay rates for sd-shell nuclei in stellar environments relevant to high-density o–ne–mg cores. The Astrophysical Journal, 817(2):163, January 2016. doi:10.3847/0004-637X/817/2/163.">2016</a>]</span> covering <span class="math notranslate nohighlight">\(17 \le A \le 28\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OdaLibrary()</span></code> : from <span id="id2">Oda <em>et al.</em> [<a class="reference internal" href="zreferences.html#id32" title="T. Oda, M. Hino, K. Muto, M. Takahara, and K. Sato. Rate tables for the weak processes of sd-shell nuclei in stellar matter. Atomic Data and Nuclear Data Tables, 56(2):231-403, 1994. URL: https://www.sciencedirect.com/science/article/pii/S0092640X84710072, doi:https://doi.org/10.1006/adnd.1994.1007.">1994</a>]</span> covering <span class="math notranslate nohighlight">\(17 \le A \le 39\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LangankeLibrary()</span></code> : from <span id="id3">Langanke and Martínez-Pinedo [<a class="reference internal" href="zreferences.html#id9" title="K. Langanke and G. Martínez-Pinedo. Rate tables for the weak processes of pf-shell nuclei in stellar environments. Atomic Data and Nuclear Data Tables, 79(1):1-46, 2001. doi:10.1006/adnd.2001.0865.">2001</a>]</span> covering <span class="math notranslate nohighlight">\(45 \le A \le 65\)</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SuzukiLibrary()</span></code> : from <span id="id4">Suzuki <em>et al.</em> [<a class="reference internal" href="zreferences.html#id10" title="Toshio Suzuki, Hiroshi Toki, and Ken’ichi Nomoto. Electron-capture and β-decay rates for sd-shell nuclei in stellar environments relevant to high-density o–ne–mg cores. The Astrophysical Journal, 817(2):163, January 2016. doi:10.3847/0004-637X/817/2/163.">2016</a>]</span> covering <span class="math notranslate nohighlight">\(17 \le A \le 28\)</span></p></li>
 </ul>
 <p>Additionally, a union of these sources can be read in via <code class="docutils literal notranslate"><span class="pre">TabularLibrary()</span></code>.  However, since there is some overlap in the
 coverage between these different sources, we need to pick an order of precedence.  The default order is the sequence in the
@@ -579,7 +591,7 @@ list above.  However, this can be overridden by via the <code class="docutils li
 <p>Read in the weak rates.  We’ll use the default ordering, but we’ll explicitly specify it here:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">TabularLibrary</span><span class="p">(</span><span class="n">ordering</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ffn&quot;</span><span class="p">,</span> <span class="s2">&quot;langanke&quot;</span><span class="p">,</span> <span class="s2">&quot;suzuki&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">TabularLibrary</span><span class="p">(</span><span class="n">ordering</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ffn&quot;</span><span class="p">,</span> <span class="s2">&quot;oda&quot;</span><span class="p">,</span> <span class="s2">&quot;langanke&quot;</span><span class="p">,</span> <span class="s2">&quot;suzuki&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -587,8 +599,9 @@ list above.  However, this can be overridden by via the <code class="docutils li
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p><code class="docutils literal notranslate"><span class="pre">ordering</span></code> specifies the sources from lowest to highest precedence.  In the above example, we first read in the <code class="docutils literal notranslate"><span class="pre">ffn</span></code> rates,
-then the <code class="docutils literal notranslate"><span class="pre">langanke</span></code> rates, and replace any <code class="docutils literal notranslate"><span class="pre">ffn</span></code> rates with <code class="docutils literal notranslate"><span class="pre">langanke</span></code> rates if they represent the same nucleus and process.
-The we do the same with <code class="docutils literal notranslate"><span class="pre">suzuki</span></code>.</p>
+then the <code class="docutils literal notranslate"><span class="pre">oda</span></code> rates, and replace any <code class="docutils literal notranslate"><span class="pre">ffn</span></code> rates with <code class="docutils literal notranslate"><span class="pre">oda</span></code> rates if they represent the same nucleus and process.
+The we do the same with the <code class="docutils literal notranslate"><span class="pre">langanke</span></code> and the <code class="docutils literal notranslate"><span class="pre">suzuki</span></code> rates.
+The default ordering, overwrite the repeated rates accordingly to the year of publication of each one of these sources, keeping the newest ones and discarding the oldest ones.</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -614,11 +627,26 @@ The we do the same with <code class="docutils literal notranslate"><span class="
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ffn_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rfile</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ffn&quot;</span><span class="p">)]</span>
 <span class="n">suzuki_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rfile</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;suzuki&quot;</span><span class="p">)]</span>
 <span class="n">langanke_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rfile</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;langanke&quot;</span><span class="p">)]</span>
+<span class="n">oda_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rfile</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;oda&quot;</span><span class="p">)]</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>Finally, plot them on a grid</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">oda_rates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">weak_type</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;beta_decay&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<p>Finally, plot them on a grid, separately showing the <span class="math notranslate nohighlight">\(\beta\)</span>-decay and <span class="math notranslate nohighlight">\(e^-\)</span>-capture.</p>
+<section id="beta-decay-rates">
+<h2><span class="math notranslate nohighlight">\(\beta\)</span>-decay rates<a class="headerlink" href="#beta-decay-rates" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
@@ -629,12 +657,18 @@ The we do the same with <code class="docutils literal notranslate"><span class="
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">N</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ffn_rates</span><span class="p">],</span>
-           <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ffn_rates</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C0&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;FFN&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">N</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">langanke_rates</span><span class="p">],</span>
-           <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">langanke_rates</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C1&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Langanke&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">N</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">suzuki_rates</span><span class="p">],</span>
-           <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">suzuki_rates</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C2&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Suzuki&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">N</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ffn_rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;beta&quot;</span><span class="p">)],</span>
+           <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ffn_rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;beta&quot;</span><span class="p">)],</span>
+           <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C0&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;FFN&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">N</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">langanke_rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;beta&quot;</span><span class="p">)],</span>
+           <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">langanke_rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;beta&quot;</span><span class="p">)],</span>
+           <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C1&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Langanke&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">N</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">suzuki_rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;beta&quot;</span><span class="p">)],</span>
+           <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">suzuki_rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;beta&quot;</span><span class="p">)],</span>
+           <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C2&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Suzuki&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">N</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">oda_rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;beta&quot;</span><span class="p">)],</span>
+           <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">oda_rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;beta&quot;</span><span class="p">)],</span>
+           <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C3&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Oda&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">)</span>
@@ -642,14 +676,50 @@ The we do the same with <code class="docutils literal notranslate"><span class="
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">max_size</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\beta$-decay&quot;</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/92573a5aa57e8ca2d0df629d5dc858eba486bfb5a2de035b3cbb0fcd530a8bd3.png" src="_images/92573a5aa57e8ca2d0df629d5dc858eba486bfb5a2de035b3cbb0fcd530a8bd3.png" />
+<img alt="_images/fade1d2c815fe53e1ca554c348e1fddb77b7bde6829cc752422e4a708b029b6f.png" src="_images/fade1d2c815fe53e1ca554c348e1fddb77b7bde6829cc752422e4a708b029b6f.png" />
 </div>
 </div>
+</section>
+<section id="e-capture-rates">
+<h2><span class="math notranslate nohighlight">\(e^-\)</span>-capture rates<a class="headerlink" href="#e-capture-rates" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">N</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ffn_rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;electron&quot;</span><span class="p">)],</span>
+           <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ffn_rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;electron&quot;</span><span class="p">)],</span>
+           <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C0&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;FFN&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">N</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">langanke_rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;electron&quot;</span><span class="p">)],</span>
+           <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">langanke_rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;electron&quot;</span><span class="p">)],</span>
+           <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C1&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Langanke&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">N</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">suzuki_rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;electron&quot;</span><span class="p">)],</span>
+           <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">suzuki_rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;electron&quot;</span><span class="p">)],</span>
+           <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C2&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Suzuki&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">N</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">oda_rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;electron&quot;</span><span class="p">)],</span>
+           <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">oda_rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak_type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;electron&quot;</span><span class="p">)],</span>
+           <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C3&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Oda&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">max_size</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">max_size</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$e^-$-capture&quot;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/8a7478901cbc6c1b008cd6787978270997be11bea037ffa76f92d0ba45d0ff06.png" src="_images/8a7478901cbc6c1b008cd6787978270997be11bea037ffa76f92d0ba45d0ff06.png" />
+</div>
+</div>
+</section>
 </section>
 
 
@@ -687,6 +757,22 @@ The we do the same with <code class="docutils literal notranslate"><span class="
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#beta-decay-rates"><span class="math notranslate nohighlight">\(\beta\)</span>-decay rates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#e-capture-rates"><span class="math notranslate nohighlight">\(e^-\)</span>-capture rates</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
