@@ -20,3 +20,8 @@ https://groups.frib.msu.edu/charge_exchange/weakrates.html
 Also includes the tabulated rates obtained from Langanke et. al.,
 2001, Atomic Data and Nuclear Data Tables, 79:1, downloaded from
 https://www.sciencedirect.com/science/article/abs/pii/S0092640X01908654?via%3Dihub
+
+Finally, we include the sd-shell nuclei tabular rates from Oda et. al. 1994,
+Atomic Data and Nuclear Data Tables, Volume 56, Issue 2 (1994); reviewed and
+prepared by FRIB, NSCL-Charge-Exchange group
+https://groups.frib.msu.edu/charge_exchange/weakrates.html
