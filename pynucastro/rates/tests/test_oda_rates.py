@@ -6,6 +6,7 @@ import pynucastro as pyna
 # these are some tests that compare directly to the tables
 # in the Oda paper.
 
+
 class TestOdaLibibrary:
     @pytest.fixture(scope="class")
     def oda_lib(self):
@@ -128,7 +129,7 @@ class TestOdaLibibrary:
         # from the table
         T = 1.e10
         rhoYe = 1.e8
-        lbetam = -8.609 # units: log(1/s)
+        lbetam = -8.609  # units: log(1/s)
         lepsp = -6.611   # units: log(1/s)
         lnu = -6.082     # units: log(MeV/s)
 
