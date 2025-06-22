@@ -20,7 +20,7 @@ class FermiIntegrals:
         self.k = k
         self.point_per_interval = point_per_interval
 
-    def _kernel(self, x, first=False):
+    def _qderivatives(self, x, eta_der, beta_der, first=False):
 
         eta = self.eta
         beta = self.beta
@@ -28,103 +28,109 @@ class FermiIntegrals:
 
         if first:
             xsq = x*x
-            if ((xsq-eta) < 1.0e2):
-                xdk = x**(2*k + 1)
-                factor = np.sqrt(1 + (xsq*beta/2))
-                denom = np.exp(xsq - eta) + 1
+            xdk = x**(2*k + 1)
+            if ((xsq-eta) < 2.0e2):
+                sqrt_factor = np.sqrt(1 + (xsq*beta/2))
+                exp_factor = np.exp(xsq - eta)
+                denom = exp_factor + 1
                 denomi = 1/denom
-                kernel = 2*xdk*factor*denomi
+                kernel = 2*xdk*sqrt_factor*denomi
+                denom2i =  1/(4 + 2*beta*xsq)
+
+                fval = kernel
+                df_deta = fval*exp_factor*denomi
+                df_deta2 = (2*exp_factor*denomi - 1)*df_deta
+                df_dbeta = fval*xsq*denom2i
+                df_dbeta2 = -df_dbeta*xsq*denom2i
+                df_deta_dbeta = df_dbeta*exp_factor*denomi
             else:
-                xdk = x**(2*k + 1)
-                factor = np.sqrt(1 + (xsq*beta/2))
+                sqrt_factor = np.sqrt(1 + (xsq*beta/2))
                 denomi = np.exp(eta - xsq)
-                kernel = 2*xdk*factor*denomi
+                kernel = 2*xdk*sqrt_factor*denomi
+                denom2i =  1/(4 + 2*beta*xsq)
+
+                fval = kernel
+                df_deta = fval
+                df_deta2 = fval
+                df_dbeta = fval*xsq*denom2i
+                df_dbeta2 = -df_dbeta*xsq*denom2i
+                df_deta_dbeta = df_dbeta
         else:
-            if ((x-eta) < 1.0e2):
+            if ((x-eta) < 2.0e2):
                 xdk = x**k
-                factor = np.sqrt(1 + (x*beta/2))
-                denom = np.exp(x - eta) + 1
+                sqrt_factor = np.sqrt(1 + (x*beta/2))
+                exp_factor = np.exp(x - eta)
+                denom = exp_factor + 1
                 denomi = 1/denom
-                kernel = xdk * factor * denomi
+                kernel = xdk*sqrt_factor*denomi
+                denom2i =  1/(4 + 2*beta*x)
+
+                fval = kernel
+                df_deta = fval*exp_factor*denomi
+                df_deta2 = (2*exp_factor*denomi - 1)*df_deta
+                df_dbeta = fval*x*denom2i
+                df_dbeta2 = -df_dbeta*x*denom2i
+                df_deta_dbeta = df_dbeta*exp_factor*denomi
             else:
                 xdk = x**k
-                factor = np.sqrt(1 + (x*beta/2))
+                sqrt_factor = np.sqrt(1 + (x*beta/2))
                 denomi = np.exp(eta - x)
-                kernel = xdk * factor * denomi
+                kernel = xdk*sqrt_factor*denomi
+                denom2i =  1/(4 + 2*beta*x)
 
-        return kernel
+                fval = kernel
+                df_deta = fval
+                df_deta2 = fval
+                df_dbeta = fval*x*denom2i
+                df_dbeta2 = -df_dbeta*x*denom2i
+                df_deta_dbeta = df_dbeta
 
-    def qfermi(self, x, first=False):
-        kernel = self._kernel(x, first)
-        weight = 1
-        f = kernel * weight
-        return f
-
-    def qdfermi_deta(self, x, first=False):
-
-        eta = self.eta
-        kernel = self._kernel(x, first)
-
-        if first:
-            xsq = x*x
-            if ((xsq-eta) < 1.0e2):
-                factor = np.exp(xsq-eta)
-                denom = 1 + factor
-                weight = factor/denom
-            else:
-                weight = 1
+        if(eta_der == 0 and beta_der == 0):
+            return fval
+        elif(eta_der == 1 and beta_der == 0):
+            return df_deta
+        elif(eta_der == 2 and beta_der == 0):
+            return df_deta2
+        elif(eta_der == 0 and beta_der == 1):
+            return df_dbeta
+        elif(eta_der == 0 and beta_der == 2):
+            return df_dbeta2
+        elif(eta_der == 1 and beta_der == 1):
+            return df_deta_dbeta
         else:
-            if ((x-eta) < 1.0e2):
-                factor = np.exp(x-eta)
-                denom = 1 + factor
-                weight = factor/denom
-            else:
-                weight = 1
-        f = kernel * weight
-        return f
+            raise ValueError("Invalid derivative order")
 
-    def qdfermi_dbeta(self, x, first=False):
-
-        beta = self.beta
-
-        kernel = self._kernel(x, first)
-
-        if first:
-            xsq = x*x
-            weight = xsq / (4 + 2*beta*xsq)
-        else:
-            weight = x / (4 + 2*beta*x)
-        f = kernel * weight
-        return f
-
-    def fermi_points(self):
+    def _fermi_points(self, eta_der=0):
 
         eta = self.eta
 
-        D = 3.3609
-        sigma = 9.1186e-2
+        D = [3.3609, 4.99551, 3.93830, 4.17444]
+        sigma = [9.1186e-2, 9.11856e-2, 9.11856e-2, 9.11856e-2]
 
-        xi = (1/sigma)*np.log(1+np.exp(sigma*(eta-D)))
+        xi = [(1/s)*np.log(1+np.exp(s*(eta-d))) for d, s in zip(D,sigma)]
 
-        a1 = 6.7774
-        b1 = 1.1418
-        c1 = 2.9826
+        a1 = [6.7774, 6.77740, 6.77740, 6.77740]
+        b1 = [1.1418, 1.14180, 1.14180, 1.14180]
+        c1 = [2.9826, 2.98255, 2.98255, 2.98255]
 
-        a2 = 3.7601
-        b2 = 9.3719e-2
-        c2 = 2.1064e-2
-        d2 = 3.1084e1
-        e2 = 1.0056
+        a2 = [3.7601, 3.76010, 3.76010, 3.76010]
+        b2 = [9.3719e-2, 9.37188e-2, 9.37188e-2, 9.37188e-2]
+        c2 = [2.1064e-2, 2.10635e-2, 2.10635e-2, 2.10635e-2]
+        d2 = [3.1084e1, 3.95015e1, 3.14499e1, 3.05412e1]
+        e2 = [1.0056, 1.00557, 1.00557, 1.00557]
 
-        a3 = 7.5669
-        b3 = 1.1695
-        c3 = 7.5416e-1
-        d3 = 6.6559
-        e3 = -1.2819
+        a3 = [7.5669, 7.56690, 7.56690, 7.56690]
+        b3 = [1.1695, 1.16953, 1.16953, 1.16953]
+        c3 = [7.5416e-1, 7.54162, 7.54162, 7.54162]
+        d3 = [6.6559, 7.64734, 6.86346, 7.88030]
+        e3 = [-1.2819, -1.28190e-1, -1.28190e-1, -1.28190e-1]
 
-        X_a = (a1 + b1*xi + c1*xi**2)/(1 + c1*xi)
-        X_b = (a2 + b2*xi + c2*d2*xi**2)/(1 + e2*xi + c2*xi**2)
-        X_c = (a3 + b3*xi + c3*d3*xi**2)/(1 + e3*xi + c3*xi**2)
+        X_a = (a1[eta_der] + b1[eta_der]*xi[eta_der] + c1[eta_der]*xi[eta_der]**2) \
+            /(1 + c1[eta_der]*xi[eta_der])
+        X_b = (a2[eta_der] + b2[eta_der]*xi[eta_der] + c2[eta_der]*d2[eta_der]*xi[eta_der]**2) \
+            /(1 + e2[eta_der]*xi[eta_der] + c2[eta_der]*xi[eta_der]**2)
+        X_c = (a3[eta_der] + b3[eta_der]*xi[eta_der] + c3[eta_der]*d3[eta_der]*xi[eta_der]**2) \
+            /(1 + e3[eta_der]*xi[eta_der] + c3[eta_der]*xi[eta_der]**2)
 
         S_1 = X_a - X_b
         S_2 = X_a
@@ -135,113 +141,66 @@ class FermiIntegrals:
 
         return points
 
-    def dfermi_points(self):
+    def _compute_legendre(self, a, b, eta_der, beta_der, first=False):
 
-        eta = self.eta
-
-        D = 4.99551
-        sigma = 9.11856e-2
-
-        xi = (1/sigma)*np.log(1+np.exp(sigma*(eta-D)))
-
-        a1 = 6.77740
-        b1 = 1.14180
-        c1 = 2.98255
-
-        a2 = 3.76010
-        b2 = 9.37188e-2
-        c2 = 2.10635e-2
-        d2 = 3.95015e1
-        e2 = 1.00557
-
-        a3 = 7.56690
-        b3 = 1.16953
-        c3 = 7.54162
-        d3 = 7.64734
-        e3 = -1.28190e-1
-
-        X_a = (a1 + b1*xi + c1*xi**2)/(1 + c1*xi)
-        X_b = (a2 + b2*xi + c2*d2*xi**2)/(1 + e2*xi + c2*xi**2)
-        X_c = (a3 + b3*xi + c3*d3*xi**2)/(1 + e3*xi + c3*xi**2)
-
-        S_1 = X_a - X_b
-        S_2 = X_a
-        S_3 = X_a + X_c
-
-        points = [S_1, S_2, S_3]
-        points = np.array(points, dtype=np.double)
-
-        return points
-
-    def _compute_legendre(self, function_fermi, a, b, first=False):
-
-        point_per_interval = self.point_per_interval/2
+        point_per_interval = self.point_per_interval//2
         roots, weights = roots_legendre(point_per_interval)
         integral = 0
 
-        for i in range(len(roots)):
-            x_1 = (a+b)/2 + (b-a)/2 * roots[i]
-            x_2 = (a+b)/2 - (b-a)/2 * roots[i]
-            fval_1 = function_fermi(x_1, first)
-            fval_2 = function_fermi(x_2, first)
-            integral += (fval_1 + fval_2) * weights[i]
+        # We set the correspondence (a+b)/2 -> 0 and map the (-1,0) and (0,1)
+        # intervals separately.
+
+        for weight, root in zip(weights,roots):
+            x_1 = (a+b)/2 + (b-a)/2 * root
+            x_2 = (a+b)/2 - (b-a)/2 * root
+            qder_1 = self._qderivatives(x_1, eta_der, beta_der, first)
+            qder_2 = self._qderivatives(x_2, eta_der, beta_der, first)
+            integral += (qder_1 + qder_2) * weight
 
         integral *= (b-a)/2
         return integral
 
-    def _compute_laguerre(self, function_fermi, a):
+    def _compute_laguerre(self, a, eta_der, beta_der):
 
         point_per_interval = self.point_per_interval
         roots, weights = roots_laguerre(point_per_interval)
         integral = 0
 
         scaled_roots = roots + a
-        for i, x in enumerate(scaled_roots):
-            integral += np.exp(roots[i]) * function_fermi(x, first=False) * weights[i]
+        for sroot, root, weight in zip(scaled_roots, roots, weights):
+            integral += np.exp(root) * self._qderivatives(sroot, eta_der, beta_der, first=False) * weight
 
         return integral
 
-    def compute_fermi(self, n, function_fermi, der):
+    def _compute_fermi(self, eta_der, beta_der):
 
         integral = 0
+        S_1, S_2, S_3 = self._fermi_points(eta_der)
 
-        if der:
-            S_1, S_2, S_3 = self.dfermi_points()
-        else:
-            S_1, S_2, S_3 = self.fermi_points()
+        a1 = 0.0
+        b2 = np.sqrt(S_1)
+        integral += self._compute_legendre(a1, b2, eta_der, beta_der, first=True)
 
-        if n == 0:
-            a = 0.0
-            b = np.sqrt(S_1)
-            integral = self._compute_legendre(function_fermi, a, b, first=True)
-        elif n == 1:
-            a = S_1
-            b = S_2
-            integral = self._compute_legendre(function_fermi, a, b)
-        elif n == 2:
-            a = S_2
-            b = S_3
-            integral = self._compute_legendre(function_fermi, a, b)
-        elif n == 3:
-            a = S_3
-            integral = self._compute_laguerre(function_fermi, a)
+        a3 = S_1
+        b4 = S_2
+        integral += self._compute_legendre(a3, b4, eta_der, beta_der)
+
+        a5 = S_2
+        b6 = S_3
+        integral += self._compute_legendre(a5, b6, eta_der, beta_der)
+
+        a7 = S_3
+        integral += self._compute_laguerre(a7, eta_der, beta_der)
 
         return integral
 
-    def fd(self):
-        f = 0.0
-        for n in range(4):
-            f += self.compute_fermi(n, self.qfermi, der=False)
-        return f
+    def evaluate(self):
 
-    def dfdeta(self):
-        f = 0.0
-        for n in range(4):
-            f += self.compute_fermi(n, self.qdfermi_deta, der=True)
-        return f
+        fval = self._compute_fermi(eta_der=0, beta_der=0)
+        df_deta = self._compute_fermi(eta_der=1, beta_der=0)
+        df_deta2 = self._compute_fermi(eta_der=2, beta_der=0)
+        df_dbeta = self._compute_fermi(eta_der=0, beta_der=1)
+        df_dbeta2 = self._compute_fermi(eta_der=0, beta_der=2)
+        df_deta_dbeta = self._compute_fermi(eta_der=1, beta_der=1)
 
-    def dfdbeta(self):
-        f = 0.0
-        for n in range(4):
-            f += self.compute_fermi(n, self.qdfermi_dbeta, der=False)
-        return f
+        return np.array([fval, df_deta, df_deta2, df_dbeta, df_dbeta2, df_deta_dbeta])
