@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>NSE Demonstrations &#8212; pynucastro 2.6.0.post27+g3cf9448a8 documentation</title>
+    <title>NSE Demonstrations &#8212; pynucastro 2.6.0.post28+gc2498abda documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=ee8a2c39"></script>
+    <script src="_static/documentation_options.js?v=a77df25e"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -826,6 +826,25 @@ In pynucastro, this is the <code class="docutils literal notranslate"><span clas
 </div>
 </div>
 </div>
+<p>We can also use <code class="docutils literal notranslate"><span class="pre">ModifiedRate</span></code> where we modify the reactants and/or the products of a reaction rate but still use the original rate. This is compatible with NSE as long as a corresponding <code class="docutils literal notranslate"><span class="pre">DerivedRate</span></code> is added.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Currently <code class="docutils literal notranslate"><span class="pre">stoichiometry</span></code> does NOT work with NSE.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">other_rates</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;c12(c12,n)mg23&quot;</span><span class="p">,</span> <span class="s2">&quot;mg24&quot;</span><span class="p">),</span>
+               <span class="p">(</span><span class="s2">&quot;o16(o16,n)s31&quot;</span><span class="p">,</span> <span class="s2">&quot;s32&quot;</span><span class="p">),</span>
+               <span class="p">(</span><span class="s2">&quot;o16(c12,n)si27&quot;</span><span class="p">,</span> <span class="s2">&quot;si28&quot;</span><span class="p">)]</span>
+<span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">mp</span> <span class="ow">in</span> <span class="n">other_rates</span><span class="p">:</span>
+    <span class="n">_r</span> <span class="o">=</span> <span class="n">library</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="n">forward_rate</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ModifiedRate</span><span class="p">(</span><span class="n">_r</span><span class="p">,</span> <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">mp</span><span class="p">])</span>
+    <span class="n">derived_rate</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">DerivedRate</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="n">forward_rate</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">lib</span><span class="o">.</span><span class="n">add_rates</span><span class="p">([</span><span class="n">forward_rate</span><span class="p">,</span> <span class="n">derived_rate</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
 <p>Now create the <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> using the modified <code class="docutils literal notranslate"><span class="pre">Library</span></code> object.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -988,7 +1007,7 @@ looking to remove Co55 ⟶ He4 + Mn51
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/08866c12b656b870ae2c3264690b1848e126b749b4253ae2a11ce5385b0fb383.png" src="_images/08866c12b656b870ae2c3264690b1848e126b749b4253ae2a11ce5385b0fb383.png" />
+<img alt="_images/bea13727e59313ca632ee4d2e39de38264aedf9c95a3f87c811ae59d58575cb7.png" src="_images/bea13727e59313ca632ee4d2e39de38264aedf9c95a3f87c811ae59d58575cb7.png" />
 </div>
 </div>
 <p>Since <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> used <span class="math notranslate nohighlight">\((\alpha,p)(p,\gamma)\)</span> approximation, do the same for <code class="docutils literal notranslate"><span class="pre">NSENetwork</span></code>.
@@ -1100,7 +1119,7 @@ looking to remove Mn51 + He4 ⟶ Co55 + 𝛾
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/3670720a4ea5fdd2b04d74ab49b1b34232f90a18481633371fc996e92639a1b8.png" src="_images/3670720a4ea5fdd2b04d74ab49b1b34232f90a18481633371fc996e92639a1b8.png" />
+<img alt="_images/bcb118d0a0e1962ad600adaaf57314454b508b651d2b231bb709bd2a2142de1a.png" src="_images/bcb118d0a0e1962ad600adaaf57314454b508b651d2b231bb709bd2a2142de1a.png" />
 </div>
 </div>
 <p>Now a plot of absolute and relative difference shows that the mass fraction obtained from direct integration matches with NSE equations to machine precision. The differences between the two are largely set by the tolerances of both the NSE solver and the ODE integrator.</p>
@@ -1123,7 +1142,7 @@ looking to remove Mn51 + He4 ⟶ Co55 + 𝛾
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/526af21e738460193515a8eaa9ce37aece3e7aec036bcc7f94c698369ed40852.png" src="_images/526af21e738460193515a8eaa9ce37aece3e7aec036bcc7f94c698369ed40852.png" />
+<img alt="_images/2cddbedf5f55e9221e3df0fedb9d31d4323476f1206ba7d1d31023a68eec51f4.png" src="_images/2cddbedf5f55e9221e3df0fedb9d31d4323476f1206ba7d1d31023a68eec51f4.png" />
 </div>
 </div>
 </section>
