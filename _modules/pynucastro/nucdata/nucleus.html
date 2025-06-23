@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.nucdata.nucleus &#8212; pynucastro 2.6.0.post26+g2ec7f4387 documentation</title>
+    <title>pynucastro.nucdata.nucleus &#8212; pynucastro 2.6.0.post27+g3cf9448a8 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=6c00c1f3"></script>
+    <script src="../../../_static/documentation_options.js?v=ee8a2c39"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -901,35 +901,74 @@ document.write(`
 
 <div class="viewcode-block" id="get_nuclei_in_range">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.get_nuclei_in_range">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_nuclei_in_range</span><span class="p">(</span><span class="n">zmin</span><span class="p">,</span> <span class="n">zmax</span><span class="p">,</span> <span class="n">amin</span><span class="p">,</span> <span class="n">amax</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Given a range of Z = [zmin, zmax], and A = [amin, amax],</span>
-<span class="sd">    return a list of Nucleus objects for all nuclei in this range</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_nuclei_in_range</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                        <span class="n">Z_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">A_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">neutron_excess_range</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a range of nuclei.  Both the proton number(s) and mass</span>
+<span class="sd">    range need to be specified.  This can be done in several ways:</span>
+
+<span class="sd">    * proton number: give either a single element name via `name`</span>
+<span class="sd">      (e.g., &quot;Fe&quot;) or the range of proton numbers via ``Z_range``</span>
+
+<span class="sd">    * masses: give either the range of atomic weights via ``A_range`` or</span>
+<span class="sd">      the range of neutron excess, ``neutron_excess_range``.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    zmin : int</span>
-<span class="sd">        minimum atomic number</span>
-<span class="sd">    zmax : int</span>
-<span class="sd">        maximum atomic number</span>
-<span class="sd">    amin : int</span>
-<span class="sd">        minimum atomic weight</span>
-<span class="sd">    amax : int</span>
-<span class="sd">        maximum atomic weight</span>
+<span class="sd">    name : str</span>
+<span class="sd">        the element name for a single atomic number</span>
+<span class="sd">    Z_range : Iterable(int)</span>
+<span class="sd">        minimum and maximum atomic number</span>
+<span class="sd">    A_range : Iterable(int)</span>
+<span class="sd">        minimum and maximum atomic weight</span>
+<span class="sd">    neutron_excess_range : Iterable(int)</span>
+<span class="sd">        the minimum and maximum value of N-Z</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    list</span>
+<span class="sd">    list(Nucleus)</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Get all of the oxygen isotopes that have anywhere from 2 fewer</span>
+<span class="sd">    neutrons than protons to 2 more neutrons than protons:</span>
+
+<span class="sd">    &gt;&gt;&gt; nuc = get_nuclei_in_range(&quot;O&quot;, neutron_excess_range=[-2, 2])</span>
+
+<span class="sd">    Get all the iron, cobalt, and nickel nuclei with masses in the</span>
+<span class="sd">    range 52 to 64</span>
+
+<span class="sd">    &gt;&gt;&gt; nuc = get_nuclei_in_range(Z_range=[26, 28], A_range=[52, 64])</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">nuc_list</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">assert</span> <span class="n">zmax</span> <span class="o">&gt;=</span> <span class="n">zmin</span><span class="p">,</span> <span class="s2">&quot;zmax must be &gt;= zmin&quot;</span>
-    <span class="k">assert</span> <span class="n">amax</span> <span class="o">&gt;=</span> <span class="n">amin</span><span class="p">,</span> <span class="s2">&quot;amax must be &gt;= amin&quot;</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">Z_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;one of name or Z_range need to be provided&quot;</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">zmin</span><span class="p">,</span> <span class="n">zmax</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">element</span> <span class="o">=</span> <span class="n">PeriodicTable</span><span class="o">.</span><span class="n">lookup_Z</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">amin</span><span class="p">,</span> <span class="n">amax</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element</span><span class="o">.</span><span class="n">abbreviation</span><span class="si">}{</span><span class="n">a</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="n">nuc_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+        <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Z_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Z_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PeriodicTable</span><span class="o">.</span><span class="n">lookup_Z</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">.</span><span class="n">abbreviation</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">A_range</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">neutron_excess_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;one of A_range or neutron_excess_range need to be provided&quot;</span><span class="p">)</span>
+
+    <span class="n">nuc_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">A_range</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">A_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">A_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">nuc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}{</span><span class="n">a</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">nuc_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">nuc</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># find the Z for this element</span>
+            <span class="n">Z</span> <span class="o">=</span> <span class="n">PeriodicTable</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span><span class="o">.</span><span class="n">Z</span>
+            <span class="n">A_symmetric</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Z</span>
+            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">A_symmetric</span> <span class="o">+</span> <span class="n">neutron_excess_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                           <span class="n">A_symmetric</span> <span class="o">+</span> <span class="n">neutron_excess_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">nuc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}{</span><span class="n">a</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">nuc_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">nuc</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">nuc_list</span></div>
 

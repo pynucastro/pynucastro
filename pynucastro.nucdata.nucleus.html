@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.nucdata.nucleus module &#8212; pynucastro 2.6.0.post26+g2ec7f4387 documentation</title>
+    <title>pynucastro.nucdata.nucleus module &#8212; pynucastro 2.6.0.post27+g3cf9448a8 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=6c00c1f3"></script>
+    <script src="_static/documentation_options.js?v=ee8a2c39"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -904,22 +904,39 @@ to be part of the network</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.get_nuclei_in_range">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.nucleus.</span></span><span class="sig-name descname"><span class="pre">get_nuclei_in_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amax</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/nucleus.html#get_nuclei_in_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.nucleus.get_nuclei_in_range" title="Link to this definition">#</a></dt>
-<dd><p>Given a range of Z = [zmin, zmax], and A = [amin, amax],
-return a list of Nucleus objects for all nuclei in this range</p>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.nucleus.</span></span><span class="sig-name descname"><span class="pre">get_nuclei_in_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neutron_excess_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/nucleus.html#get_nuclei_in_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.nucleus.get_nuclei_in_range" title="Link to this definition">#</a></dt>
+<dd><p>Create a range of nuclei.  Both the proton number(s) and mass
+range need to be specified.  This can be done in several ways:</p>
+<ul class="simple">
+<li><p>proton number: give either a single element name via <cite>name</cite>
+(e.g., “Fe”) or the range of proton numbers via <code class="docutils literal notranslate"><span class="pre">Z_range</span></code></p></li>
+<li><p>masses: give either the range of atomic weights via <code class="docutils literal notranslate"><span class="pre">A_range</span></code> or
+the range of neutron excess, <code class="docutils literal notranslate"><span class="pre">neutron_excess_range</span></code>.</p></li>
+</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>zmin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – minimum atomic number</p></li>
-<li><p><strong>zmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – maximum atomic number</p></li>
-<li><p><strong>amin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – minimum atomic weight</p></li>
-<li><p><strong>amax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – maximum atomic weight</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – the element name for a single atomic number</p></li>
+<li><p><strong>Z_range</strong> (<em>Iterable</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>)</em>) – minimum and maximum atomic number</p></li>
+<li><p><strong>A_range</strong> (<em>Iterable</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>)</em>) – minimum and maximum atomic weight</p></li>
+<li><p><strong>neutron_excess_range</strong> (<em>Iterable</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>)</em>) – the minimum and maximum value of N-Z</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>(<a class="reference internal" href="#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus">Nucleus</a>)</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<p>Get all of the oxygen isotopes that have anywhere from 2 fewer
+neutrons than protons to 2 more neutrons than protons:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nuc</span> <span class="o">=</span> <span class="n">get_nuclei_in_range</span><span class="p">(</span><span class="s2">&quot;O&quot;</span><span class="p">,</span> <span class="n">neutron_excess_range</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Get all the iron, cobalt, and nickel nuclei with masses in the
+range 52 to 64</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nuc</span> <span class="o">=</span> <span class="n">get_nuclei_in_range</span><span class="p">(</span><span class="n">Z_range</span><span class="o">=</span><span class="p">[</span><span class="mi">26</span><span class="p">,</span> <span class="mi">28</span><span class="p">],</span> <span class="n">A_range</span><span class="o">=</span><span class="p">[</span><span class="mi">52</span><span class="p">,</span> <span class="mi">64</span><span class="p">])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
