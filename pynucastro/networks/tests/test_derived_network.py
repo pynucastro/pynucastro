@@ -1,6 +1,8 @@
 # unit tests for rates
-import pytest
 import warnings
+
+import pytest
+
 import pynucastro as pyna
 
 
@@ -115,8 +117,8 @@ def Fe52__p_Mn51__derived(rate_eval, tf):
    )
 
 """
-        assert pynet2.full_ydot_string(pyna.Nucleus("he4"))  == ostr1
-        assert pynet2.full_ydot_string(pyna.Nucleus("n14"))  == ostr2
+        assert pynet2.full_ydot_string(pyna.Nucleus("he4")) == ostr1
+        assert pynet2.full_ydot_string(pyna.Nucleus("n14")) == ostr2
         assert pynet2.full_ydot_string(pyna.Nucleus("ne20")) == ostr3
 
     def test_derived_modified_function_string(self, pynet2):
