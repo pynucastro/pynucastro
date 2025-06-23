@@ -55,7 +55,8 @@ bibtex_bibfiles = ['refs.bib']
 bibtex_reference_style = 'author_year'
 
 linkcheck_ignore = [r"https://doi.org",
-                    r"https://link.aps.org"]
+                    r"https://link.aps.org",
+                    r"https://www.sciencedirect.com"]
 
 linkcheck_retries = 3
 linkcheck_timeout = 100

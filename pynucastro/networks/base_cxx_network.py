@@ -69,7 +69,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<compute_tabular_rates>'] = self._compute_tabular_rates
         self.ftags['<ydot>'] = self._ydot
         self.ftags['<ydot_weak>'] = self._ydot_weak
-        self.ftags['<enuc_add_energy_rate>'] = self._enuc_add_energy_rate
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<initial_mass_fractions>'] = self._initial_mass_fractions
         self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
@@ -494,19 +493,6 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) =\n")
 
             self._write_ydot_nuc(n_indent, of, ydot_sym_terms)
-
-    def _enuc_add_energy_rate(self, n_indent, of):
-        # Add tabular per-reaction neutrino energy generation rates to the energy generation rate
-        # (not thermal neutrinos)
-
-        idnt = self.indent * n_indent
-
-        for r in self.tabular_rates:
-            if len(r.reactants) != 1:
-                sys.exit('ERROR: Unknown energy rate corrections for a reaction where the number of reactants is not 1.')
-            else:
-                reactant = r.reactants[0]
-                of.write(f'{idnt}enuc += C::n_A * {self.symbol_rates.name_y}({reactant.cindex()}) * rate_eval.add_energy_rate(k_{r.cname()});\n')
 
     def _jacnuc(self, n_indent, of):
         # now make the Jacobian

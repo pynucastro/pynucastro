@@ -889,7 +889,7 @@ class TabularLibrary(Library):
         precedence.  We will read from the first source, and then for
         any later sources, for any duplicate rates, we will replace
         the existing rate with the version from the higher-priority
-        library.  The default ordering is ``["ffn", "langanke",
+        library.  The default ordering is ``["ffn", "oda", "langanke",
         "suzuki"]``
 
     """
@@ -902,7 +902,7 @@ class TabularLibrary(Library):
         # *electroncapture.dat
 
         if ordering is None:
-            ordering = ["ffn", "langanke", "suzuki"]
+            ordering = ["ffn", "oda", "langanke", "suzuki"]
 
         trates = []
 
@@ -952,3 +952,13 @@ class FFNLibrary(TabularLibrary):
 
     def __init__(self):
         super().__init__(ordering=["ffn"])
+
+
+class OdaLibrary(TabularLibrary):
+    """Create a :py:class:`Library` containing all of the tabular
+    rates inside the "oda" subdirectory.
+
+    """
+
+    def __init__(self):
+        super().__init__(ordering=["oda"])
