@@ -58,6 +58,7 @@ codes.
    :caption: Building Networks
    :hidden:
 
+   basic_network.ipynb
    duplicate-rates.ipynb
    validate-example.ipynb
    electron-capture-example.ipynb

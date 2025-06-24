@@ -1,4 +1,4 @@
-from pynucastro.rates import ReacLibLibrary, ReacLibRate, TabularLibrary
+from pynucastro.rates import DerivedRate, ReacLibLibrary, ReacLibRate, TabularLibrary
 
 from .amrexastro_cxx_network import AmrexAstroCxxNetwork
 from .fortran_network import FortranNetwork
@@ -8,6 +8,7 @@ from .simple_cxx_network import SimpleCxxNetwork
 
 def network_helper(nuclei, *,
                    network_type="python",
+                   use_detailed_balance=True,
                    use_tabular_rates=True,
                    tabular_ordering=None):
     """A simple helper function to generate a basic network connecting
@@ -25,6 +26,8 @@ def network_helper(nuclei, *,
         * "cxx" : create a :py:obj:`SimpleCxxNetwork <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`
         * "fortran" : create a :py:obj:`FortranNetwork <pynucastro.networks.fortran_network.FortranNetwork>`
         * "amrex" : create a :py:obj:`AmrexAstroCxxNetwork <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`
+    use_detailed_balanace : bool
+        do we rederive inverse rates using detailed balance?
     use_tabular_rates : bool
         do we include tabulated weak rates?
     tabular_ordering : Iterable(str)
@@ -60,6 +63,18 @@ def network_helper(nuclei, *,
 
         for r in rates_to_remove:
             lib.remove_rate(r)
+
+    if use_detailed_balance:
+        rates_to_derive = lib.backward().get_rates()
+
+        # now for each of those derived rates, look to see if the pair exists
+        for r in rates_to_derive:
+            fr = lib.get_rate_by_nuclei(r.products, r.reactants)
+            if fr:
+                print(f"modifying {r} from {fr}")
+                lib.remove_rate(r)
+                d = DerivedRate(rate=fr, compute_Q=False, use_pf=True)
+                lib.add_rate(d)
 
     if network_type == "python":
         return PythonNetwork(libraries=[lib])
