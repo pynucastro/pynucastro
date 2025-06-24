@@ -5,10 +5,7 @@
 
 #include <partition_functions.H>
 
-using namespace amrex;
-
 namespace part_fun {
 
 
 }
-
