@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.amrexastro_cxx_network &#8212; pynucastro 2.6.0.post28+gc2498abda documentation</title>
+    <title>pynucastro.networks.amrexastro_cxx_network &#8212; pynucastro 2.6.0.post31+g9583005ee documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=a77df25e"></script>
+    <script src="../../../_static/documentation_options.js?v=7b8398bd"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -617,7 +617,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Fill in the rate indices</span>
-        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">AMREX_GPU_MANAGED amrex::Array2D&lt;int, 1, Rates::NumRates, 1, 7, Order::C&gt; rate_indices </span><span class="se">{{\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">AMREX_GPU_MANAGED amrex::Array2D&lt;int, 1, Rates::NumRates, 1, 7, amrex::Order::C&gt; rate_indices </span><span class="se">{{\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">rate</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">):</span>
             <span class="n">tmp</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span>
