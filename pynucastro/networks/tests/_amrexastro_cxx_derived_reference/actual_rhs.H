@@ -18,7 +18,7 @@
 #include <reaclib_rates.H>
 #include <table_rates.H>
 
-using namespace amrex;
+using namespace amrex::literals;
 using namespace ArrayUtil;
 
 using namespace Species;

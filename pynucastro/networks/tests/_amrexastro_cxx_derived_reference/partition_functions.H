@@ -8,7 +8,7 @@
 #include <fundamental_constants.H>
 #include <network_properties.H>
 
-using namespace amrex;
+using namespace amrex::literals;
 using namespace Species;
 
 namespace part_fun {
@@ -90,7 +90,7 @@ namespace part_fun {
         // always accessed at the same time.
         // The entries will be default-initialized to zero, which is fine since
         // log10(x) is never zero.
-        amrex::Array2D<amrex::Real, 1, NumSpecTotal, 1, 2, Order::C> data{};
+        amrex::Array2D<amrex::Real, 1, NumSpecTotal, 1, 2, amrex::Order::C> data{};
     };
 
 }
