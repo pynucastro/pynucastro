@@ -1,5 +1,5 @@
-Initializing AMReX (23.05-820-g6ab61fb6d8a7)...
-AMReX (23.05-820-g6ab61fb6d8a7) initialized
+Initializing AMReX (23.05-831-gdf1e7d01d26d)...
+AMReX (23.05-831-gdf1e7d01d26d) initialized
 starting the single zone burn...
 reading in network electron-capture / beta-decay tables...
 chemical potential of proton is -3
@@ -32,7 +32,7 @@ Cr48 : 0.009940597763
 Fe52 : 0.05983451005
 Ni56 : 0.2349414009
 We're in NSE. 
-change in T: 6000000000 6069004586
-change in abar: 6.978696214 6.210041369
-recovered energy: 2.785013283e+18 2.785013289e+18
-AMReX (23.05-820-g6ab61fb6d8a7) finalized
+change in T: 6000000000 6069004589
+change in abar: 6.978696214 6.21004163
+recovered energy: 2.785013289e+18 2.785013289e+18
+AMReX (23.05-831-gdf1e7d01d26d) finalized
