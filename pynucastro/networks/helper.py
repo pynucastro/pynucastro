@@ -20,10 +20,11 @@ def network_helper(nuclei, *,
         the nuclei to use for the network
     network_type : str
         the type of network to create.  Allowed values are:
-        * "python" : create a :py:obj:`PythonNetwork`
-        * "cxx" : create a :py:obj:`SimpleCxxNetwork`
-        * "fortran" : create a :py:obj:`FortranNetwork`
-        * "amrex" : create a :py:obj:`AmrexAstroCxxNetwork`
+
+        * "python" : create a :py:obj:`PythonNetwork <pynucastro.networks.python_network.PythonNetwork>`
+        * "cxx" : create a :py:obj:`SimpleCxxNetwork <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`
+        * "fortran" : create a :py:obj:`FortranNetwork <pynucastro.networks.fortran_network.FortranNetwork>`
+        * "amrex" : create a :py:obj:`AmrexAstroCxxNetwork <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`
     use_tabular_rates : bool
         do we include tabulated weak rates?
     tabular_ordering : Iterable(str)
