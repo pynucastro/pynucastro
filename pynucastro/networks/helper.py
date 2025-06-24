@@ -73,3 +73,4 @@ def network_helper(nuclei, *,
     if network_type == "amrex":
         return AmrexAstroCxxNetwork(libraries=[lib])
 
+    raise ValueError("invalid network_type")
