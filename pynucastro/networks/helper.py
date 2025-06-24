@@ -1,4 +1,5 @@
-from pynucastro.rates import DerivedRate, ReacLibLibrary, ReacLibRate, TabularLibrary
+from pynucastro.rates import (DerivedRate, ReacLibLibrary, ReacLibRate,
+                              TabularLibrary)
 
 from .amrexastro_cxx_network import AmrexAstroCxxNetwork
 from .fortran_network import FortranNetwork
