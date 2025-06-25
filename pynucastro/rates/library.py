@@ -573,7 +573,7 @@ class Library:
             lib_nuclei = new_lib.get_nuclei()
             for nuc in nucleus_set:
                 if nuc not in lib_nuclei:
-                    print(f"warning: {nuc} was not able to be linked")
+                    print(f"warning: {nuc} was not able to be linked in {self.__class__.__name__}")
 
         return new_lib
 
