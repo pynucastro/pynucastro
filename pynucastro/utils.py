@@ -1,9 +1,9 @@
 import json
-from importlib.metadata import Distribution
 import subprocess
+from importlib.metadata import Distribution
 from urllib.parse import urlparse
 
-from pynucastro import version
+from ._version import version
 
 
 def pynucastro_version():
