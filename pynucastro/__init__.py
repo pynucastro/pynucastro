@@ -136,7 +136,8 @@ from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
                                  Composition, Explorer, FortranNetwork,
                                  NSENetwork, NumpyNetwork, PythonNetwork,
                                  RateCollection, SimpleCxxNetwork,
-                                 StarKillerCxxNetwork, SympyRates)
+                                 StarKillerCxxNetwork, SympyRates,
+                                 network_helper)
 from pynucastro.nucdata import Nucleus, get_all_nuclei, get_nuclei_in_range
 from pynucastro.rates import (ApproximateRate, DerivedRate, FFNLibrary,
                               LangankeLibrary, Library, ModifiedRate,
