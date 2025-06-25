@@ -21,6 +21,11 @@ def pynucastro_version():
     """
 
     direct_url = Distribution.from_name("pynucastro").read_text("direct_url.json")
+    if direct_url is None:
+        # in pytest, things are run in a new environment without a
+        # distribution
+        return version
+
     is_editable = json.loads(direct_url).get("dir_info", {}).get("editable", False)
 
     if is_editable:
