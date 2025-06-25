@@ -23,7 +23,7 @@ class TestAmrexAstroCxxNetwork:
         # subdirectory of pynucastro/networks/tests/
         reference_path = "_amrexastro_cxx_approx_reference/"
         # files that will be ignored if present in the generated directory
-        skip_files = []
+        skip_files = ["pynucastro-info.net"]
 
         # remove any previously generated files
         shutil.rmtree(test_path, ignore_errors=True)

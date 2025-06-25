@@ -670,4 +670,4 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*(n_indent+1)}break;\n\n")
 
     def _fill_pynucastro_version(self, n_indent, of):
-        of.write(f"{self.indent*n_indent}// pynucastro version: {pynucastro_version()}\n")
+        of.write(f"{self.indent*n_indent}pynucastro version: {pynucastro_version()}\n")

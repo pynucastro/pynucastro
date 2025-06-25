@@ -1,5 +1,3 @@
-// pynucastro version: 2.6.0.post31+g9583005ee.d20250625
-
 #ifndef actual_network_H
 #define actual_network_H
 
