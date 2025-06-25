@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Plotting Examples &#8212; pynucastro 2.6.0.post32+g2a3da16c6 documentation</title>
+    <title>Plotting Examples &#8212; pynucastro 2.6.0.post33+g5d528a4ea documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=61299a41"></script>
+    <script src="_static/documentation_options.js?v=a6814025"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -558,9 +558,9 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#standard-view">Standard view</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rotated-view">Rotated view</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hiding-links">Hiding links</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hiding-unimportant-rates">Hiding unimportant rates</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#curved-edges">Curved edges</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-a-legend">Adding a legend</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#labeling-edges">Labeling edges</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#legend-and-labels">Legend and labels</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#filters">Filters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-the-jacobian">Plotting the Jacobian</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-nuclides-on-a-grid">Plot nuclides on a grid</a></li>
@@ -579,6 +579,14 @@ document.write(`
   <section class="tex2jax_ignore mathjax_ignore" id="plotting-examples">
 <h1>Plotting Examples<a class="headerlink" href="#plotting-examples" title="Link to this heading">#</a></h1>
 <p>There are a variety of methods that can be used to visualize a network, which we demonstrate below.  For most plots, <a class="reference external" href="https://networkx.org/">NetworkX</a> is used to create the structure of the network and <a class="reference external" href="https://matplotlib.org/">matplotlib</a> manages the drawing.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The main plotting interface for a network is the <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.plot" title="pynucastro.networks.rate_collection.RateCollection.plot"><code class="xref py py-func docutils literal notranslate"><span class="pre">plot</span></code></a> method of <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-func docutils literal notranslate"><span class="pre">RateCollection</span></code></a>.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>You can interactively zoom and pan a network’s visualization within Jupyter by installing the <a class="reference external" href="https://matplotlib.org/ipympl/">ipympl</a> package and then adding:</p>
@@ -586,13 +594,6 @@ document.write(`
 </pre></div>
 </div>
 <p>to the notebook (in a cell that is executed).</p>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
-</pre></div>
-</div>
-</div>
 </div>
 <section id="standard-view">
 <h2>Standard view<a class="headerlink" href="#standard-view" title="Link to this heading">#</a></h2>
@@ -635,7 +636,8 @@ document.write(`
 <section id="rotated-view">
 <h2>Rotated view<a class="headerlink" href="#rotated-view" title="Link to this heading">#</a></h2>
 <p>Since everything lies close to the diagonal, it is hard to see the structure.  We can instead look at a rotated view of the network.</p>
-<p>While we’re at it, we’ll also color the rates by reaction rate strength</p>
+<p>While we’re at it, we’ll also color the rates by reaction rate strength by passing in the density, temperature,
+and composition (as a <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Composition</span></code></a> object.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e4</span>
@@ -648,62 +650,92 @@ document.write(`
 </div>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">node_size</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/fbbc1e955b9bec54f0c1c2272bd6e519edcec0cfef0db7d8ae62c702c8b5cf0c.png" src="_images/fbbc1e955b9bec54f0c1c2272bd6e519edcec0cfef0db7d8ae62c702c8b5cf0c.png" />
+<img alt="_images/095c38e83817e4fdcd95326f3149be0b6d9235e645c3705944ab1161b8f88233.png" src="_images/095c38e83817e4fdcd95326f3149be0b6d9235e645c3705944ab1161b8f88233.png" />
 </div>
 </div>
 </section>
 <section id="hiding-links">
 <h2>Hiding links<a class="headerlink" href="#hiding-links" title="Link to this heading">#</a></h2>
-<p>This looks a bit crowded, since it is showing all of the links to <span class="math notranslate nohighlight">\({}^4\mathrm{He}\)</span> from reactions of the form <span class="math notranslate nohighlight">\(A(x, \alpha)B\)</span>.  We can hide those links with <code class="docutils literal notranslate"><span class="pre">hide_xalpha=True</span></code></p>
+<p>This looks a bit crowded, since it is showing all of the links to <span class="math notranslate nohighlight">\({}^4\mathrm{He}\)</span> from reactions of the form <span class="math notranslate nohighlight">\(A(x, \alpha)B\)</span>.  We can hide those links with <code class="docutils literal notranslate"><span class="pre">hide_xalpha=True</span></code>.</p>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">node_size</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a4a91108fec1f1c9e9281404bfc114426c0af43ec905c8b8979dd2c7829fcc56.png" src="_images/a4a91108fec1f1c9e9281404bfc114426c0af43ec905c8b8979dd2c7829fcc56.png" />
+<img alt="_images/fa50abeb53aa57ac88405d2554111e6a1ddb7a4b5297c202d440e69aa6265db0.png" src="_images/fa50abeb53aa57ac88405d2554111e6a1ddb7a4b5297c202d440e69aa6265db0.png" />
+</div>
+</div>
+</section>
+<section id="hiding-unimportant-rates">
+<h2>Hiding unimportant rates<a class="headerlink" href="#hiding-unimportant-rates" title="Link to this heading">#</a></h2>
+<p>We can omit edges from the plot for rates that are below a cutoff value, using <code class="docutils literal notranslate"><span class="pre">ydot_cutoff_value</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">node_size</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+              <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="mf">1.e-50</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/125f3178d8c8ffcc796c4ddf3951269e7e5fcc0dbe3106050eb3ab462b47603b.png" src="_images/125f3178d8c8ffcc796c4ddf3951269e7e5fcc0dbe3106050eb3ab462b47603b.png" />
+</div>
+</div>
+<p>Sometimes, for a given nucleus, there are multiple rates that consume it, but one might be much more dominant than the others.  We can set a threshold to old show the rates consuming a nucleus if they are within a desired factor of the fastest rate using <code class="docutils literal notranslate"><span class="pre">consuming_rate_threshold</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">node_size</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+              <span class="n">consuming_rate_threshold</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/6fe17d26b0d1d783f0f106c37683301d906008c8c165cf671a0270e279afc8ab.png" src="_images/6fe17d26b0d1d783f0f106c37683301d906008c8c165cf671a0270e279afc8ab.png" />
 </div>
 </div>
 </section>
 <section id="curved-edges">
 <h2>Curved edges<a class="headerlink" href="#curved-edges" title="Link to this heading">#</a></h2>
-<p>We can also plot the edges curved, to help distinguish the forward and reverse rates</p>
+<p>We can also plot the edges curved, to help distinguish the forward and reverse rates.</p>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">node_size</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
               <span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/decd8960d37fbc5029ac9c6b5ba7e7f9865894ed116584f5eb7b212327d06cdb.png" src="_images/decd8960d37fbc5029ac9c6b5ba7e7f9865894ed116584f5eb7b212327d06cdb.png" />
+<img alt="_images/e00fc8d258d9151dfd891c6fce69f48e500344fec4cb09e5e413ade4760126e4.png" src="_images/e00fc8d258d9151dfd891c6fce69f48e500344fec4cb09e5e413ade4760126e4.png" />
 </div>
 </div>
 </section>
-<section id="adding-a-legend">
-<h2>Adding a legend<a class="headerlink" href="#adding-a-legend" title="Link to this heading">#</a></h2>
-<p>We can also add a “compass rose” style legend that shows the directions of key captures.  We specify the location in terms of (Z, N)</p>
+<section id="legend-and-labels">
+<h2>Legend and labels<a class="headerlink" href="#legend-and-labels" title="Link to this heading">#</a></h2>
+<p>To help understand the different rate types, we can add a “compass rose” style legend that shows the directions of key captures.  We specify the location in terms of (Z, N)</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">node_size</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
               <span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">legend_coord</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/42f23c458ab159084160e4c8d4cfb81d3c0b472db1963687279bc2aaba7684c8.png" src="_images/42f23c458ab159084160e4c8d4cfb81d3c0b472db1963687279bc2aaba7684c8.png" />
+<img alt="_images/24af0c4b5e6f23e8272d4f02c5d6349a2091a8fc394e385f039dec45c732ebf2.png" src="_images/24af0c4b5e6f23e8272d4f02c5d6349a2091a8fc394e385f039dec45c732ebf2.png" />
 </div>
 </div>
-</section>
-<section id="labeling-edges">
-<h2>Labeling edges<a class="headerlink" href="#labeling-edges" title="Link to this heading">#</a></h2>
-<p>Any edge can be labelled.</p>
+<p>Any edge can be labelled by passing a dictionary keyed by a tuple of the nodes in the network.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">edge_labels</span> <span class="o">=</span> <span class="p">{(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">),</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">)):</span>
@@ -727,16 +759,17 @@ document.write(`
 </section>
 <section id="filters">
 <h2>Filters<a class="headerlink" href="#filters" title="Link to this heading">#</a></h2>
-<p>We can use a rate filter to show only certain links.  For example, to show only links involving proton capture, we can do:</p>
+<p>We can use a rate filter, via <code class="docutils literal notranslate"><span class="pre">rate_filter_function</span></code>, to show only certain links.  For example, to show only links involving proton capture, we can do:</p>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">node_size</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
               <span class="n">rate_filter_function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/b962711709a28fce8d24c3d116feec325eb01354fd2c8d448c4a331fd2ea6322.png" src="_images/b962711709a28fce8d24c3d116feec325eb01354fd2c8d448c4a331fd2ea6322.png" />
+<img alt="_images/84ef912dd80d7de471231192e9eb413db429a29718c934cdeb4a1882195e2b69.png" src="_images/84ef912dd80d7de471231192e9eb413db429a29718c934cdeb4a1882195e2b69.png" />
 </div>
 </div>
 <p>We can also highlight rates using the <code class="docutils literal notranslate"><span class="pre">highlight_filter_function</span></code> mechanism.  This takes a function that operates on a rate and returns <code class="docutils literal notranslate"><span class="pre">True</span></code> if we wish to highlight the rate (i.e., as if we used a highlighter marker over the line).</p>
@@ -761,11 +794,15 @@ document.write(`
 \[\dot{\bf Y} = {\bf f}({\bf Y})\]</div>
 <p>and the Jacobian, <span class="math notranslate nohighlight">\({\bf J} = \partial {\bf f} / \partial {\bf Y}\)</span> plays an important role
 in solving for the update.</p>
-<p>We can visualize the Jacobian of our network easily.  By default, we will show all elements
+<p>We can visualize the Jacobian of our network easily using <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.plot_jacobian" title="pynucastro.networks.rate_collection.RateCollection.plot_jacobian"><code class="xref py py-func docutils literal notranslate"><span class="pre">plot_jacobian</span></code></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>By default, we will show all elements
 where</p>
 <div class="math notranslate nohighlight">
 \[\frac{\mathrm{max}_{i,j} (|J_{ij}|)}{|J_{ij}|} &gt; 10^{10}\]</div>
 <p>but this ratio can be set via the <code class="docutils literal notranslate"><span class="pre">rate_scaling</span></code> keyword argument.</p>
+</div>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e4</span>
@@ -779,15 +816,15 @@ where</p>
 <img alt="_images/d3f69e613365f1de22b2086737710905d1e20351a09a6654e84bf4095cd8fa58.png" src="_images/d3f69e613365f1de22b2086737710905d1e20351a09a6654e84bf4095cd8fa58.png" />
 </div>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
 <p>If you set <code class="docutils literal notranslate"><span class="pre">rate_scaling</span></code> too large, then roundoff error in mapping the Jacobian elements to colors can cause elements that are zero to appear colored.  It is best to stay below <code class="docutils literal notranslate"><span class="pre">1.e15</span></code> to minimize roundoff.</p>
 </div>
 </section>
 <section id="plot-nuclides-on-a-grid">
 <h2>Plot nuclides on a grid<a class="headerlink" href="#plot-nuclides-on-a-grid" title="Link to this heading">#</a></h2>
-<p>Nuclides in a network may also be visualized as cells on a grid of Z vs. N, colored by some quantity. This can be more interpretable for large networks.</p>
-<p>Calling <code class="docutils literal notranslate"><span class="pre">gridplot</span></code> without any arguments will just plot the grid – to see anything interesting we need to supply some conditions. Here is a plot of nuclide mass fraction on a log scale, with a 36 square inch figure:</p>
+<p>Nuclides in a network may also be visualized as cells on a grid of Z vs. N, colored by some quantity. This can be more interpretable for large networks.  This type of plot is enabled via <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.gridplot" title="pynucastro.networks.rate_collection.RateCollection.gridplot"><code class="xref py py-func docutils literal notranslate"><span class="pre">gridplot</span></code></a>.</p>
+<p>Calling <code class="docutils literal notranslate"><span class="pre">gridplot</span></code> without any arguments will just plot the grid—to see anything interesting we need to supply some conditions. Here is a plot of nuclide mass fraction on a log scale, with a 36 square inch figure:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rate_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;c12(p,g)n13&quot;</span><span class="p">,</span> 
@@ -853,7 +890,7 @@ where</p>
 </section>
 <section id="network-chart">
 <h2>Network chart<a class="headerlink" href="#network-chart" title="Link to this heading">#</a></h2>
-<p>A network chart shows how each rate affects each nucleus</p>
+<p>A network chart shows how each rate affects each nucleus.  This is produced using <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.plot_network_chart" title="pynucastro.networks.rate_collection.RateCollection.plot_network_chart"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_network_chart</span></code></a>.</p>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot_network_chart</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
@@ -915,9 +952,9 @@ where</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#standard-view">Standard view</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rotated-view">Rotated view</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hiding-links">Hiding links</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hiding-unimportant-rates">Hiding unimportant rates</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#curved-edges">Curved edges</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-a-legend">Adding a legend</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#labeling-edges">Labeling edges</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#legend-and-labels">Legend and labels</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#filters">Filters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-the-jacobian">Plotting the Jacobian</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-nuclides-on-a-grid">Plot nuclides on a grid</a></li>
