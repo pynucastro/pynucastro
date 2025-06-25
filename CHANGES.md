@@ -1,5 +1,38 @@
 # Changelog
 
+## 2.7.0
+
+  * fix some Sphinx issues (#1017, #1024)
+
+  * `AmrexAstroCxxNetwork` C++ cleaning (#993, #1003, #1009, #1010,
+    #1020, #1022)
+
+  * update CI due to Microphysics changes (#1021, #1023)
+
+  * `DerivedRate` now works on a `ModifiedRate` (#1011, #1012).
+
+  * `DerivedRate` is now consistent with NSE to machine precision
+    (#1007)
+
+  * `get_nuclei_in_range` is now more flexible in inputs (#1004)
+
+  * The weak rates from Oda et al. have been added (#1005)
+
+  * Creating a `Nucleus` now works with strings of the form "56ni",
+    and also fixes some regex issues (#998, #1016)
+
+  * A new method for evaluating the stiffness in a network was added
+    (#1006, #1008)
+
+  * add API links to the doc example pages (#984, #985, #987)
+
+  * docstring updates (#978, #989, #994)
+
+  * a new method for exporting a NetworkX graph from a network was
+    added (#990, #991)
+
+  * general documentation fixes (#980, #982, #988)
+
 ## 2.6.0
 
   * Added a `summary()` method to `RateCollection` that gives details
