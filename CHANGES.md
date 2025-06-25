@@ -2,12 +2,15 @@
 
 ## 2.7.0
 
+  * added a new `network_helper` function to make simple networks
+    more easily (#1025)
+
   * fix some Sphinx issues (#1017, #1024)
 
   * `AmrexAstroCxxNetwork` C++ cleaning (#993, #1003, #1009, #1010,
     #1020, #1022)
 
-  * update CI due to Microphysics changes (#1021, #1023)
+  * update CI due to Microphysics changes (#1021, #1023, #1029)
 
   * `DerivedRate` now works on a `ModifiedRate` (#1011, #1012).
 
@@ -24,7 +27,7 @@
   * A new method for evaluating the stiffness in a network was added
     (#1006, #1008)
 
-  * add API links to the doc example pages (#984, #985, #987)
+  * add API links to the doc example pages (#984, #985, #987, #1026)
 
   * docstring updates (#978, #989, #994)
 
