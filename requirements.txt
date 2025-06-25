@@ -1,14 +1,30 @@
-networkx>=2.1
-scipy>=1.0.0
-numpy>=1.13.3
-sympy>=1.1.1
-matplotlib>=2.1.0
-jupyter>=1.0.0
+# runtime dependencies
 ipywidgets>=7.1.2
-sphinx_rtd_theme
-Sphinx
-nbsphinx>=0.3.1
-pytest>=3.6
+matplotlib
+networkx>=3.3
+numpy>=1.13.3,<3.0
+scipy>=1.0.0
+sympy>=1.1.1
+
+# optional dependencies
+numba
+
+# tests
 nbval>=0.9.0
-numba>=0.40
 pytest-cov>=2.6.0
+pytest>=3.6
+
+# docs
+ipykernel
+jinja2
+nbsphinx>=0.3.1
+numpydoc
+Sphinx
+sphinx-copybutton
+sphinx-math-dollar
+sphinx-mdinclude
+sphinx-prompt
+sphinxcontrib-bibtex
+sphinx-book-theme
+myst-nb
+jupyterlab-myst

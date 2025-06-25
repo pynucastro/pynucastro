@@ -9,7 +9,7 @@ on:
   pull_request:
     branches:
       - main
-      - development
+  workflow_dispatch:
 
 jobs:
   test:
@@ -17,24 +17,16 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.7, 3.8]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Install Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-
-      - name: Cache pip
-        uses: actions/cache@v2
-        with:
-          # this path is specific to Ubuntu
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          cache: "pip"
 
       - name: Install dependencies
         run: |
@@ -42,7 +34,29 @@ jobs:
           pip install -r requirements.txt
 
       - name: Install pynucastro
-        run: python setup.py install --user
+        run: pip install --editable .
+
+      - name: Print system info
+        run: |
+          echo '::group::NumPy'
+          pip install threadpoolctl &>/dev/null
+          python -c "import sys, numpy; print(numpy.__version__); print(sys.version); print(numpy.show_runtime())"
+          echo '::endgroup::'
+          echo '::group::CPU info'
+          lscpu
+          echo '::endgroup::'
+          echo '::group::Package versions'
+          pip list --format=freeze
+          echo '::endgroup::'
 
       - name: Run tests with pytest
-        run: pytest -v --cov=. --nbval --ignore=docs --ignore-glob="pynucastro/library/tabular/*.ipynb" --ignore=examples/rxn-network-integration.ipynb
+        run: pytest -v -s --nbval --cov=pynucastro --color=yes
+
+      - name: Upload output from failed write_network tests
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: failed_networks_${{ matrix.python-version }}
+          path: _test_*/
+          if-no-files-found: ignore
+          retention-days: 5

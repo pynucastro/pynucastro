@@ -1,0 +1,18 @@
+[paths]
+# files installed in */site-packages/pynucastro/ are equivalent to those in pynucastro/
+source =
+  pynucastro
+  */site-packages/pynucastro
+
+[run]
+source = pynucastro
+# measure the source files from the installed pynucastro package
+source_pkgs = pynucastro
+
+[report]
+# don't include the test files themselves
+omit =
+  */tests/*
+exclude_also =
+  def __repr__
+  raise NotImplementedError

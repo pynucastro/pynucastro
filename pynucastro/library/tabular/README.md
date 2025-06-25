@@ -9,4 +9,19 @@ rates are tabulated in a two-dimensional space of:
 
 This directory includes tabulated rates obtained from Suzuki et al.,
 2016, ApJ 817:163, downloaded from
-http://w3p.phys.chs.nihon-u.ac.jp/~suzuki/data2/link.html
+https://www.phys.chs.nihon-u.ac.jp/suzuki/data2/
+https://web.archive.org/web/20210125194952/https://www.phys.chs.nihon-u.ac.jp/laboratory/suzuki
+
+In addition, includes the tabulated rates from Fuller et.al 1982, discussed in:
+https://ui.adsabs.harvard.edu/abs/1982ApJ...252..715F/abstract
+reviewed and prepared by FRIB, NSCL-Charge-Exchange group
+https://groups.frib.msu.edu/charge_exchange/weakrates.html
+
+Also includes the tabulated rates obtained from Langanke et. al.,
+2001, Atomic Data and Nuclear Data Tables, 79:1, downloaded from
+https://www.sciencedirect.com/science/article/abs/pii/S0092640X01908654?via%3Dihub
+
+Finally, we include the sd-shell nuclei tabular rates from Oda et. al. 1994,
+Atomic Data and Nuclear Data Tables, Volume 56, Issue 2 (1994); reviewed and
+prepared by FRIB, NSCL-Charge-Exchange group
+https://groups.frib.msu.edu/charge_exchange/weakrates.html

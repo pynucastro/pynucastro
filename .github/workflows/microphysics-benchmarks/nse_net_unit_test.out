@@ -1,0 +1,38 @@
+Initializing AMReX (23.05-831-gdf1e7d01d26d)...
+AMReX (23.05-831-gdf1e7d01d26d) initialized
+starting the single zone burn...
+reading in network electron-capture / beta-decay tables...
+chemical potential of proton is -3
+chemical potential of neutron is -12
+State Density (g/cm^3): 10000000
+State Temperature (K): 6000000000
+electron fraction is 0.5
+NSE state: 
+n : 0.0006076244838
+H1 : 0.001992004305
+He4 : 0.5191366258
+C12 : 1.326108871e-05
+N13 : 9.474537603e-11
+N14 : 2.564968622e-09
+O16 : 3.224747978e-05
+F18 : 5.420694616e-11
+Ne20 : 7.425465988e-07
+Ne21 : 4.997916806e-08
+Na22 : 2.606567039e-09
+Na23 : 1.008602713e-06
+Mg24 : 0.0001021891025
+Al27 : 0.0005547067894
+Si28 : 0.03679401994
+P31 : 0.0422774559
+S32 : 0.03864045615
+Ar36 : 0.02463421698
+Ca40 : 0.02883656203
+Ti44 : 0.001660314832
+Cr48 : 0.009940597763
+Fe52 : 0.05983451005
+Ni56 : 0.2349414009
+We're in NSE. 
+change in T: 6000000000 6069004589
+change in abar: 6.978696214 6.21004163
+recovered energy: 2.785013289e+18 2.785013289e+18
+AMReX (23.05-831-gdf1e7d01d26d) finalized

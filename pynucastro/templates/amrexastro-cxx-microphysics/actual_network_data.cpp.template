@@ -1,0 +1,14 @@
+#include <actual_network.H>
+
+
+#ifdef NSE_NET
+namespace NSE_INDEX
+{
+    <rate_indices>(1)
+}
+#endif
+
+void actual_network_init()
+{
+
+}

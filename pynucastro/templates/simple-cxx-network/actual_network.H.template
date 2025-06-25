@@ -1,0 +1,42 @@
+#ifndef actual_network_H
+#define actual_network_H
+
+#include <amrex_bridge.H>
+
+#include <fundamental_constants.H>
+#include <network_properties.H>
+
+void actual_network_init();
+
+const std::string network_name = "pynucastro-cxx";
+
+namespace network
+{
+    extern Array1D<Real, 1, NumSpec> bion;
+    extern Array1D<Real, 1, NumSpec> mion;
+}
+
+namespace Rates
+{
+
+    enum NetworkRates
+    {
+        <nrxn>(2)
+    };
+
+    // number of reaclib rates
+
+    <nrat_reaclib>(1)
+
+    // rate names -- note: the rates are 1-based, not zero-based, so we pad
+    // this vector with rate_names[0] = "" so the indices line up with the
+    // NetworkRates enum
+
+    static const std::vector<std::string> rate_names = {
+        "",   // 0
+        <rate_names>(2)
+    };
+
+}
+
+#endif

@@ -5,54 +5,119 @@ pynucastro incorporates the following publicly-available
 third-party data. Links to this data as well as citations to the
 relevant publications are as follows.
 
+Reaction rates
+--------------
+
 Nuclear reaction rates from JINA Reaclib
-----------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The reaction rate parameterizations in `pynucastro/library <https://github.com/pynucastro/pynucastro/tree/main/pynucastro/library>`_
-were obtained from the `JINA Reaclib database <https://groups.nscl.msu.edu/jina/reaclib/db/>`_.
+were obtained from the `JINA Reaclib database <https://reaclib.jinaweb.org/>`_, :cite:t:`ReacLib`.
 
-`Cyburt et al., ApJS 189 (2010) 240 <http://iopscience.iop.org/article/10.1088/0067-0049/189/1/240>`_
+.. _tabulated_rate_sources:
 
 Tabulated weak nuclear reaction rates
--------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The weak reaction rate tables `23Na-23Ne_electroncapture.dat
-<https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/23Na-23Ne_electroncapture.dat>`_
-and `23Ne-23Na_betadecay.dat
-<https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/23Ne-23Na_betadecay.dat>`_
-were obtained from:
+The weak rates come from several different sources, each of which focuses on
+a particular range of masses.
 
-`<http://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html>`_
+.. warning::
 
-`Suzuki et al., ApJ 817 (2016) 163 <http://iopscience.iop.org/article/10.3847/0004-637X/817/2/163>`_
+   In the C++ networks, no error is produced if you try to evaluate a rate outside of the table
+   limits.  Instead, an extrapolation is done using the data at the edge of the table.
 
-Physical constants from CODATA
-------------------------------
 
-The standalone Fortran networks and the StarKiller Microphysics
-networks rely on physical constants sourced from the 2014 CODATA
-recommended values.
+* For nuclei with $A = 17$ to $28$ we use the weak rates from
+  :cite:t:`suzuki:2016`.  The data tables were obtained from
+  `<https://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html>`_.
 
-`P.J. Mohr, D.B. Newell, and B.N. Taylor (2016), "The 2014 CODATA Recommended Values of the Fundamental Physical Constants" <http://physics.nist.gov/constants>`_
+  The density (g/cm$^3$) and temperature (K) ranges of the rates are:
 
-`Mohr et al., Rev. Mod. Phys. 88, 035009 <https://journals.aps.org/rmp/abstract/10.1103/RevModPhys.88.035009>`_
+  * $7 \le \log_{10}(\rho Y_e) \le 11$
+  * $7 \le \log_{10}(T) \le 9.65$
 
-Nuclear binding energies from the Atomic Mass Data Center
----------------------------------------------------------
+  .. note::
 
-The standalone Fortran networks and the StarKiller Microphysics
-networks rely on binding energy per nucleon sourced from the Atomic
-Mass Evaluation 2016 (default) and 2012 of the Atomic Mass Data
-Center.
+     The paper :cite:`suzuki:2016` says that the rates are evaluated
+     are in the range $8 \le \log_{10}(\rho Y_e) \le 11$, but the
+     tables provided have the lower limit as $\log_{10}(\rho Y_e) =
+     7$.
 
-The Atomic Mass Evaluation 2016 and 2012 are available `online <https://www-nds.iaea.org/amdc/>`_.
+* For nuclei with $A = 21$ to $60$ we can use the weak rates from
+  :cite:t:`ffn`.
 
-Atomic Mass Evaluation 2016:
+  The density (g/cm$^3$) and temperature (K) ranges of the rates are:
 
-* `Huang et al., Chinese Physics C 41, 030002 <http://iopscience.iop.org/article/10.1088/1674-1137/41/3/030002>`_
-* `Wang et al., Chinese Physics C 41, 030003 <http://iopscience.iop.org/article/10.1088/1674-1137/41/3/030003>`_
+  * $1 \le \log_{10}(\rho Y_e) \le 11$
+  * $7 \le \log_{10}(T) \le 11$
 
-Atomic Mass Evaluation 2012:
+* For nuclei with $A = 45$ to $65$ we use the weak rates from
+  :cite:t:`langanke:2001`.  That journal link includes the data tables.
 
-* `Audi et al., Chinese Physics C 36, 1287-1602 <http://iopscience.iop.org/article/10.1088/1674-1137/36/12/002>`_
-* `Wang et al., Chinese Physics C 36, 1603-2014 <http://iopscience.iop.org/article/10.1088/1674-1137/36/12/003>`_
+  The density (g/cm$^3$) and temperature (K) ranges of the rates are:
+
+  * $1 \le \log_{10}(\rho Y_e) \le 11$
+  * $7 \le \log_{10}(T) \le 11$
+
+  .. note::
+
+     These rates should be preferred to the FFN rates where there is
+     overlap.
+
+
+Physical constants
+------------------
+
+We use the `scipy.constants <https://docs.scipy.org/doc/scipy/reference/constants.html>`_ module
+from SciPy to get all the physical constants.  This in turn gets the constants from the CODATA
+recommended values (for SciPy versions 1.14 and earlier, this is CODATA 2018, :cite:t:`codata:2018`;
+for SciPy 1.15 they are CODATA 2022).
+
+
+Nuclei properties
+-----------------
+
+We get the basic nuclear properties from the Nubase 2020 evaluation :cite:t:`nubase:2020`.  This
+is available online at `Nuclear Data Services <https://www-nds.iaea.org/amdc/>`_.
+We are currently using the file `nubase_4.mas20.txt <https://www-nds.iaea.org/amdc/ame2020/nubase_4.mas20.txt>`_.
+
+In particular, we get the mass excesses, $\Delta m$, and spins from there.  We then compute
+mass of the nucleus as:
+
+.. math::
+
+   m = \Delta M + A m_u
+
+and the binding energies from the mass excesses as:
+
+.. math::
+
+   B = Z m_H + N m_n - (A m_u + \Delta m)
+
+where $m_H$ is the mass of the hydrogen atom, computed from the mass
+excess of ``1H`` listed in the table.  This is consistent with the
+discussion in section 2 of the AME 2020 paper :cite:`ame2020_1`, and
+these numbers match the binding energies computed in the AME tables to
+the uncertainty in the nuclear masses.
+
+Binding energies are also computed and tablulated in the AME mass
+evaluation (see `AME2020 mass table
+<https://www-nds.iaea.org/amdc/ame2020/mass_1.mas20.txt>`_).  But note
+that the Nubase evaluation seems to more closely follow the "rounded"
+version of the table `AME2020 rounded mass
+table <https://www-nds.iaea.org/amdc/ame2020/massround.mas20.txt>`_.
+The rounding procedure is discussed in Table I on the `AME 2020 paper
+II <https://iopscience.iop.org/article/10.1088/1674-1137/abddaf>`_ (also
+see the `Nubase2020
+paper <https://iopscience.iop.org/article/10.1088/1674-1137/abddae>`_,
+Table I).
+
+Partition functions
+-------------------
+
+We use the tabulated partition functions from the following sources:
+
+* :cite:t:`rauscher:1997`
+
+* :cite:t:`rauscher:2003`

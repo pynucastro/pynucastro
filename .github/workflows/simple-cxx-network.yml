@@ -1,0 +1,40 @@
+name: Simple C++ network
+
+on: [pull_request, workflow_dispatch]
+jobs:
+  compilation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -y -qq
+          sudo apt-get -qq -y install curl cmake jq clang g++>=9.3.0
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install pynucastro
+        run: pip install .
+
+      - name: Build the network
+        run: |
+          mkdir work
+          cd work
+          cp ../.github/workflows/simple_cxx_network/* .
+          python test_simple_cxx.py
+          make
+
+      - name: Run and compare
+        run: |
+          cd work
+          ./main > test.out
+          diff test.out simple_cxx_net.out

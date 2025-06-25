@@ -1,0 +1,49 @@
+#ifndef REACLIB_RATES_H
+#define REACLIB_RATES_H
+
+#include <AMReX.H>
+#include <AMReX_Print.H>
+
+#include <tfactors.H>
+#include <actual_network.H>
+#include <partition_functions.H>
+
+using namespace Rates;
+using namespace Species;
+
+<rate_struct>(0)
+
+<reaclib_rate_functions>(0)
+
+<approx_rate_functions>(0)
+
+template <int do_T_derivatives, typename T>
+AMREX_GPU_HOST_DEVICE AMREX_INLINE
+void
+fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
+{
+
+    amrex::Real rate;
+    amrex::Real drate_dT;
+
+    <fill_reaclib_rates>(1)
+
+}
+
+template <int do_T_derivatives, typename T>
+AMREX_GPU_HOST_DEVICE AMREX_INLINE
+void
+fill_approx_rates([[maybe_unused]] const tf_t& tfactors,
+                  [[maybe_unused]] const amrex::Real rho,
+                  [[maybe_unused]] const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
+                  [[maybe_unused]] T& rate_eval)
+{
+
+    [[maybe_unused]] amrex::Real rate{};
+    [[maybe_unused]] amrex::Real drate_dT{};
+
+    <fill_approx_rates>(1)
+
+}
+
+#endif
