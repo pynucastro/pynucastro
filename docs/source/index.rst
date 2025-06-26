@@ -37,11 +37,12 @@ codes.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Exploring Networks in Python
+   :caption: pynucastro Overview
    :hidden:
 
    pynucastro-examples.ipynb
    plot-types.ipynb
+   basic_network.ipynb
    pynucastro-integration.ipynb
 
 
