@@ -27,10 +27,12 @@ import warnings
 
 if sys.platform == "linux" or sys.platform == "linux2":
     os.environ["NPY_DISABLE_CPU_FEATURES"] = "AVX512F AVX512CD AVX512_SKX"
+elif sys.platform == "darwin":
+    os.environ["NPY_DISABLE_CPU_FEATURES"] = "NEON NEON_VFPV4"
 
-    # ignore all NPY_DISABLE_CPU_FEATURES warnings in any subprocesses
-    # need this for nbval as it expects stderr to be empty
-    os.environ["PYTHONWARNINGS"] = "ignore:During parsing environment variable 'NPY_DISABLE_CPU_FEATURES':RuntimeWarning::"
+# ignore all NPY_DISABLE_CPU_FEATURES warnings in any subprocesses
+# need this for nbval as it expects stderr to be empty
+os.environ["PYTHONWARNINGS"] = "ignore:During parsing environment variable 'NPY_DISABLE_CPU_FEATURES':RuntimeWarning::"
 
 with warnings.catch_warnings():
     # ignore just the "not supported by your machine" warning for the standard pytest tests
