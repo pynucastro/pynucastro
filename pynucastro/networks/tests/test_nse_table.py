@@ -8,6 +8,7 @@ import pynucastro as pyna
 from pynucastro import Nucleus
 
 
+@pytest.mark.skipif(sys.platform == "darwin")
 class TestNSETable:
     @pytest.fixture(scope="class")
     def nse_net(self, reaclib_library, tabular_library):
@@ -46,7 +47,6 @@ class TestNSETable:
             X.append((f"{n}", reduced_comp.X[n]))
         return X
 
-    @pytest.mark.skipif(sys.platform=="darwin")
     def test_generate_table(self, nse_net):
 
         Ts = np.logspace(9.6, 10.4, 3)
