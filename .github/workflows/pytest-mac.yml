@@ -43,14 +43,14 @@ jobs:
           python -c "import sys, numpy; print(numpy.__version__); print(sys.version); print(numpy.show_runtime())"
           echo '::endgroup::'
           echo '::group::CPU info'
-          lscpu
+          sysctl -a | grep machdep.cpu
           echo '::endgroup::'
           echo '::group::Package versions'
           pip list --format=freeze
           echo '::endgroup::'
 
       - name: Run tests with pytest
-        run: pytest -v -s --nbval --cov=pynucastro --color=yes
+        run: pytest -v -s --color=yes
 
       - name: Upload output from failed write_network tests
         uses: actions/upload-artifact@v4
