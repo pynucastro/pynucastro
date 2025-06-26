@@ -28,7 +28,7 @@ import warnings
 if sys.platform == "linux" or sys.platform == "linux2":
     os.environ["NPY_DISABLE_CPU_FEATURES"] = "AVX512F AVX512CD AVX512_SKX"
 elif sys.platform == "darwin":
-    os.environ["NPY_DISABLE_CPU_FEATURES"] = "NEON NEON_VFPV4"
+    os.environ["NPY_DISABLE_CPU_FEATURES"] = "ASIMDHP"
 
 # ignore all NPY_DISABLE_CPU_FEATURES warnings in any subprocesses
 # need this for nbval as it expects stderr to be empty
