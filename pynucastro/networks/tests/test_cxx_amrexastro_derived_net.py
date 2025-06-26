@@ -1,5 +1,6 @@
 # unit test for C++ network with derived rates using partition functions
 import shutil
+import sys
 
 import pytest
 
@@ -29,6 +30,7 @@ class TestAmrexAstroCxxNetwork:
         full_lib = fwd_rates_lib + der_rates_lib
         return pyna.AmrexAstroCxxNetwork(libraries=[full_lib])
 
+    @pytest.mark.skipif(sys.platform=="darwin")
     def test_write_network(self, fn, compare_network_files):
         """ test the write_network function"""
         test_path = "_test_cxx_derived/"

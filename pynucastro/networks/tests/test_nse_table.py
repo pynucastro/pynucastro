@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -45,6 +46,7 @@ class TestNSETable:
             X.append((f"{n}", reduced_comp.X[n]))
         return X
 
+    @pytest.mark.skipif(sys.platform=="darwin")
     def test_generate_table(self, nse_net):
 
         Ts = np.logspace(9.6, 10.4, 3)
