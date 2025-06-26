@@ -7,6 +7,7 @@ import pytest
 import pynucastro as pyna
 
 
+@pytest.mark.skipif(sys.platform == "darwin", reason="we get roundoff diffs on Macs")
 class TestAmrexAstroCxxNetwork:
     @pytest.fixture(scope="class")
     def fn(self, reaclib_library):
@@ -30,7 +31,6 @@ class TestAmrexAstroCxxNetwork:
         full_lib = fwd_rates_lib + der_rates_lib
         return pyna.AmrexAstroCxxNetwork(libraries=[full_lib])
 
-    @pytest.mark.skipif(sys.platform=="darwin")
     def test_write_network(self, fn, compare_network_files):
         """ test the write_network function"""
         test_path = "_test_cxx_derived/"
