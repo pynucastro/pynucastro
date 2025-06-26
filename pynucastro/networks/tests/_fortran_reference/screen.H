@@ -93,7 +93,7 @@ Real chugunov2007 (const plasma_state_t& state,
     Real n_i = state.n_e / scn_fac.ztilde3;
     Real m_i = 2.0_rt * mu12 / C::n_A;
 
-    constexpr Real T_p_factor = C::hbar/C::k_B*C::q_e * std::sqrt(4.0_rt*M_PI);
+    const Real T_p_factor = C::hbar/C::k_B*C::q_e * std::sqrt(4.0_rt*M_PI);
     Real T_p = T_p_factor * std::sqrt(z_factor * n_i / m_i);
 
     // Normalized temperature
@@ -150,9 +150,9 @@ Real chugunov2007 (const plasma_state_t& state,
     Real gamtilde = Gamma / std::cbrt(poly);
 
     // fit parameters just after Chugunov 2007 eq. 19
-    constexpr Real A1 = 2.7822_rt;
-    constexpr Real A2 = 98.34_rt;
-    constexpr Real A3 = std::sqrt(3.0_rt) - A1 / std::sqrt(A2);
+    const Real A1 = 2.7822_rt;
+    const Real A2 = 98.34_rt;
+    const Real A3 = std::sqrt(3.0_rt) - A1 / std::sqrt(A2);
     const Real B1 = -1.7476_rt;
     const Real B2 = 66.07_rt;
     const Real B3 = 1.12_rt;

@@ -1,11 +1,13 @@
 # unit test for C++ network with derived rates using partition functions
 import shutil
+import sys
 
 import pytest
 
 import pynucastro as pyna
 
 
+@pytest.mark.skipif(sys.platform == "darwin", reason="we get roundoff diffs on Macs")
 class TestAmrexAstroCxxNetwork:
     @pytest.fixture(scope="class")
     def fn(self, reaclib_library):
