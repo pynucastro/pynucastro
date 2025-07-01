@@ -20,16 +20,48 @@ Tabulated weak nuclear reaction rates
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The weak rates come from several different sources, each of which focuses on
-a particular range of masses.
+a particular range of masses.  There is overlap in the mass range between
+these sources, so pynucastro provides a way to give priority to particular
+sources.
 
 .. warning::
 
    In the C++ networks, no error is produced if you try to evaluate a rate outside of the table
    limits.  Instead, an extrapolation is done using the data at the edge of the table.
 
+The available sources are:
 
-* For nuclei with $A = 17$ to $28$ we use the weak rates from
-  :cite:t:`suzuki:2016`.  The data tables were obtained from
+* :cite:t:`ffn` (covers $A = 21$ to $60$):
+
+  The density (g/cm$^3$) and temperature (K) ranges of the rates are:
+
+  * $1 \le \log_{10}(\rho Y_e) \le 11$
+  * $7 \le \log_{10}(T) \le 11$
+
+* :cite:t:`oda:1994` (covers $A = 17$ to $39$):
+
+  The density (g/cm$^3$) and temperature (K) ranges of the rates are:
+
+  * $1 \le \log_{10}(\rho Y_e) \le 11$
+  * $7 \le \log_{10}(T) \le 10.48$
+
+* :cite:t:`langanke:2001` (covers $A = 45$ to $65$):
+
+  The data tables are provided as part of that journal link.
+
+  The density (g/cm$^3$) and temperature (K) ranges of the rates are:
+
+  * $1 \le \log_{10}(\rho Y_e) \le 11$
+  * $7 \le \log_{10}(T) \le 11$
+
+  .. note::
+
+     These rates should be preferred to the FFN rates where there is
+     overlap.
+
+* :cite:t:`suzuki:2016` (covers $A = 17$ to $28$):
+
+  These data tables were obtained from
   `<https://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html>`_.
 
   The density (g/cm$^3$) and temperature (K) ranges of the rates are:
@@ -44,26 +76,6 @@ a particular range of masses.
      tables provided have the lower limit as $\log_{10}(\rho Y_e) =
      7$.
 
-* For nuclei with $A = 21$ to $60$ we can use the weak rates from
-  :cite:t:`ffn`.
-
-  The density (g/cm$^3$) and temperature (K) ranges of the rates are:
-
-  * $1 \le \log_{10}(\rho Y_e) \le 11$
-  * $7 \le \log_{10}(T) \le 11$
-
-* For nuclei with $A = 45$ to $65$ we use the weak rates from
-  :cite:t:`langanke:2001`.  That journal link includes the data tables.
-
-  The density (g/cm$^3$) and temperature (K) ranges of the rates are:
-
-  * $1 \le \log_{10}(\rho Y_e) \le 11$
-  * $7 \le \log_{10}(T) \le 11$
-
-  .. note::
-
-     These rates should be preferred to the FFN rates where there is
-     overlap.
 
 
 Physical constants
