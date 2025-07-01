@@ -7,8 +7,8 @@
 
   * fix some Sphinx issues (#1017, #1024)
 
-  * `AmrexAstroCxxNetwork` C++ cleaning (#993, #1003, #1009, #1010,
-    #1020, #1022)
+  * `AmrexAstroCxxNetwork` C++ cleaning and syncing with Microphysics
+    (#993, #1003, #1009, #1010, #1020, #1022, #1036)
 
   * update CI due to Microphysics changes (#1021, #1023, #1029)
 
@@ -27,14 +27,15 @@
   * A new method for evaluating the stiffness in a network was added
     (#1006, #1008)
 
-  * add API links to the doc example pages (#984, #985, #987, #1026)
-
   * docstring updates (#978, #989, #994)
 
   * a new method for exporting a NetworkX graph from a network was
     added (#990, #991)
 
-  * general documentation fixes (#980, #982, #988)
+  * general documentation fixes and API links (#980, #982, #984, #985,
+    #987, #988, #1026, #1030, #1031, #1032, #1033, #1034)
+
+  * add CI testing on MacOS (#1035)
 
 ## 2.6.0
 
