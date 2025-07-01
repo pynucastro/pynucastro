@@ -42,6 +42,7 @@ networks.
 from .amrexastro_cxx_network import AmrexAstroCxxNetwork
 from .base_cxx_network import BaseCxxNetwork
 from .fortran_network import FortranNetwork
+from .helper import network_helper
 from .nse_network import NSENetwork
 from .numpy_network import NumpyNetwork
 from .python_network import PythonNetwork
