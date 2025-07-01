@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Combining ReacLib Rates with Electron Capture Tables &#8212; pynucastro 2.6.0.post36+gb207d05f2 documentation</title>
+    <title>Combining ReacLib Rates with Electron Capture Tables &#8212; pynucastro 2.6.0.post38+gf0d8af059 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=dcc0d822"></script>
+    <script src="_static/documentation_options.js?v=89ddcfef"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -620,10 +620,11 @@ S32 ⟶ p + P31                  [Q =  -8.86 MeV] (S32 --&gt; p + P31 &lt;il10_r
 </div>
 </div>
 </div>
-<p>Now let’s specify the weak rates we want from <span id="id2">Suzuki <em>et al.</em> [<a class="reference internal" href="zreferences.html#id10" title="Toshio Suzuki, Hiroshi Toki, and Ken’ichi Nomoto. Electron-capture and β-decay rates for sd-shell nuclei in stellar environments relevant to high-density o–ne–mg cores. The Astrophysical Journal, 817(2):163, January 2016. doi:10.3847/0004-637X/817/2/163.">2016</a>]</span> – these tables are included with pynucastro:</p>
+<p>Now let’s specify the weak rates we want from <span id="id2">Suzuki <em>et al.</em> [<a class="reference internal" href="zreferences.html#id10" title="Toshio Suzuki, Hiroshi Toki, and Ken’ichi Nomoto. Electron-capture and β-decay rates for sd-shell nuclei in stellar environments relevant to high-density o–ne–mg cores. The Astrophysical Journal, 817(2):163, January 2016. doi:10.3847/0004-637X/817/2/163.">2016</a>]</span>.  We’ll
+explicitly use <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.SuzukiLibrary" title="pynucastro.rates.library.SuzukiLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SuzukiLibrary</span></code></a> to only consider tabulated rates from that source.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tabular_lib</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">TabularLibrary</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tabular_lib</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">SuzukiLibrary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -655,7 +656,8 @@ S32 ⟶ p + P31                  [Q =  -8.86 MeV] (S32 --&gt; p + P31 &lt;il10_r
 <p>These tables are in terms of <span class="math notranslate nohighlight">\(T\)</span> and <span class="math notranslate nohighlight">\(\rho Y_e\)</span>.  We can easily plot the tabulated electron capture rates just like ReacLib rates:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rhoYmin</span><span class="o">=</span><span class="mf">4.e8</span><span class="p">,</span> <span class="n">rhoYmax</span><span class="o">=</span><span class="mf">2.e9</span><span class="p">,</span> <span class="n">Tmin</span><span class="o">=</span><span class="mf">1.e8</span><span class="p">,</span> <span class="n">Tmax</span><span class="o">=</span><span class="mf">2.e9</span><span class="p">,</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rhoYmin</span><span class="o">=</span><span class="mf">4.e8</span><span class="p">,</span> <span class="n">rhoYmax</span><span class="o">=</span><span class="mf">2.e9</span><span class="p">,</span>
+                 <span class="n">Tmin</span><span class="o">=</span><span class="mf">1.e8</span><span class="p">,</span> <span class="n">Tmax</span><span class="o">=</span><span class="mf">2.e9</span><span class="p">,</span>
                  <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -664,7 +666,7 @@ S32 ⟶ p + P31                  [Q =  -8.86 MeV] (S32 --&gt; p + P31 &lt;il10_r
 <img alt="_images/80b120165d89010a2f6d050baf5f7c280559e68cc604aa44f7944c280bf71f7f.png" src="_images/80b120165d89010a2f6d050baf5f7c280559e68cc604aa44f7944c280bf71f7f.png" />
 </div>
 </div>
-<p>Let’s create a rate collection from just the ReacLib rates and look to see which are actually important</p>
+<p>Let’s create a <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateCollection</span></code></a> from just the ReacLib rates and look to see which are actually important</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">ecsn_library</span><span class="p">])</span>
@@ -702,8 +704,11 @@ S32 ⟶ p + P31                  [Q =  -8.86 MeV] (S32 --&gt; p + P31 &lt;il10_r
 <img alt="_images/9bf31747ad26e1c76bc2d186cdaa3f046c0946ecc8352b334e21f21851d05d81.png" src="_images/9bf31747ad26e1c76bc2d186cdaa3f046c0946ecc8352b334e21f21851d05d81.png" />
 </div>
 </div>
-<p>Note, this rate collection already includes some weak rates from ReacLib – we want to remove those.</p>
-<p>We’ll also take the opportunity to remove any rates that are not important, by looking for a <span class="math notranslate nohighlight">\(|\dot{Y}| &gt; 10^{-20}~s^{-1}\)</span>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> already includes some weak rates from ReacLib—we will want to remove those.</p>
+</div>
+<p>We’ll also take the opportunity to remove any rates that are not important, by looking for a <span class="math notranslate nohighlight">\(|\dot{Y}| &gt; 10^{-20}~s^{-1}\)</span>.  We can use <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_rates" title="pynucastro.networks.rate_collection.RateCollection.evaluate_rates"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_rates</span></code></a> to help with this.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">new_rate_list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -723,7 +728,7 @@ S32 ⟶ p + P31                  [Q =  -8.86 MeV] (S32 --&gt; p + P31 &lt;il10_r
 </div>
 </div>
 </div>
-<p>Finally, we’ll create a new rate collection by combining this new list of rates with the list of tables:</p>
+<p>Finally, we’ll create a new <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> by combining this new list of rates with the list of tables:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc_new</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">new_rate_list</span><span class="p">)</span>
@@ -733,7 +738,8 @@ S32 ⟶ p + P31                  [Q =  -8.86 MeV] (S32 --&gt; p + P31 &lt;il10_r
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc_new</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="mf">7.e9</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc_new</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="mf">7.e9</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                  <span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -771,7 +777,7 @@ S32 ⟶ p + P31                  [Q =  -8.86 MeV] (S32 --&gt; p + P31 &lt;il10_r
 </div>
 </div>
 </div>
-<p>Additionally, we can see the specific energy generation rate for these conditions</p>
+<p>Additionally, we can see the specific energy generation rate for these conditions, using <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_energy_generation" title="pynucastro.networks.rate_collection.RateCollection.evaluate_energy_generation"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_energy_generation</span></code></a>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc_new</span><span class="o">.</span><span class="n">evaluate_energy_generation</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="mf">7.e9</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">,</span> <span class="n">composition</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>

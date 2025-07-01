@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Creating an NSE table &#8212; pynucastro 2.6.0.post36+gb207d05f2 documentation</title>
+    <title>Creating an NSE table &#8212; pynucastro 2.6.0.post38+gf0d8af059 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=dcc0d822"></script>
+    <script src="_static/documentation_options.js?v=89ddcfef"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -579,13 +579,13 @@ document.write(`
 </div>
 </div>
 <p>First we’ll create a simple NSE network with a few nuclei.  We’ll include tabulated weak rates so we can compute the change in the state due to electron/positron captures and decays.</p>
+<p>Since we often want to include a lot of isotopes of the same element, we’ll use the <a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.get_nuclei_in_range" title="pynucastro.nucdata.nucleus.get_nuclei_in_range"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_nuclei_in_range</span></code></a> helper function:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nucs</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">),</span>
-        <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe52&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe53&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe54&quot;</span><span class="p">),</span>
-        <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe55&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe56&quot;</span><span class="p">),</span>
-        <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;co54&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;co55&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;co56&quot;</span><span class="p">),</span>
-        <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ni56&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ni57&quot;</span><span class="p">)]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nucs</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)]</span>
+<span class="n">nucs</span> <span class="o">+=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">get_nuclei_in_range</span><span class="p">(</span><span class="s2">&quot;fe&quot;</span><span class="p">,</span> <span class="n">A_range</span><span class="o">=</span><span class="p">[</span><span class="mi">52</span><span class="p">,</span> <span class="mi">56</span><span class="p">])</span>
+<span class="n">nucs</span> <span class="o">+=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">get_nuclei_in_range</span><span class="p">(</span><span class="s2">&quot;co&quot;</span><span class="p">,</span> <span class="n">A_range</span><span class="o">=</span><span class="p">[</span><span class="mi">54</span><span class="p">,</span> <span class="mi">56</span><span class="p">])</span>
+<span class="n">nucs</span> <span class="o">+=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">get_nuclei_in_range</span><span class="p">(</span><span class="s2">&quot;ni&quot;</span><span class="p">,</span> <span class="n">A_range</span><span class="o">=</span><span class="p">[</span><span class="mi">56</span><span class="p">,</span> <span class="mi">57</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -607,6 +607,7 @@ warning: Ni57 was not able to be linked
 </div>
 </div>
 </div>
+<p>Now we’ll remove the ReacLib rates for the cases where we have a tabular rate</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dupes</span> <span class="o">=</span> <span class="n">all_lib</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">()</span>
@@ -620,6 +621,8 @@ warning: Ni57 was not able to be linked
 </div>
 </div>
 </div>
+<p>Constructing an NSE state is done by a <a class="reference internal" href="pynucastro.networks.nse_network.html#pynucastro.networks.nse_network.NSENetwork" title="pynucastro.networks.nse_network.NSENetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NSENetwork</span></code></a>, which extends
+a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> to include the functions needed to understand NSE.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nse</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">NSENetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">all_lib</span><span class="p">])</span>
@@ -644,7 +647,8 @@ warning: Ni57 was not able to be linked
 </div>
 </div>
 </div>
-<p>Finally we can generate the table.  This will compute the NSE state at each combination of <span class="math notranslate nohighlight">\((\rho, T, Y_e)\)</span>.  To help accelerate the convergence,
+<p>Finally we can generate the table using <a class="reference internal" href="pynucastro.networks.nse_network.html#pynucastro.networks.nse_network.NSENetwork.generate_table" title="pynucastro.networks.nse_network.NSENetwork.generate_table"><code class="xref py py-func docutils literal notranslate"><span class="pre">generate_table</span></code></a>.</p>
+<p>This will compute the NSE state at each combination of <span class="math notranslate nohighlight">\((\rho, T, Y_e)\)</span>.  To help accelerate the convergence,
 it will start at the highest temperature and loop over <span class="math notranslate nohighlight">\(\rho\)</span> and <span class="math notranslate nohighlight">\(Y_e\)</span> and cache the values of the proton and neutron chemical potentials for the
 next temperature.</p>
 <div class="cell docutils container">
@@ -664,7 +668,7 @@ next temperature.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span># NSE table generated by pynucastro 2.6.0.post36+gb207d05f2
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span># NSE table generated by pynucastro 2.6.0.post38+gf0d8af059
 # original NSENetwork had 13 nuclei
 #
 #   log10(rho)       log10(T)           Ye             Abar            &lt;B/A&gt;          dYe/dt         dAbar/dt        d&lt;B/A&gt;/dt         e_nu       
