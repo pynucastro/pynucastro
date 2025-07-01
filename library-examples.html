@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Selecting Rates from a Library &#8212; pynucastro 2.6.0.post38+gf0d8af059 documentation</title>
+    <title>Selecting Rates from a Library &#8212; pynucastro 2.6.0.post39+gd9463a10f documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=89ddcfef"></script>
+    <script src="_static/documentation_options.js?v=7c88323b"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -557,7 +557,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-a-rate-snapshot">Reading a rate snapshot</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-a-reaclib-rate-snapshot">Reading a ReacLib rate snapshot</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#specifying-desired-nuclei">Specifying desired nuclei</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#filtering-the-library">Filtering the library</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inexact-filtering">Inexact filtering</a></li>
@@ -578,10 +578,16 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="selecting-rates-from-a-library">
 <h1>Selecting Rates from a Library<a class="headerlink" href="#selecting-rates-from-a-library" title="Link to this heading">#</a></h1>
-<p>The <code class="docutils literal notranslate"><span class="pre">Library</span></code> class in pynucastro provides a high level interface for reading files containing one or more Reaclib rates and then filtering these rates based on user-specified criteria for the nuclei involved in the reactions. We can then use the resulting rates to build a network.</p>
-<section id="reading-a-rate-snapshot">
-<h2>Reading a rate snapshot<a class="headerlink" href="#reading-a-rate-snapshot" title="Link to this heading">#</a></h2>
-<p>pynucastro contains that latest ReacLib snapshot and will read that by default.</p>
+<p>The <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library</span></code></a> class provides a high level interface for reading files containing one or more Reaclib rates and then filtering these rates based on user-specified criteria for the nuclei involved in the reactions. We can then use the resulting rates to build a network.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Here we’ll use the ReacLib rate library for examples, but the same methods apply
+for the libraries that supply tabulated rates.</p>
+</div>
+<section id="reading-a-reaclib-rate-snapshot">
+<h2>Reading a ReacLib rate snapshot<a class="headerlink" href="#reading-a-reaclib-rate-snapshot" title="Link to this heading">#</a></h2>
+<p>pynucastro contains that latest ReacLib snapshot and can read that via
+<a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.ReacLibLibrary" title="pynucastro.rates.library.ReacLibLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReacLibLibrary</span></code></a>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
@@ -598,7 +604,7 @@ document.write(`
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>If the constructor is supplied a file name, pynucastro will read the contents of this file and interpret them as Reaclib rates in either the Reaclib 1 or 2 formats. The <code class="docutils literal notranslate"><span class="pre">Library</span></code> then stores the rates from the file as <code class="docutils literal notranslate"><span class="pre">Rate</span></code> objects.</p>
+<p>If the constructor is supplied a file name, pynucastro will read the contents of this file and interpret them as Reaclib rates in either the Reaclib 1 or 2 formats. The <code class="docutils literal notranslate"><span class="pre">Library</span></code> then stores the rates from the file as <a class="reference internal" href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate" title="pynucastro.rates.reaclib_rate.ReacLibRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a> objects.</p>
 </div>
 </section>
 <section id="specifying-desired-nuclei">
@@ -613,7 +619,7 @@ document.write(`
 </div>
 </div>
 </div>
-<p>Now we use the <code class="docutils literal notranslate"><span class="pre">Library.linking_nuclei()</span></code> function to return a smaller <code class="docutils literal notranslate"><span class="pre">Library</span></code> object containing only the rates that link these nuclei.</p>
+<p>Now we use the <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library.linking_nuclei" title="pynucastro.rates.library.Library.linking_nuclei"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.linking_nuclei</span></code></a> function to return a smaller <code class="docutils literal notranslate"><span class="pre">Library</span></code> object containing only the rates that link these nuclei.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>We can pass <code class="docutils literal notranslate"><span class="pre">with_reverse=False</span></code> to restrict <code class="docutils literal notranslate"><span class="pre">linking_nuclei</span></code> to only include forward rates from the Reaclib library.</p>
@@ -625,17 +631,17 @@ document.write(`
 </div>
 </div>
 </div>
-<p>Now we can create a network (here we’ll do a <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code>) as:</p>
+<p>Now we can create a network (here we’ll do a <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a>) as:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cno_network</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">networks</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">cno_library</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cno_network</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">cno_library</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>In the above, we construct a network from a <code class="docutils literal notranslate"><span class="pre">Library</span></code> object by passing the <code class="docutils literal notranslate"><span class="pre">Library</span></code> object to the <code class="docutils literal notranslate"><span class="pre">libraries</span></code> argument of the network constructor. To construct a network from multiple libraries, the <code class="docutils literal notranslate"><span class="pre">libraries</span></code> argument can also take a list of <code class="docutils literal notranslate"><span class="pre">Library</span></code> objects.</p>
+<p>In the above, we construct a network by passing our <code class="docutils literal notranslate"><span class="pre">Library</span></code> object to the network constructor via the <code class="docutils literal notranslate"><span class="pre">libraries</span></code> keyword argument. To construct a network from multiple libraries, the <code class="docutils literal notranslate"><span class="pre">libraries</span></code> argument can also take a list of <code class="docutils literal notranslate"><span class="pre">Library</span></code> objects.</p>
 </div>
 <p>We can show the structure of the network by plotting a network diagram.</p>
 <div class="cell tag_nbval-ignore-output docutils container">
@@ -661,7 +667,9 @@ document.write(`
 </section>
 <section id="filtering-the-library">
 <h2>Filtering the library<a class="headerlink" href="#filtering-the-library" title="Link to this heading">#</a></h2>
-<p>This example introduces the <code class="docutils literal notranslate"><span class="pre">RateFilter</span></code> class which allows us to define a set of reactants and products to search for in a <code class="docutils literal notranslate"><span class="pre">Library</span></code> object.</p>
+<p>More complication selection rules can be used with a <code class="docutils literal notranslate"><span class="pre">Library</span></code> by creating a
+<a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.RateFilter" title="pynucastro.rates.library.RateFilter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateFilter</span></code></a>.</p>
+<p>Here we see how to define a set of reactants and products to search for in a <code class="docutils literal notranslate"><span class="pre">Library</span></code> object.</p>
 <section id="inexact-filtering">
 <h3>Inexact filtering<a class="headerlink" href="#inexact-filtering" title="Link to this heading">#</a></h3>
 <p>Inexact filtering is like using wildcards: in the following example, the rate filter we define will match any rates in which <span class="math notranslate nohighlight">\(\mathrm{^{12}C}\)</span> is a reactant.</p>
@@ -672,7 +680,7 @@ document.write(`
 </div>
 </div>
 </div>
-<p>Once we construct a <code class="docutils literal notranslate"><span class="pre">RateFilter</span></code> object, we can apply it to our <code class="docutils literal notranslate"><span class="pre">Library</span></code> by passing it to the <code class="docutils literal notranslate"><span class="pre">Library.filter</span></code> function.</p>
+<p>Once we construct a <code class="docutils literal notranslate"><span class="pre">RateFilter</span></code> object, we can apply it to our <code class="docutils literal notranslate"><span class="pre">Library</span></code> by passing it to the <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library.filter" title="pynucastro.rates.library.Library.filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.filter</span></code></a> function.</p>
 <p><code class="docutils literal notranslate"><span class="pre">Library.filter</span></code> returns a new <code class="docutils literal notranslate"><span class="pre">Library</span></code> object containing the rates that match our <code class="docutils literal notranslate"><span class="pre">RateFilter</span></code>.</p>
 <p>We can print a <code class="docutils literal notranslate"><span class="pre">Library</span></code> to see the rates it contains. In parentheses the rate identifier is printed, showing the Reaclib rate label as well as whether the rate is forward or reverse.</p>
 <div class="cell docutils container">
@@ -768,9 +776,7 @@ C12 + C12 ⟶ n + Mg23           [Q =  -2.60 MeV] (C12 + C12 --&gt; n + Mg23 &lt
 <li><p>Loop</p>
 <ul>
 <li><p>Find the rates that are <span class="math notranslate nohighlight">\(\alpha\)</span>-capture on the current nucleus</p></li>
-<li><p>Use <code class="docutils literal notranslate"><span class="pre">Library.heaviest()</span></code> to find the heaviest nucleus in the filtered rates. This corresponds to the
-nucleus with the     largest mass number, and in case of a tie between isobars, this returns the isobar
-with the smallest atomic number.</p></li>
+<li><p>Use <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library.heaviest" title="pynucastro.rates.library.Library.heaviest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.heaviest</span></code></a> to find the heaviest nucleus in the filtered rates. This corresponds to the nucleus with the largest mass number, and in case of a tie between isobars, this returns the isobar with the smallest atomic number.</p></li>
 <li><p>Find the reverse rate using the heaviest nucleus</p></li>
 <li><p>If the mass number of the heaviest nucleus is less that 56, set the seed to the current heaviest nuclei</p></li>
 </ul>
@@ -855,7 +861,7 @@ with the smallest atomic number.</p></li>
 </div>
 <p>We will next print out the library we constructed, seeing that we have both forward and reverse rates for the alpha chain.</p>
 <p>Note that in this example, we are just using the reverse rates provided by ReacLib and not rederiving
-them via detailed balance together with the nuclear partition function.  This can be done using the <code class="docutils literal notranslate"><span class="pre">DerivedRate</span></code> class.</p>
+them via detailed balance together with the nuclear partition function.  This can be done using the <a class="reference internal" href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate" title="pynucastro.rates.derived_rate.DerivedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DerivedRate</span></code></a> class.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">alpha_library</span><span class="p">)</span>
@@ -961,7 +967,7 @@ nuclei are also important.  We’ll discuss adding them (and approximating them)
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-a-rate-snapshot">Reading a rate snapshot</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-a-reaclib-rate-snapshot">Reading a ReacLib rate snapshot</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#specifying-desired-nuclei">Specifying desired nuclei</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#filtering-the-library">Filtering the library</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inexact-filtering">Inexact filtering</a></li>
