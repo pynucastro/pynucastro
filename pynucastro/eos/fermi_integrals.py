@@ -125,7 +125,7 @@ class FermiIntegrals:
             # in the conversion from x to z).
 
             xsq = x * x
-            sqrt_term = np.sqrt(1.0 + (0.5*xsq*beta))
+            sqrt_term = np.sqrt(1.0 + 0.5 * x * x * beta)
             num = 2.0 * x**(2*k + 1.0) * sqrt_term
             denomi = 1.0 / (np.exp(xsq - eta) + 1.0)
             test = xsq - eta < -700.0
@@ -181,7 +181,7 @@ class FermiIntegrals:
         else:
             # we will work in terms of x
 
-            sqrt_term = np.sqrt(1.0 + (0.5*x*beta))
+            sqrt_term = np.sqrt(1.0 + 0.5 * x * beta)
             num = x**k * sqrt_term
             test = x - eta < 700
             denomi = 1.0
@@ -216,7 +216,7 @@ class FermiIntegrals:
                 # this corresponds to eq A.3
                 if test:
                     result = num / (np.exp(x - eta) + 2.0 + np.exp(eta - x)) * \
-                        ((np.exp(x - eta) - 1.0) / (np.exp(x - eta) + 1.0))
+                        ((1.0 - np.exp(eta - x)) / (1.0 + np.exp(eta - x)))
                 else:
                     result = 0.0
 
