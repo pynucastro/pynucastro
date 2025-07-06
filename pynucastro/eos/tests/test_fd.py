@@ -1,7 +1,4 @@
 # unit tests for rates
-import math
-
-import pytest
 from pytest import approx
 
 from pynucastro.eos import FermiIntegrals
@@ -109,4 +106,3 @@ class TestFermiDirac:
         assert f.d2F_deta2 == approx(-7.0773544184610238E-006, abs=1.e-100, rel=1.e-13)
         assert f.d2F_detadbeta == approx(3.5351802891431347E-002, abs=1.e-100, rel=1.e-13)
         assert f.d2F_dbeta2 == approx(-1.7633986737239839E-002, abs=1.e-100, rel=1.e-13)
-

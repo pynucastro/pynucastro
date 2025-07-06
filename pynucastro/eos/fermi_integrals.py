@@ -264,6 +264,31 @@ class FermiIntegrals:
 
     def _compute_laguerre(self, a, eta_der, beta_der, interval=100):
 
+        # Laguerre quadrature solves and integral of the form:
+        #
+        #   ∞
+        # ∫  f(x) exp(-x) dx ~ ∑ f(x_i) w_i
+        #  0
+        #
+        # where x_i are the nodes (roots of the Laguerre polynomial)
+        # and w_i are the weights
+        #
+        # We want to integrate just f(x) from a instead of 0, then we
+        # change variables x = z + a
+        #
+        #   ∞            ∞
+        # ∫  f(x) dx = ∫  f(z + a) dz
+        #  a            0
+        #
+        # Since Laguerre quadrature includes an exp(-x) kernel, we
+        # need to scale our function by exp(x), giving
+        #
+        #   ∞             ∞
+        # ∫  f(x) dx -> ∫  [f(x + a) exp(x)] exp(-x) dx
+        #  a             0
+        #
+        #             ~ ∑ f(x_i) w_i exp(x) f(x + a)
+
         npts = 200
         roots, weights = roots_laguerre(npts)
         integral = 0
