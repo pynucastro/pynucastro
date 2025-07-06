@@ -132,6 +132,7 @@ __version__ = version
 
 
 import pynucastro.screening
+from pynucastro.eos import FermiIntegrals
 from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
                                  Composition, Explorer, FortranNetwork,
                                  NSENetwork, NumpyNetwork, PythonNetwork,
@@ -144,4 +145,3 @@ from pynucastro.rates import (ApproximateRate, DerivedRate, FFNLibrary,
                               SuzukiLibrary, TabularLibrary, Tfactors,
                               list_known_rates, load_rate)
 from pynucastro.screening import make_plasma_state, make_screen_factors
-from pynucastro.eos import FermiIntegrals

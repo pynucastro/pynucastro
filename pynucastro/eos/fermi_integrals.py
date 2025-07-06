@@ -123,6 +123,8 @@ class FermiIntegrals:
         beta = self.beta
         k = self.k
 
+        result = 0.0
+
         if interval == 0:
             # we want to work in terms of x**2
             # see Aparicio 1998 (but note they are missing a factor of 2
@@ -137,32 +139,36 @@ class FermiIntegrals:
             # now construct the integrand for what we are actual computing
             if eta_der == 0 and beta_der == 0:
                 if test:
-                    return num
-                return num * denomi
+                    result = num
+                else:
+                    result = num * denomi
 
-            if eta_der == 1 and beta_der == 0:
+            elif eta_der == 1 and beta_der == 0:
                 # this is IB = 1 from Gong et al.
                 # this corresponds to eq A.1 in terms of x**2
                 if test:
-                    return 0.0
-                return num / (np.exp(xsq - eta) + 2.0 + np.exp(eta - xsq))
+                    result = 0.0
+                else:
+                    result = num / (np.exp(xsq - eta) + 2.0 + np.exp(eta - xsq))
 
-            if eta_der == 0 and beta_der == 1:
+            elif eta_der == 0 and beta_der == 1:
                 # this is IB = 2 from Gong et al.
                 # this corresponds to eq A.2 in terms of x**2
                 if test:
-                    return 0.5 * x**(2.0*k + 3.0) / sqrt_term
-                return 0.5 * x**(2.0*k + 3.0) * denomi / sqrt_term
+                    result = 0.5 * x**(2.0*k + 3.0) / sqrt_term
+                else:
+                    result = 0.5 * x**(2.0*k + 3.0) * denomi / sqrt_term
 
-            if eta_der == 2 and beta_der == 0:
+            elif eta_der == 2 and beta_der == 0:
                 # this is IB = 3 from Gong et al.
                 # this corresponds to eq A.3 in terms of x**2
                 if test:
-                    return 0.0
-                return num / (np.exp(xsq - eta) + 2.0 + np.exp(eta - xsq)) * \
-                    ((np.exp(xsq - eta) - 1.0) / (np.exp(xsq - eta) + 1.0))
+                    result = 0.0
+                else:
+                    result = num / (np.exp(xsq - eta) + 2.0 + np.exp(eta - xsq)) * \
+                        ((np.exp(xsq - eta) - 1.0) / (np.exp(xsq - eta) + 1.0))
 
-            if eta_der == 1 and beta_der == 1:
+            elif eta_der == 1 and beta_der == 1:
                 # this is IB = 4 from Gong et al.
                 # this corresponds to eq A.4 in terms of x**2
                 if test:
@@ -170,12 +176,13 @@ class FermiIntegrals:
                 return 0.5 * x**(2.0*k + 3.0) / \
                     (np.exp(xsq - eta) + 2.0 + np.exp(eta - xsq)) / sqrt_term
 
-            if eta_der == 0 and beta_der == 2:
+            elif eta_der == 0 and beta_der == 2:
                 # this is IB = 5 from Gong et al.
                 # this corresponds to eq A.5 in terms of x**2
                 if test:
-                    return -0.125 * x**(2.0*k + 5.0) / sqrt_term**3
-                return -0.125 * x**(2.0*k + 5.0) * denomi / sqrt_term**3
+                    result = -0.125 * x**(2.0*k + 5.0) / sqrt_term**3
+                else:
+                    result = -0.125 * x**(2.0*k + 5.0) * denomi / sqrt_term**3
 
         else:
             # we will work in terms of x
@@ -188,45 +195,53 @@ class FermiIntegrals:
             # now construct the integrand for what we are actual computing
             if eta_der == 0 and beta_der == 0:
                 if test:
-                    return num * denomi
-                return 0.0
+                    result = num * denomi
+                else:
+                    result = 0.0
 
-            if eta_der == 1 and beta_der == 0:
+            elif eta_der == 1 and beta_der == 0:
                 # this is IB = 1 from Gong et al.
                 # this corresponds to eq A.1
                 if test:
-                    return num / (np.exp(x - eta) + 2.0 + np.exp(eta - x))
-                return 0.0
+                    result = num / (np.exp(x - eta) + 2.0 + np.exp(eta - x))
+                else:
+                    result = 0.0
 
-            if eta_der == 0 and beta_der == 1:
+            elif eta_der == 0 and beta_der == 1:
                 # this is IB = 2 from Gong et al.
                 # this corresponds to eq A.2
                 if test:
-                    return 0.25 * x**(k + 1.0) * denomi / sqrt_term
-                return 0.0
+                    result = 0.25 * x**(k + 1.0) * denomi / sqrt_term
+                else:
+                    result = 0.0
 
-            if eta_der == 2 and beta_der == 0:
+            elif eta_der == 2 and beta_der == 0:
                 # this is IB = 3 from Gong et al.
                 # this corresponds to eq A.3
                 if test:
-                    return num / (np.exp(x - eta) + 2.0 + np.exp(eta - x)) * \
-                    ((np.exp(x - eta) - 1.0) / (np.exp(x - eta) + 1.0))
-                return 0.0
+                    result = num / (np.exp(x - eta) + 2.0 + np.exp(eta - x)) * \
+                        ((np.exp(x - eta) - 1.0) / (np.exp(x - eta) + 1.0))
+                else:
+                    result = 0.0
 
-            if eta_der == 1 and beta_der == 1:
+            elif eta_der == 1 and beta_der == 1:
                 # this is IB = 4 from Gong et al.
                 # this corresponds to eq A.4
                 if test:
-                    return 0.25 * x**(k + 1.0) / \
+                    result = 0.25 * x**(k + 1.0) / \
                         (np.exp(x - eta) + 2.0 + np.exp(eta - x)) / sqrt_term
-                return 0.0
+                else:
+                    result = 0.0
 
-            if eta_der == 0 and beta_der == 2:
+            elif eta_der == 0 and beta_der == 2:
                 # this is IB = 5 from Gong et al.
                 # this corresponds to eq A.5
                 if test:
-                    return -0.0625 * x**(k + 2.0) * denomi / sqrt_term**3
-                return 0.0
+                    result = -0.0625 * x**(k + 2.0) * denomi / sqrt_term**3
+                else:
+                    result = 0.0
+
+        return result
 
     def _compute_legendre(self, a, b, eta_der, beta_der, interval=None):
 
@@ -264,6 +279,7 @@ class FermiIntegrals:
 
     def _compute_fermi(self, eta_der, beta_der):
 
+        bp = None
         if eta_der == 0:
             bp = BreakPoints(itype="F")
         elif eta_der == 1:
