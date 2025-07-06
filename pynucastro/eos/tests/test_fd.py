@@ -6,6 +6,7 @@ from pytest import approx
 
 from pynucastro.eos import FermiIntegrals
 
+
 class TestFermiDirac:
 
     def test_k_0_5(self):
