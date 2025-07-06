@@ -84,16 +84,10 @@ class FermiIntegrals:
     instead of energy).
     """
 
-    def __init__(self, k, eta, beta, point_per_interval=100):
+    def __init__(self, k, eta, beta):
         self.eta = eta
         self.beta = beta
         self.k = k
-
-        # for the Legendre quadrature, we use 1/2 the weights, so
-        # we require the number of quadrature points to be even
-        assert point_per_interval % 2 == 0
-
-        self.point_per_interval = point_per_interval
 
         self.F = None
         self.dF_deta = None
@@ -189,8 +183,10 @@ class FermiIntegrals:
 
             sqrt_term = np.sqrt(1.0 + (0.5*x*beta))
             num = x**k * sqrt_term
-            denomi = 1.0 / (np.exp(x - eta) + 1.0)
             test = x - eta < 700
+            denomi = 1.0
+            if test:
+                denomi = 1.0 / (np.exp(x - eta) + 1.0)
 
             # now construct the integrand for what we are actual computing
             if eta_der == 0 and beta_der == 0:
@@ -245,8 +241,9 @@ class FermiIntegrals:
 
     def _compute_legendre(self, a, b, eta_der, beta_der, interval=None):
 
-        roots, weights = roots_legendre(self.point_per_interval)
-        N = self.point_per_interval//2
+        npts = 200
+        roots, weights = roots_legendre(npts)
+        N = npts//2
 
         integral = 0
 
@@ -267,13 +264,14 @@ class FermiIntegrals:
 
     def _compute_laguerre(self, a, eta_der, beta_der, interval=100):
 
-        point_per_interval = self.point_per_interval
-        roots, weights = roots_laguerre(point_per_interval)
+        npts = 200
+        roots, weights = roots_laguerre(npts)
         integral = 0
 
-        scaled_roots = roots + a
-        for sroot, root, weight in zip(scaled_roots, roots, weights):
-            integral += np.exp(root) * self._integrand(sroot, eta_der=eta_der, beta_der=beta_der, interval=interval) * weight
+        for root, weight in zip(roots, weights):
+            I = self._integrand(root + a, eta_der=eta_der, beta_der=beta_der, interval=interval)
+            if I != 0.0:
+                integral += I * (np.exp(root) * weight)
 
         return integral
 
