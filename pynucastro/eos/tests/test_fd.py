@@ -106,3 +106,58 @@ class TestFermiDirac:
         assert f.d2F_deta2 == approx(-7.0773544184610238E-006, abs=1.e-100, rel=1.e-13)
         assert f.d2F_detadbeta == approx(3.5351802891431347E-002, abs=1.e-100, rel=1.e-13)
         assert f.d2F_dbeta2 == approx(-1.7633986737239839E-002, abs=1.e-100, rel=1.e-13)
+
+    def test_dfdeta(self):
+
+        # test the derivative dF/dβ computed via direct integration by
+        # comparing against a difference approximation.
+
+        eps = 1.e-8
+
+        for k in [-0.5, 0.5, 1.5, 2.5]:
+            for eta in [-70, 0, 50, 500]:
+                for beta in [0, 30, 100]:
+                    f0 = FermiIntegrals(k, eta, beta)
+                    f0.evaluate()
+
+                    eta_new = eta * (1.0 + eps)
+                    if eta == 0.0:
+                        eta_new = eps
+
+                    f1 = FermiIntegrals(k, eta_new, beta)
+                    f1.evaluate()
+
+                    deriv = (f1.F - f0.F) / (eta_new - eta)
+
+                    assert f0.dF_deta == approx(deriv, abs=1.e-100, rel=1.e-6)
+
+    def test_d2fdeta2(self):
+
+        # test the derivative d^2F/dβ^2 computed via direct
+        # integration by comparing against a difference approximation.
+
+        eps = 1.e-8
+
+        for k in [-0.5, 0.5, 1.5, 2.5]:
+            for eta in [-50, 0, 250]:
+                for beta in [0, 25, 200]:
+                    f0 = FermiIntegrals(k, eta, beta)
+                    f0.evaluate()
+
+                    deta = abs(eps * eta)
+                    if deta == 0.0:
+                        deta = eps
+
+                    fp = FermiIntegrals(k, eta+deta, beta)
+                    fp.evaluate()
+
+                    etam = eta * (1.0 - eps)
+                    if eta == 0.0:
+                        etam = -eps
+
+                    fm = FermiIntegrals(k, eta-deta, beta)
+                    fm.evaluate()
+
+                    deriv2 = (fp.F - 2.0*f0.F + fm.F) / deta**2
+
+                    assert f0.d2F_deta2 == approx(deriv2, abs=1.e-100, rel=1.e-6)

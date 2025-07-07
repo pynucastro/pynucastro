@@ -313,7 +313,6 @@ class FermiIntegrals:
             bp = BreakPoints(itype="d3F/deta3")
 
         S_1, S_2, S_3 = bp.get_points(self.eta)
-        print(S_1, S_2, S_3)
 
         I0 = self._compute_legendre(0.0, np.sqrt(S_1),
                                     eta_der, beta_der, interval=0)
@@ -325,8 +324,6 @@ class FermiIntegrals:
                                     eta_der, beta_der, interval=2)
 
         I3 = self._compute_laguerre(S_3, eta_der, beta_der)
-
-        print("intervals = ", I0, I1, I2, I3)
 
         return I0 + I1 + I2 + I3
 
