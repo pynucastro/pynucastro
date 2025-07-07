@@ -9,7 +9,7 @@
 # singularity near the origin.
 
 import numpy as np
-from scipy.special import roots_laguerre, roots_legendre
+from .quadrature_weights import x_leg, w_leg, x_lag, w_lag
 
 
 class BreakPoints:
@@ -241,16 +241,14 @@ class FermiIntegrals:
 
     def _compute_legendre(self, a, b, eta_der, beta_der, interval=None):
 
-        npts = 200
-        roots, weights = roots_legendre(npts)
-        N = npts//2
+        N = len(x_leg)//2
 
         integral = 0
 
         # We set the correspondence (a+b)/2 -> 0 and map the (-1,0) and (0,1)
         # intervals separately.
 
-        for weight, root in zip(weights[N:], roots[N:]):
+        for root, weight in zip(x_leg[N:], w_leg[N:]):
             x_1 = (a+b)/2 + (b-a)/2 * root
             x_2 = (a+b)/2 - (b-a)/2 * root
             qder_1 = self._integrand(x_1, eta_der=eta_der, beta_der=beta_der,
@@ -289,14 +287,13 @@ class FermiIntegrals:
         #
         #             ~ ∑ f(x_i) w_i exp(x) f(x + a)
 
-        npts = 200
-        roots, weights = roots_laguerre(npts)
         integral = 0
 
-        for root, weight in zip(roots, weights):
+        # note: the w_lag already have the exp(x) term included
+        for root, weight in zip(x_lag, w_lag):
             I = self._integrand(root + a, eta_der=eta_der, beta_der=beta_der, interval=interval)
             if I != 0.0:
-                integral += I * (np.exp(root) * weight)
+                integral += I * weight
 
         return integral
 

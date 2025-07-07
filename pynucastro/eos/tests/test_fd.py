@@ -151,10 +151,6 @@ class TestFermiDirac:
                     fp = FermiIntegrals(k, eta+deta, beta)
                     fp.evaluate()
 
-                    etam = eta * (1.0 - eps)
-                    if eta == 0.0:
-                        etam = -eps
-
                     fm = FermiIntegrals(k, eta-deta, beta)
                     fm.evaluate()
 
