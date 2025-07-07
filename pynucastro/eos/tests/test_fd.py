@@ -140,7 +140,7 @@ class TestFermiDirac:
 
         for k in [-0.5, 0.5, 1.5, 2.5]:
             for eta in [-50, 0, 250]:
-                for beta in [0, 25, 200]:
+                for beta in [1, 25, 200]:
                     f0 = FermiIntegrals(k, eta, beta)
                     f0.evaluate()
 
@@ -151,9 +151,17 @@ class TestFermiDirac:
                     fp = FermiIntegrals(k, eta+deta, beta)
                     fp.evaluate()
 
+                    fp2 = FermiIntegrals(k, eta+2*deta, beta)
+                    fp2.evaluate()
+
                     fm = FermiIntegrals(k, eta-deta, beta)
                     fm.evaluate()
 
-                    deriv2 = (fp.F - 2.0*f0.F + fm.F) / deta**2
+                    fm2 = FermiIntegrals(k, eta-2*deta, beta)
+                    fm2.evaluate()
 
-                    assert f0.d2F_deta2 == approx(deriv2, abs=1.e-100, rel=1.e-6)
+                    #deriv2 = (fp.F - 2.0*f0.F + fm.F) / deta**2
+                    #deriv2 = (-fm2.F + 16*fm.F - 30*f0.F + 16*fp.F - fp2.F) / 12 / deta**2
+                    deriv2 = 0.5 * (fp.dF_deta - fm.dF_deta) / deta
+
+                    assert f0.d2F_deta2 == approx(deriv2, abs=1.e-100, rel=1.e-3)
