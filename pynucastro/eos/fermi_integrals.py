@@ -9,7 +9,8 @@
 # singularity near the origin.
 
 import numpy as np
-from .quadrature_weights import x_leg, w_leg, x_lag, w_lag
+
+from .quadrature_weights import w_lag, w_leg, x_lag, x_leg
 
 
 class BreakPoints:
