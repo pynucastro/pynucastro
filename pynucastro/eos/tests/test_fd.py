@@ -1,7 +1,7 @@
 # unit tests for rates
 from pytest import approx
 
-from pynucastro.eos import FermiIntegrals
+from pynucastro.eos import FermiIntegral
 
 
 class TestFermiDirac:
@@ -14,7 +14,7 @@ class TestFermiDirac:
         eta = -100
         beta = 0.0
 
-        f = FermiIntegrals(k, eta, beta)
+        f = FermiIntegral(k, eta, beta)
         f.evaluate()
 
         assert f.F == approx(3.2968314946796124e-044, abs=1.e-100, rel=1.e-13)
@@ -27,7 +27,7 @@ class TestFermiDirac:
         eta = -50
         beta = 1.0
 
-        f = FermiIntegrals(k, eta, beta)
+        f = FermiIntegral(k, eta, beta)
         f.evaluate()
 
         assert f.F == approx(2.2314386397062104E-022, abs=1.e-100, rel=1.e-13)
@@ -40,7 +40,7 @@ class TestFermiDirac:
         eta = 1.0
         beta = 10.0
 
-        f = FermiIntegrals(k, eta, beta)
+        f = FermiIntegral(k, eta, beta)
         f.evaluate()
 
         assert f.F == approx(4.3093121530612724, abs=1.e-100, rel=1.e-13)
@@ -53,7 +53,7 @@ class TestFermiDirac:
         eta = 500.0
         beta = 100.0
 
-        f = FermiIntegrals(k, eta, beta)
+        f = FermiIntegral(k, eta, beta)
         f.evaluate()
 
         assert f.F == approx(883930.45936891437, abs=1.e-100, rel=1.e-13)
@@ -71,7 +71,7 @@ class TestFermiDirac:
         eta = -100
         beta = 100.0
 
-        f = FermiIntegrals(k, eta, beta)
+        f = FermiIntegral(k, eta, beta)
         f.evaluate()
 
         assert f.F == approx(2.7816742731063666e-043, abs=1.e-100, rel=1.e-13)
@@ -84,7 +84,7 @@ class TestFermiDirac:
         eta = -50
         beta = 0.0
 
-        f = FermiIntegrals(k, eta, beta)
+        f = FermiIntegral(k, eta, beta)
         f.evaluate()
 
         assert f.F == approx(3.4186200954570750e-022, abs=1.e-100, rel=1.e-13)
@@ -97,7 +97,7 @@ class TestFermiDirac:
         eta = 100.0
         beta = 100.0
 
-        f = FermiIntegrals(k, eta, beta)
+        f = FermiIntegral(k, eta, beta)
         f.evaluate()
 
         assert f.F == approx(707.87776608227455, abs=1.e-100, rel=1.e-13)
@@ -115,7 +115,7 @@ class TestFermiDirac:
         eta = -75
         beta = 10.0
 
-        f = FermiIntegrals(k, eta, beta)
+        f = FermiIntegral(k, eta, beta)
         f.evaluate()
 
         assert f.F == approx(1.2553979904636453E-032, abs=1.e-100, rel=1.e-13)
@@ -128,7 +128,7 @@ class TestFermiDirac:
         eta = -20
         beta = 100.0
 
-        f = FermiIntegrals(k, eta, beta)
+        f = FermiIntegral(k, eta, beta)
         f.evaluate()
 
         assert f.F == approx(2.9294159670904935E-008, abs=1.e-100, rel=1.e-13)
@@ -141,7 +141,7 @@ class TestFermiDirac:
         eta = 40
         beta = 10000.0
 
-        f = FermiIntegrals(k, eta, beta)
+        f = FermiIntegral(k, eta, beta)
         f.evaluate()
 
         assert f.F == approx(1517805.2872690351, abs=1.e-100, rel=1.e-13)
@@ -159,7 +159,7 @@ class TestFermiDirac:
         eta = -55
         beta = 15.0
 
-        f = FermiIntegrals(k, eta, beta)
+        f = FermiIntegral(k, eta, beta)
         f.evaluate()
 
         assert f.F == approx(2.1821367305243183E-023, abs=1.e-100, rel=1.e-13)
@@ -172,7 +172,7 @@ class TestFermiDirac:
         eta = 10
         beta = 1.e-4
 
-        f = FermiIntegrals(k, eta, beta)
+        f = FermiIntegral(k, eta, beta)
         f.evaluate()
 
         assert f.F == approx(1034.9073854351607, abs=1.e-100, rel=1.e-13)
@@ -185,7 +185,7 @@ class TestFermiDirac:
         eta = 100
         beta = 1.0
 
-        f = FermiIntegrals(k, eta, beta)
+        f = FermiIntegral(k, eta, beta)
         f.evaluate()
 
         assert f.F == approx(17946771.869476113, abs=1.e-100, rel=1.e-13)
@@ -205,14 +205,14 @@ class TestFermiDirac:
         for k in [-0.5, 0.5, 1.5, 2.5]:
             for eta in [-70, 0, 50, 500]:
                 for beta in [0, 30, 100]:
-                    f0 = FermiIntegrals(k, eta, beta)
+                    f0 = FermiIntegral(k, eta, beta)
                     f0.evaluate()
 
                     eta_new = eta * (1.0 + eps)
                     if eta == 0.0:
                         eta_new = eps
 
-                    f1 = FermiIntegrals(k, eta_new, beta)
+                    f1 = FermiIntegral(k, eta_new, beta)
                     f1.evaluate()
 
                     deriv = (f1.F - f0.F) / (eta_new - eta)
@@ -229,14 +229,14 @@ class TestFermiDirac:
         for k in [-0.5, 0.5, 1.5, 2.5]:
             for eta in [-70, 0, 50, 500]:
                 for beta in [0, 30, 100]:
-                    f0 = FermiIntegrals(k, eta, beta)
+                    f0 = FermiIntegral(k, eta, beta)
                     f0.evaluate()
 
                     beta_new = beta * (1.0 + eps)
                     if beta == 0.0:
                         beta_new = eps
 
-                    f1 = FermiIntegrals(k, eta, beta_new)
+                    f1 = FermiIntegral(k, eta, beta_new)
                     f1.evaluate()
 
                     deriv = (f1.F - f0.F) / (beta_new - beta)
@@ -253,23 +253,23 @@ class TestFermiDirac:
         for k in [-0.5, 0.5, 1.5, 2.5]:
             for eta in [-50, 0, 250]:
                 for beta in [1, 25, 200]:
-                    f0 = FermiIntegrals(k, eta, beta)
+                    f0 = FermiIntegral(k, eta, beta)
                     f0.evaluate()
 
                     deta = abs(eps * eta)
                     if deta == 0.0:
                         deta = eps
 
-                    fp = FermiIntegrals(k, eta+deta, beta)
+                    fp = FermiIntegral(k, eta+deta, beta)
                     fp.evaluate()
 
-                    fp2 = FermiIntegrals(k, eta+2*deta, beta)
+                    fp2 = FermiIntegral(k, eta+2*deta, beta)
                     fp2.evaluate()
 
-                    fm = FermiIntegrals(k, eta-deta, beta)
+                    fm = FermiIntegral(k, eta-deta, beta)
                     fm.evaluate()
 
-                    fm2 = FermiIntegrals(k, eta-2*deta, beta)
+                    fm2 = FermiIntegral(k, eta-2*deta, beta)
                     fm2.evaluate()
 
                     #deriv2 = (fp.F - 2.0*f0.F + fm.F) / deta**2
@@ -291,23 +291,23 @@ class TestFermiDirac:
         for k in [-0.5, 0.5, 1.5, 2.5]:
             for eta in [-50, 0, 250]:
                 for beta in [1, 25, 200]:
-                    f0 = FermiIntegrals(k, eta, beta)
+                    f0 = FermiIntegral(k, eta, beta)
                     f0.evaluate()
 
                     dbeta = abs(eps * beta)
                     if dbeta == 0.0:
                         dbeta = eps
 
-                    fp = FermiIntegrals(k, eta, beta+dbeta)
+                    fp = FermiIntegral(k, eta, beta+dbeta)
                     fp.evaluate()
 
-                    fp2 = FermiIntegrals(k, eta, beta+2*dbeta)
+                    fp2 = FermiIntegral(k, eta, beta+2*dbeta)
                     fp2.evaluate()
 
-                    fm = FermiIntegrals(k, eta, beta-dbeta)
+                    fm = FermiIntegral(k, eta, beta-dbeta)
                     fm.evaluate()
 
-                    fm2 = FermiIntegrals(k, eta, beta-2*dbeta)
+                    fm2 = FermiIntegral(k, eta, beta-2*dbeta)
                     fm2.evaluate()
 
                     deriv2 = (-fp2.dF_dbeta + 8*fp.dF_dbeta - 8*fm.dF_dbeta + fm2.dF_dbeta) / (12 * dbeta)
