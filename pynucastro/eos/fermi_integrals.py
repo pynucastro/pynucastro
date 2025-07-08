@@ -12,12 +12,25 @@ import numpy as np
 
 from .quadrature_weights import w_lag, w_leg, x_lag, x_leg
 
+import pynucastro.numba_util as numba
+from pynucastro.numba_util import jitclass
 
+spec = [
+    ("D", numba.float64),
+    ("sigma", numba.float64),
+    ("a", numba.float64[:]),
+    ("b", numba.float64[:]),
+    ("c", numba.float64[:]),
+    ("d", numba.float64[:]),
+    ("e", numba.float64[:])
+]
+
+@jitclass(spec)
 class BreakPoints:
 
-    def __init__(self, *, itype="F"):
+    def __init__(self, itype : numba.int8 = 0):
 
-        if itype == "F":
+        if itype == 0:
             self.D = 3.36091
             self.sigma = 9.11856e-2
             self.a = np.array([6.77740, 3.76010, 7.56690])
@@ -26,7 +39,7 @@ class BreakPoints:
             self.d = np.array([0.0, 3.10836e1, 6.65585])
             self.e = np.array([0.0, 1.00557, -1.28190e-1])
 
-        elif itype == "dF/deta":
+        elif itype == 1:
             self.D = 4.99551
             self.sigma = 9.11856e-2
             self.a = np.array([6.77740, 3.76010, 7.56690])
@@ -35,7 +48,7 @@ class BreakPoints:
             self.d = np.array([0.0, 3.95015e1, 7.64734])
             self.e = np.array([0.0, 1.00557, -1.28190e-1])
 
-        elif itype == "d2F/deta2":
+        elif itype == 2:
             self.D = 3.93830
             self.sigma = 9.11856e-2
             self.a = np.array([6.77740, 3.76010, 7.56690])
@@ -44,7 +57,7 @@ class BreakPoints:
             self.d = np.array([0.0, 3.14499e1, 6.86346])
             self.e = np.array([0.0, 1.00557, -1.28190e-1])
 
-        elif itype == "d3F/deta3":
+        elif itype == 3:
             self.D = 4.17444
             self.sigma = 9.11856e-2
             self.a = np.array([6.77740, 3.76010, 7.56690])
@@ -69,6 +82,19 @@ class BreakPoints:
         return X_a - X_b, X_a, X_a + X_c
 
 
+spec = [
+    ("eta", numba.float64),
+    ("beta", numba.float64),
+    ("k", numba.float64),
+    ("F", numba.float64),
+    ("dF_deta", numba.float64),
+    ("dF_dbeta", numba.float64),
+    ("d2F_deta2", numba.float64),
+    ("d2F_detadbeta", numba.float64),
+    ("d2F_dbeta2", numba.float64)
+]
+
+@jitclass(spec)
 class FermiIntegral:
     r"""Construct the integral
 
@@ -90,12 +116,12 @@ class FermiIntegral:
         self.beta = beta
         self.k = k
 
-        self.F = None
-        self.dF_deta = None
-        self.dF_dbeta = None
-        self.d2F_deta2 = None
-        self.d2F_detadbeta = None
-        self.d2F_dbeta2 = None
+        self.F = np.nan
+        self.dF_deta = np.nan
+        self.dF_dbeta = np.nan
+        self.d2F_deta2 = np.nan
+        self.d2F_detadbeta = np.nan
+        self.d2F_dbeta2 = np.nan
 
     def __str__(self):
         fstr = ""
@@ -107,7 +133,7 @@ class FermiIntegral:
         fstr += f"d²F/dβ²  = {self.d2F_dbeta2}\n"
         return fstr
 
-    def _integrand(self, x, *,
+    def _integrand(self, x,
                    eta_der=0, beta_der=0,
                    interval=0):
 
@@ -302,13 +328,13 @@ class FermiIntegral:
 
         bp = None
         if eta_der == 0:
-            bp = BreakPoints(itype="F")
+            bp = BreakPoints(itype=0)
         elif eta_der == 1:
-            bp = BreakPoints(itype="dF/deta")
+            bp = BreakPoints(itype=1)
         elif eta_der == 2:
-            bp = BreakPoints(itype="d2F/deta2")
+            bp = BreakPoints(itype=2)
         elif eta_der == 3:
-            bp = BreakPoints(itype="d3F/deta3")
+            bp = BreakPoints(itype=3)
 
         S_1, S_2, S_3 = bp.get_points(self.eta)
 
@@ -325,7 +351,7 @@ class FermiIntegral:
 
         return I0 + I1 + I2 + I3
 
-    def evaluate(self, *, do_first_derivs=True, do_second_derivs=True):
+    def evaluate(self, do_first_derivs=True, do_second_derivs=True):
 
         self.F = self._compute_fermi(eta_der=0, beta_der=0)
 
