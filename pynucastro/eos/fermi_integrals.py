@@ -113,7 +113,7 @@ class BreakPoints:
         return X_a - X_b, X_a, X_a + X_c
 
 
-class FermiIntegrals:
+class FermiIntegral:
     r"""Construct the integral
 
     .. math::
@@ -127,6 +127,9 @@ class FermiIntegrals:
     the first interval, a change of variables is done to avoid
     singularities (effectively integrating in terms of momentum
     instead of energy).
+
+    First and second derivatives with respect to $\eta$ and $\beta$
+    are supported.
 
     Parameters
     ----------
@@ -380,12 +383,26 @@ class FermiIntegrals:
 
         return I0 + I1 + I2 + I3
 
-    def evaluate(self):
-        """Perform the integration"""
+    def evaluate(self, *, do_first_derivs=True, do_second_derivs=True):
+        """Perform the integration for the Fermi-Dirac function
+        and its derivatives (if desired)
+
+        Parameters
+        ----------
+        do_first_derivs : bool
+            do we compute the first derivatives?
+        do_second_derivs: bool
+            do we compute the second derivatives?
+
+        """
 
         self.F = self._compute_fermi(eta_der=0, beta_der=0)
-        self.dF_deta = self._compute_fermi(eta_der=1, beta_der=0)
-        self.d2F_deta2 = self._compute_fermi(eta_der=2, beta_der=0)
-        self.dF_dbeta = self._compute_fermi(eta_der=0, beta_der=1)
-        self.d2F_detadbeta = self._compute_fermi(eta_der=1, beta_der=1)
-        self.d2F_dbeta2 = self._compute_fermi(eta_der=0, beta_der=2)
+
+        if do_first_derivs:
+            self.dF_deta = self._compute_fermi(eta_der=1, beta_der=0)
+            self.dF_dbeta = self._compute_fermi(eta_der=0, beta_der=1)
+
+        if do_second_derivs:
+            self.d2F_deta2 = self._compute_fermi(eta_der=2, beta_der=0)
+            self.d2F_detadbeta = self._compute_fermi(eta_der=1, beta_der=1)
+            self.d2F_dbeta2 = self._compute_fermi(eta_der=0, beta_der=2)
