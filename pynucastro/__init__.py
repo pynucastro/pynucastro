@@ -132,7 +132,7 @@ __version__ = version
 
 
 import pynucastro.screening
-from pynucastro.eos import FermiIntegrals
+from pynucastro.eos import FermiIntegral
 from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
                                  Composition, Explorer, FortranNetwork,
                                  NSENetwork, NumpyNetwork, PythonNetwork,

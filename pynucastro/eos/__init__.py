@@ -2,4 +2,4 @@
 
 #__all__ = [fermi_integrals]
 
-from .fermi_integrals import FermiIntegrals
+from .fermi_integrals import FermiIntegral

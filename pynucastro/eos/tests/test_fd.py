@@ -206,14 +206,14 @@ class TestFermiDirac:
             for eta in [-70, 0, 50, 500]:
                 for beta in [0, 30, 100]:
                     f0 = FermiIntegral(k, eta, beta)
-                    f0.evaluate()
+                    f0.evaluate(do_second_derivs=False)
 
                     eta_new = eta * (1.0 + eps)
                     if eta == 0.0:
                         eta_new = eps
 
                     f1 = FermiIntegral(k, eta_new, beta)
-                    f1.evaluate()
+                    f1.evaluate(do_first_derivs=False, do_second_derivs=False)
 
                     deriv = (f1.F - f0.F) / (eta_new - eta)
 
@@ -230,14 +230,14 @@ class TestFermiDirac:
             for eta in [-70, 0, 50, 500]:
                 for beta in [0, 30, 100]:
                     f0 = FermiIntegral(k, eta, beta)
-                    f0.evaluate()
+                    f0.evaluate(do_second_derivs=False)
 
                     beta_new = beta * (1.0 + eps)
                     if beta == 0.0:
                         beta_new = eps
 
                     f1 = FermiIntegral(k, eta, beta_new)
-                    f1.evaluate()
+                    f1.evaluate(do_first_derivs=False, do_second_derivs=False)
 
                     deriv = (f1.F - f0.F) / (beta_new - beta)
 
@@ -261,16 +261,16 @@ class TestFermiDirac:
                         deta = eps
 
                     fp = FermiIntegral(k, eta+deta, beta)
-                    fp.evaluate()
+                    fp.evaluate(do_second_derivs=False)
 
                     fp2 = FermiIntegral(k, eta+2*deta, beta)
-                    fp2.evaluate()
+                    fp2.evaluate(do_second_derivs=False)
 
                     fm = FermiIntegral(k, eta-deta, beta)
-                    fm.evaluate()
+                    fm.evaluate(do_second_derivs=False)
 
                     fm2 = FermiIntegral(k, eta-2*deta, beta)
-                    fm2.evaluate()
+                    fm2.evaluate(do_second_derivs=False)
 
                     #deriv2 = (fp.F - 2.0*f0.F + fm.F) / deta**2
                     #deriv2 = (-fm2.F + 16*fm.F - 30*f0.F + 16*fp.F - fp2.F) / 12 / deta**2
@@ -299,16 +299,16 @@ class TestFermiDirac:
                         dbeta = eps
 
                     fp = FermiIntegral(k, eta, beta+dbeta)
-                    fp.evaluate()
+                    fp.evaluate(do_second_derivs=False)
 
                     fp2 = FermiIntegral(k, eta, beta+2*dbeta)
-                    fp2.evaluate()
+                    fp2.evaluate(do_second_derivs=False)
 
                     fm = FermiIntegral(k, eta, beta-dbeta)
-                    fm.evaluate()
+                    fm.evaluate(do_second_derivs=False)
 
                     fm2 = FermiIntegral(k, eta, beta-2*dbeta)
-                    fm2.evaluate()
+                    fm2.evaluate(do_second_derivs=False)
 
                     deriv2 = (-fp2.dF_dbeta + 8*fp.dF_dbeta - 8*fm.dF_dbeta + fm2.dF_dbeta) / (12 * dbeta)
 
