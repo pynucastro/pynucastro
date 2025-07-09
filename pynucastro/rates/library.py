@@ -57,7 +57,7 @@ def _rate_name_to_nuc(name):
         except (ValueError, AssertionError):
             # we need to interpret some things specially
             if nuc.lower() in ["e", "nu", "_", "g", "gamma"]:
-                # first electrons and neutrins, and nothing
+                # electrons, neutrinos, gammas, and nothing
                 continue
             if nuc.lower() == "pp":
                 reactants += [Nucleus("p"), Nucleus("p")]
