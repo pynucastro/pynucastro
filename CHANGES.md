@@ -2,7 +2,8 @@
 
 ## 2.7.0
 
-  * add a class that computes the Fermi-Dirac integrals (#1039)
+  * add a class that computes the Fermi-Dirac integrals (#1039, #1040,
+    #1041)
 
   * added a new `network_helper` function to make simple networks
     more easily (#1025)
@@ -35,7 +36,7 @@
     added (#990, #991)
 
   * general documentation fixes and API links (#980, #982, #984, #985,
-    #987, #988, #1026, #1030, #1031, #1032, #1033, #1034)
+    #987, #988, #1026, #1030, #1031, #1032, #1033, #1034, #1044)
 
   * add CI testing on MacOS (#1035)
 
