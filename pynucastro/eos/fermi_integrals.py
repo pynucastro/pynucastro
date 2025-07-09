@@ -1,15 +1,18 @@
 """Classes that enable the computation of Fermi-Dirac integrals to
-high precision"""
+high precision.  This uses the methods of Aparicio (1998) and Gong
+(2001), described in https://iopscience.iop.org/article/10.1086/313121
+and
+https://www.sciencedirect.com/science/article/abs/pii/S001046550100145X?via%3Dihub.
 
-# In this particular module, we write the routines from Aparicio (1998) and Gong (2001),
-# described in https://iopscience.iop.org/article/10.1086/313121. and
-# https://www.sciencedirect.com/science/article/abs/pii/S001046550100145X?via%3Dihub.
-# The method consist on breaking down the Fermi-integrals (eta, theta) integration domain
-# into four subintervals and apply Gauss-Legendre or the Gauss laguerre quadrature methods
-# with 20 points over each domain to guarantee accuracy beyond double-precision.
+The method consist on breaking down the Fermi-integrals (eta, theta)
+integration domain into four subintervals and apply Gauss-Legendre or
+the Gauss laguerre quadrature methods with 200 points over each domain
+to guarantee accuracy beyond double-precision.
 
-# In the first subinterval, a x=z^2 change of variable is applied to overcome the kernel
-# singularity near the origin.
+In the first subinterval, a x=z^2 change of variable is applied to
+overcome the kernel singularity near the origin.
+
+"""
 
 import numpy as np
 
