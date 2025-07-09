@@ -13,6 +13,7 @@ Subpackages
    :maxdepth: 4
 
    pynucastro.constants
+   pynucastro.eos
    pynucastro.networks
    pynucastro.neutrino_cooling
    pynucastro.nucdata
