@@ -1,128 +1,162 @@
-"""pynucastro is a python module that interprets the nuclear reaction rates,
-including those cataloged by the JINA ReacLib project:
+"""pynucastro is a python library that allows for the creation and
+interactive exploration of nuclear reaction networks for astrophysical
+environments.  It has methods for selecting rates from various
+sources, approximating rates, solving for nuclear statistical
+equilibrium, and exporting networks for simulation codes.
 
-https://reaclib.jinaweb.org/
-
-It provides both interactive access to the rates, for use in Jupyter
-notebooks as well as methods for writing python and C++ nuclear
-reaction networks, including the the righthand side and Jacobian
-routines.
-
-Several different packages provide the data structures needed to
+Several different submodules provide the data structures needed to
 interpret rates and build networks.
 
-library
+``constants``
+-------------
+
+:py:mod:`constants <pynucastro.constants>` provides the physical
+constants used throughout pynucastro.
+
+``eos``
 -------
 
-library stores Reaclib rate files in Reaclib 1 or 2 formats as well as the
-directory `library/tabular` containing tabulated rates. pynucastro
-will search these directories for rate files as well as the current
-working directory.
+:py:mod:`eos <pynucastro.eos>` provides core routines needed to build
+an equation of state describing stellar matter.
 
-Adding Reaclib rate files simply requires downloading them from the
-JINA ReacLib project and placing them in the library folder. They must
-be in the Reaclib 1 format.
+``networks``
+------------
 
-nucdata
--------
+:py:mod:`networks <pynucastro.networks>` provides classes and
+functions for organizing collection of rates, including:
 
-nucdata provides:
+* :py:obj:`Composition
+  <pynucastro.networks.rate_collection.Composition>` : this is a
+  container of :py:obj:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>`
+  objects along with associated mass fractions.  This is used for
+  evaluating rates when doing interactive exploration with pynucastro.
 
-* Nucleus : a single nucleus, with a descriptive name and its
-  properties.
+* :py:obj:`RateCollection
+  <pynucastro.networks.rate_collection.RateCollection>` : this is
+  a collection of nuclei and the reaction rates that link them
+  together.  It serves as the most basic network and provides
+  methods to evaluate and visualize the rates and more.
 
-nucdata provides tables of binding energy per nucleon in MeV,
-partition function and the number of spin states for nuclides specified
-by their number of neutrons N and atomic number Z.
+* :py:obj:`Explorer <pynucastro.networks.rate_collection.Explorer>` :
+  this an explorer takes a ``RateCollection`` and ``Composition`` and
+  produces an interactive visualization that can be explored in
+  Jupyter notebooks.
 
-The data for these tables is derived from the Atomic Mass Evaluations
-2012, 2016 and 2020. By default, pynucastro uses Atomic Mass Evaluation
-2016, and Nucleus Spin Evaluation 2020. Scripts for reading the Atomic
-Mass Evaluation tables and generating binding energy tables for pynucastro
-are provided in `pynucastro/nucdata/AtomicMassEvaluation`.
+* :py:obj:`NSENetwork <pynucastro.networks.nse_network.NSENetwork>` :
+  this extends the ``RateCollection`` to allow for solving for the
+  nuclear statistical equilibrium state of a collection of nuclei.
 
-networks
---------
+* :py:obj:`NumpyNetwork
+  <pynucastro.networks.numpy_network.NumpyNetwork>` : this extends the
+  ``RateCollection`` to allow evaluating reaction rates using vectorized
+  NumPy arrays, which may be more efficient for some applications.
 
-networks provides classes and functions for organizing collection of
-rates, including:
+and the network classes intended for outputting the righthand side
+of the ODE system for use in python or other applications:
 
-* Composition : this is a container of Nucleus objects along with
-  associated mass fractions.  This is used for evaluating rates
-  when doing interactive exploration with pynucastro.
+* :py:obj:`PythonNetwork
+  <pynucastro.networks.python_network.PythonNetwork>` : this extends
+  the ``RateCollection`` to enable output of python code that can be used
+  with ODE integrators to solve a network.
 
-* RateCollection : this is simply a collection of rates.  It will
-  determine all of the links between the rates and allow you to
-  visualize the dependencies.
+* :py:obj:`BaseCxxNetwork
+  <pynucastro.networks.base_cxx_network.BaseCxxNetwork>` : this extends
+  the ``RateCollection`` to enable output of C++ code.  It is not
+  intended to be used directly, but rather serves as the base class for
+  the other C++ network types.
 
-* Explorer : an explorer takes a rate composition and composition
-  and produces an interactive visualization that can be explored
-  in Jupyter notebooks.
+* :py:obj:`AmrexAstroCxxNetwork
+  <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>` :
+  this extends the ``RateCollection`` to enable output of C++ code
+  that can be used to add a network to the hydrodynamics codes Castro
+  and MAESTROeX via the `AMReX-Astro Microphysics
+  <https://amrex-astro.github.io/Microphysics>`_ repository.
 
-* NSENetwork : this extends the RateCollection to allow for solving
-  for the nuclear statistical equilibrium state of a collection of
-  nuclei.
+* :py:obj:`SimpleCxxNetwork
+  <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>` : this
+  extends the ``RateCollection`` to enable output of basic C++ code that
+  can be as the starting point for incorporating a pynucastro network
+  into a non-AMReX simulation code.
 
-* NumpyNetwork : this extends the RateCollection to allow evaluating
-  reaction rates using vectorized NumPy arrays, which may be
-  more efficient for some applications.
+* :py:obj:`FortranNetwork
+  <pynucastro.networks.fortran_network.FortranNetwork>` : this is a
+  set of wrappers around ``SimpleCxxNetwork`` that provide a Fortran
+  interface.
 
-* PythonNetwork : this extends the RateCollection to enable output
-  of python code that can be used with ODE integrators to solve
-  a network.
+``neutrino_cooling``
+--------------------
 
-* BaseCxxNetwork : this extends the RateCollection to enable
-  output of C++ code.
+:py:mod:`neutrino_cooling <pynucastro.neutrino_cooling>` provides
+functions for modeling thermal neutrino losses (photo-, plasma-,
+pair-, and Bremsstralung neutrinos).  Included are:
 
-* AmrexAstroCxxNetwork : this extends the RateCollection to enable
-  output of C++ code that can be used to add a network to the
-  hydrodynamics codes Castro and MAESTROeX via the AMReX-Astro
-  Microphysics repository.
-
-* SimpleCxxNetwork : this extends the RateCollection to enable
-  output of basic C++ code that can be as the starting point
-  for incorporating a pynucastro network into a non-AMReX
-  simulation code.
-
-* FortranNetwork : this is a set of wrappers around SimpleCxxNetwork
-  that provide a Fortran interface.
+* :py:obj:`NeutrinoCooling
+  <pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling>` : a
+  simply wrapper class that allows for the visualization of the
+  neutrino cooling terms.
 
 
-rates
------
+``nucdata``
+-----------
 
-rates provides classes and functions for interpreting individual
-reaction rates, including:
+:py:mod:`nucdata <pynucastro.nucdata>` provides nuclear properties.
+While there are a large number of classes here, most interaction
+is done through :py:obj:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>`.
+The nuclear data is derived from the Atomic Mass Evaluations
+2020
 
-* Rate : a single Reaclib rate, with methods for plotting and
-  evaluating it.
 
-* RatePair : a pair of rates representing the corresponding forward
-  and reverse rates
 
-* Tfactors : this is a simple container class that holds the various
-  temperature powers needed to evaluate a rate.
-
-* RateLibrary: a container class for Reaclib rates that provides a
-  high level interface for reading Reaclib-formatted files containing
-  one or more rates.
-
-* RateFilter: a class implementing search constraints to look up a
-  desired rate or group of rates from a RateLibrary.
-
-screening
+``rates``
 ---------
 
-screening provides python screening routines for the rates.
+:py:mod:`rates <pynucastro.rates>` provides classes and functions for interpreting individual
+reaction rates.  The main core rate classes are:
 
-templates
----------
+* :py:obj:`Rate <pynucastro.rates.rate.Rate>` : the base class for all rates.
 
-templates contains subdirectories for generating AmrexAstroCxxNetwork
-C++ files implementing the ODE right hand side, jacobian, and
-integration driver routines. pynucastro processes these template files
-by replacing tags of the form `<tag>` with generated code specific to
-a given choice of reaction rates.
+* :py:obj:`ReacLibRate <pynucastro.rates.reaclib_rate.ReacLibRate>` : a
+  temperature-depended rate from the ReacLib library, including
+  methods to visualize and evaluate it.
+
+* :py:obj:`TabularRate <pynucastro.rates.tabular_rate.TabularRate>` :
+  a tabulated (temperature and electron density) weak reaction rate),
+  with methods to visualize and evaluate it.
+
+* :py:obj:`Tfactors <pynucastro.rates.rate.Tfactors>` : a container
+  class that holds common temperature factors.
+
+and collections of rates are a library, described in the following
+classes:
+
+* :py:obj:`Library <pynucastro.rates.library.Library>` : a container
+  that stores multiple rates and allows for filtering based on a set
+  of rules.
+
+* :py:obj:`RateFilter <pynucastro.rates.library.RateFilter>` : a class
+  implementing search constraints to look up a desired rate or group
+  of rates from a ``Library``.
+
+with some specialized library collections available as:
+
+* :py:obj:`ReacLibLibrary <pynucastro.rates.library.ReacLibLibrary>` :
+  read in the entire collection of ReacLib rates.
+
+* :py:obj:`TabularLibrary <pynucastro.rates.library.TabularLibrary>` :
+  read in all known tabular reaction rates.
+
+``reduction``
+-------------
+
+:py:mod:`reduction <pynucastro.reduction>` provides tools for directed
+relation graph with error propagation reduction of reaction networks.
+
+``screening``
+-------------
+
+:py:mod:`screening <pynucastro.screening>` provides electron screening
+routines for modifying the reaction rates.
+
 
 """
 
