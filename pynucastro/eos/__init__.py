@@ -1,4 +1,5 @@
-"This module is used to reconstruct the Helmholtz electron-positron table described in "
+"""This module provides classes and functions needed to understand the thermodynamics
+of stellar material."""
 
 #__all__ = [fermi_integrals]
 
