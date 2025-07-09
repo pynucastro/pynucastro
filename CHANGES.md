@@ -2,6 +2,8 @@
 
 ## 2.7.0
 
+  * add a class that computes the Fermi-Dirac integrals (#1039)
+
   * added a new `network_helper` function to make simple networks
     more easily (#1025)
 
