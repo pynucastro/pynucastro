@@ -1,12 +1,18 @@
-# In this particular module, we write the routines from Aparicio (1998) and Gong (2001),
-# described in https://iopscience.iop.org/article/10.1086/313121. and
-# https://www.sciencedirect.com/science/article/abs/pii/S001046550100145X?via%3Dihub.
-# The method consist on breaking down the Fermi-integrals (eta, theta) integration domain
-# into four subintervals and apply Gauss-Legendre or the Gauss laguerre quadrature methods
-# with 20 points over each domain to guarantee accuracy beyond double-precision.
+"""Classes that enable the computation of Fermi-Dirac integrals to
+high precision.  This uses the methods of Aparicio (1998) and Gong
+(2001), described in https://iopscience.iop.org/article/10.1086/313121
+and
+https://www.sciencedirect.com/science/article/abs/pii/S001046550100145X?via%3Dihub.
 
-# In the first subinterval, a x=z^2 change of variable is applied to overcome the kernel
-# singularity near the origin.
+The method consist on breaking down the Fermi-integrals (eta, theta)
+integration domain into four subintervals and apply Gauss-Legendre or
+the Gauss laguerre quadrature methods with 200 points over each domain
+to guarantee accuracy beyond double-precision.
+
+In the first subinterval, a x=z^2 change of variable is applied to
+overcome the kernel singularity near the origin.
+
+"""
 
 import numpy as np
 
@@ -14,6 +20,30 @@ from .quadrature_weights import w_lag, w_leg, x_lag, x_leg
 
 
 class BreakPoints:
+    """The break points used in splitting the integral from [0, inf] into
+    4 separate integrals over smaller domains.  These are described in
+    Gong et al. 2001.  Different choices of the break points are made
+    depending on whether we are computing the integral itself or one
+    of its derivatives with respect to eta (the degeneracy parameter).
+
+    Parameters
+    ----------
+    itype : str
+        the type of integral we are doing---mainly this concerns the
+        eta derivatives.  Valid choices are:
+
+        * "F" : the Fermi-Dirac integral
+
+        * "dF/deta" : the first derivative of the F-D integral with
+          respect to eta.
+
+        * "d2F/deta2" : the second derivative of the F-D integral with
+          respect to eta.
+
+        * "d3F/deta3" : the third derivative of the F-D integral with
+          respect to eta.
+
+    """
 
     def __init__(self, *, itype="F"):
 
@@ -53,7 +83,24 @@ class BreakPoints:
             self.d = np.array([0.0, 3.05412e1, 7.88030])
             self.e = np.array([0.0, 1.00557, -1.28190e-1])
 
+        else:
+            raise ValueError("invalid itype")
+
     def get_points(self, eta):
+        """Return the 3 break points that define the 4 sub-intervals
+        of integration
+
+        Parameters
+        ----------
+        eta : float
+            The degeneracy parameter.
+
+        Returns
+        -------
+        S_1, S_2, S_3 : float
+            The break points.
+
+        """
 
         xi = np.log(1.0 + np.exp(self.sigma * (eta - self.D))) / self.sigma
 
@@ -83,6 +130,20 @@ class FermiIntegral:
     the first interval, a change of variables is done to avoid
     singularities (effectively integrating in terms of momentum
     instead of energy).
+
+    First and second derivatives with respect to $\eta$ and $\beta$
+    are supported.
+
+    Parameters
+    ----------
+    k : float
+        The index of the Fermi-Dirac integral
+    eta : float
+        The degeneracy parameter ($\eta = \mu / k_B T$)
+    beta : float
+        The dimenionless temperature (relativity parameter)
+        ($\beta = k_B T / m_e c^2$)
+
     """
 
     def __init__(self, k, eta, beta):
@@ -326,6 +387,17 @@ class FermiIntegral:
         return I0 + I1 + I2 + I3
 
     def evaluate(self, *, do_first_derivs=True, do_second_derivs=True):
+        """Perform the integration for the Fermi-Dirac function
+        and its derivatives (if desired)
+
+        Parameters
+        ----------
+        do_first_derivs : bool
+            do we compute the first derivatives?
+        do_second_derivs: bool
+            do we compute the second derivatives?
+
+        """
 
         self.F = self._compute_fermi(eta_der=0, beta_der=0)
 
