@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; pynucastro 2.6.0.post43+g6b919d867 documentation</title>
+    <title>Index &#8212; pynucastro 2.6.0.post45+gcedd2a74a documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=4fb6bdc2"></script>
+    <script src="_static/documentation_options.js?v=741f6822"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -255,6 +255,11 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.constants.html">pynucastro.constants package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.constants.constants.html">pynucastro.constants.constants module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.eos.html">pynucastro.eos package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.fermi_integrals.html">pynucastro.eos.fermi_integrals module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.quadrature_weights.html">pynucastro.eos.quadrature_weights module</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -549,13 +554,15 @@ document.write(`
 </li>
       <li><a href="pynucastro.rates.rate.html#pynucastro.rates.rate.BaryonConservationError">BaryonConservationError</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.networks.base_cxx_network.html#pynucastro.networks.base_cxx_network.BaseCxxNetwork">BaseCxxNetwork (class in pynucastro.networks.base_cxx_network)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition.bin_as">bin_as() (pynucastro.networks.rate_collection.Composition method)</a>
 </li>
       <li><a href="pynucastro.reduction.sensitivity_analysis.html#pynucastro.reduction.sensitivity_analysis.binary_search_trim">binary_search_trim() (in module pynucastro.reduction.sensitivity_analysis)</a>
+</li>
+      <li><a href="pynucastro.eos.fermi_integrals.html#pynucastro.eos.fermi_integrals.BreakPoints">BreakPoints (class in pynucastro.eos.fermi_integrals)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -691,11 +698,13 @@ document.write(`
         <li><a href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.eval">(pynucastro.rates.tabular_rate.TabularRate method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.eval_deriv">eval_deriv() (pynucastro.rates.reaclib_rate.ReacLibRate method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval_jacobian_term">eval_jacobian_term() (pynucastro.rates.rate.Rate method)</a>
+</li>
+      <li><a href="pynucastro.eos.fermi_integrals.html#pynucastro.eos.fermi_integrals.FermiIntegral.evaluate">evaluate() (pynucastro.eos.fermi_integrals.FermiIntegral method)</a>
 </li>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_activity">evaluate_activity() (pynucastro.networks.rate_collection.RateCollection method)</a>
 </li>
@@ -728,6 +737,8 @@ document.write(`
       <li><a href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.SingleSet.f">f() (pynucastro.rates.reaclib_rate.SingleSet method)</a>
 </li>
       <li><a href="pynucastro.reduction.reduction_utils.html#pynucastro.reduction.reduction_utils.FailedMPIImport">FailedMPIImport (class in pynucastro.reduction.reduction_utils)</a>
+</li>
+      <li><a href="pynucastro.eos.fermi_integrals.html#pynucastro.eos.fermi_integrals.FermiIntegral">FermiIntegral (class in pynucastro.eos.fermi_integrals)</a>
 </li>
       <li><a href="pynucastro.rates.library.html#pynucastro.rates.library.FFNLibrary">FFNLibrary (class in pynucastro.rates.library)</a>
 </li>
@@ -837,15 +848,17 @@ document.write(`
 </li>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.get_nuclei_needing_partition_functions">get_nuclei_needing_partition_functions() (pynucastro.networks.rate_collection.RateCollection method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunctionCollection.get_partition_function">get_partition_function() (pynucastro.nucdata.partition_function.PartitionFunctionCollection method)</a>
 
       <ul>
         <li><a href="pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunctionTable.get_partition_function">(pynucastro.nucdata.partition_function.PartitionFunctionTable method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.yt_utils.html#pynucastro.yt_utils.get_point">get_point() (in module pynucastro.yt_utils)</a>
+</li>
+      <li><a href="pynucastro.eos.fermi_integrals.html#pynucastro.eos.fermi_integrals.BreakPoints.get_points">get_points() (pynucastro.eos.fermi_integrals.BreakPoints method)</a>
 </li>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.get_rate">get_rate() (pynucastro.networks.rate_collection.RateCollection method)</a>
 
@@ -1073,6 +1086,12 @@ document.write(`
 </li>
         <li><a href="pynucastro.constants.constants.html#module-pynucastro.constants.constants">pynucastro.constants.constants</a>
 </li>
+        <li><a href="pynucastro.eos.html#module-pynucastro.eos">pynucastro.eos</a>
+</li>
+        <li><a href="pynucastro.eos.fermi_integrals.html#module-pynucastro.eos.fermi_integrals">pynucastro.eos.fermi_integrals</a>
+</li>
+        <li><a href="pynucastro.eos.quadrature_weights.html#module-pynucastro.eos.quadrature_weights">pynucastro.eos.quadrature_weights</a>
+</li>
         <li><a href="pynucastro.networks.html#module-pynucastro.networks">pynucastro.networks</a>
 </li>
         <li><a href="pynucastro.networks.amrexastro_cxx_network.html#module-pynucastro.networks.amrexastro_cxx_network">pynucastro.networks.amrexastro_cxx_network</a>
@@ -1292,6 +1311,27 @@ document.write(`
 </li>
       </ul></li>
       <li>
+    pynucastro.eos
+
+      <ul>
+        <li><a href="pynucastro.eos.html#module-pynucastro.eos">module</a>
+</li>
+      </ul></li>
+      <li>
+    pynucastro.eos.fermi_integrals
+
+      <ul>
+        <li><a href="pynucastro.eos.fermi_integrals.html#module-pynucastro.eos.fermi_integrals">module</a>
+</li>
+      </ul></li>
+      <li>
+    pynucastro.eos.quadrature_weights
+
+      <ul>
+        <li><a href="pynucastro.eos.quadrature_weights.html#module-pynucastro.eos.quadrature_weights">module</a>
+</li>
+      </ul></li>
+      <li>
     pynucastro.networks
 
       <ul>
@@ -1396,6 +1436,8 @@ document.write(`
         <li><a href="pynucastro.nucdata.html#module-pynucastro.nucdata">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pynucastro.nucdata.elements
 
@@ -1410,8 +1452,6 @@ document.write(`
         <li><a href="pynucastro.nucdata.halflife_table.html#module-pynucastro.nucdata.halflife_table">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pynucastro.nucdata.mass_table
 
@@ -1793,10 +1833,14 @@ document.write(`
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.write_network">write_network() (pynucastro.networks.rate_collection.RateCollection method)</a>
+      <li><a href="pynucastro.eos.quadrature_weights.html#pynucastro.eos.quadrature_weights.w_lag">w_lag (in module pynucastro.eos.quadrature_weights)</a>
+</li>
+      <li><a href="pynucastro.eos.quadrature_weights.html#pynucastro.eos.quadrature_weights.w_leg">w_leg (in module pynucastro.eos.quadrature_weights)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.write_network">write_network() (pynucastro.networks.rate_collection.RateCollection method)</a>
+</li>
       <li><a href="pynucastro.rates.library.html#pynucastro.rates.library.Library.write_to_file">write_to_file() (pynucastro.rates.library.Library method)</a>
 
       <ul>
@@ -1810,6 +1854,12 @@ document.write(`
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition.X">X (pynucastro.networks.rate_collection.Composition property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pynucastro.eos.quadrature_weights.html#pynucastro.eos.quadrature_weights.x_lag">x_lag (in module pynucastro.eos.quadrature_weights)</a>
+</li>
+      <li><a href="pynucastro.eos.quadrature_weights.html#pynucastro.eos.quadrature_weights.x_leg">x_leg (in module pynucastro.eos.quadrature_weights)</a>
 </li>
   </ul></td>
 </tr></table>

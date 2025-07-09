@@ -1,0 +1,974 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pynucastro.eos.fermi_integrals &#8212; pynucastro 2.6.0.post45+gcedd2a74a documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/myfile.css?v=15ab05d9" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=741f6822"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=eaa7b67c"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pynucastro/eos/fermi_integrals';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt=""/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt=""/>`);</script>
+  
+  
+    <p class="title logo__title">pynucastro 2.6</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rate_types.html">Reaction Rate Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Properties</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../sources.html">Third Party Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nucleus.html">Nuclear Properties</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">pynucastro Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-examples.html">pynucastro Usage Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plot-types.html">Plotting Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic_network.html">Basic Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-integration.html">Integrating a Network</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Working with Libraries</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tabulated-weak-rates.html">Tabulated Weak Rate Sources</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../duplicate-rates.html">Dealing with Duplicate Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../validate-example.html">Checking Your Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../electron-capture-example.html">Tabulated Weak Rate Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../alternate-rates.html"><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code></a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Rate Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../screening-examples.html">Screening Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modify-example.html">Modifying Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../custom-rates.html">Creating a Custom Rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../partition-function.html">Reverse Rates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../approximate-rates.html">Approximate and Modified Rates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../alpha-gamma-approx.html">Approximating alpha-capture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../double-n-capture.html">Approximating double n-capture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modified-rates.html">Modified Rates</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nse-protons.html">Using NSE Protons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../unimportant-rates.html">Removing Unimportant Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../network-cycles.html">Finding Cycles (with NetworkX)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stiffness.html">Assessing the Stiffness of a Network</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../NSE-example.html">NSE Demonstrations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nse_table.html">Creating an NSE table</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../neutrino-cooling.html">Neutrino Cooling</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Exporting Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../networks.html">Exporting Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../python-network.html">Python network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../simple-cxx-network.html">Simple C++ network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../fortran-network.html">Fortran Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../amrex-astro-cxx-networks.html">AMReX Astro Microphysics Networks</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../julia.html">Integrating using DifferentialEquations.jl</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installing-diffeqpy-julia.html">Installing <code class="docutils literal notranslate"><span class="pre">diffeqpy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../Example-Integrating-Network-diffeqpy.html">Example of Integrating a Network</a></li>
+
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../he-burning-example.html">A He-burning Network</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/binding-energy.html">Binding Energy per Nucleon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/pp-cno.html">p-p chain vs. CNO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/hot-CNO-breakout-example.html">hot-CNO and breakout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/triple_alpha_eval.html">Computing the Screened Triple-alpha rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/he-burning.html">Ratio of C/O from He burning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/supernova-lightcurve.html">A Supernova Lightcurve</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changes.html">Changelog</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../modules.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../pynucastro.html">pynucastro package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.constants.html">pynucastro.constants package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.constants.constants.html">pynucastro.constants.constants module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.eos.html">pynucastro.eos package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.fermi_integrals.html">pynucastro.eos.fermi_integrals module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.quadrature_weights.html">pynucastro.eos.quadrature_weights module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.networks.html">pynucastro.networks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.amrexastro_cxx_network.html">pynucastro.networks.amrexastro_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.base_cxx_network.html">pynucastro.networks.base_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.fortran_network.html">pynucastro.networks.fortran_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.helper.html">pynucastro.networks.helper module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.nse_network.html">pynucastro.networks.nse_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.numpy_network.html">pynucastro.networks.numpy_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.python_network.html">pynucastro.networks.python_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.rate_collection.html">pynucastro.networks.rate_collection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.simple_cxx_network.html">pynucastro.networks.simple_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.sympy_network_support.html">pynucastro.networks.sympy_network_support module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.neutrino_cooling.html">pynucastro.neutrino_cooling package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.neutrino_cooling.neutrino_cooling.html">pynucastro.neutrino_cooling.neutrino_cooling module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.neutrino_cooling.sneut5_mod.html">pynucastro.neutrino_cooling.sneut5_mod module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.nucdata.html">pynucastro.nucdata package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.elements.html">pynucastro.nucdata.elements module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.halflife_table.html">pynucastro.nucdata.halflife_table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.mass_table.html">pynucastro.nucdata.mass_table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.nucleus.html">pynucastro.nucdata.nucleus module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.partition_function.html">pynucastro.nucdata.partition_function module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.spin_table.html">pynucastro.nucdata.spin_table module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.library.html">pynucastro.rates.library module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.modified_rate.html">pynucastro.rates.modified_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.rate.html">pynucastro.rates.rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.reaclib_rate.html">pynucastro.rates.reaclib_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.tabular_rate.html">pynucastro.rates.tabular_rate module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.drgep.html">pynucastro.reduction.drgep module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.generate_data.html">pynucastro.reduction.generate_data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.load_network.html">pynucastro.reduction.load_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.reduction.html">pynucastro.reduction.reduction module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.reduction_utils.html">pynucastro.reduction.reduction_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.sensitivity_analysis.html">pynucastro.reduction.sensitivity_analysis module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.screening.html">pynucastro.screening package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.screening.screen.html">pynucastro.screening.screen module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.screening.screening_util.html">pynucastro.screening.screening_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.numba_util.html">pynucastro.numba_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.yt_utils.html">pynucastro.yt_utils module</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../zreferences.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Index</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../py-modindex.html">Module Index</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2F_modules/pynucastro/eos/fermi_integrals.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pynucastro.eos.fermi_integrals</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Classes that enable the computation of Fermi-Dirac integrals to</span>
+<span class="sd">high precision.  This uses the methods of Aparicio (1998) and Gong</span>
+<span class="sd">(2001), described in https://iopscience.iop.org/article/10.1086/313121</span>
+<span class="sd">and</span>
+<span class="sd">https://www.sciencedirect.com/science/article/abs/pii/S001046550100145X?via%3Dihub.</span>
+
+<span class="sd">The method consist on breaking down the Fermi-integrals (eta, theta)</span>
+<span class="sd">integration domain into four subintervals and apply Gauss-Legendre or</span>
+<span class="sd">the Gauss laguerre quadrature methods with 200 points over each domain</span>
+<span class="sd">to guarantee accuracy beyond double-precision.</span>
+
+<span class="sd">In the first subinterval, a x=z^2 change of variable is applied to</span>
+<span class="sd">overcome the kernel singularity near the origin.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.quadrature_weights</span><span class="w"> </span><span class="kn">import</span> <span class="n">w_lag</span><span class="p">,</span> <span class="n">w_leg</span><span class="p">,</span> <span class="n">x_lag</span><span class="p">,</span> <span class="n">x_leg</span>
+
+
+<div class="viewcode-block" id="BreakPoints">
+<a class="viewcode-back" href="../../../pynucastro.eos.fermi_integrals.html#pynucastro.eos.fermi_integrals.BreakPoints">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BreakPoints</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The break points used in splitting the integral from [0, inf] into</span>
+<span class="sd">    4 separate integrals over smaller domains.  These are described in</span>
+<span class="sd">    Gong et al. 2001.  Different choices of the break points are made</span>
+<span class="sd">    depending on whether we are computing the integral itself or one</span>
+<span class="sd">    of its derivatives with respect to eta (the degeneracy parameter).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    itype : str</span>
+<span class="sd">        the type of integral we are doing---mainly this concerns the</span>
+<span class="sd">        eta derivatives.  Valid choices are:</span>
+
+<span class="sd">        * &quot;F&quot; : the Fermi-Dirac integral</span>
+
+<span class="sd">        * &quot;dF/deta&quot; : the first derivative of the F-D integral with</span>
+<span class="sd">          respect to eta.</span>
+
+<span class="sd">        * &quot;d2F/deta2&quot; : the second derivative of the F-D integral with</span>
+<span class="sd">          respect to eta.</span>
+
+<span class="sd">        * &quot;d3F/deta3&quot; : the third derivative of the F-D integral with</span>
+<span class="sd">          respect to eta.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">itype</span><span class="o">=</span><span class="s2">&quot;F&quot;</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">itype</span> <span class="o">==</span> <span class="s2">&quot;F&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">D</span> <span class="o">=</span> <span class="mf">3.36091</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="mf">9.11856e-2</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6.77740</span><span class="p">,</span> <span class="mf">3.76010</span><span class="p">,</span> <span class="mf">7.56690</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.14180</span><span class="p">,</span> <span class="mf">9.37188e-2</span><span class="p">,</span> <span class="mf">1.16953</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.98255</span><span class="p">,</span> <span class="mf">2.10635e-2</span><span class="p">,</span> <span class="mf">7.54162e-1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.10836e1</span><span class="p">,</span> <span class="mf">6.65585</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.00557</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.28190e-1</span><span class="p">])</span>
+
+        <span class="k">elif</span> <span class="n">itype</span> <span class="o">==</span> <span class="s2">&quot;dF/deta&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">D</span> <span class="o">=</span> <span class="mf">4.99551</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="mf">9.11856e-2</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6.77740</span><span class="p">,</span> <span class="mf">3.76010</span><span class="p">,</span> <span class="mf">7.56690</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.14180</span><span class="p">,</span> <span class="mf">9.37188e-2</span><span class="p">,</span> <span class="mf">1.16953</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.98255</span><span class="p">,</span> <span class="mf">2.10635e-2</span><span class="p">,</span> <span class="mf">7.54162</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.95015e1</span><span class="p">,</span> <span class="mf">7.64734</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.00557</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.28190e-1</span><span class="p">])</span>
+
+        <span class="k">elif</span> <span class="n">itype</span> <span class="o">==</span> <span class="s2">&quot;d2F/deta2&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">D</span> <span class="o">=</span> <span class="mf">3.93830</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="mf">9.11856e-2</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6.77740</span><span class="p">,</span> <span class="mf">3.76010</span><span class="p">,</span> <span class="mf">7.56690</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.14180</span><span class="p">,</span> <span class="mf">9.37188e-2</span><span class="p">,</span> <span class="mf">1.16953</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.98255</span><span class="p">,</span> <span class="mf">2.10635e-2</span><span class="p">,</span> <span class="mf">7.54162</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.14499e1</span><span class="p">,</span> <span class="mf">6.86346</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.00557</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.28190e-1</span><span class="p">])</span>
+
+        <span class="k">elif</span> <span class="n">itype</span> <span class="o">==</span> <span class="s2">&quot;d3F/deta3&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">D</span> <span class="o">=</span> <span class="mf">4.17444</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="mf">9.11856e-2</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6.77740</span><span class="p">,</span> <span class="mf">3.76010</span><span class="p">,</span> <span class="mf">7.56690</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.14180</span><span class="p">,</span> <span class="mf">9.37188e-2</span><span class="p">,</span> <span class="mf">1.16953</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.98255</span><span class="p">,</span> <span class="mf">2.10635e-2</span><span class="p">,</span> <span class="mf">7.54162</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.05412e1</span><span class="p">,</span> <span class="mf">7.88030</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.00557</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.28190e-1</span><span class="p">])</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid itype&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BreakPoints.get_points">
+<a class="viewcode-back" href="../../../pynucastro.eos.fermi_integrals.html#pynucastro.eos.fermi_integrals.BreakPoints.get_points">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eta</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the 3 break points that define the 4 sub-intervals</span>
+<span class="sd">        of integration</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        eta : float</span>
+<span class="sd">            The degeneracy parameter.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        S_1, S_2, S_3 : float</span>
+<span class="sd">            The break points.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">xi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">*</span> <span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="p">)))</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span>
+
+        <span class="n">X_a</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">xi</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">xi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span>
+               <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">xi</span><span class="p">))</span>
+
+        <span class="n">X_b</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">xi</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">xi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span>
+               <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">xi</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">xi</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+        <span class="n">X_c</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">xi</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">xi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span>
+               <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">xi</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">xi</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">X_a</span> <span class="o">-</span> <span class="n">X_b</span><span class="p">,</span> <span class="n">X_a</span><span class="p">,</span> <span class="n">X_a</span> <span class="o">+</span> <span class="n">X_c</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="FermiIntegral">
+<a class="viewcode-back" href="../../../pynucastro.eos.fermi_integrals.html#pynucastro.eos.fermi_integrals.FermiIntegral">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FermiIntegral</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Construct the integral</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       F_k(\eta, \beta) = \int_0^\infty</span>
+<span class="sd">           \frac{x^k [1 + (x\beta/2)]^{1/2}}{e^{x-\eta} + 1} dx</span>
+
+<span class="sd">    using the method from Gong et al. 2001.  This splits the</span>
+<span class="sd">    integration into 4 intervals, and uses Legendre quadrature for the</span>
+<span class="sd">    first 3 parts and Laguerre quadrature for the last interval.  For</span>
+<span class="sd">    the first interval, a change of variables is done to avoid</span>
+<span class="sd">    singularities (effectively integrating in terms of momentum</span>
+<span class="sd">    instead of energy).</span>
+
+<span class="sd">    First and second derivatives with respect to $\eta$ and $\beta$</span>
+<span class="sd">    are supported.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    k : float</span>
+<span class="sd">        The index of the Fermi-Dirac integral</span>
+<span class="sd">    eta : float</span>
+<span class="sd">        The degeneracy parameter ($\eta = \mu / k_B T$)</span>
+<span class="sd">    beta : float</span>
+<span class="sd">        The dimenionless temperature (relativity parameter)</span>
+<span class="sd">        ($\beta = k_B T / m_e c^2$)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eta</span> <span class="o">=</span> <span class="n">eta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dF_deta</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dF_dbeta</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d2F_deta2</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d2F_detadbeta</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d2F_dbeta2</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">fstr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;F        = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;dF/dη    = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dF_deta</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;dF/dβ    = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dF_dbeta</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;d²F/dη²  = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">d2F_deta2</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;d²F/dηdβ = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">d2F_detadbeta</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;d²F/dβ²  = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">d2F_dbeta2</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">fstr</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_integrand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                   <span class="n">eta_der</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">beta_der</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                   <span class="n">interval</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">eta_der</span> <span class="o">&lt;=</span> <span class="mi">2</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">beta_der</span> <span class="o">&lt;=</span> <span class="mi">2</span>
+
+        <span class="n">eta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">if</span> <span class="n">interval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># we want to work in terms of x**2</span>
+            <span class="c1"># see Aparicio 1998 (but note they are missing a factor of 2</span>
+            <span class="c1"># in the conversion from x to z).</span>
+
+            <span class="n">xsq</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>
+            <span class="n">sqrt_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">beta</span><span class="p">)</span>
+            <span class="n">num</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">k</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">sqrt_term</span>
+            <span class="n">denomi</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">test</span> <span class="o">=</span> <span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">700.0</span>
+
+            <span class="c1"># now construct the integrand for what we are actual computing</span>
+            <span class="k">if</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">num</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">num</span> <span class="o">*</span> <span class="n">denomi</span>
+
+            <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># this is IB = 1 from Gong et al.</span>
+                <span class="c1"># this corresponds to eq A.1 in terms of x**2</span>
+                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">xsq</span><span class="p">))</span>
+
+            <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># this is IB = 2 from Gong et al.</span>
+                <span class="c1"># this corresponds to eq A.2 in terms of x**2</span>
+                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">k</span> <span class="o">+</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">sqrt_term</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">k</span> <span class="o">+</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">denomi</span> <span class="o">/</span> <span class="n">sqrt_term</span>
+
+            <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># this is IB = 3 from Gong et al.</span>
+                <span class="c1"># this corresponds to eq A.3 in terms of x**2</span>
+                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">xsq</span><span class="p">))</span> <span class="o">*</span> \
+                        <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">))</span>
+
+            <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># this is IB = 4 from Gong et al.</span>
+                <span class="c1"># this corresponds to eq A.4 in terms of x**2</span>
+                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="mf">0.0</span>
+                <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">k</span> <span class="o">+</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">/</span> \
+                    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">xsq</span><span class="p">))</span> <span class="o">/</span> <span class="n">sqrt_term</span>
+
+            <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="c1"># this is IB = 5 from Gong et al.</span>
+                <span class="c1"># this corresponds to eq A.5 in terms of x**2</span>
+                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.125</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">k</span> <span class="o">+</span> <span class="mf">5.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">sqrt_term</span><span class="o">**</span><span class="mi">3</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.125</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">k</span> <span class="o">+</span> <span class="mf">5.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">denomi</span> <span class="o">/</span> <span class="n">sqrt_term</span><span class="o">**</span><span class="mi">3</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># we will work in terms of x</span>
+
+            <span class="n">sqrt_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">beta</span><span class="p">)</span>
+            <span class="n">num</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="n">k</span> <span class="o">*</span> <span class="n">sqrt_term</span>
+            <span class="n">test</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">eta</span> <span class="o">&lt;</span> <span class="mi">700</span>
+            <span class="n">denomi</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+                <span class="n">denomi</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span>
+
+            <span class="c1"># now construct the integrand for what we are actual computing</span>
+            <span class="k">if</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">num</span> <span class="o">*</span> <span class="n">denomi</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+            <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># this is IB = 1 from Gong et al.</span>
+                <span class="c1"># this corresponds to eq A.1</span>
+                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">x</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+            <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># this is IB = 2 from Gong et al.</span>
+                <span class="c1"># this corresponds to eq A.2</span>
+                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">denomi</span> <span class="o">/</span> <span class="n">sqrt_term</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+            <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># this is IB = 3 from Gong et al.</span>
+                <span class="c1"># this corresponds to eq A.3</span>
+                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">x</span><span class="p">))</span> <span class="o">*</span> \
+                        <span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">x</span><span class="p">)))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+            <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># this is IB = 4 from Gong et al.</span>
+                <span class="c1"># this corresponds to eq A.4</span>
+                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> \
+                        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="n">sqrt_term</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+            <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="c1"># this is IB = 5 from Gong et al.</span>
+                <span class="c1"># this corresponds to eq A.5</span>
+                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.0625</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">denomi</span> <span class="o">/</span> <span class="n">sqrt_term</span><span class="o">**</span><span class="mi">3</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_legendre</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_leg</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span>
+
+        <span class="n">integral</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># We set the correspondence (a+b)/2 -&gt; 0 and map the (-1,0) and (0,1)</span>
+        <span class="c1"># intervals separately.</span>
+
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x_leg</span><span class="p">[</span><span class="n">N</span><span class="p">:],</span> <span class="n">w_leg</span><span class="p">[</span><span class="n">N</span><span class="p">:]):</span>
+            <span class="n">x_1</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">root</span>
+            <span class="n">x_2</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">root</span>
+            <span class="n">qder_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integrand</span><span class="p">(</span><span class="n">x_1</span><span class="p">,</span> <span class="n">eta_der</span><span class="o">=</span><span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="o">=</span><span class="n">beta_der</span><span class="p">,</span>
+                                     <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">)</span>
+            <span class="n">qder_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integrand</span><span class="p">(</span><span class="n">x_2</span><span class="p">,</span> <span class="n">eta_der</span><span class="o">=</span><span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="o">=</span><span class="n">beta_der</span><span class="p">,</span>
+                                     <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">)</span>
+            <span class="n">integral</span> <span class="o">+=</span> <span class="p">(</span><span class="n">qder_1</span> <span class="o">+</span> <span class="n">qder_2</span><span class="p">)</span> <span class="o">*</span> <span class="n">weight</span>
+
+        <span class="n">integral</span> <span class="o">*=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+        <span class="k">return</span> <span class="n">integral</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_laguerre</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+
+        <span class="c1"># Laguerre quadrature solves and integral of the form:</span>
+        <span class="c1">#</span>
+        <span class="c1">#   ∞</span>
+        <span class="c1"># ∫  f(x) exp(-x) dx ~ ∑ f(x_i) w_i</span>
+        <span class="c1">#  0</span>
+        <span class="c1">#</span>
+        <span class="c1"># where x_i are the nodes (roots of the Laguerre polynomial)</span>
+        <span class="c1"># and w_i are the weights</span>
+        <span class="c1">#</span>
+        <span class="c1"># We want to integrate just f(x) from a instead of 0, then we</span>
+        <span class="c1"># change variables x = z + a</span>
+        <span class="c1">#</span>
+        <span class="c1">#   ∞            ∞</span>
+        <span class="c1"># ∫  f(x) dx = ∫  f(z + a) dz</span>
+        <span class="c1">#  a            0</span>
+        <span class="c1">#</span>
+        <span class="c1"># Since Laguerre quadrature includes an exp(-x) kernel, we</span>
+        <span class="c1"># need to scale our function by exp(x), giving</span>
+        <span class="c1">#</span>
+        <span class="c1">#   ∞             ∞</span>
+        <span class="c1"># ∫  f(x) dx -&gt; ∫  [f(x + a) exp(x)] exp(-x) dx</span>
+        <span class="c1">#  a             0</span>
+        <span class="c1">#</span>
+        <span class="c1">#             ~ ∑ f(x_i) w_i exp(x) f(x + a)</span>
+
+        <span class="n">integral</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># note: the w_lag already have the exp(x) term included</span>
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x_lag</span><span class="p">,</span> <span class="n">w_lag</span><span class="p">):</span>
+            <span class="n">I</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integrand</span><span class="p">(</span><span class="n">root</span> <span class="o">+</span> <span class="n">a</span><span class="p">,</span> <span class="n">eta_der</span><span class="o">=</span><span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="o">=</span><span class="n">beta_der</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">I</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">integral</span> <span class="o">+=</span> <span class="n">I</span> <span class="o">*</span> <span class="n">weight</span>
+
+        <span class="k">return</span> <span class="n">integral</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_fermi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="p">):</span>
+
+        <span class="n">bp</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">bp</span> <span class="o">=</span> <span class="n">BreakPoints</span><span class="p">(</span><span class="n">itype</span><span class="o">=</span><span class="s2">&quot;F&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">bp</span> <span class="o">=</span> <span class="n">BreakPoints</span><span class="p">(</span><span class="n">itype</span><span class="o">=</span><span class="s2">&quot;dF/deta&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">bp</span> <span class="o">=</span> <span class="n">BreakPoints</span><span class="p">(</span><span class="n">itype</span><span class="o">=</span><span class="s2">&quot;d2F/deta2&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">bp</span> <span class="o">=</span> <span class="n">BreakPoints</span><span class="p">(</span><span class="n">itype</span><span class="o">=</span><span class="s2">&quot;d3F/deta3&quot;</span><span class="p">)</span>
+
+        <span class="n">S_1</span><span class="p">,</span> <span class="n">S_2</span><span class="p">,</span> <span class="n">S_3</span> <span class="o">=</span> <span class="n">bp</span><span class="o">.</span><span class="n">get_points</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eta</span><span class="p">)</span>
+
+        <span class="n">I0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_legendre</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">S_1</span><span class="p">),</span>
+                                    <span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">I1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_legendre</span><span class="p">(</span><span class="n">S_1</span><span class="p">,</span> <span class="n">S_2</span><span class="p">,</span>
+                                    <span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">I2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_legendre</span><span class="p">(</span><span class="n">S_2</span><span class="p">,</span> <span class="n">S_3</span><span class="p">,</span>
+                                    <span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">I3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_laguerre</span><span class="p">(</span><span class="n">S_3</span><span class="p">,</span> <span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">I0</span> <span class="o">+</span> <span class="n">I1</span> <span class="o">+</span> <span class="n">I2</span> <span class="o">+</span> <span class="n">I3</span>
+
+<div class="viewcode-block" id="FermiIntegral.evaluate">
+<a class="viewcode-back" href="../../../pynucastro.eos.fermi_integrals.html#pynucastro.eos.fermi_integrals.FermiIntegral.evaluate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">do_first_derivs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">do_second_derivs</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform the integration for the Fermi-Dirac function</span>
+<span class="sd">        and its derivatives (if desired)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        do_first_derivs : bool</span>
+<span class="sd">            do we compute the first derivatives?</span>
+<span class="sd">        do_second_derivs: bool</span>
+<span class="sd">            do we compute the second derivatives?</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_fermi</span><span class="p">(</span><span class="n">eta_der</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">beta_der</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">do_first_derivs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dF_deta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_fermi</span><span class="p">(</span><span class="n">eta_der</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">beta_der</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dF_dbeta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_fermi</span><span class="p">(</span><span class="n">eta_der</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">beta_der</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">do_second_derivs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">d2F_deta2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_fermi</span><span class="p">(</span><span class="n">eta_der</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">beta_der</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">d2F_detadbeta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_fermi</span><span class="p">(</span><span class="n">eta_der</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">beta_der</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">d2F_dbeta2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_fermi</span><span class="p">(</span><span class="n">eta_der</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">beta_der</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By pynucastro development team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024-2025, pynucastro development team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

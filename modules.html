@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro &#8212; pynucastro 2.6.0.post43+g6b919d867 documentation</title>
+    <title>pynucastro &#8212; pynucastro 2.6.0.post45+gcedd2a74a documentation</title>
   
   
   
@@ -39,13 +39,15 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=4fb6bdc2"></script>
+    <script src="_static/documentation_options.js?v=741f6822"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=eaa7b67c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'modules';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -258,6 +260,11 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.constants.html">pynucastro.constants package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.constants.constants.html">pynucastro.constants.constants module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.eos.html">pynucastro.eos package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.fermi_integrals.html">pynucastro.eos.fermi_integrals module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.quadrature_weights.html">pynucastro.eos.quadrature_weights module</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -562,15 +569,21 @@ document.write(`
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro.html">pynucastro package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#library">library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#nucdata">nucdata</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#networks">networks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#rates">rates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#screening">screening</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#templates">templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#constants"><code class="docutils literal notranslate"><span class="pre">constants</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#eos"><code class="docutils literal notranslate"><span class="pre">eos</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#networks"><code class="docutils literal notranslate"><span class="pre">networks</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#neutrino-cooling"><code class="docutils literal notranslate"><span class="pre">neutrino_cooling</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#nucdata"><code class="docutils literal notranslate"><span class="pre">nucdata</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#rates"><code class="docutils literal notranslate"><span class="pre">rates</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#reduction"><code class="docutils literal notranslate"><span class="pre">reduction</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.html#screening"><code class="docutils literal notranslate"><span class="pre">screening</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.constants.html">pynucastro.constants package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.constants.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.html">pynucastro.eos package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.html#submodules">Submodules</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><ul>
