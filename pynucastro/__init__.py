@@ -149,7 +149,7 @@ with some specialized library collections available as:
 -------------
 
 :py:mod:`reduction <pynucastro.reduction>` provides tools for directed
-relation graph with error propagation reduction of reaction netwroks.
+relation graph with error propagation reduction of reaction networks.
 
 ``screening``
 -------------
