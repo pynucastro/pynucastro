@@ -1,9 +1,16 @@
+"""Classes and methods that implement the Itoh et al. 1996 thermal
+neutron loss terms.
+
+"""
+
 import numpy as np
 
 
 class NeutrinoComponents:
     """A simple container that holds the individual components to the
-    neutrino cooling."""
+    neutrino cooling.
+
+    """
 
     def __init__(self):
         self.splas = None

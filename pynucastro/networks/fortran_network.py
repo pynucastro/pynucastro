@@ -5,8 +5,10 @@ from pynucastro.networks.simple_cxx_network import SimpleCxxNetwork
 
 
 class FortranNetwork(SimpleCxxNetwork):
-    """A basic Fortran network.  This provides Fortran interfaces
-    to the C++ network output by a SimpleCxxNetwork"""
+    """A basic Fortran network.  This provides Fortran interfaces to
+    the C++ network output by a SimpleCxxNetwork.
+
+    """
 
     def __init__(self, *args, **kwargs):
 
