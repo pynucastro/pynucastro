@@ -1,5 +1,6 @@
-"""Support modules to write a pure python reaction network ODE
-source"""
+"""Support modules to write a pure python reaction network ODE source
+
+"""
 
 import shutil
 import sys

@@ -1,5 +1,7 @@
 """A collection of classes and methods to deal with collections of
-rates that together make up a network."""
+rates that together make up a network.
+
+"""
 
 import collections
 import functools
@@ -48,9 +50,11 @@ class RateDuplicationError(Exception):
     """An error of multiple rates linking the same nuclei occurred"""
 
 
-def _skip_xalpha(n, p, r):
-    """utility function to consider if we show an (a, x) or (x, a) rate.  Here, p is the
-    product we want to link to"""
+def _skip_xalpha(n, p, r): 
+    """Check if we should show an (a, x) or (x, a) rate.  Here, p is
+    the product we want to link to
+
+    """
 
     # first check if alpha is the heaviest nucleus on the RHS
     rhs_heavy = max(r.products)
@@ -76,8 +80,10 @@ def _skip_xalpha(n, p, r):
 
 
 def _skip_xp(n, p, r):
-    """utility function to consider if we show an (p, x) or (x, p) rate.  Here, p is the
-    product we want to link to"""
+    """Check if we should show an (p, x) or (x, p) rate.  Here, p is
+    the product we want to link to
+
+    """
 
     # for rates that are A (x, p) B, where A and B are heavy nuclei,
     # don't show the connection of the nucleus to p, only show it to B
@@ -264,7 +270,7 @@ class Composition(collections.UserDict):
         self.normalize()
 
     def set_nuc(self, name, xval: float):
-        """Set nuclei name to the mass fraction xval
+        """Set nuclei name to the mass fraction xval.
 
         Parameters
         ----------
@@ -275,7 +281,7 @@ class Composition(collections.UserDict):
         self[name] = xval
 
     def normalize(self):
-        """Normalize the mass fractions to sum to 1 """
+        """Normalize the mass fractions to sum to 1."""
         X_sum = self.get_sum_X()
 
         for k in self:
@@ -1028,9 +1034,12 @@ class RateCollection:
         return temp_arrays, temp_indices
 
     def remove_nuclei(self, nuc_list):
-        """remove the nuclei in nuc_list from the network along with any rates
-        that directly involve them (this doesn't affect approximate rates that
-        may have these nuclei as hidden intermediate links)"""
+        """Remove the nuclei in nuc_list from the network along with
+        any rates that directly involve them (this doesn't affect
+        approximate rates that may have these nuclei as hidden
+        intermediate links)
+
+        """
 
         nuc_list = Nucleus.cast_list(nuc_list)
         rates_to_delete = []
@@ -1046,9 +1055,11 @@ class RateCollection:
         self._build_collection()
 
     def remove_rates(self, rates):
-        """remove the Rate objects in rates from the network.  Note, if
-        rate list is a dict, then the keys are assumed to be the rates
-        to remove"""
+        """Remove the Rate objects in rates from the network.  Note,
+        if rate list is a dict, then the keys are assumed to be the
+        rates to remove
+
+        """
 
         if isinstance(rates, Rate):
             self.rates.remove(rates)
@@ -1068,6 +1079,7 @@ class RateCollection:
         rates : Rate, list(Rate)
              a single Rate object or a list of Rate objects specifying the
              rates to be added to the network.
+
         """
 
         if isinstance(rates, Rate):
