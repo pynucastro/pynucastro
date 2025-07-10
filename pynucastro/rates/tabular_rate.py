@@ -1,3 +1,8 @@
+"""Classes and methods for describing a reaction rate that is
+tabulated in terms of electron density and temperature.
+
+"""
+
 import math
 import re
 from enum import Enum
@@ -15,9 +20,10 @@ from pynucastro.rates.rate import Rate, RateSource
 
 class TableIndex(Enum):
     """An enum-like container for indexing the electron-capture
-    tables
+    tables.
 
     """
+
     RHOY = 0
     T = 1
     MU = 2
@@ -205,6 +211,7 @@ class TabularRate(Rate):
         the file containing the data table
 
     """
+
     def __init__(self, rfile=None):
         super().__init__()
         self.rate_eval_needs_rho = True
@@ -349,9 +356,11 @@ class TabularRate(Rate):
         # to recompute Q -- this is used for finding rate pairs
         self._set_q()
 
-    def _set_rhs_properties(self):
+    def _set_rhs_properties(self): 
         """Compute statistical prefactor and density exponent from the
-        reactants."""
+        reactants.
+
+        """
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
         self.inv_prefactor = 1
         if self.use_identical_particle_factor:
@@ -362,7 +371,9 @@ class TabularRate(Rate):
 
     def _set_screening(self):
         """Tabular rates are not currently screened (they are
-        e-capture or beta-decay)"""
+        e-capture or beta-decay)
+
+        """
         self.ion_screen = []
         self.symmetric_screen = []
 
@@ -380,6 +391,7 @@ class TabularRate(Rate):
         Returns
         -------
         str
+
         """
 
         ssrc = 'tabular'
