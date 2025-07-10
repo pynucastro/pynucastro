@@ -70,7 +70,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<ydot>'] = self._ydot
         self.ftags['<ydot_weak>'] = self._ydot_weak
         self.ftags['<jacnuc>'] = self._jacnuc
-        self.ftags['<initial_mass_fractions>'] = self._initial_mass_fractions
         self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
         self.ftags['<rate_struct>'] = self._rate_struct
         self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
@@ -504,13 +503,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                                                                      standard="c++11"))
                     of.write(f"{self.indent*(n_indent)}scratch = {jvalue};\n")
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, scratch);\n\n")
-
-    def _initial_mass_fractions(self, n_indent, of):
-        for i, _ in enumerate(self.unique_nuclei):
-            if i == 0:
-                of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 1.0\n")
-            else:
-                of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 0.0\n")
 
     def _reaclib_rate_functions(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"
