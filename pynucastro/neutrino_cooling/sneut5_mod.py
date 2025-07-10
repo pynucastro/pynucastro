@@ -17,10 +17,12 @@ class NeutrinoComponents:
 
 
 def ifermi12(f):
-    """apply a rational function expansion to get the inverse
+    """Apply a rational function expansion to get the inverse
     fermi-dirac integral of order 1/2 when it is equal to f.
-    maximum error is 4.19e-9_rt.
-    reference: Antia ApJS 84,101 1993"""
+
+    The maximum error is 4.19e-9_rt (see Antia ApJS 84,101 1993)
+
+    """
 
     # coefficients of the expansion from Table 8 of Antia
 
@@ -104,7 +106,7 @@ def ifermi12(f):
 
 def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
            full_output=False):
-    """compute thermal neutrino losses from the analytic fits of Itoh
+    """Compute thermal neutrino losses from the analytic fits of Itoh
     et al. ApJS 102, 411, 1996.  Note that either a Composition object
     of abar/zbar need to be provided.
 
