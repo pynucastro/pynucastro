@@ -806,7 +806,7 @@ class RateFilter:
         exact : bool
             do we require an exact match (ignoring ordering)?
             or do we only want to ensure that every ``Nucleus``
-            in ``test`` appears at least onces in ``reference``?
+            in ``test`` appears at least once in ``reference``?
 
         Returns
         -------
