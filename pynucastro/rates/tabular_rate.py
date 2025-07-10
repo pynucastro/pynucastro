@@ -356,7 +356,7 @@ class TabularRate(Rate):
         # to recompute Q -- this is used for finding rate pairs
         self._set_q()
 
-    def _set_rhs_properties(self): 
+    def _set_rhs_properties(self):
         """Compute statistical prefactor and density exponent from the
         reactants.
 
