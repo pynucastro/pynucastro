@@ -2,6 +2,8 @@
 
 ## 2.7.0
 
+  * Make library warnings more informative (#1049)
+
   * add a class that computes the Fermi-Dirac integrals (#1039, #1040,
     #1041)
 
@@ -11,9 +13,9 @@
   * fix some Sphinx issues (#1017, #1024)
 
   * `AmrexAstroCxxNetwork` C++ cleaning and syncing with Microphysics
-    (#993, #1003, #1009, #1010, #1020, #1022, #1036)
+    (#993, #1003, #1009, #1010, #1020, #1022, #1036, #1038)
 
-  * update CI due to Microphysics changes (#1021, #1023, #1029)
+  * update CI due to Microphysics changes (#1021, #1023, #1029, #1050)
 
   * `DerivedRate` now works on a `ModifiedRate` (#1011, #1012).
 
@@ -30,7 +32,7 @@
   * A new method for evaluating the stiffness in a network was added
     (#1006, #1008)
 
-  * docstring updates (#978, #989, #994)
+  * docstring updates (#978, #989, #994, #1042)
 
   * a new method for exporting a NetworkX graph from a network was
     added (#990, #991)
