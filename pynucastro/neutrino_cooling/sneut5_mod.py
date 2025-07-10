@@ -2,8 +2,9 @@ import numpy as np
 
 
 class NeutrinoComponents:
-    """a simple container that holds the individual components to the
-    neutrino cooling"""
+    """A simple container that holds the individual components to the
+    neutrino cooling."""
+
     def __init__(self):
         self.splas = None
         self.spair = None

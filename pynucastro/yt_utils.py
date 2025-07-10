@@ -4,7 +4,7 @@ from pynucastro.networks import Composition
 
 
 def get_point(ds, pos):
-    """Helper for getting a specific point from a yt dataset object.
+    """Get a specific point from a yt dataset object.
 
     Field values can be extracted by subscripting: ``point['Temp']``.
 
