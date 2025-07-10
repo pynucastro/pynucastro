@@ -8,7 +8,6 @@
 
 import argparse
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument('input', type=str, help='Name of the input table')
 parser.add_argument('-o', '--output', type=str, default='halflife2020', help='Name of the formatted mass excess table')

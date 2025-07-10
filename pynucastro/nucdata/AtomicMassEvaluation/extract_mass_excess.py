@@ -8,7 +8,6 @@
 
 import argparse
 
-
 #os.path.dirname(os.path.realpath(__file__))
 
 parser = argparse.ArgumentParser()
