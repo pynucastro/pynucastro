@@ -1,7 +1,6 @@
-"""
-
-This script extract the spin data for each ground state (gs) nuclei,
-characterized by the pair  (A, Z), from nubase_3.mas20.txt, published in:
+"""Extract the spin data for each ground state (gs) nuclei,
+characterized by the pair (A, Z), from nubase_3.mas20.txt, published
+in:
 
 Kondev, F. G., Wang, M., Huang, W. J., Naimi, S., & Audi, G.
 Chinese Physics C, 45(3), 030001. (2021) doi:10.1088/1674-1137/abddae
@@ -14,9 +13,7 @@ import argparse
 
 
 def num_states(spin_str_element):
-
-    """
-    This function evaluates de spin number string, formatted as s=a/b and
+    """Evaluate the spin number string, formatted as s=a/b and
     returns the number of states 2*s + 1.
 
     In the table we have three type of strings:

@@ -1,12 +1,13 @@
-import argparse
-
-"""
-This module extract the (A,Z, dm) tuples from `nubase_4.mas20.txt`, where:
+"""Extract the (A,Z, dm) tuples from `nubase_4.mas20.txt`, where:
 
 :var A: is the atomic weight measured in atomic mass units.
 :var Z: is the atomic number.
 :var dm: is the mass difference A_{nuc}-A.
+
 """
+
+import argparse
+
 
 #os.path.dirname(os.path.realpath(__file__))
 
