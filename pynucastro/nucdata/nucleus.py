@@ -459,7 +459,7 @@ def get_nuclei_in_range(name=None, *,
                 nuc_list.append(Nucleus(nuc))
         else:
             # find the Z for this element
-            Z = PeriodicTable.table[e.lower()].Z
+            Z = PeriodicTable.lookup_abbreviation(e.lower()).Z
             A_symmetric = 2 * Z
             for a in range(A_symmetric + neutron_excess_range[0],
                            A_symmetric + neutron_excess_range[1] + 1):
