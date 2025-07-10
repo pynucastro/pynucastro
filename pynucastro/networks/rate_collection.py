@@ -50,7 +50,7 @@ class RateDuplicationError(Exception):
     """An error of multiple rates linking the same nuclei occurred"""
 
 
-def _skip_xalpha(n, p, r): 
+def _skip_xalpha(n, p, r):
     """Check if we should show an (a, x) or (x, a) rate.  Here, p is
     the product we want to link to
 
@@ -105,8 +105,8 @@ def _skip_xp(n, p, r):
 
 
 class Composition(collections.UserDict):
-    """a composition holds the mass fractions of the nuclei in a network
-    -- useful for evaluating the rates
+    """A composition holds the mass fractions of the nuclei in a
+    network.
 
     Parameters
     ----------
@@ -114,7 +114,9 @@ class Composition(collections.UserDict):
         an iterable of Nucleus objects
     small : float
         a floor for nuclei mass fractions, used as the default value
+
     """
+
     def __init__(self, nuclei, small=1.e-16):
         try:
             super().__init__({Nucleus.cast(k): small for k in nuclei})
@@ -169,16 +171,18 @@ class Composition(collections.UserDict):
         return {n: n.Z for n in self}
 
     def get_nuclei(self):
-        """Return a list of Nuclei objects that make up this composition.
+        """Return a list of Nuclei objects that make up this
+        composition.
 
         Returns
         -------
         list
+
         """
         return list(self)
 
     def get_molar(self):
-        """Return a dictionary of molar fractions, Y = X/A
+        """Return a dictionary of molar fractions, Y = X/A.
 
         Returns
         -------
@@ -188,7 +192,7 @@ class Composition(collections.UserDict):
         return {k: v/k.A for k, v in self.items()}
 
     def get_sum_X(self):
-        """return the sum of the mass fractions
+        """Return the sum of the mass fractions.
 
         Returns
         -------
@@ -204,6 +208,7 @@ class Composition(collections.UserDict):
         ----------
         Z : float
             The desired metalicity
+
         """
 
         rem = Z/(len(self)-2)
@@ -1279,8 +1284,8 @@ class RateCollection:
         self._build_collection()
 
     def make_nse_protons(self, A):
-        """for rates involving nuclei with mass number >= A, swap any
-        protons for NSE protons.  This will decouple these rates from
+        """Replace protons in rates involving nuclei with mass number
+        >= A with NSE protons.  This will decouple these rates from
         the proton captures at lower mass number, simplifying the
         linear algebra.
 
@@ -1289,6 +1294,7 @@ class RateCollection:
         A : int
             mass number above which to swap regular protons for
             NSE protons.
+
         """
 
         # we want to update both the forward and reverse rates,
@@ -1350,7 +1356,7 @@ class RateCollection:
         print(f"  custom rates: {len(self.custom_rates)}")
 
     def evaluate_rates(self, rho, T, composition, screen_func=None):
-        """evaluate the rates for a specific density, temperature, and
+        """Evaluate the rates for a specific density, temperature, and
         composition, with optional screening.  Note: this returns that
         rate as dY/dt, where Y is the molar fraction.  For a 2 body
         reaction, a + b, this will be of the form:
@@ -1402,7 +1408,8 @@ class RateCollection:
 
     def evaluate_jacobian(self, rho, T, comp, *,
                           screen_func=None, exclude_rates=None):
-        """return an array of the form J_ij = dYdot_i/dY_j for the network
+        """Return an array of the form J_ij = dYdot_i/dY_j for the
+        network
 
         Parameters
         ----------
@@ -1842,8 +1849,10 @@ class RateCollection:
         return act
 
     def _get_network_chart(self, rho, T, composition):
-        """a network chart is a dict, keyed by rate that holds a list
-        of tuples (Nucleus, ydot)"""
+        """Create a dict, keyed by rate that holds a list of tuples
+        (Nucleus, ydot)
+
+        """
 
         rvals = self.evaluate_rates(rho, T, composition)
 
@@ -1971,8 +1980,9 @@ class RateCollection:
         return len(set(names)) == len(self.rates)
 
     def _write_network(self, *args, **kwargs):
-        """A stub for function to output the network -- this is
-        implementation dependent.
+        """Output the network.  This version is a stub that will be
+        replaced by derived classes, as this is implementation
+        dependent.
 
         """
         # pylint: disable=unused-argument
@@ -2941,9 +2951,9 @@ class RateCollection:
 
 
 class Explorer:
-    """A simple class that enables interactive exploration a RateCollection,
-    presenting density and temperature sliders to update the reaction rate
-    values.
+    """A simple class that enables interactive exploration a
+    RateCollection, presenting density and temperature sliders to
+    update the reaction rate values.
 
     Parameters
     ----------
@@ -2955,9 +2965,10 @@ class Explorer:
         Additional parameters that will be passed through to the
         RateCollection plot() function.  Note that "T" and "rho"
         will be ignored.
+
     """
+
     def __init__(self, rc, comp, **kwargs):
-        """ take a RateCollection and a composition """
         self.rc = rc
         self.comp = comp
         self.kwargs = kwargs

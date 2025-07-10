@@ -1,6 +1,4 @@
-"""Classes and methods to interface with files storing rate data.
-
-"""
+"""Classes and methods to interface with files storing rate data."""
 
 import math
 from pathlib import Path
@@ -14,6 +12,11 @@ from pynucastro.rates.files import _find_rate_file
 
 
 class BaryonConservationError(Exception):
+    """Exception for the case where we don't have the same number of
+    baryons on the left and righthand sides of the reaction.
+
+    """
+
     pass
 
 
@@ -26,19 +29,31 @@ class BaryonConservationError(Exception):
     ('lnT9', numba.float64)
 ])
 class Tfactors:
-    """ precompute temperature factors for speed
+    """Precompute temperature factors for speed
 
-    :param float T: input temperature (Kelvin)
-    :var T9:    T / 1.e9 K
-    :var T9i:   1.0 / T9
-    :var T913i: 1.0 / T9 ** (1/3)
-    :var T913:  T9 ** (1/3)
-    :var T953:  T9 ** (5/3)
-    :var lnT9:  log(T9)
+    Parameters
+    ----------
+    T : float
+        Temperature in Kelvin.
+
+    Attributes
+    ----------
+    T9 : float
+        Temperature divided by 1.e9 K.
+    T9i : float
+        1.0 / T9
+    T913i : float
+        1.0 / T9**(1/3)
+    T913 : float
+        T9**(1/3)
+    T953 : float
+        T9**(5/3)
+    lnT9 : float
+        log(T9)
+
     """
 
     def __init__(self, T):
-        """ return the Tfactors object.  Here, T is temperature in Kelvin """
         self.T9 = T/1.e9
         self.T9i = 1.0/self.T9
         self.T913i = self.T9i**(1./3.)
