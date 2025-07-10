@@ -1,3 +1,5 @@
+"""Classes and methods for exploring thermal neutrinos."""
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -8,7 +10,9 @@ class NeutrinoCooling:
     """A class to provide an interface to explore neutrino cooling.
     This calls a specific implementation of the cooling that includes
     contributions from pairs, plasma, recombination, bremsstrahlung,
-    and photoneutrinos."""
+    and photoneutrinos.
+
+    """
 
     def __init__(self, neutrino_function=sneut5):
 
@@ -16,8 +20,10 @@ class NeutrinoCooling:
 
     def plot(self, *, Tmin=1.e7, Tmax=1.e10, rhomin=1.e3, rhomax=1.e10,
              abar=20, zbar=10, npts_temp=50, npts_rho=50):
-        """given a fixed abar/zbar, make a plot of neutrino cooling over
-        a range of density and temperature"""
+        """Plot the cooling term in as a function of density and
+        temperature given a fixed abar/zbar.
+
+        """
 
         Ts = np.logspace(np.log10(Tmin), np.log10(Tmax), npts_temp)
         rhos = np.logspace(np.log10(rhomin), np.log10(rhomax), npts_rho)

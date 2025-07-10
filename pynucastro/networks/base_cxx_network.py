@@ -110,9 +110,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         return int(rem.group(1))
 
     def _write_network(self, odir=None):
-        """This writes the RHS, jacobian and ancillary files for the
-        system of ODEs that this network describes, using the template
-        files.
+        """Output the RHS, jacobian and ancillary files for the system
+        of ODEs that this network describes, using the template files.
 
         """
         # pylint: disable=arguments-differ
@@ -590,7 +589,10 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _fill_partition_function_data(self, n_indent, of):
         # itertools recipe
         def batched(iterable, n):
-            "Batch data into tuples of length n. The last batch may be shorter."
+            """Batch data into tuples of length n. The last batch may
+            be shorter.
+
+            """
             # batched('ABCDEFG', 3) --> ABC DEF G
             if n < 1:
                 raise ValueError('n must be at least one')

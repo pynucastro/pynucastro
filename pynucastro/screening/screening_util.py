@@ -5,8 +5,10 @@ from pynucastro.rates import ApproximateRate
 
 
 class ScreeningPair:
-    """a pair of nuclei that will have rate screening applied.  We store a
-    list of all rates that match this pair of nuclei"""
+    """A pair of nuclei that will have rate screening applied.  We
+    store a list of all rates that match this pair of nuclei
+
+    """
 
     def __init__(self, name, nuc1, nuc2, rate=None):
         self.name = name
@@ -19,6 +21,15 @@ class ScreeningPair:
             self.rates = [rate]
 
     def add_rate(self, rate):
+        """Add a new rate to the screening pair.
+
+        Parameters
+        ----------
+        rate : Rate
+            The rate to add.
+
+        """
+
         if rate not in self.rates:
             self.rates.append(rate)
 
@@ -30,18 +41,32 @@ class ScreeningPair:
         return ostr
 
     def __eq__(self, other):
-        """all we care about is whether the names are the same -- that conveys
-        what the reaction is"""
+        """Test for equality.  All we care about is whether the names
+        are the same -- that conveys what the reaction is
+
+        """
 
         return self.name == other.name
 
 
 def get_screening_map(rates, *, symmetric_screening=False):
-    """a screening map is just a list of ScreeningPair objects
-    containing the information about nuclei pairs for screening If
-    symmetric_screening=True, then for reverse rates, we screen using
-    the forward rate nuclei (assuming that we got here via detailed
-    balance).
+    """Create a screening map---this is just a list of ScreeningPair
+    objects containing the information about nuclei pairs for
+    screening If symmetric_screening=True, then for reverse rates, we
+    screen using the forward rate nuclei (assuming that we got here
+    via detailed balance).
+
+    Parameters
+    ----------
+    rates : Iterable(Rate)
+        A list of the rates in our network.
+    symmetric_screening : bool
+        Do we use the same screening factor for the forward and reverse
+        rate of a single reaction process?
+
+    Returns
+    -------
+    list(ScreeningPair)
 
     """
     screening_map = []

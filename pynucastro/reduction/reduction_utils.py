@@ -1,9 +1,12 @@
+"""MPI utilities used in the reduction algorithm."""
+
+
 class MPIImportError(Exception):
-    pass
+    """Exception for MPI errors"""
 
 
 class FailedMPIImport:
-    """Class that can replace an mpi4py.MPI import and will throw an error if used."""
+    """Replacement for mpi4py.MPI import that will throw an error if used."""
 
     def __init__(self, error=None, msg=None):
 
@@ -22,9 +25,9 @@ class FailedMPIImport:
 
 
 def mpi_importer():
-    """
-    Lazy MPI import, where we only throw an error if the import failed and then we attempt to use
-    the object.
+    """Import MPI (lazily), where we only throw an error if the import
+    failed and then we attempt to use the object.
+
     """
 
     try:
@@ -36,10 +39,12 @@ def mpi_importer():
 
 
 def mpi_numpy_decomp(MPI_N, MPI_rank, n):
-    """
-    Decompose a set of conditions for *MPI_N* MPI processes, where the conditions are a sequence of
-    3 sequences with ordering (composition_sequence, density_sequence, temperature_sequence). This
-    structure for the dataset is necessary for the vectorized reduction algorithms.
+    """Decompose a set of conditions for *MPI_N* MPI processes, where
+    the conditions are a sequence of 3 sequences with ordering
+    (composition_sequence, density_sequence,
+    temperature_sequence). This structure for the dataset is necessary
+    for the vectorized reduction algorithms.
+
     """
 
     if MPI_N <= n[0]:
@@ -109,9 +114,10 @@ def mpi_numpy_decomp(MPI_N, MPI_rank, n):
 
 
 def to_list(x, n=1):
-    """
-    Convert a sequence or non-iterable to a list. In the non-iterable case, the supplied object will
-    be repeated *n* times (default 1).
+    """Convert a sequence or non-iterable to a list. In the
+    non-iterable case, the supplied object will be repeated *n* times
+    (default 1).
+
     """
 
     try:

@@ -1,6 +1,8 @@
 """A C++ reaction network for integration into the AMReX Astro
-Microphysics set of reaction networks used by astrophysical hydrodynamics
-codes"""
+Microphysics set of reaction networks used by astrophysical
+hydrodynamics codes
+
+"""
 
 
 import re
@@ -13,6 +15,8 @@ from pynucastro.rates import ReacLibRate
 
 
 class AmrexAstroCxxNetwork(BaseCxxNetwork):
+    """A C++ network for simulation codes based on AMReX."""
+
     def __init__(self, *args, **kwargs):
 
         # this network can have a special kwarg called disable_rate_params
@@ -84,9 +88,9 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         return re.sub(std_pow_pattern, amrex_powi_replacement, cxx_code)
 
     def _write_network(self, odir=None):
-        """
-        This writes the RHS, jacobian and ancillary files for the system of ODEs that
-        this network describes, using the template files.
+        """Output the RHS, jacobian and ancillary files for the system
+        of ODEs that this network describes, using the template files.
+
         """
 
         super()._write_network(odir=odir)
@@ -127,7 +131,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
     def _fill_rate_indices(self, n_indent, of):
         """
-        Fills the index needed for the NSE_NET algorithm.
+        Fill the index needed for the NSE_NET algorithm.
 
         Fill rate_indices: 2D array with 1-based index of shape of size (NumRates, 7).
            - Each row represents a rate in self.all_rates.

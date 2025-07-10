@@ -1,3 +1,5 @@
+"""Methods to ease the creation of networks."""
+
 from pynucastro.rates import (DerivedRate, ReacLibLibrary, ReacLibRate,
                               TabularLibrary)
 
@@ -12,9 +14,8 @@ def network_helper(nuclei, *,
                    use_detailed_balance=True,
                    use_tabular_rates=True,
                    tabular_ordering=None):
-    """A simple helper function to generate a basic network connecting
-    all of the input nuclei using all of the rates known to
-    pynucastro.
+    """Generate a basic network connecting all of the input nuclei
+    using all of the rates known to pynucastro.
 
     Parameters
     ----------

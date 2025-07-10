@@ -1,10 +1,12 @@
+"""Classes and methods that provide access to the AME half life data."""
+
 from pathlib import Path
 
 
 class HalfLifeTable:
-    """
-    Read the table of halflives (in seconds) extracted from the Nubase
-    compilation in halflife2020.txt
+    """Read the table of halflives (in seconds) extracted from the
+    Nubase compilation in halflife2020.txt
+
     """
 
     def __init__(self, filename: str | Path = None) -> None:
@@ -35,6 +37,21 @@ class HalfLifeTable:
                 self.halflife[int(A), int(Z)] = tau
 
     def get_halflife(self, a: int, z: int) -> float | str:
+        """Return the half life of a nucleus.
+
+        Parameters
+        ----------
+        a : int
+            Atomic weight
+        z : int
+            Atomic number
+
+        Returns
+        -------
+        float
+
+        """
+
         try:
             return self.halflife[a, z]
         except KeyError as exc:

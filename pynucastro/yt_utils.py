@@ -1,10 +1,15 @@
+"""A collection of methods for accessing data from a simulation using
+yt and putting it in a form that pynucastro can use.
+
+"""
+
 import re
 
 from pynucastro.networks import Composition
 
 
 def get_point(ds, pos):
-    """Helper for getting a specific point from a yt dataset object.
+    """Get a specific point from a yt dataset object.
 
     Field values can be extracted by subscripting: ``point['Temp']``.
 
@@ -14,7 +19,6 @@ def get_point(ds, pos):
 
     Parameters
     ----------
-
     ds : yt.data_objects.static_output.Dataset
         a yt dataset
     pos : Iterable(float, ~unyt.array.unyt_quantity)

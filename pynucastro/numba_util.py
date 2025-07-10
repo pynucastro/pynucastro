@@ -1,6 +1,4 @@
-"""
-Drop-in for numba that provides no-op stubs if numba isn't installed.
-"""
+"""Drop-in for numba that provides no-op stubs if numba isn't installed."""
 
 try:
     # the linters really don't like this
@@ -20,6 +18,7 @@ except ImportError:
         return wrapper
 
     def jit(*args, **kwargs):
+        """Apply just-in-time compilation."""
         if len(args) == 1 and not kwargs and callable(args[0]):
             # used as a normal decorator with no arguments (`@jit`)
             return _noop_wrapper(args[0])
@@ -29,6 +28,7 @@ except ImportError:
     njit = jit
 
     def jitclass(*args, **kwargs):
+        """Use just-in-time compilation for a class."""
         if len(args) == 1 and not kwargs and isinstance(args[0], type):
             # used as a normal decorator
             return _noop_wrapper(args[0])

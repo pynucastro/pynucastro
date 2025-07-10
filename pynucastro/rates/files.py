@@ -1,6 +1,5 @@
-"""Functions for finding and working with the rate data directories.
+"""Functions for finding and working with the rate data directories."""
 
-"""
 from pathlib import Path
 
 _pynucastro_dir = Path(__file__).parents[1]
@@ -45,8 +44,11 @@ class RateFileError(Exception):
 
 
 def _find_rate_file(ratename):
-    """locate the Reaclib or tabular rate or library file given its name.  Return
-    None if the file cannot be located, otherwise return its path."""
+    """Locate the Reaclib or tabular rate or library file given its
+    name.  Return None if the file cannot be located, otherwise return
+    its path.
+
+    """
 
     # check to see if the rate file is in the working dir,
     # is already the full path, or is in _dirs

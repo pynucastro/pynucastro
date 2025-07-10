@@ -1,3 +1,8 @@
+"""Classes for managing and filtering nuclear reaction rate data from
+multiple sources.
+
+"""
+
 import collections
 import io
 import re
@@ -16,7 +21,7 @@ from pynucastro.rates.tabular_rate import TabularRate
 
 
 def list_known_rates():
-    """Print a list of all of the rates found in the library """
+    """Print a list of all of the rates found in the library."""
 
     lib_path = Path(__file__).parents[1]/"library"
 
@@ -787,10 +792,26 @@ class RateFilter:
 
     @staticmethod
     def _compare_nuclides(test, reference, exact=True):
-        """
-        test and reference should be iterables of Nucleus objects.
-        If an exact match is desired, test and reference should exactly match, ignoring ordering.
-        Otherwise, return True only if every element of test appears at least one time in reference.
+        """Compare nuclides.  If an exact match is desired, test and
+        reference should exactly match, ignoring ordering.  Otherwise,
+        return True only if every element of test appears at least one
+        time in reference.
+
+        Parameters
+        ----------
+        test : Iterable(Nucleus)
+            list of nuclei we want to compare
+        reference : Iterable(Nucleus)
+            list of nuclei we are comparing to
+        exact : bool
+            do we require an exact match (ignoring ordering)?
+            or do we only want to ensure that every ``Nucleus``
+            in ``test`` appears at least once in ``reference``?
+
+        Returns
+        -------
+        bool
+
         """
         matches = True
         if exact:

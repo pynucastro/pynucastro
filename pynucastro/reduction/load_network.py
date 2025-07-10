@@ -1,3 +1,5 @@
+"""Methods used for loading a previously-saved library."""
+
 #!/usr/bin/env python3
 
 import sys
@@ -8,9 +10,9 @@ from pynucastro.rates import Library, RateFilter
 
 
 def load_network(endpoint=Nucleus('te108'), library_name='rp-process-lib'):
-    """
-    Load a network from a library, filtering the library so only nuclei with Z and A less than
-    the endpoint's Z and A are included.
+    """Load a network from a library, filtering the library so only
+    nuclei with Z and A less than the endpoint's Z and A are included.
+
     """
 
     endpoint = Nucleus.cast(endpoint)

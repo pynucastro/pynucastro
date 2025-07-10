@@ -1,3 +1,6 @@
+"""Classes and methods for dealing with nuclear partition functions."""
+
+
 from pathlib import Path
 
 import numpy as np
@@ -5,11 +8,10 @@ from scipy.interpolate import InterpolatedUnivariateSpline
 
 
 class PartitionFunction:
-    """
-    This class holds the tabulated data for the partition function for a
-    specific nucleus, which can be combined with other (non-overlapping)
-    partition functions by addition and evaluated for different temperature
-    values.
+    """Store the tabulated data for the partition function for a
+    specific nucleus, which can be combined with other
+    (non-overlapping) partition functions by addition and evaluated
+    for different temperature values.
 
     Adding two PartitionFunction objects is implemented by simply appending the
     temperature and partition function arrays of the higher-temperature
@@ -21,17 +23,24 @@ class PartitionFunction:
     returned PartitionFunction of order equal to the maximum order of the added
     PartitionFunction objects.
 
-    :var nucleus:            a string composed by a lowercase element and the
-                             atomic number, e.g. ``"ni56"``
-    :var name:               the name of the table on which the nucleus is read
-    :var temperature:        a sorted array of all the temperatures involved
-    :var partition_function: an array with all the partition function values
-                             given in the same order as ``temperature``
-    :var interpolant_order:  the interpolation spline order, must be between
-                             1 and 5, inclusive
+    Parameters
+    ----------
+    nucleus : str
+        The nucleus (e.g. ``"ni56"``)
+    name : str
+        The name of the table on which the nucleus is read
+    temperature : numpy.ndarray
+        A sorted array of all the temperatures involved
+    partition_function : numpy.ndarray
+        An array with all the partition function values given in the
+        same order as ``temperature``
+    interpolant_order : int
+        The interpolation spline order, must be between 1 and 5, inclusive
+
     """
 
-    def __init__(self, nucleus, name, temperature, partition_function, interpolant_order=3):
+    def __init__(self, nucleus, name, temperature,
+                 partition_function, interpolant_order=3):
         assert isinstance(nucleus, str)
 
         temperature = np.asarray(temperature)
@@ -94,8 +103,7 @@ class PartitionFunction:
                 np.all(self.temperature == other.temperature))
 
     def construct_spline_interpolant(self, order=3):
-        """
-        Construct an interpolating univariate spline of order >= 1 and
+        """Construct an interpolating univariate spline of order >= 1 and
         order <= 5 using the scipy InterpolatedUnivariateSpline
         implementation.
 
@@ -106,7 +114,10 @@ class PartitionFunction:
         self.interpolant_order = order
 
     def eval(self, T):
-        """Return the interpolated partition function value for the temperature T."""
+        """Return the interpolated partition function value for the
+        temperature T.
+
+        """
 
         # lazily construct the interpolant object, since it's pretty expensive
         if not self._interpolant:
@@ -125,15 +136,15 @@ class PartitionFunction:
 
 
 class PartitionFunctionTable:
-    """
-    Class for reading a partition function table file. A
-    :class:`PartitionFunction` object is constructed for each nucleus and
-    stored in a dictionary keyed by the lowercase nucleus name in the form e.g.
-    "ni56". The table files are stored in the ``PartitionFunction``
-    subdirectory.
+    """Manage a partition function table file. A
+    :class:`PartitionFunction` object is constructed for each nucleus
+    and stored in a dictionary keyed by the lowercase nucleus name in
+    the form e.g.  "ni56". The table files are stored in the
+    ``PartitionFunction`` subdirectory.
 
     :var name:         the name of the table (as defined in the data file)
     :var temperatures: an array of temperature values
+
     """
 
     def __init__(self, file_name):
@@ -195,9 +206,8 @@ class PartitionFunctionTable:
 
 
 class PartitionFunctionCollection:
-    """
-    This class holds a collection of :class:`PartitionFunctionTable` objects in
-    a dictionary keyed by the name of the tables.
+    """A collection of :class:`PartitionFunctionTable` objects in a
+    dictionary keyed by the name of the tables.
 
     In our discussion we have two different sets of tables: FRDM and ETFSI-Q.
 
@@ -205,6 +215,7 @@ class PartitionFunctionCollection:
                                 tables
     :var use_set: selects between the FRDM (``'frdm'``) and ETFSI-Q
                   (``'etfsiq'``) data sets.
+
     """
 
     def __init__(self, use_high_temperatures=True, use_set='frdm'):

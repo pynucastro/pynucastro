@@ -1,3 +1,8 @@
+"""Classes and methods for deriving inverse rates from forward rates
+using detailed balance.
+
+"""
+
 import math
 import warnings
 from collections import Counter

@@ -1,3 +1,8 @@
+"""Classes and methods for a network that uses NumPy arrays to cache
+some intermediate data.
+
+"""
+
 import numpy as np
 
 from pynucastro.networks.rate_collection import RateCollection
@@ -7,20 +12,16 @@ from pynucastro.rates import Tfactors
 class NumpyNetwork(RateCollection):
     """A network that uses numpy arrays to evaluate rates more efficiently.
 
-    .. py:attribute:: yfac
-
-       Array storing the molar fraction component of each rate (Y of each
-       reactant raised to the appropriate power).
-
-       Depends on composition only.
-
-    .. py:attribute:: prefac
-
+    Attributes
+    ----------
+    yfac : numpy.ndarray
+        Array storing the molar fraction component of each rate (Y of each
+        reactant raised to the appropriate power).  Depends on composition
+        only.
+    prefac : numpy.ndarray
        Array storing the prefactor for each rate, which includes both the
        statistical prefactor and mass density raised to the corresponding
-       density exponent.
-
-       Depends on composition and density.
+       density exponent.  Depends on composition and density.
 
     """
 
@@ -46,9 +47,10 @@ class NumpyNetwork(RateCollection):
 
     @property
     def nuc_prod_count(self):
-        """Array storing the count of each nucleus in rates producing
-        that nucleus, with shape ``(number_of_species,
+        """Return an array storing the count of each nucleus in rates
+        producing that nucleus, with shape ``(number_of_species,
         number_of_rates)``
+
         """
 
         if self._nuc_prod_count is None:
@@ -57,9 +59,10 @@ class NumpyNetwork(RateCollection):
 
     @property
     def nuc_cons_count(self):
-        """Array storing the count of each nucleus in rates consuming
-        that nucleus, with shape ``(number_of_species,
+        """Return an array storing the count of each nucleus in rates
+        consuming that nucleus, with shape ``(number_of_species,
         number_of_rates)``.
+
         """
         if self._nuc_cons_count is None:
             self._calc_count_matrices()
@@ -67,8 +70,8 @@ class NumpyNetwork(RateCollection):
 
     @property
     def nuc_used(self):
-        """A boolean matrix of whether the nucleus is involved in the
-        reaction or not, with shape ``(number_of_species,
+        """Return a boolean matrix of whether the nucleus is involved
+        in the reaction or not, with shape ``(number_of_species,
         number_of_rates)``
 
         """
@@ -109,7 +112,7 @@ class NumpyNetwork(RateCollection):
     @property
     def coef_arr(self):
         """Reaclib rate coefficient array, with shape
-       ``(number_of_rates, number_of_sets, 7)``
+        ``(number_of_rates, number_of_sets, 7)``
 
         """
         if self._coef_arr is None:
@@ -128,9 +131,7 @@ class NumpyNetwork(RateCollection):
         return self._coef_mask
 
     def _update_rate_coef_arr(self):
-        """
-        Update the :attr:`.coef_arr` and :attr:`.coef_mask` arrays.
-        """
+        """Update the :attr:`.coef_arr` and :attr:`.coef_mask` arrays."""
 
         # coef arr can be precomputed if evaluate_rates_arr is called multiple times
         N_sets = max(len(r.sets) for r in self.rates)

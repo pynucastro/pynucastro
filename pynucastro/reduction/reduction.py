@@ -1,3 +1,5 @@
+"""Methods and driver used in the reduction algorithm."""
+
 #!/usr/bin/env python3
 
 import argparse
@@ -35,6 +37,7 @@ NetInfo = namedtuple("NetInfo", "y ydot z a ebind m")
 
 
 def get_net_info(net, comp, rho, T):
+    """Return information about the network."""
 
     y_dict = comp.get_molar()
     # Can alternatively use the NumPy-based method (evaluate_ydots_arr)
@@ -82,7 +85,10 @@ def abar_dot(net_info):
 
 
 def map_comp(comp, net):
-    """Create new composition object with nuclei in net, and copy their mass fractions over."""
+    """Create new composition object with nuclei in net, and copy
+    their mass fractions over.
+
+    """
 
     comp_new = Composition(net.unique_nuclei)
 
@@ -99,7 +105,7 @@ def rel_err(x, x0):
 
 
 def get_errfunc_enuc(net_old, conds):
-    """Function for computing error in nuclear energy generation."""
+    """Compute the error in nuclear energy generation."""
 
     enucdot_list = []
 
@@ -123,6 +129,7 @@ def get_errfunc_enuc(net_old, conds):
 
 
 def main():
+    """Initialize and run the reduction."""
 
     #-----------------------------------
     # Setup parser and process arguments
