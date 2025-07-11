@@ -314,9 +314,12 @@ class FermiIntegral:
         # We set the correspondence (a+b)/2 -> 0 and map the (-1,0) and (0,1)
         # intervals separately.
 
+        fac1 = (a + b)/2
+        fac2 = (b - a)/2
+
         for root, weight in zip(x_leg[N:], w_leg[N:]):
-            x_1 = (a+b)/2 + (b-a)/2 * root
-            x_2 = (a+b)/2 - (b-a)/2 * root
+            x_1 = fac1 + fac2 * root
+            x_2 = fac1 - fac2 * root
             qder_1 = kernel(x_1, k, eta, beta,
                             eta_der=eta_der, beta_der=beta_der)
             qder_2 = kernel(x_2, k, eta, beta,
@@ -326,7 +329,7 @@ class FermiIntegral:
         integral *= (b - a) / 2
         return integral
 
-    def _compute_laguerre(self, a, eta_der, beta_der, interval=100):
+    def _compute_laguerre(self, a, eta_der, beta_der):
 
         # Laguerre quadrature solves and integral of the form:
         #
@@ -353,14 +356,15 @@ class FermiIntegral:
         #
         #             ~ ∑ f(x_i) w_i exp(x) f(x + a)
 
-        integral = 0
-
         # note: the w_lag already have the exp(x) term included
-        for root, weight in zip(x_lag, w_lag):
-            I = _kernel_E(root + a, self.k, self.eta, self.beta,
-                          eta_der=eta_der, beta_der=beta_der)
-            if I != 0.0:
-                integral += I * weight
+        # for root, weight in zip(x_lag, w_lag):
+        #     I = _kernel_E(root + a, self.k, self.eta, self.beta,
+        #                   eta_der=eta_der, beta_der=beta_der)
+        #     integral += I * weight
+
+        integral = sum(_kernel_E(root + a, self.k, self.eta, self.beta,
+                                 eta_der=eta_der, beta_der=beta_der) * weight for
+                       root, weight in zip(x_lag, w_lag))
 
         return integral
 
