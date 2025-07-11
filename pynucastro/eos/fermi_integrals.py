@@ -14,8 +14,8 @@ overcome the kernel singularity near the origin.
 
 """
 
-import numpy as np
 import numba
+import numpy as np
 
 from .quadrature_weights import w_lag, w_leg, x_lag, x_leg
 
