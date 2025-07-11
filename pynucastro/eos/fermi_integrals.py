@@ -143,9 +143,7 @@ def _kernel_p(x, k, eta, beta,
     elif eta_der == 1 and beta_der == 0:
         # this is IB = 1 from Gong et al.
         # this corresponds to eq A.1 in terms of x**2
-        if test:
-            result = 0.0
-        else:
+        if not test:
             result = num / (np.exp(xsq - eta) + 2.0 + np.exp(eta - xsq))
 
     elif eta_der == 0 and beta_der == 1:
@@ -159,19 +157,16 @@ def _kernel_p(x, k, eta, beta,
     elif eta_der == 2 and beta_der == 0:
         # this is IB = 3 from Gong et al.
         # this corresponds to eq A.3 in terms of x**2
-        if test:
-            result = 0.0
-        else:
+        if not test:
             result = num / (np.exp(xsq - eta) + 2.0 + np.exp(eta - xsq)) * \
                 ((np.exp(xsq - eta) - 1.0) / (np.exp(xsq - eta) + 1.0))
 
     elif eta_der == 1 and beta_der == 1:
         # this is IB = 4 from Gong et al.
         # this corresponds to eq A.4 in terms of x**2
-        if test:
-            return 0.0
-        return 0.5 * x**(2.0*k + 3.0) / \
-            (np.exp(xsq - eta) + 2.0 + np.exp(eta - xsq)) / sqrt_term
+        if not test:
+            result = 0.5 * x**(2.0*k + 3.0) / \
+                (np.exp(xsq - eta) + 2.0 + np.exp(eta - xsq)) / sqrt_term
 
     elif eta_der == 0 and beta_der == 2:
         # this is IB = 5 from Gong et al.
@@ -203,24 +198,18 @@ def _kernel_E(x, k, eta, beta,
     if eta_der == 0 and beta_der == 0:
         if test:
             result = num * denomi
-        else:
-            result = 0.0
 
     elif eta_der == 1 and beta_der == 0:
         # this is IB = 1 from Gong et al.
         # this corresponds to eq A.1
         if test:
             result = num / (np.exp(x - eta) + 2.0 + np.exp(eta - x))
-        else:
-            result = 0.0
 
     elif eta_der == 0 and beta_der == 1:
         # this is IB = 2 from Gong et al.
         # this corresponds to eq A.2
         if test:
             result = 0.25 * x**(k + 1.0) * denomi / sqrt_term
-        else:
-            result = 0.0
 
     elif eta_der == 2 and beta_der == 0:
         # this is IB = 3 from Gong et al.
@@ -228,8 +217,6 @@ def _kernel_E(x, k, eta, beta,
         if test:
             result = num / (np.exp(x - eta) + 2.0 + np.exp(eta - x)) * \
                 ((1.0 - np.exp(eta - x)) / (1.0 + np.exp(eta - x)))
-        else:
-            result = 0.0
 
     elif eta_der == 1 and beta_der == 1:
         # this is IB = 4 from Gong et al.
@@ -237,16 +224,12 @@ def _kernel_E(x, k, eta, beta,
         if test:
             result = 0.25 * x**(k + 1.0) / \
                 (np.exp(x - eta) + 2.0 + np.exp(eta - x)) / sqrt_term
-        else:
-            result = 0.0
 
     elif eta_der == 0 and beta_der == 2:
         # this is IB = 5 from Gong et al.
         # this corresponds to eq A.5
         if test:
             result = -0.0625 * x**(k + 2.0) * denomi / sqrt_term**3
-        else:
-            result = 0.0
 
     return result
 
