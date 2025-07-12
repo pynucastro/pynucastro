@@ -2338,8 +2338,9 @@ class RateCollection:
         else:
             connectionstyle = "arc3"
 
-        real_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 1]
-        real_weights = [e["weight"] for u, v, e in G.edges(data=True) if e["real"] == 1]
+        sorted_edges = sorted(G.edges(data=True), key=lambda edge: edge[-1].get("weight", 0))
+        real_edges = [(u, v) for u, v, e in sorted_edges if e["real"] == 1]
+        real_weights = [e["weight"] for u, v, e in sorted_edges if e["real"] == 1]
 
         if rate_ydots is None:
             edge_color = "C0"
@@ -2357,19 +2358,12 @@ class RateCollection:
         else:
             widths *= 2
 
-        # plot the arrow of reaction
-        real_edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
-                                               edgelist=real_edges, edge_color=edge_color,
-                                               connectionstyle=connectionstyle,
-                                               node_size=node_size,
-                                               edge_cmap=plt.cm.viridis, ax=ax)
-
         approx_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 0]
 
         _ = nx.draw_networkx_edges(G, G.position, width=1,
                                    edgelist=approx_edges, edge_color="0.5",
                                    connectionstyle=connectionstyle,
-                                   style="dotted", node_size=node_size, ax=ax)
+                                   style="dashed", node_size=node_size, ax=ax)
 
         # plot invisible rates, rates that are below ydot_cutoff_value
         invis_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == -1]
@@ -2377,7 +2371,14 @@ class RateCollection:
         _ = nx.draw_networkx_edges(G, G.position, width=1,
                                    edgelist=invis_edges, edge_color="gray",
                                    connectionstyle=connectionstyle,
-                                   style="dashed", node_size=node_size, ax=ax)
+                                   style="dotted", node_size=node_size, ax=ax)
+
+        # plot the arrow of reaction
+        real_edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
+                                               edgelist=real_edges, edge_color=edge_color,
+                                               connectionstyle=connectionstyle,
+                                               node_size=node_size,
+                                               edge_cmap=plt.cm.viridis, ax=ax)
 
         # highlight edges
         highlight_edges = [(u, v) for u, v, e in G.edges(data=True) if e["highlight"]]
