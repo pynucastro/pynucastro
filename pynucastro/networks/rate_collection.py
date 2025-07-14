@@ -2157,7 +2157,9 @@ class RateCollection:
              size=(800, 600), dpi=100, title=None,
              ydot_cutoff_value=None, show_small_ydot=False,
              consuming_rate_threshold=None,
-             node_size=1000, node_font_size=12, node_color="#444444", node_shape="o",
+             node_size=1000, node_font_size=12,
+             node_color="#444444", node_shape="o",
+             color_nodes_by_abundance=False, node_abundance_cutoff=1.e-10,
              nuclei_custom_labels=None,
              curved_edges=False,
              N_range=None, Z_range=None, rotated=False,
@@ -2210,6 +2212,12 @@ class RateCollection:
             a dict of the form {Nucleus: str} that provides alternate
             labels for nodes (instead of using the `pretty` attribute
             of the Nucleus.
+        color_nodes_by_abundance : bool
+            if true, the color of the nodes is set via
+            log(X) for each nucleus.  Note: this cannot be
+            used with a callable for ``node_color``.
+        node_abundance_cutoff : float
+            the lower cutoff value used for coloring nodes by abundance.
         curved_edges : bool
             do we use arcs to connect the nodes?
         N_range : Iterable
@@ -2271,8 +2279,17 @@ class RateCollection:
         node_nuclei = []
         colors = []
 
+        if callable(node_color) and color_nodes_by_abundance:
+            raise NotImplementedError("setting node_color to a callable and using color_nodes_by_abundance together is not supported.")
+
         if callable(node_color):
             get_node_color = node_color
+        elif color_nodes_by_abundance:
+            nuc_norm = mpl.colors.LogNorm(vmin=node_abundance_cutoff, vmax=1.0)
+            nuc_sm = mpl.cm.ScalarMappable(norm=nuc_norm, cmap=mpl.colormaps.get_cmap("magma"))
+
+            def get_node_color(_nuc):
+                return nuc_sm.to_rgba(comp[_nuc])
         else:
             def get_node_color(_nuc):
                 return node_color
