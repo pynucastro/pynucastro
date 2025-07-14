@@ -2168,7 +2168,7 @@ class RateCollection:
              edge_labels=None,
              highlight_filter_function=None,
              nucleus_filter_function=None, rate_filter_function=None,
-             legend_coord=None):
+             legend_coord=None, plot_to_cbar_ratio=20):
         """Make a plot of the network structure showing the links between
         nuclei.  If a full set of thermodymamic conditions are
         provided (rho, T, comp), then the links are colored by rate
@@ -2252,18 +2252,28 @@ class RateCollection:
         rate_filter_function : Callable
             a function that takes a ``Rate`` object
             and returns True or False if it is to be shown as an edge.
+        plot_to_cbar_ratio : float
+            ratio of main axes to colorbar size
 
         Returns
         -------
         matplotlib.figure.Figure
         """
 
-        fig, ax = plt.subplots()
+        fig = plt.figure(figsize=size)
 
-        #divider = make_axes_locatable(ax)
-        #cax = divider.append_axes('right', size='15%', pad=0.05)
-
-        #ax.plot([0, 0], [8, 8], 'b-')
+        # we'll use a grid spec of 2 x 2.  We can merge columns / rows
+        # as needed to give us the flexibility to have colorbars
+        if rotated:
+            gs = mpl.gridspec.GridSpec(nrows=2, ncols=2,
+                                       height_ratios=[plot_to_cbar_ratio, 1], figure=fig)
+            # plot is the top row, colorbar(s) will be the bottom
+            ax = fig.add_subplot(gs[0, :])
+        else:
+            gs = mpl.gridspec.GridSpec(nrows=2, ncols=2,
+                                       width_ratios=[plot_to_cbar_ratio, 1], figure=fig)
+            # plot is the left column, colorbar(s) will be on the right
+            ax = fig.add_subplot(gs[:, 0])
 
         # in general, we do not show p, n, alpha,
         # unless we have p + p, 3-a, etc.
@@ -2418,20 +2428,42 @@ class RateCollection:
                                          font_size=node_font_size,
                                          edge_labels=edge_labels)
 
+        # figure out the colorbar axes -- we have a single colorbar if we are doing the
+        # rate_ydots.  We have 2 colorbars if we are also doing the color_nodes_by_abundance
+        rate_cb_ax = None
+        node_cb_ax = None
+        if rate_ydots and color_nodes_by_abundance:
+            if rotated:
+                rate_cb_ax = fig.add_subplot(gs[1, 0])
+                node_cb_ax = fig.add_subplot(gs[1, 1])
+            else:
+                rate_cb_ax = fig.add_subplot(gs[0, 1])
+                node_cb_ax = fig.add_subplot(gs[1, 1])
+        elif rate_ydots:
+            if rotated:
+                rate_cb_ax = fig.add_subplot(gs[1, :])
+            else:
+                rate_cb_ax = fig.add_subplot(gs[:, 1])
+
+        orientation = "vertical"
+        if rotated:
+            orientation = "horizontal"
+
         if rate_ydots is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
             pc.set_array(real_weights)
-            if not rotated:
-                plt.colorbar(pc, ax=ax, label="log10(rate)")
-            else:
-                plt.colorbar(pc, ax=ax, label="log10(rate)", orientation="horizontal", fraction=0.05)
+            fig.colorbar(pc, cax=rate_cb_ax, label="log10(rate)", orientation=orientation)
+
+        if color_nodes_by_abundance:
+            fig.colorbar(nuc_sm, cax=node_cb_ax, label="log10(X)",
+                         orientation=orientation)
 
         if not rotated:
-            plt.xlabel(r"$N$", fontsize="large")
-            plt.ylabel(r"$Z$", fontsize="large")
+            ax.set_xlabel(r"$N$", fontsize="large")
+            ax.set_ylabel(r"$Z$", fontsize="large")
         else:
-            plt.xlabel(r"$Z$", fontsize="large")
-            plt.ylabel(r"$A - 2Z$", fontsize="large")
+            ax.set_xlabel(r"$Z$", fontsize="large")
+            ax.set_ylabel(r"$A - 2Z$", fontsize="large")
 
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
@@ -2488,8 +2520,8 @@ class RateCollection:
             fig.suptitle(title)
 
         if outfile is not None:
-            plt.tight_layout()
-            plt.savefig(outfile, dpi=dpi)
+            fig.tight_layout()
+            fig.savefig(outfile, dpi=dpi)
 
         return fig
 
@@ -2757,11 +2789,11 @@ class RateCollection:
         cbar_label : str
             Colorbar label.
         cbar_bounds : list, tuple
-             Explicit colorbar bounds.
+            Explicit colorbar bounds.
         cbar_format : str, matplotlib.ticker.Formatter
-             Format string or formatter object for the colorbar ticks.
+            Format string or formatter object for the colorbar ticks.
         cbar_ticks : int
-             Number of ticks to use on the colorbar
+            Number of ticks to use on the colorbar
 
         Returns
         -------
