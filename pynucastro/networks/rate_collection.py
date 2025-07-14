@@ -2260,7 +2260,7 @@ class RateCollection:
         matplotlib.figure.Figure
         """
 
-        fig = plt.figure(figsize=size)
+        fig = plt.figure(figsize=(size[0]/dpi, size[1]/dpi))
 
         # we'll use a grid spec of 2 x 2.  We can merge columns / rows
         # as needed to give us the flexibility to have colorbars
@@ -2513,8 +2513,6 @@ class RateCollection:
                              length_includes_head=True)
                     ax.text(legend_coord[1]+dN+eps, legend_coord[0]+dZ+eps,
                             label, fontsize="small")
-
-        fig.set_size_inches(size[0]/dpi, size[1]/dpi)
 
         if title is not None:
             fig.suptitle(title)
