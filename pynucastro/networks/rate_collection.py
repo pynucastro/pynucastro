@@ -2356,8 +2356,23 @@ class RateCollection:
                                node_color=colors, alpha=1.0,
                                node_shape=node_shape, node_size=node_size, linewidths=2.0, ax=ax)
 
+        if color_nodes_by_abundance:
+            node_font_color = {}
+            for n in node_nuclei:
+                try:
+                    r, g, b = get_node_color(n)[:3]
+                    # simple rgb -> luminance conversion
+                    # see: https://en.wikipedia.org/wiki/Luma_(video)
+                    luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
+                    node_font_color[n] = "black" if luminance > 0.5 else "white"
+                except KeyError:
+                    # hidden nucleus
+                    node_font_color[n] = "white"
+        else:
+            node_font_color = "w"
+
         nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
-                                font_size=node_font_size, font_color="w", ax=ax)
+                                font_size=node_font_size, font_color=node_font_color, ax=ax)
 
         # now we'll draw edges in two groups -- real links and approximate links
 
