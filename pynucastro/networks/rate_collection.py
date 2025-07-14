@@ -2260,7 +2260,8 @@ class RateCollection:
         matplotlib.figure.Figure
         """
 
-        fig = plt.figure(figsize=(size[0]/dpi, size[1]/dpi))
+        fig = plt.figure(constrained_layout=True,
+                         figsize=(size[0]/dpi, size[1]/dpi))
 
         # we'll use a grid spec of 2 x 2.  We can merge columns / rows
         # as needed to give us the flexibility to have colorbars
@@ -2518,7 +2519,6 @@ class RateCollection:
             fig.suptitle(title)
 
         if outfile is not None:
-            fig.tight_layout()
             fig.savefig(outfile, dpi=dpi)
 
         return fig
