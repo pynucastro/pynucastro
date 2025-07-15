@@ -2542,9 +2542,11 @@ class RateCollection:
 
     def plot_network_chart(self, rho=None, T=None, comp=None, *,
                            outfile=None,
-                           size=(800, 800), dpi=100, force_one_column=False):
-        """
-        Plot a heatmap showing which rates are affected by which nuclei.
+                           size=(800, 800), dpi=100,
+                           force_one_column=False,
+                           plot_to_cbar_ratio=20):
+        """Plot a heatmap showing which rates are affected by which
+        nuclei.
 
         Parameters
         ----------
@@ -2554,11 +2556,21 @@ class RateCollection:
             temperature used to evaluate rates
         comp : Composition
             composition used to evaluate rates
-        outfile
+        outfile : str
+            filename to output image
+        size : Iterable(int)
+            image dimensions in pixels
+        dpi : int
+            dots per inch for physical size of image
+        force_one_column : bool
+            do we insist on a single column for the plot?
+        plot_to_cbar_ratio : float
+            ratio of main axes to colorbar size
 
         Returns
         -------
         matplotlib.figure.Figure
+
         """
 
         nc = self._get_network_chart(rho, T, comp)
@@ -2589,23 +2601,31 @@ class RateCollection:
         if force_one_column:
             npanes = 1
 
-        fig, _ax = plt.subplots(1, npanes, constrained_layout=True)
+        fig = plt.figure(constrained_layout=True,
+                         figsize=(size[0]/dpi, size[1]/dpi))
 
-        fig.set_size_inches(size[0]/dpi, size[1]/dpi)
-
-        if npanes == 1:
-            drate = len(self.rates)
-        else:
+        if npanes == 2:
+            # we'll use a grid spec of 3x1 and make the main plot
+            # areas and colorbar from it (colorbar on the right)
+            gs = mpl.gridspec.GridSpec(figure=fig,
+                                       nrows=1, ncols=3,
+                                       width_ratios=[plot_to_cbar_ratio, plot_to_cbar_ratio, 1])
             drate = (len(self.rates) + 1) // 2
+        else:
+            # colorbar on the bottom
+            drate = len(self.rates)
+            gs = mpl.gridspec.GridSpec(figure=fig,
+                                       nrows=2, ncols=1,
+                                       height_ratios=[plot_to_cbar_ratio, 1])
 
         _rates = sorted(self.rates)
 
         for ipane in range(npanes):
 
             if npanes == 2:
-                ax = _ax[ipane]
+                ax = fig.add_subplot(gs[0, ipane])
             else:
-                ax = _ax
+                ax = fig.add_subplot(gs[0, 0])
 
             istart = ipane * drate
             iend = min((ipane + 1) * drate - 1, len(self.rates)-1)
@@ -2627,10 +2647,15 @@ class RateCollection:
                         data[irow, icol] = ydot
 
             # each pane has all the nuclei
-            ax.set_xticks(np.arange(len(self.unique_nuclei)), labels=[f"${n.pretty}$" for n in self.unique_nuclei], rotation=90)
+            ax.set_xticks(np.arange(len(self.unique_nuclei)),
+                          labels=[f"${n.pretty}$"
+                                  for n in self.unique_nuclei], rotation=90)
 
             # each pane only has its subset of rates
-            ax.set_yticks(np.arange(nrates), labels=[f"{r.pretty_string}" for irate, r in enumerate(_rates) if istart <= irate <= iend])
+            ax.set_yticks(np.arange(nrates),
+                          labels=[f"{r.pretty_string}"
+                                  for irate, r in enumerate(_rates)
+                                  if istart <= irate <= iend])
 
             im = ax.imshow(data, norm=norm, cmap=plt.cm.bwr)
 
@@ -2642,12 +2667,15 @@ class RateCollection:
             ax.set_xticks(np.arange(data.shape[1]+1)-.5, minor=True)
             ax.set_yticks(np.arange(data.shape[0]+1)-.5, minor=True)
             ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
-            ax.tick_params(which="minor", bottom=False, left=False)
+            ax.tick_params(which="minor", bottom=False, left=False,
+                           labelsize=8)
 
         if npanes == 1:
-            fig.colorbar(im, ax=ax, orientation="horizontal", shrink=0.75)
+            cax = fig.add_subplot(gs[1, 0])
+            fig.colorbar(im, cax=cax, orientation="horizontal")
         else:
-            fig.colorbar(im, ax=ax, orientation="vertical", shrink=0.25)
+            cax = fig.add_subplot(gs[0, 2])
+            fig.colorbar(im, cax=cax, orientation="vertical")
 
         if outfile is not None:
             fig.savefig(outfile, bbox_inches="tight")
