@@ -2544,6 +2544,7 @@ class RateCollection:
                            outfile=None,
                            size=(800, 800), dpi=100,
                            force_one_column=False,
+                           max_ydot_ratio=1.e15,
                            plot_to_cbar_ratio=20):
         """Plot a heatmap showing which rates are affected by which
         nuclei.
@@ -2564,6 +2565,8 @@ class RateCollection:
             dots per inch for physical size of image
         force_one_column : bool
             do we insist on a single column for the plot?
+        max_ydot_ratio : float
+            ratio between maximum ydot and minimum shown in the plot
         plot_to_cbar_ratio : float
             ratio of main axes to colorbar size
 
@@ -2585,7 +2588,7 @@ class RateCollection:
         valid_max = np.abs(_ydot[_ydot != 0]).max()
 
         # pylint: disable-next=redundant-keyword-arg
-        norm = SymLogNorm(valid_max/1.e15, vmin=-valid_max, vmax=valid_max)
+        norm = SymLogNorm(valid_max/max_ydot_ratio, vmin=-valid_max, vmax=valid_max)
 
         # if there are a lot of rates, we split the network chart into
         # two side-by-side panes, with the first half of the rates on
