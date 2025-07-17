@@ -193,8 +193,10 @@ class FermiIntegral:
             xsq = x * x
             sqrt_term = np.sqrt(1.0 + 0.5 * x * x * beta)
             num = 2.0 * x**(2*k + 1.0) * sqrt_term
-            denomi = 1.0 / (np.exp(xsq - eta) + 1.0)
             test = xsq - eta < -700.0
+            denomi = 1.0
+            if not test:
+                denomi = 1.0 / (np.exp(xsq - eta) + 1.0)
 
             # now construct the integrand for what we are actual computing
             if eta_der == 0 and beta_der == 0:
