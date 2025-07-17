@@ -1,11 +1,10 @@
 # unit tests for rates
+import numpy as np
 from pytest import approx
 
-import numpy as np
-
+from pynucastro import Composition
 from pynucastro.constants import constants
 from pynucastro.eos import ElectronEOS
-from pynucastro import Composition
 
 
 def zero_temperature_eos(rho, comp):

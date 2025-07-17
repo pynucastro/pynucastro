@@ -3,5 +3,5 @@ of stellar material."""
 
 #__all__ = [fermi_integrals]
 
-from .fermi_integrals import FermiIntegral
 from .electron_eos import ElectronEOS
+from .fermi_integrals import FermiIntegral

@@ -1,12 +1,11 @@
-import numpy as np
-
 from collections import namedtuple
 
-from pynucastro.constants import constants
-from .fermi_integrals import FermiIntegral
-
+import numpy as np
 from scipy.optimize import brentq
 
+from pynucastro.constants import constants
+
+from .fermi_integrals import FermiIntegral
 
 EOSState = namedtuple("EOSState", ["p_e", "e_e", "eta"])
 
@@ -27,7 +26,7 @@ class ElectronEOS:
         self.include_positrons = include_positrons
 
     def pe_state(self, rho, T, comp, *,
-                 eta_guess_range=[-500, 1.e7]):
+                 eta_guess_min=-500, eta_guess_max=1.e7):
         """Find the pressure and energy given density, temperature,
         and composition
 
@@ -71,7 +70,7 @@ class ElectronEOS:
                 return coeff * (f12.F + beta * f32.F)
 
             eta = brentq(lambda eta: n_e - n_e_fermi(eta),
-                         eta_guess_range[0], eta_guess_range[1])
+                         eta_guess_min, eta_guess_max)
 
         # compute the pressure and energy
         pcoeff = coeff * (2.0 / 3.0) * constants.m_e * constants.c_light**2 * beta
