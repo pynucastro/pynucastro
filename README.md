@@ -158,7 +158,7 @@ In [10]: fig.savefig("c-net.png")
 After the network is created, we see messages saying that a number
 of reverse rates were rederived using detailed balance.
 
-The resulting figure appears is:
+The resulting figure is:
 
 ![](https://raw.githubusercontent.com/pynucastro/pynucastro/main/examples/c-net.png)
 
