@@ -46,10 +46,10 @@ class DerivedRate(ReacLibRate):
             raise ValueError('The rate is reverse or weak or tabular')
 
         if not all(nuc.spin_states for nuc in self.rate.reactants):
-            raise ValueError('One of the reactants spin ground state, is not defined')
+            raise ValueError(f'One of the reactants spin ground state ({self.rate.reactants}), is not defined')
 
         if not all(nuc.spin_states for nuc in self.rate.products):
-            raise ValueError('One of the products spin ground state, is not defined')
+            raise ValueError(f'One of the products spin ground state ({self.rate.products}), is not defined')
 
         derived_sets = []
 
