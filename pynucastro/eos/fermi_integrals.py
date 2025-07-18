@@ -134,12 +134,18 @@ def _kernel_p(x, k, eta, beta,
     xsq = x * x
     sqrt_term = np.sqrt(1.0 + 0.5 * x * x * beta)
     num = 2.0 * x**(2*k + 1.0) * sqrt_term
-    denomi = 1.0 / (np.exp(xsq - eta) + 1.0)
-    test = xsq - eta < -700.0
+    testm = xsq - eta < -700.0
+    testp = xsq - eta > 700.0
+    if testm:
+        denomi = 1.0
+    elif testp:
+        denomi = 0.0
+    else:
+        denomi = 1.0 / (np.exp(xsq - eta) + 1.0)
 
     # now construct the integrand for what we are actual computing
     if eta_der == 0 and beta_der == 0:
-        if test:
+        if testm:
             result = num
         else:
             result = num * denomi
@@ -147,13 +153,13 @@ def _kernel_p(x, k, eta, beta,
     elif eta_der == 1 and beta_der == 0:
         # this is IB = 1 from Gong et al.
         # this corresponds to eq A.1 in terms of x**2
-        if not test:
+        if not testm:
             result = num / (np.exp(xsq - eta) + 2.0 + np.exp(eta - xsq))
 
     elif eta_der == 0 and beta_der == 1:
         # this is IB = 2 from Gong et al.
         # this corresponds to eq A.2 in terms of x**2
-        if test:
+        if testm:
             result = 0.5 * x**(2.0*k + 3.0) / sqrt_term
         else:
             result = 0.5 * x**(2.0*k + 3.0) * denomi / sqrt_term
@@ -161,21 +167,21 @@ def _kernel_p(x, k, eta, beta,
     elif eta_der == 2 and beta_der == 0:
         # this is IB = 3 from Gong et al.
         # this corresponds to eq A.3 in terms of x**2
-        if not test:
+        if not testm:
             result = num / (np.exp(xsq - eta) + 2.0 + np.exp(eta - xsq)) * \
                 ((np.exp(xsq - eta) - 1.0) / (np.exp(xsq - eta) + 1.0))
 
     elif eta_der == 1 and beta_der == 1:
         # this is IB = 4 from Gong et al.
         # this corresponds to eq A.4 in terms of x**2
-        if not test:
+        if not testm:
             result = 0.5 * x**(2.0*k + 3.0) / \
                 (np.exp(xsq - eta) + 2.0 + np.exp(eta - xsq)) / sqrt_term
 
     elif eta_der == 0 and beta_der == 2:
         # this is IB = 5 from Gong et al.
         # this corresponds to eq A.5 in terms of x**2
-        if test:
+        if testm:
             result = -0.125 * x**(2.0*k + 5.0) / sqrt_term**3
         else:
             result = -0.125 * x**(2.0*k + 5.0) * denomi / sqrt_term**3
