@@ -7,7 +7,9 @@ from pynucastro.constants import constants
 
 from .fermi_integrals import FermiIntegral
 
-EOSState = namedtuple("EOSState", ["p_e", "e_e", "p_pos", "e_pos", "eta"])
+EOSState = namedtuple("EOSState", ["n_e", "p_e", "e_e",
+                                   "n_pos", "p_pos", "e_pos",
+                                   "eta"])
 
 
 class ElectronEOS:
@@ -22,11 +24,11 @@ class ElectronEOS:
 
     """
 
-    def __init__(self, include_positrons=False):
+    def __init__(self, include_positrons=True):
         self.include_positrons = include_positrons
 
     def pe_state(self, rho, T, comp, *,
-                 eta_guess_min=-500, eta_guess_max=1.e7):
+                 eta_guess_min=-100, eta_guess_max=1.e7):
         """Find the pressure and energy given density, temperature,
         and composition
 
@@ -54,7 +56,10 @@ class ElectronEOS:
         # our Fermi integrals will use a dimensionless temperature
         beta = constants.k * T / (constants.m_e * constants.c_light**2)
 
-        coeff = 8 * np.pi * np.sqrt(2) * (constants.m_e * constants.c_light / constants.h)**3 * beta**1.5
+        inv_compton_wavelength = constants.m_e * constants.c_light / constants.h
+        rest_mass = constants.m_e * constants.c_light**2
+
+        coeff = 8 * np.pi * np.sqrt(2) * inv_compton_wavelength**3 * beta**1.5
 
         def n_e_fermi(eta):
             f12 = FermiIntegral(0.5, eta, beta)
@@ -87,9 +92,12 @@ class ElectronEOS:
         # for positrons
         eta_pos = -eta - 2.0/beta
 
-        # compute the pressure and energy
-        pcoeff = coeff * (2.0 / 3.0) * constants.m_e * constants.c_light**2 * beta
-        ecoeff = coeff * constants.m_e * constants.c_light**2 * beta
+        # compute the number density, pressure and energy
+        pcoeff = coeff * (2.0 / 3.0) * rest_mass * beta
+        ecoeff = coeff * rest_mass * beta
+
+        f12 = FermiIntegral(0.5, eta, beta)
+        f12.evaluate(do_first_derivs=False, do_second_derivs=False)
 
         f32 = FermiIntegral(1.5, eta, beta)
         f32.evaluate(do_first_derivs=False, do_second_derivs=False)
@@ -97,20 +105,28 @@ class ElectronEOS:
         f52 = FermiIntegral(2.5, eta, beta)
         f52.evaluate(do_first_derivs=False, do_second_derivs=False)
 
+        n_e = coeff * (f12.F + beta * f32.F)
         p_e = pcoeff * (f32.F + 0.5 * beta * f52.F)
         e_e = ecoeff * (f32.F + beta * f52.F) / rho
 
+        n_pos = 0.0
         p_pos = 0.0
         e_pos = 0.0
 
         if self.include_positrons:
+            f12_pos = FermiIntegral(0.5, eta_pos, beta)
+            f12_pos.evaluate(do_first_derivs=False, do_second_derivs=False)
+
             f32_pos = FermiIntegral(1.5, eta_pos, beta)
             f32_pos.evaluate(do_first_derivs=False, do_second_derivs=False)
 
             f52_pos = FermiIntegral(2.5, eta_pos, beta)
             f52_pos.evaluate(do_first_derivs=False, do_second_derivs=False)
 
+            n_pos = coeff * (f12_pos.F + beta * f32_pos.F)
             p_pos = pcoeff * (f32_pos.F + 0.5 * beta * f52_pos.F)
             e_pos = ecoeff * (f32_pos.F + beta * f52_pos.F) / rho
 
-        return EOSState(eta=eta, p_e=p_e, e_e=e_e, p_pos=p_pos, e_pos=e_pos)
+        return EOSState(eta=eta,
+                        n_e=n_e, p_e=p_e, e_e=e_e,
+                        n_pos=n_pos, p_pos=p_pos, e_pos=e_pos)

@@ -74,3 +74,29 @@ class TestElectronEOS:
             p_ideal = ideal_gas(rho, T, comp)
 
             assert es.p_e == approx(p_ideal, rel=1.e-4)
+
+    def test_positrons(self):
+        # at low densities and high temperatures (T ~ 1.e10 K), we
+        # should have a lot of positrons
+
+        e = ElectronEOS(include_positrons=True)
+        comp = Composition(["h1", "he4", "c12", "ne22"])
+        comp.set_equal()
+
+        # too cold to have positrons (kT << 2 m_e c**2)
+
+        rho = 1.e4
+        T = 1.e6
+
+        es = e.pe_state(rho, T, comp)
+
+        assert es.n_pos == 0.0
+
+        # positrons and electrons are almost equal
+
+        rho = 1.e4
+        T = 1.e10
+
+        es = e.pe_state(rho, T, comp)
+
+        assert es.n_pos == approx(es.n_e, rel=1.e-3)
