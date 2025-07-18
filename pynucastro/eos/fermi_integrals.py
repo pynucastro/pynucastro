@@ -102,7 +102,11 @@ class BreakPoints:
 
         """
 
-        xi = np.log(1.0 + np.exp(self.sigma * (eta - self.D))) / self.sigma
+        term = self.sigma * (eta - self.D)
+        if term <= 50:
+            xi = np.log(1.0 + np.exp(term)) / self.sigma
+        else:
+            xi = eta - self.D
 
         X_a = ((self.a[0] + self.b[0] * xi + self.c[0] * xi**2) /
                (1.0 + self.c[0] * xi))
