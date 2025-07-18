@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.eos.fermi_integrals &#8212; pynucastro 2.6.0.post50+gc59213ae8 documentation</title>
+    <title>pynucastro.eos.fermi_integrals &#8212; pynucastro 2.6.0.post51+ga934dfc52 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=199e998a"></script>
+    <script src="../../../_static/documentation_options.js?v=55e2444f"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -496,6 +496,7 @@ document.write(`
 
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">numba</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.quadrature_weights</span><span class="w"> </span><span class="kn">import</span> <span class="n">w_lag</span><span class="p">,</span> <span class="n">w_leg</span><span class="p">,</span> <span class="n">x_lag</span><span class="p">,</span> <span class="n">x_leg</span>
@@ -608,6 +609,123 @@ document.write(`
 
 
 
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_kernel_p</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span>
+              <span class="n">eta_der</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">beta_der</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="c1"># we want to work in terms of x**2</span>
+    <span class="c1"># see Aparicio 1998 (but note they are missing a factor of 2</span>
+    <span class="c1"># in the conversion from x to z).</span>
+
+    <span class="n">xsq</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>
+    <span class="n">sqrt_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">beta</span><span class="p">)</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">k</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">sqrt_term</span>
+    <span class="n">denomi</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">test</span> <span class="o">=</span> <span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">700.0</span>
+
+    <span class="c1"># now construct the integrand for what we are actual computing</span>
+    <span class="k">if</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">num</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">num</span> <span class="o">*</span> <span class="n">denomi</span>
+
+    <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># this is IB = 1 from Gong et al.</span>
+        <span class="c1"># this corresponds to eq A.1 in terms of x**2</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">test</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">xsq</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># this is IB = 2 from Gong et al.</span>
+        <span class="c1"># this corresponds to eq A.2 in terms of x**2</span>
+        <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">k</span> <span class="o">+</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">sqrt_term</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">k</span> <span class="o">+</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">denomi</span> <span class="o">/</span> <span class="n">sqrt_term</span>
+
+    <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># this is IB = 3 from Gong et al.</span>
+        <span class="c1"># this corresponds to eq A.3 in terms of x**2</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">test</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">xsq</span><span class="p">))</span> <span class="o">*</span> \
+                <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># this is IB = 4 from Gong et al.</span>
+        <span class="c1"># this corresponds to eq A.4 in terms of x**2</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">test</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">k</span> <span class="o">+</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">/</span> \
+                <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">xsq</span><span class="p">))</span> <span class="o">/</span> <span class="n">sqrt_term</span>
+
+    <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="c1"># this is IB = 5 from Gong et al.</span>
+        <span class="c1"># this corresponds to eq A.5 in terms of x**2</span>
+        <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.125</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">k</span> <span class="o">+</span> <span class="mf">5.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">sqrt_term</span><span class="o">**</span><span class="mi">3</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.125</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">k</span> <span class="o">+</span> <span class="mf">5.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">denomi</span> <span class="o">/</span> <span class="n">sqrt_term</span><span class="o">**</span><span class="mi">3</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="nd">@numba</span><span class="o">.</span><span class="n">njit</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_kernel_E</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span>
+              <span class="n">eta_der</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">beta_der</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="c1"># we will work in terms of x</span>
+
+    <span class="n">sqrt_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">beta</span><span class="p">)</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="n">k</span> <span class="o">*</span> <span class="n">sqrt_term</span>
+    <span class="n">test</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">eta</span> <span class="o">&lt;</span> <span class="mi">700</span>
+    <span class="n">denomi</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+        <span class="n">denomi</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="c1"># now construct the integrand for what we are actual computing</span>
+    <span class="k">if</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">num</span> <span class="o">*</span> <span class="n">denomi</span>
+
+    <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># this is IB = 1 from Gong et al.</span>
+        <span class="c1"># this corresponds to eq A.1</span>
+        <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">x</span><span class="p">))</span>
+
+    <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># this is IB = 2 from Gong et al.</span>
+        <span class="c1"># this corresponds to eq A.2</span>
+        <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">denomi</span> <span class="o">/</span> <span class="n">sqrt_term</span>
+
+    <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># this is IB = 3 from Gong et al.</span>
+        <span class="c1"># this corresponds to eq A.3</span>
+        <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">x</span><span class="p">))</span> <span class="o">*</span> \
+                <span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">x</span><span class="p">)))</span>
+
+    <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># this is IB = 4 from Gong et al.</span>
+        <span class="c1"># this corresponds to eq A.4</span>
+        <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> \
+                <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="n">sqrt_term</span>
+
+    <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="c1"># this is IB = 5 from Gong et al.</span>
+        <span class="c1"># this corresponds to eq A.5</span>
+        <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.0625</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">denomi</span> <span class="o">/</span> <span class="n">sqrt_term</span><span class="o">**</span><span class="mi">3</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+
 <div class="viewcode-block" id="FermiIntegral">
 <a class="viewcode-back" href="../../../pynucastro.eos.fermi_integrals.html#pynucastro.eos.fermi_integrals.FermiIntegral">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FermiIntegral</span><span class="p">:</span>
@@ -662,140 +780,9 @@ document.write(`
         <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;d²F/dβ²  = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">d2F_dbeta2</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">fstr</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_integrand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-                   <span class="n">eta_der</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">beta_der</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                   <span class="n">interval</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-
-        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">eta_der</span> <span class="o">&lt;=</span> <span class="mi">2</span>
-        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">beta_der</span> <span class="o">&lt;=</span> <span class="mi">2</span>
-
-        <span class="n">eta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta</span>
-        <span class="n">beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span>
-        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span>
-
-        <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
-
-        <span class="k">if</span> <span class="n">interval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="c1"># we want to work in terms of x**2</span>
-            <span class="c1"># see Aparicio 1998 (but note they are missing a factor of 2</span>
-            <span class="c1"># in the conversion from x to z).</span>
-
-            <span class="n">xsq</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>
-            <span class="n">sqrt_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">beta</span><span class="p">)</span>
-            <span class="n">num</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">k</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">sqrt_term</span>
-            <span class="n">denomi</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span>
-            <span class="n">test</span> <span class="o">=</span> <span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">700.0</span>
-
-            <span class="c1"># now construct the integrand for what we are actual computing</span>
-            <span class="k">if</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="n">num</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="n">num</span> <span class="o">*</span> <span class="n">denomi</span>
-
-            <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="c1"># this is IB = 1 from Gong et al.</span>
-                <span class="c1"># this corresponds to eq A.1 in terms of x**2</span>
-                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">xsq</span><span class="p">))</span>
-
-            <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="c1"># this is IB = 2 from Gong et al.</span>
-                <span class="c1"># this corresponds to eq A.2 in terms of x**2</span>
-                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">k</span> <span class="o">+</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">sqrt_term</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">k</span> <span class="o">+</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">denomi</span> <span class="o">/</span> <span class="n">sqrt_term</span>
-
-            <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="c1"># this is IB = 3 from Gong et al.</span>
-                <span class="c1"># this corresponds to eq A.3 in terms of x**2</span>
-                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">xsq</span><span class="p">))</span> <span class="o">*</span> \
-                        <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">))</span>
-
-            <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="c1"># this is IB = 4 from Gong et al.</span>
-                <span class="c1"># this corresponds to eq A.4 in terms of x**2</span>
-                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="mf">0.0</span>
-                <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">k</span> <span class="o">+</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">/</span> \
-                    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">xsq</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">xsq</span><span class="p">))</span> <span class="o">/</span> <span class="n">sqrt_term</span>
-
-            <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="c1"># this is IB = 5 from Gong et al.</span>
-                <span class="c1"># this corresponds to eq A.5 in terms of x**2</span>
-                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.125</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">k</span> <span class="o">+</span> <span class="mf">5.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">sqrt_term</span><span class="o">**</span><span class="mi">3</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.125</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">k</span> <span class="o">+</span> <span class="mf">5.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">denomi</span> <span class="o">/</span> <span class="n">sqrt_term</span><span class="o">**</span><span class="mi">3</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># we will work in terms of x</span>
-
-            <span class="n">sqrt_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">beta</span><span class="p">)</span>
-            <span class="n">num</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="n">k</span> <span class="o">*</span> <span class="n">sqrt_term</span>
-            <span class="n">test</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">eta</span> <span class="o">&lt;</span> <span class="mi">700</span>
-            <span class="n">denomi</span> <span class="o">=</span> <span class="mf">1.0</span>
-            <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
-                <span class="n">denomi</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span>
-
-            <span class="c1"># now construct the integrand for what we are actual computing</span>
-            <span class="k">if</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="n">num</span> <span class="o">*</span> <span class="n">denomi</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
-
-            <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="c1"># this is IB = 1 from Gong et al.</span>
-                <span class="c1"># this corresponds to eq A.1</span>
-                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">x</span><span class="p">))</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
-
-            <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="c1"># this is IB = 2 from Gong et al.</span>
-                <span class="c1"># this corresponds to eq A.2</span>
-                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">denomi</span> <span class="o">/</span> <span class="n">sqrt_term</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
-
-            <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="c1"># this is IB = 3 from Gong et al.</span>
-                <span class="c1"># this corresponds to eq A.3</span>
-                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">x</span><span class="p">))</span> <span class="o">*</span> \
-                        <span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">x</span><span class="p">)))</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
-
-            <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="c1"># this is IB = 4 from Gong et al.</span>
-                <span class="c1"># this corresponds to eq A.4</span>
-                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> \
-                        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">eta</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">eta</span> <span class="o">-</span> <span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="n">sqrt_term</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
-
-            <span class="k">elif</span> <span class="n">eta_der</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">beta_der</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="c1"># this is IB = 5 from Gong et al.</span>
-                <span class="c1"># this corresponds to eq A.5</span>
-                <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.0625</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">denomi</span> <span class="o">/</span> <span class="n">sqrt_term</span><span class="o">**</span><span class="mi">3</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.0</span>
-
-        <span class="k">return</span> <span class="n">result</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_legendre</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_legendre</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span>
+                          <span class="n">k</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span>
+                          <span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="p">):</span>
 
         <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_leg</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span>
 
@@ -804,19 +791,22 @@ document.write(`
         <span class="c1"># We set the correspondence (a+b)/2 -&gt; 0 and map the (-1,0) and (0,1)</span>
         <span class="c1"># intervals separately.</span>
 
+        <span class="n">fac1</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">fac2</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+
         <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x_leg</span><span class="p">[</span><span class="n">N</span><span class="p">:],</span> <span class="n">w_leg</span><span class="p">[</span><span class="n">N</span><span class="p">:]):</span>
-            <span class="n">x_1</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">root</span>
-            <span class="n">x_2</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">root</span>
-            <span class="n">qder_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integrand</span><span class="p">(</span><span class="n">x_1</span><span class="p">,</span> <span class="n">eta_der</span><span class="o">=</span><span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="o">=</span><span class="n">beta_der</span><span class="p">,</span>
-                                     <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">)</span>
-            <span class="n">qder_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integrand</span><span class="p">(</span><span class="n">x_2</span><span class="p">,</span> <span class="n">eta_der</span><span class="o">=</span><span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="o">=</span><span class="n">beta_der</span><span class="p">,</span>
-                                     <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">)</span>
+            <span class="n">x_1</span> <span class="o">=</span> <span class="n">fac1</span> <span class="o">+</span> <span class="n">fac2</span> <span class="o">*</span> <span class="n">root</span>
+            <span class="n">x_2</span> <span class="o">=</span> <span class="n">fac1</span> <span class="o">-</span> <span class="n">fac2</span> <span class="o">*</span> <span class="n">root</span>
+            <span class="n">qder_1</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">(</span><span class="n">x_1</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span>
+                            <span class="n">eta_der</span><span class="o">=</span><span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="o">=</span><span class="n">beta_der</span><span class="p">)</span>
+            <span class="n">qder_2</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">(</span><span class="n">x_2</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span>
+                            <span class="n">eta_der</span><span class="o">=</span><span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="o">=</span><span class="n">beta_der</span><span class="p">)</span>
             <span class="n">integral</span> <span class="o">+=</span> <span class="p">(</span><span class="n">qder_1</span> <span class="o">+</span> <span class="n">qder_2</span><span class="p">)</span> <span class="o">*</span> <span class="n">weight</span>
 
-        <span class="n">integral</span> <span class="o">*=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">integral</span> <span class="o">*=</span> <span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
         <span class="k">return</span> <span class="n">integral</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_laguerre</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_laguerre</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="p">):</span>
 
         <span class="c1"># Laguerre quadrature solves and integral of the form:</span>
         <span class="c1">#</span>
@@ -843,13 +833,15 @@ document.write(`
         <span class="c1">#</span>
         <span class="c1">#             ~ ∑ f(x_i) w_i exp(x) f(x + a)</span>
 
-        <span class="n">integral</span> <span class="o">=</span> <span class="mi">0</span>
-
         <span class="c1"># note: the w_lag already have the exp(x) term included</span>
-        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x_lag</span><span class="p">,</span> <span class="n">w_lag</span><span class="p">):</span>
-            <span class="n">I</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integrand</span><span class="p">(</span><span class="n">root</span> <span class="o">+</span> <span class="n">a</span><span class="p">,</span> <span class="n">eta_der</span><span class="o">=</span><span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="o">=</span><span class="n">beta_der</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">I</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
-                <span class="n">integral</span> <span class="o">+=</span> <span class="n">I</span> <span class="o">*</span> <span class="n">weight</span>
+        <span class="c1"># for root, weight in zip(x_lag, w_lag):</span>
+        <span class="c1">#     I = _kernel_E(root + a, self.k, self.eta, self.beta,</span>
+        <span class="c1">#                   eta_der=eta_der, beta_der=beta_der)</span>
+        <span class="c1">#     integral += I * weight</span>
+
+        <span class="n">integral</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">_kernel_E</span><span class="p">(</span><span class="n">root</span> <span class="o">+</span> <span class="n">a</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span>
+                                 <span class="n">eta_der</span><span class="o">=</span><span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="o">=</span><span class="n">beta_der</span><span class="p">)</span> <span class="o">*</span> <span class="n">weight</span> <span class="k">for</span>
+                       <span class="n">root</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x_lag</span><span class="p">,</span> <span class="n">w_lag</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">integral</span>
 
@@ -867,14 +859,17 @@ document.write(`
 
         <span class="n">S_1</span><span class="p">,</span> <span class="n">S_2</span><span class="p">,</span> <span class="n">S_3</span> <span class="o">=</span> <span class="n">bp</span><span class="o">.</span><span class="n">get_points</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eta</span><span class="p">)</span>
 
-        <span class="n">I0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_legendre</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">S_1</span><span class="p">),</span>
-                                    <span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">I0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_legendre</span><span class="p">(</span><span class="n">_kernel_p</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">S_1</span><span class="p">),</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span>
+                                    <span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="p">)</span>
 
-        <span class="n">I1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_legendre</span><span class="p">(</span><span class="n">S_1</span><span class="p">,</span> <span class="n">S_2</span><span class="p">,</span>
-                                    <span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">I1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_legendre</span><span class="p">(</span><span class="n">_kernel_E</span><span class="p">,</span> <span class="n">S_1</span><span class="p">,</span> <span class="n">S_2</span><span class="p">,</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span>
+                                    <span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="p">)</span>
 
-        <span class="n">I2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_legendre</span><span class="p">(</span><span class="n">S_2</span><span class="p">,</span> <span class="n">S_3</span><span class="p">,</span>
-                                    <span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">I2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_legendre</span><span class="p">(</span><span class="n">_kernel_E</span><span class="p">,</span> <span class="n">S_2</span><span class="p">,</span> <span class="n">S_3</span><span class="p">,</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span>
+                                    <span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="p">)</span>
 
         <span class="n">I3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_laguerre</span><span class="p">(</span><span class="n">S_3</span><span class="p">,</span> <span class="n">eta_der</span><span class="p">,</span> <span class="n">beta_der</span><span class="p">)</span>
 
