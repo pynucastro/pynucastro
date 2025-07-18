@@ -54,10 +54,10 @@ class ElectronEOS:
         n_e = (zbar / abar) * constants.N_A * rho
 
         # our Fermi integrals will use a dimensionless temperature
-        beta = constants.k * T / (constants.m_e * constants.c_light**2)
-
         inv_compton_wavelength = constants.m_e * constants.c_light / constants.h
         rest_mass = constants.m_e * constants.c_light**2
+
+        beta = constants.k * T / rest_mass
 
         coeff = 8 * np.pi * np.sqrt(2) * inv_compton_wavelength**3 * beta**1.5
 
