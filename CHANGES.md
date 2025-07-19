@@ -2,10 +2,16 @@
 
 ## 2.7.0
 
+  * Improved error messages for `DerivedRate` (#1064)
+
+  * Removed `setup.py` and `setup.cfg` (#1056)
+
+  * Added pydocstyle CI (#1052)
+
   * Make library warnings more informative (#1049)
 
   * add a class that computes the Fermi-Dirac integrals (#1039, #1040,
-    #1041, #1047)
+    #1041, #1047, #1057)
 
   * added a new `network_helper` function to make simple networks
     more easily (#1025)
@@ -38,7 +44,8 @@
     added (#990, #991)
 
   * general documentation fixes and API links (#980, #982, #984, #985,
-    #987, #988, #1026, #1030, #1031, #1032, #1033, #1034, #1044)
+    #987, #988, #1026, #1030, #1031, #1032, #1033, #1034, #1044,
+    #1061, #1062, #1063)
 
   * add CI testing on MacOS (#1035)
 
