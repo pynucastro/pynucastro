@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Screening Rates &#8212; pynucastro 2.6.0.post53+gf3bc19a20 documentation</title>
+    <title>Screening Rates &#8212; pynucastro 2.6.0.post55+g8ff11f444 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=76c4921f"></script>
+    <script src="_static/documentation_options.js?v=27bb7bb4"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -583,10 +583,10 @@ document.write(`
 <h2>Screening implementations<a class="headerlink" href="#screening-implementations" title="Link to this heading">#</a></h2>
 <p>pynucastro currently has 4 screening implementations:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">screen5</span></code> based on <span id="id1">Wallace <em>et al.</em> [<a class="reference internal" href="zreferences.html#id29" title="R. K. Wallace, S. E. Woosley, and T. A. Weaver. The thermonuclear model for X-ray transients. \apj , 258:696-715, July 1982. doi:10.1086/160119.">1982</a>]</span></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">potekhin_1998</span></code> based on <span id="id2">Chabrier and Potekhin [<a class="reference internal" href="zreferences.html#id8" title="Gilles Chabrier and Alexander Y. Potekhin. Equation of state of fully ionized electron-ion plasmas. Physical Review E, 58(4):4941–4949, October 1998. doi:10.1103/PhysRevE.58.4941.">1998</a>]</span></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">chugunov_2007</span></code> based on <span id="id3">Chugunov <em>et al.</em> [<a class="reference internal" href="zreferences.html#id4" title="A. I. Chugunov, H. E. DeWitt, and D. G. Yakovlev. Coulomb tunneling for fusion reactions in dense matter: Path integral Monte Carlo versus mean field. Physical Review D, 76(2):025028, July 2007. arXiv:0707.3500, doi:10.1103/PhysRevD.76.025028.">2007</a>]</span></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">chugunov_2009</span></code> based on <span id="id4">Chugunov and DeWitt [<a class="reference internal" href="zreferences.html#id6" title="A. I. Chugunov and H. E. DeWitt. Nuclear fusion reaction rates for strongly coupled ionic mixtures. Physical Review C, 80(1):014611, July 2009. arXiv:0905.3844, doi:10.1103/PhysRevC.80.014611.">2009</a>]</span></p></li>
+<li><p><a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.screen5" title="pynucastro.screening.screen.screen5"><code class="xref py py-func docutils literal notranslate"><span class="pre">screen5</span></code></a> based on <span id="id1">Wallace <em>et al.</em> [<a class="reference internal" href="zreferences.html#id29" title="R. K. Wallace, S. E. Woosley, and T. A. Weaver. The thermonuclear model for X-ray transients. \apj , 258:696-715, July 1982. doi:10.1086/160119.">1982</a>]</span></p></li>
+<li><p><a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.potekhin_1998" title="pynucastro.screening.screen.potekhin_1998"><code class="xref py py-func docutils literal notranslate"><span class="pre">potekhin_1998</span></code></a> based on <span id="id2">Chabrier and Potekhin [<a class="reference internal" href="zreferences.html#id8" title="Gilles Chabrier and Alexander Y. Potekhin. Equation of state of fully ionized electron-ion plasmas. Physical Review E, 58(4):4941–4949, October 1998. doi:10.1103/PhysRevE.58.4941.">1998</a>]</span></p></li>
+<li><p><a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.chugunov_2007" title="pynucastro.screening.screen.chugunov_2007"><code class="xref py py-func docutils literal notranslate"><span class="pre">chugunov_2007</span></code></a> based on <span id="id3">Chugunov <em>et al.</em> [<a class="reference internal" href="zreferences.html#id4" title="A. I. Chugunov, H. E. DeWitt, and D. G. Yakovlev. Coulomb tunneling for fusion reactions in dense matter: Path integral Monte Carlo versus mean field. Physical Review D, 76(2):025028, July 2007. arXiv:0707.3500, doi:10.1103/PhysRevD.76.025028.">2007</a>]</span></p></li>
+<li><p><a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.chugunov_2009" title="pynucastro.screening.screen.chugunov_2009"><code class="xref py py-func docutils literal notranslate"><span class="pre">chugunov_2009</span></code></a> based on <span id="id4">Chugunov and DeWitt [<a class="reference internal" href="zreferences.html#id6" title="A. I. Chugunov and H. E. DeWitt. Nuclear fusion reaction rates for strongly coupled ionic mixtures. Physical Review C, 80(1):014611, July 2009. arXiv:0905.3844, doi:10.1103/PhysRevC.80.014611.">2009</a>]</span></p></li>
 </ul>
 <p>Each of these use various approximations to account for the influence of the plasma on screening the electric charge of the nuclei that are fusing.</p>
 </section>
@@ -594,12 +594,12 @@ document.write(`
 <h2>Using screening<a class="headerlink" href="#using-screening" title="Link to this heading">#</a></h2>
 <p>To compute the screening factor for a rate, we need to know the entire composition (since the electron number density matters) as well as the two nuclei involved in the reaction.  There are two special types that store this information:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> : stores the aggregate information about the entire plasma</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ScreenFactors</span></code> : stores the information about the two nuclei</p></li>
+<li><p><a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.PlasmaState" title="pynucastro.screening.screen.PlasmaState"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlasmaState</span></code></a> : stores the aggregate information about the entire plasma</p></li>
+<li><p><a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.ScreenFactors" title="pynucastro.screening.screen.ScreenFactors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScreenFactors</span></code></a> : stores the information about the two nuclei</p></li>
 </ul>
 <p>We create these objects separate before we call the screening routine since there are some computational expensive calculations here that don’t change with repeated calls.</p>
 <p>Here we create a <code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> that knows about the conditions where the screening is taking place and then we use that to compute the screening factor for a rate.  The helper function
-<code class="docutils literal notranslate"><span class="pre">make_plasma_state</span></code> can create the <code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> object</p>
+<a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.make_plasma_state" title="pynucastro.screening.screen.make_plasma_state"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_plasma_state</span></code></a> can create the <code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> object</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
@@ -643,7 +643,7 @@ document.write(`
 </div>
 </div>
 </div>
-<p>For the rate, we need the <code class="docutils literal notranslate"><span class="pre">ScreenFactor</span></code></p>
+<p>For the rate, we need the <code class="docutils literal notranslate"><span class="pre">ScreenFactors</span></code> object</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scn_fac</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">make_screen_factors</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -652,7 +652,7 @@ document.write(`
 </div>
 </div>
 <p>Finally, we’ll select the Chugunov (2009) screening and compute the screening factor.  All of the needed thermodynamic information is contained in the <code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> and all of the needed
-reaction rate information is contained in the <code class="docutils literal notranslate"><span class="pre">ScreenFactor</span></code></p>
+reaction rate information is contained in the <code class="docutils literal notranslate"><span class="pre">ScreenFactors</span></code></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">chugunov_2009</span>
@@ -676,14 +676,13 @@ reaction rate information is contained in the <code class="docutils literal notr
 </section>
 <section id="screening-map">
 <h2>Screening map<a class="headerlink" href="#screening-map" title="Link to this heading">#</a></h2>
-<p>For a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> or a network derived from it, there are a lot of rates that will need to be screened, and some might have the same nuclei that need to be screened.  A “screening map” keeps track of all of the rates that need to be screened for the same set of reactants.</p>
+<p>For a <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateCollection</span></code></a> or a network derived from it, there are a lot of rates that will need to be screened, and some might have the same nuclei that need to be screened.  A “screening map” keeps track of all of the rates that need to be screened for the same set of reactants.</p>
+<p>The screening map is a <code class="docutils literal notranslate"><span class="pre">list</span></code> of <a class="reference internal" href="pynucastro.screening.screening_util.html#pynucastro.screening.screening_util.ScreeningPair" title="pynucastro.screening.screening_util.ScreeningPair"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScreeningPair</span></code></a> objects which contain the pair of nuclei that need a screening factor computed as well as the list of all
+the rates that screening factor applies to.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Some networks (like the <code class="docutils literal notranslate"><span class="pre">aprox</span></code> networks in the literature) use the same screening factor for the forward and reverse rates.  A <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> takes a keyword argument <code class="docutils literal notranslate"><span class="pre">symmetric_screening</span></code> that tells the network to use the same screening for forward and reverse.  The screening map will then take this into account.</p>
 </div>
-<p>The screening map returns a list of <code class="docutils literal notranslate"><span class="pre">ScreeningPair</span></code> objects which contain
-the pair of nuclei that need a screening factor computed as well as the list of all
-the rates that screening factor applies to.</p>
 <p>Here’s an example: let’s build a helium and carbon burning network.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -700,7 +699,7 @@ the rates that screening factor applies to.</p>
 </div>
 </div>
 </div>
-<p>From the <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code>, we can get the screening map (the list of <code class="docutils literal notranslate"><span class="pre">ScreeningPair</span></code> objects)</p>
+<p>From the <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code>, we can get the screening map using the <a class="reference internal" href="pynucastro.screening.screening_util.html#pynucastro.screening.screening_util.get_screening_map" title="pynucastro.screening.screening_util.get_screening_map"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_screening_map</span></code></a> function:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_screening_map</span>
@@ -765,7 +764,8 @@ rates:
 </section>
 <section id="screening-and-a-python-network">
 <h2>Screening and a python network<a class="headerlink" href="#screening-and-a-python-network" title="Link to this heading">#</a></h2>
-<p>When we write out the module that defines a python network, it contains all of the information needed to define the righthand side and Jacobian, if screening is not used.  But the <code class="docutils literal notranslate"><span class="pre">rhs</span></code> and <code class="docutils literal notranslate"><span class="pre">jacobian</span></code> functions can take an optional argument that is the name of the screening function to use, and if this is provided, then the rates will be screened.  Here we demonstrate this.</p>
+<p>When we write out the module that defines a python network, it contains all of the information needed to define the righthand side and Jacobian.  By default, screening is not used, but the <code class="docutils literal notranslate"><span class="pre">rhs</span></code> and <code class="docutils literal notranslate"><span class="pre">jacobian</span></code> functions can take an optional argument that is the name of the screening function to use.</p>
+<p>Here we demonstrate this.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
