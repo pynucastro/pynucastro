@@ -1,11 +1,16 @@
+"""Classes and methods for describing approximations to rates.  Often
+this involves using a group of existing rates to enforce an
+equilibrium through a nucleus.
+
+"""
+
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.rate import Rate
 
 
 def create_double_neutron_capture(lib, reactant, product):
-    """A helper function that will return a pair of
-    :py:class:`ApproximateRate` objects for the A(n,g)X(n,g)B ->
-    A(nn,g)B approximation
+    """Return a pair of :py:class:`ApproximateRate` objects for the
+    A(n,g)X(n,g)B -> A(nn,g)B approximation
 
     Parameters
     ----------
@@ -96,6 +101,7 @@ class ApproximateRate(Rate):
         factor to be disabled.
 
     """
+
     def __init__(self, primary_rate, secondary_rates,
                  primary_reverse, secondary_reverse, *,
                  is_reverse=False, approx_type="ap_pg",
