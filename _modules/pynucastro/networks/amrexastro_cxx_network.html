@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.amrexastro_cxx_network &#8212; pynucastro 2.6.0.post56+g929436c6e documentation</title>
+    <title>pynucastro.networks.amrexastro_cxx_network &#8212; pynucastro 2.6.0.post57+gd3a17fba2 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=c4eae6ff"></script>
+    <script src="../../../_static/documentation_options.js?v=e47bdb58"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -481,8 +481,10 @@ document.write(`
                   
   <h1>Source code for pynucastro.networks.amrexastro_cxx_network</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;A C++ reaction network for integration into the AMReX Astro</span>
-<span class="sd">Microphysics set of reaction networks used by astrophysical hydrodynamics</span>
-<span class="sd">codes&quot;&quot;&quot;</span>
+<span class="sd">Microphysics set of reaction networks used by astrophysical</span>
+<span class="sd">hydrodynamics codes</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
 
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
@@ -497,6 +499,8 @@ document.write(`
 <div class="viewcode-block" id="AmrexAstroCxxNetwork">
 <a class="viewcode-back" href="../../../pynucastro.networks.amrexastro_cxx_network.html#pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AmrexAstroCxxNetwork</span><span class="p">(</span><span class="n">BaseCxxNetwork</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A C++ network for simulation codes based on AMReX.&quot;&quot;&quot;</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="c1"># this network can have a special kwarg called disable_rate_params</span>
@@ -568,9 +572,9 @@ document.write(`
         <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">std_pow_pattern</span><span class="p">,</span> <span class="n">amrex_powi_replacement</span><span class="p">,</span> <span class="n">cxx_code</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">odir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This writes the RHS, jacobian and ancillary files for the system of ODEs that</span>
-<span class="sd">        this network describes, using the template files.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Output the RHS, jacobian and ancillary files for the system</span>
+<span class="sd">        of ODEs that this network describes, using the template files.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_write_network</span><span class="p">(</span><span class="n">odir</span><span class="o">=</span><span class="n">odir</span><span class="p">)</span>
@@ -611,7 +615,7 @@ document.write(`
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_fill_rate_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Fills the index needed for the NSE_NET algorithm.</span>
+<span class="sd">        Fill the index needed for the NSE_NET algorithm.</span>
 
 <span class="sd">        Fill rate_indices: 2D array with 1-based index of shape of size (NumRates, 7).</span>
 <span class="sd">           - Each row represents a rate in self.all_rates.</span>

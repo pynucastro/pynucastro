@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.neutrino_cooling.sneut5_mod module &#8212; pynucastro 2.6.0.post56+g929436c6e documentation</title>
+    <title>pynucastro.neutrino_cooling.sneut5_mod module &#8212; pynucastro 2.6.0.post57+gd3a17fba2 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=c4eae6ff"></script>
+    <script src="_static/documentation_options.js?v=e47bdb58"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -576,27 +576,28 @@ document.write(`
                   
   <section id="module-pynucastro.neutrino_cooling.sneut5_mod">
 <span id="pynucastro-neutrino-cooling-sneut5-mod-module"></span><h1>pynucastro.neutrino_cooling.sneut5_mod module<a class="headerlink" href="#module-pynucastro.neutrino_cooling.sneut5_mod" title="Link to this heading">#</a></h1>
+<p>Classes and methods that implement the Itoh et al. 1996 thermal
+neutron loss terms.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.neutrino_cooling.sneut5_mod.</span></span><span class="sig-name descname"><span class="pre">NeutrinoComponents</span></span><a class="reference internal" href="_modules/pynucastro/neutrino_cooling/sneut5_mod.html#NeutrinoComponents"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>a simple container that holds the individual components to the
-neutrino cooling</p>
+<p>A simple container that holds the individual components to the
+neutrino cooling.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.neutrino_cooling.sneut5_mod.ifermi12">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.neutrino_cooling.sneut5_mod.</span></span><span class="sig-name descname"><span class="pre">ifermi12</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/neutrino_cooling/sneut5_mod.html#ifermi12"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.neutrino_cooling.sneut5_mod.ifermi12" title="Link to this definition">#</a></dt>
-<dd><p>apply a rational function expansion to get the inverse
-fermi-dirac integral of order 1/2 when it is equal to f.
-maximum error is 4.19e-9_rt.
-reference: Antia ApJS 84,101 1993</p>
+<dd><p>Apply a rational function expansion to get the inverse
+fermi-dirac integral of order 1/2 when it is equal to f.</p>
+<p>The maximum error is 4.19e-9_rt (see Antia ApJS 84,101 1993)</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.neutrino_cooling.sneut5_mod.sneut5">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.neutrino_cooling.sneut5_mod.</span></span><span class="sig-name descname"><span class="pre">sneut5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/neutrino_cooling/sneut5_mod.html#sneut5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.neutrino_cooling.sneut5_mod.sneut5" title="Link to this definition">#</a></dt>
-<dd><p>compute thermal neutrino losses from the analytic fits of Itoh
+<dd><p>Compute thermal neutrino losses from the analytic fits of Itoh
 et al. ApJS 102, 411, 1996.  Note that either a Composition object
 of abar/zbar need to be provided.</p>
 </dd></dl>

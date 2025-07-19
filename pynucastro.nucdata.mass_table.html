@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.nucdata.mass_table module &#8212; pynucastro 2.6.0.post56+g929436c6e documentation</title>
+    <title>pynucastro.nucdata.mass_table module &#8212; pynucastro 2.6.0.post57+gd3a17fba2 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=c4eae6ff"></script>
+    <script src="_static/documentation_options.js?v=e47bdb58"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -577,24 +577,36 @@ document.write(`
                   
   <section id="module-pynucastro.nucdata.mass_table">
 <span id="pynucastro-nucdata-mass-table-module"></span><h1>pynucastro.nucdata.mass_table module<a class="headerlink" href="#module-pynucastro.nucdata.mass_table" title="Link to this heading">#</a></h1>
+<p>Classes and methods that provide access to the AME mass excess data.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.nucdata.mass_table.MassTable">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.mass_table.</span></span><span class="sig-name descname"><span class="pre">MassTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/mass_table.html#MassTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.mass_table.MassTable" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>The purpose of this class is to:</p>
-<ol class="loweralpha simple">
-<li><p>Create a dictionary mapping nuclides to their mass excess A_nuc - A measured
-in MeV from the table mass_excess2020.txt.</p></li>
-<li><p>Parse the information of the previously defined dictionary to the Nucleus
-class.</p></li>
-</ol>
-<p>The only required variable to construct an instance of this class is : var filename:
-that contains the .txt table file with the nuclei and their mass excess. If this
-variable is not provided, then mass_excess2020.txt is considered by default.</p>
+<p>Store the nuclear masses as a dictionary mapping nuclides to
+their mass excess (A_nuc - A measured) in MeV from the table
+mass_excess2020.txt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a>) – The name of the file containing nuclei and mass excesses
+(mass_excess2020.txt is used by default).</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.nucdata.mass_table.MassTable.get_mass_diff">
 <span class="sig-name descname"><span class="pre">get_mass_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/mass_table.html#MassTable.get_mass_diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.mass_table.MassTable.get_mass_diff" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Return the mass excess for a nucleus</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Atomic weight</p></li>
+<li><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Atomic number</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

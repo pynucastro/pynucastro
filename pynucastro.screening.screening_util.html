@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.screening.screening_util module &#8212; pynucastro 2.6.0.post56+g929436c6e documentation</title>
+    <title>pynucastro.screening.screening_util module &#8212; pynucastro 2.6.0.post57+gd3a17fba2 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=c4eae6ff"></script>
+    <script src="_static/documentation_options.js?v=e47bdb58"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -583,23 +583,41 @@ document.write(`
 <dt class="sig sig-object py" id="pynucastro.screening.screening_util.ScreeningPair">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screening_util.</span></span><span class="sig-name descname"><span class="pre">ScreeningPair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nuc1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nuc2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screening_util.html#ScreeningPair"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screening_util.ScreeningPair" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>a pair of nuclei that will have rate screening applied.  We store a
-list of all rates that match this pair of nuclei</p>
+<p>A pair of nuclei that will have rate screening applied.  We
+store a list of all rates that match this pair of nuclei</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.screening.screening_util.ScreeningPair.add_rate">
 <span class="sig-name descname"><span class="pre">add_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screening_util.html#ScreeningPair.add_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screening_util.ScreeningPair.add_rate" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Add a new rate to the screening pair.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rate</strong> (<a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><em>Rate</em></a>) – The rate to add.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.screening.screening_util.get_screening_map">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screening_util.</span></span><span class="sig-name descname"><span class="pre">get_screening_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rates</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetric_screening</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screening_util.html#get_screening_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screening_util.get_screening_map" title="Link to this definition">#</a></dt>
-<dd><p>a screening map is just a list of ScreeningPair objects
-containing the information about nuclei pairs for screening If
-symmetric_screening=True, then for reverse rates, we screen using
-the forward rate nuclei (assuming that we got here via detailed
-balance).</p>
+<dd><p>Create a screening map—this is just a list of ScreeningPair
+objects containing the information about nuclei pairs for
+screening If symmetric_screening=True, then for reverse rates, we
+screen using the forward rate nuclei (assuming that we got here
+via detailed balance).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rates</strong> (<em>Iterable</em><em>(</em><a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><em>Rate</em></a><em>)</em>) – A list of the rates in our network.</p></li>
+<li><p><strong>symmetric_screening</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Do we use the same screening factor for the forward and reverse
+rate of a single reaction process?</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>(<a class="reference internal" href="#pynucastro.screening.screening_util.ScreeningPair" title="pynucastro.screening.screening_util.ScreeningPair">ScreeningPair</a>)</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

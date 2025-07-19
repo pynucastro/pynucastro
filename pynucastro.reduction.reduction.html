@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.reduction.reduction module &#8212; pynucastro 2.6.0.post56+g929436c6e documentation</title>
+    <title>pynucastro.reduction.reduction module &#8212; pynucastro 2.6.0.post57+gd3a17fba2 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=c4eae6ff"></script>
+    <script src="_static/documentation_options.js?v=e47bdb58"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -590,6 +590,7 @@ document.write(`
                   
   <section id="module-pynucastro.reduction.reduction">
 <span id="pynucastro-reduction-reduction-module"></span><h1>pynucastro.reduction.reduction module<a class="headerlink" href="#module-pynucastro.reduction.reduction" title="Link to this heading">#</a></h1>
+<p>Methods and driver used in the reduction algorithm.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction.NetInfo">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">NetInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ydot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ebind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pynucastro.reduction.reduction.NetInfo" title="Link to this definition">#</a></dt>
@@ -647,23 +648,26 @@ document.write(`
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction.get_errfunc_enuc">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">get_errfunc_enuc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net_old</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction.html#get_errfunc_enuc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction.get_errfunc_enuc" title="Link to this definition">#</a></dt>
-<dd><p>Function for computing error in nuclear energy generation.</p>
+<dd><p>Compute the error in nuclear energy generation.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction.get_net_info">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">get_net_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction.html#get_net_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction.get_net_info" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Return information about the network.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction.main">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction.main" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Initialize and run the reduction.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.reduction.map_comp">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.reduction.</span></span><span class="sig-name descname"><span class="pre">map_comp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/reduction.html#map_comp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.reduction.map_comp" title="Link to this definition">#</a></dt>
-<dd><p>Create new composition object with nuclei in net, and copy their mass fractions over.</p>
+<dd><p>Create new composition object with nuclei in net, and copy
+their mass fractions over.</p>
 </dd></dl>
 
 <dl class="py function">

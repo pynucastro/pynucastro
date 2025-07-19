@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.rate_collection module &#8212; pynucastro 2.6.0.post56+g929436c6e documentation</title>
+    <title>pynucastro.networks.rate_collection module &#8212; pynucastro 2.6.0.post57+gd3a17fba2 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=c4eae6ff"></script>
+    <script src="_static/documentation_options.js?v=e47bdb58"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -649,8 +649,8 @@ rates that together make up a network.</p>
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.Composition">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.networks.rate_collection.</span></span><span class="sig-name descname"><span class="pre">Composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuclei</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">small</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-16</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.UserDict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserDict</span></code></a></p>
-<p>a composition holds the mass fractions of the nuclei in a network
-– useful for evaluating the rates</p>
+<p>A composition holds the mass fractions of the nuclei in a
+network.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -733,7 +733,7 @@ map into</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.Composition.get_molar">
 <span class="sig-name descname"><span class="pre">get_molar</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.get_molar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.get_molar" title="Link to this definition">#</a></dt>
-<dd><p>Return a dictionary of molar fractions, Y = X/A</p>
+<dd><p>Return a dictionary of molar fractions, Y = X/A.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>molar</strong> – {Nucleus : Y}</p>
@@ -747,7 +747,8 @@ map into</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.Composition.get_nuclei">
 <span class="sig-name descname"><span class="pre">get_nuclei</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.get_nuclei"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.get_nuclei" title="Link to this definition">#</a></dt>
-<dd><p>Return a list of Nuclei objects that make up this composition.</p>
+<dd><p>Return a list of Nuclei objects that make up this
+composition.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a></p>
@@ -758,7 +759,7 @@ map into</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.Composition.get_sum_X">
 <span class="sig-name descname"><span class="pre">get_sum_X</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.get_sum_X"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.get_sum_X" title="Link to this definition">#</a></dt>
-<dd><p>return the sum of the mass fractions</p>
+<dd><p>Return the sum of the mass fractions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
@@ -769,7 +770,7 @@ map into</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.Composition.normalize">
 <span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.normalize" title="Link to this definition">#</a></dt>
-<dd><p>Normalize the mass fractions to sum to 1</p>
+<dd><p>Normalize the mass fractions to sum to 1.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -824,7 +825,7 @@ in arr, <cite>get_nuclei()</cite></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.Composition.set_nuc">
 <span class="sig-name descname"><span class="pre">set_nuc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xval</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.set_nuc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.set_nuc" title="Link to this definition">#</a></dt>
-<dd><p>Set nuclei name to the mass fraction xval</p>
+<dd><p>Set nuclei name to the mass fraction xval.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -890,9 +891,9 @@ parameters alpha and specified rng seed.</p>
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.Explorer">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.networks.rate_collection.</span></span><span class="sig-name descname"><span class="pre">Explorer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Explorer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Explorer" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>A simple class that enables interactive exploration a RateCollection,
-presenting density and temperature sliders to update the reaction rate
-values.</p>
+<p>A simple class that enables interactive exploration a
+RateCollection, presenting density and temperature sliders to
+update the reaction rate values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1080,7 +1081,8 @@ from neutrinos from weak reactions</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.evaluate_jacobian">
 <span class="sig-name descname"><span class="pre">evaluate_jacobian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_rates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.evaluate_jacobian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.evaluate_jacobian" title="Link to this definition">#</a></dt>
-<dd><p>return an array of the form J_ij = dYdot_i/dY_j for the network</p>
+<dd><p>Return an array of the form J_ij = dYdot_i/dY_j for the
+network</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1102,7 +1104,7 @@ correction.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.evaluate_rates">
 <span class="sig-name descname"><span class="pre">evaluate_rates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.evaluate_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.evaluate_rates" title="Link to this definition">#</a></dt>
-<dd><p>evaluate the rates for a specific density, temperature, and
+<dd><p>Evaluate the rates for a specific density, temperature, and
 composition, with optional screening.  Note: this returns that
 rate as dY/dt, where Y is the molar fraction.  For a 2 body
 reaction, a + b, this will be of the form:</p>
@@ -1485,8 +1487,8 @@ wish to approximate out.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.make_nse_protons">
 <span class="sig-name descname"><span class="pre">make_nse_protons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.make_nse_protons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.make_nse_protons" title="Link to this definition">#</a></dt>
-<dd><p>for rates involving nuclei with mass number &gt;= A, swap any
-protons for NSE protons.  This will decouple these rates from
+<dd><p>Replace protons in rates involving nuclei with mass number
+&gt;= A with NSE protons.  This will decouple these rates from
 the proton captures at lower mass number, simplifying the
 linear algebra.</p>
 <dl class="field-list simple">
@@ -1632,17 +1634,18 @@ forward-reverse pairs</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.remove_nuclei">
 <span class="sig-name descname"><span class="pre">remove_nuclei</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuc_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.remove_nuclei"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.remove_nuclei" title="Link to this definition">#</a></dt>
-<dd><p>remove the nuclei in nuc_list from the network along with any rates
-that directly involve them (this doesn’t affect approximate rates that
-may have these nuclei as hidden intermediate links)</p>
+<dd><p>Remove the nuclei in nuc_list from the network along with
+any rates that directly involve them (this doesn’t affect
+approximate rates that may have these nuclei as hidden
+intermediate links)</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.remove_rates">
 <span class="sig-name descname"><span class="pre">remove_rates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rates</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.remove_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.remove_rates" title="Link to this definition">#</a></dt>
-<dd><p>remove the Rate objects in rates from the network.  Note, if
-rate list is a dict, then the keys are assumed to be the rates
-to remove</p>
+<dd><p>Remove the Rate objects in rates from the network.  Note,
+if rate list is a dict, then the keys are assumed to be the
+rates to remove</p>
 </dd></dl>
 
 <dl class="py method">

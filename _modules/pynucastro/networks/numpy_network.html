@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.numpy_network &#8212; pynucastro 2.6.0.post56+g929436c6e documentation</title>
+    <title>pynucastro.networks.numpy_network &#8212; pynucastro 2.6.0.post57+gd3a17fba2 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=c4eae6ff"></script>
+    <script src="../../../_static/documentation_options.js?v=e47bdb58"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -480,7 +480,12 @@ document.write(`
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.networks.numpy_network</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span></span><span class="sd">&quot;&quot;&quot;Classes and methods for a network that uses NumPy arrays to cache</span>
+<span class="sd">some intermediate data.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.rate_collection</span><span class="w"> </span><span class="kn">import</span> <span class="n">RateCollection</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tfactors</span>
@@ -491,20 +496,16 @@ document.write(`
 <span class="k">class</span><span class="w"> </span><span class="nc">NumpyNetwork</span><span class="p">(</span><span class="n">RateCollection</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A network that uses numpy arrays to evaluate rates more efficiently.</span>
 
-<span class="sd">    .. py:attribute:: yfac</span>
-
-<span class="sd">       Array storing the molar fraction component of each rate (Y of each</span>
-<span class="sd">       reactant raised to the appropriate power).</span>
-
-<span class="sd">       Depends on composition only.</span>
-
-<span class="sd">    .. py:attribute:: prefac</span>
-
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    yfac : numpy.ndarray</span>
+<span class="sd">        Array storing the molar fraction component of each rate (Y of each</span>
+<span class="sd">        reactant raised to the appropriate power).  Depends on composition</span>
+<span class="sd">        only.</span>
+<span class="sd">    prefac : numpy.ndarray</span>
 <span class="sd">       Array storing the prefactor for each rate, which includes both the</span>
 <span class="sd">       statistical prefactor and mass density raised to the corresponding</span>
-<span class="sd">       density exponent.</span>
-
-<span class="sd">       Depends on composition and density.</span>
+<span class="sd">       density exponent.  Depends on composition and density.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -530,9 +531,10 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">nuc_prod_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Array storing the count of each nucleus in rates producing</span>
-<span class="sd">        that nucleus, with shape ``(number_of_species,</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an array storing the count of each nucleus in rates</span>
+<span class="sd">        producing that nucleus, with shape ``(number_of_species,</span>
 <span class="sd">        number_of_rates)``</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuc_prod_count</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -541,9 +543,10 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">nuc_cons_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Array storing the count of each nucleus in rates consuming</span>
-<span class="sd">        that nucleus, with shape ``(number_of_species,</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an array storing the count of each nucleus in rates</span>
+<span class="sd">        consuming that nucleus, with shape ``(number_of_species,</span>
 <span class="sd">        number_of_rates)``.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nuc_cons_count</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_calc_count_matrices</span><span class="p">()</span>
@@ -551,8 +554,8 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">nuc_used</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A boolean matrix of whether the nucleus is involved in the</span>
-<span class="sd">        reaction or not, with shape ``(number_of_species,</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a boolean matrix of whether the nucleus is involved</span>
+<span class="sd">        in the reaction or not, with shape ``(number_of_species,</span>
 <span class="sd">        number_of_rates)``</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -593,7 +596,7 @@ document.write(`
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">coef_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Reaclib rate coefficient array, with shape</span>
-<span class="sd">       ``(number_of_rates, number_of_sets, 7)``</span>
+<span class="sd">        ``(number_of_rates, number_of_sets, 7)``</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coef_arr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -612,9 +615,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coef_mask</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_update_rate_coef_arr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the :attr:`.coef_arr` and :attr:`.coef_mask` arrays.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the :attr:`.coef_arr` and :attr:`.coef_mask` arrays.&quot;&quot;&quot;</span>
 
         <span class="c1"># coef arr can be precomputed if evaluate_rates_arr is called multiple times</span>
         <span class="n">N_sets</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">sets</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span>

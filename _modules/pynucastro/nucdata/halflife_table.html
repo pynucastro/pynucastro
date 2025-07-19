@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.nucdata.halflife_table &#8212; pynucastro 2.6.0.post56+g929436c6e documentation</title>
+    <title>pynucastro.nucdata.halflife_table &#8212; pynucastro 2.6.0.post57+gd3a17fba2 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=c4eae6ff"></script>
+    <script src="../../../_static/documentation_options.js?v=e47bdb58"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -480,15 +480,17 @@ document.write(`
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.nucdata.halflife_table</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span></span><span class="sd">&quot;&quot;&quot;Classes and methods that provide access to the AME half life data.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 
 <div class="viewcode-block" id="HalfLifeTable">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.halflife_table.html#pynucastro.nucdata.halflife_table.HalfLifeTable">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">HalfLifeTable</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Read the table of halflives (in seconds) extracted from the Nubase</span>
-<span class="sd">    compilation in halflife2020.txt</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the table of halflives (in seconds) extracted from the</span>
+<span class="sd">    Nubase compilation in halflife2020.txt</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -521,6 +523,21 @@ document.write(`
 <div class="viewcode-block" id="HalfLifeTable.get_halflife">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.halflife_table.html#pynucastro.nucdata.halflife_table.HalfLifeTable.get_halflife">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_halflife</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the half life of a nucleus.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        a : int</span>
+<span class="sd">            Atomic weight</span>
+<span class="sd">        z : int</span>
+<span class="sd">            Atomic number</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">halflife</span><span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">z</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>

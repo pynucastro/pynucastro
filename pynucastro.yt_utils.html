@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.yt_utils module &#8212; pynucastro 2.6.0.post56+g929436c6e documentation</title>
+    <title>pynucastro.yt_utils module &#8212; pynucastro 2.6.0.post57+gd3a17fba2 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=c4eae6ff"></script>
+    <script src="_static/documentation_options.js?v=e47bdb58"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -575,10 +575,12 @@ document.write(`
                   
   <section id="module-pynucastro.yt_utils">
 <span id="pynucastro-yt-utils-module"></span><h1>pynucastro.yt_utils module<a class="headerlink" href="#module-pynucastro.yt_utils" title="Link to this heading">#</a></h1>
+<p>A collection of methods for accessing data from a simulation using
+yt and putting it in a form that pynucastro can use.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.yt_utils.get_point">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.yt_utils.</span></span><span class="sig-name descname"><span class="pre">get_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/yt_utils.html#get_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.yt_utils.get_point" title="Link to this definition">#</a></dt>
-<dd><p>Helper for getting a specific point from a yt dataset object.</p>
+<dd><p>Get a specific point from a yt dataset object.</p>
 <p>Field values can be extracted by subscripting: <code class="docutils literal notranslate"><span class="pre">point['Temp']</span></code>.</p>
 <p>Works around various annoyances with the argument handling in
 <code class="docutils literal notranslate"><span class="pre">ds.point()</span></code>, so things like <code class="docutils literal notranslate"><span class="pre">get_point(ds,</span> <span class="pre">ds.all_data().argmax('enuc'))</span></code>

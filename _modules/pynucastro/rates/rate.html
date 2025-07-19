@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.6.0.post56+g929436c6e documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.6.0.post57+gd3a17fba2 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=c4eae6ff"></script>
+    <script src="../../../_static/documentation_options.js?v=e47bdb58"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -480,9 +480,7 @@ document.write(`
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.rates.rate</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Classes and methods to interface with files storing rate data.</span>
-
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Classes and methods to interface with files storing rate data.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -498,7 +496,10 @@ document.write(`
 <div class="viewcode-block" id="BaryonConservationError">
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.BaryonConservationError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BaryonConservationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception for the case where we don&#39;t have the same number of</span>
+<span class="sd">    baryons on the left and righthand sides of the reaction.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span></div>
 
 
 
@@ -513,19 +514,31 @@ document.write(`
     <span class="p">(</span><span class="s1">&#39;lnT9&#39;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 <span class="p">])</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Tfactors</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; precompute temperature factors for speed</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Precompute temperature factors for speed</span>
 
-<span class="sd">    :param float T: input temperature (Kelvin)</span>
-<span class="sd">    :var T9:    T / 1.e9 K</span>
-<span class="sd">    :var T9i:   1.0 / T9</span>
-<span class="sd">    :var T913i: 1.0 / T9 ** (1/3)</span>
-<span class="sd">    :var T913:  T9 ** (1/3)</span>
-<span class="sd">    :var T953:  T9 ** (5/3)</span>
-<span class="sd">    :var lnT9:  log(T9)</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    T : float</span>
+<span class="sd">        Temperature in Kelvin.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    T9 : float</span>
+<span class="sd">        Temperature divided by 1.e9 K.</span>
+<span class="sd">    T9i : float</span>
+<span class="sd">        1.0 / T9</span>
+<span class="sd">    T913i : float</span>
+<span class="sd">        1.0 / T9**(1/3)</span>
+<span class="sd">    T913 : float</span>
+<span class="sd">        T9**(1/3)</span>
+<span class="sd">    T953 : float</span>
+<span class="sd">        T9**(5/3)</span>
+<span class="sd">    lnT9 : float</span>
+<span class="sd">        log(T9)</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; return the Tfactors object.  Here, T is temperature in Kelvin &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">T9</span> <span class="o">=</span> <span class="n">T</span><span class="o">/</span><span class="mf">1.e9</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">T9i</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">T9</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">T913i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T9i</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">3.</span><span class="p">)</span>
@@ -576,6 +589,7 @@ document.write(`
 <span class="sd">        use_identical_particle_factor = False</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weak_type</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;generic&quot;</span><span class="p">,</span>
                  <span class="n">stoichiometry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -647,13 +661,18 @@ document.write(`
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Determine whether two Rate objects are equal.</span>
-<span class="sd">        They are equal if they contain identical reactants and products&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine whether two Rate objects are equal.  They are</span>
+<span class="sd">        equal if they contain identical reactants and products</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;sort such that lightest reactants come first, and then look at products&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sort such that lightest reactants come first, and then look</span>
+<span class="sd">        at products.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># this sort will make two nuclei with the same A be in order of Z</span>
         <span class="c1"># (assuming there are no nuclei with A &gt; 999</span>
@@ -680,7 +699,7 @@ document.write(`
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_q</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;set the Q value of the reaction (in MeV)&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the Q value of the reaction (in MeV).&quot;&quot;&quot;</span>
 
         <span class="c1"># from the masses of the nuclei, Q = M_products - M_reactants</span>
 
@@ -852,7 +871,10 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_rhs_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; compute statistical prefactor and density exponent from the reactants. &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute statistical prefactor and density exponent from the</span>
+<span class="sd">        reactants.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># this is 1/2 for rates like a + a (double counting)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_identical_particle_factor</span><span class="p">:</span>
@@ -865,7 +887,9 @@ document.write(`
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_screening</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine if this rate is eligible for screening and the</span>
-<span class="sd">        nuclei to use.&quot;&quot;&quot;</span>
+<span class="sd">        nuclei to use.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Tells if this rate is eligible for screening, and if it is</span>
         <span class="c1"># then Rate.ion_screen is a 2-element (3 for 3-alpha) list of</span>
         <span class="c1"># Nucleus objects for screening; otherwise it is set to none</span>
@@ -900,7 +924,7 @@ document.write(`
 <div class="viewcode-block" id="Rate.cname">
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.cname">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">cname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A C++-safe version of the rate name</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a C++-safe version of the rate name</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -915,7 +939,7 @@ document.write(`
 <div class="viewcode-block" id="Rate.get_rate_id">
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.get_rate_id">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_rate_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;An identifying string for this rate.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get an identifying string for this rate.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -927,7 +951,7 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;the rate&#39;s id string</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the rate&#39;s id string</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -977,9 +1001,11 @@ document.write(`
 <div class="viewcode-block" id="Rate.swap_protons">
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.swap_protons">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">swap_protons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Change any protons in the rate to NSE protons.  These</span>
-<span class="sd">        act the same as protons but will be kept as distinct in</span>
-<span class="sd">        the network.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Change any protons in the rate to NSE protons.  These act</span>
+<span class="sd">        the same as protons but will be kept as distinct in the</span>
+<span class="sd">        network.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">p</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span>
         <span class="n">p_nse</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p_nse&quot;</span><span class="p">)</span>
@@ -1283,7 +1309,7 @@ document.write(`
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_read_rate_sources</span><span class="p">(</span><span class="n">urls</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">csv_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Builds the labels dictionary from the supplied csv file.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build the labels dictionary from the supplied csv file.&quot;&quot;&quot;</span>
 
         <span class="n">labels</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">with</span> <span class="n">csv_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csv</span><span class="p">:</span>
@@ -1302,11 +1328,13 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.RateSource.source">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">source</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the source of a rate given its label, and None if not found.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the source of a rate given its label, and None if</span>
+<span class="sd">        not found.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        label : str</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">labels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">label</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span></div>

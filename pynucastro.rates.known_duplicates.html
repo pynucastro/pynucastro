@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.known_duplicates module &#8212; pynucastro 2.6.0.post56+g929436c6e documentation</title>
+    <title>pynucastro.rates.known_duplicates module &#8212; pynucastro 2.6.0.post57+gd3a17fba2 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=c4eae6ff"></script>
+    <script src="_static/documentation_options.js?v=e47bdb58"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -575,6 +575,7 @@ document.write(`
                   
   <section id="module-pynucastro.rates.known_duplicates">
 <span id="pynucastro-rates-known-duplicates-module"></span><h1>pynucastro.rates.known_duplicates module<a class="headerlink" href="#module-pynucastro.rates.known_duplicates" title="Link to this heading">#</a></h1>
+<p>Tools for detecting if a list of rates contains duplicates.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.rates.known_duplicates.find_duplicate_rates">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.rates.known_duplicates.</span></span><span class="sig-name descname"><span class="pre">find_duplicate_rates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/known_duplicates.html#find_duplicate_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.known_duplicates.find_duplicate_rates" title="Link to this definition">#</a></dt>
@@ -593,10 +594,10 @@ rates</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.rates.known_duplicates.is_allowed_dupe">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.rates.known_duplicates.</span></span><span class="sig-name descname"><span class="pre">is_allowed_dupe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/known_duplicates.html#is_allowed_dupe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.known_duplicates.is_allowed_dupe" title="Link to this definition">#</a></dt>
-<dd><p>Some duplicates may be allowed since they represent distinct
-processes between the same endpoints (those rates are listed in
-<code class="docutils literal notranslate"><span class="pre">ALLOWED_DUPLICATES</span></code>).  Return <cite>True</cite> is the input set of rates
-is an allowed duplicate.</p>
+<dd><p>Check if any of the duplicates are allowed.  Some duplicates
+may be allowed since they represent distinct processes between the
+same endpoints (those rates are listed in <code class="docutils literal notranslate"><span class="pre">ALLOWED_DUPLICATES</span></code>).
+Return <cite>True</cite> is the input set of rates is an allowed duplicate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>rate_list</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>(</em><a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><em>Rate</em></a><em>)</em>) – a group of rates represented the same sequence that may be

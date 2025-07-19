@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.reduction.drgep &#8212; pynucastro 2.6.0.post56+g929436c6e documentation</title>
+    <title>pynucastro.reduction.drgep &#8212; pynucastro 2.6.0.post57+gd3a17fba2 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=c4eae6ff"></script>
+    <script src="../../../_static/documentation_options.js?v=e47bdb58"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -480,7 +480,9 @@ document.write(`
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.reduction.drgep</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span></span><span class="sd">&quot;&quot;&quot;Classes and methods for implementing DRGEP reduction.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.reduction.reduction_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">mpi_importer</span><span class="p">,</span>
@@ -570,9 +572,9 @@ document.write(`
 <div class="viewcode-block" id="get_adj_nuc">
 <a class="viewcode-back" href="../../../pynucastro.reduction.drgep.html#pynucastro.reduction.drgep.get_adj_nuc">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_adj_nuc</span><span class="p">(</span><span class="n">net</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get set of adjacent nuclei for each nucleus in the net. Returns dictionary keyed by</span>
-<span class="sd">    nuclei.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get set of adjacent nuclei for each nucleus in the net. Returns</span>
+<span class="sd">    dictionary keyed by nuclei.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">adj_nuc</span> <span class="o">=</span> <span class="p">{}</span>
@@ -595,9 +597,10 @@ document.write(`
 <div class="viewcode-block" id="drgep_dijkstras">
 <a class="viewcode-back" href="../../../pynucastro.reduction.drgep.html#pynucastro.reduction.drgep.drgep_dijkstras">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">drgep_dijkstras</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">r_AB</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">adj_nuc</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Modified Dijkstra&#39;s algorithm to find paths that maximize the overall interaction coefficient</span>
-<span class="sd">    between the target and each other nucleus in the net.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implement modified Dijkstra&#39;s algorithm to find paths that</span>
+<span class="sd">    maximize the overall interaction coefficient between the target</span>
+<span class="sd">    and each other nucleus in the net.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Number of species</span>
@@ -782,9 +785,9 @@ document.write(`
 <div class="viewcode-block" id="drgep">
 <a class="viewcode-back" href="../../../pynucastro.reduction.drgep.html#pynucastro.reduction.drgep.drgep">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">drgep</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">,</span> <span class="n">returnobj</span><span class="o">=</span><span class="s1">&#39;net&#39;</span><span class="p">,</span> <span class="n">use_mpi</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_numpy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Implementation of Directed Relation Graph with Error Propagation (DRGEP) reduction</span>
-<span class="sd">    method described in :cite:t:`pepiot-desjardins:2008` and :cite:t:`niemeyer:2011`.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implement Directed Relation Graph with Error Propagation</span>
+<span class="sd">    (DRGEP) reduction method described in</span>
+<span class="sd">    :cite:t:`pepiot-desjardins:2008` and :cite:t:`niemeyer:2011`.</span>
 
 <span class="sd">    :param net: The network (RateCollection) to reduce.</span>
 <span class="sd">    :param conds: A set of conditions to reduce over. Should either be a sequence of (composition,</span>
@@ -808,6 +811,7 @@ document.write(`
 <span class="sd">        not. This is more memory intensive and may actually hinder performance for some setups.</span>
 <span class="sd">        Conditions should be supplied as 3 lists that will be permuted to form the dataset (see</span>
 <span class="sd">        *conds* parameter). Default setting is *False*.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1">#------------------</span>

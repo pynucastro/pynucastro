@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.numpy_network module &#8212; pynucastro 2.6.0.post56+g929436c6e documentation</title>
+    <title>pynucastro.networks.numpy_network module &#8212; pynucastro 2.6.0.post57+gd3a17fba2 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=c4eae6ff"></script>
+    <script src="_static/documentation_options.js?v=e47bdb58"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -589,6 +589,8 @@ document.write(`
                   
   <section id="module-pynucastro.networks.numpy_network">
 <span id="pynucastro-networks-numpy-network-module"></span><h1>pynucastro.networks.numpy_network module<a class="headerlink" href="#module-pynucastro.networks.numpy_network" title="Link to this heading">#</a></h1>
+<p>Classes and methods for a network that uses NumPy arrays to cache
+some intermediate data.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.networks.numpy_network.</span></span><span class="sig-name descname"><span class="pre">NumpyNetwork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">libraries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inert_nuclei</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetric_screening</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_screening</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/numpy_network.html#NumpyNetwork"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork" title="Link to this definition">#</a></dt>
@@ -598,8 +600,13 @@ document.write(`
 <dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.yfac">
 <span class="sig-name descname"><span class="pre">yfac</span></span><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.yfac" title="Link to this definition">#</a></dt>
 <dd><p>Array storing the molar fraction component of each rate (Y of each
-reactant raised to the appropriate power).</p>
-<p>Depends on composition only.</p>
+reactant raised to the appropriate power).  Depends on composition
+only.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)">numpy.ndarray</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -607,8 +614,12 @@ reactant raised to the appropriate power).</p>
 <span class="sig-name descname"><span class="pre">prefac</span></span><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.prefac" title="Link to this definition">#</a></dt>
 <dd><p>Array storing the prefactor for each rate, which includes both the
 statistical prefactor and mass density raised to the corresponding
-density exponent.</p>
-<p>Depends on composition and density.</p>
+density exponent.  Depends on composition and density.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)">numpy.ndarray</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -708,24 +719,24 @@ performance between the two varies based on the setup. See
 <dl class="py property">
 <dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.nuc_cons_count">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nuc_cons_count</span></span><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_cons_count" title="Link to this definition">#</a></dt>
-<dd><p>Array storing the count of each nucleus in rates consuming
-that nucleus, with shape <code class="docutils literal notranslate"><span class="pre">(number_of_species,</span>
+<dd><p>Return an array storing the count of each nucleus in rates
+consuming that nucleus, with shape <code class="docutils literal notranslate"><span class="pre">(number_of_species,</span>
 <span class="pre">number_of_rates)</span></code>.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.nuc_prod_count">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nuc_prod_count</span></span><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_prod_count" title="Link to this definition">#</a></dt>
-<dd><p>Array storing the count of each nucleus in rates producing
-that nucleus, with shape <code class="docutils literal notranslate"><span class="pre">(number_of_species,</span>
+<dd><p>Return an array storing the count of each nucleus in rates
+producing that nucleus, with shape <code class="docutils literal notranslate"><span class="pre">(number_of_species,</span>
 <span class="pre">number_of_rates)</span></code></p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pynucastro.networks.numpy_network.NumpyNetwork.nuc_used">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nuc_used</span></span><a class="headerlink" href="#pynucastro.networks.numpy_network.NumpyNetwork.nuc_used" title="Link to this definition">#</a></dt>
-<dd><p>A boolean matrix of whether the nucleus is involved in the
-reaction or not, with shape <code class="docutils literal notranslate"><span class="pre">(number_of_species,</span>
+<dd><p>Return a boolean matrix of whether the nucleus is involved
+in the reaction or not, with shape <code class="docutils literal notranslate"><span class="pre">(number_of_species,</span>
 <span class="pre">number_of_rates)</span></code></p>
 </dd></dl>
 

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.files &#8212; pynucastro 2.6.0.post56+g929436c6e documentation</title>
+    <title>pynucastro.rates.files &#8212; pynucastro 2.6.0.post57+gd3a17fba2 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=c4eae6ff"></script>
+    <script src="../../../_static/documentation_options.js?v=e47bdb58"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -480,9 +480,8 @@ document.write(`
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.rates.files</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Functions for finding and working with the rate data directories.</span>
+<span></span><span class="sd">&quot;&quot;&quot;Functions for finding and working with the rate data directories.&quot;&quot;&quot;</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="n">_pynucastro_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -536,8 +535,11 @@ document.write(`
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_find_rate_file</span><span class="p">(</span><span class="n">ratename</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;locate the Reaclib or tabular rate or library file given its name.  Return</span>
-<span class="sd">    None if the file cannot be located, otherwise return its path.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Locate the Reaclib or tabular rate or library file given its</span>
+<span class="sd">    name.  Return None if the file cannot be located, otherwise return</span>
+<span class="sd">    its path.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># check to see if the rate file is in the working dir,</span>
     <span class="c1"># is already the full path, or is in _dirs</span>

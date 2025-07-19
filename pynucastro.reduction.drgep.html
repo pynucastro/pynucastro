@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.reduction.drgep module &#8212; pynucastro 2.6.0.post56+g929436c6e documentation</title>
+    <title>pynucastro.reduction.drgep module &#8212; pynucastro 2.6.0.post57+gd3a17fba2 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=c4eae6ff"></script>
+    <script src="_static/documentation_options.js?v=e47bdb58"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -578,6 +578,7 @@ document.write(`
                   
   <section id="module-pynucastro.reduction.drgep">
 <span id="pynucastro-reduction-drgep-module"></span><h1>pynucastro.reduction.drgep module<a class="headerlink" href="#module-pynucastro.reduction.drgep" title="Link to this heading">#</a></h1>
+<p>Classes and methods for implementing DRGEP reduction.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.drgep.calc_interaction_matrix">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep.</span></span><span class="sig-name descname"><span class="pre">calc_interaction_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rvals</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep.html#calc_interaction_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep.calc_interaction_matrix" title="Link to this definition">#</a></dt>
@@ -593,8 +594,9 @@ document.write(`
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.drgep.drgep">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep.</span></span><span class="sig-name descname"><span class="pre">drgep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returnobj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'net'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_mpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_numpy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep.html#drgep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep.drgep" title="Link to this definition">#</a></dt>
-<dd><p>Implementation of Directed Relation Graph with Error Propagation (DRGEP) reduction
-method described in <span id="id1">Pepiot-Desjardins and Pitsch [<a class="reference internal" href="zreferences.html#id24" title="P. Pepiot-Desjardins and H. Pitsch. An efficient error-propagation-based reduction method for large chemical kinetic mechanisms. Combustion and Flame, 154(1):67-81, 2008. doi:10.1016/j.combustflame.2007.10.020.">2008</a>]</span> and <span id="id2">Niemeyer and Sung [<a class="reference internal" href="zreferences.html#id25" title="Kyle E. Niemeyer and Chih-Jen Sung. On the importance of graph search algorithms for DRGEP-based mechanism reduction methods. Combustion and Flame, 158(8):1439-1443, 2011. doi:10.1016/j.combustflame.2010.12.010.">2011</a>]</span>.</p>
+<dd><p>Implement Directed Relation Graph with Error Propagation
+(DRGEP) reduction method described in
+<span id="id1">Pepiot-Desjardins and Pitsch [<a class="reference internal" href="zreferences.html#id24" title="P. Pepiot-Desjardins and H. Pitsch. An efficient error-propagation-based reduction method for large chemical kinetic mechanisms. Combustion and Flame, 154(1):67-81, 2008. doi:10.1016/j.combustflame.2007.10.020.">2008</a>]</span> and <span id="id2">Niemeyer and Sung [<a class="reference internal" href="zreferences.html#id25" title="Kyle E. Niemeyer and Chih-Jen Sung. On the importance of graph search algorithms for DRGEP-based mechanism reduction methods. Combustion and Flame, 158(8):1439-1443, 2011. doi:10.1016/j.combustflame.2010.12.010.">2011</a>]</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -628,15 +630,16 @@ Conditions should be supplied as 3 lists that will be permuted to form the datas
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.drgep.drgep_dijkstras">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep.</span></span><span class="sig-name descname"><span class="pre">drgep_dijkstras</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_AB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adj_nuc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep.html#drgep_dijkstras"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep.drgep_dijkstras" title="Link to this definition">#</a></dt>
-<dd><p>Modified Dijkstra’s algorithm to find paths that maximize the overall interaction coefficient
-between the target and each other nucleus in the net.</p>
+<dd><p>Implement modified Dijkstra’s algorithm to find paths that
+maximize the overall interaction coefficient between the target
+and each other nucleus in the net.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.drgep.get_adj_nuc">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep.</span></span><span class="sig-name descname"><span class="pre">get_adj_nuc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep.html#get_adj_nuc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep.get_adj_nuc" title="Link to this definition">#</a></dt>
-<dd><p>Get set of adjacent nuclei for each nucleus in the net. Returns dictionary keyed by
-nuclei.</p>
+<dd><p>Get set of adjacent nuclei for each nucleus in the net. Returns
+dictionary keyed by nuclei.</p>
 </dd></dl>
 
 </section>

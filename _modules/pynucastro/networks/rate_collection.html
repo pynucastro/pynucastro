@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.6.0.post56+g929436c6e documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.6.0.post57+gd3a17fba2 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=c4eae6ff"></script>
+    <script src="../../../_static/documentation_options.js?v=e47bdb58"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -481,7 +481,9 @@ document.write(`
                   
   <h1>Source code for pynucastro.networks.rate_collection</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;A collection of classes and methods to deal with collections of</span>
-<span class="sd">rates that together make up a network.&quot;&quot;&quot;</span>
+<span class="sd">rates that together make up a network.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
@@ -534,8 +536,10 @@ document.write(`
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_skip_xalpha</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;utility function to consider if we show an (a, x) or (x, a) rate.  Here, p is the</span>
-<span class="sd">    product we want to link to&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if we should show an (a, x) or (x, a) rate.  Here, p is</span>
+<span class="sd">    the product we want to link to</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># first check if alpha is the heaviest nucleus on the RHS</span>
     <span class="n">rhs_heavy</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
@@ -561,8 +565,10 @@ document.write(`
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_skip_xp</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;utility function to consider if we show an (p, x) or (x, p) rate.  Here, p is the</span>
-<span class="sd">    product we want to link to&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if we should show an (p, x) or (x, p) rate.  Here, p is</span>
+<span class="sd">    the product we want to link to</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># for rates that are A (x, p) B, where A and B are heavy nuclei,</span>
     <span class="c1"># don&#39;t show the connection of the nucleus to p, only show it to B</span>
@@ -586,8 +592,8 @@ document.write(`
 <div class="viewcode-block" id="Composition">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Composition</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">UserDict</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;a composition holds the mass fractions of the nuclei in a network</span>
-<span class="sd">    -- useful for evaluating the rates</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A composition holds the mass fractions of the nuclei in a</span>
+<span class="sd">    network.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -595,7 +601,9 @@ document.write(`
 <span class="sd">        an iterable of Nucleus objects</span>
 <span class="sd">    small : float</span>
 <span class="sd">        a floor for nuclei mass fractions, used as the default value</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuclei</span><span class="p">,</span> <span class="n">small</span><span class="o">=</span><span class="mf">1.e-16</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">({</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">small</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">nuclei</span><span class="p">})</span>
@@ -652,11 +660,13 @@ document.write(`
 <div class="viewcode-block" id="Composition.get_nuclei">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition.get_nuclei">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of Nuclei objects that make up this composition.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of Nuclei objects that make up this</span>
+<span class="sd">        composition.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        list</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
@@ -664,7 +674,7 @@ document.write(`
 <div class="viewcode-block" id="Composition.get_molar">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition.get_molar">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_molar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a dictionary of molar fractions, Y = X/A</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a dictionary of molar fractions, Y = X/A.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -677,7 +687,7 @@ document.write(`
 <div class="viewcode-block" id="Composition.get_sum_X">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition.get_sum_X">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_sum_X</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;return the sum of the mass fractions</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the sum of the mass fractions.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -696,6 +706,7 @@ document.write(`
 <span class="sd">        ----------</span>
 <span class="sd">        Z : float</span>
 <span class="sd">            The desired metalicity</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">rem</span> <span class="o">=</span> <span class="n">Z</span><span class="o">/</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
@@ -777,7 +788,7 @@ document.write(`
 <div class="viewcode-block" id="Composition.set_nuc">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition.set_nuc">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_nuc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">xval</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set nuclei name to the mass fraction xval</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set nuclei name to the mass fraction xval.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -791,7 +802,7 @@ document.write(`
 <div class="viewcode-block" id="Composition.normalize">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition.normalize">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalize the mass fractions to sum to 1 &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalize the mass fractions to sum to 1.&quot;&quot;&quot;</span>
         <span class="n">X_sum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sum_X</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
@@ -1595,9 +1606,12 @@ document.write(`
 <div class="viewcode-block" id="RateCollection.remove_nuclei">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.remove_nuclei">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">remove_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuc_list</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;remove the nuclei in nuc_list from the network along with any rates</span>
-<span class="sd">        that directly involve them (this doesn&#39;t affect approximate rates that</span>
-<span class="sd">        may have these nuclei as hidden intermediate links)&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the nuclei in nuc_list from the network along with</span>
+<span class="sd">        any rates that directly involve them (this doesn&#39;t affect</span>
+<span class="sd">        approximate rates that may have these nuclei as hidden</span>
+<span class="sd">        intermediate links)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">nuc_list</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">nuc_list</span><span class="p">)</span>
         <span class="n">rates_to_delete</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1616,9 +1630,11 @@ document.write(`
 <div class="viewcode-block" id="RateCollection.remove_rates">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.remove_rates">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">remove_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rates</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;remove the Rate objects in rates from the network.  Note, if</span>
-<span class="sd">        rate list is a dict, then the keys are assumed to be the rates</span>
-<span class="sd">        to remove&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the Rate objects in rates from the network.  Note,</span>
+<span class="sd">        if rate list is a dict, then the keys are assumed to be the</span>
+<span class="sd">        rates to remove</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">Rate</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">rates</span><span class="p">)</span>
@@ -1641,6 +1657,7 @@ document.write(`
 <span class="sd">        rates : Rate, list(Rate)</span>
 <span class="sd">             a single Rate object or a list of Rate objects specifying the</span>
 <span class="sd">             rates to be added to the network.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">Rate</span><span class="p">):</span>
@@ -1849,8 +1866,8 @@ document.write(`
 <div class="viewcode-block" id="RateCollection.make_nse_protons">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.make_nse_protons">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">make_nse_protons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;for rates involving nuclei with mass number &gt;= A, swap any</span>
-<span class="sd">        protons for NSE protons.  This will decouple these rates from</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Replace protons in rates involving nuclei with mass number</span>
+<span class="sd">        &gt;= A with NSE protons.  This will decouple these rates from</span>
 <span class="sd">        the proton captures at lower mass number, simplifying the</span>
 <span class="sd">        linear algebra.</span>
 
@@ -1859,6 +1876,7 @@ document.write(`
 <span class="sd">        A : int</span>
 <span class="sd">            mass number above which to swap regular protons for</span>
 <span class="sd">            NSE protons.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># we want to update both the forward and reverse rates,</span>
@@ -1926,7 +1944,7 @@ document.write(`
 <div class="viewcode-block" id="RateCollection.evaluate_rates">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_rates">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;evaluate the rates for a specific density, temperature, and</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the rates for a specific density, temperature, and</span>
 <span class="sd">        composition, with optional screening.  Note: this returns that</span>
 <span class="sd">        rate as dY/dt, where Y is the molar fraction.  For a 2 body</span>
 <span class="sd">        reaction, a + b, this will be of the form:</span>
@@ -1981,7 +1999,8 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_jacobian">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                           <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude_rates</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;return an array of the form J_ij = dYdot_i/dY_j for the network</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an array of the form J_ij = dYdot_i/dY_j for the</span>
+<span class="sd">        network</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -2446,8 +2465,10 @@ document.write(`
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_network_chart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;a network chart is a dict, keyed by rate that holds a list</span>
-<span class="sd">        of tuples (Nucleus, ydot)&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a dict, keyed by rate that holds a list of tuples</span>
+<span class="sd">        (Nucleus, ydot)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">)</span>
 
@@ -2590,8 +2611,9 @@ document.write(`
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">names</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A stub for function to output the network -- this is</span>
-<span class="sd">        implementation dependent.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Output the network.  This version is a stub that will be</span>
+<span class="sd">        replaced by derived classes, as this is implementation</span>
+<span class="sd">        dependent.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># pylint: disable=unused-argument</span>
@@ -3578,9 +3600,9 @@ document.write(`
 <div class="viewcode-block" id="Explorer">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Explorer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Explorer</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple class that enables interactive exploration a RateCollection,</span>
-<span class="sd">    presenting density and temperature sliders to update the reaction rate</span>
-<span class="sd">    values.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple class that enables interactive exploration a</span>
+<span class="sd">    RateCollection, presenting density and temperature sliders to</span>
+<span class="sd">    update the reaction rate values.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -3592,9 +3614,10 @@ document.write(`
 <span class="sd">        Additional parameters that will be passed through to the</span>
 <span class="sd">        RateCollection plot() function.  Note that &quot;T&quot; and &quot;rho&quot;</span>
 <span class="sd">        will be ignored.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rc</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; take a RateCollection and a composition &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rc</span> <span class="o">=</span> <span class="n">rc</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">comp</span> <span class="o">=</span> <span class="n">comp</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>

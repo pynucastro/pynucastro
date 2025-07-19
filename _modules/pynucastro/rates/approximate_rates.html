@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.approximate_rates &#8212; pynucastro 2.6.0.post56+g929436c6e documentation</title>
+    <title>pynucastro.rates.approximate_rates &#8212; pynucastro 2.6.0.post57+gd3a17fba2 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=c4eae6ff"></script>
+    <script src="../../../_static/documentation_options.js?v=e47bdb58"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -480,16 +480,21 @@ document.write(`
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.rates.approximate_rates</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
+<span></span><span class="sd">&quot;&quot;&quot;Classes and methods for describing approximations to rates.  Often</span>
+<span class="sd">this involves using a group of existing rates to enforce an</span>
+<span class="sd">equilibrium through a nucleus.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rate</span>
 
 
 <div class="viewcode-block" id="create_double_neutron_capture">
 <a class="viewcode-back" href="../../../pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.create_double_neutron_capture">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_double_neutron_capture</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="n">reactant</span><span class="p">,</span> <span class="n">product</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A helper function that will return a pair of</span>
-<span class="sd">    :py:class:`ApproximateRate` objects for the A(n,g)X(n,g)B -&gt;</span>
-<span class="sd">    A(nn,g)B approximation</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a pair of :py:class:`ApproximateRate` objects for the</span>
+<span class="sd">    A(n,g)X(n,g)B -&gt; A(nn,g)B approximation</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -583,6 +588,7 @@ document.write(`
 <span class="sd">        factor to be disabled.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">primary_rate</span><span class="p">,</span> <span class="n">secondary_rates</span><span class="p">,</span>
                  <span class="n">primary_reverse</span><span class="p">,</span> <span class="n">secondary_reverse</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                  <span class="n">is_reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;ap_pg&quot;</span><span class="p">,</span>

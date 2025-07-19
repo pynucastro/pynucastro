@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.screening.screen &#8212; pynucastro 2.6.0.post56+g929436c6e documentation</title>
+    <title>pynucastro.screening.screen &#8212; pynucastro 2.6.0.post57+gd3a17fba2 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=c4eae6ff"></script>
+    <script src="../../../_static/documentation_options.js?v=e47bdb58"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -480,9 +480,8 @@ document.write(`
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.screening.screen</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Python implementations of screening routines.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Python implementations of common electron screening routines.&quot;&quot;&quot;</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
@@ -501,9 +500,8 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.PlasmaState">[docs]</a>
 <span class="nd">@jitclass</span><span class="p">()</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">PlasmaState</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Stores precomputed values that are reused for all screening correction</span>
-<span class="sd">    factor calculations.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store precomputed values that are reused for all screening</span>
+<span class="sd">    correction factor calculations.</span>
 
 <span class="sd">    :var temp:        temperature in K</span>
 <span class="sd">    :var dens:        density in g/cm^3</span>
@@ -515,7 +513,9 @@ document.write(`
 <span class="sd">    :var z2bar:       average (ion charge)^2</span>
 <span class="sd">    :var n_e:         electron number density</span>
 <span class="sd">    :var gamma_e_fac: temperature-independent part of Gamma_e</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">temp</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">dens</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">qlam0z</span><span class="p">:</span> <span class="nb">float</span>
@@ -580,15 +580,23 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.NseState">[docs]</a>
 <span class="nd">@jitclass</span><span class="p">()</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">NseState</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Stores precomputed values that are reused in the NSE state screening</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store precomputed values that are reused in the NSE state screening</span>
 <span class="sd">    calculations</span>
 
-<span class="sd">    :var temp:        temperature in K</span>
-<span class="sd">    :var dens:        density in g/cm^3</span>
-<span class="sd">    :var ye:          electron molar fraction</span>
-<span class="sd">    :var n_e:         electron number density</span>
-<span class="sd">    :var gamma_e_fac: temperature-independent part of Gamma_e</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    temp : float</span>
+<span class="sd">        Temperature in K</span>
+<span class="sd">    dens : float</span>
+<span class="sd">        Density in g/cm^3</span>
+<span class="sd">    ye : float</span>
+<span class="sd">        Electron molar fraction</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gamma_e_fac : float</span>
+<span class="sd">        Temperature-independent part of Gamma_e.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">temp</span><span class="p">:</span> <span class="nb">float</span>
@@ -597,18 +605,6 @@ document.write(`
     <span class="n">gamma_e_fac</span><span class="p">:</span> <span class="nb">float</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">ye</span><span class="p">):</span>
-
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :param temp:        temperature in K</span>
-<span class="sd">        :param dens:        density in g/cm^3</span>
-<span class="sd">        :param ye:          electron molar fraction</span>
-<span class="sd">        :param Xs:          nucleon fraction of each ion</span>
-<span class="sd">        :type Xs: numpy ndarray</span>
-<span class="sd">        :param As:          atomic mass number of each ion</span>
-<span class="sd">        :type As: numpy ndarray</span>
-<span class="sd">        :param Zs:          atomic number of each ion</span>
-<span class="sd">        :type Zs: numpy ndarray</span>
-<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dens</span> <span class="o">=</span> <span class="n">dens</span>
@@ -620,13 +616,13 @@ document.write(`
 <div class="viewcode-block" id="make_plasma_state">
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.make_plasma_state">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_plasma_state</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">molar_fractions</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Construct a PlasmaState object from simulation data.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a PlasmaState object from simulation data.</span>
 
 <span class="sd">    :param temp:            temperature in K</span>
 <span class="sd">    :param dens:            density in g/cm^3</span>
 <span class="sd">    :param molar_fractions: dictionary of molar abundances for each ion,</span>
 <span class="sd">                            as returned by :meth:`.Composition.get_molar`</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">nuclei</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">molar_fractions</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
     <span class="n">Ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">molar_fractions</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nuclei</span><span class="p">])</span>
@@ -639,9 +635,8 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.ScreenFactors">[docs]</a>
 <span class="nd">@jitclass</span><span class="p">()</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ScreenFactors</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Stores values that will be used to calculate the screening correction factor</span>
-<span class="sd">    for a specific pair of nuclei.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store values that will be used to calculate the screening</span>
+<span class="sd">    correction factor for a specific pair of nuclei.</span>
 
 <span class="sd">    :var z1: atomic number of first nucleus</span>
 <span class="sd">    :var z2: atomic number of second nucleus</span>
@@ -653,7 +648,9 @@ document.write(`
 <span class="sd">    :var lzav: log of effective charge</span>
 <span class="sd">    :var aznut: combination of a1, z1, a2, z2 raised to 1/3 power</span>
 <span class="sd">    :var ztilde: effective ion radius factor for a MCP</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">z1</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">z2</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">a1</span><span class="p">:</span> <span class="nb">int</span>
@@ -682,11 +679,11 @@ document.write(`
 <div class="viewcode-block" id="make_screen_factors">
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.make_screen_factors">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_screen_factors</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Construct a ScreenFactors object from a pair of nuclei.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a ScreenFactors object from a pair of nuclei.</span>
 
 <span class="sd">    :param Nucleus n1: first nucleus</span>
 <span class="sd">    :param Nucleus n2: second nucleus</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">n1</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">n1</span><span class="p">)</span>
     <span class="n">n2</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">n2</span><span class="p">)</span>
@@ -698,12 +695,13 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.debye_huckel">[docs]</a>
 <span class="nd">@njit</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">debye_huckel</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates the Debye-Huckel enhancement factor for weak Coloumb coupling,</span>
-<span class="sd">    following the appendix of :cite:t:`chugunov:2009`.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the Debye-Huckel enhancement factor for weak Coloumb</span>
+<span class="sd">    coupling, following the appendix of :cite:t:`chugunov:2009`.</span>
 
 <span class="sd">    :param PlasmaState state:     the precomputed plasma state factors</span>
 <span class="sd">    :param ScreenFactors scn_fac: the precomputed ion pair factors</span>
 <span class="sd">    :returns: screening correction factor</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">z1z2</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span>
 
@@ -724,11 +722,13 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.screen5">[docs]</a>
 <span class="nd">@njit</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">screen5</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">PlasmaState</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates screening factors following the appendix of :cite:t:`Wallace:1982`.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate screening factors following the appendix of</span>
+<span class="sd">    :cite:t:`Wallace:1982`.</span>
 
 <span class="sd">    Based on :cite:t:`graboske:1973` for weak screening. Based on</span>
 <span class="sd">    :cite:t:`alastuey:1978` with plasma parameters from :cite:t:`itoh:1979`,</span>
 <span class="sd">    for strong screening.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">fact</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">gamefx</span> <span class="o">=</span> <span class="mf">0.3e0</span>  <span class="c1"># lower gamma limit for intermediate screening</span>
@@ -858,7 +858,8 @@ document.write(`
 
 <span class="nd">@njit</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">smooth_clip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Smoothly transition between y=limit and y=x with a half-cosine.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a smooth transition between y=limit and y=x with a</span>
+<span class="sd">    half-cosine.</span>
 
 <span class="sd">    Clips smaller values if limit &lt; start and larger values if start &lt; limit.</span>
 
@@ -866,6 +867,7 @@ document.write(`
 <span class="sd">    :param limit: the constant value to clip x to</span>
 <span class="sd">    :param start: the x-value at which to start the transition</span>
 <span class="sd">    :returns: y</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">limit</span> <span class="o">&lt;</span> <span class="n">start</span><span class="p">:</span>
         <span class="n">lower</span> <span class="o">=</span> <span class="n">limit</span>
@@ -889,7 +891,7 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.chugunov_2007">[docs]</a>
 <span class="nd">@njit</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">chugunov_2007</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates screening factors based on :cite:t:`chugunov:2007`.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate screening factors based on :cite:t:`chugunov:2007`.</span>
 
 <span class="sd">    Follows the approach in :cite:t:`yakovlev:2006` to extend to a</span>
 <span class="sd">    multi-component plasma.</span>
@@ -897,6 +899,7 @@ document.write(`
 <span class="sd">    :param PlasmaState state:     the precomputed plasma state factors</span>
 <span class="sd">    :param ScreenFactors scn_fac: the precomputed ion pair factors</span>
 <span class="sd">    :returns: screening correction factor</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Plasma temperature T_p</span>
     <span class="c1"># This formula comes from working backwards from zeta_ij (Chugunov 2009 eq. 12)</span>
@@ -988,10 +991,12 @@ document.write(`
 
 <span class="nd">@njit</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">f0</span><span class="p">(</span><span class="n">gamma</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate the free energy per ion in a OCP from :cite:t:`chugunov:2009` eq. 24</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate the free energy per ion in a OCP from</span>
+<span class="sd">    :cite:t:`chugunov:2009` eq. 24</span>
 
 <span class="sd">    :param gamma: Coulomb coupling parameter</span>
 <span class="sd">    :returns: free energy</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">A1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.907</span>
     <span class="n">A2</span> <span class="o">=</span> <span class="mf">0.62954</span>
@@ -1020,11 +1025,12 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.chugunov_2009">[docs]</a>
 <span class="nd">@njit</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">chugunov_2009</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates screening factors based on :cite:t:`chugunov:2009`.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate screening factors based on :cite:t:`chugunov:2009`.</span>
 
 <span class="sd">    :param PlasmaState state:     the precomputed plasma state factors</span>
 <span class="sd">    :param ScreenFactors scn_fac: the precomputed ion pair factors</span>
 <span class="sd">    :returns: screening correction factor</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">z1z2</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span>
     <span class="n">zcomp</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span> <span class="o">+</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span>
@@ -1088,11 +1094,13 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.potekhin_1998">[docs]</a>
 <span class="nd">@njit</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">potekhin_1998</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates screening factors based on :cite:t:`chabrier_potekhin:1998`.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate screening factors based on</span>
+<span class="sd">    :cite:t:`chabrier_potekhin:1998`.</span>
 
 <span class="sd">    :param PlasmaState state:     the precomputed plasma state factors</span>
 <span class="sd">    :param ScreenFactors scn_fac: the precomputed ion pair factors</span>
 <span class="sd">    :returns: screening correction factor</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">Gamma_e</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span>
@@ -1129,18 +1137,19 @@ document.write(`
 <div class="viewcode-block" id="screening_check">
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.screening_check">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">screening_check</span><span class="p">(</span><span class="n">check_func</span><span class="o">=</span><span class="n">debye_huckel</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.01</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A decorator factory that wraps a screening function with a</span>
-<span class="sd">    check that determines whether that function can be skipped for a</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a decorator factory that wraps a screening function with</span>
+<span class="sd">    a check that determines whether that function can be skipped for a</span>
 <span class="sd">    given plasma state and screening pair.</span>
 
 <span class="sd">    :param func: the function to check against the threshold</span>
 <span class="sd">    :param threshold: the threshold to check against. If screen_check</span>
 <span class="sd">                      is less than the threshold, skip screen_func</span>
 <span class="sd">    :returns: a decorator for wrapping screening functions</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">screening_decorator</span><span class="p">(</span><span class="n">screen_func</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Decorates a screening function with a computation</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Decorate a screening function with a computation</span>
 <span class="sd">        that determines whether the check is skippable.</span>
 
 <span class="sd">        :param screen_func: the screening function being wrapped</span>
