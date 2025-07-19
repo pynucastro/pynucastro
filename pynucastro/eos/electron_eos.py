@@ -1,3 +1,7 @@
+"""Classes and methods for managing an electron / positron equation of
+state."""
+
+
 from collections import namedtuple
 
 import numpy as np
