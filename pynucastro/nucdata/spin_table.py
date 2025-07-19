@@ -1,15 +1,18 @@
+"""Classes and methods for dealing with nuclear spin data."""
+
 from pathlib import Path
 
 
 class SpinTable:
-    """
-    This class stores the spins2020.txt table information in a dictionary data structure
+    """Manage the nuclear spin data in a dictionary data structure
     that maps nuclides to their number of nuclear spin states.
-    Therefore, after setting an SpinTable class in rates.py, we can retrieve the
-    spin states for a designated Nucleus class.
+    Therefore, after setting an SpinTable class in rates.py, we can
+    retrieve the spin states for a designated Nucleus class.
 
-    The variable reliable switch between using all the values of the tables, excluding the nuclei
-    where only intervals are given and the values measured by strong experimental arguments.
+    The variable reliable switch between using all the values of the
+    tables, excluding the nuclei where only intervals are given and
+    the values measured by strong experimental arguments.
+
     """
 
     def __init__(self, datafile: str | Path = None, reliable: bool = False) -> None:
@@ -44,6 +47,20 @@ class SpinTable:
                     self._spin_states[A, Z] = spin_states
 
     def get_spin_states(self, a: int, z: int) -> int:
+        """Return the spin for a nucleus.
+
+        Parameters
+        ----------
+        a : int
+            Atomic weight
+        z : int
+            Atomic number
+
+        Returns
+        -------
+        float
+
+        """
         try:
             return self._spin_states[a, z]
         except KeyError as exc:
