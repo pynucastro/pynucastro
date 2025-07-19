@@ -1,6 +1,4 @@
-"""
-Classes and methods to interface with files storing rate data.
-"""
+"""Classes and methods to interface with files storing rate data."""
 
 import re
 from pathlib import Path
@@ -26,7 +24,7 @@ _pcollection = PartitionFunctionCollection(use_high_temperatures=True, use_set='
 
 
 class UnsupportedNucleus(Exception):
-    pass
+    """Exception for a nucleus that we do not know about."""
 
 
 class Nucleus:
@@ -272,7 +270,7 @@ class Nucleus:
         return cls.from_cache(name, dummy)
 
     def summary(self):
-        """print a summary of the nuclear properties"""
+        """Print a summary of the nuclear properties"""
 
         heading = f"{self.caps_name} / {self.spec_name}"
         print(heading)
@@ -470,11 +468,12 @@ def get_nuclei_in_range(name=None, *,
 
 
 def get_all_nuclei():
-    """Return a list with every Nucleus that has a known mass
+    """Return a list with every Nucleus that has a known mass.
 
     Returns
     -------
     list
+
     """
 
     nuc_list = []

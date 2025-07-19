@@ -1,3 +1,8 @@
+"""A collection of alternate rates that are not contained in the other
+sources.
+
+"""
+
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.reaclib_rate import ReacLibRate, SingleSet
 
@@ -7,6 +12,7 @@ class DeBoerC12agO16(ReacLibRate):
     the formulation from DeBoer et al. 2017
 
     """
+
     def __init__(self):
 
         labelprops = "deboer"

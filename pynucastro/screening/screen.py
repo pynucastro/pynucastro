@@ -1,6 +1,5 @@
-"""
-Python implementations of screening routines.
-"""
+"""Python implementations of common electron screening routines."""
+
 import numpy as np
 
 from pynucastro.constants import constants
@@ -17,9 +16,8 @@ __all__ = ["NseState", "PlasmaState", "ScreenFactors",
 
 @jitclass()
 class PlasmaState:
-    """
-    Stores precomputed values that are reused for all screening correction
-    factor calculations.
+    """Store precomputed values that are reused for all screening
+    correction factor calculations.
 
     :var temp:        temperature in K
     :var dens:        density in g/cm^3
@@ -31,7 +29,9 @@ class PlasmaState:
     :var z2bar:       average (ion charge)^2
     :var n_e:         electron number density
     :var gamma_e_fac: temperature-independent part of Gamma_e
+
     """
+
     temp: float
     dens: float
     qlam0z: float
@@ -93,15 +93,23 @@ class PlasmaState:
 
 @jitclass()
 class NseState:
-    """
-    Stores precomputed values that are reused in the NSE state screening
+    """Store precomputed values that are reused in the NSE state screening
     calculations
 
-    :var temp:        temperature in K
-    :var dens:        density in g/cm^3
-    :var ye:          electron molar fraction
-    :var n_e:         electron number density
-    :var gamma_e_fac: temperature-independent part of Gamma_e
+    Parameters
+    ----------
+    temp : float
+        Temperature in K
+    dens : float
+        Density in g/cm^3
+    ye : float
+        Electron molar fraction
+
+    Attributes
+    ----------
+    gamma_e_fac : float
+        Temperature-independent part of Gamma_e.
+
     """
 
     temp: float
@@ -111,18 +119,6 @@ class NseState:
 
     def __init__(self, temp, dens, ye):
 
-        """
-        :param temp:        temperature in K
-        :param dens:        density in g/cm^3
-        :param ye:          electron molar fraction
-        :param Xs:          nucleon fraction of each ion
-        :type Xs: numpy ndarray
-        :param As:          atomic mass number of each ion
-        :type As: numpy ndarray
-        :param Zs:          atomic number of each ion
-        :type Zs: numpy ndarray
-        """
-
         self.temp = temp
         self.dens = dens
         self.ye = ye
@@ -130,13 +126,13 @@ class NseState:
 
 
 def make_plasma_state(temp, dens, molar_fractions):
-    """
-    Construct a PlasmaState object from simulation data.
+    """Construct a PlasmaState object from simulation data.
 
     :param temp:            temperature in K
     :param dens:            density in g/cm^3
     :param molar_fractions: dictionary of molar abundances for each ion,
                             as returned by :meth:`.Composition.get_molar`
+
     """
     nuclei = list(molar_fractions.keys())
     Ys = np.asarray([molar_fractions[n] for n in nuclei])
@@ -146,9 +142,8 @@ def make_plasma_state(temp, dens, molar_fractions):
 
 @jitclass()
 class ScreenFactors:
-    """
-    Stores values that will be used to calculate the screening correction factor
-    for a specific pair of nuclei.
+    """Store values that will be used to calculate the screening
+    correction factor for a specific pair of nuclei.
 
     :var z1: atomic number of first nucleus
     :var z2: atomic number of second nucleus
@@ -160,7 +155,9 @@ class ScreenFactors:
     :var lzav: log of effective charge
     :var aznut: combination of a1, z1, a2, z2 raised to 1/3 power
     :var ztilde: effective ion radius factor for a MCP
+
     """
+
     z1: int
     z2: int
     a1: int
@@ -186,11 +183,11 @@ class ScreenFactors:
 
 
 def make_screen_factors(n1, n2):
-    """
-    Construct a ScreenFactors object from a pair of nuclei.
+    """Construct a ScreenFactors object from a pair of nuclei.
 
     :param Nucleus n1: first nucleus
     :param Nucleus n2: second nucleus
+
     """
     n1 = Nucleus.cast(n1)
     n2 = Nucleus.cast(n2)
@@ -199,12 +196,13 @@ def make_screen_factors(n1, n2):
 
 @njit
 def debye_huckel(state, scn_fac) -> float:
-    """Calculates the Debye-Huckel enhancement factor for weak Coloumb coupling,
-    following the appendix of :cite:t:`chugunov:2009`.
+    """Calculate the Debye-Huckel enhancement factor for weak Coloumb
+    coupling, following the appendix of :cite:t:`chugunov:2009`.
 
     :param PlasmaState state:     the precomputed plasma state factors
     :param ScreenFactors scn_fac: the precomputed ion pair factors
     :returns: screening correction factor
+
     """
     z1z2 = scn_fac.z1 * scn_fac.z2
 
@@ -222,11 +220,13 @@ def debye_huckel(state, scn_fac) -> float:
 
 @njit
 def screen5(state: PlasmaState, scn_fac):
-    """Calculates screening factors following the appendix of :cite:t:`Wallace:1982`.
+    """Calculate screening factors following the appendix of
+    :cite:t:`Wallace:1982`.
 
     Based on :cite:t:`graboske:1973` for weak screening. Based on
     :cite:t:`alastuey:1978` with plasma parameters from :cite:t:`itoh:1979`,
     for strong screening.
+
     """
     fact = np.cbrt(2)
     gamefx = 0.3e0  # lower gamma limit for intermediate screening
@@ -355,7 +355,8 @@ def screen5(state: PlasmaState, scn_fac):
 
 @njit
 def smooth_clip(x, limit, start):
-    """Smoothly transition between y=limit and y=x with a half-cosine.
+    """Create a smooth transition between y=limit and y=x with a
+    half-cosine.
 
     Clips smaller values if limit < start and larger values if start < limit.
 
@@ -363,6 +364,7 @@ def smooth_clip(x, limit, start):
     :param limit: the constant value to clip x to
     :param start: the x-value at which to start the transition
     :returns: y
+
     """
     if limit < start:
         lower = limit
@@ -384,7 +386,7 @@ def smooth_clip(x, limit, start):
 
 @njit
 def chugunov_2007(state, scn_fac):
-    """Calculates screening factors based on :cite:t:`chugunov:2007`.
+    """Calculate screening factors based on :cite:t:`chugunov:2007`.
 
     Follows the approach in :cite:t:`yakovlev:2006` to extend to a
     multi-component plasma.
@@ -392,6 +394,7 @@ def chugunov_2007(state, scn_fac):
     :param PlasmaState state:     the precomputed plasma state factors
     :param ScreenFactors scn_fac: the precomputed ion pair factors
     :returns: screening correction factor
+
     """
     # Plasma temperature T_p
     # This formula comes from working backwards from zeta_ij (Chugunov 2009 eq. 12)
@@ -482,10 +485,12 @@ def chugunov_2007(state, scn_fac):
 
 @njit
 def f0(gamma):
-    r"""Calculate the free energy per ion in a OCP from :cite:t:`chugunov:2009` eq. 24
+    r"""Calculate the free energy per ion in a OCP from
+    :cite:t:`chugunov:2009` eq. 24
 
     :param gamma: Coulomb coupling parameter
     :returns: free energy
+
     """
     A1 = -0.907
     A2 = 0.62954
@@ -512,11 +517,12 @@ def f0(gamma):
 
 @njit
 def chugunov_2009(state, scn_fac):
-    """Calculates screening factors based on :cite:t:`chugunov:2009`.
+    """Calculate screening factors based on :cite:t:`chugunov:2009`.
 
     :param PlasmaState state:     the precomputed plasma state factors
     :param ScreenFactors scn_fac: the precomputed ion pair factors
     :returns: screening correction factor
+
     """
     z1z2 = scn_fac.z1 * scn_fac.z2
     zcomp = scn_fac.z1 + scn_fac.z2
@@ -577,11 +583,13 @@ def chugunov_2009(state, scn_fac):
 
 @njit
 def potekhin_1998(state, scn_fac):
-    """Calculates screening factors based on :cite:t:`chabrier_potekhin:1998`.
+    """Calculate screening factors based on
+    :cite:t:`chabrier_potekhin:1998`.
 
     :param PlasmaState state:     the precomputed plasma state factors
     :param ScreenFactors scn_fac: the precomputed ion pair factors
     :returns: screening correction factor
+
     """
 
     Gamma_e = state.gamma_e_fac / state.temp
@@ -615,18 +623,19 @@ def potekhin_1998(state, scn_fac):
 
 
 def screening_check(check_func=debye_huckel, threshold: float = 1.01):
-    """A decorator factory that wraps a screening function with a
-    check that determines whether that function can be skipped for a
+    """Create a decorator factory that wraps a screening function with
+    a check that determines whether that function can be skipped for a
     given plasma state and screening pair.
 
     :param func: the function to check against the threshold
     :param threshold: the threshold to check against. If screen_check
                       is less than the threshold, skip screen_func
     :returns: a decorator for wrapping screening functions
+
     """
 
     def screening_decorator(screen_func):
-        """Decorates a screening function with a computation
+        """Decorate a screening function with a computation
         that determines whether the check is skippable.
 
         :param screen_func: the screening function being wrapped
