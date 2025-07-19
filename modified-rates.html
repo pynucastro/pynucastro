@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Modified Rates &#8212; pynucastro 2.6.0.post52+g10ef7ef61 documentation</title>
+    <title>Modified Rates &#8212; pynucastro 2.6.0.post54+g944ba615f documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=0deeb5e1"></script>
+    <script src="_static/documentation_options.js?v=eeedfba8"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -566,7 +566,7 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="modified-rates">
 <h1>Modified Rates<a class="headerlink" href="#modified-rates" title="Link to this heading">#</a></h1>
-<p>A <code class="docutils literal notranslate"><span class="pre">ModifiedRate</span></code> acts as a wrapper, encapsulating a single rate, allowing you to change the products of the stoichiometric coefficients.  A good example of this comes from the <code class="docutils literal notranslate"><span class="pre">aprox19</span></code> and <code class="docutils literal notranslate"><span class="pre">aprox21</span></code> networks.  There, an approximation to H-burning (via pp and CNO) is included, and the nucleus <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}\)</span> is present, which is the bottleneck for CNO.  Beyond that is an <span class="math notranslate nohighlight">\(\alpha\)</span>-chain.  But <span class="math notranslate nohighlight">\(\alpha\)</span>-captures cannot connect <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}\)</span> (odd <span class="math notranslate nohighlight">\(Z\)</span>) to the even-<span class="math notranslate nohighlight">\(Z\)</span> nuclei in the <span class="math notranslate nohighlight">\(\alpha\)</span>-chain.</p>
+<p>A <a class="reference internal" href="pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate" title="pynucastro.rates.modified_rate.ModifiedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModifiedRate</span></code></a> acts as a wrapper, encapsulating a single rate, allowing you to change the products of the stoichiometric coefficients.  A good example of this comes from the <code class="docutils literal notranslate"><span class="pre">aprox19</span></code> and <code class="docutils literal notranslate"><span class="pre">aprox21</span></code> networks.  There, an approximation to H-burning (via pp and CNO) is included, and the nucleus <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}\)</span> is present, which is the bottleneck for CNO.  Beyond that is an <span class="math notranslate nohighlight">\(\alpha\)</span>-chain.  But <span class="math notranslate nohighlight">\(\alpha\)</span>-captures cannot connect <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}\)</span> (odd <span class="math notranslate nohighlight">\(Z\)</span>) to the even-<span class="math notranslate nohighlight">\(Z\)</span> nuclei in the <span class="math notranslate nohighlight">\(\alpha\)</span>-chain.</p>
 <p>To make this connection, a rate that does:</p>
 <div class="math notranslate nohighlight">
 \[2\, {}^{14}\mathrm{N} + 3 \alpha \rightarrow 2\, {}^{20}\mathrm{Ne}\]</div>

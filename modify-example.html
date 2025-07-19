@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Modifying Rates &#8212; pynucastro 2.6.0.post52+g10ef7ef61 documentation</title>
+    <title>Modifying Rates &#8212; pynucastro 2.6.0.post54+g944ba615f documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=0deeb5e1"></script>
+    <script src="_static/documentation_options.js?v=eeedfba8"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -580,7 +580,7 @@ document.write(`
 pynucastro supports changing the products.  Here’s an example.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>A newer way to accomplish this is via the <code class="docutils literal notranslate"><span class="pre">ModifiedRate</span></code> class.  In the future, the <code class="docutils literal notranslate"><span class="pre">.modify_products()</span></code> method
+<p>A newer way to accomplish this is via the <a class="reference internal" href="pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate" title="pynucastro.rates.modified_rate.ModifiedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModifiedRate</span></code></a> class.  In the future, the <a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.modify_products" title="pynucastro.rates.rate.Rate.modify_products"><code class="xref py py-func docutils literal notranslate"><span class="pre">modify_products</span></code></a> method
 shown here may be removed.</p>
 </div>
 <div class="cell docutils container">
@@ -671,7 +671,7 @@ C12 + C12 ⟶ n + Mg23           [Q =  -2.60 MeV] (C12 + C12 --&gt; n + Mg23 &lt
 <p>Now let’s build a network that includes the nuclei involved in our carbon burning.  We’ll start by leaving off the <span class="math notranslate nohighlight">\({}^{23}\mathrm{Mg}\)</span></p>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
-<p>We we get the rate object from the library via <code class="docutils literal notranslate"><span class="pre">get_rate_by_name()</span></code> (or any similar function), we are getting
+<p>We we get the rate object from the library via <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library.get_rate_by_name" title="pynucastro.rates.library.Library.get_rate_by_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_rate_by_name</span></code></a> (or any similar function), we are getting
 a reference to the rate in the library, not a copy.  This means that our modification is reflected back in the
 original library in memory.  Care needs to be taken (e.g. by making a copy or rereading the library) if you want
 to access the original rate.</p>
