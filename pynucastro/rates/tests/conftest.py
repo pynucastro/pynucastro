@@ -1,3 +1,5 @@
+"""Fixtures used for rates testing."""
+
 # reuse fixtures from networks/tests
 # pylint: disable=unused-import
 from pynucastro.networks.tests.conftest import langanke_library  # noqa: F401

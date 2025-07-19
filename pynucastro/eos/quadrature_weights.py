@@ -9,7 +9,6 @@ computed with 100-digit precision.
 
 Attributes
 ----------
-
 x_leg : numpy.ndarray
     The Gauss-Legendre nodes for a 200-point quadrature rule.
 

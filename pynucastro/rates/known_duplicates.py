@@ -1,3 +1,5 @@
+"""Tools for detecting if a list of rates contains duplicates."""
+
 import collections
 
 # there are some exceptions to the no-duplicate rates restriction.  We
@@ -37,10 +39,10 @@ def find_duplicate_rates(rate_list):
 
 
 def is_allowed_dupe(rate_list):
-    """Some duplicates may be allowed since they represent distinct
-    processes between the same endpoints (those rates are listed in
-    ``ALLOWED_DUPLICATES``).  Return `True` is the input set of rates
-    is an allowed duplicate.
+    """Check if any of the duplicates are allowed.  Some duplicates
+    may be allowed since they represent distinct processes between the
+    same endpoints (those rates are listed in ``ALLOWED_DUPLICATES``).
+    Return `True` is the input set of rates is an allowed duplicate.
 
     Parameters
     ----------

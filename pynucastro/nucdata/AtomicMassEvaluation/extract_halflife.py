@@ -1,12 +1,12 @@
-import argparse
-
-"""
-This module extract the (A,Z, tau) tuples from `nubase_4.mas20.txt`, where:
+"""Extract the (A,Z, tau) tuples from `nubase_4.mas20.txt`, where:
 
 :var A: is the atomic weight measured in atomic mass units.
 :var Z: is the atomic number.
 :var tau: is the halflife in s (or `"stable"` if it is stable)
+
 """
+
+import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('input', type=str, help='Name of the input table')
