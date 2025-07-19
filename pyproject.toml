@@ -137,6 +137,7 @@ addopts = """\
   --ignore=docs/source/duplicate-rates.ipynb \
   --ignore-glob=pynucastro/library/tabular/*/generate_*.ipynb \
   --ignore=pynucastro/eos/generate_quadrature_weights.ipynb \
+  --ignore=pynucastro/eos/degenerate_derivatives.ipynb \
   --ignore=examples/rxn-network-integration.ipynb \
   --nbval-sanitize-with .github/workflows/nbval_sanitize.cfg \
   """
