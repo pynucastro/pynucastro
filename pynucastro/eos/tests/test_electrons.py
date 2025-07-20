@@ -120,3 +120,26 @@ class TestElectronEOS:
         es = e.pe_state(rho, T, comp)
 
         assert es.n_pos == approx(n_pos_approx, rel=0.5)
+
+    def test_pres_derivs(self):
+
+        e = ElectronEOS(include_positrons=False)
+
+        comp = Composition(["h1", "he4", "c12", "ne22"])
+        comp.set_equal()
+
+        eps = 1.e-8
+
+        for T in [1.e4, 1.e6, 1.e9]:
+            for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
+
+                es = e.pe_state(rho, T, comp)
+
+                es_r = e.pe_state(rho * (1.0 + eps), T, comp)
+                es_T = e.pe_state(rho, T * (1.0 + eps), comp)
+
+                dpdr_approx = (es_r.p_e - es.p_e) / (eps * rho)
+                assert es.dpe_drho == approx(dpdr_approx)
+
+                #dpdT_approx = (es_T.p_e - es.p_e) / (eps * T)
+                #assert es.dpe_dT == approx(dpdT_approx)
