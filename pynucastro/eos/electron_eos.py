@@ -154,9 +154,9 @@ class ElectronEOS:
         deta_dT = -dbeta_dT * (dne_dbeta - dnp_dbeta) / (dne_deta - dnp_deta)
 
         dpe_drho = pcoeff * beta**2.5 * (0.5 * beta * f52.dF_deta * deta_drho + f32.dF_deta * deta_drho)
-        dpe_dT = 0.5 * pcoeff * beta**1.5 * (5.0 * (f32.F + f52.F) * dbeta_dT +
+        dpe_dT = 0.25 * pcoeff * beta**1.5 * (5.0 * (2.0 * f32.F + f52.F) * dbeta_dT +
                                              2.0 * beta * (beta * (f52.dF_dbeta * dbeta_dT + f52.dF_deta * deta_dT) +
-                                                           (f52.F * dbeta_dT + f32.dF_dbeta * dbeta_dT + f32.dF_deta * deta_dT)))
+                                                           (f52.F * dbeta_dT + 2.0 * f32.dF_dbeta * dbeta_dT + 2.0 * f32.dF_deta * deta_dT)))
 
         return EOSState(eta=eta,
                         n_e=n_e, p_e=p_e, e_e=e_e,
