@@ -65,7 +65,7 @@ class ElectronEOS:
 
         beta = constants.k * T / rest_mass
 
-        coeff = 8 * np.pi * np.sqrt(2) * inv_compton_wavelength**3 * beta**1.5
+        coeff = 8 * np.pi * np.sqrt(2) * inv_compton_wavelength**3
 
         def n_e_fermi(eta):
             f12 = FermiIntegral(0.5, eta, beta)
@@ -74,7 +74,7 @@ class ElectronEOS:
             f32 = FermiIntegral(1.5, eta, beta)
             f32.evaluate(do_first_derivs=False, do_second_derivs=False)
 
-            return coeff * (f12.F + beta * f32.F)
+            return coeff * beta**1.5 * (f12.F + beta * f32.F)
 
         def n_pos_fermi(eta):
             eta_pos = -eta - 2.0/beta
@@ -85,7 +85,7 @@ class ElectronEOS:
             f32 = FermiIntegral(1.5, eta_pos, beta)
             f32.evaluate(do_first_derivs=False, do_second_derivs=False)
 
-            return coeff * (f12.F + beta * f32.F)
+            return coeff * beta**1.5 * (f12.F + beta * f32.F)
 
         # compute the degeneracy parameter
         if self.include_positrons:
@@ -99,8 +99,8 @@ class ElectronEOS:
         eta_pos = -eta - 2.0/beta
 
         # compute the number density, pressure and energy
-        pcoeff = coeff * (2.0 / 3.0) * rest_mass * beta
-        ecoeff = coeff * rest_mass * beta
+        pcoeff = coeff * (2.0 / 3.0) * rest_mass
+        ecoeff = coeff * rest_mass
 
         f12 = FermiIntegral(0.5, eta, beta)
         f12.evaluate(do_first_derivs=True, do_second_derivs=False)
@@ -111,9 +111,9 @@ class ElectronEOS:
         f52 = FermiIntegral(2.5, eta, beta)
         f52.evaluate(do_first_derivs=True, do_second_derivs=False)
 
-        n_e = coeff * (f12.F + beta * f32.F)
-        p_e = pcoeff * (f32.F + 0.5 * beta * f52.F)
-        e_e = ecoeff * (f32.F + beta * f52.F) / rho
+        n_e = coeff * beta**1.5 * (f12.F + beta * f32.F)
+        p_e = pcoeff * beta**2.5 * (f32.F + 0.5 * beta * f52.F)
+        e_e = ecoeff * beta**2.5 * (f32.F + beta * f52.F) / rho
 
         n_pos = 0.0
         p_pos = 0.0
@@ -128,13 +128,13 @@ class ElectronEOS:
             f52_pos = FermiIntegral(2.5, eta_pos, beta)
             f52_pos.evaluate(do_first_derivs=True, do_second_derivs=False)
 
-            n_pos = coeff * (f12_pos.F + beta * f32_pos.F)
-            p_pos = pcoeff * (f32_pos.F + 0.5 * beta * f52_pos.F)
-            e_pos = ecoeff * (f32_pos.F + beta * f52_pos.F) / rho
+            n_pos = coeff * beta**1.5 * (f12_pos.F + beta * f32_pos.F)
+            p_pos = pcoeff * beta**2.5 * (f32_pos.F + 0.5 * beta * f52_pos.F)
+            e_pos = ecoeff * beta**2.5 * (f32_pos.F + beta * f52_pos.F) / rho
 
         # compute the derivatives
         dne_deta = coeff * beta**1.5 * (f12.dF_deta + beta * f32.dF_deta)
-        dne_dbeta = 0.5 * coeff * np.sqrt(beta) * (3.0 * f12.F + 5.0 * f32.F +
+        dne_dbeta = 0.5 * coeff * np.sqrt(beta) * (3.0 * f12.F + 5.0 * beta * f32.F +
                                                    2 * beta * f12.dF_dbeta +
                                                    2 * beta**2 * f32.dF_dbeta)
 
@@ -153,9 +153,10 @@ class ElectronEOS:
         deta_drho = constants.N_A * zbar / abar / (dne_deta - dnp_deta)
         deta_dT = -dbeta_dT * (dne_dbeta - dnp_dbeta) / (dne_deta - dnp_deta)
 
-        dpe_drho = pcoeff * (beta * f52.dF_deta * deta_drho + f32.dF_deta * deta_drho)
-        dpe_dT = pcoeff * (beta * (f52.dF_dbeta * dbeta_dT + f52.dF_deta * deta_dT) +
-                          (f52.F * dbeta_dT + f32.dF_dbeta * dbeta_dT + f32.dF_deta * deta_dT))
+        dpe_drho = pcoeff * beta**2.5 * (0.5 * beta * f52.dF_deta * deta_drho + f32.dF_deta * deta_drho)
+        dpe_dT = 0.5 * pcoeff * beta**1.5 * (5.0 * (f32.F + f52.F) * dbeta_dT +
+                                             2.0 * beta * (beta * (f52.dF_dbeta * dbeta_dT + f52.dF_deta * deta_dT) +
+                                                           (f52.F * dbeta_dT + f32.dF_dbeta * dbeta_dT + f32.dF_deta * deta_dT)))
 
         return EOSState(eta=eta,
                         n_e=n_e, p_e=p_e, e_e=e_e,
