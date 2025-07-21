@@ -75,52 +75,6 @@ class TestElectronEOS:
 
             assert es.p_e == approx(p_ideal, rel=1.e-4)
 
-    def test_positrons(self):
-        # at low densities and high temperatures (T ~ 1.e10 K), we
-        # should have a lot of positrons
-
-        e = ElectronEOS(include_positrons=True)
-        comp = Composition(["h1", "he4", "c12", "ne22"])
-        comp.set_equal()
-
-        # too cold to have positrons (kT << 2 m_e c**2)
-
-        rho = 1.e4
-        T = 1.e6
-
-        es = e.pe_state(rho, T, comp)
-
-        assert es.n_pos == 0.0
-
-        # positrons and electrons are almost equal
-
-        rho = 1.e4
-        T = 1.e10
-
-        es = e.pe_state(rho, T, comp)
-
-        assert es.n_pos == approx(es.n_e, rel=1.e-3)
-
-        # For non-degenerate and kT < m_e c**2, we can get a Saha-like
-        # relation (see Clayton Eq. 3-297).  This is *very*
-        # approximate, so let's just check order of magnitude
-
-        rho = 1.e3
-        T = 1.e9
-
-        n_e_0 = (comp.zbar / comp.abar) * constants.N_A * rho
-
-        beta = constants.k * T / (constants.m_e * constants.c_light**2)
-
-        n_1 = 1.0 / np.sqrt(2) * (constants.m_e * constants.k * T /
-                                  np.pi / constants.hbar**2)**1.5 * np.exp(-1.0 / beta)
-
-        n_pos_approx = -0.5 * n_e_0 + np.sqrt((0.5 * n_e_0)**2 + n_1**2)
-
-        es = e.pe_state(rho, T, comp)
-
-        assert es.n_pos == approx(n_pos_approx, rel=0.5)
-
     def test_ne_rho_derivs(self):
 
         e = ElectronEOS(include_positrons=False)

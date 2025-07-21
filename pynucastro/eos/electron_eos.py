@@ -60,7 +60,7 @@ class ElectronEOS:
         zbar = comp.zbar
         abar = comp.abar
 
-        n_e = (zbar / abar) * constants.N_A * rho
+        n_e_net = (zbar / abar) * constants.N_A * rho
 
         # our Fermi integrals will use a dimensionless temperature
         inv_compton_wavelength = constants.m_e * constants.c_light / constants.h
@@ -92,10 +92,10 @@ class ElectronEOS:
 
         # compute the degeneracy parameter
         if self.include_positrons:
-            eta = brentq(lambda eta: n_e - (n_e_fermi(eta) - n_pos_fermi(eta)),
+            eta = brentq(lambda eta: n_e_net - (n_e_fermi(eta) - n_pos_fermi(eta)),
                          eta_guess_min, eta_guess_max)
         else:
-            eta = brentq(lambda eta: n_e - n_e_fermi(eta),
+            eta = brentq(lambda eta: n_e_net - n_e_fermi(eta),
                          eta_guess_min, eta_guess_max)
 
         # for positrons
