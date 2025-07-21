@@ -121,7 +121,7 @@ class TestElectronEOS:
 
         assert es.n_pos == approx(n_pos_approx, rel=0.5)
 
-    def test_ne_derivs(self):
+    def test_ne_rho_derivs(self):
 
         e = ElectronEOS(include_positrons=False)
 
@@ -133,49 +133,53 @@ class TestElectronEOS:
         for T in [1.e4, 1.e6, 1.e9]:
             for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
 
-                # density derivative
                 es = e.pe_state(rho, T, comp)
-                print(rho, T, es.eta)
                 es_r = e.pe_state(rho * (1.0 + eps), T, comp)
-                
+
                 dnedr_approx = (es_r.n_e - es.n_e) / (eps * rho)
                 assert es.dne_drho == approx(dnedr_approx)
 
-                # temperature derivative -- we'll use 6th order expression
-                _h = eps * T
-                _Tnew = T + _h
-                dtemp = _Tnew - T
-
-                fvals = []
-                for i in [-3, -2, -1, 0, 1, 2, 3]:
-                    _es = e.pe_state(rho, T + i*dtemp, comp)
-                    fvals.append(_es.n_e)
-
-                deriv = (fvals[0] - 9.0 * fvals[1] + 45.0 * fvals[2] -
-                         45 * fvals[4] + 9 * fvals[5] - fvals[6]) / (60 * dtemp)
-
-                #assert es.dne_dT == approx(deriv)
-
-    def test_pres_derivs(self):
+    def test_pres_rho_derivs(self):
 
         e = ElectronEOS(include_positrons=False)
 
         comp = Composition(["h1", "he4", "c12", "ne22"])
         comp.set_equal()
 
-        eps = 1.e-8
+        eps_rho = 1.e-8
 
-        for T in [1.e4, 1.e6, 1.e9]:
+        for T in [1.e4, 1.e7, 1.e9]:
+            for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
+                es = e.pe_state(rho, T, comp)
+                es_r = e.pe_state(rho * (1.0 + eps_rho), T, comp)
+                dpdr_approx = (es_r.p_e - es.p_e) / (eps_rho * rho)
+                assert es.dpe_drho == approx(dpdr_approx)
+
+    def test_pres_temp_derivs(self):
+
+        # the temperature derivatives are very hard, since beta enters
+        # into the integrand as sqrt(1 + 0.5 * x * beta).  For small
+        # beta (beta <~ 1.e-5), we can have a hard time with
+        # finite-differencing.  We use a relatively large epsilon
+        # here, a fourth-order difference approximation, and also skip
+        # very cool temperature (< 1.e6 K)
+
+        e = ElectronEOS(include_positrons=False)
+
+        comp = Composition(["h1", "he4", "c12", "ne22"])
+        comp.set_equal()
+
+        eps_T = 5.e-4
+
+        for T in [1.e6, 1.e7, 1.e9]:
             for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
 
                 es = e.pe_state(rho, T, comp)
+                dtemp = eps_T * T
+                fvals = []
+                for i in [-2, -1, 0, 1, 2]:
+                    _es = e.pe_state(rho, T + i*dtemp, comp)
+                    fvals.append(_es.p_e)
 
-                es_r = e.pe_state(rho * (1.0 + eps), T, comp)
-                es_T = e.pe_state(rho, T * (1.0 + eps), comp)
-
-                dpdr_approx = (es_r.p_e - es.p_e) / (eps * rho)
-                assert es.dpe_drho == approx(dpdr_approx)
-
-                #dpdT_approx = (es_T.p_e - es.p_e) / (eps * T)
-                #assert es.dpe_dT == approx(dpdT_approx)
-
+                deriv = (fvals[0] - 8.0 * fvals[1] + 8.0 * fvals[3] - fvals[4]) / (12 * dtemp)
+                assert es.dpe_dT == approx(deriv, rel=1.e-3)

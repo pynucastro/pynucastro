@@ -150,12 +150,11 @@ class ElectronEOS:
                                                        4.0 * beta * f32.dF_deta +
                                                        4.0 * f12.dF_deta)
 
-        dbeta_drho = 0.0
+        #dbeta_drho = 0.0
         dbeta_dT = constants.k / rest_mass
 
         deta_drho = constants.N_A * zbar / abar / (dne_deta - dnp_deta)
         deta_dT = -dbeta_dT * (dne_dbeta - dnp_dbeta) / (dne_deta - dnp_deta)
-
 
         # Compute partials of number density with density and temperature
         # For debugging
