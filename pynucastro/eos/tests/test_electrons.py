@@ -163,3 +163,72 @@ class TestElectronEOS:
 
                 deriv = (fvals[0] - 8.0 * fvals[1] + 8.0 * fvals[3] - fvals[4]) / (12 * dtemp)
                 assert es.dpe_dT == approx(deriv, rel=1.e-3)
+
+    def test_e_rho_derivs(self):
+
+        e = ElectronEOS(include_positrons=False)
+
+        comp = Composition(["h1", "he4", "c12", "ne22"])
+        comp.set_equal()
+
+        # we need to use a slightly larger eps for this because we
+        # divide out the rho dependence in e
+        eps_rho = 5.e-4
+
+        for T in [1.e4, 1.e7, 1.e9]:
+            for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
+
+                es = e.pe_state(rho, T, comp)
+                drho = eps_rho * rho
+                fvals = []
+                for i in [-2, -1, 0, 1, 2]:
+                    _es = e.pe_state(rho + i*drho, T, comp)
+                    fvals.append(_es.e_e)
+
+                deriv = (fvals[0] - 8.0 * fvals[1] + 8.0 * fvals[3] - fvals[4]) / (12 * drho)
+                assert es.dee_drho == approx(deriv, rel=1.e-3)
+
+    def test_e_temp_derivs(self):
+
+        # the temperature derivatives are very hard, since beta enters
+        # into the integrand as sqrt(1 + 0.5 * x * beta).  For small
+        # beta (beta <~ 1.e-5), we can have a hard time with
+        # finite-differencing.  We use a relatively large epsilon
+        # here, a fourth-order difference approximation, and also skip
+        # very cool temperature (< 1.e6 K)
+
+        e = ElectronEOS(include_positrons=False)
+
+        comp = Composition(["h1", "he4", "c12", "ne22"])
+        comp.set_equal()
+
+        eps_T = 5.e-4
+
+        for T in [1.e6, 1.e7, 1.e9]:
+            for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
+
+                es = e.pe_state(rho, T, comp)
+                dtemp = eps_T * T
+                fvals = []
+                for i in [-2, -1, 0, 1, 2]:
+                    _es = e.pe_state(rho, T + i*dtemp, comp)
+                    fvals.append(_es.e_e)
+
+                deriv = (fvals[0] - 8.0 * fvals[1] + 8.0 * fvals[3] - fvals[4]) / (12 * dtemp)
+                assert es.dee_dT == approx(deriv, rel=1.e-3)
+
+    def test_gamma_limits(self):
+
+        e = ElectronEOS(include_positrons=False)
+
+        comp = Composition(["h1", "he4", "c12", "ne22"])
+        comp.set_equal()
+
+        # at low density, we are either non-relativistic degenerate
+        # or ideal gas, and should have rho e / p = 3/2 (gamma = 5/3)
+
+        rho = 1.e-2
+        T = 1.e6
+
+        es = e.pe_state(rho, T, comp)
+        assert rho * es.e_e / es.p_e == approx(1.5, rel=5.e-4)
