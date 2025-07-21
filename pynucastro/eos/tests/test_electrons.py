@@ -139,6 +139,32 @@ class TestElectronEOS:
                 dnedr_approx = (es_r.n_e - es.n_e) / (eps * rho)
                 assert es.dne_drho == approx(dnedr_approx)
 
+    def test_ne_temp_derivs(self):
+
+        # formally, dn_e/dT = 0 when we don't include positrons.  The
+        # EOS gives this correctly.  So to compare with a finite
+        # difference approximation, we need a scale to compare with,
+        # so we'll compare to n_e/T.
+
+        e = ElectronEOS(include_positrons=False)
+
+        comp = Composition(["h1", "he4", "c12", "ne22"])
+        comp.set_equal()
+
+        # use a relatively large eps because of how weakly beta enters when beta << 1
+
+        eps = 1.e-5
+
+        for T in [1.e4, 1.e6, 1.e9]:
+            for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
+
+                es = e.pe_state(rho, T, comp)
+                es_r = e.pe_state(rho, T * (1.0 + eps), comp)
+
+                dnedr_approx = (es_r.n_e - es.n_e) / (eps * T)
+                scale = es.n_e / T
+                assert es.dne_dT == approx(dnedr_approx / scale, abs=5.e-9)
+
     def test_pres_rho_derivs(self):
 
         e = ElectronEOS(include_positrons=False)
