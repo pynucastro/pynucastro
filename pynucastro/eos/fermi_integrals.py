@@ -134,51 +134,57 @@ def _kernel_p(x, k, eta, beta,
     xsq = x * x
     sqrt_term = np.sqrt(1.0 + 0.5 * x * x * beta)
     num = 2.0 * x**(2*k + 1.0) * sqrt_term
-    denomi = 1.0 / (np.exp(xsq - eta) + 1.0)
-    test = xsq - eta < -700.0
+    # this is what we are usually exponentiating
+    delta = xsq - eta
+    cosh_delta = np.cosh(delta)  # this is 0.5 * (exp(xsq - eta) + exp(eta - xsq))
+    tanh_half_delta = np.tanh(0.5 * delta)  # this is (exp(xsq - eta) - 1.0) / (exp(xsq - eta) + 1.0)
+    testm = delta < -700.0
+    if testm:
+        denomi = 1.0
+        exp_delta = 0.0
+    else:
+        exp_delta = np.exp(delta)
+        inv_exp_delta = 1.0 / exp_delta
+        # 1 / (exp(x**2 - eta) + 1) rewritten
+        denomi = inv_exp_delta / (1.0 + inv_exp_delta)
 
     # now construct the integrand for what we are actual computing
     if eta_der == 0 and beta_der == 0:
-        if test:
-            result = num
-        else:
-            result = num * denomi
+        result = num
+        if not testm:
+            result *= denomi
 
     elif eta_der == 1 and beta_der == 0:
         # this is IB = 1 from Gong et al.
         # this corresponds to eq A.1 in terms of x**2
-        if not test:
-            result = num / (np.exp(xsq - eta) + 2.0 + np.exp(eta - xsq))
+        if not testm:
+            result = num / (2.0 * (1.0 + cosh_delta))
 
     elif eta_der == 0 and beta_der == 1:
         # this is IB = 2 from Gong et al.
         # this corresponds to eq A.2 in terms of x**2
-        if test:
-            result = 0.5 * x**(2.0*k + 3.0) / sqrt_term
-        else:
-            result = 0.5 * x**(2.0*k + 3.0) * denomi / sqrt_term
+        result = 0.5 * x**(2.0*k + 3.0) / sqrt_term
+        if not testm:
+            result *= denomi
 
     elif eta_der == 2 and beta_der == 0:
         # this is IB = 3 from Gong et al.
         # this corresponds to eq A.3 in terms of x**2
-        if not test:
-            result = num / (np.exp(xsq - eta) + 2.0 + np.exp(eta - xsq)) * \
-                ((np.exp(xsq - eta) - 1.0) / (np.exp(xsq - eta) + 1.0))
+        if not testm:
+            result = num / (2.0 * (1.0 + cosh_delta)) * tanh_half_delta
 
     elif eta_der == 1 and beta_der == 1:
         # this is IB = 4 from Gong et al.
         # this corresponds to eq A.4 in terms of x**2
-        if not test:
-            result = 0.5 * x**(2.0*k + 3.0) / \
-                (np.exp(xsq - eta) + 2.0 + np.exp(eta - xsq)) / sqrt_term
+        if not testm:
+            result = 0.5 * x**(2.0*k + 3.0) / (2.0 * (1.0 + cosh_delta)) / sqrt_term
 
     elif eta_der == 0 and beta_der == 2:
         # this is IB = 5 from Gong et al.
         # this corresponds to eq A.5 in terms of x**2
-        if test:
-            result = -0.125 * x**(2.0*k + 5.0) / sqrt_term**3
-        else:
-            result = -0.125 * x**(2.0*k + 5.0) * denomi / sqrt_term**3
+        result = -0.125 * x**(2.0*k + 5.0) / sqrt_term**3
+        if not testm:
+            result *= denomi
 
     return result
 
@@ -193,47 +199,57 @@ def _kernel_E(x, k, eta, beta,
 
     sqrt_term = np.sqrt(1.0 + 0.5 * x * beta)
     num = x**k * sqrt_term
-    test = x - eta < 700
-    denomi = 1.0
-    if test:
-        denomi = 1.0 / (np.exp(x - eta) + 1.0)
+    # this is what we are usually exponentiating
+    delta = x - eta
+    cosh_delta = np.cosh(delta)
+    tanh_half_delta = np.tanh(0.5 * delta)  # this is (exp(x - eta) - 1.0) / (exp(x - eta) + 1.0)
+    testm = x - eta < -700
+    if testm:
+        denomi = 1.0
+        exp_delta = 0.0
+    else:
+        exp_delta = np.exp(delta)
+        inv_exp_delta = 1.0 / exp_delta
+        # 1 / (exp(x - eta) + 1) rewritten
+        denomi = inv_exp_delta / (1.0 + inv_exp_delta)
 
     # now construct the integrand for what we are actual computing
     if eta_der == 0 and beta_der == 0:
-        if test:
-            result = num * denomi
+        result = num
+        if not testm:
+            result *= denomi
 
     elif eta_der == 1 and beta_der == 0:
         # this is IB = 1 from Gong et al.
         # this corresponds to eq A.1
-        if test:
-            result = num / (np.exp(x - eta) + 2.0 + np.exp(eta - x))
+        if not testm:
+            result = num / (2.0 * (1.0 + cosh_delta))
 
     elif eta_der == 0 and beta_der == 1:
         # this is IB = 2 from Gong et al.
         # this corresponds to eq A.2
-        if test:
-            result = 0.25 * x**(k + 1.0) * denomi / sqrt_term
+        result = 0.25 * x**(k + 1.0) / sqrt_term
+        if not testm:
+            result *= denomi
 
     elif eta_der == 2 and beta_der == 0:
         # this is IB = 3 from Gong et al.
         # this corresponds to eq A.3
-        if test:
-            result = num / (np.exp(x - eta) + 2.0 + np.exp(eta - x)) * \
-                ((1.0 - np.exp(eta - x)) / (1.0 + np.exp(eta - x)))
+        if not testm:
+            result = num / (2.0 * (1.0 + cosh_delta)) * tanh_half_delta
 
     elif eta_der == 1 and beta_der == 1:
         # this is IB = 4 from Gong et al.
         # this corresponds to eq A.4
-        if test:
-            result = 0.25 * x**(k + 1.0) / \
-                (np.exp(x - eta) + 2.0 + np.exp(eta - x)) / sqrt_term
+        if not testm:
+            result = 0.25 * x**(k + 1.0) / (2.0 * (1.0 + cosh_delta)) / sqrt_term
 
     elif eta_der == 0 and beta_der == 2:
         # this is IB = 5 from Gong et al.
         # this corresponds to eq A.5
-        if test:
-            result = -0.0625 * x**(k + 2.0) * denomi / sqrt_term**3
+        result = -0.0625 * x**(k + 2.0) / sqrt_term**3
+        if not testm:
+            result *= denomi
 
     return result
 
@@ -296,22 +312,17 @@ class FermiIntegral:
 
         N = len(x_leg)//2
 
-        integral = 0
-
         # We set the correspondence (a+b)/2 -> 0 and map the (-1,0) and (0,1)
         # intervals separately.
 
         fac1 = (a + b)/2
         fac2 = (b - a)/2
 
-        for root, weight in zip(x_leg[N:], w_leg[N:]):
-            x_1 = fac1 + fac2 * root
-            x_2 = fac1 - fac2 * root
-            qder_1 = kernel(x_1, k, eta, beta,
-                            eta_der=eta_der, beta_der=beta_der)
-            qder_2 = kernel(x_2, k, eta, beta,
-                            eta_der=eta_der, beta_der=beta_der)
-            integral += (qder_1 + qder_2) * weight
+        integral = sum((kernel(fac1 + fac2 * root, k, eta, beta,
+                               eta_der=eta_der, beta_der=beta_der) +
+                        kernel(fac1 - fac2 * root, k, eta, beta,
+                               eta_der=eta_der, beta_der=beta_der)) * weight
+                       for root, weight in zip(x_leg[N:], w_leg[N:]))
 
         integral *= (b - a) / 2
         return integral
