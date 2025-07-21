@@ -189,7 +189,7 @@ def _kernel_p(x, k, eta, beta,
     return result
 
 
-@numba.njit()
+@numba.jit()
 def _kernel_E(x, k, eta, beta,
               eta_der=0, beta_der=0):
 
@@ -310,14 +310,11 @@ class FermiIntegral:
         fac1 = (a + b)/2
         fac2 = (b - a)/2
 
-        for root, weight in zip(x_leg[N:], w_leg[N:]):
-            x_1 = fac1 + fac2 * root
-            x_2 = fac1 - fac2 * root
-            qder_1 = kernel(x_1, k, eta, beta,
-                            eta_der=eta_der, beta_der=beta_der)
-            qder_2 = kernel(x_2, k, eta, beta,
-                            eta_der=eta_der, beta_der=beta_der)
-            integral += (qder_1 + qder_2) * weight
+        integral = sum((kernel(fac1 + fac2 * root, k, eta, beta,
+                               eta_der=eta_der, beta_der=beta_der) +
+                        kernel(fac1 - fac2 * root, k, eta, beta,
+                               eta_der=eta_der, beta_der=beta_der)) * weight
+                       for root, weight in zip(x_leg[N:], w_leg[N:]))
 
         integral *= (b - a) / 2
         return integral
