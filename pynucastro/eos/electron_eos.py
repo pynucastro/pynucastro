@@ -1,5 +1,7 @@
 """Classes and methods for managing an electron / positron equation of
-state."""
+state.
+
+"""
 
 
 from collections import namedtuple
@@ -20,7 +22,7 @@ EOSState = namedtuple("EOSState", ["n_e", "n_pos",
 
 
 class ElectronEOS:
-    """A electron EOS that works for arbitrary degeneracy or
+    """An electron/positron EOS that works for arbitrary degeneracy or
     relativity.  This works by performing the Fermi-Dirac integrals
     directly.  This assumes complete ionization.
 
