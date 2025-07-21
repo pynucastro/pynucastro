@@ -101,7 +101,7 @@ class TestFermiDirac:
         f.evaluate()
 
         assert f.F == approx(707.87776608227455, abs=1.e-100, rel=1.e-15)
-        assert f.dF_deta == approx(7.0717751162111329, abs=1.e-100, rel=1.e-11)
+        assert f.dF_deta == approx(7.0717751162111329, abs=1.e-100, rel=1.e-14)
         assert f.dF_dbeta == approx(3.5323860528718423, abs=1.e-100, rel=1.e-15)
         assert f.d2F_deta2 == approx(-7.0773544184610238E-006, abs=1.e-100, rel=1.e-11)
         assert f.d2F_detadbeta == approx(3.5351802891431347E-002, abs=1.e-100, rel=1.e-15)
