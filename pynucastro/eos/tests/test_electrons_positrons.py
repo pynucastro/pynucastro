@@ -5,7 +5,7 @@ from pytest import approx
 from pynucastro import Composition
 from pynucastro.constants import constants
 from pynucastro.eos import ElectronEOS
-from pynucastro.eos.difference_utils import fourth_order_rho, fourth_order_temp
+from pynucastro.eos.difference_utils import fourth_order_diff, sixth_order_diff
 
 
 def zero_temperature_eos(rho, comp):
@@ -134,15 +134,16 @@ class TestElectronPositronEOS:
         comp = Composition(["h1", "he4", "c12", "ne22"])
         comp.set_equal()
 
-        eps_rho = 1.e-5
+        eps_rho = 5.e-5
 
         for T in [1.e4, 1.e6, 1.e9]:
             for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
 
                 es = e.pe_state(rho, T, comp)
                 drho = eps_rho * rho
-                deriv = fourth_order_rho(e, (rho, T, comp), "n_e", drho)
-                assert es.dne_drho == approx(deriv, rel=5.e-5)
+                deriv = sixth_order_diff(lambda _rho: e.pe_state(_rho, T, comp),
+                                         rho, drho, "n_e")
+                assert es.dne_drho == approx(deriv, rel=1.e-5)
 
     def test_ne_temp_derivs(self):
 
@@ -183,8 +184,9 @@ class TestElectronPositronEOS:
 
                 es = e.pe_state(rho, T, comp)
                 drho = eps_rho * rho
-                deriv = fourth_order_rho(e, (rho, T, comp), "n_pos", drho)
-                assert es.dnp_drho == approx(deriv, rel=5.e-5)
+                deriv = fourth_order_diff(lambda _rho: e.pe_state(_rho, T, comp),
+                                          rho, drho, "n_pos")
+                assert es.dnp_drho == approx(deriv, rel=1.e-5)
 
                 # since n_e - n_pos = N_A (Z/A) rho, it should be the case that
                 # dne/drho = dnp/drho + N_A (Z/A)
@@ -207,13 +209,14 @@ class TestElectronPositronEOS:
 
                 es = e.pe_state(rho, T, comp)
                 dtemp = eps_T * T
-                deriv = fourth_order_temp(e, (rho, T, comp), "n_pos", dtemp)
+                deriv = fourth_order_diff(lambda _T: e.pe_state(rho, _T, comp),
+                                          T, dtemp, "n_pos")
                 if es.dnp_dT == 0 and es.n_pos != 0:
                     # no pair production
                     scale = es.n_pos / T
                     assert es.dnp_dT == approx(deriv / scale, abs=5.e-9)
                 else:
-                    assert es.dnp_dT == approx(deriv, rel=1.e-4)
+                    assert es.dnp_dT == approx(deriv, rel=1.e-5)
 
                 # since n_e - n_pos = N_A (Z/A) rho, it should be the case that
                 # dne/T = dnp/T

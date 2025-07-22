@@ -5,7 +5,7 @@ from pytest import approx
 from pynucastro import Composition
 from pynucastro.constants import constants
 from pynucastro.eos import ElectronEOS
-from pynucastro.eos.difference_utils import fourth_order_rho, fourth_order_temp
+from pynucastro.eos.difference_utils import fourth_order_diff, sixth_order_diff
 
 
 def zero_temperature_eos(rho, comp):
@@ -157,8 +157,9 @@ class TestElectronEOS:
 
                 es = e.pe_state(rho, T, comp)
                 dtemp = eps_T * T
-                deriv = fourth_order_temp(e, (rho, T, comp), "p_e", dtemp)
-                assert es.dpe_dT == approx(deriv, rel=1.e-3)
+                deriv = sixth_order_diff(lambda _T: e.pe_state(rho, _T, comp),
+                                          T, dtemp, "p_e")
+                assert es.dpe_dT == approx(deriv, rel=5.e-4)
 
     def test_e_rho_derivs(self):
 
@@ -176,7 +177,8 @@ class TestElectronEOS:
 
                 es = e.pe_state(rho, T, comp)
                 drho = eps_rho * rho
-                deriv = fourth_order_rho(e, (rho, T, comp), "e_e", drho)
+                deriv = fourth_order_diff(lambda _rho: e.pe_state(_rho, T, comp),
+                                          rho, drho, "e_e")
                 assert es.dee_drho == approx(deriv, rel=1.e-3)
 
     def test_e_temp_derivs(self):
@@ -200,8 +202,9 @@ class TestElectronEOS:
 
                 es = e.pe_state(rho, T, comp)
                 dtemp = eps_T * T
-                deriv = fourth_order_temp(e, (rho, T, comp), "e_e", dtemp)
-                assert es.dee_dT == approx(deriv, rel=1.e-3)
+                deriv = sixth_order_diff(lambda _T: e.pe_state(rho, _T, comp),
+                                          T, dtemp, "e_e")
+                assert es.dee_dT == approx(deriv, rel=5.e-4)
 
     def test_gamma_limits(self):
 
