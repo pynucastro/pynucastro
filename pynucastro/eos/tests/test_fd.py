@@ -2,7 +2,7 @@
 from pytest import approx
 
 from pynucastro.eos import FermiIntegral
-
+from pynucastro.eos.difference_utils import fourth_order_diff
 
 class TestFermiDirac:
 
@@ -260,26 +260,14 @@ class TestFermiDirac:
                     if deta == 0.0:
                         deta = eps
 
-                    fp = FermiIntegral(k, eta+deta, beta)
-                    fp.evaluate(do_second_derivs=False)
+                    def _kernel(_eta):
+                        _f = FermiIntegral(k, _eta, beta)
+                        _f.evaluate(do_second_derivs=False)
+                        return _f.dF_deta
 
-                    fp2 = FermiIntegral(k, eta+2*deta, beta)
-                    fp2.evaluate(do_second_derivs=False)
+                    deriv = fourth_order_diff(_kernel, eta, deta)
 
-                    fm = FermiIntegral(k, eta-deta, beta)
-                    fm.evaluate(do_second_derivs=False)
-
-                    fm2 = FermiIntegral(k, eta-2*deta, beta)
-                    fm2.evaluate(do_second_derivs=False)
-
-                    #deriv2 = (fp.F - 2.0*f0.F + fm.F) / deta**2
-                    #deriv2 = (-fm2.F + 16*fm.F - 30*f0.F + 16*fp.F - fp2.F) / 12 / deta**2
-
-                    # 4th order accurate difference approximation
-                    # using the computed first derivatives
-                    deriv2 = (-fp2.dF_deta + 8*fp.dF_deta - 8*fm.dF_deta + fm2.dF_deta) / (12 * deta)
-
-                    assert f0.d2F_deta2 == approx(deriv2, abs=1.e-100, rel=5.e-4)
+                    assert f0.d2F_deta2 == approx(deriv, abs=1.e-100, rel=5.e-4)
 
     def test_d2fdbeta2(self):
 
@@ -298,18 +286,11 @@ class TestFermiDirac:
                     if dbeta == 0.0:
                         dbeta = eps
 
-                    fp = FermiIntegral(k, eta, beta+dbeta)
-                    fp.evaluate(do_second_derivs=False)
+                    def _kernel(_beta):
+                        _f = FermiIntegral(k, eta, _beta)
+                        _f.evaluate(do_second_derivs=False)
+                        return _f.dF_bdeta
 
-                    fp2 = FermiIntegral(k, eta, beta+2*dbeta)
-                    fp2.evaluate(do_second_derivs=False)
+                    deriv = fourth_order_diff(_kernel, beta, dbeta)
 
-                    fm = FermiIntegral(k, eta, beta-dbeta)
-                    fm.evaluate(do_second_derivs=False)
-
-                    fm2 = FermiIntegral(k, eta, beta-2*dbeta)
-                    fm2.evaluate(do_second_derivs=False)
-
-                    deriv2 = (-fp2.dF_dbeta + 8*fp.dF_dbeta - 8*fm.dF_dbeta + fm2.dF_dbeta) / (12 * dbeta)
-
-                    assert f0.d2F_dbeta2 == approx(deriv2, abs=1.e-100, rel=1.e-6)
+                    assert f0.d2F_dbeta2 == approx(deriv, abs=1.e-100, rel=1.e-6)
