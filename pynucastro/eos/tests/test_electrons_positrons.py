@@ -186,6 +186,11 @@ class TestElectronPositronEOS:
                 deriv = fourth_order_rho(e, (rho, T, comp), "n_pos", drho)
                 assert es.dnp_drho == approx(deriv, rel=5.e-5)
 
+                # since n_e - n_pos = N_A (Z/A) rho, it should be the case that
+                # dne/drho = dnp/drho + N_A (Z/A)
+
+                assert es.dne_drho == approx(constants.N_A * comp.zbar / comp.abar + es.dnp_drho)
+
     def test_np_temp_derivs(self):
 
         e = ElectronEOS(include_positrons=True)
@@ -209,3 +214,14 @@ class TestElectronPositronEOS:
                     assert es.dnp_dT == approx(deriv / scale, abs=5.e-9)
                 else:
                     assert es.dnp_dT == approx(deriv, rel=1.e-4)
+
+                # since n_e - n_pos = N_A (Z/A) rho, it should be the case that
+                # dne/T = dnp/T
+
+                if es.dne_dT == 0.0:
+                    # if dne_dT == 0, then just make sure that they are equal to
+                    # roundoff error
+                    scale = es.n_e / T
+                    assert es.dne_dT == approx(es.dnp_dT/scale, abs=1.e-15)
+                else:
+                    assert es.dne_dT == approx(es.dnp_dT)
