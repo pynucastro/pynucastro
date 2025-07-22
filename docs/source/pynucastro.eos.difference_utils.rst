@@ -1,7 +1,7 @@
-pynucastro.networks.nse\_network module
+pynucastro.eos.difference\_utils module
 =======================================
 
-.. automodule:: pynucastro.networks.nse_network
+.. automodule:: pynucastro.eos.difference_utils
    :members:
    :show-inheritance:
    :undoc-members:
