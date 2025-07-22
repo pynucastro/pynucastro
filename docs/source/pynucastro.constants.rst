@@ -3,8 +3,8 @@ pynucastro.constants package
 
 .. automodule:: pynucastro.constants
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 Submodules
 ----------

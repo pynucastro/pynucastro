@@ -3,8 +3,8 @@ pynucastro.rates package
 
 .. automodule:: pynucastro.rates
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 Submodules
 ----------
