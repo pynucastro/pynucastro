@@ -1,4 +1,6 @@
 # unit tests for rates
+import functools
+
 from pytest import approx
 
 from pynucastro.eos import FermiIntegral

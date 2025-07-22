@@ -1,4 +1,6 @@
 # unit tests for rates
+import functools
+
 import numpy as np
 from pytest import approx
 
@@ -157,7 +159,7 @@ class TestElectronEOS:
 
                 es = e.pe_state(rho, T, comp)
                 dtemp = eps_T * T
-                deriv = sixth_order_diff(lambda _T: e.pe_state(rho, _T, comp),
+                deriv = sixth_order_diff(functools.partial(e.pe_state, rho, comp=comp),
                                           T, dtemp, "p_e")
                 assert es.dpe_dT == approx(deriv, rel=5.e-4)
 
@@ -177,7 +179,7 @@ class TestElectronEOS:
 
                 es = e.pe_state(rho, T, comp)
                 drho = eps_rho * rho
-                deriv = fourth_order_diff(lambda _rho: e.pe_state(_rho, T, comp),
+                deriv = fourth_order_diff(functools.partial(e.pe_state, T=T, comp=comp),
                                           rho, drho, "e_e")
                 assert es.dee_drho == approx(deriv, rel=1.e-3)
 
@@ -202,7 +204,7 @@ class TestElectronEOS:
 
                 es = e.pe_state(rho, T, comp)
                 dtemp = eps_T * T
-                deriv = sixth_order_diff(lambda _T: e.pe_state(rho, _T, comp),
+                deriv = sixth_order_diff(functools.partial(e.pe_state, rho, comp=comp),
                                           T, dtemp, "e_e")
                 assert es.dee_dT == approx(deriv, rel=5.e-4)
 

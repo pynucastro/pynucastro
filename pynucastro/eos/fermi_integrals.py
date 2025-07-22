@@ -300,7 +300,7 @@ class FermiIntegral:
 
     """
 
-    def __init__(self, k, eta, beta):
+    def __init__(self, k, eta=None, beta=None):
         self.eta = eta
         self.beta = beta
         self.k = k

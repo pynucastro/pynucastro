@@ -39,7 +39,7 @@ class ElectronEOS:
     def __init__(self, include_positrons=True):
         self.include_positrons = include_positrons
 
-    def pe_state(self, rho, T, comp, *,
+    def pe_state(self, rho=None, T=None, comp=None, *,
                  eta_guess_min=-100, eta_guess_max=1.e7):
         """Find the pressure and energy given density, temperature,
         and composition
