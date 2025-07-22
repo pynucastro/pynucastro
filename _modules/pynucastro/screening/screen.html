@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.screening.screen &#8212; pynucastro 2.6.0.post57+gd3a17fba2 documentation</title>
+    <title>pynucastro.screening.screen &#8212; pynucastro 2.6.0.post58+g8e788e312 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=e47bdb58"></script>
+    <script src="../../../_static/documentation_options.js?v=dcc044a8"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -491,9 +491,9 @@ document.write(`
 <span class="c1"># jit-decorated functions should be listed here so they</span>
 <span class="c1"># get documented by sphinx</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NseState&quot;</span><span class="p">,</span> <span class="s2">&quot;PlasmaState&quot;</span><span class="p">,</span> <span class="s2">&quot;ScreenFactors&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;chugunov_2007&quot;</span><span class="p">,</span> <span class="s2">&quot;chugunov_2009&quot;</span><span class="p">,</span> <span class="s2">&quot;debye_huckel&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;chugunov_2007&quot;</span><span class="p">,</span> <span class="s2">&quot;chugunov_2009&quot;</span><span class="p">,</span> <span class="s2">&quot;f0&quot;</span><span class="p">,</span> <span class="s2">&quot;debye_huckel&quot;</span><span class="p">,</span>
            <span class="s2">&quot;make_plasma_state&quot;</span><span class="p">,</span> <span class="s2">&quot;make_screen_factors&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;potekhin_1998&quot;</span><span class="p">,</span> <span class="s2">&quot;screen5&quot;</span><span class="p">,</span> <span class="s2">&quot;screening_check&quot;</span><span class="p">]</span>
+           <span class="s2">&quot;potekhin_1998&quot;</span><span class="p">,</span> <span class="s2">&quot;screen5&quot;</span><span class="p">,</span> <span class="s2">&quot;smooth_clip&quot;</span><span class="p">,</span> <span class="s2">&quot;screening_check&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="PlasmaState">
@@ -503,16 +503,28 @@ document.write(`
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Store precomputed values that are reused for all screening</span>
 <span class="sd">    correction factor calculations.</span>
 
-<span class="sd">    :var temp:        temperature in K</span>
-<span class="sd">    :var dens:        density in g/cm^3</span>
-<span class="sd">    :var qlam0z:      TODO: from screen5</span>
-<span class="sd">    :var taufac:      TODO: from screen5</span>
-<span class="sd">    :var aa:          TODO: from screen5</span>
-<span class="sd">    :var abar:        average atomic mass</span>
-<span class="sd">    :var zbar:        average ion charge</span>
-<span class="sd">    :var z2bar:       average (ion charge)^2</span>
-<span class="sd">    :var n_e:         electron number density</span>
-<span class="sd">    :var gamma_e_fac: temperature-independent part of Gamma_e</span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    temp : float</span>
+<span class="sd">        temperature in K</span>
+<span class="sd">    dens : float</span>
+<span class="sd">        density in g/cm^3</span>
+<span class="sd">    qlam0z : float</span>
+<span class="sd">        a common factor from Graboske 1973</span>
+<span class="sd">    taufac : float</span>
+<span class="sd">        a common factor from Itoh 1979</span>
+<span class="sd">    aa : float</span>
+<span class="sd">        a common factor from Itoh 1979</span>
+<span class="sd">    abar : float</span>
+<span class="sd">        average atomic mass</span>
+<span class="sd">    zbar : float</span>
+<span class="sd">        average ion charge</span>
+<span class="sd">    z2bar : float</span>
+<span class="sd">       average (ion charge)^2</span>
+<span class="sd">    n_e : float</span>
+<span class="sd">         electron number density</span>
+<span class="sd">    gamma_e_fac : float</span>
+<span class="sd">         temperature-independent part of Gamma_e</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -528,20 +540,12 @@ document.write(`
     <span class="n">gamma_e_fac</span><span class="p">:</span> <span class="nb">float</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">Ys</span><span class="p">,</span> <span class="n">Zs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :param temp: temperature in K</span>
-<span class="sd">        :param dens: density in g/cm^3</span>
-<span class="sd">        :param Ys:   molar fractions of each ion</span>
-<span class="sd">        :type Ys: numpy ndarray</span>
-<span class="sd">        :param Zs:   charge of each ion, in the same order as Ys</span>
-<span class="sd">        :type Zs: numpy ndarray</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dens</span> <span class="o">=</span> <span class="n">dens</span>
         <span class="n">ytot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Ys</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abar</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">ytot</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">zbar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Zs</span> <span class="o">*</span> <span class="n">Ys</span><span class="p">)</span> <span class="o">/</span> <span class="n">ytot</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">z2bar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Zs</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Ys</span><span class="p">)</span> <span class="o">/</span> <span class="n">ytot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z2bar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Zs</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Ys</span><span class="p">)</span> <span class="o">/</span> <span class="n">ytot</span>
 
         <span class="c1"># ntot</span>
         <span class="n">rr</span> <span class="o">=</span> <span class="n">dens</span> <span class="o">*</span> <span class="n">ytot</span>
@@ -554,14 +558,16 @@ document.write(`
         <span class="c1"># Part of Eq.6 in Itoh:1979</span>
         <span class="c1"># 4.248719e3 = (27*pi^2*e^4*m_u/(2*k_B*hbar^2))^(1/3)</span>
         <span class="c1"># the extra (1/3) to make tau -&gt; tau/3</span>
-        <span class="n">co2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">27</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">constants</span><span class="o">.</span><span class="n">q_e</span><span class="o">**</span><span class="mi">4</span><span class="o">*</span><span class="n">constants</span><span class="o">.</span><span class="n">m_u_C18</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">constants</span><span class="o">.</span><span class="n">k</span><span class="o">*</span><span class="n">constants</span><span class="o">.</span><span class="n">hbar</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="mi">3</span>
+        <span class="n">co2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">27</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">constants</span><span class="o">.</span><span class="n">q_e</span><span class="o">**</span><span class="mi">4</span><span class="o">*</span><span class="n">constants</span><span class="o">.</span><span class="n">m_u_C18</span> <span class="o">/</span>
+                      <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">constants</span><span class="o">.</span><span class="n">k</span><span class="o">*</span><span class="n">constants</span><span class="o">.</span><span class="n">hbar</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="mi">3</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">taufac</span> <span class="o">=</span> <span class="n">co2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
 
         <span class="n">xni</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">rr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">zbar</span><span class="p">)</span>
 
         <span class="c1"># Part of Eq.4 in Itoh:1979</span>
         <span class="c1"># 2.27493e5 = e^2 / ( (3*m_u/(4pi))^(1/3) *k_B )</span>
-        <span class="n">aa_factor</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">q_e</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">constants</span><span class="o">.</span><span class="n">m_u_C18</span><span class="o">/</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">aa_factor</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">q_e</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">constants</span><span class="o">.</span><span class="n">m_u_C18</span><span class="o">/</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">*</span>
+                                        <span class="n">constants</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">aa</span> <span class="o">=</span> <span class="n">aa_factor</span> <span class="o">/</span> <span class="n">temp</span> <span class="o">*</span> <span class="n">xni</span>
 
         <span class="c1"># Average mass and total number density</span>
@@ -572,7 +578,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">n_e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zbar</span> <span class="o">*</span> <span class="n">ntot</span>
 
         <span class="c1"># temperature-independent part of Gamma_e, from Chugunov 2009 eq. 6</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">q_e</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">k</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_e</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">q_e</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">k</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_e</span><span class="p">)</span></div>
 
 
 
@@ -580,8 +586,8 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.NseState">[docs]</a>
 <span class="nd">@jitclass</span><span class="p">()</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">NseState</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store precomputed values that are reused in the NSE state screening</span>
-<span class="sd">    calculations</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store precomputed values that are reused in the NSE state</span>
+<span class="sd">    screening calculations</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -609,7 +615,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dens</span> <span class="o">=</span> <span class="n">dens</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ye</span> <span class="o">=</span> <span class="n">ye</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">q_e</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">k</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">q_e</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">k</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span></div>
 
 
 
@@ -618,10 +624,19 @@ document.write(`
 <span class="k">def</span><span class="w"> </span><span class="nf">make_plasma_state</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">molar_fractions</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a PlasmaState object from simulation data.</span>
 
-<span class="sd">    :param temp:            temperature in K</span>
-<span class="sd">    :param dens:            density in g/cm^3</span>
-<span class="sd">    :param molar_fractions: dictionary of molar abundances for each ion,</span>
-<span class="sd">                            as returned by :meth:`.Composition.get_molar`</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    temp : float</span>
+<span class="sd">        temperature in K</span>
+<span class="sd">    dens : float</span>
+<span class="sd">        density in g/cm^3</span>
+<span class="sd">    molar_fractions : dict(Nucleus)</span>
+<span class="sd">        dictionary of molar abundances for each ion,</span>
+<span class="sd">        as returned by :meth:`.Composition.get_molar`</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    PlasmaState</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">nuclei</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">molar_fractions</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -638,16 +653,28 @@ document.write(`
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Store values that will be used to calculate the screening</span>
 <span class="sd">    correction factor for a specific pair of nuclei.</span>
 
-<span class="sd">    :var z1: atomic number of first nucleus</span>
-<span class="sd">    :var z2: atomic number of second nucleus</span>
-<span class="sd">    :var a1: atomic mass of first nucleus</span>
-<span class="sd">    :var a2: atomic mass of second nucleus</span>
-<span class="sd">    :var zs13: (z1+z2)**(1/3)</span>
-<span class="sd">    :var zhat: combination of z1 and z2 raised to the 5/3 power</span>
-<span class="sd">    :var zhat2: combination of z1 and z2 raised to the 5/12 power</span>
-<span class="sd">    :var lzav: log of effective charge</span>
-<span class="sd">    :var aznut: combination of a1, z1, a2, z2 raised to 1/3 power</span>
-<span class="sd">    :var ztilde: effective ion radius factor for a MCP</span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z1 : float</span>
+<span class="sd">        atomic number of first nucleus</span>
+<span class="sd">    z2 : float</span>
+<span class="sd">        atomic number of second nucleus</span>
+<span class="sd">    a1 : float</span>
+<span class="sd">        atomic mass of first nucleus</span>
+<span class="sd">    a2 : float</span>
+<span class="sd">        atomic mass of second nucleus</span>
+<span class="sd">    zs13 : float</span>
+<span class="sd">        (z1+z2)**(1/3)</span>
+<span class="sd">    zhat : float</span>
+<span class="sd">        combination of z1 and z2 raised to the 5/3 power</span>
+<span class="sd">    zhat2 : float</span>
+<span class="sd">        combination of z1 and z2 raised to the 5/12 power</span>
+<span class="sd">    lzav : float</span>
+<span class="sd">        log of effective charge</span>
+<span class="sd">    aznut : float</span>
+<span class="sd">        combination of a1, z1, a2, z2 raised to 1/3 power</span>
+<span class="sd">    ztilde : float</span>
+<span class="sd">        effective ion radius factor for a MCP</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -668,10 +695,10 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">a1</span> <span class="o">=</span> <span class="n">a1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">a2</span> <span class="o">=</span> <span class="n">a2</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">zs13</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">z1</span> <span class="o">+</span> <span class="n">z2</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">zhat</span> <span class="o">=</span> <span class="p">(</span><span class="n">z1</span> <span class="o">+</span> <span class="n">z2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">z1</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">z2</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">zhat2</span> <span class="o">=</span> <span class="p">(</span><span class="n">z1</span> <span class="o">+</span> <span class="n">z2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">12</span><span class="p">)</span> <span class="o">-</span> <span class="n">z1</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">12</span><span class="p">)</span> <span class="o">-</span> <span class="n">z2</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">12</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zhat</span> <span class="o">=</span> <span class="p">(</span><span class="n">z1</span> <span class="o">+</span> <span class="n">z2</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">z1</span><span class="o">**</span><span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">z2</span><span class="o">**</span><span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zhat2</span> <span class="o">=</span> <span class="p">(</span><span class="n">z1</span> <span class="o">+</span> <span class="n">z2</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">12</span><span class="p">)</span> <span class="o">-</span> <span class="n">z1</span><span class="o">**</span><span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">12</span><span class="p">)</span> <span class="o">-</span> <span class="n">z2</span><span class="o">**</span><span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">12</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lzav</span> <span class="o">=</span> <span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">z1</span> <span class="o">*</span> <span class="n">z2</span> <span class="o">/</span> <span class="p">(</span><span class="n">z1</span> <span class="o">+</span> <span class="n">z2</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">aznut</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">z1</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">z2</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">a1</span> <span class="o">*</span> <span class="n">a2</span> <span class="o">/</span> <span class="p">(</span><span class="n">a1</span> <span class="o">+</span> <span class="n">a2</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aznut</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">z1</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">z2</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">a1</span> <span class="o">*</span> <span class="n">a2</span> <span class="o">/</span> <span class="p">(</span><span class="n">a1</span> <span class="o">+</span> <span class="n">a2</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ztilde</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">z1</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">z2</span><span class="p">))</span></div>
 
 
@@ -681,10 +708,19 @@ document.write(`
 <span class="k">def</span><span class="w"> </span><span class="nf">make_screen_factors</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a ScreenFactors object from a pair of nuclei.</span>
 
-<span class="sd">    :param Nucleus n1: first nucleus</span>
-<span class="sd">    :param Nucleus n2: second nucleus</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n1 : Nucleus, str</span>
+<span class="sd">        first nucleus</span>
+<span class="sd">    n2 : Nucleus, str</span>
+<span class="sd">        second nucleus</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ScreenFactors</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">n1</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">n1</span><span class="p">)</span>
     <span class="n">n2</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">n2</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ScreenFactors</span><span class="p">(</span><span class="n">n1</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">n1</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">n2</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">n2</span><span class="o">.</span><span class="n">A</span><span class="p">)</span></div>
@@ -698,9 +734,16 @@ document.write(`
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the Debye-Huckel enhancement factor for weak Coloumb</span>
 <span class="sd">    coupling, following the appendix of :cite:t:`chugunov:2009`.</span>
 
-<span class="sd">    :param PlasmaState state:     the precomputed plasma state factors</span>
-<span class="sd">    :param ScreenFactors scn_fac: the precomputed ion pair factors</span>
-<span class="sd">    :returns: screening correction factor</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    state : PlasmaState</span>
+<span class="sd">        the precomputed plasma state factors</span>
+<span class="sd">    scn_fac : ScreenFactors</span>
+<span class="sd">        the precomputed ion pair factors</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">z1z2</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span>
@@ -728,6 +771,17 @@ document.write(`
 <span class="sd">    Based on :cite:t:`graboske:1973` for weak screening. Based on</span>
 <span class="sd">    :cite:t:`alastuey:1978` with plasma parameters from :cite:t:`itoh:1979`,</span>
 <span class="sd">    for strong screening.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    state : PlasmaState</span>
+<span class="sd">        the precomputed plasma state factors</span>
+<span class="sd">    scn_fac : ScreenFactors</span>
+<span class="sd">        the precomputed ion pair factors</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">fact</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -788,7 +842,7 @@ document.write(`
     <span class="k">if</span> <span class="n">gamef</span> <span class="o">&gt;</span> <span class="n">gamefx</span><span class="p">:</span>
 
         <span class="c1"># gamma_ij^(1/4)</span>
-        <span class="n">gamp14</span> <span class="o">=</span> <span class="n">gamp</span> <span class="o">**</span> <span class="mf">0.25</span>
+        <span class="n">gamp14</span> <span class="o">=</span> <span class="n">gamp</span><span class="o">**</span><span class="mf">0.25</span>
 
         <span class="c1"># Here we follow Eq. A9 in Wallace:1982</span>
         <span class="c1"># See Eq. 25 Alastuey:1978, Eq. 16 and 17 in Jancovici:1977 for reference</span>
@@ -856,17 +910,28 @@ document.write(`
 
 
 
+<div class="viewcode-block" id="smooth_clip">
+<a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.smooth_clip">[docs]</a>
 <span class="nd">@njit</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">smooth_clip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a smooth transition between y=limit and y=x with a</span>
 <span class="sd">    half-cosine.</span>
 
-<span class="sd">    Clips smaller values if limit &lt; start and larger values if start &lt; limit.</span>
+<span class="sd">    Clips smaller values if limit &lt; start and larger values if start &lt;</span>
+<span class="sd">    limit.</span>
 
-<span class="sd">    :param x:     the value to clip</span>
-<span class="sd">    :param limit: the constant value to clip x to</span>
-<span class="sd">    :param start: the x-value at which to start the transition</span>
-<span class="sd">    :returns: y</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : float</span>
+<span class="sd">        the value to clip</span>
+<span class="sd">    limit : float</span>
+<span class="sd">        the constant value to clip x to</span>
+<span class="sd">    start : float</span>
+<span class="sd">        the x-value at which to start the transition</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">limit</span> <span class="o">&lt;</span> <span class="n">start</span><span class="p">:</span>
@@ -884,7 +949,8 @@ document.write(`
     <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="n">start</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">start</span> <span class="o">-</span> <span class="n">limit</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">tmp</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span>
 
-    <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">f</span><span class="p">)</span> <span class="o">*</span> <span class="n">lower</span> <span class="o">+</span> <span class="n">f</span> <span class="o">*</span> <span class="n">upper</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">f</span><span class="p">)</span> <span class="o">*</span> <span class="n">lower</span> <span class="o">+</span> <span class="n">f</span> <span class="o">*</span> <span class="n">upper</span></div>
+
 
 
 <div class="viewcode-block" id="chugunov_2007">
@@ -896,9 +962,16 @@ document.write(`
 <span class="sd">    Follows the approach in :cite:t:`yakovlev:2006` to extend to a</span>
 <span class="sd">    multi-component plasma.</span>
 
-<span class="sd">    :param PlasmaState state:     the precomputed plasma state factors</span>
-<span class="sd">    :param ScreenFactors scn_fac: the precomputed ion pair factors</span>
-<span class="sd">    :returns: screening correction factor</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    state : PlasmaState</span>
+<span class="sd">        the precomputed plasma state factors</span>
+<span class="sd">    scn_fac : ScreenFactors</span>
+<span class="sd">        the precomputed ion pair factors</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Plasma temperature T_p</span>
@@ -923,7 +996,7 @@ document.write(`
     <span class="c1">#   m_i -&gt; m_u * abar</span>
     <span class="n">mu12</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">a1</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">a2</span> <span class="o">/</span> <span class="p">(</span><span class="n">scn_fac</span><span class="o">.</span><span class="n">a1</span> <span class="o">+</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">a2</span><span class="p">)</span>
     <span class="n">z_factor</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span>
-    <span class="n">n_i</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">n_e</span> <span class="o">/</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">ztilde</span> <span class="o">**</span> <span class="mi">3</span>
+    <span class="n">n_i</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">n_e</span> <span class="o">/</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">ztilde</span><span class="o">**</span><span class="mi">3</span>
     <span class="n">m_i</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">mu12</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_C18</span>
 
     <span class="n">T_p</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">hbar</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">k</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">q_e</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">z_factor</span> <span class="o">*</span> <span class="n">n_i</span> <span class="o">/</span> <span class="n">m_i</span><span class="p">)</span>
@@ -950,7 +1023,7 @@ document.write(`
     <span class="n">Gamma</span> <span class="o">=</span> <span class="n">smooth_clip</span><span class="p">(</span><span class="n">Gamma</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">Gamma_max</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">Gamma_fade</span><span class="p">)</span>
 
     <span class="c1"># Chugunov 2007 eq. 3</span>
-    <span class="n">zeta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">4</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">T_norm</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">zeta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">4</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">T_norm</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
 
     <span class="c1"># Gamma tilde from Chugunov 2007 eq. 21</span>
     <span class="n">fit_alpha</span> <span class="o">=</span> <span class="mf">0.022</span>
@@ -970,15 +1043,15 @@ document.write(`
     <span class="n">B2</span> <span class="o">=</span> <span class="mf">66.07</span>
     <span class="n">B3</span> <span class="o">=</span> <span class="mf">1.12</span>
     <span class="n">B4</span> <span class="o">=</span> <span class="mi">65</span>
-    <span class="n">gamtilde2</span> <span class="o">=</span> <span class="n">gamtilde</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">gamtilde2</span> <span class="o">=</span> <span class="n">gamtilde</span><span class="o">**</span><span class="mi">2</span>
 
     <span class="c1"># Chugunov 2007 eq. 19</span>
     <span class="n">term1</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A2</span> <span class="o">+</span> <span class="n">gamtilde</span><span class="p">)</span>
     <span class="n">term2</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">gamtilde</span><span class="p">)</span>
-    <span class="n">term3</span> <span class="o">=</span> <span class="n">gamtilde</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">B2</span> <span class="o">+</span> <span class="n">gamtilde</span><span class="p">)</span>
+    <span class="n">term3</span> <span class="o">=</span> <span class="n">gamtilde</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">B2</span> <span class="o">+</span> <span class="n">gamtilde</span><span class="p">)</span>
     <span class="n">term4</span> <span class="o">=</span> <span class="n">gamtilde2</span> <span class="o">/</span> <span class="p">(</span><span class="n">B4</span> <span class="o">+</span> <span class="n">gamtilde2</span><span class="p">)</span>
 
-    <span class="n">h</span> <span class="o">=</span> <span class="n">gamtilde</span> <span class="o">**</span> <span class="p">(</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">A1</span> <span class="o">*</span> <span class="n">term1</span> <span class="o">+</span> <span class="n">A3</span> <span class="o">*</span> <span class="n">term2</span><span class="p">)</span> <span class="o">+</span> <span class="n">B1</span> <span class="o">*</span> <span class="n">term3</span> <span class="o">+</span> <span class="n">B3</span> <span class="o">*</span> <span class="n">term4</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">gamtilde</span><span class="o">**</span><span class="p">(</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">A1</span> <span class="o">*</span> <span class="n">term1</span> <span class="o">+</span> <span class="n">A3</span> <span class="o">*</span> <span class="n">term2</span><span class="p">)</span> <span class="o">+</span> <span class="n">B1</span> <span class="o">*</span> <span class="n">term3</span> <span class="o">+</span> <span class="n">B3</span> <span class="o">*</span> <span class="n">term4</span>
 
     <span class="c1"># machine limit the output</span>
     <span class="n">h_max</span> <span class="o">=</span> <span class="mi">300</span>
@@ -989,13 +1062,21 @@ document.write(`
 
 
 
+<div class="viewcode-block" id="f0">
+<a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.f0">[docs]</a>
 <span class="nd">@njit</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">f0</span><span class="p">(</span><span class="n">gamma</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate the free energy per ion in a OCP from</span>
 <span class="sd">    :cite:t:`chugunov:2009` eq. 24</span>
 
-<span class="sd">    :param gamma: Coulomb coupling parameter</span>
-<span class="sd">    :returns: free energy</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gamma : float</span>
+<span class="sd">        Coulomb coupling parameter</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">A1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.907</span>
@@ -1011,14 +1092,15 @@ document.write(`
     <span class="n">gamma_12</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">gamma</span><span class="p">)</span>
     <span class="n">term3</span> <span class="o">=</span> <span class="n">gamma_12</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">gamma_12</span><span class="p">)</span>
     <span class="n">term4</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">gamma</span> <span class="o">/</span> <span class="n">B2</span><span class="p">)</span>
-    <span class="n">term5</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">gamma</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">B4</span><span class="p">)</span>
+    <span class="n">term5</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">gamma</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">B4</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">(</span>
         <span class="n">A1</span> <span class="o">*</span> <span class="p">(</span><span class="n">term1</span> <span class="o">-</span> <span class="n">A2</span> <span class="o">*</span> <span class="n">term2</span><span class="p">)</span> <span class="o">+</span>
         <span class="mi">2</span> <span class="o">*</span> <span class="n">A3</span> <span class="o">*</span> <span class="n">term3</span> <span class="o">+</span>
         <span class="n">B1</span> <span class="o">*</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">-</span> <span class="n">B2</span> <span class="o">*</span> <span class="n">term4</span><span class="p">)</span> <span class="o">+</span>
         <span class="n">B3</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">term5</span>
-    <span class="p">)</span>
+    <span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="chugunov_2009">
@@ -1027,9 +1109,16 @@ document.write(`
 <span class="k">def</span><span class="w"> </span><span class="nf">chugunov_2009</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate screening factors based on :cite:t:`chugunov:2009`.</span>
 
-<span class="sd">    :param PlasmaState state:     the precomputed plasma state factors</span>
-<span class="sd">    :param ScreenFactors scn_fac: the precomputed ion pair factors</span>
-<span class="sd">    :returns: screening correction factor</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    state : PlasmaState</span>
+<span class="sd">        the precomputed plasma state factors</span>
+<span class="sd">    scn_fac : ScreenFactors</span>
+<span class="sd">        the precomputed ion pair factors</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">z1z2</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span>
@@ -1039,24 +1128,24 @@ document.write(`
     <span class="n">Gamma_e</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span>
 
     <span class="c1"># Coulomb coupling parameters for ions and compound nucleus, eqs. 7 &amp; 9</span>
-    <span class="n">Gamma_1</span> <span class="o">=</span> <span class="n">Gamma_e</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
-    <span class="n">Gamma_2</span> <span class="o">=</span> <span class="n">Gamma_e</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
-    <span class="n">Gamma_comp</span> <span class="o">=</span> <span class="n">Gamma_e</span> <span class="o">*</span> <span class="n">zcomp</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">Gamma_1</span> <span class="o">=</span> <span class="n">Gamma_e</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span><span class="o">**</span><span class="p">(</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">Gamma_2</span> <span class="o">=</span> <span class="n">Gamma_e</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span><span class="o">**</span><span class="p">(</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">Gamma_comp</span> <span class="o">=</span> <span class="n">Gamma_e</span> <span class="o">*</span> <span class="n">zcomp</span><span class="o">**</span><span class="p">(</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
 
     <span class="n">Gamma_12</span> <span class="o">=</span> <span class="n">Gamma_e</span> <span class="o">*</span> <span class="n">z1z2</span> <span class="o">/</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">ztilde</span>
 
     <span class="c1"># Coulomb barrier penetrability, eq. 10</span>
-    <span class="n">tau_factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">27</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">q_e</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">hbar</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_C18</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+    <span class="n">tau_factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">27</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">q_e</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">hbar</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_C18</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
     <span class="n">tau_12</span> <span class="o">=</span> <span class="n">tau_factor</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">aznut</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">temp</span><span class="p">)</span>
 
     <span class="c1"># eq. 12</span>
     <span class="n">zeta</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">Gamma_12</span> <span class="o">/</span> <span class="n">tau_12</span>
 
     <span class="c1"># additional fit parameters, eq. 25</span>
-    <span class="n">y_12</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">z1z2</span> <span class="o">/</span> <span class="n">zcomp</span> <span class="o">**</span> <span class="mi">2</span>
-    <span class="n">c1</span> <span class="o">=</span> <span class="mf">0.013</span> <span class="o">*</span> <span class="n">y_12</span> <span class="o">**</span> <span class="mi">2</span>
-    <span class="n">c2</span> <span class="o">=</span> <span class="mf">0.406</span> <span class="o">*</span> <span class="n">y_12</span> <span class="o">**</span> <span class="mf">0.14</span>
-    <span class="n">c3</span> <span class="o">=</span> <span class="mf">0.062</span> <span class="o">*</span> <span class="n">y_12</span> <span class="o">**</span> <span class="mf">0.19</span> <span class="o">+</span> <span class="mf">1.8</span> <span class="o">/</span> <span class="n">Gamma_12</span>
+    <span class="n">y_12</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">z1z2</span> <span class="o">/</span> <span class="n">zcomp</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">c1</span> <span class="o">=</span> <span class="mf">0.013</span> <span class="o">*</span> <span class="n">y_12</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">c2</span> <span class="o">=</span> <span class="mf">0.406</span> <span class="o">*</span> <span class="n">y_12</span><span class="o">**</span><span class="mf">0.14</span>
+    <span class="n">c3</span> <span class="o">=</span> <span class="mf">0.062</span> <span class="o">*</span> <span class="n">y_12</span><span class="o">**</span><span class="mf">0.19</span> <span class="o">+</span> <span class="mf">1.8</span> <span class="o">/</span> <span class="n">Gamma_12</span>
 
     <span class="n">poly</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">zeta</span><span class="o">*</span><span class="p">(</span><span class="n">c1</span> <span class="o">+</span> <span class="n">zeta</span><span class="o">*</span><span class="p">(</span><span class="n">c2</span> <span class="o">+</span> <span class="n">c3</span><span class="o">*</span><span class="n">zeta</span><span class="p">))</span>
     <span class="n">t_12</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">poly</span><span class="p">)</span>
@@ -1072,11 +1161,11 @@ document.write(`
     <span class="c1"># weak screening correction term, eq. A3</span>
     <span class="n">corr_C</span> <span class="o">=</span> <span class="p">(</span>
         <span class="mi">3</span> <span class="o">*</span> <span class="n">z1z2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">z2bar</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">zbar</span><span class="p">)</span> <span class="o">/</span>
-        <span class="p">(</span><span class="n">zcomp</span> <span class="o">**</span> <span class="mf">2.5</span> <span class="o">-</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span> <span class="o">**</span> <span class="mf">2.5</span> <span class="o">-</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span> <span class="o">**</span> <span class="mf">2.5</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">zcomp</span><span class="o">**</span><span class="mf">2.5</span> <span class="o">-</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span><span class="o">**</span><span class="mf">2.5</span> <span class="o">-</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span><span class="o">**</span><span class="mf">2.5</span><span class="p">)</span>
     <span class="p">)</span>
 
     <span class="c1"># corrected enhancement factor, eq. A4</span>
-    <span class="n">Gamma_12_2</span> <span class="o">=</span> <span class="n">Gamma_12</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">Gamma_12_2</span> <span class="o">=</span> <span class="n">Gamma_12</span><span class="o">**</span><span class="mi">2</span>
     <span class="n">numer</span> <span class="o">=</span> <span class="n">corr_C</span> <span class="o">+</span> <span class="n">Gamma_12_2</span>
     <span class="n">denom</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">Gamma_12_2</span>
     <span class="n">h12</span> <span class="o">=</span> <span class="n">numer</span> <span class="o">/</span> <span class="n">denom</span> <span class="o">*</span> <span class="n">h_fit</span>
@@ -1097,18 +1186,25 @@ document.write(`
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate screening factors based on</span>
 <span class="sd">    :cite:t:`chabrier_potekhin:1998`.</span>
 
-<span class="sd">    :param PlasmaState state:     the precomputed plasma state factors</span>
-<span class="sd">    :param ScreenFactors scn_fac: the precomputed ion pair factors</span>
-<span class="sd">    :returns: screening correction factor</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    state : PlasmaState</span>
+<span class="sd">        the precomputed plasma state factors</span>
+<span class="sd">    scn_fac : ScreenFactors</span>
+<span class="sd">        the precomputed ion pair factors</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">Gamma_e</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span>
     <span class="n">zcomp</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span> <span class="o">+</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span>
 
-    <span class="n">Gamma_1</span> <span class="o">=</span> <span class="n">Gamma_e</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
-    <span class="n">Gamma_2</span> <span class="o">=</span> <span class="n">Gamma_e</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
-    <span class="n">Gamma_comp</span> <span class="o">=</span> <span class="n">Gamma_e</span> <span class="o">*</span> <span class="n">zcomp</span> <span class="o">**</span> <span class="p">(</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">Gamma_1</span> <span class="o">=</span> <span class="n">Gamma_e</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span><span class="o">**</span><span class="p">(</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">Gamma_2</span> <span class="o">=</span> <span class="n">Gamma_e</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span><span class="o">**</span><span class="p">(</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">Gamma_comp</span> <span class="o">=</span> <span class="n">Gamma_e</span> <span class="o">*</span> <span class="n">zcomp</span><span class="o">**</span><span class="p">(</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
 
     <span class="n">A_1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.9052</span>
     <span class="n">A_2</span> <span class="o">=</span> <span class="mf">0.6322</span>
