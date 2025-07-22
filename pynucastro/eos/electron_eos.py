@@ -165,8 +165,11 @@ class ElectronEOS:
         dne_drho = dne_deta * deta_drho
         dne_dT = dne_deta * deta_dT + dne_dbeta * dbeta_dT
 
-        dnp_drho = dnp_deta * deta_drho
-        dnp_dT = dnp_deta * deta_dT + dnp_dbeta * dbeta_dT
+        dnp_drho = 0.0
+        dnp_dT = 0.0
+        if self.include_positrons:
+            dnp_drho = dnp_deta * deta_drho
+            dnp_dT = dnp_deta * deta_dT + dnp_dbeta * dbeta_dT
 
         # Compute partials of pressure with density and temperature
         dpe_drho = pcoeff * beta**2.5 * (0.5 * beta * f52.dF_deta + f32.dF_deta) * deta_drho
@@ -177,12 +180,15 @@ class ElectronEOS:
                                                             2.0 * f32.dF_dbeta * dbeta_dT +
                                                             2.0 * f32.dF_deta * deta_dT)))
 
-        dpp_drho = -pcoeff * beta**2.5 * (0.5 * beta * f52_pos.dF_deta + f32_pos.dF_deta) * deta_drho
-        dpp_dT = 0.5 * pcoeff * np.sqrt(beta) * (-2.0 * (beta**2 * deta_dT - 2.0 * dbeta_dT) * f32_pos.dF_deta -
-                                                 beta * (-beta**2 * (2.0 / beta**2 * f52_pos.dF_deta + f52_pos.dF_dbeta) * dbeta_dT +
-                                                         (beta**2 * deta_dT - 2.0 * dbeta_dT) * f52_pos.dF_deta) +
-                                                 5.0 * beta * (f32_pos.F + 0.5 * beta * f52_pos.F) * dbeta_dT +
-                                                 2.0 * beta**2 * (2.0 / beta**2 * f32_pos.dF_deta + 0.5 * f52_pos.F + f32_pos.dF_dbeta) * dbeta_dT)
+        dpp_drho = 0.0
+        dpp_dT = 0.0
+        if self.include_positrons:
+            dpp_drho = -pcoeff * beta**2.5 * (0.5 * beta * f52_pos.dF_deta + f32_pos.dF_deta) * deta_drho
+            dpp_dT = 0.5 * pcoeff * np.sqrt(beta) * (-2.0 * (beta**2 * deta_dT - 2.0 * dbeta_dT) * f32_pos.dF_deta -
+                                                     beta * (-beta**2 * (2.0 / beta**2 * f52_pos.dF_deta + f52_pos.dF_dbeta) * dbeta_dT +
+                                                             (beta**2 * deta_dT - 2.0 * dbeta_dT) * f52_pos.dF_deta) +
+                                                     5.0 * beta * (f32_pos.F + 0.5 * beta * f52_pos.F) * dbeta_dT +
+                                                     2.0 * beta**2 * (2.0 / beta**2 * f32_pos.dF_deta + 0.5 * f52_pos.F + f32_pos.dF_dbeta) * dbeta_dT)
 
         # Compute partials of pressure with density and temperature
         dee_drho = ecoeff * beta**2.5 * (rho * (f32.dF_deta + beta * f52.dF_deta) * deta_drho -
