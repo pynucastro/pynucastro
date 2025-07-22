@@ -125,3 +125,50 @@ class TestElectronPositronEOS:
         es = e.pe_state(rho, T, comp)
 
         assert es.n_pos == approx(n_pos_approx, rel=0.5)
+
+    def test_ne_rho_derivs(self):
+
+        e = ElectronEOS(include_positrons=True)
+
+        comp = Composition(["h1", "he4", "c12", "ne22"])
+        comp.set_equal()
+
+        eps_rho = 1.e-5
+
+        for T in [1.e4, 1.e6, 1.e9]:
+            for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
+
+                es = e.pe_state(rho, T, comp)
+                drho = eps_rho * rho
+                fvals = []
+                for i in [-2, -1, 0, 1, 2]:
+                    _es = e.pe_state(rho + i*drho, T, comp)
+                    fvals.append(_es.n_e)
+
+                deriv = (fvals[0] - 8.0 * fvals[1] + 8.0 * fvals[3] - fvals[4]) / (12 * drho)
+                assert es.dne_drho == approx(deriv, rel=5.e-5)
+
+    def test_ne_temp_derivs(self):
+
+        e = ElectronEOS(include_positrons=True)
+
+        comp = Composition(["h1", "he4", "c12", "ne22"])
+        comp.set_equal()
+
+        # use a relatively large eps because of how weakly beta enters when beta << 1
+
+        eps = 1.e-5
+
+        for T in [1.e4, 1.e6, 1.e9]:
+            for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
+
+                es = e.pe_state(rho, T, comp)
+                es_r = e.pe_state(rho, T * (1.0 + eps), comp)
+
+                dnedr_approx = (es_r.n_e - es.n_e) / (eps * T)
+                if es.dne_dT == 0:
+                    # no pair production
+                    scale = es.n_e / T
+                    assert es.dne_dT == approx(dnedr_approx / scale, abs=5.e-9)
+                else:
+                    assert es.dne_dT == approx(dnedr_approx, rel=1.e-4)

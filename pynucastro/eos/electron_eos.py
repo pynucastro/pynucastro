@@ -148,10 +148,9 @@ class ElectronEOS:
             dnp_deta = coeff * beta**1.5 * (-f12_pos.dF_deta - beta * f32_pos.dF_deta)
             dnp_dbeta = 0.5 * coeff / np.sqrt(beta) * (3.0 * beta * f12_pos.F +
                                                        5.0 * beta**2 * f32_pos.F +
-                                                       2.0 * beta**3 * f32_pos.dF_dbeta +
-                                                       2.0 * beta**2 * f12_pos.dF_dbeta +
-                                                       4.0 * beta * f32.dF_deta +
-                                                       4.0 * f12.dF_deta)
+                                                       2.0 * beta**2 * (f12_pos.dF_dbeta +
+                                                                        beta * f32_pos.dF_dbeta) +
+                                                       4.0 * (f12_pos.dF_deta + beta * f32_pos.dF_deta))
 
         #dbeta_drho = 0.0
         dbeta_dT = constants.k / rest_mass
