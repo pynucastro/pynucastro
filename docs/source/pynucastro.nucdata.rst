@@ -3,8 +3,8 @@ pynucastro.nucdata package
 
 .. automodule:: pynucastro.nucdata
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Submodules
 ----------

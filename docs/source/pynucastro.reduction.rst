@@ -3,8 +3,8 @@ pynucastro.reduction package
 
 .. automodule:: pynucastro.reduction
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Submodules
 ----------
