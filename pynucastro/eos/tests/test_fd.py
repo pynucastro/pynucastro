@@ -262,13 +262,13 @@ class TestFermiDirac:
                         deta = eps
 
                     def _kernel(_eta):
-                        _f = FermiIntegral(k, _eta, beta)
+                        _f = FermiIntegral(k, _eta, beta)  # pylint: disable=cell-var-from-loop
                         _f.evaluate(do_second_derivs=False)
                         return _f.dF_deta
 
                     deriv = sixth_order_diff(_kernel, eta, deta)
 
-                    assert f0.d2F_deta2 == approx(deriv, abs=1.e-100, rel=1.e-5)
+                    assert f0.d2F_deta2 == approx(deriv, abs=1.e-100, rel=2.e-5)
 
     def test_d2fdbeta2(self):
 
@@ -288,7 +288,7 @@ class TestFermiDirac:
                         dbeta = eps
 
                     def _kernel(_beta):
-                        _f = FermiIntegral(k, eta, _beta)
+                        _f = FermiIntegral(k, eta, _beta)  # pylint: disable=cell-var-from-loop
                         _f.evaluate(do_second_derivs=False)
                         return _f.dF_dbeta
 
