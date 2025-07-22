@@ -2,7 +2,7 @@
 from pytest import approx
 
 from pynucastro.eos import FermiIntegral
-from pynucastro.eos.difference_utils import fourth_order_diff
+from pynucastro.eos.difference_utils import fourth_order_diff, sixth_order_diff
 
 class TestFermiDirac:
 
@@ -248,7 +248,7 @@ class TestFermiDirac:
         # test the derivative d^2F/dη^2 computed via direct
         # integration by comparing against a difference approximation.
 
-        eps = 1.e-8
+        eps = 1.e-6
 
         for k in [-0.5, 0.5, 1.5, 2.5]:
             for eta in [-50, 0, 250]:
@@ -265,9 +265,9 @@ class TestFermiDirac:
                         _f.evaluate(do_second_derivs=False)
                         return _f.dF_deta
 
-                    deriv = fourth_order_diff(_kernel, eta, deta)
+                    deriv = sixth_order_diff(_kernel, eta, deta)
 
-                    assert f0.d2F_deta2 == approx(deriv, abs=1.e-100, rel=5.e-4)
+                    assert f0.d2F_deta2 == approx(deriv, abs=1.e-100, rel=1.e-5)
 
     def test_d2fdbeta2(self):
 
@@ -289,7 +289,7 @@ class TestFermiDirac:
                     def _kernel(_beta):
                         _f = FermiIntegral(k, eta, _beta)
                         _f.evaluate(do_second_derivs=False)
-                        return _f.dF_bdeta
+                        return _f.dF_dbeta
 
                     deriv = fourth_order_diff(_kernel, beta, dbeta)
 
