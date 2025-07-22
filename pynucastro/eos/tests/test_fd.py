@@ -1,5 +1,4 @@
 # unit tests for rates
-import functools
 
 from pytest import approx
 

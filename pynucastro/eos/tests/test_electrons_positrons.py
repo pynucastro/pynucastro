@@ -1,5 +1,4 @@
 # unit tests for rates
-import functools
 
 import numpy as np
 from pytest import approx
@@ -143,7 +142,7 @@ class TestElectronPositronEOS:
 
                 es = e.pe_state(rho, T, comp)
                 drho = eps_rho * rho
-                deriv = sixth_order_diff(functools.partial(e.pe_state, T=T, comp=comp),
+                deriv = sixth_order_diff(lambda _rho: e.pe_state(_rho, T, comp),  # pylint: disable=cell-var-from-loop
                                          rho, drho, "n_e")
                 assert es.dne_drho == approx(deriv, rel=1.e-5)
 
@@ -186,7 +185,7 @@ class TestElectronPositronEOS:
 
                 es = e.pe_state(rho, T, comp)
                 drho = eps_rho * rho
-                deriv = fourth_order_diff(functools.partial(e.pe_state, T=T, comp=comp),
+                deriv = fourth_order_diff(lambda _rho: e.pe_state(_rho, T, comp),  # pylint: disable=cell-var-from-loop
                                           rho, drho, "n_pos")
                 assert es.dnp_drho == approx(deriv, rel=1.e-5)
 
@@ -213,7 +212,7 @@ class TestElectronPositronEOS:
                 dtemp = eps_T * T
                 # here rho is a positional argument, so partial will put T in the
                 # proper spot
-                deriv = fourth_order_diff(functools.partial(e.pe_state, rho, comp=comp),
+                deriv = fourth_order_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
                                           T, dtemp, "n_pos")
                 if es.dnp_dT == 0 and es.n_pos != 0:
                     # no pair production
