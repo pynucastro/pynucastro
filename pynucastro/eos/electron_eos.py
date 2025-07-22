@@ -135,7 +135,7 @@ class ElectronEOS:
 
             n_pos = coeff * beta**1.5 * (f12_pos.F + beta * f32_pos.F)
             p_pos = pcoeff * beta**2.5 * (f32_pos.F + 0.5 * beta * f52_pos.F)
-            e_pos = ecoeff * beta**2.5 * (f32_pos.F + beta * f52_pos.F) / rho
+            e_pos = ecoeff * beta**2.5 * (f32_pos.F + beta * f52_pos.F) / rho + 2 * rest_mass * n_pos / rho
 
         # compute the derivatives of eta and beta with respect to
         # density and temperature
