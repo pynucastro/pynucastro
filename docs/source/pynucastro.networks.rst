@@ -3,8 +3,8 @@ pynucastro.networks package
 
 .. automodule:: pynucastro.networks
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Submodules
 ----------

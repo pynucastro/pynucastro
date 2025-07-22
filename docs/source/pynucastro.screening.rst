@@ -3,8 +3,8 @@ pynucastro.screening package
 
 .. automodule:: pynucastro.screening
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Submodules
 ----------

@@ -3,8 +3,8 @@ pynucastro.neutrino\_cooling package
 
 .. automodule:: pynucastro.neutrino_cooling
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Submodules
 ----------
