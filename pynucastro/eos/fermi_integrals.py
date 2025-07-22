@@ -141,10 +141,8 @@ def _kernel_p(x, k, eta, beta,
     testm = delta < -700.0
     if testm:
         denomi = 1.0
-        exp_delta = 0.0
     else:
-        exp_delta = np.exp(delta)
-        inv_exp_delta = 1.0 / exp_delta
+        inv_exp_delta = np.exp(-delta)
         # 1 / (exp(x**2 - eta) + 1) rewritten
         denomi = inv_exp_delta / (1.0 + inv_exp_delta)
 
@@ -206,10 +204,8 @@ def _kernel_E(x, k, eta, beta,
     testm = x - eta < -700
     if testm:
         denomi = 1.0
-        exp_delta = 0.0
     else:
-        exp_delta = np.exp(delta)
-        inv_exp_delta = 1.0 / exp_delta
+        inv_exp_delta = np.exp(-delta)
         # 1 / (exp(x - eta) + 1) rewritten
         denomi = inv_exp_delta / (1.0 + inv_exp_delta)
 
