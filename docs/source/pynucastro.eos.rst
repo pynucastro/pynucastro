@@ -3,8 +3,8 @@ pynucastro.eos package
 
 .. automodule:: pynucastro.eos
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 Submodules
 ----------
