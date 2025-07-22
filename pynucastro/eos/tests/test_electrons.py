@@ -2,11 +2,10 @@
 import numpy as np
 from pytest import approx
 
-from pynucastro.eos.difference_utils import fourth_order_rho, fourth_order_temp
-
 from pynucastro import Composition
 from pynucastro.constants import constants
 from pynucastro.eos import ElectronEOS
+from pynucastro.eos.difference_utils import fourth_order_rho, fourth_order_temp
 
 
 def zero_temperature_eos(rho, comp):

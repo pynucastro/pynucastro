@@ -26,6 +26,9 @@ def fourth_order_rho(eos, state, component, delta):
 
     fvals = []
     for i in [-2, -1, 0, 1, 2]:
+        if i == 0:
+            fvals.append(None)
+            continue
         _es = eos.pe_state(rho + i*delta, T, comp)
         fvals.append(getattr(_es, component))
 
@@ -58,6 +61,9 @@ def fourth_order_temp(eos, state, component, delta):
 
     fvals = []
     for i in [-2, -1, 0, 1, 2]:
+        if i == 0:
+            fvals.append(None)
+            continue
         _es = eos.pe_state(rho, T + i*delta, comp)
         fvals.append(getattr(_es, component))
 

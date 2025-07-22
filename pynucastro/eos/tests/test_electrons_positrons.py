@@ -2,11 +2,10 @@
 import numpy as np
 from pytest import approx
 
-from pynucastro.eos.difference_utils import fourth_order_rho, fourth_order_temp
-
 from pynucastro import Composition
 from pynucastro.constants import constants
 from pynucastro.eos import ElectronEOS
+from pynucastro.eos.difference_utils import fourth_order_rho, fourth_order_temp
 
 
 def zero_temperature_eos(rho, comp):
@@ -169,3 +168,44 @@ class TestElectronPositronEOS:
                     assert es.dne_dT == approx(dnedr_approx / scale, abs=5.e-9)
                 else:
                     assert es.dne_dT == approx(dnedr_approx, rel=1.e-4)
+
+    def test_np_rho_derivs(self):
+
+        e = ElectronEOS(include_positrons=True)
+
+        comp = Composition(["h1", "he4", "c12", "ne22"])
+        comp.set_equal()
+
+        eps_rho = 1.e-5
+
+        for T in [1.e4, 1.e6, 1.e9]:
+            for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
+
+                es = e.pe_state(rho, T, comp)
+                drho = eps_rho * rho
+                deriv = fourth_order_rho(e, (rho, T, comp), "n_pos", drho)
+                assert es.dnp_drho == approx(deriv, rel=5.e-5)
+
+    def test_np_temp_derivs(self):
+
+        e = ElectronEOS(include_positrons=True)
+
+        comp = Composition(["h1", "he4", "c12", "ne22"])
+        comp.set_equal()
+
+        # use a relatively large eps because of how weakly beta enters when beta << 1
+
+        eps_T = 1.e-5
+
+        for T in [1.e4, 1.e6, 1.e9]:
+            for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
+
+                es = e.pe_state(rho, T, comp)
+                dtemp = eps_T * T
+                deriv = fourth_order_temp(e, (rho, T, comp), "n_pos", dtemp)
+                if es.dnp_dT == 0 and es.n_pos != 0:
+                    # no pair production
+                    scale = es.n_pos / T
+                    assert es.dnp_dT == approx(deriv / scale, abs=5.e-9)
+                else:
+                    assert es.dnp_dT == approx(deriv, rel=1.e-4)

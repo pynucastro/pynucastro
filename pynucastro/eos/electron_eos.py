@@ -18,6 +18,7 @@ EOSState = namedtuple("EOSState", ["n_e", "n_pos",
                                    "e_e", "e_pos",
                                    "eta",
                                    "dne_drho", "dne_dT",
+                                   "dnp_drho", "dnp_dT",
                                    "dpe_drho", "dpe_dT",
                                    "dee_drho", "dee_dT"])
 
@@ -163,6 +164,9 @@ class ElectronEOS:
         dne_drho = dne_deta * deta_drho
         dne_dT = dne_deta * deta_dT + dne_dbeta * dbeta_dT
 
+        dnp_drho = dnp_deta * deta_drho
+        dnp_dT = dnp_deta * deta_dT + dnp_dbeta * dbeta_dT
+
         # Compute partials of pressure with density and temperature
         dpe_drho = pcoeff * beta**2.5 * (0.5 * beta * f52.dF_deta * deta_drho +
                                          f32.dF_deta * deta_drho)
@@ -185,5 +189,6 @@ class ElectronEOS:
                         n_e=n_e, p_e=p_e, e_e=e_e,
                         n_pos=n_pos, p_pos=p_pos, e_pos=e_pos,
                         dne_drho=dne_drho, dne_dT=dne_dT,
+                        dnp_drho=dnp_drho, dnp_dT=dnp_dT,
                         dpe_drho=dpe_drho, dpe_dT=dpe_dT,
                         dee_drho=dee_drho, dee_dT=dee_dT)
