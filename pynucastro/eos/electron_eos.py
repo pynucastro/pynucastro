@@ -174,11 +174,11 @@ class ElectronEOS:
         # Compute partials of pressure with density and temperature
         dpe_drho = pcoeff * beta**2.5 * (0.5 * beta * f52.dF_deta + f32.dF_deta) * deta_drho
         dpe_dT = 0.25 * pcoeff * beta**1.5 * (5.0 * (2.0 * f32.F + beta * f52.F) * dbeta_dT +
-                                             2.0 * beta * (beta * (f52.dF_dbeta * dbeta_dT +
-                                                                   f52.dF_deta * deta_dT) +
-                                                           (f52.F * dbeta_dT +
-                                                            2.0 * f32.dF_dbeta * dbeta_dT +
-                                                            2.0 * f32.dF_deta * deta_dT)))
+                                              2.0 * beta * (beta * (f52.dF_dbeta * dbeta_dT +
+                                                                    f52.dF_deta * deta_dT) +
+                                                            (f52.F * dbeta_dT +
+                                                             2.0 * f32.dF_dbeta * dbeta_dT +
+                                                             2.0 * f32.dF_deta * deta_dT)))
 
         dpp_drho = 0.0
         dpp_dT = 0.0

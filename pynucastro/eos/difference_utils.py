@@ -73,3 +73,41 @@ def sixth_order_diff(func, x0, delta, component=None):
 
     deriv = (-fvals[0] + 9.0 * fvals[1] - 45.0 * fvals[2] + 45.0 * fvals[4] - 9.0 * fvals[5] + fvals[6]) / (60 * delta)
     return deriv
+
+
+def eighth_order_diff(func, x0, delta, component=None):
+    """Compute an 8th order accurate centered difference approximation
+    of a function, and allow us to specify the component of the object
+    that is returned (if applicable)
+
+    Parameters
+    ----------
+    func : Callable
+        the function to difference, assumed to be of the form `func(x)`
+    x0 : float
+        the point at which to approximate the derivative
+    delta : float
+        the step-size to use
+    component : str
+        if func returns an object, use this component for the derivative.
+
+    Returns
+    -------
+    float
+
+    """
+
+    fvals = []
+    for i in [-4, -3, -2, -1, 0, 1, 2, 3, 4]:
+        if i == 0:
+            fvals.append(None)
+            continue
+        _f = func(x0 + i*delta)
+        if component:
+            fvals.append(getattr(_f, component))
+        else:
+            fvals.append(_f)
+
+    deriv = ((1.0 / 280.0) * fvals[0] - (4.0 / 105.0) * fvals[1] + 0.2 * fvals[2] - 0.8 * fvals[3] +
+             0.8 * fvals[5] - 0.2 * fvals[6] + (4.0 / 105.0) * fvals[7] - (1.0 / 280.0) * fvals[8])
+    return deriv

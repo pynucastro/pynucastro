@@ -6,7 +6,7 @@ from pytest import approx
 from pynucastro import Composition
 from pynucastro.constants import constants
 from pynucastro.eos import ElectronEOS
-from pynucastro.eos.difference_utils import fourth_order_diff, sixth_order_diff
+from pynucastro.eos.difference_utils import fourth_order_diff, sixth_order_diff, eighth_order_diff
 
 
 def zero_temperature_eos(rho, comp):
@@ -231,3 +231,42 @@ class TestElectronPositronEOS:
                     assert es.dne_dT == approx(es.dnp_dT/scale, abs=1.e-15)
                 else:
                     assert es.dne_dT == approx(es.dnp_dT)
+
+    def test_pe_rho_derivs(self):
+
+        e = ElectronEOS(include_positrons=True)
+
+        comp = Composition(["h1", "he4", "c12", "ne22"])
+        comp.set_equal()
+
+        eps_rho = 5.e-5
+
+        for T in [1.e4, 1.e6, 1.e9]:
+            for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
+
+                es = e.pe_state(rho, T, comp)
+                drho = eps_rho * rho
+                deriv = fourth_order_diff(lambda _rho: e.pe_state(_rho, T, comp),  # pylint: disable=cell-var-from-loop
+                                          rho, drho, "p_e")
+                assert es.dpe_drho == approx(deriv, rel=1.e-5)
+
+    def test_pe_temp_derivs(self):
+
+        e = ElectronEOS(include_positrons=True)
+
+        comp = Composition(["h1", "he4", "c12", "ne22"])
+        comp.set_equal()
+
+        # use a relatively large eps because of how weakly beta enters when beta << 1
+
+        eps_T = 1.e-4
+
+        for T in [1.e4, 1.e6, 1.e9]:
+            for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
+
+                es = e.pe_state(rho, T, comp)
+                dtemp = eps_T * T
+                print(rho, T, es.p_e, es.dpe_dT, es.eta)
+                deriv = eighth_order_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
+                                         T, dtemp, "p_e")
+                assert es.dpe_dT == approx(deriv, rel=5.e-3)
