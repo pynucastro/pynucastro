@@ -38,7 +38,7 @@
   * A new method for evaluating the stiffness in a network was added
     (#1006, #1008)
 
-  * docstring updates (#978, #989, #994, #1042)
+  * docstring updates (#978, #989, #994, #1042, #1067)
 
   * a new method for exporting a NetworkX graph from a network was
     added (#990, #991)
