@@ -4,6 +4,7 @@ from pytest import approx
 from pynucastro.eos import FermiIntegral
 from pynucastro.eos.difference_utils import fourth_order_diff, sixth_order_diff
 
+
 class TestFermiDirac:
 
     def test_k_0_5(self):
