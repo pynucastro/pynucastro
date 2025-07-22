@@ -2,6 +2,8 @@
 import numpy as np
 from pytest import approx
 
+from pynucastro.eos.difference_utils import fourth_order_rho, fourth_order_temp
+
 from pynucastro import Composition
 from pynucastro.constants import constants
 from pynucastro.eos import ElectronEOS
@@ -140,12 +142,7 @@ class TestElectronPositronEOS:
 
                 es = e.pe_state(rho, T, comp)
                 drho = eps_rho * rho
-                fvals = []
-                for i in [-2, -1, 0, 1, 2]:
-                    _es = e.pe_state(rho + i*drho, T, comp)
-                    fvals.append(_es.n_e)
-
-                deriv = (fvals[0] - 8.0 * fvals[1] + 8.0 * fvals[3] - fvals[4]) / (12 * drho)
+                deriv = fourth_order_rho(e, (rho, T, comp), "n_e", drho)
                 assert es.dne_drho == approx(deriv, rel=5.e-5)
 
     def test_ne_temp_derivs(self):
