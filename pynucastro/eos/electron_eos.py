@@ -94,12 +94,33 @@ class ElectronEOS:
             return coeff * beta**1.5 * (f12.F + beta * f32.F)
 
         # compute the degeneracy parameter
-        if self.include_positrons:
-            eta = brentq(lambda eta: n_e_net - (n_e_fermi(eta) - n_pos_fermi(eta)),
-                         eta_guess_min, eta_guess_max)
+        # a very crude dividing line for eta = 0 is
+        # log T = (5/8) log rho + 21/4
+        # if T is larger than this, then we are ideal, otherwise degenerate
+        logT_thresh = 0.625 * np.log10(rho) + 5.25
+        if np.log10(T) > logT_thresh:
+            root_find_limits = (-100, 5)
         else:
-            eta = brentq(lambda eta: n_e_net - n_e_fermi(eta),
-                         eta_guess_min, eta_guess_max)
+            if rho > 1.e5:
+                root_find_limits = (-5, 1.e7)
+            else:
+                root_find_limits = (-5, 1.e3)
+
+        if self.include_positrons:
+            try:
+                eta = brentq(lambda eta: n_e_net - (n_e_fermi(eta) - n_pos_fermi(eta)),
+                             root_find_limits[0], root_find_limits[1], xtol=1.e-14)
+            except ValueError:
+                eta = brentq(lambda eta: n_e_net - (n_e_fermi(eta) - n_pos_fermi(eta)),
+                             eta_guess_min, eta_guess_max, xtol=1.e-14)
+
+        else:
+            try:
+                eta = brentq(lambda eta: n_e_net - n_e_fermi(eta),
+                             root_find_limits[0], root_find_limits[1], xtol=1.e-14)
+            except ValueError:
+                eta = brentq(lambda eta: n_e_net - n_e_fermi(eta),
+                             eta_guess_min, eta_guess_max, xtol=1.e-14)
 
         # for positrons
         eta_pos = -eta - 2.0/beta
