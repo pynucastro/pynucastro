@@ -183,11 +183,17 @@ class ElectronEOS:
         dpp_dT = 0.0
         if self.include_positrons:
             dpp_drho = -pcoeff * beta**2.5 * (0.5 * beta * f52_pos.dF_deta + f32_pos.dF_deta) * deta_drho
-            dpp_dT = 0.5 * pcoeff * np.sqrt(beta) * (-2.0 * (beta**2 * deta_dT - 2.0 * dbeta_dT) * f32_pos.dF_deta -
-                                                     beta * (-beta**2 * (2.0 / beta**2 * f52_pos.dF_deta + f52_pos.dF_dbeta) * dbeta_dT +
-                                                             (beta**2 * deta_dT - 2.0 * dbeta_dT) * f52_pos.dF_deta) +
-                                                     5.0 * beta * (f32_pos.F + 0.5 * beta * f52_pos.F) * dbeta_dT +
-                                                     2.0 * beta**2 * (2.0 / beta**2 * f32_pos.dF_deta + 0.5 * f52_pos.F + f32_pos.dF_dbeta) * dbeta_dT)
+            #dpp_dT = 0.5 * pcoeff * np.sqrt(beta) * (-2.0 * (beta**2 * deta_dT - 2.0 * dbeta_dT) * f32_pos.dF_deta -
+            #                                         beta * (-beta**2 * (2.0 / beta**2 * f52_pos.dF_deta + f52_pos.dF_dbeta) * dbeta_dT +
+            #                                                 (beta**2 * deta_dT - 2.0 * dbeta_dT) * f52_pos.dF_deta) +
+            #                                         5.0 * beta * (f32_pos.F + 0.5 * beta * f52_pos.F) * dbeta_dT +
+            #                                         2.0 * beta**2 * (2.0 / beta**2 * f32_pos.dF_deta + 0.5 * f52_pos.F + f32_pos.dF_dbeta) * dbeta_dT)
+
+            dpp_dT = pcoeff * np.sqrt(beta) * (
+                beta * (2.5 * f32_pos.F + 1.75 * beta * f52_pos.F) * dbeta_dT +
+                0.5 * beta**3 * (dbeta_dT * f52_pos.dF_dbeta - deta_dT * f52_pos.dF_deta) +
+                beta**2 * (dbeta_dT * f32_pos.dF_dbeta - deta_dT * f32_pos.dF_deta) +
+                4.0 * dbeta_dT * (f32_pos.dF_deta + 0.5 * beta * f52_pos.dF_deta))
 
         # Compute partials of pressure with density and temperature
         dee_drho = ecoeff * beta**2.5 * (rho * (f32.dF_deta + beta * f52.dF_deta) * deta_drho -
