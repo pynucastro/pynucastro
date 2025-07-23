@@ -148,8 +148,7 @@ class ElectronEOS:
         dnp_dbeta = 0.0
         if self.include_positrons:
             dnp_deta = coeff * beta**1.5 * (-f12_pos.dF_deta - beta * f32_pos.dF_deta)
-            dnp_dbeta = 0.5 * coeff / np.sqrt(beta) * (3.0 * beta * f12_pos.F +
-                                                       5.0 * beta**2 * f32_pos.F +
+            dnp_dbeta = 0.5 * coeff / np.sqrt(beta) * (beta * (3.0 * f12_pos.F + 5.0 * beta * f32_pos.F) +
                                                        2.0 * beta**2 * (f12_pos.dF_dbeta +
                                                                         beta * f32_pos.dF_dbeta) +
                                                        4.0 * (f12_pos.dF_deta + beta * f32_pos.dF_deta))

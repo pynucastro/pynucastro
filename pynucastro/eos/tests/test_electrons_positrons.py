@@ -259,14 +259,14 @@ class TestElectronPositronEOS:
 
         # use a relatively large eps because of how weakly beta enters when beta << 1
 
-        eps_T = 1.e-4
+        eps_T = 5.e-4
 
         for T in [1.e4, 1.e6, 1.e9]:
             for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
 
                 es = e.pe_state(rho, T, comp)
                 dtemp = eps_T * T
-                print(rho, T, es.p_e, es.dpe_dT, es.eta)
-                deriv = eighth_order_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
+                print(f"{rho=}, {T=}, {es.p_e=}, {es.dpe_dT=}, {es.eta=}")
+                deriv = sixth_order_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
                                          T, dtemp, "p_e")
                 assert es.dpe_dT == approx(deriv, rel=5.e-3)
