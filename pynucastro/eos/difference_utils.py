@@ -1,5 +1,8 @@
 """Some high-order finite-difference approximations for the EOS."""
 
+# the coefficients for these can be found in many sources, including:
+# https://en.wikipedia.org/wiki/Finite_difference_coefficient
+
 
 def fourth_order_diff(func, x0, delta, component=None):
     """Compute a 4th order accurate centered difference approximation
