@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>AMReX Astro Microphysics Networks &#8212; pynucastro 2.6.0.post63+gdf6bc0230 documentation</title>
+    <title>AMReX Astro Microphysics Networks &#8212; pynucastro 2.6.0.post64+g5d2b6fa29 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=06dc854a"></script>
+    <script src="_static/documentation_options.js?v=f4e64817"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -567,7 +567,7 @@ document.write(`
 <h1>AMReX Astro Microphysics Networks<a class="headerlink" href="#amrex-astro-microphysics-networks" title="Link to this heading">#</a></h1>
 <p>pynucastro can generate a C++ network that works in the
 AMReX-Astro <a class="reference external" href="https://github.com/amrex-astro/Microphysics">Microphysics</a>.  This is done through
-the <code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code> class.  A simple
+the <a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html#pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork" title="pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code></a> class.  A simple
 C++ 3-alpha network that works with <code class="docutils literal notranslate"><span class="pre">Microphysics</span></code> can be created via:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
 
@@ -587,14 +587,14 @@ placeholders of the form <code class="docutils literal notranslate"><span class=
 to write the output in this location</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">num</span></code> is the number of indentations for that line of code</p></li>
 </ul>
-<p>In <code class="docutils literal notranslate"><span class="pre">BaseCxxNetwork</span></code>, there is a dictionary of function tags and the corresponding function
+<p>In <a class="reference internal" href="pynucastro.networks.base_cxx_network.html#pynucastro.networks.base_cxx_network.BaseCxxNetwork" title="pynucastro.networks.base_cxx_network.BaseCxxNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCxxNetwork</span></code></a>, there is a dictionary of function tags and the corresponding function
 called <code class="docutils literal notranslate"><span class="pre">ftags</span></code>.  Any network class that derives from this can add to this list to specialize
 the output.</p>
 <p>When the network is written, each template file is read and output line by line, injecting
 the code output by a function if the line has a function tag in it.</p>
 <p>For the generation of the righthand side of the network itself, we use
 SymPy to build up an expression for each term and then use SymPy’s
-<code class="docutils literal notranslate"><span class="pre">cxxcode</span></code> function to translate it into C++ code.</p>
+<a class="reference external" href="https://docs.sympy.org/latest/modules/printing.html#sympy.printing.codeprinter.cxxcode">cxxcode</a> function to translate it into C++ code.  This is managed by the <a class="reference internal" href="pynucastro.networks.sympy_network_support.html#pynucastro.networks.sympy_network_support.SympyRates" title="pynucastro.networks.sympy_network_support.SympyRates"><code class="xref py py-class docutils literal notranslate"><span class="pre">SympyRates</span></code></a> class.</p>
 <p>This will directly write out the C++ code into a collection of headers
 and source files.  These are:</p>
 <ul>

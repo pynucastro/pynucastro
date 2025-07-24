@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Python network &#8212; pynucastro 2.6.0.post63+gdf6bc0230 documentation</title>
+    <title>Python network &#8212; pynucastro 2.6.0.post64+g5d2b6fa29 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=06dc854a"></script>
+    <script src="_static/documentation_options.js?v=f4e64817"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -567,7 +567,7 @@ document.write(`
                   
   <section id="python-network">
 <h1>Python network<a class="headerlink" href="#python-network" title="Link to this heading">#</a></h1>
-<p>A <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> will output a python module with all the data
+<p>A <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a> will output a python module with all the data
 needed for constructing the righthand side and Jacobian of the ODE
 system.  This is designed to solve the system:</p>
 <div class="math notranslate nohighlight">
@@ -588,8 +588,11 @@ Numba JIT decorators for performance.</p>
 <span class="n">net</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;triple_alpha.py&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>after running this script, we could then <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">triple_alpha</span></code> and
-access the information needed for an ODE integrator.</p>
+<p>after running this script, we could then import the network as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">triple_alpha</span>
+</pre></div>
+</div>
+<p>access the information needed for an ODE integrator.</p>
 <p>For this example, 4 rates will be found (forward and reverse).</p>
 <p>The following information is provided:</p>
 <ul>
@@ -639,7 +642,7 @@ as for <code class="docutils literal notranslate"><span class="pre">rhs</span></
 </ul>
 </li>
 </ul>
-<p>A <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> can be integrated using the SciPy <code class="docutils literal notranslate"><span class="pre">solve_ivp</span></code> methods.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> can be integrated using the SciPy <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html">solve_ivp</a> methods.</p>
 </section>
 
 
