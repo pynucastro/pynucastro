@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Tabulated Weak Rate Example &#8212; pynucastro 2.6.0.post64+g5d2b6fa29 documentation</title>
+    <title>Tabulated Weak Rate Example &#8212; pynucastro 2.6.0.post65+g1d853c9d8 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=f4e64817"></script>
+    <script src="_static/documentation_options.js?v=502e4058"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -583,6 +583,7 @@ document.write(`
 </div>
 </div>
 </div>
+<p>We access the tabular rates from <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.TabularLibrary" title="pynucastro.rates.library.TabularLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularLibrary</span></code></a>.  Alternately, for this example, we could directly use <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.LangankeLibrary" title="pynucastro.rates.library.LangankeLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LangankeLibrary</span></code></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">TabularLibrary</span><span class="p">()</span>
@@ -598,7 +599,7 @@ Co56 ⟶ Ni56 + e⁻ + 𝜈           [Q =  -2.13 MeV] (Co56 --&gt; Ni56 &lt;tab
 </div>
 </div>
 </div>
-<p>We’ll create a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> so we can evaluate the rates easily</p>
+<p>We’ll create a <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateCollection</span></code></a> so we can evaluate the rates easily</p>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">])</span>
@@ -610,7 +611,7 @@ Co56 ⟶ Ni56 + e⁻ + 𝜈           [Q =  -2.13 MeV] (Co56 --&gt; Ni56 &lt;tab
 <img alt="_images/f69c62a040996a9f8fec6bfe887e62acbbe22eb1672dc21874e946929cb2fe9c.png" src="_images/f69c62a040996a9f8fec6bfe887e62acbbe22eb1672dc21874e946929cb2fe9c.png" />
 </div>
 </div>
-<p>Let’s create a composition – we’ll make equal amounts of Ni and Co</p>
+<p>Let’s create a <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Composition</span></code></a>—we’ll make equal amounts of Ni and Co</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
@@ -644,7 +645,7 @@ to what is in the table.</p>
 </div>
 </div>
 </div>
-<p>The rates are proportional to the molar fractions, so we can get those too:</p>
+<p>The rates are proportional to the molar fractions, so we can get those too (via <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition.get_molar" title="pynucastro.networks.rate_collection.Composition.get_molar"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_molar</span></code></a>):</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Y</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
@@ -658,7 +659,7 @@ to what is in the table.</p>
 </div>
 </div>
 </div>
-<p>Now we can evaluate the rates</p>
+<p>Now we can evaluate the rates using <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_rates" title="pynucastro.networks.rate_collection.RateCollection.evaluate_rates"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_rates</span></code></a>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
@@ -672,6 +673,7 @@ to what is in the table.</p>
 </div>
 </div>
 </div>
+<p>We can also compute <span class="math notranslate nohighlight">\(dY/dt\)</span> for the network via <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_ydots" title="pynucastro.networks.rate_collection.RateCollection.evaluate_ydots"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_ydots</span></code></a>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ydots</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">evaluate_ydots</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
