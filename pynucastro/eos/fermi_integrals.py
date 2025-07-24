@@ -121,7 +121,7 @@ class BreakPoints:
         return X_a - X_b, X_a, X_a + X_c
 
 
-#@numba.njit()
+@numba.njit()
 def _kernel_p(x, k, eta, beta,
               eta_der=0, beta_der=0):
 
@@ -200,7 +200,7 @@ def _kernel_p(x, k, eta, beta,
     return result
 
 
-#@numba.njit()
+@numba.njit()
 def _kernel_E(x, k, eta, beta,
               eta_der=0, beta_der=0):
 
