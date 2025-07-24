@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.alternate_rates &#8212; pynucastro 2.6.0.post61+gab02ce2b4 documentation</title>
+    <title>pynucastro.eos.difference_utils &#8212; pynucastro 2.6.0.post61+gab02ce2b4 documentation</title>
   
   
   
@@ -45,7 +45,7 @@
     <script src="../../../_static/copybutton.js?v=eaa7b67c"></script>
     <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pynucastro/rates/alternate_rates';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pynucastro/eos/difference_utils';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -402,7 +402,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2F_modules/pynucastro/rates/alternate_rates.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2F_modules/pynucastro/eos/difference_utils.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -480,55 +480,90 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for pynucastro.rates.alternate_rates</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;A collection of alternate rates that are not contained in the other</span>
-<span class="sd">sources.</span>
+  <h1>Source code for pynucastro.eos.difference_utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Some high-order finite-difference approximations for the EOS.&quot;&quot;&quot;</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.reaclib_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">SingleSet</span>
+<span class="c1"># the coefficients for these can be found in many sources, including:</span>
+<span class="c1"># https://en.wikipedia.org/wiki/Finite_difference_coefficient</span>
 
 
-<div class="viewcode-block" id="DeBoerC12agO16">
-<a class="viewcode-back" href="../../../pynucastro.rates.alternate_rates.html#pynucastro.rates.alternate_rates.DeBoerC12agO16">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">DeBoerC12agO16</span><span class="p">(</span><span class="n">ReacLibRate</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A drop-in replacement for &quot;C12(a,g)O16&quot; from ReacLib that uses</span>
-<span class="sd">    the formulation from DeBoer et al. 2017</span>
+<div class="viewcode-block" id="fourth_order_diff">
+<a class="viewcode-back" href="../../../pynucastro.eos.difference_utils.html#pynucastro.eos.difference_utils.fourth_order_diff">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fourth_order_diff</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute a 4th order accurate centered difference approximation</span>
+<span class="sd">    of a function, and allow us to specify the component of the object</span>
+<span class="sd">    that is returned (if applicable)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func : Callable</span>
+<span class="sd">        the function to difference, assumed to be of the form `func(x)`</span>
+<span class="sd">    x0 : float</span>
+<span class="sd">        the point at which to approximate the derivative</span>
+<span class="sd">    delta : float</span>
+<span class="sd">        the step-size to use</span>
+<span class="sd">    component : str</span>
+<span class="sd">        if func returns an object, use this component for the derivative.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">fvals</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">fvals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="n">_f</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x0</span> <span class="o">+</span> <span class="n">i</span><span class="o">*</span><span class="n">delta</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">component</span><span class="p">:</span>
+            <span class="n">fvals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">_f</span><span class="p">,</span> <span class="n">component</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fvals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_f</span><span class="p">)</span>
 
-        <span class="n">labelprops</span> <span class="o">=</span> <span class="s2">&quot;deboer&quot;</span>
+    <span class="n">deriv</span> <span class="o">=</span> <span class="p">(</span><span class="n">fvals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mf">8.0</span> <span class="o">*</span> <span class="n">fvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">8.0</span> <span class="o">*</span> <span class="n">fvals</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">fvals</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="mi">12</span> <span class="o">*</span> <span class="n">delta</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">deriv</span></div>
 
-        <span class="n">reactants</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)]</span>
-        <span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">)]</span>
 
-        <span class="n">Q</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">reactants</span><span class="p">:</span>
-            <span class="n">Q</span> <span class="o">+=</span> <span class="o">-</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">n</span><span class="o">.</span><span class="n">nucbind</span>
-        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">products</span><span class="p">:</span>
-            <span class="n">Q</span> <span class="o">+=</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">n</span><span class="o">.</span><span class="n">nucbind</span>
 
-        <span class="c1"># we&#39;ll use the same chapter notation as ReacLib</span>
-        <span class="n">chapter</span> <span class="o">=</span> <span class="mi">4</span>
+<div class="viewcode-block" id="sixth_order_diff">
+<a class="viewcode-back" href="../../../pynucastro.eos.difference_utils.html#pynucastro.eos.difference_utils.sixth_order_diff">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sixth_order_diff</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute a 6th order accurate centered difference approximation</span>
+<span class="sd">    of a function, and allow us to specify the component of the object</span>
+<span class="sd">    that is returned (if applicable)</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="n">products</span><span class="p">,</span>
-                         <span class="n">chapter</span><span class="o">=</span><span class="n">chapter</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span>
-                         <span class="n">labelprops</span><span class="o">=</span><span class="n">labelprops</span><span class="p">)</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func : Callable</span>
+<span class="sd">        the function to difference, assumed to be of the form `func(x)`</span>
+<span class="sd">    x0 : float</span>
+<span class="sd">        the point at which to approximate the derivative</span>
+<span class="sd">    delta : float</span>
+<span class="sd">        the step-size to use</span>
+<span class="sd">    component : str</span>
+<span class="sd">        if func returns an object, use this component for the derivative.</span>
 
-        <span class="c1"># from DeBoer et al. 2017</span>
-        <span class="c1"># https://arxiv.org/pdf/1709.03144</span>
-        <span class="c1"># table XXVI</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
 
-        <span class="c1"># non-resonant</span>
-        <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mf">24.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">32.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.9</span><span class="p">,</span> <span class="mf">1.8</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.17</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.</span><span class="o">/</span><span class="mf">3.</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="n">labelprops</span><span class="p">))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-        <span class="c1"># resonance</span>
-        <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mf">7.4</span><span class="p">,</span> <span class="o">-</span><span class="mf">30.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="n">labelprops</span><span class="p">))</span></div>
+    <span class="n">fvals</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">fvals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="n">_f</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x0</span> <span class="o">+</span> <span class="n">i</span><span class="o">*</span><span class="n">delta</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">component</span><span class="p">:</span>
+            <span class="n">fvals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">_f</span><span class="p">,</span> <span class="n">component</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fvals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_f</span><span class="p">)</span>
+
+    <span class="n">deriv</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">fvals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">9.0</span> <span class="o">*</span> <span class="n">fvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mf">45.0</span> <span class="o">*</span> <span class="n">fvals</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mf">45.0</span> <span class="o">*</span> <span class="n">fvals</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">-</span> <span class="mf">9.0</span> <span class="o">*</span> <span class="n">fvals</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="n">fvals</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="mi">60</span> <span class="o">*</span> <span class="n">delta</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">deriv</span></div>
 
 </pre></div>
 
