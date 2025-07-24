@@ -105,7 +105,7 @@ class BreakPoints:
 
         term = self.sigma * (eta - self.D)
         if term <= 50:
-            xi = np.log(1.0 + np.exp(term)) / self.sigma
+            xi = np.log1p(np.exp(term)) / self.sigma
         else:
             xi = eta - self.D
 
@@ -121,7 +121,7 @@ class BreakPoints:
         return X_a - X_b, X_a, X_a + X_c
 
 
-@numba.njit()
+#@numba.njit()
 def _kernel_p(x, k, eta, beta,
               eta_der=0, beta_der=0):
 
@@ -154,7 +154,8 @@ def _kernel_p(x, k, eta, beta,
         if delta > 700:
             denomi = 0.0
         else:
-            inv_exp_delta = 1.0 / np.exp(delta)
+            #inv_exp_delta = 1.0 / np.exp(delta)
+            inv_exp_delta = np.exp(-delta)
             # 1 / (exp(x**2 - eta) + 1) rewritten
             denomi = inv_exp_delta / (1.0 + inv_exp_delta)
 
@@ -199,7 +200,7 @@ def _kernel_p(x, k, eta, beta,
     return result
 
 
-@numba.njit()
+#@numba.njit()
 def _kernel_E(x, k, eta, beta,
               eta_der=0, beta_der=0):
 
@@ -225,9 +226,12 @@ def _kernel_E(x, k, eta, beta,
     if testm:
         denomi = 1.0
     else:
-        inv_exp_delta = np.exp(-delta)
-        # 1 / (exp(x - eta) + 1) rewritten
-        denomi = inv_exp_delta / (1.0 + inv_exp_delta)
+        if delta > 700.0:
+            denomi = 0.0
+        else:
+            inv_exp_delta = np.exp(-delta)
+            # 1 / (exp(x - eta) + 1) rewritten
+            denomi = inv_exp_delta / (1.0 + inv_exp_delta)
 
     # now construct the integrand for what we are actual computing
     if eta_der == 0 and beta_der == 0:

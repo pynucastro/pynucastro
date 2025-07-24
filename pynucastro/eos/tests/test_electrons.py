@@ -8,6 +8,8 @@ from pynucastro.constants import constants
 from pynucastro.eos import ElectronEOS
 from pynucastro.eos.difference_utils import fourth_order_diff, sixth_order_diff
 
+#np.seterr(all="warn")
+
 
 def zero_temperature_eos(rho, comp):
     """This is the analytic expression for the T = 0 Fermi-Dirac
