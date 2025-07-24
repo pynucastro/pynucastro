@@ -203,8 +203,8 @@ class ElectronEOS:
 
             dpp_dT = pcoeff * np.sqrt(beta) * (
                 beta * (2.5 * f32_pos.F + 1.75 * beta * f52_pos.F) * dbeta_dT +
-                0.5 * beta**3 * (dbeta_dT * f52_pos.dF_dbeta - deta_dT * f52_pos.dF_deta) +
-                beta**2 * (dbeta_dT * f32_pos.dF_dbeta - deta_dT * f32_pos.dF_deta) +
+                beta**2 * ((f32_pos.dF_dbeta + 0.5 * beta * f52_pos.dF_dbeta) * dbeta_dT -
+                           (f32_pos.dF_deta + 0.5 * beta * f52_pos.dF_deta) * deta_dT) +
                 4.0 * dbeta_dT * (f32_pos.dF_deta + 0.5 * beta * f52_pos.dF_deta))
 
         # Compute partials of pressure with density and temperature
