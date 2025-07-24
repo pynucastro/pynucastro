@@ -121,7 +121,7 @@ class TestElectronEOS:
 
                 dnedr_approx = (es_r.n_e - es.n_e) / (eps * T)
                 scale = es.n_e / T
-                assert es.dne_dT == approx(dnedr_approx / scale, abs=5.e-9)
+                assert es.dne_dT == approx(dnedr_approx/scale, abs=5.e-9)
 
     def test_pres_rho_derivs(self):
 
@@ -160,9 +160,9 @@ class TestElectronEOS:
 
                 es = e.pe_state(rho, T, comp)
                 dtemp = eps_T * T
-                deriv = sixth_order_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
+                deriv = fourth_order_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
                                          T, dtemp, component="p_e")
-                assert es.dpe_dT == approx(deriv, rel=5.e-4)
+                assert es.dpe_dT == approx(deriv, rel=3.e-4)
 
     def test_e_rho_derivs(self):
 
@@ -205,7 +205,7 @@ class TestElectronEOS:
 
                 es = e.pe_state(rho, T, comp)
                 dtemp = eps_T * T
-                deriv = sixth_order_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
+                deriv = fourth_order_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
                                          T, dtemp, component="e_e")
                 assert es.dee_dT == approx(deriv, rel=5.e-4)
 

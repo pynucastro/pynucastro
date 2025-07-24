@@ -131,7 +131,9 @@ class ElectronEOS:
 
         n_e = coeff * beta**1.5 * (f12.F + beta * f32.F)
         p_e = pcoeff * beta**2.5 * (f32.F + 0.5 * beta * f52.F)
-        e_e = ecoeff * beta**2.5 * (f32.F + beta * f52.F) / rho
+
+        # this is (energy / volume, what we usually write as rho e)
+        E_e = ecoeff * beta**2.5 * (f32.F + beta * f52.F)
 
         n_pos = 0.0
         p_pos = 0.0
@@ -148,7 +150,7 @@ class ElectronEOS:
 
             n_pos = coeff * beta**1.5 * (f12_pos.F + beta * f32_pos.F)
             p_pos = pcoeff * beta**2.5 * (f32_pos.F + 0.5 * beta * f52_pos.F)
-            e_pos = ecoeff * beta**2.5 * (f32_pos.F + beta * f52_pos.F) / rho + 2 * rest_mass * n_pos / rho
+            E_pos = ecoeff * beta**2.5 * (f32_pos.F + beta * f52_pos.F) + 2 * rest_mass * n_pos
 
         # compute the derivatives of eta and beta with respect to
         # density and temperature
@@ -168,7 +170,7 @@ class ElectronEOS:
         #dbeta_drho = 0.0
         dbeta_dT = constants.k / rest_mass
 
-        deta_drho = constants.N_A * zbar / abar / (dne_deta - dnp_deta)
+        deta_drho = constants.N_A * (zbar / abar) / (dne_deta - dnp_deta)
         deta_dT = -dbeta_dT * (dne_dbeta - dnp_dbeta) / (dne_deta - dnp_deta)
 
         # Compute partials of number density with density and temperature
@@ -182,14 +184,13 @@ class ElectronEOS:
             dnp_drho = dnp_deta * deta_drho
             dnp_dT = dnp_deta * deta_dT + dnp_dbeta * dbeta_dT
 
-        # Compute partials of pressure with density and temperature
-        dpe_drho = pcoeff * beta**2.5 * (0.5 * beta * f52.dF_deta + f32.dF_deta) * deta_drho
-        dpe_dT = 0.25 * pcoeff * beta**1.5 * (5.0 * (2.0 * f32.F + beta * f52.F) * dbeta_dT +
-                                              2.0 * beta * (beta * (f52.dF_dbeta * dbeta_dT +
-                                                                    f52.dF_deta * deta_dT) +
-                                                            (f52.F * dbeta_dT +
-                                                             2.0 * f32.dF_dbeta * dbeta_dT +
-                                                             2.0 * f32.dF_deta * deta_dT)))
+        # Compute partials of pressure with density and temperature via the chain rule
+        dpe_deta = pcoeff * beta**2.5 * (f32.dF_deta + 0.5 * beta * f52.dF_deta)
+        dpe_dbeta = 0.25 * pcoeff * beta**1.5 * (10.0 * f32.F + 7.0 * beta * f52.F +
+                                                 4.0 * beta * (f32.dF_dbeta + 0.5 * beta * f52.dF_dbeta))
+
+        dpe_drho = dpe_deta * deta_drho   # dbeta_drho = 0
+        dpe_dT = dpe_deta * deta_dT + dpe_dbeta * dbeta_dT
 
         dpp_drho = 0.0
         dpp_dT = 0.0
@@ -207,14 +208,17 @@ class ElectronEOS:
                            (f32_pos.dF_deta + 0.5 * beta * f52_pos.dF_deta) * deta_dT) +
                 4.0 * dbeta_dT * (f32_pos.dF_deta + 0.5 * beta * f52_pos.dF_deta))
 
-        # Compute partials of pressure with density and temperature
-        dee_drho = ecoeff * beta**2.5 * (rho * (f32.dF_deta + beta * f52.dF_deta) * deta_drho -
-                                         (f32.F + beta * f52.F)) / rho**2
+        # Compute partials of energy with density and temperature
+        dEe_deta = ecoeff * beta**2.5 * (f32.dF_deta + beta * f52.dF_deta)
+        dEe_dbeta = 0.5 * ecoeff * beta**1.5 * (5.0 * f32.F + 7.0 * beta * f52.F +
+                                                2.0 * beta * (f32.dF_dbeta + beta * f52.dF_dbeta))
 
-        dee_dT = 0.5 * ecoeff * beta**1.5 * (5 * (f32.F + beta * f52.F) * dbeta_dT +
-                                             2 * beta * (beta * (f52.dF_dbeta * dbeta_dT +
-                                                                 f52.dF_deta * deta_dT) +
-                                                         f52.F * dbeta_dT + f32.dF_dbeta * dbeta_dT + f32.dF_deta * deta_dT)) / rho
+        dEe_drho = dEe_deta * deta_drho   # dbeta_drho = 0
+        dEe_dT = dEe_deta * deta_dT + dEe_dbeta * dbeta_dT
+
+        e_e = E_e / rho
+        dee_drho = (dEe_drho - E_e/rho) / rho
+        dee_dT = dEe_dT / rho
 
         return EOSState(eta=eta,
                         n_e=n_e, p_e=p_e, e_e=e_e,
