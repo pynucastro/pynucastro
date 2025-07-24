@@ -11,6 +11,7 @@ from scipy.optimize import brentq
 
 from pynucastro.constants import constants
 
+from .degeneracy_parameter_bounds import get_eta_bounds
 from .fermi_integrals import FermiIntegral
 
 EOSState = namedtuple("EOSState", ["n_e", "n_pos",
@@ -94,33 +95,23 @@ class ElectronEOS:
             return coeff * beta**1.5 * (f12.F + beta * f32.F)
 
         # compute the degeneracy parameter
-        # a very crude dividing line for eta = 0 is
-        # log T = (5/8) log rho + 21/4
-        # if T is larger than this, then we are ideal, otherwise degenerate
-        logT_thresh = 0.625 * np.log10(rho) + 5.25
-        if np.log10(T) > logT_thresh:
-            root_find_limits = (-100, 5)
-        else:
-            if rho > 1.e5:
-                root_find_limits = (-5, 1.e7)
-            else:
-                root_find_limits = (-5, 1.e3)
-
+        root_find_limits = get_eta_bounds(rho * comp.ye, T,
+                                          include_positrons=self.include_positrons)
         if self.include_positrons:
             try:
                 eta = brentq(lambda eta: n_e_net - (n_e_fermi(eta) - n_pos_fermi(eta)),
-                             root_find_limits[0], root_find_limits[1], xtol=1.e-14)
+                             root_find_limits[0], root_find_limits[1], xtol=1.e-15)
             except ValueError:
                 eta = brentq(lambda eta: n_e_net - (n_e_fermi(eta) - n_pos_fermi(eta)),
-                             eta_guess_min, eta_guess_max, xtol=1.e-14)
+                             eta_guess_min, eta_guess_max, xtol=1.e-15)
 
         else:
             try:
                 eta = brentq(lambda eta: n_e_net - n_e_fermi(eta),
-                             root_find_limits[0], root_find_limits[1], xtol=1.e-14)
+                             root_find_limits[0], root_find_limits[1], xtol=1.e-15)
             except ValueError:
                 eta = brentq(lambda eta: n_e_net - n_e_fermi(eta),
-                             eta_guess_min, eta_guess_max, xtol=1.e-14)
+                             eta_guess_min, eta_guess_max, xtol=1.e-15)
 
         # for positrons
         eta_pos = -eta - 2.0/beta
