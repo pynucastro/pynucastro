@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>alternate_rates &#8212; pynucastro 2.6.0.post61+gab02ce2b4 documentation</title>
+    <title>alternate_rates &#8212; pynucastro 2.6.0.post62+g517b7fb6f documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=aed58442"></script>
+    <script src="_static/documentation_options.js?v=c6d4d000"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -584,7 +584,7 @@ document.write(`
 <h1><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code><a class="headerlink" href="#alternate-rates" title="Link to this heading">#</a></h1>
 <p>Sometimes papers provide new measurements of rates that may be better than the current ReacLib library.  An example of this is the
 <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2017RvMP...89c5007D/abstract">DeBoer et al. 2012</a> <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span> rate.</p>
-<p>These rates can be added individually to the <code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code> module.</p>
+<p>These rates can be added individually to the <a class="reference internal" href="pynucastro.rates.alternate_rates.html#module-pynucastro.rates.alternate_rates" title="pynucastro.rates.alternate_rates"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alternate_rates</span></code></a> module.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
@@ -614,7 +614,7 @@ document.write(`
 </div>
 </div>
 <p>Note that since DeBoer et al. 2012 give the new rate as a parameterization in the ReacLib form, this new rate just subclasses
-<code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code></p>
+<a class="reference internal" href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate" title="pynucastro.rates.reaclib_rate.ReacLibRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DeBoerC12agO16</span><span class="o">.</span><span class="n">__base__</span>
@@ -658,7 +658,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fbefd9de290&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f3678070710&gt;
 </pre></div>
 </div>
 <img alt="_images/666ecf491a99b3e1d03a3d56ef17979e26dac15128af8145ddb3117d6e9a38e0.png" src="_images/666ecf491a99b3e1d03a3d56ef17979e26dac15128af8145ddb3117d6e9a38e0.png" />
@@ -704,7 +704,7 @@ Here’s a simple He-burning network.</p>
 </div>
 <section id="pure-reaclib">
 <h3>Pure ReacLib<a class="headerlink" href="#pure-reaclib" title="Link to this heading">#</a></h3>
-<p>First we’ll create a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> with just the ReacLib rates</p>
+<p>First we’ll create a <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateCollection</span></code></a> with just the ReacLib rates</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lib</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="n">with_reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -732,7 +732,7 @@ Na23 + p ⟶ He4 + Ne20     : 8.9374939e+06
 </section>
 <section id="swapping-in-deboer-rate">
 <h3>Swapping in DeBoer rate<a class="headerlink" href="#swapping-in-deboer-rate" title="Link to this heading">#</a></h3>
-<p>Now we’ll swap in the deBoer rate.</p>
+<p>Now we’ll swap in the deBoer rate, first using <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library.remove_rate" title="pynucastro.rates.library.Library.remove_rate"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_rate</span></code></a> to remove the old rate and then using <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library.add_rate" title="pynucastro.rates.library.Library.add_rate"><code class="xref py py-func docutils literal notranslate"><span class="pre">add_rate</span></code></a> to add the new rate to the library.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lib</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">c12_rl</span><span class="p">)</span>
