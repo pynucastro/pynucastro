@@ -143,7 +143,7 @@ class TestElectronPositronEOS:
                 es = e.pe_state(rho, T, comp)
                 drho = eps_rho * rho
                 deriv = sixth_order_diff(lambda _rho: e.pe_state(_rho, T, comp),  # pylint: disable=cell-var-from-loop
-                                         rho, drho, "n_e")
+                                         rho, drho, component="n_e")
                 assert es.dne_drho == approx(deriv, rel=1.e-5)
 
     def test_ne_temp_derivs(self):
@@ -186,7 +186,7 @@ class TestElectronPositronEOS:
                 es = e.pe_state(rho, T, comp)
                 drho = eps_rho * rho
                 deriv = fourth_order_diff(lambda _rho: e.pe_state(_rho, T, comp),  # pylint: disable=cell-var-from-loop
-                                          rho, drho, "n_pos")
+                                          rho, drho, component="n_pos")
                 assert es.dnp_drho == approx(deriv, rel=1.e-5)
 
                 # since n_e - n_pos = N_A (Z/A) rho, it should be the case that
@@ -213,7 +213,7 @@ class TestElectronPositronEOS:
                 # here rho is a positional argument, so partial will put T in the
                 # proper spot
                 deriv = fourth_order_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
-                                          T, dtemp, "n_pos")
+                                          T, dtemp, component="n_pos")
                 if es.dnp_dT == 0 and es.n_pos != 0:
                     # no pair production
                     scale = es.n_pos / T
@@ -247,7 +247,7 @@ class TestElectronPositronEOS:
                 es = e.pe_state(rho, T, comp)
                 drho = eps_rho * rho
                 deriv = fourth_order_diff(lambda _rho: e.pe_state(_rho, T, comp),  # pylint: disable=cell-var-from-loop
-                                          rho, drho, "p_e")
+                                          rho, drho, component="p_e")
                 assert es.dpe_drho == approx(deriv, rel=1.e-5)
 
     def test_pe_temp_derivs(self):
@@ -273,7 +273,7 @@ class TestElectronPositronEOS:
 
                 dtemp = eps_T * T
                 deriv = sixth_order_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
-                                         T, dtemp, "p_e")
+                                         T, dtemp, component="p_e")
                 assert es.dpe_dT == approx(deriv, rel=5.e-4)
 
     def test_pp_rho_derivs(self):
@@ -291,7 +291,7 @@ class TestElectronPositronEOS:
                 es = e.pe_state(rho, T, comp)
                 drho = eps_rho * rho
                 deriv = fourth_order_diff(lambda _rho: e.pe_state(_rho, T, comp),  # pylint: disable=cell-var-from-loop
-                                          rho, drho, "p_pos")
+                                          rho, drho, component="p_pos")
                 assert es.dpp_drho == approx(deriv, rel=1.e-5)
 
     def test_pp_temp_derivs(self):
@@ -306,7 +306,7 @@ class TestElectronPositronEOS:
         eps_T = 1.e-3
 
         for T in [1.e4, 1.e6, 1.e9]:
-            for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
+            for rho in [1.e-2, 1.e2, 1.e5, 5.e8, 1.e9]:
 
                 es = e.pe_state(rho, T, comp)
 
@@ -318,5 +318,5 @@ class TestElectronPositronEOS:
                 print(f"{rho=} {T=} {es.p_pos=} {es.p_e=} {es.eta=} {es.dpp_dT=}")
                 dtemp = eps_T * T
                 deriv, _ = adaptive_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
-                                         T, dtemp, "p_pos")
+                                         T, dtemp, component="p_pos")
                 assert es.dpp_dT == approx(deriv, rel=5.e-4)
