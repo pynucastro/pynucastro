@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Checking Your Network &#8212; pynucastro 2.6.0.post62+g517b7fb6f documentation</title>
+    <title>Checking Your Network &#8212; pynucastro 2.6.0.post63+gdf6bc0230 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=c6d4d000"></script>
+    <script src="_static/documentation_options.js?v=06dc854a"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -585,26 +585,20 @@ document.write(`
 </div>
 </div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reaclib_library</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
 <section id="ratecollection-validate-method">
 <h2><code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> validate method<a class="headerlink" href="#ratecollection-validate-method" title="Link to this heading">#</a></h2>
 <p>Let’s start by trying to create a network for carbon burning.</p>
-<p>To start, let’s pick the nuclei <span class="math notranslate nohighlight">\(\alpha\)</span>, <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}\)</span> and <span class="math notranslate nohighlight">\({}^{20}\mathrm{Ne}\)</span></p>
+<p>To start, let’s pick the nuclei <span class="math notranslate nohighlight">\(\alpha\)</span>, <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}\)</span> and <span class="math notranslate nohighlight">\({}^{20}\mathrm{Ne}\)</span>.  We’ll explicitly read in the ReacLib library and select the rates, since we will need the library later—otherwise we could have used <a class="reference internal" href="pynucastro.networks.helper.html#pynucastro.networks.helper.network_helper" title="pynucastro.networks.helper.network_helper"><code class="xref py py-func docutils literal notranslate"><span class="pre">network_helper</span></code></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reaclib_library</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
+<span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">]</span>
 <span class="n">cburn_library</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>Now we can make a rate collection</p>
+<p>Now we’ll make a <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateCollection</span></code></a> (any of the other network types is fine too).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">cburn_library</span><span class="p">])</span>
@@ -621,7 +615,7 @@ Ne20 + He4 ⟶ C12 + C12
 </div>
 </div>
 </div>
-<p>Now, since we are primarily interested in <span class="math notranslate nohighlight">\({}^{12}\mathrm{C} + {}^{12}\mathrm{C}\)</span>, let’s make sure we are not missing any other reactions that have the same reactants.  The <code class="docutils literal notranslate"><span class="pre">validate()</span></code> method will do this, by comparing the rates we have selected to another library.</p>
+<p>Now, since we are primarily interested in <span class="math notranslate nohighlight">\({}^{12}\mathrm{C} + {}^{12}\mathrm{C}\)</span>, let’s make sure we are not missing any other reactions that have the same reactants.  The <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.validate" title="pynucastro.networks.rate_collection.RateCollection.validate"><code class="xref py py-func docutils literal notranslate"><span class="pre">validate</span></code></a> method will do this, by comparing the rates we have selected to another library.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">reaclib_library</span><span class="p">)</span>
