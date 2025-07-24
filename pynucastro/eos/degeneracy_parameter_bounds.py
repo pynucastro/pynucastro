@@ -74,6 +74,22 @@ eta_ele = np.array([
 
 
 def get_eta_bounds(rhoYe0, T0, include_positrons=True):
+    """Return an interval that we expect to contain the degeneracy
+    parameter, eta, given a rho * Ye and T
+
+    Parameters
+    ----------
+    rhoYe0 : float
+        the electron mass fraction (rho * Ye)
+    T : float
+        the temperature (K)
+
+    Returns
+    -------
+    tuple(float, float)
+
+    """
+
     ir = np.clip(np.searchsorted(rhoYes, rhoYe0) - 1, 1, len(rhoYes)-3)
     it = np.clip(np.searchsorted(Ts, T0) - 1, 1, len(Ts)-3)
 
