@@ -1,7 +1,7 @@
 Fortran Networks
 ================
 
-A ``FortranNetwork`` provides Fortran wrappers to a ``SimpleCxxNetwork``,
+A :class:`FortranNetwork <pynucastro.networks.fortran_network.FortranNetwork>` provides Fortran wrappers to a :class:`SimpleCxxNetwork <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`,
 in particular, the righthand side and Jacobian functions.  All features
 supported by ``SimpleCxxNetwork`` are supported by ``FortranNetwork``.
 

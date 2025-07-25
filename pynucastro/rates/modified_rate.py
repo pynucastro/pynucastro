@@ -1,3 +1,8 @@
+"""Classes and methods for describing rates where one or more
+properties have been modified from the original source.
+
+"""
+
 from pynucastro.rates.rate import Rate
 
 

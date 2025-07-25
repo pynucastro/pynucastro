@@ -1,3 +1,6 @@
+"""Classes and methods that provide access to the periodic table."""
+
+
 class Element:
     """An element---this holds the name, abbreviation, and proton
     number (Z)
@@ -12,6 +15,7 @@ class Element:
         The proton number.
 
     """
+
     def __init__(self, abbreviation: str, name: str, Z: int) -> None:
         self.abbreviation = abbreviation
         self.name = name
@@ -19,13 +23,11 @@ class Element:
 
 
 class UnidentifiedElement(Exception):
-    pass
+    """Exception for an unknown element."""
 
 
 class PeriodicTable:
-    """The periodic table of elements.
-
-    """
+    """The periodic table of elements."""
 
     _table = {'h':  Element('h',  'hydrogen', 1),
               'he': Element('he', 'helium', 2),

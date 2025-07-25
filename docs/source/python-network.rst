@@ -1,7 +1,7 @@
 Python network
 ==============
 
-A ``PythonNetwork`` will output a python module with all the data
+A :class:`PythonNetwork <pynucastro.networks.python_network.PythonNetwork>` will output a python module with all the data
 needed for constructing the righthand side and Jacobian of the ODE
 system.  This is designed to solve the system:
 
@@ -28,7 +28,12 @@ Using the previous example:
    net = pyna.PythonNetwork(libraries=[lib])
    net.write_network("triple_alpha.py")
 
-after running this script, we could then ``import triple_alpha`` and
+after running this script, we could then import the network as:
+
+.. code:: python
+
+   import triple_alpha
+
 access the information needed for an ODE integrator.
 
 For this example, 4 rates will be found (forward and reverse).
@@ -88,5 +93,5 @@ The following information is provided:
 
     This returns the Jacobian array, $J_{i,j} = \partial \dot{Y}_i/\partial Y_j$.
 
-A ``PythonNetwork`` can be integrated using the SciPy ``solve_ivp`` methods.
+A ``PythonNetwork`` can be integrated using the SciPy `solve_ivp <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html>`_ methods.
 
