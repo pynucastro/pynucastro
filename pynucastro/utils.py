@@ -1,3 +1,6 @@
+"""Various utilities for working with pynucastro."""
+
+
 import json
 import subprocess
 from importlib.metadata import Distribution
