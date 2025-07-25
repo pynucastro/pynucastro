@@ -2374,14 +2374,17 @@ class RateCollection:
         nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
                                 font_size=node_font_size, font_color=node_font_color, ax=ax)
 
-        # now we'll draw edges in two groups -- real links and approximate links
+        # now we'll draw edges in several groups
 
         if curved_edges:
             connectionstyle = "arc3, rad = 0.2"
+            sort_reverse = False
         else:
             connectionstyle = "arc3"
+            sort_reverse = True
 
-        sorted_edges = sorted(G.edges(data=True), key=lambda edge: edge[-1].get("weight", 0))
+        sorted_edges = sorted(G.edges(data=True), key=lambda edge: edge[-1].get("weight", 0),
+                              reverse=sort_reverse)
         real_edges = [(u, v) for u, v, e in sorted_edges if e["real"] == 1]
         real_weights = [e["weight"] for u, v, e in sorted_edges if e["real"] == 1]
 
@@ -2401,6 +2404,7 @@ class RateCollection:
         else:
             widths *= 2
 
+        # draw the approximate rate edges
         approx_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 0]
 
         _ = nx.draw_networkx_edges(G, G.position, width=1,
@@ -2408,7 +2412,7 @@ class RateCollection:
                                    connectionstyle=connectionstyle,
                                    style="dashed", node_size=node_size, ax=ax)
 
-        # plot invisible rates, rates that are below ydot_cutoff_value
+        # draw the edges for the rates that are below ydot_cutoff_value
         invis_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == -1]
 
         _ = nx.draw_networkx_edges(G, G.position, width=1,
@@ -2416,7 +2420,7 @@ class RateCollection:
                                    connectionstyle=connectionstyle,
                                    style="dotted", node_size=node_size, ax=ax)
 
-        # plot the arrow of reaction
+        # draw the edges that are real rates, and above any cutoffs
         real_edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
                                                edgelist=real_edges, edge_color=edge_color,
                                                connectionstyle=connectionstyle,
