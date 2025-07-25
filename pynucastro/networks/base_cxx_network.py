@@ -71,7 +71,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<ydot>'] = self._ydot
         self.ftags['<ydot_weak>'] = self._ydot_weak
         self.ftags['<jacnuc>'] = self._jacnuc
-        self.ftags['<initial_mass_fractions>'] = self._initial_mass_fractions
         self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
         self.ftags['<rate_struct>'] = self._rate_struct
         self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
@@ -113,9 +112,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         return int(rem.group(1))
 
     def _write_network(self, odir=None):
-        """This writes the RHS, jacobian and ancillary files for the
-        system of ODEs that this network describes, using the template
-        files.
+        """Output the RHS, jacobian and ancillary files for the system
+        of ODEs that this network describes, using the template files.
 
         """
         # pylint: disable=arguments-differ
@@ -508,13 +506,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f"{self.indent*(n_indent)}scratch = {jvalue};\n")
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, scratch);\n\n")
 
-    def _initial_mass_fractions(self, n_indent, of):
-        for i, _ in enumerate(self.unique_nuclei):
-            if i == 0:
-                of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 1.0\n")
-            else:
-                of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 0.0\n")
-
     def _reaclib_rate_functions(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"
         for r in self.reaclib_rates + self.derived_rates + self.modified_rates:
@@ -600,7 +591,10 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _fill_partition_function_data(self, n_indent, of):
         # itertools recipe
         def batched(iterable, n):
-            "Batch data into tuples of length n. The last batch may be shorter."
+            """Batch data into tuples of length n. The last batch may
+            be shorter.
+
+            """
             # batched('ABCDEFG', 3) --> ABC DEF G
             if n < 1:
                 raise ValueError('n must be at least one')
