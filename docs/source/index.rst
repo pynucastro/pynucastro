@@ -100,6 +100,7 @@ codes.
    :hidden:
 
    fermi-integrals
+   electron-eos
 
 .. toctree::
    :maxdepth: 1
