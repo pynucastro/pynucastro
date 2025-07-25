@@ -6,7 +6,6 @@ the root finding algorithm.
 
 import numpy as np
 
-
 Ts = np.logspace(3, 12, 10)
 rhoYes = np.logspace(-12, 11, 24)
 

@@ -6,7 +6,7 @@ from pytest import approx
 from pynucastro import Composition
 from pynucastro.constants import constants
 from pynucastro.eos import ElectronEOS
-from pynucastro.eos.difference_utils import fourth_order_diff, sixth_order_diff, adaptive_diff
+from pynucastro.eos.difference_utils import fourth_order_diff, sixth_order_diff
 
 
 def zero_temperature_eos(rho, comp):
@@ -405,4 +405,3 @@ class TestElectronPositronEOS:
                 deriv = sixth_order_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
                                          T, dtemp, component="e_pos")
                 assert es.dep_dT == approx(deriv, rel=5.e-4)
-

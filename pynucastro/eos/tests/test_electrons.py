@@ -6,7 +6,7 @@ from pytest import approx
 from pynucastro import Composition
 from pynucastro.constants import constants
 from pynucastro.eos import ElectronEOS
-from pynucastro.eos.difference_utils import fourth_order_diff, sixth_order_diff
+from pynucastro.eos.difference_utils import fourth_order_diff
 
 #np.seterr(all="warn")
 
