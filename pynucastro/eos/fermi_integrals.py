@@ -318,12 +318,12 @@ class FermiIntegral:
 
     def __str__(self):
         fstr = ""
-        fstr += f"F        = {self.F}\n"
-        fstr += f"dF/dη    = {self.dF_deta}\n"
-        fstr += f"dF/dβ    = {self.dF_dbeta}\n"
-        fstr += f"d²F/dη²  = {self.d2F_deta2}\n"
-        fstr += f"d²F/dηdβ = {self.d2F_detadbeta}\n"
-        fstr += f"d²F/dβ²  = {self.d2F_dbeta2}\n"
+        fstr += f"F        = {self.F:20.10g}\n"
+        fstr += f"dF/dη    = {self.dF_deta:20.10g}\n"
+        fstr += f"dF/dβ    = {self.dF_dbeta:20.10g}\n"
+        fstr += f"d²F/dη²  = {self.d2F_deta2:20.10g}\n"
+        fstr += f"d²F/dηdβ = {self.d2F_detadbeta:20.10g}\n"
+        fstr += f"d²F/dβ²  = {self.d2F_dbeta2:20.10g}\n"
         return fstr
 
     def _compute_legendre(self, kernel, a, b,
