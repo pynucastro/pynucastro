@@ -135,7 +135,7 @@ class TestElectronPositronEOS:
         comp = Composition(["h1", "he4", "c12", "ne22"])
         comp.set_equal()
 
-        eps_rho = 5.e-5
+        eps_rho = 1.e-4
 
         for T in [1.e4, 1.e6, 1.e9]:
             for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
@@ -178,7 +178,7 @@ class TestElectronPositronEOS:
         comp = Composition(["h1", "he4", "c12", "ne22"])
         comp.set_equal()
 
-        eps_rho = 1.e-5
+        eps_rho = 1.e-4
 
         for T in [1.e4, 1.e6, 1.e9]:
             for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:

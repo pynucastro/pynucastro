@@ -16,6 +16,7 @@ overcome the kernel singularity near the origin.
 
 import numba
 import numpy as np
+import math
 
 from .quadrature_weights import w_lag, w_leg, x_lag, x_leg
 
@@ -338,7 +339,7 @@ class FermiIntegral:
         fac1 = (a + b)/2
         fac2 = (b - a)/2
 
-        integral = sum((kernel(fac1 + fac2 * root, k, eta, beta,
+        integral = math.fsum((kernel(fac1 + fac2 * root, k, eta, beta,
                                eta_der=eta_der, beta_der=beta_der) +
                         kernel(fac1 - fac2 * root, k, eta, beta,
                                eta_der=eta_der, beta_der=beta_der)) * weight
@@ -380,7 +381,7 @@ class FermiIntegral:
         #                   eta_der=eta_der, beta_der=beta_der)
         #     integral += I * weight
 
-        integral = sum(_kernel_E(root + a, self.k, self.eta, self.beta,
+        integral = math.fsum(_kernel_E(root + a, self.k, self.eta, self.beta,
                                  eta_der=eta_der, beta_der=beta_der) * weight for
                        root, weight in zip(x_lag, w_lag))
 
