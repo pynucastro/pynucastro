@@ -315,8 +315,7 @@ class TestElectronPositronEOS:
                 if es.eta > 1.e4:
                     continue
 
-                print(f"{rho=} {T=} {es.p_pos=} {es.p_e=} {es.eta=} {es.dpp_dT=}")
                 dtemp = eps_T * T
-                deriv, _ = adaptive_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
-                                         T, dtemp, component="p_pos")
+                deriv = fourth_order_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
+                                          T, dtemp, component="p_pos")
                 assert es.dpp_dT == approx(deriv, rel=5.e-4)

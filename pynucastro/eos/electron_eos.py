@@ -189,24 +189,19 @@ class ElectronEOS:
         dpe_dbeta = 0.25 * pcoeff * beta**1.5 * (10.0 * f32.F + 7.0 * beta * f52.F +
                                                  4.0 * beta * (f32.dF_dbeta + 0.5 * beta * f52.dF_dbeta))
 
-        dpe_drho = dpe_deta * deta_drho   # dbeta_drho = 0
+        dpe_drho = dpe_deta * deta_drho
         dpe_dT = dpe_deta * deta_dT + dpe_dbeta * dbeta_dT
 
         dpp_drho = 0.0
         dpp_dT = 0.0
         if self.include_positrons:
-            dpp_drho = -pcoeff * beta**2.5 * (0.5 * beta * f52_pos.dF_deta + f32_pos.dF_deta) * deta_drho
-            #dpp_dT = 0.5 * pcoeff * np.sqrt(beta) * (-2.0 * (beta**2 * deta_dT - 2.0 * dbeta_dT) * f32_pos.dF_deta -
-            #                                         beta * (-beta**2 * (2.0 / beta**2 * f52_pos.dF_deta + f52_pos.dF_dbeta) * dbeta_dT +
-            #                                                 (beta**2 * deta_dT - 2.0 * dbeta_dT) * f52_pos.dF_deta) +
-            #                                         5.0 * beta * (f32_pos.F + 0.5 * beta * f52_pos.F) * dbeta_dT +
-            #                                         2.0 * beta**2 * (2.0 / beta**2 * f32_pos.dF_deta + 0.5 * f52_pos.F + f32_pos.dF_dbeta) * dbeta_dT)
+            dpp_deta = -pcoeff * beta**2.5 * (f32_pos.dF_deta + 0.5 * beta * f52_pos.dF_deta)
+            dpp_dbeta = pcoeff * np.sqrt(beta) * (beta * (2.5 * f32_pos.F + 1.75 * beta * f52_pos.F) +
+                                                  beta**2 * (f32_pos.dF_dbeta + 0.5 * beta * f52_pos.dF_dbeta) +
+                                                  2.0 * (f32_pos.dF_deta + 0.5 * beta * f52_pos.dF_deta))
 
-            dpp_dT = pcoeff * np.sqrt(beta) * (
-                beta * (2.5 * f32_pos.F + 1.75 * beta * f52_pos.F) * dbeta_dT +
-                beta**2 * ((f32_pos.dF_dbeta + 0.5 * beta * f52_pos.dF_dbeta) * dbeta_dT -
-                           (f32_pos.dF_deta + 0.5 * beta * f52_pos.dF_deta) * deta_dT) +
-                4.0 * dbeta_dT * (f32_pos.dF_deta + 0.5 * beta * f52_pos.dF_deta))
+            dpp_drho = dpp_deta * deta_drho
+            dpp_dT = dpp_deta * deta_dT + dpp_dbeta * dbeta_dT
 
         # Compute partials of energy with density and temperature
         dEe_deta = ecoeff * beta**2.5 * (f32.dF_deta + beta * f52.dF_deta)
