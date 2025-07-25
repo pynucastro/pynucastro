@@ -1,3 +1,5 @@
+"""Methods used for generating a dataset for reduction."""
+
 #!/usr/bin/env python3
 
 import numpy as np
@@ -7,11 +9,13 @@ from pynucastro.reduction.load_network import load_network
 
 
 def dataset(network, n=10, permute=True, b_rho=None, b_T=None, b_Z=None):
-    """
-    Generate a dataset with *n* datapoints. Will either be returned as a sequence of tuples,
-    each with order (composition, density, temperature) if *permute* is *True* (default),
-    or the transpose of that if *permute* is *False*. The parameters *b_rho*, *b_T*, and
-    *b_Z* are tuples giving the bounds on density, temperature, and metallicity respectively.
+    """Generate a dataset with *n* datapoints. Will either be returned
+    as a sequence of tuples, each with order (composition, density,
+    temperature) if *permute* is *True* (default), or the transpose of
+    that if *permute* is *False*. The parameters *b_rho*, *b_T*, and
+    *b_Z* are tuples giving the bounds on density, temperature, and
+    metallicity respectively.
+
     """
 
     if isinstance(n, int):
@@ -63,6 +67,8 @@ def dataset(network, n=10, permute=True, b_rho=None, b_T=None, b_Z=None):
 
 
 def main():
+    """Execute the data generation routines."""
+
     network = load_network(Nucleus("ni56"))
     conds_list = list(dataset(network))
     rho = sorted({conds[1] for conds in conds_list})

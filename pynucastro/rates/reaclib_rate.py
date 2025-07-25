@@ -1,3 +1,8 @@
+"""Classes and methods for working with rates from the ReacLib
+library.
+
+"""
+
 import io
 from pathlib import Path
 
@@ -37,7 +42,7 @@ class SingleSet:
 
     def _update_label_properties(self):
         """Set label and flags indicating Set is resonant, weak, or
-            reverse.
+        reverse.
 
         """
         assert isinstance(self.labelprops, str)
@@ -264,6 +269,7 @@ class ReacLibRate(Rate):
         If the nucleus is unknown to pynucastro
 
     """
+
     def __init__(self, rfile=None, chapter=None, original_source=None,
                  reactants=None, products=None, sets=None, labelprops=None, Q=None):
         # pylint: disable=super-init-not-called
@@ -405,7 +411,7 @@ class ReacLibRate(Rate):
 
     def __add__(self, other):
         """Combine the sets of two Rate objects if they describe the
-           same reaction. Must be Reaclib rates.
+        same reaction. Must be Reaclib rates.
 
         """
         assert self.reactants == other.reactants
@@ -430,8 +436,8 @@ class ReacLibRate(Rate):
         return new_rate
 
     def _set_label_properties(self, labelprops=None):
-        """Calls _update_resonance_combined and then
-            _update_label_properties.
+        """Call _update_resonance_combined and then
+        _update_label_properties.
 
         """
         if labelprops:
@@ -443,8 +449,8 @@ class ReacLibRate(Rate):
         self._update_label_properties()
 
     def _update_resonance_combined(self):
-        """Checks the Sets in this Rate and updates the
-            resonance_combined flag as well as self.labelprops[4]
+        """Check the Sets in this Rate and updates the
+        resonance_combined flag as well as self.labelprops[4]
 
         """
         sres = [s.resonant for s in self.sets]
@@ -459,7 +465,7 @@ class ReacLibRate(Rate):
 
     def _update_label_properties(self):
         """Set label and flags indicating Rate is resonant, weak, or
-            reverse.
+        reverse.
 
         """
         assert isinstance(self.labelprops, str)
