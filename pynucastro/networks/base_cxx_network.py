@@ -21,6 +21,7 @@ from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
 from pynucastro.rates import DerivedRate
 from pynucastro.screening import get_screening_map
+from pynucastro.utils import pynucastro_version
 
 
 class BaseCxxNetwork(ABC, RateCollection):
@@ -79,6 +80,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<part_fun_declare>'] = self._fill_partition_function_declare
         self.ftags['<part_fun_cases>'] = self._fill_partition_function_cases
         self.ftags['<spin_state_cases>'] = self._fill_spin_state_cases
+        self.ftags['<pynucastro_version>'] = self._fill_pynucastro_version
         self.indent = '    '
 
     @abstractmethod
@@ -660,3 +662,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
             of.write(f"{self.indent*(n_indent+1)}spin = {spin_state};\n")
             of.write(f"{self.indent*(n_indent+1)}break;\n\n")
+
+    def _fill_pynucastro_version(self, n_indent, of):
+        of.write(f"{self.indent*n_indent}pynucastro version: {pynucastro_version()}\n")
