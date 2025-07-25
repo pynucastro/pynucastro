@@ -59,8 +59,8 @@ class TestElectronPositronEOS:
             es = e.pe_state(rho, T, comp)
             p_zt, e_zt = zero_temperature_eos(rho, comp)
 
-            assert es.p_e == approx(p_zt, rel=1.e-4)
-            assert es.e_e == approx(e_zt, rel=1.e-4)
+            assert es.p_e == approx(p_zt, rel=1.e-5)
+            assert es.e_e == approx(e_zt, rel=1.e-5)
 
     def test_high_temperature(self):
         # at high temperatures, we should be an ideal electron gas.
@@ -144,7 +144,7 @@ class TestElectronPositronEOS:
                 drho = eps_rho * rho
                 deriv = sixth_order_diff(lambda _rho: e.pe_state(_rho, T, comp),  # pylint: disable=cell-var-from-loop
                                          rho, drho, component="n_e")
-                assert es.dne_drho == approx(deriv, rel=1.e-5)
+                assert es.dne_drho == approx(deriv, rel=3.e-6)
 
     def test_ne_temp_derivs(self):
 
@@ -210,8 +210,6 @@ class TestElectronPositronEOS:
 
                 es = e.pe_state(rho, T, comp)
                 dtemp = eps_T * T
-                # here rho is a positional argument, so partial will put T in the
-                # proper spot
                 deriv = fourth_order_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
                                           T, dtemp, component="n_pos")
                 if es.dnp_dT == 0 and es.n_pos != 0:
@@ -303,7 +301,7 @@ class TestElectronPositronEOS:
 
         # use a relatively large eps because of how weakly beta enters when beta << 1
 
-        eps_T = 1.e-3
+        eps_T = 1.e-4
 
         for T in [1.e4, 1.e6, 1.e9]:
             for rho in [1.e-2, 1.e2, 1.e5, 5.e8, 1.e9]:
@@ -318,4 +316,4 @@ class TestElectronPositronEOS:
                 dtemp = eps_T * T
                 deriv = fourth_order_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
                                           T, dtemp, component="p_pos")
-                assert es.dpp_dT == approx(deriv, rel=5.e-4)
+                assert es.dpp_dT == approx(deriv, rel=1.e-5)
