@@ -89,6 +89,13 @@ def get_eta_bounds(rhoYe0, T0, include_positrons=True):
 
     """
 
+    # we will find the index into the table such that
+    #   rhoYes[ir] <= rhoYe0 < rhoYe[ir+1]
+    # and likewise for T
+
+    # then we will take a 4x4 box of etas from our
+    # precomputed table and use those as the bounds
+
     ir = np.clip(np.searchsorted(rhoYes, rhoYe0) - 1, 1, len(rhoYes)-3)
     it = np.clip(np.searchsorted(Ts, T0) - 1, 1, len(Ts)-3)
 
@@ -98,5 +105,6 @@ def get_eta_bounds(rhoYe0, T0, include_positrons=True):
     else:
         eta_min = eta_ele[ir-1:ir+3, it-1:it+3].min()
         eta_max = eta_ele[ir-1:ir+3, it-1:it+3].max()
+
 
     return eta_min, eta_max
