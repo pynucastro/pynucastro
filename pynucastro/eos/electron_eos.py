@@ -22,7 +22,8 @@ EOSState = namedtuple("EOSState", ["n_e", "n_pos",
                                    "dnp_drho", "dnp_dT",
                                    "dpe_drho", "dpe_dT",
                                    "dpp_drho", "dpp_dT",
-                                   "dee_drho", "dee_dT"])
+                                   "dee_drho", "dee_dT",
+                                   "dep_drho", "dep_dT"])
 
 
 class ElectronEOS:
@@ -137,7 +138,7 @@ class ElectronEOS:
 
         n_pos = 0.0
         p_pos = 0.0
-        e_pos = 0.0
+        E_pos = 0.0
         if self.include_positrons:
             f12_pos = FermiIntegral(0.5, eta_pos, beta)
             f12_pos.evaluate(do_first_derivs=True, do_second_derivs=False)
@@ -211,9 +212,30 @@ class ElectronEOS:
         dEe_drho = dEe_deta * deta_drho   # dbeta_drho = 0
         dEe_dT = dEe_deta * deta_dT + dEe_dbeta * dbeta_dT
 
+        dEp_drho = 0.0
+        dEp_dT = 0.0
+        if self.include_positrons:
+            # these don't include the 2 m_e c**2 n_p part
+            dEp_deta = -ecoeff * beta**2.5 * (f32_pos.dF_deta + beta * f52_pos.dF_deta)
+            dEp_dbeta = ecoeff * np.sqrt(beta) * (beta * (2.5 * f32_pos.F + 3.5 * beta * f52_pos.F) +
+                                                  beta**2 * (f32_pos.dF_dbeta + beta * f52_pos.dF_dbeta) +
+                                                  2.0 * (f32_pos.dF_deta + beta * f52_pos.dF_deta))
+
+            dEp_drho = dEp_deta * deta_drho + 2.0 * rest_mass * dnp_drho
+            dEp_dT = dEp_deta * deta_dT + dEp_dbeta * dbeta_dT + 2.0 * rest_mass * dnp_dT
+
+        # correct energy to be specific energy
         e_e = E_e / rho
         dee_drho = (dEe_drho - E_e/rho) / rho
         dee_dT = dEe_dT / rho
+
+        e_pos = 0.0
+        dep_drho = 0.0
+        dep_dT = 0.0
+        if self.include_positrons:
+            e_pos = E_pos / rho
+            dep_drho = (dEp_drho - E_pos/rho) / rho
+            dep_dT = dEp_dT / rho
 
         return EOSState(eta=eta,
                         n_e=n_e, p_e=p_e, e_e=e_e,
@@ -222,4 +244,5 @@ class ElectronEOS:
                         dnp_drho=dnp_drho, dnp_dT=dnp_dT,
                         dpe_drho=dpe_drho, dpe_dT=dpe_dT,
                         dpp_drho=dpp_drho, dpp_dT=dpp_dT,
-                        dee_drho=dee_drho, dee_dT=dee_dT)
+                        dee_drho=dee_drho, dee_dT=dee_dT,
+                        dep_drho=dep_drho, dep_dT=dep_dT)

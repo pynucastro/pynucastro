@@ -317,3 +317,92 @@ class TestElectronPositronEOS:
                 deriv = fourth_order_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
                                           T, dtemp, component="p_pos")
                 assert es.dpp_dT == approx(deriv, rel=1.e-5)
+
+    def test_ee_rho_derivs(self):
+
+        e = ElectronEOS(include_positrons=True)
+
+        comp = Composition(["h1", "he4", "c12", "ne22"])
+        comp.set_equal()
+
+        eps_rho = 5.e-5
+
+        for T in [1.e4, 1.e6, 1.e9]:
+            for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
+
+                es = e.pe_state(rho, T, comp)
+                drho = eps_rho * rho
+                deriv = fourth_order_diff(lambda _rho: e.pe_state(_rho, T, comp),  # pylint: disable=cell-var-from-loop
+                                          rho, drho, component="e_e")
+                assert es.dee_drho == approx(deriv, rel=1.e-5)
+
+    def test_ee_temp_derivs(self):
+
+        e = ElectronEOS(include_positrons=True)
+
+        comp = Composition(["h1", "he4", "c12", "ne22"])
+        comp.set_equal()
+
+        # use a relatively large eps because of how weakly beta enters when beta << 1
+
+        eps_T = 1.e-5
+
+        for T in [1.e4, 1.e6, 1.e9]:
+            for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
+
+                es = e.pe_state(rho, T, comp)
+
+                # at high density and low T, the temperature derivative
+                # is effectively zero, and differencing struggles
+                if es.eta > 1.e4:
+                    continue
+
+                dtemp = eps_T * T
+                deriv = sixth_order_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
+                                         T, dtemp, component="e_e")
+                assert es.dee_dT == approx(deriv, rel=5.e-4)
+
+    def test_ep_rho_derivs(self):
+
+        e = ElectronEOS(include_positrons=True)
+
+        comp = Composition(["h1", "he4", "c12", "ne22"])
+        comp.set_equal()
+
+        eps_rho = 5.e-5
+
+        for T in [1.e4, 1.e6, 1.e9]:
+            for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
+
+                es = e.pe_state(rho, T, comp)
+                drho = eps_rho * rho
+                deriv = fourth_order_diff(lambda _rho: e.pe_state(_rho, T, comp),  # pylint: disable=cell-var-from-loop
+                                          rho, drho, component="e_pos")
+                assert es.dep_drho == approx(deriv, rel=1.e-5)
+
+    def test_ep_temp_derivs(self):
+
+        e = ElectronEOS(include_positrons=True)
+
+        comp = Composition(["h1", "he4", "c12", "ne22"])
+        comp.set_equal()
+
+        # use a relatively large eps because of how weakly beta enters when beta << 1
+
+        eps_T = 1.e-5
+
+        for T in [1.e4, 1.e6, 1.e9]:
+            for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
+
+                es = e.pe_state(rho, T, comp)
+
+                # at high density and low T, the temperature derivative
+                # is effectively zero, and differencing struggles
+                if es.eta > 1.e4:
+                    continue
+
+                dtemp = eps_T * T
+                deriv = sixth_order_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
+                                         T, dtemp, component="e_pos")
+                assert es.dep_dT == approx(deriv, rel=5.e-4)
+
