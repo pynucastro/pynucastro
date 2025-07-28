@@ -1,7 +1,7 @@
 # runtime dependencies
 ipywidgets>=7.1.2
 matplotlib
-networkx>=3.3
+networkx>=3.4
 numpy>=1.13.3,<3.0
 scipy>=1.0.0
 sympy>=1.1.1
