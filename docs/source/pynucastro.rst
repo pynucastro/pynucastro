@@ -28,4 +28,5 @@ Submodules
    :maxdepth: 4
 
    pynucastro.numba_util
+   pynucastro.utils
    pynucastro.yt_utils

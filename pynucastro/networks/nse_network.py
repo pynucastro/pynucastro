@@ -1,3 +1,8 @@
+"""A collection of classes and methods for working with nuclear
+statistical equilibrium.
+
+"""
+
 import warnings
 
 import numpy as np
@@ -74,8 +79,10 @@ class NSETableEntry:
         return f"({self.rho:12.6g}, {self.T:12.6g}, {self.Ye:6.4f}): {self.abar:6.4f}  {self.bea:6.4f}  {self.dYedt:12.6g}  {self.enu:12.6g}"
 
     def value(self):
-        """a simple integer used for sorting.  This has the format
-        (logrho)(logT)(1-Ye)"""
+        """Return an integer used for sorting.  This has the format
+        (logrho)(logT)(1-Ye)
+
+        """
 
         return int(f"{np.log10(self.rho):08.5f}{np.log10(self.T):08.5f}{1-self.Ye:08.5f}".replace(".", ""))
 
@@ -84,14 +91,17 @@ class NSETableEntry:
 
 
 class NSENetwork(RateCollection):
-    """a network for solving the NSE composition and outputting
-    tabulated NSE quantities"""
+    """A network for solving the NSE composition and outputting
+    tabulated NSE quantities
+
+    """
 
     def _evaluate_mu_c(self, state, use_coulomb_corr=True):
-        """A helper function that finds the coulomb potential of each nuclide in NSE state.
-        The coulomb potential is evaluated using the Helmholtz free energy
-        following Eq. 28 from Chabrier & Potekhin 1998 DOI: 10.1103/PhysRevE.58.4941
-        Also see appendix in Calder 2007 DOI: 10.1086/510709
+        """Find the Coulomb potential of each nuclide in NSE state.
+        The Coulomb potential is evaluated using the Helmholtz free
+        energy following Eq. 28 from Chabrier & Potekhin 1998 DOI:
+        10.1103/PhysRevE.58.4941 Also see appendix in Calder 2007 DOI:
+        10.1086/510709
 
         A1 = -0.9052
         A2 = 0.6322
@@ -111,6 +121,7 @@ class NSENetwork(RateCollection):
         -------
         u_c : dict
             A dictionary of coulomb potential keyed by Nucleus.
+
         """
 
         if not use_coulomb_corr:
@@ -133,7 +144,7 @@ class NSENetwork(RateCollection):
         return u_c
 
     def _nucleon_fraction_nse(self, u, u_c, state):
-        """A helper function that computes the NSE mass fraction for a given NSE state.
+        """Compute the NSE mass fraction for a given NSE state.
 
         NSE condition says that the chemical potential of the i-th nuclei
         is equal to the chemical potential of the free nucleon.
@@ -171,6 +182,7 @@ class NSENetwork(RateCollection):
         -------
         Xs : dict
             A dictionary of NSE mass fractions keyed by Nucleus.
+
         """
 
         Xs = {}
@@ -192,8 +204,9 @@ class NSENetwork(RateCollection):
         return Xs
 
     def _constraint_eq(self, u, u_c, state):
-        """ Constraint Equations used to evaluate chemical potential for proton and neutron,
-        which is used when evaluating composition at NSE.
+        """Implement the constraints for our system to evaluate
+        chemical potential for proton and neutron, which is used when
+        evaluating composition at NSE.
 
         1) Conservation of Mass:   Σ_k X_k - 1 = 0
         2) Conservation of Charge: Σ_k Z_k X_k / A_k - Y_e = 0
@@ -212,6 +225,7 @@ class NSENetwork(RateCollection):
         -------
         constraint_eqs : List
             Constraint equations for NSE.
+
         """
 
         Xs = self._nucleon_fraction_nse(u, u_c, state)
@@ -222,9 +236,8 @@ class NSENetwork(RateCollection):
 
     def get_comp_nse(self, rho, T, ye, init_guess=(-3.5, -15),
                      tol=1.0e-11, use_coulomb_corr=False, return_sol=False):
-        """
-        Returns the NSE composition given density, temperature and prescribed electron fraction
-        using scipy.fsolve.
+        """Return the NSE composition given density, temperature and
+        prescribed electron fraction using scipy.fsolve.
 
         Parameters
         ----------
@@ -249,6 +262,7 @@ class NSENetwork(RateCollection):
             the NSE composition
         u : ndarray
             the chemical potentials found by solving the nonlinear system.
+
         """
 
         # Determine the upper and lower bound of possible ye for the current network.
@@ -312,9 +326,9 @@ class NSENetwork(RateCollection):
     def generate_table(self, rho_values=None, T_values=None, Ye_values=None,
                        comp_reduction_func=None,
                        verbose=False, outfile="nse.tbl"):
-        """Generate a table of NSE properties.  For every combination of
-        density, temperature, and Ye, we solve for the NSE state and output
-        composition properties to a file.
+        """Generate a table of NSE properties.  For every combination
+        of density, temperature, and Ye, we solve for the NSE state
+        and output composition properties to a file.
 
         Parameters
         ----------
@@ -331,6 +345,7 @@ class NSENetwork(RateCollection):
             output progress on creating the table as we go along
         outfile : str
             filename for the NSE table output
+
         """
 
         # initial guess

@@ -21,6 +21,7 @@ from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
 from pynucastro.rates import DerivedRate
 from pynucastro.screening import get_screening_map
+from pynucastro.utils import pynucastro_version
 
 
 class BaseCxxNetwork(ABC, RateCollection):
@@ -79,6 +80,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<part_fun_declare>'] = self._fill_partition_function_declare
         self.ftags['<part_fun_cases>'] = self._fill_partition_function_cases
         self.ftags['<spin_state_cases>'] = self._fill_spin_state_cases
+        self.ftags['<pynucastro_version>'] = self._fill_pynucastro_version
         self.indent = '    '
 
     @abstractmethod
@@ -110,9 +112,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         return int(rem.group(1))
 
     def _write_network(self, odir=None):
-        """This writes the RHS, jacobian and ancillary files for the
-        system of ODEs that this network describes, using the template
-        files.
+        """Output the RHS, jacobian and ancillary files for the system
+        of ODEs that this network describes, using the template files.
 
         """
         # pylint: disable=arguments-differ
@@ -590,7 +591,10 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _fill_partition_function_data(self, n_indent, of):
         # itertools recipe
         def batched(iterable, n):
-            "Batch data into tuples of length n. The last batch may be shorter."
+            """Batch data into tuples of length n. The last batch may
+            be shorter.
+
+            """
             # batched('ABCDEFG', 3) --> ABC DEF G
             if n < 1:
                 raise ValueError('n must be at least one')
@@ -658,3 +662,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
             of.write(f"{self.indent*(n_indent+1)}spin = {spin_state};\n")
             of.write(f"{self.indent*(n_indent+1)}break;\n\n")
+
+    def _fill_pynucastro_version(self, n_indent, of):
+        of.write(f"{self.indent*n_indent}pynucastro version: {pynucastro_version()}\n")
