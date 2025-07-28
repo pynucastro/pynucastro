@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.reduction.load_network module &#8212; pynucastro 2.6.0.post66+g2dfb8fb0a documentation</title>
+    <title>pynucastro.utils module &#8212; pynucastro 2.6.0.post66+g2dfb8fb0a documentation</title>
   
   
   
@@ -46,11 +46,11 @@
     <script src="_static/copybutton.js?v=eaa7b67c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'pynucastro.reduction.load_network';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pynucastro.utils';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pynucastro.reduction.reduction module" href="pynucastro.reduction.reduction.html" />
-    <link rel="prev" title="pynucastro.reduction.generate_data module" href="pynucastro.reduction.generate_data.html" />
+    <link rel="next" title="pynucastro.yt_utils module" href="pynucastro.yt_utils.html" />
+    <link rel="prev" title="pynucastro.numba_util module" href="pynucastro.numba_util.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -306,10 +306,10 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.tabular_rate.html">pynucastro.rates.tabular_rate module</a></li>
 </ul>
 </details></li>
-<li class="toctree-l3 current active has-children"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep.html">pynucastro.reduction.drgep module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.generate_data.html">pynucastro.reduction.generate_data module</a></li>
-<li class="toctree-l4 current active"><a class="current reference internal" href="#">pynucastro.reduction.load_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.load_network.html">pynucastro.reduction.load_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.reduction.html">pynucastro.reduction.reduction module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.reduction_utils.html">pynucastro.reduction.reduction_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.sensitivity_analysis.html">pynucastro.reduction.sensitivity_analysis module</a></li>
@@ -321,7 +321,7 @@
 </ul>
 </details></li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.numba_util.html">pynucastro.numba_util module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.utils.html">pynucastro.utils module</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">pynucastro.utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.yt_utils.html">pynucastro.yt_utils module</a></li>
 </ul>
 </details></li>
@@ -404,7 +404,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/pynucastro.reduction.load_network.rst?plain=1" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/pynucastro.utils.rst?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -421,7 +421,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/pynucastro.reduction.load_network.rst" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/pynucastro.utils.rst" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -438,7 +438,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fpynucastro.reduction.load_network.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fpynucastro.utils.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -468,7 +468,7 @@
       
       
       
-      <li><a href="_sources/pynucastro.reduction.load_network.rst" target="_blank"
+      <li><a href="_sources/pynucastro.utils.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -552,7 +552,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>pynucastro.reduction.load_network module</h1>
+    <h1>pynucastro.utils module</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -562,7 +562,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.load_network.load_network"><code class="docutils literal notranslate"><span class="pre">load_network()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.utils.pynucastro_version"><code class="docutils literal notranslate"><span class="pre">pynucastro_version()</span></code></a></li>
 </ul>
             </nav>
         </div>
@@ -574,14 +574,23 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-pynucastro.reduction.load_network">
-<span id="pynucastro-reduction-load-network-module"></span><h1>pynucastro.reduction.load_network module<a class="headerlink" href="#module-pynucastro.reduction.load_network" title="Link to this heading">#</a></h1>
-<p>Methods used for loading a previously-saved library.</p>
+  <section id="module-pynucastro.utils">
+<span id="pynucastro-utils-module"></span><h1>pynucastro.utils module<a class="headerlink" href="#module-pynucastro.utils" title="Link to this heading">#</a></h1>
+<p>Various utilities for working with pynucastro.</p>
 <dl class="py function">
-<dt class="sig sig-object py" id="pynucastro.reduction.load_network.load_network">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.load_network.</span></span><span class="sig-name descname"><span class="pre">load_network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Te108</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">library_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rp-process-lib'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/load_network.html#load_network"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.load_network.load_network" title="Link to this definition">#</a></dt>
-<dd><p>Load a network from a library, filtering the library so only
-nuclei with Z and A less than the endpoint’s Z and A are included.</p>
+<dt class="sig sig-object py" id="pynucastro.utils.pynucastro_version">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.utils.</span></span><span class="sig-name descname"><span class="pre">pynucastro_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/utils.html#pynucastro_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.utils.pynucastro_version" title="Link to this definition">#</a></dt>
+<dd><p>Get as descriptive of a version as possible.  If this was
+installed via pip directly, then it will be the version assigned
+to that release.  However, if we are installed in editable mode,
+then the version from __version__ might not be updated, since that
+is created dynamically at the pip invocation.  In that case, we
+will use git to find the version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -598,20 +607,20 @@ nuclei with Z and A less than the endpoint’s Z and A are included.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="pynucastro.reduction.generate_data.html"
+       href="pynucastro.numba_util.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">pynucastro.reduction.generate_data module</p>
+        <p class="prev-next-title">pynucastro.numba_util module</p>
       </div>
     </a>
     <a class="right-next"
-       href="pynucastro.reduction.reduction.html"
+       href="pynucastro.yt_utils.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pynucastro.reduction.reduction module</p>
+        <p class="prev-next-title">pynucastro.yt_utils module</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -631,7 +640,7 @@ nuclei with Z and A less than the endpoint’s Z and A are included.</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.load_network.load_network"><code class="docutils literal notranslate"><span class="pre">load_network()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.utils.pynucastro_version"><code class="docutils literal notranslate"><span class="pre">pynucastro_version()</span></code></a></li>
 </ul>
   </nav></div>
 
