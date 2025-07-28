@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Plotting Examples &#8212; pynucastro 2.6.0.post67+g8b614bce3 documentation</title>
+    <title>Plotting Examples &#8212; pynucastro 2.6.0.post68+gb49967ee8 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=1d2c038f"></script>
+    <script src="_static/documentation_options.js?v=5a7f5acb"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -569,6 +569,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hiding-links">Hiding links</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hiding-unimportant-rates">Hiding unimportant rates</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#curved-edges">Curved edges</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#showing-abundances">Showing abundances</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#legend-and-labels">Legend and labels</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#filters">Filters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-the-jacobian">Plotting the Jacobian</a></li>
@@ -638,7 +639,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/260d3d1d8631b79eff3210b1186d27a736dfc363e15e7988cb38b3c998445778.png" src="_images/260d3d1d8631b79eff3210b1186d27a736dfc363e15e7988cb38b3c998445778.png" />
+<img alt="_images/e8f446a1463d03418c5882a4d15f106adc7411497930af7d812267a07354a18b.png" src="_images/e8f446a1463d03418c5882a4d15f106adc7411497930af7d812267a07354a18b.png" />
 </div>
 </div>
 </section>
@@ -651,8 +652,26 @@ and composition (as a <a class="reference internal" href="pynucastro.networks.ra
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e4</span>
 <span class="n">T</span> <span class="o">=</span> <span class="mf">1.e8</span>
-<span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">())</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">set_solar_like</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We’ll give the composition a lot of CNO + He</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">())</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">set_all</span><span class="p">(</span><span class="mf">1.e-10</span><span class="p">)</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.075</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n13&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n14&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.15</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ne20&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.02</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;na23&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">1.e-4</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;mg23&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">1.e-5</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;mg24&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.005</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;si28&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">1.e-5</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -665,7 +684,7 @@ and composition (as a <a class="reference internal" href="pynucastro.networks.ra
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/d6b76b5cfafb55feab0456e854b040ead72cb4367bb3ad57967dea7ec9f5ded5.png" src="_images/d6b76b5cfafb55feab0456e854b040ead72cb4367bb3ad57967dea7ec9f5ded5.png" />
+<img alt="_images/fab2642676b9e08a931a802a5e8c0d828dac205985f6977bee2f3c4186106a11.png" src="_images/fab2642676b9e08a931a802a5e8c0d828dac205985f6977bee2f3c4186106a11.png" />
 </div>
 </div>
 </section>
@@ -680,7 +699,7 @@ and composition (as a <a class="reference internal" href="pynucastro.networks.ra
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/cd4936e7a4af97c67e32c6a00c995e6e873db8f18f48dc40f6711443e42b107a.png" src="_images/cd4936e7a4af97c67e32c6a00c995e6e873db8f18f48dc40f6711443e42b107a.png" />
+<img alt="_images/cf8c621a5ba22a1087e61593d50d3eb088bc705201c86575f0d46a0f4972793c.png" src="_images/cf8c621a5ba22a1087e61593d50d3eb088bc705201c86575f0d46a0f4972793c.png" />
 </div>
 </div>
 </section>
@@ -696,7 +715,7 @@ and composition (as a <a class="reference internal" href="pynucastro.networks.ra
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/9fe6de858e93ad0be28a65028f2923357d889bba7ee5bff7b19b6effa90d14fa.png" src="_images/9fe6de858e93ad0be28a65028f2923357d889bba7ee5bff7b19b6effa90d14fa.png" />
+<img alt="_images/b26fc14f23ee0af7e4028268b324ce77b300274bfd968a47a5951228fb361a68.png" src="_images/b26fc14f23ee0af7e4028268b324ce77b300274bfd968a47a5951228fb361a68.png" />
 </div>
 </div>
 <p>Sometimes, for a given nucleus, there are multiple rates that consume it, but one might be much more dominant than the others.  We can set a threshold to old show the rates consuming a nucleus if they are within a desired factor of the fastest rate using <code class="docutils literal notranslate"><span class="pre">consuming_rate_threshold</span></code>:</p>
@@ -709,7 +728,7 @@ and composition (as a <a class="reference internal" href="pynucastro.networks.ra
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/7302fac97675c57dd7663197538d3727ca43fb0711180a583e92519aecf3b036.png" src="_images/7302fac97675c57dd7663197538d3727ca43fb0711180a583e92519aecf3b036.png" />
+<img alt="_images/02e606b66aa42923e8b9054918413f3e8c6fdd730a514ce168296f546c045a8b.png" src="_images/02e606b66aa42923e8b9054918413f3e8c6fdd730a514ce168296f546c045a8b.png" />
 </div>
 </div>
 </section>
@@ -725,7 +744,24 @@ and composition (as a <a class="reference internal" href="pynucastro.networks.ra
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/72f406816bfd56042cfb7a418a42533dfa6082f64ea02e19ea1ddf755ccd232d.png" src="_images/72f406816bfd56042cfb7a418a42533dfa6082f64ea02e19ea1ddf755ccd232d.png" />
+<img alt="_images/c2f7d71f187330b92af5539832ef97a642465c4d42b9cfa1cc68c9c66a8eee05.png" src="_images/c2f7d71f187330b92af5539832ef97a642465c4d42b9cfa1cc68c9c66a8eee05.png" />
+</div>
+</div>
+</section>
+<section id="showing-abundances">
+<h2>Showing abundances<a class="headerlink" href="#showing-abundances" title="Link to this heading">#</a></h2>
+<p>We can also color the nodes by abundance (mass fraction):</p>
+<div class="cell tag_nbval-ignore-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">color_nodes_by_abundance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">node_size</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/42e08881633f7feda2b46eeb52d63ee276d772890d199acfbfdf279beb6c752a.png" src="_images/42e08881633f7feda2b46eeb52d63ee276d772890d199acfbfdf279beb6c752a.png" />
 </div>
 </div>
 </section>
@@ -741,7 +777,7 @@ and composition (as a <a class="reference internal" href="pynucastro.networks.ra
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/8ffa2459516a1b3ff2e2aa876b4026f86e5c696a9e16840c67e12feef8b8f3d7.png" src="_images/8ffa2459516a1b3ff2e2aa876b4026f86e5c696a9e16840c67e12feef8b8f3d7.png" />
+<img alt="_images/1f40651172c8a12b9945fc9cd0de82d039610fd003a5507d8fea63d907d8a7e6.png" src="_images/1f40651172c8a12b9945fc9cd0de82d039610fd003a5507d8fea63d907d8a7e6.png" />
 </div>
 </div>
 <p>Any edge can be labelled by passing a dictionary keyed by a tuple of the nodes in the network.</p>
@@ -762,7 +798,7 @@ and composition (as a <a class="reference internal" href="pynucastro.networks.ra
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/30a3965915337306bfea848e94297ca4af5d65c70a688f1816fb8c48aa157416.png" src="_images/30a3965915337306bfea848e94297ca4af5d65c70a688f1816fb8c48aa157416.png" />
+<img alt="_images/b4468ca09a747b3dfe4835531647379ba9b6589fdbdb5943bedb4a24278cb942.png" src="_images/b4468ca09a747b3dfe4835531647379ba9b6589fdbdb5943bedb4a24278cb942.png" />
 </div>
 </div>
 </section>
@@ -778,7 +814,7 @@ and composition (as a <a class="reference internal" href="pynucastro.networks.ra
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/84ef912dd80d7de471231192e9eb413db429a29718c934cdeb4a1882195e2b69.png" src="_images/84ef912dd80d7de471231192e9eb413db429a29718c934cdeb4a1882195e2b69.png" />
+<img alt="_images/210cce79993b8b21cc273fe17f4c9b2fff4c008d3bfcbe3fb2cb7926e372fcc6.png" src="_images/210cce79993b8b21cc273fe17f4c9b2fff4c008d3bfcbe3fb2cb7926e372fcc6.png" />
 </div>
 </div>
 <p>We can also highlight rates using the <code class="docutils literal notranslate"><span class="pre">highlight_filter_function</span></code> mechanism.  This takes a function that operates on a rate and returns <code class="docutils literal notranslate"><span class="pre">True</span></code> if we wish to highlight the rate (i.e., as if we used a highlighter marker over the line).</p>
@@ -792,7 +828,7 @@ and composition (as a <a class="reference internal" href="pynucastro.networks.ra
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/8e1ceaa736483d0144f89920feff1dfeeb08333fba33f8c868d75dd63cf6b02e.png" src="_images/8e1ceaa736483d0144f89920feff1dfeeb08333fba33f8c868d75dd63cf6b02e.png" />
+<img alt="_images/c88b750296350707cb277a1663541a59ec78a47741126ea55afa042773e711af.png" src="_images/c88b750296350707cb277a1663541a59ec78a47741126ea55afa042773e711af.png" />
 </div>
 </div>
 </section>
@@ -963,6 +999,7 @@ where</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hiding-links">Hiding links</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hiding-unimportant-rates">Hiding unimportant rates</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#curved-edges">Curved edges</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#showing-abundances">Showing abundances</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#legend-and-labels">Legend and labels</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#filters">Filters</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-the-jacobian">Plotting the Jacobian</a></li>

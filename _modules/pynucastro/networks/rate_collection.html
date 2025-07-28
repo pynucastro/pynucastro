@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.6.0.post67+g8b614bce3 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.6.0.post68+gb49967ee8 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=1d2c038f"></script>
+    <script src="../../../_static/documentation_options.js?v=5a7f5acb"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -2817,7 +2817,9 @@ document.write(`
              <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_small_ydot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">consuming_rate_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-             <span class="n">node_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s2">&quot;#444444&quot;</span><span class="p">,</span> <span class="n">node_shape</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+             <span class="n">node_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+             <span class="n">node_color</span><span class="o">=</span><span class="s2">&quot;#444444&quot;</span><span class="p">,</span> <span class="n">node_shape</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+             <span class="n">color_nodes_by_abundance</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">node_abundance_cutoff</span><span class="o">=</span><span class="mf">1.e-10</span><span class="p">,</span>
              <span class="n">nuclei_custom_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">curved_edges</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">N_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Z_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -2826,7 +2828,7 @@ document.write(`
              <span class="n">edge_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">highlight_filter_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">nucleus_filter_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rate_filter_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-             <span class="n">legend_coord</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+             <span class="n">legend_coord</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_to_cbar_ratio</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a plot of the network structure showing the links between</span>
 <span class="sd">        nuclei.  If a full set of thermodymamic conditions are</span>
 <span class="sd">        provided (rho, T, comp), then the links are colored by rate</span>
@@ -2870,6 +2872,12 @@ document.write(`
 <span class="sd">            a dict of the form {Nucleus: str} that provides alternate</span>
 <span class="sd">            labels for nodes (instead of using the `pretty` attribute</span>
 <span class="sd">            of the Nucleus.</span>
+<span class="sd">        color_nodes_by_abundance : bool</span>
+<span class="sd">            if true, the color of the nodes is set via</span>
+<span class="sd">            log(X) for each nucleus.  Note: this cannot be</span>
+<span class="sd">            used with a callable for ``node_color``.</span>
+<span class="sd">        node_abundance_cutoff : float</span>
+<span class="sd">            the lower cutoff value used for coloring nodes by abundance.</span>
 <span class="sd">        curved_edges : bool</span>
 <span class="sd">            do we use arcs to connect the nodes?</span>
 <span class="sd">        N_range : Iterable</span>
@@ -2904,18 +2912,29 @@ document.write(`
 <span class="sd">        rate_filter_function : Callable</span>
 <span class="sd">            a function that takes a ``Rate`` object</span>
 <span class="sd">            and returns True or False if it is to be shown as an edge.</span>
+<span class="sd">        plot_to_cbar_ratio : float</span>
+<span class="sd">            ratio of main axes to colorbar size</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        matplotlib.figure.Figure</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                         <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">dpi</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">dpi</span><span class="p">))</span>
 
-        <span class="c1">#divider = make_axes_locatable(ax)</span>
-        <span class="c1">#cax = divider.append_axes(&#39;right&#39;, size=&#39;15%&#39;, pad=0.05)</span>
-
-        <span class="c1">#ax.plot([0, 0], [8, 8], &#39;b-&#39;)</span>
+        <span class="c1"># we&#39;ll use a grid spec of 2 x 2.  We can merge columns / rows</span>
+        <span class="c1"># as needed to give us the flexibility to have colorbars</span>
+        <span class="k">if</span> <span class="n">rotated</span><span class="p">:</span>
+            <span class="n">gs</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                                       <span class="n">height_ratios</span><span class="o">=</span><span class="p">[</span><span class="n">plot_to_cbar_ratio</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">)</span>
+            <span class="c1"># plot is the top row, colorbar(s) will be the bottom</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gs</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                                       <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="n">plot_to_cbar_ratio</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">)</span>
+            <span class="c1"># plot is the left column, colorbar(s) will be on the right</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
 
         <span class="c1"># in general, we do not show p, n, alpha,</span>
         <span class="c1"># unless we have p + p, 3-a, etc.</span>
@@ -2931,8 +2950,17 @@ document.write(`
         <span class="n">node_nuclei</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
 
+        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">node_color</span><span class="p">)</span> <span class="ow">and</span> <span class="n">color_nodes_by_abundance</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;setting node_color to a callable and using color_nodes_by_abundance together is not supported.&quot;</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">node_color</span><span class="p">):</span>
             <span class="n">get_node_color</span> <span class="o">=</span> <span class="n">node_color</span>
+        <span class="k">elif</span> <span class="n">color_nodes_by_abundance</span><span class="p">:</span>
+            <span class="n">nuc_norm</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">node_abundance_cutoff</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">nuc_sm</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">nuc_norm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">colormaps</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">&quot;magma&quot;</span><span class="p">))</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">get_node_color</span><span class="p">(</span><span class="n">_nuc</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">nuc_sm</span><span class="o">.</span><span class="n">to_rgba</span><span class="p">(</span><span class="n">comp</span><span class="p">[</span><span class="n">_nuc</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">def</span><span class="w"> </span><span class="nf">get_node_color</span><span class="p">(</span><span class="n">_nuc</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">node_color</span>
@@ -2988,8 +3016,23 @@ document.write(`
                                <span class="n">node_color</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
                                <span class="n">node_shape</span><span class="o">=</span><span class="n">node_shape</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="n">node_size</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">color_nodes_by_abundance</span><span class="p">:</span>
+            <span class="n">node_font_color</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">get_node_color</span><span class="p">(</span><span class="n">n</span><span class="p">)[:</span><span class="mi">3</span><span class="p">]</span>
+                    <span class="c1"># simple rgb -&gt; luminance conversion</span>
+                    <span class="c1"># see: https://en.wikipedia.org/wiki/Luma_(video)</span>
+                    <span class="n">luminance</span> <span class="o">=</span> <span class="mf">0.2126</span> <span class="o">*</span> <span class="n">r</span> <span class="o">+</span> <span class="mf">0.7152</span> <span class="o">*</span> <span class="n">g</span> <span class="o">+</span> <span class="mf">0.0722</span> <span class="o">*</span> <span class="n">b</span>
+                    <span class="n">node_font_color</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;black&quot;</span> <span class="k">if</span> <span class="n">luminance</span> <span class="o">&gt;</span> <span class="mf">0.5</span> <span class="k">else</span> <span class="s2">&quot;white&quot;</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="c1"># hidden nucleus</span>
+                    <span class="n">node_font_color</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;white&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">node_font_color</span> <span class="o">=</span> <span class="s2">&quot;w&quot;</span>
+
         <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_labels</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span>   <span class="c1"># label the name of element at the correct position</span>
-                                <span class="n">font_size</span><span class="o">=</span><span class="n">node_font_size</span><span class="p">,</span> <span class="n">font_color</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+                                <span class="n">font_size</span><span class="o">=</span><span class="n">node_font_size</span><span class="p">,</span> <span class="n">font_color</span><span class="o">=</span><span class="n">node_font_color</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 
         <span class="c1"># now we&#39;ll draw edges in several groups</span>
 
@@ -3065,20 +3108,42 @@ document.write(`
                                          <span class="n">font_size</span><span class="o">=</span><span class="n">node_font_size</span><span class="p">,</span>
                                          <span class="n">edge_labels</span><span class="o">=</span><span class="n">edge_labels</span><span class="p">)</span>
 
+        <span class="c1"># figure out the colorbar axes -- we have a single colorbar if we are doing the</span>
+        <span class="c1"># rate_ydots.  We have 2 colorbars if we are also doing the color_nodes_by_abundance</span>
+        <span class="n">rate_cb_ax</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">node_cb_ax</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">rate_ydots</span> <span class="ow">and</span> <span class="n">color_nodes_by_abundance</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rotated</span><span class="p">:</span>
+                <span class="n">rate_cb_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+                <span class="n">node_cb_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rate_cb_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+                <span class="n">node_cb_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">rate_ydots</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rotated</span><span class="p">:</span>
+                <span class="n">rate_cb_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rate_cb_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">orientation</span> <span class="o">=</span> <span class="s2">&quot;vertical&quot;</span>
+        <span class="k">if</span> <span class="n">rotated</span><span class="p">:</span>
+            <span class="n">orientation</span> <span class="o">=</span> <span class="s2">&quot;horizontal&quot;</span>
+
         <span class="k">if</span> <span class="n">rate_ydots</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">pc</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">collections</span><span class="o">.</span><span class="n">PatchCollection</span><span class="p">(</span><span class="n">real_edges_lc</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">)</span>
             <span class="n">pc</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="n">real_weights</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">rotated</span><span class="p">:</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">pc</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;log10(rate)&quot;</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">pc</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;log10(rate)&quot;</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">pc</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">rate_cb_ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;log10(rate)&quot;</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="n">orientation</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">color_nodes_by_abundance</span><span class="p">:</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">nuc_sm</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">node_cb_ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;log10(X)&quot;</span><span class="p">,</span>
+                         <span class="n">orientation</span><span class="o">=</span><span class="n">orientation</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">rotated</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$N$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;large&quot;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$Z$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;large&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$N$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;large&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$Z$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;large&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$Z$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;large&quot;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$A - 2Z$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;large&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$Z$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;large&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$A - 2Z$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;large&quot;</span><span class="p">)</span>
 
         <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
@@ -3129,14 +3194,11 @@ document.write(`
                     <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">legend_coord</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">dN</span><span class="o">+</span><span class="n">eps</span><span class="p">,</span> <span class="n">legend_coord</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">dZ</span><span class="o">+</span><span class="n">eps</span><span class="p">,</span>
                             <span class="n">label</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">)</span>
 
-        <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">dpi</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">dpi</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">outfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">)</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">fig</span></div>
 
@@ -3413,11 +3475,11 @@ document.write(`
 <span class="sd">        cbar_label : str</span>
 <span class="sd">            Colorbar label.</span>
 <span class="sd">        cbar_bounds : list, tuple</span>
-<span class="sd">             Explicit colorbar bounds.</span>
+<span class="sd">            Explicit colorbar bounds.</span>
 <span class="sd">        cbar_format : str, matplotlib.ticker.Formatter</span>
-<span class="sd">             Format string or formatter object for the colorbar ticks.</span>
+<span class="sd">            Format string or formatter object for the colorbar ticks.</span>
 <span class="sd">        cbar_ticks : int</span>
-<span class="sd">             Number of ticks to use on the colorbar</span>
+<span class="sd">            Number of ticks to use on the colorbar</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
