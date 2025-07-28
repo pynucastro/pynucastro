@@ -2,6 +2,11 @@
 
 ## 2.7.0
 
+  * Sort the edges before drawing network plots (#1045)
+
+  * Include the pynucastro version information in
+    `AmrexAstroCxxNetwork` output (#1028)
+
   * Updated `README.md` (#1065)
 
   * Improved error messages for `DerivedRate` (#1064)
