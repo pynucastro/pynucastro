@@ -433,7 +433,7 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     amrex::Real dsneutdt{};
 #ifdef NEUTRINOS
     amrex::Real sneut, dsneutdd, dsnuda, dsnudz;
-    amrex::Real pair, phot, plas, brem;
+    amrex::Real pair{}, phot{}, plas{}, brem{};
     constexpr int do_derivatives{1};
     neutrino_cooling<do_derivatives>(state.T, state.rho, state.abar, state.zbar,
                                      sneut, dsneutdt, dsneutdd, dsnuda, dsnudz,
