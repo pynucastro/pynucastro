@@ -2437,7 +2437,7 @@ class RateCollection:
         # plot invisible rates, rates that are below ydot_cutoff_value
         invis_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == -1]
 
-        # if both the forward and reverse are invisible, then plot without cuves
+        # if both the forward and reverse are invisible, then plot without curves
         invis_straight = [(u, v) for u, v in invis_edges if (v, u) in invis_edges]
         invis_curved = [(u, v) for u, v in invis_edges if (v, u) not in invis_edges]
 
