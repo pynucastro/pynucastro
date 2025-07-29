@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.simple_cxx_network module &#8212; pynucastro 2.6.0.post69+g9da12b93b documentation</title>
+    <title>Fermi-Dirac Integrals &#8212; pynucastro 2.6.0.post69+g9da12b93b documentation</title>
   
   
   
@@ -46,11 +46,13 @@
     <script src="_static/copybutton.js?v=eaa7b67c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'pynucastro.networks.simple_cxx_network';</script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'fermi-integrals';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pynucastro.networks.sympy_network_support module" href="pynucastro.networks.sympy_network_support.html" />
-    <link rel="prev" title="pynucastro.networks.rate_collection module" href="pynucastro.networks.rate_collection.html" />
+    <link rel="next" title="Neutrino Cooling" href="neutrino-cooling.html" />
+    <link rel="prev" title="Creating an NSE table" href="nse_table.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -220,8 +222,8 @@
 <li class="toctree-l1"><a class="reference internal" href="nse_table.html">Creating an NSE table</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Thermodynamics</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="fermi-integrals.html">Fermi-Dirac Integrals</a></li>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Fermi-Dirac Integrals</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
 <ul class="nav bd-sidenav">
@@ -255,11 +257,11 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/supernova-lightcurve.html">A Supernova Lightcurve</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="modules.html">API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.constants.html">pynucastro.constants package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.constants.constants.html">pynucastro.constants.constants module</a></li>
 </ul>
@@ -270,7 +272,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.quadrature_weights.html">pynucastro.eos.quadrature_weights module</a></li>
 </ul>
 </details></li>
-<li class="toctree-l3 current active has-children"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html">pynucastro.networks.amrexastro_cxx_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.base_cxx_network.html">pynucastro.networks.base_cxx_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.fortran_network.html">pynucastro.networks.fortran_network module</a></li>
@@ -279,7 +281,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.numpy_network.html">pynucastro.networks.numpy_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.python_network.html">pynucastro.networks.python_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.rate_collection.html">pynucastro.networks.rate_collection module</a></li>
-<li class="toctree-l4 current active"><a class="current reference internal" href="#">pynucastro.networks.simple_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.simple_cxx_network.html">pynucastro.networks.simple_cxx_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.sympy_network_support.html">pynucastro.networks.sympy_network_support module</a></li>
 </ul>
 </details></li>
@@ -408,7 +410,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/pynucastro.networks.simple_cxx_network.rst?plain=1" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/fermi-integrals.ipynb?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -425,7 +427,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/pynucastro.networks.simple_cxx_network.rst" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/fermi-integrals.ipynb" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -442,7 +444,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fpynucastro.networks.simple_cxx_network.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Ffermi-integrals.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -472,7 +474,7 @@
       
       
       
-      <li><a href="_sources/pynucastro.networks.simple_cxx_network.rst" target="_blank"
+      <li><a href="_sources/fermi-integrals.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -482,7 +484,7 @@
 <span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="btn__text-container">.rst</span>
+<span class="btn__text-container">.ipynb</span>
 </a>
 </li>
       
@@ -556,7 +558,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>pynucastro.networks.simple_cxx_network module</h1>
+    <h1>Fermi-Dirac Integrals</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -566,7 +568,8 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork"><code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-the-integral">Computing the integral</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trends">Trends</a></li>
 </ul>
             </nav>
         </div>
@@ -578,16 +581,171 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-pynucastro.networks.simple_cxx_network">
-<span id="pynucastro-networks-simple-cxx-network-module"></span><h1>pynucastro.networks.simple_cxx_network module<a class="headerlink" href="#module-pynucastro.networks.simple_cxx_network" title="Link to this heading">#</a></h1>
-<p>A simple C++ reaction network for integrating into other C++ codes</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="pynucastro.networks.simple_cxx_network.SimpleCxxNetwork">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.networks.simple_cxx_network.</span></span><span class="sig-name descname"><span class="pre">SimpleCxxNetwork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/simple_cxx_network.html#SimpleCxxNetwork"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="pynucastro.networks.base_cxx_network.html#pynucastro.networks.base_cxx_network.BaseCxxNetwork" title="pynucastro.networks.base_cxx_network.BaseCxxNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCxxNetwork</span></code></a></p>
-<p>A basic C++ network.</p>
-</dd></dl>
+  <section class="tex2jax_ignore mathjax_ignore" id="fermi-dirac-integrals">
+<h1>Fermi-Dirac Integrals<a class="headerlink" href="#fermi-dirac-integrals" title="Link to this heading">#</a></h1>
+<p>Degenerate matter follows <a class="reference external" href="https://en.wikipedia.org/wiki/Fermi%E2%80%93Dirac_statistics">Fermi-Dirac statistics</a>,
+with the distribution function taking the form:</p>
+<div class="math notranslate nohighlight">
+\[n(p) = \frac{g}{h^3} \frac{1}{e^{(\mathcal{E}(p) + m_e c^2 - \mu)/k_BT} + 1}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{E}(p)\)</span> is the kinetic energy of a single particle, <span class="math notranslate nohighlight">\(m_e c^2\)</span> is the rest mass (assuming electrons, <span class="math notranslate nohighlight">\(m_e\)</span>, here),
+<span class="math notranslate nohighlight">\(\mu\)</span> is the chemical potential, and <span class="math notranslate nohighlight">\(g\)</span> is the degeneracy of states (<span class="math notranslate nohighlight">\(g = 2\)</span> for electrons).</p>
+<p>We can write this, defining the degeneracy parameter <span class="math notranslate nohighlight">\(\eta = (\mu - m_e c^2)/k_BT\)</span>, as:</p>
+<div class="math notranslate nohighlight">
+\[n(p) = \frac{2}{h^3} \frac{1}{e^{(\mathcal{E}(p)/k_BT - \eta)} + 1}\]</div>
+<p>To get the number density of electrons, we would integrate over momentum-space (in spherical coordinates), giving:</p>
+<div class="math notranslate nohighlight">
+\[n_e = \frac{8\pi}{h^3} \int_0^\infty \frac{p^2}{e^{(\mathcal{E}(p)/k_BT - \eta)} + 1} dp\]</div>
+<p>and we can express the relation between energy and momentum (using a relativistic expression) as:</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{E}(p) = m_e c^2 \left [ \left (1 + \left(\frac{p}{m_e c}\right )^2 \right )^{1/2} - 1 \right ]\]</div>
+<p>Traditionally, we do the integral in terms of dimensionless energy, <span class="math notranslate nohighlight">\(x \equiv \mathcal{E}/k_BT\)</span>, which requires us to express <span class="math notranslate nohighlight">\(p\)</span> in terms of <span class="math notranslate nohighlight">\(\mathcal{E}\)</span> as:</p>
+<div class="math notranslate nohighlight">
+\[p = \frac{1}{c} \left [\mathcal{E}^{1/2} (\mathcal{E} + 2 m_e c^2)^{1/2}\right ]\]</div>
+<p>Defining</p>
+<div class="math notranslate nohighlight">
+\[\beta = \frac{k_B T}{m_e c^2}\]</div>
+<p>and working through the change in variables, we have</p>
+<div class="math notranslate nohighlight">
+\[n_e = \frac{8 \sqrt{2} \pi}{h^3} m_e^3 c^3 \beta^{3/2}
+   \left [ \underbrace{\int_0^\infty \frac{x^{1/2} \left(1 + \beta x/2 \right )^{1/2}}{e^{x-\eta} + 1} dx}_{F_{1/2}(\eta, \beta)} +
+           \beta \underbrace{\int_0^\infty \frac{x^{3/2} \left(1 + \beta x/2 \right )^{1/2}}{e^{x-\eta} + 1} dx}_{F_{3/2}(\eta, \beta)}
+   \right ]\]</div>
+<p>where the <span class="math notranslate nohighlight">\(F_k(\eta, \beta)\)</span> are called the Fermi-Dirac integrals.  You can see this form, for example,
+in <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/1999ApJS..125..277T/abstract">Timmes &amp; Arnett 1999</a> (although note that the <span class="math notranslate nohighlight">\(\beta\)</span> factor in front of <span class="math notranslate nohighlight">\(F_{3/2}\)</span> is missing there).</p>
+<p>The <a class="reference internal" href="pynucastro.eos.fermi_integrals.html#pynucastro.eos.fermi_integrals.FermiIntegral" title="pynucastro.eos.fermi_integrals.FermiIntegral"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FermiIntegral</span></code></a> class can
+compute general Fermi-Dirac integrals of the form:</p>
+<div class="math notranslate nohighlight">
+\[F_k(\eta, \beta) = \int_0^\infty
+           \frac{x^k [1 + \beta x/2]^{1/2}}{e^{x-\eta} + 1} dx\]</div>
+<p>where <span class="math notranslate nohighlight">\(k\)</span> is the index and <span class="math notranslate nohighlight">\(\eta\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> are defined as above.</p>
+<p><span class="math notranslate nohighlight">\(\eta \gg 1\)</span> means that we are degenerate, while <span class="math notranslate nohighlight">\(\eta \ll -1\)</span> is the ideal gas regime.  Likewise, <span class="math notranslate nohighlight">\(\beta \rightarrow 0\)</span> implies non-relativisitic while <span class="math notranslate nohighlight">\(\beta \rightarrow \infty\)</span> is extreme-relativistic.</p>
+<p>Typically, in stellar conditions, we can encounter <span class="math notranslate nohighlight">\(10^{-6} \le \beta \le 10^4\)</span> and <span class="math notranslate nohighlight">\(-100 \le \eta \le 10^4\)</span>.</p>
+<p>pynucastro computes this integral using the method of <span id="id1">Gong <em>et al.</em> [<a class="reference internal" href="zreferences.html#id33" title="Zhigang Gong, Ladislav Zejda, Werner Däppen, and Josep M. Apari cio. Generalized Fermi–Dirac functions and derivatives: properti es and evaluation. Computer Physics Communications, 136(3):294–309, May 2001. URL: https://linkinghub.elsevier.com/retrieve/pii/S001046550100145X (visited on 2025-02-12), doi:10.1016/S0010-4655(01)00145-X.">2001</a>]</span>, which breaks the integration into 4 parts, using Legendre quadrature for the first 3 and Laguerre quadrature for the last.  Additionally, it constructs the integral in the first part in terms of <span class="math notranslate nohighlight">\(x^2\)</span> to avoid a singularity at the origin.</p>
+<section id="computing-the-integral">
+<h2>Computing the integral<a class="headerlink" href="#computing-the-integral" title="Link to this heading">#</a></h2>
+<p>We need to specify <span class="math notranslate nohighlight">\(k\)</span>, <span class="math notranslate nohighlight">\(\eta\)</span>, and <span class="math notranslate nohighlight">\(\beta\)</span> upon creation of a <code class="docutils literal notranslate"><span class="pre">FermiIntegral</span></code>, and then we can evaluate it (and optionally its derivatives):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">eta</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">beta</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">F</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">FermiIntegral</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+<span class="n">F</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>F        =          11206.29935
+dF/dη    =          223.8302928
+dF/dβ    =          558.0936627
+d²F/dη²  =          2.236069094
+d²F/dηdβ =           11.1691763
+d²F/dβ²  =         -27.79487092
+</pre></div>
+</div>
+</div>
+</div>
+<p>First and second derivatives can be disabled via the parameters to <a class="reference internal" href="pynucastro.eos.fermi_integrals.html#pynucastro.eos.fermi_integrals.FermiIntegral.evaluate" title="pynucastro.eos.fermi_integrals.FermiIntegral.evaluate"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate</span></code></a>.</p>
+</section>
+<section id="trends">
+<h2>Trends<a class="headerlink" href="#trends" title="Link to this heading">#</a></h2>
+<p>We can explore how <span class="math notranslate nohighlight">\(F_k\)</span> varies with <span class="math notranslate nohighlight">\(\eta\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>First, for fixed <span class="math notranslate nohighlight">\(\eta\)</span>, let’s see the variation with <span class="math notranslate nohighlight">\(\beta\)</span></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">Fs</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">betas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">eta</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1000</span><span class="p">]:</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">beta</span> <span class="ow">in</span> <span class="n">betas</span><span class="p">:</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">FermiIntegral</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">do_first_derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">do_second_derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">F</span><span class="p">)</span>
 
+    <span class="n">Fs</span><span class="p">[</span><span class="n">eta</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_nbval-ignore-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">Fs</span><span class="p">:</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">betas</span><span class="p">,</span> <span class="n">Fs</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">rf</span><span class="s2">&quot;$\eta$ = </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\beta$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$F_{1/2}$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/8ecad7ea47a6324b0c09e189e234c6b270d393e4871ade37e0e4c8500c9fbca8.png" src="_images/8ecad7ea47a6324b0c09e189e234c6b270d393e4871ade37e0e4c8500c9fbca8.png" />
+</div>
+</div>
+<p>Now for fixed <span class="math notranslate nohighlight">\(\beta\)</span>, let’s see the variation with <span class="math notranslate nohighlight">\(\eta\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">etam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">21</span><span class="p">)</span>
+<span class="n">etap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">41</span><span class="p">)</span>
+<span class="n">etas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="o">-</span><span class="n">etam</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">etap</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">Fs</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">beta</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">eta</span> <span class="ow">in</span> <span class="n">etas</span><span class="p">:</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">FermiIntegral</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">do_first_derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">do_second_derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">F</span><span class="p">)</span>
+
+    <span class="n">Fs</span><span class="p">[</span><span class="n">beta</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_nbval-ignore-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">Fs</span><span class="p">:</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">etas</span><span class="p">,</span> <span class="n">Fs</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">rf</span><span class="s2">&quot;$\beta$ = </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;symlog&quot;</span><span class="p">,</span> <span class="n">linthresh</span><span class="o">=</span><span class="mf">1.e-2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\eta$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$F_{1/2}$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/76f4b236c07ba53f0727cb169481d53e90f088456fd20dbf66a53b5346e06872.png" src="_images/76f4b236c07ba53f0727cb169481d53e90f088456fd20dbf66a53b5346e06872.png" />
+</div>
+</div>
+</section>
 </section>
 
 
@@ -602,20 +760,20 @@ document.write(`
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="pynucastro.networks.rate_collection.html"
+       href="nse_table.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">pynucastro.networks.rate_collection module</p>
+        <p class="prev-next-title">Creating an NSE table</p>
       </div>
     </a>
     <a class="right-next"
-       href="pynucastro.networks.sympy_network_support.html"
+       href="neutrino-cooling.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pynucastro.networks.sympy_network_support module</p>
+        <p class="prev-next-title">Neutrino Cooling</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -635,7 +793,8 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork"><code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-the-integral">Computing the integral</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trends">Trends</a></li>
 </ul>
   </nav></div>
 
