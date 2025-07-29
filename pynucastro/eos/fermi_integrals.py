@@ -20,6 +20,8 @@ import numpy as np
 from .quadrature_weights import w_lag, w_leg, x_lag, x_leg
 
 
+MAX_EXPONENT = np.trunc(np.log(np.finfo(np.float64).max))
+
 class BreakPoints:
     """The break points used in splitting the integral from [0, inf] into
     4 separate integrals over smaller domains.  These are described in
@@ -140,18 +142,18 @@ def _kernel_p(x, k, eta, beta,
     # this is 1.0 / (2.0 + exp(-delta) + exp(delta)
     # which is 1.0 / (2.0 * (1.0 + cosh(delta))
     inv_cosh_term = 0.0
-    if abs(delta) < 700:
+    if abs(delta) < MAX_EXPONENT:
         inv_cosh_term = 0.5 / (1.0 + np.cosh(delta))
 
     # this is (exp(xsq - eta) - 1.0) / (exp(xsq - eta) + 1.0)
     tanh_half_delta = np.tanh(0.5 * delta)
 
-    testm = delta < -700.0
+    testm = delta < -MAX_EXPONENT
     if testm:
         denomi = 1.0
     else:
         #inv_exp_delta = np.exp(-delta)
-        if delta > 700:
+        if delta > MAX_EXPONENT:
             denomi = 0.0
         else:
             #inv_exp_delta = 1.0 / np.exp(delta)
@@ -216,17 +218,17 @@ def _kernel_E(x, k, eta, beta,
     # this is 1.0 / (2.0 + exp(-delta) + exp(delta)
     # which is 1.0 / (2.0 * (1.0 + cosh(delta))
     inv_cosh_term = 0.0
-    if abs(delta) < 700:
+    if abs(delta) < MAX_EXPONENT:
         inv_cosh_term = 0.5 / (1.0 + np.cosh(delta))
 
     # this is (exp(x - eta) - 1.0) / (exp(x - eta) + 1.0)
     tanh_half_delta = np.tanh(0.5 * delta)
 
-    testm = x - eta < -700
+    testm = x - eta < -MAX_EXPONENT
     if testm:
         denomi = 1.0
     else:
-        if delta > 700.0:
+        if delta > MAX_EXPONENT:
             denomi = 0.0
         else:
             inv_exp_delta = np.exp(-delta)
