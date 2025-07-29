@@ -96,6 +96,14 @@ codes.
 
 .. toctree::
    :maxdepth: 1
+   :caption: Thermodynamics
+   :hidden:
+
+   fermi-integrals
+   electron-eos
+
+.. toctree::
+   :maxdepth: 1
    :caption: Plasma Neutrinos
    :hidden:
 
