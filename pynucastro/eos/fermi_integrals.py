@@ -19,8 +19,8 @@ import numpy as np
 
 from .quadrature_weights import w_lag, w_leg, x_lag, x_leg
 
-
 MAX_EXPONENT = np.trunc(np.log(np.finfo(np.float64).max))
+
 
 class BreakPoints:
     """The break points used in splitting the integral from [0, inf] into
