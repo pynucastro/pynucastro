@@ -2,6 +2,9 @@
 
 ## 2.7.0
 
+  * add a `color_nodes_by_abundance` option to `RateCollection.plot()`
+    (#1058)
+
   * Sort the edges before drawing network plots (#1045)
 
   * Include the pynucastro version information in
@@ -18,7 +21,7 @@
   * Make library warnings more informative (#1049)
 
   * add a class that computes the Fermi-Dirac integrals (#1039, #1040,
-    #1041, #1047, #1057, #1068, #1070)
+    #1041, #1046, #1047, #1057, #1068, #1070)
 
   * added a new `network_helper` function to make simple networks
     more easily (#1025)
