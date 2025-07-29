@@ -1,5 +1,64 @@
 # Changelog
 
+## 2.7.0
+
+  * add a `color_nodes_by_abundance` option to `RateCollection.plot()`
+    (#1058)
+
+  * Sort the edges before drawing network plots (#1045)
+
+  * Include the pynucastro version information in
+    `AmrexAstroCxxNetwork` output (#1028)
+
+  * Updated `README.md` (#1065)
+
+  * Improved error messages for `DerivedRate` (#1064)
+
+  * Removed `setup.py` and `setup.cfg` (#1056)
+
+  * Added pydocstyle CI (#1052)
+
+  * Make library warnings more informative (#1049)
+
+  * add a class that computes the Fermi-Dirac integrals (#1039, #1040,
+    #1041, #1046, #1047, #1057, #1068, #1070)
+
+  * added a new `network_helper` function to make simple networks
+    more easily (#1025)
+
+  * fix some Sphinx issues (#1017, #1024)
+
+  * `AmrexAstroCxxNetwork` C++ cleaning and syncing with Microphysics
+    (#993, #1003, #1009, #1010, #1020, #1022, #1036, #1038)
+
+  * update CI due to Microphysics changes (#1021, #1023, #1029, #1050)
+
+  * `DerivedRate` now works on a `ModifiedRate` (#1011, #1012).
+
+  * `DerivedRate` is now consistent with NSE to machine precision
+    (#1007)
+
+  * `get_nuclei_in_range` is now more flexible in inputs (#1004)
+
+  * The weak rates from Oda et al. have been added (#1005)
+
+  * Creating a `Nucleus` now works with strings of the form "56ni",
+    and also fixes some regex issues (#998, #1016)
+
+  * A new method for evaluating the stiffness in a network was added
+    (#1006, #1008)
+
+  * docstring updates (#978, #989, #994, #1042, #1067)
+
+  * a new method for exporting a NetworkX graph from a network was
+    added (#990, #991)
+
+  * general documentation fixes and API links (#980, #982, #984, #985,
+    #987, #988, #1026, #1030, #1031, #1032, #1033, #1034, #1044,
+    #1061, #1062, #1063, #1071, #1072, #1073, #1074)
+
+  * add CI testing on MacOS (#1035)
+
 ## 2.6.0
 
   * Added a `summary()` method to `RateCollection` that gives details
