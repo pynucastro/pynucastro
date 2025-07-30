@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.7.1
+
+  * fix a numba import for conda-forge (#1078)
+
 ## 2.7.0
 
   * add a `color_nodes_by_abundance` option to `RateCollection.plot()`
