@@ -56,7 +56,7 @@ The main features are:
   * The ability to write out python or C++ code needed to integrate
     the network.
 
-  * Additional physic methods for thermal neutrino sources and
+  * Additional physics methods for thermal neutrino sources and
     Fermi-Dirac integrals.
 
 ## Documentation
