@@ -16,7 +16,7 @@ def doit(clfile):
         for line in cl:
             if g := tag.match(line):
                 url = rf"{RELEASE_URL_BASE}{g.group(2)}"
-                response = requests.get(url)
+                response = requests.get(url, timeout=30)
                 if response.status_code < 400:
                     new_line = re.sub(tag, rf"## [\g<2>]({RELEASE_URL_BASE}\g<2>)", line)
                     print(new_line)
