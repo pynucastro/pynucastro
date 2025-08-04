@@ -1,7 +1,7 @@
 import argparse
 import re
-import requests
 
+import requests
 
 PR_URL_BASE = r"https://github.com/pynucastro/pynucastro/pull/"
 RELEASE_URL_BASE = r"https://github.com/pynucastro/pynucastro/releases/tag/"
@@ -9,6 +9,7 @@ RELEASE_URL_BASE = r"https://github.com/pynucastro/pynucastro/releases/tag/"
 
 pr = re.compile(r"(\#)(\d+)")
 tag = re.compile(r"(\#\# )(\d\.\d+\.\d+)")
+
 
 def doit(clfile):
 
@@ -24,6 +25,7 @@ def doit(clfile):
 
             new_line = re.sub(pr, rf"[\g<0>]({PR_URL_BASE}\g<2>)", line)
             print(new_line, end="")
+
 
 if __name__ == "__main__":
 
