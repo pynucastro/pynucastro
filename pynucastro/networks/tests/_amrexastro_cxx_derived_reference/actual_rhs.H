@@ -266,11 +266,9 @@ void actual_rhs (burn_t& state, amrex::Array1D<amrex::Real, 1, neqs>& ydot)
 #ifdef NEUTRINOS
     constexpr int do_derivatives{0};
     amrex::Real dsneutdt{}, dsneutdd{}, dsnuda{}, dsnudz{};
-    amrex::Real pair{}, phot{}, plas{}, brem{};
 
     neutrino_cooling<do_derivatives>(state.T, state.rho, state.abar, state.zbar,
-                                     sneut, dsneutdt, dsneutdd, dsnuda, dsnudz,
-                                     pair, phot, plas, brem);
+                                     sneut, dsneutdt, dsneutdd, dsnuda, dsnudz);
 #endif
 
     // Append the energy equation (this is erg/g/s)
@@ -406,11 +404,9 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     amrex::Real dsneutdt{};
 #ifdef NEUTRINOS
     amrex::Real sneut, dsneutdd, dsnuda, dsnudz;
-    amrex::Real pair{}, phot{}, plas{}, brem{};
     constexpr int do_derivatives{1};
     neutrino_cooling<do_derivatives>(state.T, state.rho, state.abar, state.zbar,
-                                     sneut, dsneutdt, dsneutdd, dsnuda, dsnudz,
-                                     pair, phot, plas, brem);
+                                     sneut, dsneutdt, dsneutdd, dsnuda, dsnudz);
 
     for (int j = 1; j <= NumSpec; ++j) {
        amrex::Real b1 = (-state.abar * state.abar * dsnuda + (zion[j-1] - state.zbar) * state.abar * dsnudz);
