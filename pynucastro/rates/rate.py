@@ -657,7 +657,7 @@ class Rate:
 
         """
 
-        raise NotImplementedError("base Rate class does not know how to eval()")
+        raise NotImplementedError("base Rate class does not implement function_string_py()")
 
     def jacobian_string_py(self, y_i):
         """Return a string containing the term in a jacobian matrix
