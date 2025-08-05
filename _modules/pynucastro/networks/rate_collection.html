@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.7.1.post2+ga5171a59f documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.7.1.post3+g62df8b68e documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=4cad51f5"></script>
+    <script src="../../../_static/documentation_options.js?v=2598d6b9"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -3279,9 +3279,12 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.plot_network_chart">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_network_chart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                            <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                           <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">force_one_column</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Plot a heatmap showing which rates are affected by which nuclei.</span>
+                           <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                           <span class="n">force_one_column</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                           <span class="n">max_ydot_ratio</span><span class="o">=</span><span class="mf">1.e15</span><span class="p">,</span>
+                           <span class="n">plot_to_cbar_ratio</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot a heatmap showing which rates are affected by which</span>
+<span class="sd">        nuclei.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -3291,11 +3294,23 @@ document.write(`
 <span class="sd">            temperature used to evaluate rates</span>
 <span class="sd">        comp : Composition</span>
 <span class="sd">            composition used to evaluate rates</span>
-<span class="sd">        outfile</span>
+<span class="sd">        outfile : str</span>
+<span class="sd">            filename to output image</span>
+<span class="sd">        size : Iterable(int)</span>
+<span class="sd">            image dimensions in pixels</span>
+<span class="sd">        dpi : int</span>
+<span class="sd">            dots per inch for physical size of image</span>
+<span class="sd">        force_one_column : bool</span>
+<span class="sd">            do we insist on a single column for the plot?</span>
+<span class="sd">        max_ydot_ratio : float</span>
+<span class="sd">            ratio between maximum ydot and minimum shown in the plot</span>
+<span class="sd">        plot_to_cbar_ratio : float</span>
+<span class="sd">            ratio of main axes to colorbar size</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        matplotlib.figure.Figure</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">nc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_network_chart</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
@@ -3310,7 +3325,7 @@ document.write(`
         <span class="n">valid_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">_ydot</span><span class="p">[</span><span class="n">_ydot</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
 
         <span class="c1"># pylint: disable-next=redundant-keyword-arg</span>
-        <span class="n">norm</span> <span class="o">=</span> <span class="n">SymLogNorm</span><span class="p">(</span><span class="n">valid_max</span><span class="o">/</span><span class="mf">1.e15</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="n">valid_max</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">valid_max</span><span class="p">)</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">SymLogNorm</span><span class="p">(</span><span class="n">valid_max</span><span class="o">/</span><span class="n">max_ydot_ratio</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="n">valid_max</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">valid_max</span><span class="p">)</span>
 
         <span class="c1"># if there are a lot of rates, we split the network chart into</span>
         <span class="c1"># two side-by-side panes, with the first half of the rates on</span>
@@ -3326,23 +3341,31 @@ document.write(`
         <span class="k">if</span> <span class="n">force_one_column</span><span class="p">:</span>
             <span class="n">npanes</span> <span class="o">=</span> <span class="mi">1</span>
 
-        <span class="n">fig</span><span class="p">,</span> <span class="n">_ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">npanes</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                         <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">dpi</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">dpi</span><span class="p">))</span>
 
-        <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">dpi</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">dpi</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">npanes</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">drate</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">npanes</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># we&#39;ll use a grid spec of 3x1 and make the main plot</span>
+            <span class="c1"># areas and colorbar from it (colorbar on the right)</span>
+            <span class="n">gs</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span>
+                                       <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                                       <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="n">plot_to_cbar_ratio</span><span class="p">,</span> <span class="n">plot_to_cbar_ratio</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
             <span class="n">drate</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># colorbar on the bottom</span>
+            <span class="n">drate</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span>
+            <span class="n">gs</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span>
+                                       <span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                       <span class="n">height_ratios</span><span class="o">=</span><span class="p">[</span><span class="n">plot_to_cbar_ratio</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 
         <span class="n">_rates</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">ipane</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">npanes</span><span class="p">):</span>
 
             <span class="k">if</span> <span class="n">npanes</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="n">ax</span> <span class="o">=</span> <span class="n">_ax</span><span class="p">[</span><span class="n">ipane</span><span class="p">]</span>
+                <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">ipane</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">ax</span> <span class="o">=</span> <span class="n">_ax</span>
+                <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 
             <span class="n">istart</span> <span class="o">=</span> <span class="n">ipane</span> <span class="o">*</span> <span class="n">drate</span>
             <span class="n">iend</span> <span class="o">=</span> <span class="nb">min</span><span class="p">((</span><span class="n">ipane</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">drate</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -3364,10 +3387,15 @@ document.write(`
                         <span class="n">data</span><span class="p">[</span><span class="n">irow</span><span class="p">,</span> <span class="n">icol</span><span class="p">]</span> <span class="o">=</span> <span class="n">ydot</span>
 
             <span class="c1"># each pane has all the nuclei</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)),</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">n</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">$&quot;</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">],</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)),</span>
+                          <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">n</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">$&quot;</span>
+                                  <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">],</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
 
             <span class="c1"># each pane only has its subset of rates</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nrates</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">pretty_string</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">irate</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_rates</span><span class="p">)</span> <span class="k">if</span> <span class="n">istart</span> <span class="o">&lt;=</span> <span class="n">irate</span> <span class="o">&lt;=</span> <span class="n">iend</span><span class="p">])</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nrates</span><span class="p">),</span>
+                          <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">pretty_string</span><span class="si">}</span><span class="s2">&quot;</span>
+                                  <span class="k">for</span> <span class="n">irate</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_rates</span><span class="p">)</span>
+                                  <span class="k">if</span> <span class="n">istart</span> <span class="o">&lt;=</span> <span class="n">irate</span> <span class="o">&lt;=</span> <span class="n">iend</span><span class="p">])</span>
 
             <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">bwr</span><span class="p">)</span>
 
@@ -3379,12 +3407,15 @@ document.write(`
             <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="mf">.5</span><span class="p">,</span> <span class="n">minor</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="mf">.5</span><span class="p">,</span> <span class="n">minor</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s2">&quot;minor&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s2">&quot;minor&quot;</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s2">&quot;minor&quot;</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                           <span class="n">labelsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">npanes</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+            <span class="n">cax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">cax</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+            <span class="n">cax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">cax</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">outfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
