@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Creating a Custom Rate &#8212; pynucastro 2.7.1.post4+g4ab68ddca documentation</title>
+    <title>Creating a Custom Rate &#8212; pynucastro 2.7.1.post5+g9e7c3ed65 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=2c7b7ed7"></script>
+    <script src="_static/documentation_options.js?v=5de4ada5"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -582,7 +582,7 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="creating-a-custom-rate">
 <h1>Creating a Custom Rate<a class="headerlink" href="#creating-a-custom-rate" title="Link to this heading">#</a></h1>
-<p>Let’s imagine wanting to add a rate that has a temperature form not known to pynucastro.  We can accomplish this by creating a new class derived from <code class="docutils literal notranslate"><span class="pre">Rate</span></code>.</p>
+<p>Let’s imagine wanting to add a rate that has a temperature form not known to pynucastro.  We can accomplish this by creating a new class derived from <a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Rate</span></code></a>.</p>
 <p>We’ll consider a rate of the form:</p>
 <div class="math notranslate nohighlight">
 \[r = r_0 \left (\frac{T}{T_0} \right )^\nu\]</div>
@@ -628,13 +628,13 @@ document.write(`
 </div>
 <p>Now we can write our custom rate.  A few bits are needed in the initialization:</p>
 <ul class="simple">
-<li><p>We need to set the “chapter” to “custom” – this will be used by <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> to know how to group this rate with the others</p></li>
+<li><p>We need to set the “chapter” to “custom”—this will be used by <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a> to know how to group this rate with the others</p></li>
 <li><p>We call the parent <code class="docutils literal notranslate"><span class="pre">Rate</span></code> class’s <code class="docutils literal notranslate"><span class="pre">__init__()</span></code> to do all the remaining initialization.</p></li>
 </ul>
 <p>We only write 2 additional methods here:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">function_string_py()</span></code> is used when outputting a <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> to a <code class="docutils literal notranslate"><span class="pre">.py</span></code> file that can be imported and used for integration</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">eval()</span></code> is used when evaluating the rate interactively (including when making plots)</p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.function_string_py" title="pynucastro.rates.rate.Rate.function_string_py"><code class="xref py py-func docutils literal notranslate"><span class="pre">function_string_py</span></code></a> is used when outputting a <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> to a <code class="docutils literal notranslate"><span class="pre">.py</span></code> file that can be imported and used for integration</p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval" title="pynucastro.rates.rate.Rate.eval"><code class="xref py py-func docutils literal notranslate"><span class="pre">eval</span></code></a> is used when evaluating the rate interactively (including when making plots)</p></li>
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -791,7 +791,7 @@ def N14_p__O15__generic(rate_eval, tf):
 </div>
 </div>
 <p>Finally, we can see that when the network constructs the <code class="docutils literal notranslate"><span class="pre">dYdt</span></code> term,
-when writing out the network (via <code class="docutils literal notranslate"><span class="pre">pynet.write_network()</span></code>), our rate
+when writing out the network (via <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.write_network" title="pynucastro.networks.rate_collection.RateCollection.write_network"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_network</span></code></a>), our rate
 is included.  For example, for the protons:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
