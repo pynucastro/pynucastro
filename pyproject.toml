@@ -1,6 +1,6 @@
 # pyproject.toml
 [build-system]
-requires = ["setuptools>=64", "setuptools_scm>=8"]
+requires = ["setuptools>=77", "setuptools_scm>=8"]
 build-backend = "setuptools.build_meta"
 
 
@@ -10,7 +10,7 @@ build-backend = "setuptools.build_meta"
 name = "pynucastro"
 description = "A python library for nuclear astrophysics"
 readme = "README.md"
-license.text = "BSD"
+license = "BSD-3-Clause"
 authors = [
   {name="pynucastro development group"},
   {email="michael.zingale@stonybrook.edu"},
