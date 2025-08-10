@@ -14,8 +14,9 @@ overcome the kernel singularity near the origin.
 
 """
 
-import numba
 import numpy as np
+
+import pynucastro.numba_util as numba
 
 from .quadrature_weights import w_lag, w_leg, x_lag, x_leg
 

@@ -2179,7 +2179,9 @@ class RateCollection:
              size=(800, 600), dpi=100, title=None,
              ydot_cutoff_value=None, show_small_ydot=False,
              consuming_rate_threshold=None,
-             node_size=1000, node_font_size=12, node_color="#444444", node_shape="o",
+             node_size=1000, node_font_size=12,
+             node_color="#444444", node_shape="o",
+             color_nodes_by_abundance=False, node_abundance_cutoff=1.e-10,
              nuclei_custom_labels=None,
              curved_edges=False,
              N_range=None, Z_range=None, rotated=False,
@@ -2188,7 +2190,7 @@ class RateCollection:
              edge_labels=None,
              highlight_filter_function=None,
              nucleus_filter_function=None, rate_filter_function=None,
-             legend_coord=None):
+             legend_coord=None, plot_to_cbar_ratio=20):
         """Make a plot of the network structure showing the links between
         nuclei.  If a full set of thermodymamic conditions are
         provided (rho, T, comp), then the links are colored by rate
@@ -2232,6 +2234,12 @@ class RateCollection:
             a dict of the form {Nucleus: str} that provides alternate
             labels for nodes (instead of using the `pretty` attribute
             of the Nucleus.
+        color_nodes_by_abundance : bool
+            if true, the color of the nodes is set via
+            log(X) for each nucleus.  Note: this cannot be
+            used with a callable for ``node_color``.
+        node_abundance_cutoff : float
+            the lower cutoff value used for coloring nodes by abundance.
         curved_edges : bool
             do we use arcs to connect the nodes?
         N_range : Iterable
@@ -2266,18 +2274,29 @@ class RateCollection:
         rate_filter_function : Callable
             a function that takes a ``Rate`` object
             and returns True or False if it is to be shown as an edge.
+        plot_to_cbar_ratio : float
+            ratio of main axes to colorbar size
 
         Returns
         -------
         matplotlib.figure.Figure
         """
 
-        fig, ax = plt.subplots()
+        fig = plt.figure(constrained_layout=True,
+                         figsize=(size[0]/dpi, size[1]/dpi))
 
-        #divider = make_axes_locatable(ax)
-        #cax = divider.append_axes('right', size='15%', pad=0.05)
-
-        #ax.plot([0, 0], [8, 8], 'b-')
+        # we'll use a grid spec of 2 x 2.  We can merge columns / rows
+        # as needed to give us the flexibility to have colorbars
+        if rotated:
+            gs = mpl.gridspec.GridSpec(nrows=2, ncols=2,
+                                       height_ratios=[plot_to_cbar_ratio, 1], figure=fig)
+            # plot is the top row, colorbar(s) will be the bottom
+            ax = fig.add_subplot(gs[0, :])
+        else:
+            gs = mpl.gridspec.GridSpec(nrows=2, ncols=2,
+                                       width_ratios=[plot_to_cbar_ratio, 1], figure=fig)
+            # plot is the left column, colorbar(s) will be on the right
+            ax = fig.add_subplot(gs[:, 0])
 
         # in general, we do not show p, n, alpha,
         # unless we have p + p, 3-a, etc.
@@ -2293,8 +2312,17 @@ class RateCollection:
         node_nuclei = []
         colors = []
 
+        if callable(node_color) and color_nodes_by_abundance:
+            raise NotImplementedError("setting node_color to a callable and using color_nodes_by_abundance together is not supported.")
+
         if callable(node_color):
             get_node_color = node_color
+        elif color_nodes_by_abundance:
+            nuc_norm = mpl.colors.LogNorm(vmin=node_abundance_cutoff, vmax=1.0)
+            nuc_sm = mpl.cm.ScalarMappable(norm=nuc_norm, cmap=mpl.colormaps.get_cmap("magma"))
+
+            def get_node_color(_nuc):
+                return nuc_sm.to_rgba(comp[_nuc])
         else:
             def get_node_color(_nuc):
                 return node_color
@@ -2350,18 +2378,37 @@ class RateCollection:
                                node_color=colors, alpha=1.0,
                                node_shape=node_shape, node_size=node_size, linewidths=2.0, ax=ax)
 
-        nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
-                                font_size=node_font_size, font_color="w", ax=ax)
+        if color_nodes_by_abundance:
+            node_font_color = {}
+            for n in node_nuclei:
+                try:
+                    r, g, b = get_node_color(n)[:3]
+                    # simple rgb -> luminance conversion
+                    # see: https://en.wikipedia.org/wiki/Luma_(video)
+                    luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
+                    node_font_color[n] = "black" if luminance > 0.5 else "white"
+                except KeyError:
+                    # hidden nucleus
+                    node_font_color[n] = "white"
+        else:
+            node_font_color = "w"
 
-        # now we'll draw edges in two groups -- real links and approximate links
+        nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
+                                font_size=node_font_size, font_color=node_font_color, ax=ax)
+
+        # now we'll draw edges in several groups
 
         if curved_edges:
             connectionstyle = "arc3, rad = 0.2"
+            sort_reverse = False
         else:
             connectionstyle = "arc3"
+            sort_reverse = True
 
-        real_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 1]
-        real_weights = [e["weight"] for u, v, e in G.edges(data=True) if e["real"] == 1]
+        sorted_edges = sorted(G.edges(data=True), key=lambda edge: edge[-1].get("weight", 0),
+                              reverse=sort_reverse)
+        real_edges = [(u, v) for u, v, e in sorted_edges if e["real"] == 1]
+        real_weights = [e["weight"] for u, v, e in sorted_edges if e["real"] == 1]
 
         if rate_ydots is None:
             edge_color = "C0"
@@ -2379,27 +2426,28 @@ class RateCollection:
         else:
             widths *= 2
 
-        # plot the arrow of reaction
-        real_edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
-                                               edgelist=real_edges, edge_color=edge_color,
-                                               connectionstyle=connectionstyle,
-                                               node_size=node_size,
-                                               edge_cmap=plt.cm.viridis, ax=ax)
-
+        # draw the approximate rate edges
         approx_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 0]
 
         _ = nx.draw_networkx_edges(G, G.position, width=1,
                                    edgelist=approx_edges, edge_color="0.5",
                                    connectionstyle=connectionstyle,
-                                   style="dotted", node_size=node_size, ax=ax)
+                                   style="dashed", node_size=node_size, ax=ax)
 
-        # plot invisible rates, rates that are below ydot_cutoff_value
+        # draw the edges for the rates that are below ydot_cutoff_value
         invis_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == -1]
 
         _ = nx.draw_networkx_edges(G, G.position, width=1,
                                    edgelist=invis_edges, edge_color="gray",
                                    connectionstyle=connectionstyle,
-                                   style="dashed", node_size=node_size, ax=ax)
+                                   style="dotted", node_size=node_size, ax=ax)
+
+        # draw the edges that are real rates, and above any cutoffs
+        real_edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
+                                               edgelist=real_edges, edge_color=edge_color,
+                                               connectionstyle=connectionstyle,
+                                               node_size=node_size,
+                                               edge_cmap=plt.cm.viridis, ax=ax)
 
         # highlight edges
         highlight_edges = [(u, v) for u, v, e in G.edges(data=True) if e["highlight"]]
@@ -2422,20 +2470,42 @@ class RateCollection:
                                          font_size=node_font_size,
                                          edge_labels=edge_labels)
 
+        # figure out the colorbar axes -- we have a single colorbar if we are doing the
+        # rate_ydots.  We have 2 colorbars if we are also doing the color_nodes_by_abundance
+        rate_cb_ax = None
+        node_cb_ax = None
+        if rate_ydots and color_nodes_by_abundance:
+            if rotated:
+                rate_cb_ax = fig.add_subplot(gs[1, 0])
+                node_cb_ax = fig.add_subplot(gs[1, 1])
+            else:
+                rate_cb_ax = fig.add_subplot(gs[0, 1])
+                node_cb_ax = fig.add_subplot(gs[1, 1])
+        elif rate_ydots:
+            if rotated:
+                rate_cb_ax = fig.add_subplot(gs[1, :])
+            else:
+                rate_cb_ax = fig.add_subplot(gs[:, 1])
+
+        orientation = "vertical"
+        if rotated:
+            orientation = "horizontal"
+
         if rate_ydots is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
             pc.set_array(real_weights)
-            if not rotated:
-                plt.colorbar(pc, ax=ax, label="log10(rate)")
-            else:
-                plt.colorbar(pc, ax=ax, label="log10(rate)", orientation="horizontal", fraction=0.05)
+            fig.colorbar(pc, cax=rate_cb_ax, label="log10(rate)", orientation=orientation)
+
+        if color_nodes_by_abundance:
+            fig.colorbar(nuc_sm, cax=node_cb_ax, label="log10(X)",
+                         orientation=orientation)
 
         if not rotated:
-            plt.xlabel(r"$N$", fontsize="large")
-            plt.ylabel(r"$Z$", fontsize="large")
+            ax.set_xlabel(r"$N$", fontsize="large")
+            ax.set_ylabel(r"$Z$", fontsize="large")
         else:
-            plt.xlabel(r"$Z$", fontsize="large")
-            plt.ylabel(r"$A - 2Z$", fontsize="large")
+            ax.set_xlabel(r"$Z$", fontsize="large")
+            ax.set_ylabel(r"$A - 2Z$", fontsize="large")
 
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
@@ -2486,14 +2556,11 @@ class RateCollection:
                     ax.text(legend_coord[1]+dN+eps, legend_coord[0]+dZ+eps,
                             label, fontsize="small")
 
-        fig.set_size_inches(size[0]/dpi, size[1]/dpi)
-
         if title is not None:
             fig.suptitle(title)
 
         if outfile is not None:
-            plt.tight_layout()
-            plt.savefig(outfile, dpi=dpi)
+            fig.savefig(outfile, dpi=dpi)
 
         return fig
 
@@ -2564,9 +2631,12 @@ class RateCollection:
 
     def plot_network_chart(self, rho=None, T=None, comp=None, *,
                            outfile=None,
-                           size=(800, 800), dpi=100, force_one_column=False):
-        """
-        Plot a heatmap showing which rates are affected by which nuclei.
+                           size=(800, 800), dpi=100,
+                           force_one_column=False,
+                           max_ydot_ratio=1.e15,
+                           plot_to_cbar_ratio=20):
+        """Plot a heatmap showing which rates are affected by which
+        nuclei.
 
         Parameters
         ----------
@@ -2576,11 +2646,23 @@ class RateCollection:
             temperature used to evaluate rates
         comp : Composition
             composition used to evaluate rates
-        outfile
+        outfile : str
+            filename to output image
+        size : Iterable(int)
+            image dimensions in pixels
+        dpi : int
+            dots per inch for physical size of image
+        force_one_column : bool
+            do we insist on a single column for the plot?
+        max_ydot_ratio : float
+            ratio between maximum ydot and minimum shown in the plot
+        plot_to_cbar_ratio : float
+            ratio of main axes to colorbar size
 
         Returns
         -------
         matplotlib.figure.Figure
+
         """
 
         nc = self._get_network_chart(rho, T, comp)
@@ -2595,7 +2677,7 @@ class RateCollection:
         valid_max = np.abs(_ydot[_ydot != 0]).max()
 
         # pylint: disable-next=redundant-keyword-arg
-        norm = SymLogNorm(valid_max/1.e15, vmin=-valid_max, vmax=valid_max)
+        norm = SymLogNorm(valid_max/max_ydot_ratio, vmin=-valid_max, vmax=valid_max)
 
         # if there are a lot of rates, we split the network chart into
         # two side-by-side panes, with the first half of the rates on
@@ -2611,23 +2693,31 @@ class RateCollection:
         if force_one_column:
             npanes = 1
 
-        fig, _ax = plt.subplots(1, npanes, constrained_layout=True)
+        fig = plt.figure(constrained_layout=True,
+                         figsize=(size[0]/dpi, size[1]/dpi))
 
-        fig.set_size_inches(size[0]/dpi, size[1]/dpi)
-
-        if npanes == 1:
-            drate = len(self.rates)
-        else:
+        if npanes == 2:
+            # we'll use a grid spec of 3x1 and make the main plot
+            # areas and colorbar from it (colorbar on the right)
+            gs = mpl.gridspec.GridSpec(figure=fig,
+                                       nrows=1, ncols=3,
+                                       width_ratios=[plot_to_cbar_ratio, plot_to_cbar_ratio, 1])
             drate = (len(self.rates) + 1) // 2
+        else:
+            # colorbar on the bottom
+            drate = len(self.rates)
+            gs = mpl.gridspec.GridSpec(figure=fig,
+                                       nrows=2, ncols=1,
+                                       height_ratios=[plot_to_cbar_ratio, 1])
 
         _rates = sorted(self.rates)
 
         for ipane in range(npanes):
 
             if npanes == 2:
-                ax = _ax[ipane]
+                ax = fig.add_subplot(gs[0, ipane])
             else:
-                ax = _ax
+                ax = fig.add_subplot(gs[0, 0])
 
             istart = ipane * drate
             iend = min((ipane + 1) * drate - 1, len(self.rates)-1)
@@ -2649,10 +2739,15 @@ class RateCollection:
                         data[irow, icol] = ydot
 
             # each pane has all the nuclei
-            ax.set_xticks(np.arange(len(self.unique_nuclei)), labels=[f"${n.pretty}$" for n in self.unique_nuclei], rotation=90)
+            ax.set_xticks(np.arange(len(self.unique_nuclei)),
+                          labels=[f"${n.pretty}$"
+                                  for n in self.unique_nuclei], rotation=90)
 
             # each pane only has its subset of rates
-            ax.set_yticks(np.arange(nrates), labels=[f"{r.pretty_string}" for irate, r in enumerate(_rates) if istart <= irate <= iend])
+            ax.set_yticks(np.arange(nrates),
+                          labels=[f"{r.pretty_string}"
+                                  for irate, r in enumerate(_rates)
+                                  if istart <= irate <= iend])
 
             im = ax.imshow(data, norm=norm, cmap=plt.cm.bwr)
 
@@ -2664,12 +2759,15 @@ class RateCollection:
             ax.set_xticks(np.arange(data.shape[1]+1)-.5, minor=True)
             ax.set_yticks(np.arange(data.shape[0]+1)-.5, minor=True)
             ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
-            ax.tick_params(which="minor", bottom=False, left=False)
+            ax.tick_params(which="minor", bottom=False, left=False,
+                           labelsize=8)
 
         if npanes == 1:
-            fig.colorbar(im, ax=ax, orientation="horizontal", shrink=0.75)
+            cax = fig.add_subplot(gs[1, 0])
+            fig.colorbar(im, cax=cax, orientation="horizontal")
         else:
-            fig.colorbar(im, ax=ax, orientation="vertical", shrink=0.25)
+            cax = fig.add_subplot(gs[0, 2])
+            fig.colorbar(im, cax=cax, orientation="vertical")
 
         if outfile is not None:
             fig.savefig(outfile, bbox_inches="tight")
@@ -2761,11 +2859,11 @@ class RateCollection:
         cbar_label : str
             Colorbar label.
         cbar_bounds : list, tuple
-             Explicit colorbar bounds.
+            Explicit colorbar bounds.
         cbar_format : str, matplotlib.ticker.Formatter
-             Format string or formatter object for the colorbar ticks.
+            Format string or formatter object for the colorbar ticks.
         cbar_ticks : int
-             Number of ticks to use on the colorbar
+            Number of ticks to use on the colorbar
 
         Returns
         -------

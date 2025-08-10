@@ -647,6 +647,18 @@ class Rate:
 
         raise NotImplementedError("base Rate class does not know how to eval()")
 
+    def function_string_py(self):
+        """Return a string containing the python function that
+        computes the rate.
+
+        Raises
+        ------
+        NotImplementedError
+
+        """
+
+        raise NotImplementedError("base Rate class does not implement function_string_py()")
+
     def jacobian_string_py(self, y_i):
         """Return a string containing the term in a jacobian matrix
         in a reaction network corresponding to this rate
