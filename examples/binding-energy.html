@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Binding Energy per Nucleon &#8212; pynucastro 2.7.1.post7+g49685cd91 documentation</title>
+    <title>Binding Energy per Nucleon &#8212; pynucastro 2.7.1.post8+g78f99674d documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../_static/documentation_options.js?v=c3d78487"></script>
+    <script src="../_static/documentation_options.js?v=f3ff4d3f"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -654,62 +654,72 @@ document.write(`
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">As</span><span class="p">,</span> <span class="n">BEs</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;number of nucleons&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;binding energy per nucleon&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;binding energy per nucleon (MeV)&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;binding energy per nucleon&#39;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;binding energy per nucleon (MeV)&#39;)
 </pre></div>
 </div>
-<img alt="../_images/65bb081abccec78f8c905834faa2b0aa731e0d167153f04f087b91773381ef23.png" src="../_images/65bb081abccec78f8c905834faa2b0aa731e0d167153f04f087b91773381ef23.png" />
+<img alt="../_images/d1eb56ca3186bde596350f2fad4cf1770d13e6d4237ce3b4b4c71e5b2747f105.png" src="../_images/d1eb56ca3186bde596350f2fad4cf1770d13e6d4237ce3b4b4c71e5b2747f105.png" />
 </div>
 </div>
 </section>
 <section id="cleaner-plot">
 <h2>Cleaner plot<a class="headerlink" href="#cleaner-plot" title="Link to this heading">#</a></h2>
-<p>We see that there is quite a spread in binding energy for each nucleon count.  If you look at the <a class="reference external" href="https://commons.wikimedia.org/wiki/File:Binding_energy_curve_-_common_isotopes.svg">version of the plot on Wikipedia</a>, it is much cleaner, because they only use a few nuclei.</p>
-<p>We can recreate that by using the same nuclei</p>
+<p>We see that there is quite a spread in binding energy for each nucleon count.  We can instead consider only the most tightly bound nucleus at each mass number.  We will also
+only consider those that are stable (or have half lives &gt; 1 million years)</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuc</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;H1&quot;</span><span class="p">,</span> <span class="s2">&quot;H2&quot;</span><span class="p">,</span> <span class="s2">&quot;H3&quot;</span><span class="p">,</span> <span class="s2">&quot;He3&quot;</span><span class="p">,</span> <span class="s2">&quot;He4&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Li6&quot;</span><span class="p">,</span> <span class="s2">&quot;Li7&quot;</span><span class="p">,</span> <span class="s2">&quot;Be9&quot;</span><span class="p">,</span> <span class="s2">&quot;B10&quot;</span><span class="p">,</span> <span class="s2">&quot;B11&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;C12&quot;</span><span class="p">,</span> <span class="s2">&quot;C13&quot;</span><span class="p">,</span> <span class="s2">&quot;N14&quot;</span><span class="p">,</span> <span class="s2">&quot;O16&quot;</span><span class="p">,</span> <span class="s2">&quot;F19&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Ne20&quot;</span><span class="p">,</span> <span class="s2">&quot;Na23&quot;</span><span class="p">,</span> <span class="s2">&quot;Mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;Al27&quot;</span><span class="p">,</span> <span class="s2">&quot;Si28&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;P31&quot;</span><span class="p">,</span> <span class="s2">&quot;S32&quot;</span><span class="p">,</span> <span class="s2">&quot;Cl35&quot;</span><span class="p">,</span> <span class="s2">&quot;Cl37&quot;</span><span class="p">,</span> <span class="s2">&quot;K39&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Ar40&quot;</span><span class="p">,</span> <span class="s2">&quot;Ca40&quot;</span><span class="p">,</span> <span class="s2">&quot;Sc45&quot;</span><span class="p">,</span> <span class="s2">&quot;Ti48&quot;</span><span class="p">,</span> <span class="s2">&quot;V51&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Cr52&quot;</span><span class="p">,</span> <span class="s2">&quot;Mn55&quot;</span><span class="p">,</span> <span class="s2">&quot;Fe56&quot;</span><span class="p">,</span> <span class="s2">&quot;Ni58&quot;</span><span class="p">,</span> <span class="s2">&quot;Co59&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Ni60&quot;</span><span class="p">,</span> <span class="s2">&quot;Cu63&quot;</span><span class="p">,</span> <span class="s2">&quot;Zn64&quot;</span><span class="p">,</span> <span class="s2">&quot;Cu65&quot;</span><span class="p">,</span> <span class="s2">&quot;Zn66&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Zn68&quot;</span><span class="p">,</span> <span class="s2">&quot;Ga68&quot;</span><span class="p">,</span> <span class="s2">&quot;Ge70&quot;</span><span class="p">,</span> <span class="s2">&quot;Ga71&quot;</span><span class="p">,</span> <span class="s2">&quot;Ge72&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Ge74&quot;</span><span class="p">,</span> <span class="s2">&quot;As75&quot;</span><span class="p">,</span> <span class="s2">&quot;Se78&quot;</span><span class="p">,</span> <span class="s2">&quot;Br79&quot;</span><span class="p">,</span> <span class="s2">&quot;Se80&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Br81&quot;</span><span class="p">,</span> <span class="s2">&quot;Kr84&quot;</span><span class="p">,</span> <span class="s2">&quot;Rb85&quot;</span><span class="p">,</span> <span class="s2">&quot;Sr88&quot;</span><span class="p">,</span> <span class="s2">&quot;Zr90&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Nb93&quot;</span><span class="p">,</span> <span class="s2">&quot;Zr94&quot;</span><span class="p">,</span> <span class="s2">&quot;Mo95&quot;</span><span class="p">,</span> <span class="s2">&quot;Mo96&quot;</span><span class="p">,</span> <span class="s2">&quot;Mo98&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Tc98&quot;</span><span class="p">,</span> <span class="s2">&quot;Ru102&quot;</span><span class="p">,</span> <span class="s2">&quot;Rh103&quot;</span><span class="p">,</span> <span class="s2">&quot;Pd105&quot;</span><span class="p">,</span> <span class="s2">&quot;Pd106&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Ag107&quot;</span><span class="p">,</span> <span class="s2">&quot;Pd108&quot;</span><span class="p">,</span> <span class="s2">&quot;Ag109&quot;</span><span class="p">,</span> <span class="s2">&quot;Cd112&quot;</span><span class="p">,</span> <span class="s2">&quot;Cd114&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;In115&quot;</span><span class="p">,</span> <span class="s2">&quot;Sn118&quot;</span><span class="p">,</span> <span class="s2">&quot;Sn120&quot;</span><span class="p">,</span> <span class="s2">&quot;Sb121&quot;</span><span class="p">,</span> <span class="s2">&quot;Sb123&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;I127&quot;</span><span class="p">,</span> <span class="s2">&quot;Te128&quot;</span><span class="p">,</span> <span class="s2">&quot;Xe129&quot;</span><span class="p">,</span> <span class="s2">&quot;Te130&quot;</span><span class="p">,</span> <span class="s2">&quot;Xe131&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Xe132&quot;</span><span class="p">,</span> <span class="s2">&quot;Cs133&quot;</span><span class="p">,</span> <span class="s2">&quot;Ba138&quot;</span><span class="p">,</span> <span class="s2">&quot;La139&quot;</span><span class="p">,</span> <span class="s2">&quot;Ce140&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Pr141&quot;</span><span class="p">,</span> <span class="s2">&quot;Nd142&quot;</span><span class="p">,</span> <span class="s2">&quot;Pm145&quot;</span><span class="p">,</span> <span class="s2">&quot;Eu151&quot;</span><span class="p">,</span> <span class="s2">&quot;Sm152&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Eu153&quot;</span><span class="p">,</span> <span class="s2">&quot;Sm154&quot;</span><span class="p">,</span> <span class="s2">&quot;Gd156&quot;</span><span class="p">,</span> <span class="s2">&quot;Gd158&quot;</span><span class="p">,</span> <span class="s2">&quot;Dy162&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Dy163&quot;</span><span class="p">,</span> <span class="s2">&quot;Dy164&quot;</span><span class="p">,</span> <span class="s2">&quot;Ho165&quot;</span><span class="p">,</span> <span class="s2">&quot;Er166&quot;</span><span class="p">,</span> <span class="s2">&quot;Er167&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Er168&quot;</span><span class="p">,</span> <span class="s2">&quot;Tm169&quot;</span><span class="p">,</span> <span class="s2">&quot;Yb172&quot;</span><span class="p">,</span> <span class="s2">&quot;Lu175&quot;</span><span class="p">,</span> <span class="s2">&quot;Hf178&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Hf180&quot;</span><span class="p">,</span> <span class="s2">&quot;Ta181&quot;</span><span class="p">,</span> <span class="s2">&quot;W182&quot;</span><span class="p">,</span> <span class="s2">&quot;W184&quot;</span><span class="p">,</span> <span class="s2">&quot;Re185&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;W186&quot;</span><span class="p">,</span> <span class="s2">&quot;Re187&quot;</span><span class="p">,</span> <span class="s2">&quot;Os190&quot;</span><span class="p">,</span> <span class="s2">&quot;Ir191&quot;</span><span class="p">,</span> <span class="s2">&quot;Os120&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Ir193&quot;</span><span class="p">,</span> <span class="s2">&quot;Pt194&quot;</span><span class="p">,</span> <span class="s2">&quot;Pt195&quot;</span><span class="p">,</span> <span class="s2">&quot;Pt196&quot;</span><span class="p">,</span> <span class="s2">&quot;Au197&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Hg200&quot;</span><span class="p">,</span> <span class="s2">&quot;Hg202&quot;</span><span class="p">,</span> <span class="s2">&quot;Tl203&quot;</span><span class="p">,</span> <span class="s2">&quot;Tl205&quot;</span><span class="p">,</span> <span class="s2">&quot;Pb206&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Pb208&quot;</span><span class="p">,</span> <span class="s2">&quot;Bi209&quot;</span><span class="p">,</span> <span class="s2">&quot;Po209&quot;</span><span class="p">,</span> <span class="s2">&quot;At210&quot;</span><span class="p">,</span> <span class="s2">&quot;Rn222&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;Fr223&quot;</span><span class="p">,</span> <span class="s2">&quot;Ra226&quot;</span><span class="p">,</span> <span class="s2">&quot;Ac227&quot;</span><span class="p">,</span> <span class="s2">&quot;Pa231&quot;</span><span class="p">,</span> <span class="s2">&quot;Th232&quot;</span><span class="p">,</span>
-       <span class="s2">&quot;U235&quot;</span><span class="p">,</span> <span class="s2">&quot;U238&quot;</span><span class="p">]</span>
-
-<span class="n">new_nuc</span> <span class="o">=</span> <span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">nuc</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">max_A</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">As</span><span class="p">)</span>
+<span class="n">max_A</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>295
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">As</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">new_nuc</span><span class="p">]</span>
-<span class="n">BEs</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">nucbind</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">new_nuc</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuc</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>1 million years in seconds</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">million_years</span> <span class="o">=</span> <span class="mf">1.e6</span> <span class="o">*</span> <span class="mf">365.25</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">3600</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">A</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_A</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+    <span class="c1"># for mass number A, find the nucleus with the maximum binding energy</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_new</span> <span class="o">=</span> <span class="nb">max</span><span class="p">((</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nuclei</span>
+                    <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="n">A</span> <span class="ow">and</span> <span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">tau</span> <span class="o">==</span> <span class="s2">&quot;stable&quot;</span> <span class="ow">or</span>
+                                     <span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">tau</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">n</span><span class="o">.</span><span class="n">tau</span> <span class="o">&gt;</span> <span class="n">million_years</span><span class="p">))),</span>
+                   <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="n">q</span><span class="o">.</span><span class="n">nucbind</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="c1"># no stable nucleus of this pass</span>
+        <span class="k">continue</span>
+    <span class="n">nuc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_new</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We now plot just these most tightly bound nuclei</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">As</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nuc</span><span class="p">]</span>
+<span class="n">BEs</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">nucbind</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nuc</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -719,13 +729,14 @@ document.write(`
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">As</span><span class="p">,</span> <span class="n">BEs</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="s2">&quot;3&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;number of nucleons&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;binding energy per nucleon&quot;</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;binding energy per nucleon (MeV)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/f1e4f152aba9e30d37873410a63bbd7c37c23c98222462b9bccc5acb579c3120.png" src="../_images/f1e4f152aba9e30d37873410a63bbd7c37c23c98222462b9bccc5acb579c3120.png" />
+<img alt="../_images/698fd880485268217ee602acbcb08b9382774c8d07a03abc43dbcf469633d6a6.png" src="../_images/698fd880485268217ee602acbcb08b9382774c8d07a03abc43dbcf469633d6a6.png" />
 </div>
 </div>
 </section>
@@ -825,7 +836,7 @@ First let’s get the extent of <span class="math notranslate nohighlight">\(N\)
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7ff40fd1fed0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7fa9b6f87590&gt;
 </pre></div>
 </div>
 <img alt="../_images/995fb41dc3d35e8d92437e6188ef824109e8abf5fe14c75ae223e10eb7a6ac28.png" src="../_images/995fb41dc3d35e8d92437e6188ef824109e8abf5fe14c75ae223e10eb7a6ac28.png" />
@@ -848,7 +859,7 @@ First let’s get the extent of <span class="math notranslate nohighlight">\(N\)
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7ff40fd96950&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7fa9b4908d10&gt;
 </pre></div>
 </div>
 <img alt="../_images/46cc91db22f5b395a5827e17acc8069b7bbf7464de5b55671809e5d3436dcb0b.png" src="../_images/46cc91db22f5b395a5827e17acc8069b7bbf7464de5b55671809e5d3436dcb0b.png" />
