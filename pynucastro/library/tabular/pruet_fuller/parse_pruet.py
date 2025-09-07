@@ -10,7 +10,7 @@ import numpy as np
 import pynucastro as pyna
 from pynucastro.constants import constants
 
-with open("pruet_fowler_datafile2.txt") as df:
+with open("pruet_fuller_datafile2.txt") as df:
 
     # skip the header
 
@@ -106,9 +106,9 @@ with open("pruet_fowler_datafile2.txt") as df:
                 betaf.close()
 
             # open the new files
-            ecf = open(f"pruetfowler-{ec_parent.A}{ec_parent.el}-{ec_daughter.A}{ec_daughter.el}_electroncapture.dat", "w")
+            ecf = open(f"pruetfuller-{ec_parent.A}{ec_parent.el}-{ec_daughter.A}{ec_daughter.el}_electroncapture.dat", "w")
             if beta_valid:
-                betaf = open(f"pruetfowler-{beta_parent.A}{beta_parent.el}-{beta_daughter.A}{beta_daughter.el}_betadecay.dat", "w")
+                betaf = open(f"pruetfuller-{beta_parent.A}{beta_parent.el}-{beta_daughter.A}{beta_daughter.el}_betadecay.dat", "w")
             else:
                 betaf = None
 
