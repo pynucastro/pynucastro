@@ -126,3 +126,43 @@ class TestPruetFullerLibibrary:
 
         nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
         assert nu_loss == approx(source_nu_loss, rel=1.e-5, abs=1.e-50)
+
+    def test_br69_kr69(self, pl):
+
+        # this beta-decay does not exist
+        r = pl.get_rate_by_name("br69(,)kr69")
+        assert r is None
+
+    def test_zn70_cu70(self, pl):
+
+        # get the rate
+        r = pl.get_rate_by_name("zn70(,)cu70")
+
+        assert r.reactants == [pyna.Nucleus("zn70")]
+        assert r.products == [pyna.Nucleus("cu70")]
+
+        # compare to data from the original Pruet & Fuller table,
+        # interpolate on a tabulated value, so the interpolation
+        # should just be a no-op
+
+        # we need a composition just to define a Ye
+        comp = pyna.Composition(["he4", "zn70", "cu70"])
+        comp.set_equal()
+        Ye = comp.ye
+
+        # from the table -- everything should be -100
+        T = 7.5e9
+        rhoYe = 10.0**1.5
+        lbetap = -6.866
+        lec = -5.661  # positron capture
+        lnu = -5.242
+
+        source_rate = 10.0**lbetap + 10.0**lec
+        source_nu_loss = 10.0**lnu * pyna.constants.constants.MeV2erg
+
+        rate = r.eval(T, rho=rhoYe/Ye, comp=comp)
+        assert rate == approx(source_rate, rel=1.e-5, abs=1.e-50)
+
+        nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
+        assert nu_loss == approx(source_nu_loss, rel=1.e-5, abs=1.e-50)
+
