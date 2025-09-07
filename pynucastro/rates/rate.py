@@ -787,7 +787,7 @@ class RateSource:
         "langanke": "https://doi.org/10.1006/adnd.2001.0865",
         "suzuki": "https://doi.org/10.3847/0004-637X/817/2/163",
         "ffn": "https://doi.org/10.1086/190779",
-        "pruetfuller": "https://doi.org/10.1086/376753",
+        "pruet_fuller": "https://doi.org/10.1086/376753",
         "reaclib": "https://reaclib.jinaweb.org/labels.php?action=viewLabel&label="
     }
 
