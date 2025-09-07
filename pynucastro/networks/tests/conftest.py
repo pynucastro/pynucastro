@@ -38,6 +38,7 @@ def oda_library():
     """Return the OdaLibrary"""
     return pyna.OdaLibrary()
 
+
 @pytest.fixture(scope="package")
 def pruetfuller_library():
     """Return the PruetFullerLibrary"""
