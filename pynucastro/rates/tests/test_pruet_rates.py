@@ -165,4 +165,3 @@ class TestPruetFullerLibibrary:
 
         nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
         assert nu_loss == approx(source_nu_loss, rel=1.e-5, abs=1.e-50)
-
