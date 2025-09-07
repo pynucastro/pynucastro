@@ -38,6 +38,11 @@ def oda_library():
     """Return the OdaLibrary"""
     return pyna.OdaLibrary()
 
+@pytest.fixture(scope="package")
+def pruetfuller_library():
+    """Return the PruetFullerLibrary"""
+    return pyna.PruetFullerLibrary()
+
 
 @pytest.fixture(scope="package")
 def compare_network_files(request):
