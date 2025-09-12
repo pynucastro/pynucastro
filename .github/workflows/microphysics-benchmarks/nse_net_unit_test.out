@@ -1,0 +1,45 @@
+Initializing AMReX (24.10-214-g11d0e8031b48)...
+AMReX (24.10-214-g11d0e8031b48) initialized
+starting the single zone burn...
+reading in network electron-capture / beta-decay tables...
+chemical potential of proton is -3
+chemical potential of neutron is -12
+State Density (g/cm^3): 10000000
+State Temperature (K): 6000000000
+electron fraction is 0.5
+NSE state: 
+H1 : 0.001652199832
+He4 : 0.5184754334
+C12 : 1.321048372e-05
+N13 : 7.828343335e-11
+O16 : 3.208350685e-05
+Ne20 : 7.37829949e-07
+Na23 : 1.206776684e-06
+Mg24 : 0.000101410673
+Al27 : 0.0006628523088
+Si28 : 0.03646723471
+P31 : 0.0504555158
+S32 : 0.03824849496
+Ar36 : 0.02435327551
+Ca40 : 0.02847138631
+Ti44 : 0.001637201348
+Cr48 : 0.009789728783
+Fe52 : 0.05885134758
+Ni56 : 0.2307866801
+We're in NSE. 
+-----------------------------------------------
+Using nse.solve_nse_e_mode == 1 :
+change in T: 6000000000 6069144727
+change in abar: 7.026880148 6.26238884
+recovered energy: 2.784234255e+18 2.784234255e+18
+Constraint Eqns using solved input are: -1.082467449e-14 -4.440892099e-16 -5.551115123e-16 
+Constraint Jacobian using solved input are: 19.70206532 19.80498652 3.069602949e-09 9.82702147 9.875043853 1.533907452e-09 0.2616834419 0.2616834419 7.450188201e-10 
+-----------------------------------------------
+Using nse.solve_nse_e_mode == 2 :
+change in T: 6000000000 6069144727
+change in abar: 7.026880148 6.26238884
+recovered energy: 2.784234255e+18 2.784234255e+18
+Constraint Eqns using solved input are: 1.260797022e-12 4.363176487e-14 9.03721542e-14 
+Constraint Jacobian using solved input are: 19.70206532 19.80498652 3.069602949e-09 9.82702147 9.875043853 1.533907452e-09 0.2616834419 0.2616834419 7.450188201e-10 
+-----------------------------------------------
+AMReX (24.10-214-g11d0e8031b48) finalized

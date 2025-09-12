@@ -1,58 +1,59 @@
-import os
+"""Classes and methods that provide access to the AME mass excess data."""
+
+from pathlib import Path
 
 
 class MassTable:
-    """
-    The purpose of this class is to:
+    """Store the nuclear masses as a dictionary mapping nuclides to
+    their mass excess (A_nuc - A measured) in MeV from the table
+    mass_excess2020.txt.
 
-    a) Create a dictionary mapping nuclides to their mass excess A_nuc - A measured
-       in MeV from the table mass_excess2020.txt.
+    Parameters
+    ----------
+    filename : str, pathlib.Path
+        The name of the file containing nuclei and mass excesses
+        (mass_excess2020.txt is used by default).
 
-    b) Parse the information of the previously defined dictionary to the Nucleus
-       class.
-
-    The only required variable to construct an instance of this class is : var filename:
-    that contains the .txt table file with the nuclei and their mass excess. If this
-    variable is not provided, then mass_excess2020.txt is considered by default.
     """
 
-    def __init__(self, filename=None):
+    def __init__(self, filename: str | Path = None):
 
-        self._mass_diff = {}
+        self.mass_diff = {}
 
         if filename:
-            self.filename = filename
+            self.filename = Path(filename)
         else:
+            nucdata_dir = Path(__file__).parent
             datafile_name = 'mass_excess2020.txt'
-            nucdata_dir = os.path.dirname(os.path.realpath(__file__))
-            self.filename = os.path.join(os.path.join(nucdata_dir, 'AtomicMassEvaluation'), datafile_name)
+            self.filename = nucdata_dir/'AtomicMassEvaluation'/datafile_name
 
         self._read_table()
 
-    def _read_table(self):
+    def _read_table(self) -> None:
 
-        file = open(self.filename, 'r')
+        with self.filename.open("r") as f:
+            # skip the header
+            for line in f.readlines()[5:]:
+                A, Z, dm = line.strip().split()[:3]
+                self.mass_diff[int(A), int(Z)] = float(dm)
 
-        for _ in range(4):
-            file.readline()
+    def get_mass_diff(self, a: int, z: int) -> float:
+        """Return the mass excess for a nucleus
 
-        for line in file:
+        Parameters
+        ----------
+        a : int
+            Atomic weight
+        z : int
+            Atomic number
 
-            data_list = line.strip().split()
-            #print(data_list)
-            A_str = data_list.pop(0)
-            Z_str = data_list.pop(0)
-            dm_str = data_list.pop(0)
+        Returns
+        -------
+        float
 
-            A = int(A_str)
-            Z = int(Z_str)
-            dm = float(dm_str)
+        """
 
-            self._mass_diff[A, Z] = dm
-
-        file.close()
-
-    def get_mass_diff(self, a, z):
-        if (a, z) in self._mass_diff:
-            return self._mass_diff[a, z]
-        raise NotImplementedError("Nuclear mass difference is not available")
+        try:
+            return self.mass_diff[a, z]
+        except KeyError as exc:
+            raise NotImplementedError(f"nuclear mass difference for A={a} and Z={z} not available") from exc

@@ -1,5 +1,6 @@
 """Test the various helper functions in the reduction module."""
 
+import numpy as np
 import pytest
 from numpy.testing import assert_allclose
 from pytest import approx
@@ -124,21 +125,23 @@ class TestReductionHelpers:
 
     def test_ye_dot(self, net_info, net, thermo_state):
         comp = thermo_state[2]
-        y_e = comp.eval_ye()
+        y_e = comp.ye
 
         Y_dot = net.evaluate_ydots(*thermo_state)
         nuc = net.unique_nuclei
         Y = comp.get_molar()
+        Y_dot_Z = np.array([Y_dot[n] * n.Z for n in nuc])
+        Y_dot_A = np.array([Y_dot[n] * n.A for n in nuc])
         ye_dot = y_e * (
-            sum(Y_dot[n] * n.Z for n in nuc) / sum(Y[n] * n.Z for n in nuc) -
-            sum(Y_dot[n] * n.A for n in nuc) / sum(comp.X[n] for n in nuc)
+            np.sum(Y_dot_Z) / sum(Y[n] * n.Z for n in nuc) -
+            np.sum(Y_dot_A) / sum(comp.X[n] for n in nuc)
         )
 
         assert reduction.ye_dot(net_info) == approx(ye_dot, rel=1e-6, abs=0)
 
     def test_abar_dot(self, net_info, net, thermo_state):
         comp = thermo_state[2]
-        abar = comp.eval_abar()
+        abar = comp.abar
 
         ydots = net.evaluate_ydots(*thermo_state)
         abar_dot = -abar**2 * sum(Y for Y in ydots.values())

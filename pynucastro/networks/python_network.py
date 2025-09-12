@@ -1,22 +1,45 @@
-"""Support modules to write a pure python reaction network ODE
-source"""
+"""Support modules to write a pure python reaction network ODE source."""
 
-import os
 import shutil
 import sys
 import warnings
+from pathlib import Path
 
 from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import RateCollection
-from pynucastro.rates.rate import ApproximateRate
+from pynucastro.rates import ApproximateRate, ModifiedRate
 from pynucastro.screening import get_screening_map
 
 
 class PythonNetwork(RateCollection):
-    """A pure python reaction network."""
+    """A pure python reaction network.  This can create a python
+    module as a file that contains everything needed to evaluate the
+    reaction rates and construct the righthand side and Jacobian
+    functions.
+
+    """
 
     def full_ydot_string(self, nucleus, indent=""):
-        """construct the python form of dY(nucleus)/dt"""
+        """Construct a string containing the python code for
+        dY(nucleus)/dt by considering every reaction that involves
+        nucleus, adding terms that result in its creation and
+        subtracting terms representing its destruction.
+
+        Parameters
+        ----------
+        nucleus : Nucleus
+            The nucleus we are constructing the time derivative
+            of.
+        indent : str
+            A string that will be prepended to each line of the output,
+            typically consisting of just spaces representing the amount
+            of indent desired.
+
+        Returns
+        -------
+        str
+
+        """
 
         ostr = ""
         if not self.nuclei_consumed[nucleus] + self.nuclei_produced[nucleus]:
@@ -24,24 +47,57 @@ class PythonNetwork(RateCollection):
             ostr += f"{indent}dYdt[j{nucleus.raw}] = 0.0\n\n"
         else:
             ostr += f"{indent}dYdt[j{nucleus.raw}] = (\n"
-            for r in self.nuclei_consumed[nucleus]:
-                c = r.reactants.count(nucleus)
-                if c == 1:
-                    ostr += f"{indent}   -{r.ydot_string_py()}\n"
-                else:
-                    ostr += f"{indent}   -{c}*{r.ydot_string_py()}\n"
-            for r in self.nuclei_produced[nucleus]:
-                c = r.products.count(nucleus)
-                if c == 1:
-                    ostr += f"{indent}   +{r.ydot_string_py()}\n"
-                else:
-                    ostr += f"{indent}   +{c}*{r.ydot_string_py()}\n"
+            for ipair, rp in enumerate(self.nuclei_rate_pairs[nucleus]):
+                # when we are working with rate pairs, one or more of the
+                # rates may be missing.  We also have not clearly separated
+                # them into creation / destruction, so we'll figure that out
+                rlist = [r for r in [rp.forward, rp.reverse] if r is not None]
+                ostr += f"{indent}      "
+                if len(rlist) > 1:
+                    ostr += "( "
+
+                for rate in rlist:
+                    c_reac = rate.reactant_count(nucleus)
+                    c_prod = rate.product_count(nucleus)
+                    c = c_prod - c_reac
+                    if c == 1:
+                        ostr += f"+{rate.ydot_string_py()} "
+                    elif c == -1:
+                        ostr += f"-{rate.ydot_string_py()} "
+                    else:
+                        ostr += f"+ {c}*{rate.ydot_string_py()} "
+
+                if len(rlist) > 1:
+                    ostr += ")"
+                if ipair < len(self.nuclei_rate_pairs[nucleus]) - 1:
+                    ostr += " +"
+                ostr = ostr.rstrip() + "\n"
+
             ostr += f"{indent}   )\n\n"
 
         return ostr
 
     def full_jacobian_element_string(self, ydot_i_nucleus, y_j_nucleus, indent=""):
-        """return the Jacobian element dYdot(ydot_i_nucleus)/dY(y_j_nucleus)"""
+        """Construct a string containing the python code for a single
+        element of the Jacobian, dYdot(ydot_i_nucleus)/dY(y_j_nucleus)
+
+        Parameters
+        ----------
+        ydot_i_nucleus: Nucleus
+            The nucleus representing the dY/dt term we are differentiating.
+            This is the row of the Jacobian.
+        ydot_j_nucleus: Nucleus
+            The nucleus we are differentiating with respect to.  This
+            is the column of the Jacobian.
+        indent : str
+            A string that will be prepended to each line of the output,
+            typically consisting of just spaces representing the amount
+            of indent desired.
+
+        Returns
+        -------
+        str
+        """
 
         # this is the jac(i,j) string
         idx_str = f"jac[j{ydot_i_nucleus.raw}, j{y_j_nucleus.raw}]"
@@ -55,7 +111,7 @@ class PythonNetwork(RateCollection):
             ostr += f"{indent}{idx_str} = (\n"
             rate_terms_str = ""
             for r in self.nuclei_consumed[ydot_i_nucleus]:
-                c = r.reactants.count(ydot_i_nucleus)
+                c = r.reactant_count(ydot_i_nucleus)
 
                 jac_str = r.jacobian_string_py(y_j_nucleus)
                 if jac_str == "":
@@ -66,7 +122,7 @@ class PythonNetwork(RateCollection):
                 else:
                     rate_terms_str += f"{indent}   -{c}*{jac_str}\n"
             for r in self.nuclei_produced[ydot_i_nucleus]:
-                c = r.products.count(ydot_i_nucleus)
+                c = r.product_count(ydot_i_nucleus)
 
                 jac_str = r.jacobian_string_py(y_j_nucleus)
                 if jac_str == "":
@@ -86,6 +142,23 @@ class PythonNetwork(RateCollection):
         return ostr
 
     def screening_string(self, indent=""):
+        """Create a string containing the python code that sets up the
+        screening (PlasmaState) and calls the screening function on
+        every set of reactants in our network, and updating the reaction
+        rate values stored in the network.
+
+        Parameters
+        ----------
+        indent : str
+            A string that will be prepended to each line of the output,
+            typically consisting of just spaces representing the amount
+            of indent desired.
+
+        Returns
+        -------
+        str
+        """
+
         ostr = ""
         ostr += f"{indent}plasma_state = PlasmaState(T, rho, Y, Z)\n"
 
@@ -102,11 +175,13 @@ class PythonNetwork(RateCollection):
                 ostr += f"{indent}scor = screen_func(plasma_state, scn_fac)\n"
 
             if scr.name == "He4_He4_He4":
-                # we don't need to do anything here, but we want to avoid immediately applying the screening
+                # we don't need to do anything here, but we want to
+                # avoid immediately applying the screening
                 pass
 
             elif scr.name == "He4_He4_He4_dummy":
-                # make sure the previous iteration was the first part of 3-alpha
+                # make sure the previous iteration was the first part
+                # of 3-alpha
                 assert screening_map[i - 1].name == "He4_He4_He4"
                 # handle the second part of the screening for 3-alpha
                 ostr += f"{indent}scn_fac2 = ScreenFactors({scr.n1.Z}, {scr.n1.A}, {scr.n2.Z}, {scr.n2.A})\n"
@@ -129,26 +204,67 @@ class PythonNetwork(RateCollection):
         return ostr
 
     def rates_string(self, indent=""):
-        """section for evaluating the rates and storing them in rate_eval"""
+        """Create the python code that calls the evaluation function
+        for each rate.  Typically this is of the form
+        ``name(rate_eval, ...)``, where ``rate_eval`` is a container
+        class in the output network that stores the rate values.  This
+        also calls ``screening_string()`` after the main rates are
+        evaluated but before the approximate rates are constructed.
+
+        Parameters
+        ----------
+        indent : str
+            A string that will be prepended to each line of the output,
+            typically consisting of just spaces representing the amount
+            of indent desired.
+
+        Returns
+        -------
+        str
+
+        """
+
+        def format_rate_call(r, use_tf=True):
+            args = ["rate_eval"]
+            if use_tf:
+                args.append("tf")
+            else:
+                args.append("T")
+            if r.rate_eval_needs_rho:
+                args.append("rho=rho")
+            if r.rate_eval_needs_comp:
+                args.append("Y=Y")
+            return f"{indent}{r.fname}({', '.join(args)})\n"
+
         ostr = ""
         ostr += f"{indent}# reaclib rates\n"
         for r in self.reaclib_rates:
-            ostr += f"{indent}{r.fname}(rate_eval, tf)\n"
+            ostr += format_rate_call(r)
 
         if self.derived_rates:
             ostr += f"\n{indent}# derived rates\n"
         for r in self.derived_rates:
-            ostr += f"{indent}{r.fname}(rate_eval, tf)\n"
+            ostr += format_rate_call(r)
 
         if self.tabular_rates:
             ostr += f"\n{indent}# tabular rates\n"
         for r in self.tabular_rates:
-            ostr += f"{indent}{r.fname}(rate_eval, T, rho*ye(Y))\n"
+            ostr += format_rate_call(r, use_tf=False)
 
         if self.custom_rates:
             ostr += f"\n{indent}# custom rates\n"
         for r in self.custom_rates:
-            ostr += f"{indent}{r.fname}(rate_eval, tf)\n"
+            ostr += format_rate_call(r)
+
+        # modified rates will have their own screening,
+        # either using the origina rate or any modified
+        # form.  Therefore we call them before applying
+        # screening factors.
+
+        if self.modified_rates:
+            ostr += f"\n{indent}# modified rates\n"
+        for r in self.modified_rates:
+            ostr += format_rate_call(r)
 
         ostr += "\n"
 
@@ -159,20 +275,31 @@ class PythonNetwork(RateCollection):
         if self.approx_rates:
             ostr += f"\n{indent}# approximate rates\n"
         for r in self.approx_rates:
-            ostr += f"{indent}{r.fname}(rate_eval, tf)\n"
+            ostr += format_rate_call(r)
 
         return ostr
 
-    def _write_network(self, outfile=None):
-        """
-        This is the actual RHS for the system of ODEs that
-        this network describes.
+    def _write_network(self, outfile: str | Path = None):
+        """Create the entire python code representing this network.
+        This includes defining the nuclei properties, evaluating
+        partition functions, defining the ``RateEval`` class, defining
+        the tabular rate data, writing the functions that evaluate
+        each of the rates, and then calling the functions that
+        construct the RHS and Jacobian.
+
+        Parameters
+        ----------
+        outfile : str, Path
+            The name of the output file to write to.  If this is ``None``,
+            then the output is written to stdout
+
         """
         # pylint: disable=arguments-differ
         if outfile is None:
             of = sys.stdout
         else:
-            of = open(outfile, "w")
+            outfile = Path(outfile)
+            of = outfile.open("w")
 
         indent = 4*" "
 
@@ -209,7 +336,7 @@ class PythonNetwork(RateCollection):
         of.write("# masses in ergs\n")
         of.write("mass = np.zeros((nnuc), dtype=np.float64)\n\n")
         for n in self.unique_nuclei:
-            mass = n.A_nuc * constants.m_u_MeV * constants.MeV2erg
+            mass = n.A_nuc * constants.m_u_MeV_C18 * constants.MeV2erg
             of.write(f"mass[j{n.raw}] = {mass}\n")
 
         of.write("\n")
@@ -296,6 +423,17 @@ class PythonNetwork(RateCollection):
                 # now write out the function that computes the
                 # approximate rate
                 of.write(r.function_string_py())
+            elif isinstance(r, ModifiedRate):
+                orig_rate = r.original_rate
+                if r in _rate_func_written:
+                    continue
+                of.write(orig_rate.function_string_py())
+                _rate_func_written.append(orig_rate)
+
+                # now write out the function that computes the
+                # modified rate
+                of.write(r.function_string_py())
+                _rate_func_written.append(r)
             else:
                 if r in _rate_func_written:
                     continue
@@ -357,20 +495,20 @@ class PythonNetwork(RateCollection):
         # Copy any tables in the network to the current directory
         # if the table file cannot be found, print a warning and continue.
         try:
-            odir = os.path.dirname(outfile)
-        except TypeError:
+            odir = outfile.parent
+        except AttributeError:
             odir = None
 
         for tr in self.tabular_rates:
-            tdir = os.path.dirname(tr.rfile_path)
-            if tdir != os.getcwd():
-                tdat_file = os.path.join(tdir, tr.table_file)
-                if os.path.isfile(tdat_file):
-                    shutil.copy(tdat_file, odir or os.getcwd())
+            tdir = tr.rfile_path.parent
+            if tdir != Path.cwd():
+                tdat_file = tdir/tr.table_file
+                if tdat_file.is_file():
+                    shutil.copy(tdat_file, odir or Path.cwd())
                 else:
                     warnings.warn(UserWarning(f'Table data file {tr.table_file} not found.'))
-                rtoki_file = os.path.join(tdir, tr.rfile)
-                if os.path.isfile(rtoki_file):
-                    shutil.copy(rtoki_file, odir or os.getcwd())
+                rtoki_file = tdir/tr.rfile
+                if rtoki_file.is_file():
+                    shutil.copy(rtoki_file, odir or Path.cwd())
                 else:
                     warnings.warn(UserWarning(f'Table metadata file {tr.rfile} not found.'))

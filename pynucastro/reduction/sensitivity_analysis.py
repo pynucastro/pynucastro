@@ -1,3 +1,5 @@
+"""Methods and functions used for sensitivity analysis."""
+
 import numpy as np
 
 from pynucastro.nucdata import Nucleus
@@ -7,11 +9,12 @@ MPI = mpi_importer()
 
 
 def binary_search_trim(network, nuclei, errfunc, thresh=0.05):
-    """
-    Given an array of nuclei sorted roughly by relative importance, perform a binary search to trim
-    out nuclei from the network until the error is as close as possible to the given threshold
-    without exceeding it. Nuclei whose removal will result in only a small increase in error need to
-    be packed towards the back of the array for the binary search to work effectively.
+    """Given an array of nuclei sorted roughly by relative importance,
+    perform a binary search to trim out nuclei from the network until
+    the error is as close as possible to the given threshold without
+    exceeding it. Nuclei whose removal will result in only a small
+    increase in error need to be packed towards the back of the array
+    for the binary search to work effectively.
 
     :param network: The network to reduce.
     :param nuclei: Nuclei to consider for the final network, sorted by decreasing importance (i.e.
@@ -24,6 +27,7 @@ def binary_search_trim(network, nuclei, errfunc, thresh=0.05):
 
     :return: A reduced reaction network with an evaluated error approximately equal to the supplied
         threshold.
+
     """
 
     nuclei = Nucleus.cast_list(nuclei)
@@ -61,12 +65,14 @@ def _progress_bar(frac, size=50):
 
 
 def sens_analysis(network, errfunc, thresh=0.05, use_mpi=False, print_prog=True):
-    """
-    Given a reaction network, remove nuclei from the network one-by-one until the induced error is
-    as close to the given threshold as possible without exceeding it. This will test nuclei for
-    removal individually and remove the one that induces the smallest error on each pass. Since
-    it requires O(n^2) error function evaluations, this routine is much more expensive than
-    *binary_search*, but it will typically trim the network down significantly more.
+    """Given a reaction network, remove nuclei from the network
+    one-by-one until the induced error is as close to the given
+    threshold as possible without exceeding it. This will test nuclei
+    for removal individually and remove the one that induces the
+    smallest error on each pass. Since it requires O(n^2) error
+    function evaluations, this routine is much more expensive than
+    *binary_search*, but it will typically trim the network down
+    significantly more.
 
     :param network: The network to reduce.
     :param errfunc: Error function to use when evaluating error. Should take a reduced network as
@@ -83,6 +89,7 @@ def sens_analysis(network, errfunc, thresh=0.05, use_mpi=False, print_prog=True)
 
     :return: A reduced reaction network with an evaluated error approximately equal to the supplied
         threshold.
+
     """
 
     if use_mpi:

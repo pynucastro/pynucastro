@@ -5,23 +5,15 @@ jobs:
   compilation:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
-      - name: Install Python 3.10
-        uses: actions/setup-python@v4
+      - name: Install Python
+        uses: actions/setup-python@v6
         with:
-          python-version: '3.10'
-
-      - name: Cache pip
-        uses: actions/cache@v3
-        with:
-          # this path is specific to Ubuntu
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          python-version: '3.11'
+          cache: "pip"
 
       - name: Install dependencies
         run: |
@@ -56,26 +48,26 @@ jobs:
           sudo apt-get update -y -qq
           sudo apt-get -qq -y install curl cmake jq clang g++>=9.3.0
 
-      - name: Regenerate subch_approx network
+      - name: Regenerate he-burn-22a network
         run: |
-          cd external/Microphysics/networks/subch_approx
-          python subch_approx.py
+          cd external/Microphysics/networks/he-burn/he-burn-22a
+          python he_burn_22a.py
 
-      - name: Compile burn_cell (subch_approx)
+      - name: Compile burn_cell (he-burn-22a)
         run: |
           cd external/Microphysics/unit_test/burn_cell
           make realclean
-          make NETWORK_DIR=subch_approx -j 4
+          make NETWORK_DIR=he-burn/he-burn-22a -j 4
 
-      - name: Run burn_cell (subch_approx)
+      - name: Run burn_cell (he-burn-22a)
         run: |
           cd external/Microphysics/unit_test/burn_cell
-          ./main3d.gnu.ex inputs_subch_approx > test.out
+          ./main3d.gnu.ex inputs_subch_simple > test.out
 
-      - name: Compare to stored output (subch_approx)
+      - name: Compare to stored output (he-burn-22a)
         run: |
           cd external/Microphysics/unit_test/burn_cell
-          diff -I "^Initializing AMReX" -I "^AMReX" -I "^reading in reaclib rates" test.out ${GITHUB_WORKSPACE}/.github/workflows/microphysics-benchmarks/subch_approx_unit_test.out
+          diff -I "^Initializing AMReX" -I "^AMReX" -I "^reading in reaclib rates" test.out ${GITHUB_WORKSPACE}/.github/workflows/microphysics-benchmarks/subch_simple_unit_test.out
 
       - name: Regenerate ECSN network
         run: |
@@ -103,18 +95,18 @@ jobs:
           cd external/Microphysics/networks/ase
           python ase.py
 
-      - name: Compile test_ase (NSE_NET, ase)
+      - name: Compile nse_net_cell (NSE_NET, ase)
         run: |
-          cd external/Microphysics/unit_test/test_ase
+          cd external/Microphysics/unit_test/nse_net_cell
           make realclean
           make -j 4
 
-      - name: Run test_ase (NSE_NET, ase)
+      - name: Run nse_net_cell (NSE_NET, ase)
         run: |
-          cd external/Microphysics/unit_test/test_ase
+          cd external/Microphysics/unit_test/nse_net_cell
           ./main3d.gnu.ex inputs_ase > test.out
 
       - name: Compare to stored output (NSE_NET, ase)
         run: |
-          cd external/Microphysics/unit_test/test_ase
-          diff -I "^Initializing AMReX" -I "^AMReX" -I "^reading in reaclib rates" test.out ${GITHUB_WORKSPACE}/.github/workflows/microphysics-benchmarks/ase_nse_net_unit_test.out
+          cd external/Microphysics/unit_test/nse_net_cell
+          diff -I "^Initializing AMReX" -I "^AMReX" -I "^reading in reaclib rates" test.out ${GITHUB_WORKSPACE}/.github/workflows/microphysics-benchmarks/nse_net_unit_test.out

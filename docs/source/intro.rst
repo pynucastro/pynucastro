@@ -1,10 +1,9 @@
 Overview of pynucastro
 ======================
 
-pynucastro is a set of python interfaces to nuclear reaction rates. It
-is meant for both interactive exploration of rates (through Jupyter
-notebooks) and to create reaction networks for use in simulation
-codes.
+pynucastro is a python library for nuclear astrophysics.  It provides
+access to nuclear data and reaction rates, and tools for building
+and interactively exploring nuclear reaction networks.
 
 The preferred way of importing pynucastro is as follows:
 
@@ -28,21 +27,31 @@ The main classes are:
 
   There are a few special rates derived from `Rate`:
 
-  * :func:`ReacLibRate <pynucastro.rates.rate.ReacLibRate>`: This is a rate in the
+  * :func:`ReacLibRate <pynucastro.rates.reaclib_rate.ReacLibRate>`: This is a rate in the
     JINA ReacLib format, with the temperature dependence specified by an interpolant
     with 7 different coefficients.
 
-  * :func:`TabularRate <pynucastro.rates.rate.TabularRate>`: This is a
+  * :func:`TabularRate <pynucastro.rates.tabular_rate.TabularRate>`: This is a
     rate that is tabulated in terms of :math:`(T, \rho Y_e)`.  This is
     how the weak rate (electron captures and beta-decays) are stored.
     Interpolation is used to find the rate at any thermodynamic state.
 
-  * :func:`ApproximateRate <pynucastro.rates.rate.ApproximateRate>`:
-    An approximate rate groups together :math:`A(\alpha, \gamma)B` and
-    :math:`A(\alpha,p)X(p,\gamma)B` into a single effective rate, assuming
-    equilibrium of :math:`p` and :math:`X`.
+  * :func:`ApproximateRate <pynucastro.rates.approximate_rates.ApproximateRate>`:
+    An approximate rate assumes equilibration of intermediate nuclei to create
+    an approximation for a rate sequence.  Currently, there are two
+    approximations that can be made:
 
-  * :func:`DerivedRate <pynucastro.rates.rate.DerivedRate>`: A
+    * grouping $A(\alpha, \gamma)B$ and $A(\alpha,p)X(p,\gamma)B$ into
+      a single effective rate, assuming equilibrium of $p$ and $X$.
+
+    * converting $A(n,\gamma)X(n,\gamma)B$ into $A(nn,\gamma)B$
+      by assuming equilibrium of $X$.
+
+  * :func:`ModifiedRate <pynucastro.rates.modified_rate.ModifiedRate>`:
+    A container for a single rate that allows for different stoichiometry
+    or products.
+
+  * :func:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>`: A
     derived rate uses detailed balance to recompute a reverse rate from the forward rate.
 
 * :func:`RatePair <pynucastro.rates.rate.RatePair>`: For a single nuclear process,
@@ -90,6 +99,10 @@ The main classes are:
     This is a simple C++ network that provides functions for
     computing the righthand side and Jacobian of a network.
     Not all pynucastro features are supported in this network.
+
+  * :func:`FortranNetwork
+    <pynucastro.networks.fortran_network.FortranNetwork>`:
+    A network that provides Fortran wrappers to ``SimpleCxxNetwork``.
 
   * :func:`AmrexAstroCxxNetwork
     <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`:

@@ -15,13 +15,14 @@
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
+# documentation root, use pathlib.Path.resolve to make it absolute, like shown here.
 #
 import os
 import sys
 from importlib.metadata import version as importlib_version
+from pathlib import Path
 
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, str(Path.cwd().parents[1]))
 
 
 # -- General configuration ------------------------------------------------
@@ -42,21 +43,50 @@ extensions = ['sphinx.ext.autodoc',
     'nbsphinx',
     'sphinx.ext.githubpages',
     'sphinx_copybutton',
-    'sphinx-prompt',
+    'sphinx_prompt',
     'sphinx_math_dollar',
-    'sphinx_rtd_theme',
     'sphinx_mdinclude',
+    'myst_nb',
+    'sphinx.ext.napoleon',
     'IPython.sphinxext.ipython_console_highlighting']
 
 # bibtex
 bibtex_bibfiles = ['refs.bib']
 bibtex_reference_style = 'author_year'
 
+linkcheck_ignore = [r"https://doi.org",
+                    r"https://link.aps.org",
+                    r"https://www.sciencedirect.com"]
+
+linkcheck_retries = 3
+linkcheck_timeout = 100
+linkcheck_allow_unauthorized = True
+
+autosummary_generate = True
+
+# docstrings
+autodoc_typehints = "none"
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
 # always execute notebooks
-nbsphinx_execute = 'always'
+env_skip_execute = os.getenv("SKIP_EXECUTE")
+
+
+if not env_skip_execute:
+    nb_execution_mode = "force"
+else:
+    nb_execution_mode = "off"
+
+nbsphinx_allow_errors = True
+nbsphinx_timeout = 1000
+
+# myst-nb control of notebooks
+nb_execution_timeout = 500
+nb_execution_allow_errors = True
+myst_enable_extensions = ["dollarmath"]
+
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -69,10 +99,10 @@ main_doc = 'index'
 
 # General information about the project.
 project = 'pynucastro'
-copyright = '2023, pynucastro development team'
+copyright = '2024-2025, pynucastro development team'
 author = 'pynucastro development team'
 
-html_logo = "logo.png"
+#html_logo = "logo.png"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -94,7 +124,7 @@ language = "en"
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = []
+exclude_patterns = ["changelog.md"]
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
@@ -106,7 +136,15 @@ todo_include_todos = False
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'matplotlib': ('https://matplotlib.org/stable', None),
+    "networkx": ('https://networkx.org/documentation/stable', None),
+    'numpy': ('https://numpy.org/doc/stable/', None),
+    'sympy': ('https://docs.sympy.org/latest/', None),
+    'yt': ('https://yt-project.org/doc', None),
+    'unyt': ('https://unyt.readthedocs.io/en/stable', None),
 }
+
+# Don't include the extra CSS from sphinx-prompt when using the copy button
+copybutton_exclude = 'style'
 
 
 # -- Options for HTML output ----------------------------------------------
@@ -114,20 +152,25 @@ intersphinx_mapping = {
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-#html_theme = 'nature'
-html_theme = "sphinx_rtd_theme"
+html_theme = "sphinx_book_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-html_theme_options = {"vcs_pageview_mode": "blob"}
-
-html_context = {
-  "display_github": True,
-  "github_repo": "pynucastro",
-  "github_user": "pynucastro",
-  "github_version": "main/docs/source/"
+html_theme_options = {
+    "repository_url": "https://github.com/pynucastro/pynucastro",
+    "use_repository_button": True,
+    "use_issues_button": True,
+    "use_edit_page_button": True,
+    "use_source_button": True,
+    "repository_branch": "main",
+    "path_to_docs": "docs/source",
+    "logo": {
+        "text": f"pynucastro {version}",
+        "image_light": "logo.png",
+        "image_dark": "logo.png",
+    }
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -135,19 +178,8 @@ html_context = {
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-html_css_files = ["theme_overrides.css"]
+html_css_files = ["myfile.css"]
 
-# Custom sidebar templates, must be a dictionary that maps document names
-# to template names.
-#
-# This is required for the alabaster theme
-# refs: http://alabaster.readthedocs.io/en/latest/installation.html#sidebars
-html_sidebars = {
-    '**': ['globaltoc.html',
-        'relations.html',  # needs 'show_related': True theme option to display
-        'searchbox.html',
-    ]
-}
 
 
 # -- Options for HTMLHelp output ------------------------------------------

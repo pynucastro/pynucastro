@@ -8,7 +8,7 @@
 #include <fundamental_constants.H>
 #include <network_properties.H>
 
-using namespace amrex;
+using namespace amrex::literals;
 using namespace Species;
 
 namespace part_fun {
@@ -17,21 +17,21 @@ namespace part_fun {
 
     // interpolation routine
 
-    template <int npts>
+    template <typename T>
     AMREX_GPU_HOST_DEVICE AMREX_INLINE
-    void interpolate_pf(const Real t9, const Real (&temp_array)[npts], const Real (&pf_array)[npts],
-                        Real& pf, Real& dpf_dT) {
+    void interpolate_pf(const amrex::Real t9, const T& temp_array, const T& pf_array,
+                        amrex::Real& pf, amrex::Real& dpf_dT) {
 
-        if (t9 >= temp_array[0] && t9 < temp_array[npts-1]) {
+        if (t9 >= temp_array.lo() && t9 < temp_array.hi()) {
 
             // find the largest temperature element <= t9 using a binary search
 
-            int left = 0;
-            int right = npts;
+            int left = temp_array.lo();
+            int right = temp_array.hi();
 
             while (left < right) {
                 int mid = (left + right) / 2;
-                if (temp_array[mid] > t9) {
+                if (temp_array(mid) > t9) {
                     right = mid;
                 } else {
                     left = mid + 1;
@@ -44,16 +44,17 @@ namespace part_fun {
 
             // construct the slope -- this is (log10(pf_{i+1}) - log10(pf_i)) / (T_{i+1} - T_i)
 
-            Real slope = (pf_array[idx+1] - pf_array[idx]) / (temp_array[idx+1] - temp_array[idx]);
+            amrex::Real slope = (pf_array(idx+1) - pf_array(idx)) /
+                                (temp_array(idx+1) - temp_array(idx));
 
             // find the PF
 
-            Real log10_pf = pf_array[idx] + slope * (t9 - temp_array[idx]);
+            amrex::Real log10_pf = pf_array(idx) + slope * (t9 - temp_array(idx));
             pf = std::pow(10.0_rt, log10_pf);
 
             // find the derivative (with respect to T, not T9)
 
-            Real dpf_dT9 = pf * M_LN10 * slope;
+            amrex::Real dpf_dT9 = pf * M_LN10 * slope;
             dpf_dT = dpf_dT9 / 1.e9_rt;
 
         } else {
@@ -66,13 +67,21 @@ namespace part_fun {
 
     }
 
+    struct pf_cache_t {
+        // Store the coefficient and derivative adjacent in memory, as they're
+        // always accessed at the same time.
+        // The entries will be default-initialized to zero, which is fine since
+        // log10(x) is never zero.
+        amrex::Array2D<amrex::Real, 1, NumSpecTotal, 1, 2, amrex::Order::C> data{};
+    };
+
 }
 
 // main interface
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void get_partition_function(const int inuc, [[maybe_unused]] const tf_t& tfactors,
-                            Real& pf, Real& dpf_dT) {
+                            amrex::Real& pf, amrex::Real& dpf_dT) {
 
     // inuc is the 1-based index for the species
 
@@ -88,14 +97,30 @@ void get_partition_function(const int inuc, [[maybe_unused]] const tf_t& tfactor
 
 }
 
+AMREX_GPU_HOST_DEVICE AMREX_INLINE
+void get_partition_function_cached(const int inuc, const tf_t& tfactors,
+                                   part_fun::pf_cache_t& pf_cache,
+                                   amrex::Real& pf, amrex::Real& dpf_dT) {
+    if (pf_cache.data(inuc, 1) != 0.0_rt) {
+        // present in cache
+        amrex::ignore_unused(tfactors);
+        pf = pf_cache.data(inuc, 1);
+        dpf_dT = pf_cache.data(inuc, 2);
+    } else {
+        get_partition_function(inuc, tfactors, pf, dpf_dT);
+        pf_cache.data(inuc, 1) = pf;
+        pf_cache.data(inuc, 2) = dpf_dT;
+    }
+}
+
 // spins
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-constexpr Real get_spin_state(const int inuc) {
+constexpr amrex::Real get_spin_state(const int inuc) {
 
-    Real spin = -1.0;
+    amrex::Real spin = -1.0;
 
-    switch (inuc) {
+    switch (inuc) {  // NOLINT(bugprone-switch-missing-default-case)
 
     case He4:
     case Mg24:

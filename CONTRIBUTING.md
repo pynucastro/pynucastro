@@ -33,6 +33,22 @@ to squash commits upon merge to have a clean history.  *Please ensure
 that your PR title and first post are descriptive, since these will be
 used for a squashed commit message.*
 
+## Documentation
+
+The documentation is in `docs/source` and uses MyST-flavored markdown,
+managed by Sphinx.  To build the docs, in the `docs/` directory, do:
+
+```
+make html
+```
+
+by default, this will execute all of the Jupyter notebooks.  To skip this,
+build as:
+
+```
+SKIP_EXECUTE=TRUE make html
+```
+
 ## Testing
 
 We use pytest to do unit and regression tests. All commands should be
@@ -84,5 +100,5 @@ run from the repository root.
 * To re-run notebooks whose outputs have changed:
 
   ```
-  docs/regen_notebook.sh <path to notebook>
+  docs/regen_notebook.sh <paths to notebooks>
   ```

@@ -1,7 +1,7 @@
 {
     "creators": [
         {
-            "name": "the pynucastro development"
+            "name": "pynucastro development team"
         },
         {   "affiliation": "Department of Physics and Astronomy, Stony Brook University",
             "name": "Boyd, Brendan",
@@ -20,6 +20,11 @@
             "affiliation": "Department of Astronomy, University of California, Berkeley",
             "name": "Eiden, Kiran",
             "orcid": "0000-0001-6191-4285"
+        },
+        {
+            "affiliation": "Department of Physics and Astronomy, Stony Brook University",
+            "name": "Glosser, Sam",
+            "orcid": "0009-0000-6648-3381"
         },
         {   "affiliation": "Department of Physics and Astronomy, Stony Brook University",
             "name": "Johnson, Eric",

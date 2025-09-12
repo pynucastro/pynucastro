@@ -47,8 +47,8 @@ class TestLibrary:
     def test_lightest(self):
         assert self.library.lightest() == pyna.Nucleus("p")
 
-    def test_get_num_rates(self):
-        assert self.library.get_num_rates() == 8
+    def test_num_rates(self):
+        assert self.library.num_rates == 8
 
     def test_get_rate(self):
         # get by rate id
@@ -82,7 +82,7 @@ class TestLibrary:
             [pyna.Nucleus("p")], [pyna.Nucleus("n14")]
         ) is None
 
-        dup_rates = [pyna.load_rate("f17--o17-wc12"), pyna.load_rate("f17--o17-toki")]
+        dup_rates = [pyna.load_rate("f17--o17-wc12"), pyna.load_rate("suzuki-17f-17o_electroncapture.dat")]
         dup_lib = self.library + pyna.Library(rates=dup_rates)
 
         assert dup_lib.get_rate_by_nuclei(

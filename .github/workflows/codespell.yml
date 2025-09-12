@@ -1,0 +1,36 @@
+name: codespell
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  codespell:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r ./requirements.txt
+
+      - name: Install codespell
+        run: pip install codespell
+
+      - name: Preprocess notebooks
+        run: for i in $(find . -name "*.ipynb"); do jupyter nbconvert --clear-output --inplace $i; done
+
+      - name: Run codespell
+        run: |
+          codespell .
+

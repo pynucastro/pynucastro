@@ -9,50 +9,12 @@ pynucastro.nucdata package
 Submodules
 ----------
 
-pynucastro.nucdata.binding\_table module
-----------------------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: pynucastro.nucdata.binding_table
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pynucastro.nucdata.elements module
-----------------------------------
-
-.. automodule:: pynucastro.nucdata.elements
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pynucastro.nucdata.mass\_table module
--------------------------------------
-
-.. automodule:: pynucastro.nucdata.mass_table
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pynucastro.nucdata.nucleus module
----------------------------------
-
-.. automodule:: pynucastro.nucdata.nucleus
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pynucastro.nucdata.partition\_function module
----------------------------------------------
-
-.. automodule:: pynucastro.nucdata.partition_function
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pynucastro.nucdata.spin\_table module
--------------------------------------
-
-.. automodule:: pynucastro.nucdata.spin_table
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   pynucastro.nucdata.elements
+   pynucastro.nucdata.halflife_table
+   pynucastro.nucdata.mass_table
+   pynucastro.nucdata.nucleus
+   pynucastro.nucdata.partition_function
+   pynucastro.nucdata.spin_table

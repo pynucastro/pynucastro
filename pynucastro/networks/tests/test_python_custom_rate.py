@@ -1,7 +1,7 @@
 # unit tests for rates
 import importlib
-import os
 import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -33,7 +33,7 @@ class MyRate(pyna.Rate):
         fstring += f"    rate_eval.{self.fname} = {self.r0} * (tf.T9 * 1.e9 / {self.T0} )**({self.nu})\n\n"
         return fstring
 
-    def eval(self, T, rhoY=None):
+    def eval(self, T, *, rho=None, comp=None):
         return self.r0 * (T / self.T0)**self.nu
 
 
@@ -73,11 +73,11 @@ class TestPythonCustomNetwork:
 
         dpdt = \
 """dYdt[jp] = (
-   -rho*Y[jp]*Y[jc12]*rate_eval.p_C12__N13
-   -rho*Y[jp]*Y[jc13]*rate_eval.p_C13__N14
-   -rho*Y[jp]*Y[jn13]*rate_eval.p_N13__O14
-   -rho*Y[jp]*Y[jn15]*rate_eval.p_N15__He4_C12
-   -rho*Y[jp]*Y[jn14]*rate_eval.N14_p__O15__generic
+      -rho*Y[jp]*Y[jc12]*rate_eval.p_C12__N13  +
+      -rho*Y[jp]*Y[jc13]*rate_eval.p_C13__N14  +
+      -rho*Y[jp]*Y[jn13]*rate_eval.p_N13__O14  +
+      -rho*Y[jp]*Y[jn15]*rate_eval.p_N15__He4_C12  +
+      -rho*Y[jp]*Y[jn14]*rate_eval.N14_p__O15__generic
    )
 
 """
@@ -140,6 +140,6 @@ def N14_p__O15__generic(rate_eval, tf):
         for n in range(custom.nnuc):
             assert ydots[n] == approx(ydot_save[n])
 
-        os.remove("custom.py")
+        Path("custom.py").unlink()
         del custom
         del sys.modules["custom"]

@@ -9,26 +9,16 @@ pynucastro.rates package
 Submodules
 ----------
 
-pynucastro.rates.known\_duplicates module
------------------------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: pynucastro.rates.known_duplicates
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pynucastro.rates.library module
--------------------------------
-
-.. automodule:: pynucastro.rates.library
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pynucastro.rates.rate module
-----------------------------
-
-.. automodule:: pynucastro.rates.rate
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   pynucastro.rates.alternate_rates
+   pynucastro.rates.approximate_rates
+   pynucastro.rates.derived_rate
+   pynucastro.rates.files
+   pynucastro.rates.known_duplicates
+   pynucastro.rates.library
+   pynucastro.rates.modified_rate
+   pynucastro.rates.rate
+   pynucastro.rates.reaclib_rate
+   pynucastro.rates.tabular_rate

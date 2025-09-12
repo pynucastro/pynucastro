@@ -1,7 +1,6 @@
-"""
-
-This script extract the spin data for each ground state (gs) nuclei,
-characterized by the pair  (A, Z), from nubase_3.mas20.txt, published in:
+"""Extract the spin data for each ground state (gs) nuclei,
+characterized by the pair (A, Z), from nubase_3.mas20.txt, published
+in:
 
 Kondev, F. G., Wang, M., Huang, W. J., Naimi, S., & Audi, G.
 Chinese Physics C, 45(3), 030001. (2021) doi:10.1088/1674-1137/abddae
@@ -14,9 +13,7 @@ import argparse
 
 
 def num_states(spin_str_element):
-
-    """
-    This function evaluates de spin number string, formatted as s=a/b and
+    """Evaluate the spin number string, formatted as s=a/b and
     returns the number of states 2*s + 1.
 
     In the table we have three type of strings:
@@ -30,8 +27,8 @@ def num_states(spin_str_element):
                       in [88:102], about spin, parity, and
                       isospin charge.
 
-    Returns:
-    --------
+    Return
+    ------
     :var states: this integer variable contains the number of states associated
             to the `spin_str_element` string
 
@@ -59,7 +56,7 @@ def num_states(spin_str_element):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('table', type=str, help='Name of the input spin stable')
-parser.add_argument('-o', '--output', type=str, default='nubase2020', help='Pynucastro Formatted Table')
+parser.add_argument('-o', '--output', type=str, default='spins2020', help='Pynucastro Formatted Table')
 
 args = parser.parse_args()
 
@@ -76,7 +73,7 @@ fout = open(args.output+'.txt', 'w')
 fout.write('# Ground state spin evaluation table: {}\n'.format(args.output))
 fout.write('# if the ==Spin== column contain more than two values, the gs state is uncertain.\n')
 fout.write('#\n')
-fout.write('#==A=='+' '*22+'==Z=='+' '*18+'==Spin=='+' '*18+'==Number=of=States==\n')
+fout.write('#==A=='+' '*22+'==Z=='+' '*18+'==Spin=='+' '*18+'==Number=of=States=='+' '*12+'==Experimental=='+' '*12+'==Theoretical==\n')
 
 # For each consecutive line, we extract:
 for line in finput:
@@ -107,55 +104,54 @@ for line in finput:
     # "#"   : The spin/parity measurement is provided by
     #         theoretical arguments.
 
+    experimental_str = ' '
+    theoretical_str = ' '
+
+    for c in spin_str:
+        if c == '*':
+            experimental_str = 's'
+            theoretical_str = 'w'
+        elif c == '#':
+            experimental_str = 'w'
+            theoretical_str = 's'
+        elif c != '(' and c != ')' and c != '*' and c != '#':
+            experimental_str = 's'
+            theoretical_str = 's'
+
+    if spin_str[0] == '(':
+        experimental_str = 'w'
+        theoretical_str = 'w'
+
     special_chars = "+-*()#,"
 
     for c in special_chars:
         spin_str = spin_str.replace(c, ' ')
 
-    #From spin_str we remove the parity
-    #and source information; however:
-
-    # 1. Some `spin_str` strings contains two values,
-    #    that contains uncertain measurements
-    #    from a particular nuclei state gs.
-    # 2. Some nucleus information may have been
-    #    extrapolated without taking experimental
-    #    measurements.
-
     spin_str = spin_str.strip().split()
 
     if i == 0:
+        # We eliminate lines that may contain more than one spin value in the gs
+        if len(spin_str) > 1:
+            continue
+
         output_str = '{0:5}'.format(A)
 
         output_str += ' '*21
         output_str += '{0:5}'.format(Z)
 
-        if spin_str:
-            output_str += ' '*23
-            spin_str_1 = spin_str.pop(0)
-            output_str += '{0:<4}'.format(spin_str_1)
-            state1 = str(num_states(spin_str_1))
+        output_str += ' '*23
+        spin = spin_str.pop(0)
+        output_str += '{0:<4}'.format(spin)
+        states = str(num_states(spin))
 
-            if spin_str:
-                output_str += ' '
-                spin_str_2 = spin_str.pop(0)
-                output_str += '{0:<5}'.format(spin_str_2)
-                state2 = str(num_states(spin_str_2))
-            else:
-                state2 = None
-        else:
-            continue
+        output_str += ' '*27
+        output_str += '{0:<3}'.format(states)
 
-        if state2:
-            output_str += ' '*21
-        else:
-            output_str += ' '*27
+        output_str += ' '*27
+        output_str += '{0:<3}'.format(experimental_str)
 
-        output_str += '{0:<3}'.format(state1)
-
-        if state2:
-            output_str += ' '
-            output_str += '{0:<3}'.format(state2)
+        output_str += ' '*27
+        output_str += '{0:<3}'.format(theoretical_str)
 
         output_str += '\n'
         fout.write(output_str)

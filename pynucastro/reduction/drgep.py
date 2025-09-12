@@ -1,3 +1,5 @@
+"""Classes and methods for implementing DRGEP reduction."""
+
 import numpy as np
 
 from pynucastro.nucdata import Nucleus
@@ -80,9 +82,9 @@ def calc_interaction_matrix_numpy(net, rvals_arr):
 
 
 def get_adj_nuc(net):
-    """
-    Get set of adjacent nuclei for each nucleus in the net. Returns dictionary keyed by
-    nuclei.
+    """Get set of adjacent nuclei for each nucleus in the net. Returns
+    dictionary keyed by nuclei.
+
     """
 
     adj_nuc = {}
@@ -102,9 +104,10 @@ def get_adj_nuc(net):
 
 
 def drgep_dijkstras(net, r_AB, target, adj_nuc):
-    """
-    Modified Dijkstra's algorithm to find paths that maximize the overall interaction coefficient
-    between the target and each other nucleus in the net.
+    """Implement modified Dijkstra's algorithm to find paths that
+    maximize the overall interaction coefficient between the target
+    and each other nucleus in the net.
+
     """
 
     # Number of species
@@ -286,9 +289,9 @@ def _drgep_mpi_numpy(net, conds, targets, tols):
 
 
 def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False, use_numpy=False):
-    """
-    Implementation of Directed Relation Graph with Error Propagation (DRGEP) reduction
-    method described in :cite:t:`pepiot-desjardins:2008` and :cite:t:`niemeyer:2011`.
+    """Implement Directed Relation Graph with Error Propagation
+    (DRGEP) reduction method described in
+    :cite:t:`pepiot-desjardins:2008` and :cite:t:`niemeyer:2011`.
 
     :param net: The network (RateCollection) to reduce.
     :param conds: A set of conditions to reduce over. Should either be a sequence of (composition,
@@ -312,6 +315,7 @@ def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False, use_numpy=F
         not. This is more memory intensive and may actually hinder performance for some setups.
         Conditions should be supplied as 3 lists that will be permuted to form the dataset (see
         *conds* parameter). Default setting is *False*.
+
     """
 
     #------------------

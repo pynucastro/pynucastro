@@ -39,12 +39,12 @@ class TestScreening:
                  "C12 + C12 --> He4 + Ne20 <cf88_reaclib__>": 103.21274049093526,
                  "C12 + C12 --> n + Mg23 <cf88_reaclib__reverse>": 103.21274049093526,
                  "C12 + C12 --> p + Na23 <cf88_reaclib__>": 103.21274049093526,
-                 "He4 + He4 + He4 --> C12 <fy05_reaclib__>": 6.502599619793744}
+                 "3 He4 --> C12 <fy05_reaclib__>": 6.502599619793744}
 
         factors = rc.evaluate_screening(1.e6, 1.e8, c, screen_func=chugunov_2007)
 
         for r, factor in factors.items():
-            assert factor == approx(rates[r.get_rate_id()])
+            assert factor == approx(rates[r.id])
 
     def test_screening_chugunov_2009(self, rc):
         c = networks.Composition(rc.unique_nuclei)
@@ -54,9 +54,9 @@ class TestScreening:
                  "C12 + C12 --> He4 + Ne20 <cf88_reaclib__>": 89.6640543016441,
                  "C12 + C12 --> n + Mg23 <cf88_reaclib__reverse>": 89.6640543016441,
                  "C12 + C12 --> p + Na23 <cf88_reaclib__>": 89.6640543016441,
-                 "He4 + He4 + He4 --> C12 <fy05_reaclib__>": 4.380701422122169}
+                 "3 He4 --> C12 <fy05_reaclib__>": 4.380701422122169}
 
         factors = rc.evaluate_screening(1.e6, 1.e8, c, screen_func=chugunov_2009)
 
         for r, factor in factors.items():
-            assert factor == approx(rates[r.get_rate_id()])
+            assert factor == approx(rates[r.id])

@@ -1,4 +1,5 @@
-import os
+import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -7,6 +8,7 @@ import pynucastro as pyna
 from pynucastro import Nucleus
 
 
+@pytest.mark.skipif(sys.platform == "darwin", reason="we get roundoff diffs on Macs")
 class TestNSETable:
     @pytest.fixture(scope="class")
     def nse_net(self, reaclib_library, tabular_library):
@@ -59,15 +61,21 @@ class TestNSETable:
         # this creates a file called `nse.tbl`, which we want to compare
         # to the stored benchmark
 
-        base_path = os.path.relpath(os.path.dirname(__file__))
-        ref_path = os.path.join(base_path, "_nse_table")
+        base_path = Path(__file__).parent.relative_to(Path.cwd())
+        ref_path = base_path/"_nse_table"
 
-        with open("nse.tbl") as new_table, open(f"{ref_path}/nse.tbl") as ref_table:
+        with (
+            open("nse.tbl") as new_table,
+            open(f"{ref_path}/nse_scipy_1.14.tbl") as ref_table_1,
+            open(f"{ref_path}/nse_scipy_1.15.tbl") as ref_table_2
+        ):
 
             new_lines = new_table.readlines()
-            ref_lines = ref_table.readlines()
+            ref_lines_1 = ref_table_1.readlines()
+            ref_lines_2 = ref_table_2.readlines()
 
-            for new, ref in zip(new_lines, ref_lines):
+            for new, ref_1, ref_2 in zip(new_lines, ref_lines_1, ref_lines_2):
                 if new.startswith("#"):
                     continue
-                assert new == ref
+                # pylint: disable-next=consider-using-in
+                assert new == ref_1 or new == ref_2

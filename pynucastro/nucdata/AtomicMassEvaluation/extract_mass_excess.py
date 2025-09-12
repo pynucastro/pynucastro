@@ -1,29 +1,29 @@
-import argparse
-
-"""
-This module extract the (A,Z, dm) tuples from `nubase_3.mas20.txt`, where:
+"""Extract the (A,Z, dm) tuples from `nubase_4.mas20.txt`, where:
 
 :var A: is the atomic weight measured in atomic mass units.
 :var Z: is the atomic number.
 :var dm: is the mass difference A_{nuc}-A.
+
 """
+
+import argparse
 
 #os.path.dirname(os.path.realpath(__file__))
 
 parser = argparse.ArgumentParser()
 parser.add_argument('input', type=str, help='Name of the input table')
-parser.add_argument('-o', '--output', type=str, default='mass_excess2020', help='Name of the formatted mass escess table')
+parser.add_argument('-o', '--output', type=str, default='mass_excess2020', help='Name of the formatted mass excess table')
 
 
 args = parser.parse_args()
 
-finput = open(args.input, 'r')
+finput = open(args.input)
 
 for _ in range(25):
     finput.readline()
 
 fout = open(args.output+'.txt', 'w')
-fout.write('# Mass difference evaluation table: {} \n'.format(args.output))
+fout.write(f'# Mass difference evaluation table: {args.output} \n')
 fout.write('# only ground states are tabulated \n')
 fout.write('#\n')
 fout.write('#\n')
@@ -46,7 +46,7 @@ for line in finput:
 
     #dm is measured in keV, but we want MeV
     dm = float(dm_string)/1.0e3
-    fout.write('{:3d} {:20s} {:3d} {:10s} {:15.6} \n'.format(A, ' ', Z, ' ', dm))
+    fout.write(f'{A:3d} {" ":20s} {Z:3d} {" ":10s} {dm:20.15} \n')
 
 finput.close()
 fout.close()

@@ -44,14 +44,14 @@ Z[jmg23] = 12
 # masses in ergs
 mass = np.zeros((nnuc), dtype=np.float64)
 
-mass[jn] = 0.0015053497659156634
-mass[jp] = 0.0015040963030260536
-mass[jhe4] = 0.0059735574925878256
+mass[jn] = 0.001505349762871528
+mass[jp] = 0.0015040963047307696
+mass[jhe4] = 0.0059735574859708365
 mass[jc12] = 0.017909017027273523
-mass[jo16] = 0.023871099858982767
-mass[jne20] = 0.02983707929641827
+mass[jo16] = 0.023871099855618198
+mass[jne20] = 0.029837079292893483
 mass[jne23] = 0.03431735827046045
-mass[jna23] = 0.034310347465945384
+mass[jna23] = 0.03431034746033777
 mass[jmg23] = 0.03431684618276469
 
 names = []
@@ -106,13 +106,13 @@ class RateEval:
 
 # note: we cannot make the TableInterpolator global, since numba doesn't like global jitclass
 # load data for Na23 --> Ne23
-Na23__Ne23_rate = TabularRate(rfile='na23--ne23-toki')
+Na23__Ne23_rate = TabularRate(rfile='suzuki-23na-23ne_electroncapture.dat')
 Na23__Ne23_info = (Na23__Ne23_rate.table_rhoy_lines,
                   Na23__Ne23_rate.table_temp_lines,
                   Na23__Ne23_rate.tabular_data_table)
 
 # load data for Ne23 --> Na23
-Ne23__Na23_rate = TabularRate(rfile='ne23--na23-toki')
+Ne23__Na23_rate = TabularRate(rfile='suzuki-23ne-23na_betadecay.dat')
 Ne23__Na23_info = (Ne23__Na23_rate.table_rhoy_lines,
                   Ne23__Na23_rate.table_temp_lines,
                   Ne23__Na23_rate.tabular_data_table)
@@ -180,31 +180,33 @@ def n__p__weak__wc12(rate_eval, tf):
 
 @numba.njit()
 def He4_He4_He4__C12(rate_eval, tf):
-    # He4 + He4 + He4 --> C12
+    # 3 He4 --> C12
     rate = 0.0
 
-    # fy05r
-    rate += np.exp(  -24.3505 + -4.12656*tf.T9i + -13.49*tf.T913i + 21.4259*tf.T913
-                  + -1.34769*tf.T9 + 0.0879816*tf.T953 + -13.1653*tf.lnT9)
     # fy05r
     rate += np.exp(  -11.7884 + -1.02446*tf.T9i + -23.57*tf.T913i + 20.4886*tf.T913
                   + -12.9882*tf.T9 + -20.0*tf.T953 + -2.16667*tf.lnT9)
     # fy05n
     rate += np.exp(  -0.971052 + -37.06*tf.T913i + 29.3493*tf.T913
                   + -115.507*tf.T9 + -10.0*tf.T953 + -1.33333*tf.lnT9)
+    # fy05r
+    rate += np.exp(  -24.3505 + -4.12656*tf.T9i + -13.49*tf.T913i + 21.4259*tf.T913
+                  + -1.34769*tf.T9 + 0.0879816*tf.T953 + -13.1653*tf.lnT9)
 
     rate_eval.He4_He4_He4__C12 = rate
 
 @numba.njit()
-def Na23__Ne23(rate_eval, T, rhoY):
+def Na23__Ne23(rate_eval, T, rho, Y):
     # Na23 --> Ne23
+    rhoY = rho * ye(Y)
     Na23__Ne23_interpolator = TableInterpolator(*Na23__Ne23_info)
     r = Na23__Ne23_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)
     rate_eval.Na23__Ne23 = 10.0**r
 
 @numba.njit()
-def Ne23__Na23(rate_eval, T, rhoY):
+def Ne23__Na23(rate_eval, T, rho, Y):
     # Ne23 --> Na23
+    rhoY = rho * ye(Y)
     Ne23__Na23_interpolator = TableInterpolator(*Ne23__Na23_info)
     r = Ne23__Na23_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)
     rate_eval.Ne23__Na23 = 10.0**r
@@ -227,8 +229,8 @@ def rhs_eq(t, Y, rho, T, screen_func):
     He4_He4_He4__C12(rate_eval, tf)
 
     # tabular rates
-    Na23__Ne23(rate_eval, T, rho*ye(Y))
-    Ne23__Na23(rate_eval, T, rho*ye(Y))
+    Na23__Ne23(rate_eval, T, rho=rho, Y=Y)
+    Ne23__Na23(rate_eval, T, rho=rho, Y=Y)
 
     if screen_func is not None:
         plasma_state = PlasmaState(T, rho, Y, Z)
@@ -252,50 +254,48 @@ def rhs_eq(t, Y, rho, T, screen_func):
     dYdt = np.zeros((nnuc), dtype=np.float64)
 
     dYdt[jn] = (
-       -Y[jn]*rate_eval.n__p__weak__wc12
-       +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23
+          -Y[jn]*rate_eval.n__p__weak__wc12  +
+          +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23
        )
 
     dYdt[jp] = (
-       +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__p_Na23
-       +Y[jn]*rate_eval.n__p__weak__wc12
+          +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__p_Na23  +
+          +Y[jn]*rate_eval.n__p__weak__wc12
        )
 
     dYdt[jhe4] = (
-       -rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12__O16
-       -3*1.66666666666667e-01*rho**2*Y[jhe4]**3*rate_eval.He4_He4_He4__C12
-       +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__He4_Ne20
+          +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__He4_Ne20  +
+          -rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12__O16  +
+          + -3*1.66666666666667e-01*rho**2*Y[jhe4]**3*rate_eval.He4_He4_He4__C12
        )
 
     dYdt[jc12] = (
-       -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__He4_Ne20
-       -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23
-       -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__p_Na23
-       -rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12__O16
-       +1.66666666666667e-01*rho**2*Y[jhe4]**3*rate_eval.He4_He4_He4__C12
+          + -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__He4_Ne20  +
+          + -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__p_Na23  +
+          -rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12__O16  +
+          +1.66666666666667e-01*rho**2*Y[jhe4]**3*rate_eval.He4_He4_He4__C12  +
+          + -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23
        )
 
     dYdt[jo16] = (
-       +rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12__O16
+          +rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12__O16
        )
 
     dYdt[jne20] = (
-       +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__He4_Ne20
+          +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__He4_Ne20
        )
 
     dYdt[jne23] = (
-       -Y[jne23]*rate_eval.Ne23__Na23
-       +Y[jna23]*rate_eval.Na23__Ne23
+          ( -Y[jne23]*rate_eval.Ne23__Na23 +Y[jna23]*rate_eval.Na23__Ne23 )
        )
 
     dYdt[jna23] = (
-       -Y[jna23]*rate_eval.Na23__Ne23
-       +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__p_Na23
-       +Y[jne23]*rate_eval.Ne23__Na23
+          +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__p_Na23  +
+          ( +Y[jne23]*rate_eval.Ne23__Na23 -Y[jna23]*rate_eval.Na23__Ne23 )
        )
 
     dYdt[jmg23] = (
-       +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23
+          +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12__n_Mg23
        )
 
     return dYdt
@@ -318,8 +318,8 @@ def jacobian_eq(t, Y, rho, T, screen_func):
     He4_He4_He4__C12(rate_eval, tf)
 
     # tabular rates
-    Na23__Ne23(rate_eval, T, rho*ye(Y))
-    Ne23__Na23(rate_eval, T, rho*ye(Y))
+    Na23__Ne23(rate_eval, T, rho=rho, Y=Y)
+    Ne23__Na23(rate_eval, T, rho=rho, Y=Y)
 
     if screen_func is not None:
         plasma_state = PlasmaState(T, rho, Y, Z)

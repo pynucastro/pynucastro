@@ -1,7 +1,7 @@
 # unit tests for rates
 import importlib
-import os
 import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -34,10 +34,8 @@ class TestPythonNetwork:
     def test_full_ydot_string(self, pynet):
         ostr = \
 """dYdt[jhe4] = (
-   -rho*Y[jhe4]*Y[jmg24]*rate_eval.Mg24_He4__Si28__approx
-   -rho*Y[jhe4]*Y[jsi28]*rate_eval.Si28_He4__S32__approx
-   +Y[jsi28]*rate_eval.Si28__Mg24_He4__approx
-   +Y[js32]*rate_eval.S32__Si28_He4__approx
+      ( -rho*Y[jhe4]*Y[jmg24]*rate_eval.Mg24_He4__Si28__approx +Y[jsi28]*rate_eval.Si28__Mg24_He4__approx ) +
+      ( -rho*Y[jhe4]*Y[jsi28]*rate_eval.Si28_He4__S32__approx +Y[js32]*rate_eval.S32__Si28_He4__approx )
    )
 
 """
@@ -69,11 +67,11 @@ def He4_Mg24__Si28__removed(rate_eval, tf):
     rate = 0.0
 
     # st08r
-    rate += np.exp(  -50.5494 + -12.8332*tf.T9i + 21.3721*tf.T913i + 37.7649*tf.T913
-                  + -4.10635*tf.T9 + 0.249618*tf.T953 + -1.5*tf.lnT9)
-    # st08r
     rate += np.exp(  8.03977 + -15.629*tf.T9i
                   + -1.5*tf.lnT9)
+    # st08r
+    rate += np.exp(  -50.5494 + -12.8332*tf.T9i + 21.3721*tf.T913i + 37.7649*tf.T913
+                  + -4.10635*tf.T9 + 0.249618*tf.T953 + -1.5*tf.lnT9)
 
     rate_eval.He4_Mg24__Si28__removed = rate
 
@@ -108,7 +106,7 @@ def He4_Mg24__Si28__removed(rate_eval, tf):
             assert answer[i] == approx(sol.y[i, -1])
 
         # clean up generated files if the test passed
-        os.remove("app.py")
+        Path("app.py").unlink()
         # remove imported module from cache
         del app
         del sys.modules["app"]
@@ -128,7 +126,7 @@ def He4_Mg24__Si28__removed(rate_eval, tf):
         assert comp_new.X == comp_orig.X
 
         # clean up generated files if the test passed
-        os.remove("app.py")
+        Path("app.py").unlink()
         # remove imported module from cache
         del app
         del sys.modules["app"]
