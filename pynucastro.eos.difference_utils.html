@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.eos.difference_utils module &#8212; pynucastro 2.7.1.post11+gdb1e5521c documentation</title>
+    <title>pynucastro.eos.difference_utils module &#8212; pynucastro 2.7.1.post12+g32a75722e documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=393805a1"></script>
+    <script src="_static/documentation_options.js?v=868e99fb"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -566,6 +566,8 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.difference_utils.adaptive_diff"><code class="docutils literal notranslate"><span class="pre">adaptive_diff()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.difference_utils.eighth_order_diff"><code class="docutils literal notranslate"><span class="pre">eighth_order_diff()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.difference_utils.fourth_order_diff"><code class="docutils literal notranslate"><span class="pre">fourth_order_diff()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.difference_utils.sixth_order_diff"><code class="docutils literal notranslate"><span class="pre">sixth_order_diff()</span></code></a></li>
 </ul>
@@ -583,8 +585,55 @@ document.write(`
 <span id="pynucastro-eos-difference-utils-module"></span><h1>pynucastro.eos.difference_utils module<a class="headerlink" href="#module-pynucastro.eos.difference_utils" title="Link to this heading">#</a></h1>
 <p>Some high-order finite-difference approximations for the EOS.</p>
 <dl class="py function">
+<dt class="sig sig-object py" id="pynucastro.eos.difference_utils.adaptive_diff">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.eos.difference_utils.</span></span><span class="sig-name descname"><span class="pre">adaptive_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_levels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/eos/difference_utils.html#adaptive_diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.eos.difference_utils.adaptive_diff" title="Link to this definition">#</a></dt>
+<dd><p>Perform an adaptive centered-difference estimate to the first
+derivative using Richardson-extrapolation / Ridders’ method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> (<em>Callable</em>) – the function to difference, assumed to be of the form <cite>func(x)</cite></p></li>
+<li><p><strong>x0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – the point at which to approximate the derivative</p></li>
+<li><p><strong>delta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – the step-size to use</p></li>
+<li><p><strong>component</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – if func returns an object, use this component for the derivative.</p></li>
+<li><p><strong>max_levels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – the number of levels / iterations in the tableau used in
+extrapolating the deriviative to higher order</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>deriv</strong> (<em>float</em>) – an estimate of the derivative at x0</p></li>
+<li><p><strong>err</strong> (<em>float</em>) – the estimated error in the difference approximation</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pynucastro.eos.difference_utils.eighth_order_diff">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.eos.difference_utils.</span></span><span class="sig-name descname"><span class="pre">eighth_order_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/eos/difference_utils.html#eighth_order_diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.eos.difference_utils.eighth_order_diff" title="Link to this definition">#</a></dt>
+<dd><p>Compute an 8th order accurate centered difference approximation
+of a function, and allow us to specify the component of the object
+that is returned (if applicable)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> (<em>Callable</em>) – the function to difference, assumed to be of the form <cite>func(x)</cite></p></li>
+<li><p><strong>x0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – the point at which to approximate the derivative</p></li>
+<li><p><strong>delta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – the step-size to use</p></li>
+<li><p><strong>component</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – if func returns an object, use this component for the derivative.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.eos.difference_utils.fourth_order_diff">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.eos.difference_utils.</span></span><span class="sig-name descname"><span class="pre">fourth_order_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/eos/difference_utils.html#fourth_order_diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.eos.difference_utils.fourth_order_diff" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.eos.difference_utils.</span></span><span class="sig-name descname"><span class="pre">fourth_order_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/eos/difference_utils.html#fourth_order_diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.eos.difference_utils.fourth_order_diff" title="Link to this definition">#</a></dt>
 <dd><p>Compute a 4th order accurate centered difference approximation
 of a function, and allow us to specify the component of the object
 that is returned (if applicable)</p>
@@ -605,7 +654,7 @@ that is returned (if applicable)</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.eos.difference_utils.sixth_order_diff">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.eos.difference_utils.</span></span><span class="sig-name descname"><span class="pre">sixth_order_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/eos/difference_utils.html#sixth_order_diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.eos.difference_utils.sixth_order_diff" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.eos.difference_utils.</span></span><span class="sig-name descname"><span class="pre">sixth_order_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/eos/difference_utils.html#sixth_order_diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.eos.difference_utils.sixth_order_diff" title="Link to this definition">#</a></dt>
 <dd><p>Compute a 6th order accurate centered difference approximation
 of a function, and allow us to specify the component of the object
 that is returned (if applicable)</p>
@@ -671,6 +720,8 @@ that is returned (if applicable)</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.difference_utils.adaptive_diff"><code class="docutils literal notranslate"><span class="pre">adaptive_diff()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.difference_utils.eighth_order_diff"><code class="docutils literal notranslate"><span class="pre">eighth_order_diff()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.difference_utils.fourth_order_diff"><code class="docutils literal notranslate"><span class="pre">fourth_order_diff()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.difference_utils.sixth_order_diff"><code class="docutils literal notranslate"><span class="pre">sixth_order_diff()</span></code></a></li>
 </ul>
