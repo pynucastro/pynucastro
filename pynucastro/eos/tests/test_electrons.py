@@ -119,9 +119,9 @@ class TestElectronEOS:
                 es = e.pe_state(rho, T, comp)
                 es_r = e.pe_state(rho, T * (1.0 + eps), comp)
 
-                dnedr_approx = (es_r.n_e - es.n_e) / (eps * T)
+                dnedT_approx = (es_r.n_e - es.n_e) / (eps * T)
                 scale = es.n_e / T
-                assert es.dne_dT == approx(dnedr_approx/scale, abs=5.e-9)
+                assert es.dne_dT == approx(dnedT_approx/scale, abs=5.e-9)
 
     def test_pres_rho_derivs(self):
 

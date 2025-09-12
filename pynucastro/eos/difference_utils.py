@@ -216,7 +216,7 @@ def adaptive_diff(func, x0, h, *, component=None, max_levels=10):
 
         # for the current column n, fill in all the rows m > 0
         for m in range(1, n+1):
-            A[m, n] = ((2 * jump)**m * A[m-1, n] - A[m-1, n-1]) / ((2 * jump)**m - 1)
+            A[m, n] = ((jump * jump)**m * A[m-1, n] - A[m-1, n-1]) / ((jump * jump)**m - 1)
 
             # estimate the error so far, using the current row
             # and the estimates in the row above us
