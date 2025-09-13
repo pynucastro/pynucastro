@@ -42,8 +42,8 @@ class DerivedRate(ReacLibRate):
             raise TypeError('rate must be a Rate subclass')
 
         if (isinstance(rate, TabularRate) or self.rate.weak or
-            self.rate.reverse):
-            raise ValueError('The rate is reverse or weak or tabular')
+            self.rate.derived_from_inverse):
+            raise ValueError('The rate is a ReacLib derived from inverse rate or weak or tabular')
 
         if not all(nuc.spin_states for nuc in self.rate.reactants):
             raise ValueError(f'One of the reactants spin ground state ({self.rate.reactants}), is not defined')
@@ -112,7 +112,7 @@ class DerivedRate(ReacLibRate):
                          sets=derived_sets, labelprops="derived", Q=-Q)
 
         # explicitly mark it as reverse
-        self.reverse = True
+        self.derived_from_inverse = True
 
         # Update stoichiometry so that we are consistent in full ydot eqns
         self.stoichiometry = self.rate.stoichiometry
