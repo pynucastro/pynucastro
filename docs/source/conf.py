@@ -43,7 +43,7 @@ extensions = ['sphinx.ext.autodoc',
     'nbsphinx',
     'sphinx.ext.githubpages',
     'sphinx_copybutton',
-    'sphinx-prompt',
+    'sphinx_prompt',
     'sphinx_math_dollar',
     'sphinx_mdinclude',
     'myst_nb',
@@ -55,7 +55,8 @@ bibtex_bibfiles = ['refs.bib']
 bibtex_reference_style = 'author_year'
 
 linkcheck_ignore = [r"https://doi.org",
-                    r"https://link.aps.org"]
+                    r"https://link.aps.org",
+                    r"https://www.sciencedirect.com"]
 
 linkcheck_retries = 3
 linkcheck_timeout = 100
@@ -98,7 +99,7 @@ main_doc = 'index'
 
 # General information about the project.
 project = 'pynucastro'
-copyright = '2024, pynucastro development team'
+copyright = '2024-2025, pynucastro development team'
 author = 'pynucastro development team'
 
 #html_logo = "logo.png"
@@ -135,11 +136,15 @@ todo_include_todos = False
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'matplotlib': ('https://matplotlib.org/stable', None),
+    "networkx": ('https://networkx.org/documentation/stable', None),
     'numpy': ('https://numpy.org/doc/stable/', None),
     'sympy': ('https://docs.sympy.org/latest/', None),
     'yt': ('https://yt-project.org/doc', None),
     'unyt': ('https://unyt.readthedocs.io/en/stable', None),
 }
+
+# Don't include the extra CSS from sphinx-prompt when using the copy button
+copybutton_exclude = 'style'
 
 
 # -- Options for HTML output ----------------------------------------------

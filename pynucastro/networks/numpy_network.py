@@ -1,3 +1,8 @@
+"""Classes and methods for a network that uses NumPy arrays to cache
+some intermediate data.
+
+"""
+
 import numpy as np
 
 from pynucastro.networks.rate_collection import RateCollection
@@ -7,23 +12,17 @@ from pynucastro.rates import Tfactors
 class NumpyNetwork(RateCollection):
     """A network that uses numpy arrays to evaluate rates more efficiently.
 
-    .. py:attribute:: yfac
-
-       Array storing the molar fraction component of each rate (Y of each
-       reactant raised to the appropriate power).
-
-       Depends on composition only.
-
-    .. py:attribute:: prefac
-
+    Attributes
+    ----------
+    yfac : numpy.ndarray
+        Array storing the molar fraction component of each rate (Y of each
+        reactant raised to the appropriate power).  Depends on composition
+        only.
+    prefac : numpy.ndarray
        Array storing the prefactor for each rate, which includes both the
        statistical prefactor and mass density raised to the corresponding
-       density exponent.
+       density exponent.  Depends on composition and density.
 
-       Depends on composition and density.
-
-    Methods
-    -------
     """
 
     def __init__(self, rate_files=None, libraries=None, rates=None,
@@ -48,9 +47,9 @@ class NumpyNetwork(RateCollection):
 
     @property
     def nuc_prod_count(self):
-        """Array storing the count of each nucleus in rates producing
-       that nucleus, with shape ``(number_of_species,
-       number_of_rates)``
+        """Return an array storing the count of each nucleus in rates
+        producing that nucleus, with shape ``(number_of_species,
+        number_of_rates)``
 
         """
 
@@ -60,9 +59,10 @@ class NumpyNetwork(RateCollection):
 
     @property
     def nuc_cons_count(self):
-        """Array storing the count of each nucleus in rates consuming
-        that nucleus, with shape ``(number_of_species,
+        """Return an array storing the count of each nucleus in rates
+        consuming that nucleus, with shape ``(number_of_species,
         number_of_rates)``.
+
         """
         if self._nuc_cons_count is None:
             self._calc_count_matrices()
@@ -70,8 +70,8 @@ class NumpyNetwork(RateCollection):
 
     @property
     def nuc_used(self):
-        """A boolean matrix of whether the nucleus is involved in the
-        reaction or not, with shape ``(number_of_species,
+        """Return a boolean matrix of whether the nucleus is involved
+        in the reaction or not, with shape ``(number_of_species,
         number_of_rates)``
 
         """
@@ -112,7 +112,7 @@ class NumpyNetwork(RateCollection):
     @property
     def coef_arr(self):
         """Reaclib rate coefficient array, with shape
-       ``(number_of_rates, number_of_sets, 7)``
+        ``(number_of_rates, number_of_sets, 7)``
 
         """
         if self._coef_arr is None:
@@ -131,9 +131,7 @@ class NumpyNetwork(RateCollection):
         return self._coef_mask
 
     def _update_rate_coef_arr(self):
-        """
-        Update the :attr:`.coef_arr` and :attr:`.coef_mask` arrays.
-        """
+        """Update the :attr:`.coef_arr` and :attr:`.coef_mask` arrays."""
 
         # coef arr can be precomputed if evaluate_rates_arr is called multiple times
         N_sets = max(len(r.sets) for r in self.rates)
@@ -150,10 +148,15 @@ class NumpyNetwork(RateCollection):
         self._coef_mask = coef_mask
 
     def update_yfac_arr(self, composition):
-        """
-        Calculate and store molar fraction component of each rate (Y of each
-        reactant raised to the appropriate power). The results are stored in
-        the :attr:`.yfac` array.
+        """Calculate and store molar fraction component of each rate
+        (Y of each reactant raised to the appropriate power). The
+        results are stored in the :attr:`.yfac` array.
+
+        Parameters
+        ----------
+        composition : Composition
+            the composition we are considering
+
         """
 
         # yfac must be evaluated each time composition changes, probably pretty cheap
@@ -165,10 +168,18 @@ class NumpyNetwork(RateCollection):
         self.yfac = yfac
 
     def update_prefac_arr(self, rho, composition):
-        """
-        Calculate and store rate prefactors, which include both statistical
-        prefactors and mass density raised to the corresponding density
-        exponents. The results are stored in the :attr:`.prefac` array.
+        """Calculate and store rate prefactors, which include both
+        statistical prefactors and mass density raised to the
+        corresponding density exponents. The results are stored in the
+        :attr:`.prefac` array.
+
+        Parameters
+        ----------
+        rho : float
+            mass density
+        composition : Composition
+            composition to evaluate rates with
+
         """
 
         y_e = composition.ye
@@ -183,11 +194,11 @@ class NumpyNetwork(RateCollection):
         self.prefac = prefac
 
     def evaluate_rates_arr(self, T):
-        """
-        Evaluate the rates in the network for a specific temperature, assuming
-        necessary precalculations have been carried out (calling the methods
-        :meth:`.update_yfac_arr` and :meth:`.update_prefac_arr` to set the
-        composition and density).
+        """Evaluate the rates in the network for a specific
+        temperature, assuming necessary precalculations have been
+        carried out (calling the methods :meth:`.update_yfac_arr` and
+        :meth:`.update_prefac_arr` to set the composition and
+        density).
 
         This performs a vectorized calculation, and returns an array ordered by
         the rates in the ``rates`` member variable. This does not support
@@ -196,6 +207,16 @@ class NumpyNetwork(RateCollection):
         See :meth:`.evaluate_rates` for the non-vectorized version. Relative
         performance between the two varies based on the setup. See
         :meth:`clear_arrays` for freeing memory post calculation.
+
+        Parameters
+        ----------
+        T : float
+            temperature
+
+        Returns
+        -------
+        numpy.ndarray
+
         """
 
         # T9 arr only needs to be evaluated when T changes
@@ -206,19 +227,28 @@ class NumpyNetwork(RateCollection):
         return rvals
 
     def evaluate_ydots_arr(self, T):
-        """
-        Evaluate net rate of change of molar abundance for each nucleus in the
+        """Evaluate net rate of change of molar abundance for each nucleus in the
         network for a specific temperature, assuming necessary precalculations
         have been carried out (calling the methods :meth:`.update_yfac_arr` and
         :meth:`.update_prefac_arr` to set the composition and density).
 
-        This performs a vectorized calculation, and returns an array ordered by
-        the nuclei in the ``unique_nuclei`` member variable. This does not
-        support tabular rates.
+        This performs a vectorized calculation, and returns an array
+        ordered by the nuclei in the ``unique_nuclei`` member
+        variable. This does not support tabular rates.
 
         See :meth:`.evaluate_ydots` for the non-vectorized version. Relative
         performance between the two varies based on the setup. See
         :meth:`.clear_arrays` for freeing memory post calculation.
+
+        Parameters
+        ----------
+        T : float
+            temperature
+
+        Returns
+        -------
+        numpy.ndarray
+
         """
 
         rvals_arr = self.evaluate_rates_arr(T)
@@ -229,11 +259,11 @@ class NumpyNetwork(RateCollection):
         return p_A - c_A
 
     def evaluate_activity_arr(self, T):
-        """
-        Sum over all of the terms contributing to dY/dt for a specific
-        temperature, neglecting sign, assuming necessary precalculations have
-        been carried out (calling the methods :meth:`.update_yfac_arr` and
-        :meth:`.update_prefac_arr` to set the composition and density).
+        """Sum over all of the terms contributing to dY/dt for a
+        specific temperature, neglecting sign, assuming necessary
+        precalculations have been carried out (calling the methods
+        :meth:`.update_yfac_arr` and :meth:`.update_prefac_arr` to set
+        the composition and density).
 
         This performs a vectorized calculation, and returns an array ordered by
         the nuclei in the ``unique_nuclei`` member variable. This does not
@@ -242,6 +272,16 @@ class NumpyNetwork(RateCollection):
         See :meth:`.evaluate_activity` for the non-vectorized version. Relative
         performance between the two varies based on the setup. See
         :meth:`.clear_arrays` for freeing memory post calculation.
+
+        Parameters
+        ----------
+        T : float
+            temperature
+
+        Returns
+        -------
+        numpy.ndarray
+
         """
 
         rvals_arr = self.evaluate_rates_arr(T)
@@ -252,9 +292,10 @@ class NumpyNetwork(RateCollection):
         return p_A + c_A
 
     def clear_arrays(self):
-        """
-        Clear all cached arrays stored by the :meth:`.update_yfac_arr` and
-        :meth:`.update_prefac_arr` member functions, freeing up memory.
+        """Clear all cached arrays stored by the
+        :meth:`.update_yfac_arr` and :meth:`.update_prefac_arr` member
+        functions, freeing up memory.
+
         """
         self._nuc_prod_count = None
         self._nuc_cons_count = None

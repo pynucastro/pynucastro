@@ -1,5 +1,10 @@
-import io
+"""Classes and methods for describing a reaction rate that is
+tabulated in terms of electron density and temperature.
+
+"""
+
 import math
+import re
 from enum import Enum
 from pathlib import Path
 
@@ -14,7 +19,11 @@ from pynucastro.rates.rate import Rate, RateSource
 
 
 class TableIndex(Enum):
-    """a simple enum-like container for indexing the electron-capture tables"""
+    """An enum-like container for indexing the electron-capture
+    tables.
+
+    """
+
     RHOY = 0
     T = 1
     MU = 2
@@ -33,8 +42,21 @@ class TableIndex(Enum):
     ('temp', numba.float64[:])
 ])
 class TableInterpolator:
-    """A simple class that holds a pointer to the table data and
-    methods that allow us to interpolate a variable"""
+    """A class that holds a pointer to the table data and
+    methods that allow us to interpolate a variable
+
+    Parameters
+    ----------
+    table_rhoy_lines : int
+        the number of the (ρ Y_e) values where the rate is tabulated
+    table_temp_lines : int
+        the number of T values where the rate is tabulated
+    table_data : numpy.ndarray
+        a 2D array giving the tabulated rate data of the form (index,
+        component) where index is a 1D flattened representation of
+        (rhoY, T).
+
+    """
 
     def __init__(self, table_rhoy_lines, table_temp_lines, table_data):
 
@@ -47,20 +69,39 @@ class TableInterpolator:
         self.temp = self.data[0:self.table_temp_lines, TableIndex.T.value]
 
     def _get_logT_idx(self, logt0):
-        """return the index into the temperatures such that
-        T[i-1] < t0 <= T[i].  We return i-1 here, corresponding to
-        the lower value.
+        """Find the index into the temperatures such that T[i-1] < t0 <= T[i].
+        We return i-1 here, corresponding to the lower value.
+
         Note: we work in terms of log10()
+
+        Parameters
+        ----------
+        logt0 : float
+            log10(temperature) to interpolate at
+
+        Returns
+        -------
+        int
+
         """
 
         max_idx = len(self.temp) - 1
         return max(0, min(max_idx, np.searchsorted(self.temp, logt0)) - 1)
 
     def _get_logrhoy_idx(self, logrhoy0):
-        """return the index into rho*Y such that
-        rhoY[i-1] < rhoy0 <= rhoY[i].  We return i-1 here,
-        corresponding to the lower value.
+        """Return the index into rhoY such that rhoY[i-1] < rhoy0 <= rhoY[i].
+        We return i-1 here, corresponding to the lower value.
+
         Note: we work in terms of log10()
+
+        Parameters
+        ----------
+        logrhoy0 : float
+            log10(ρ Y_e) to interpolate at
+
+        Returns
+        -------
+        int
 
         """
 
@@ -68,14 +109,44 @@ class TableInterpolator:
         return max(0, min(max_idx, np.searchsorted(self.rhoy, logrhoy0)) - 1)
 
     def _rhoy_T_to_idx(self, irhoy, jtemp):
-        """given a pair (irhoy, jtemp) into the table, return the 1-d index
-        into the underlying data array assuming row-major ordering"""
+        """Given a pair (irhoy, jtemp) into the table, return the 1D
+        index into the underlying data array assuming row-major
+        ordering
+
+        Parameters
+        ----------
+        irhoy : int
+            the index in the (ρ Y_e) dimension
+        ijtemp : int
+            the index into the T dimension
+
+        Returns
+        -------
+        int
+
+        """
 
         return irhoy * self.table_temp_lines + jtemp
 
     def interpolate(self, logrhoy, logT, component):
-        """given logrhoy and logT, do bilinear interpolation to
-        find the value of the data component in the table"""
+        """Given logrhoy and logT, do bilinear interpolation to
+        find the value of the data component in the table
+
+        Parameters
+        ----------
+        logrhoy : float
+            log10(ρ Y_e) to interpolate at
+        logT : float
+            log10(T) to interpolate at
+        component : int
+            the component from the data table we are interpolating.
+            This should correspond to a :py:class:`TableIndex` component.
+
+        Returns
+        -------
+        float
+
+        """
 
         # We are going to do bilinear interpolation.  We create a
         # polynomial of the form:
@@ -132,13 +203,16 @@ class TableInterpolator:
 
 
 class TabularRate(Rate):
-    """A tabular rate.
+    """A rate tabulated in terms of log10(ρ Y_e) and log10(T).
 
-    :raises: :class:`.RateFileError`, :class:`.UnsupportedNucleus`
+    Parameters
+    ----------
+    rfile : str, pathlib.Path, io.StringIO
+        the file containing the data table
+
     """
+
     def __init__(self, rfile=None):
-        """ rfile can be either a string specifying the path to a rate file or
-        an io.StringIO object from which to read rate information. """
         super().__init__()
         self.rate_eval_needs_rho = True
         self.rate_eval_needs_comp = True
@@ -161,25 +235,11 @@ class TabularRate(Rate):
         # we should initialize this somehow
         self.weak_type = ""
 
-        if isinstance(rfile, Path):
-            # read in the file, parse the different sets and store them as
-            # SingleSet objects in sets[]
-            f = self.rfile_path.open()
-        elif isinstance(rfile, io.StringIO):
-            # Set f to the io.StringIO object
-            f = rfile
-        else:
-            f = None
-
-        if f:
-            self._read_from_file(f)
-            f.close()
+        self._read_from_file(self.rfile_path)
 
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
-
-        self.get_tabular_rate()
 
         # store the extrema of the thermodynamics
         _rhoy = self.tabular_data_table[::self.table_temp_lines, TableIndex.RHOY.value]
@@ -197,8 +257,10 @@ class TabularRate(Rate):
         return hash(self.__repr__())
 
     def __eq__(self, other):
-        """ Determine whether two Rate objects are equal.
-        They are equal if they contain identical reactants and products."""
+        """Determine whether two Rate objects are equal.  They are
+        equal if they contain identical reactants and products.
+
+        """
 
         if not isinstance(other, TabularRate):
             return False
@@ -208,55 +270,97 @@ class TabularRate(Rate):
     def __add__(self, other):
         raise NotImplementedError("addition not defined for tabular rates")
 
-    def _read_from_file(self, f):
-        """ given a file object, read rate data from the file. """
-        lines = f.readlines()
-        f.close()
+    def _read_from_file(self, table_file):
+        """Given a filename, read rate data from the file.
 
-        self.original_source = "".join(lines)
+        Parameters
+        ----------
+        table_file : str, pathlib.Path
+            The file object that contains the table data
 
-        # first line is the chapter
-        self.chapter = lines[0].strip()
-        if self.chapter != "t":
-            raise RateFileError(f"Invalid chapter for TabularRate ({self.chapter})")
+        """
 
-        # remove any blank lines
-        set_lines = [line for line in lines[1:] if not line.strip() == ""]
+        # just store the filename as the original source
+        self.original_source = f"{table_file}"
 
-        # e1 -> e2, Tabulated
-        s1 = set_lines.pop(0)
-        s2 = set_lines.pop(0)
-        s3 = set_lines.pop(0)
-        s4 = set_lines.pop(0)
-        s5 = set_lines.pop(0)
-        f = s1.split()
+        # set weak type
+        if "electroncapture" in str(table_file):
+            self.weak_type = "electron_capture"
+
+        elif "betadecay" in str(table_file):
+            self.weak_type = "beta_decay"
+
+        # for backwards compatibility, we'll set a chapter to "t"
+        self.chapter = "t"
+
+        # read in the table data
+        # there are a few header lines that start with "!", which we skip,
+        # expect for the very first, which defines the nuclei in the form
+        # reactant -> product
+
+        t_data2d = []
+        reactant = None
+        product = None
+        header_lines = 0
+        with open(table_file) as tabular_file:
+            for i, line in enumerate(tabular_file):
+                if i == 0:
+                    try:
+                        # we have a line of the form:
+                        # !65ni -> 65co, e- capture
+                        # split it
+                        g = re.match(r"!([\da-zA-Z]*) \-\> ([\da-zA-Z]*)[\w,\-]*", line)
+                        reactant = g.group(1)
+                        product = g.group(2)
+                    except AttributeError:
+                        # we have a line including spins, of the form:
+                        # !17F (5/2+, 1/2+) -> 17O    e-capture   with screening effects
+                        # this is mainly Suzuki rates.  The stuff in the (...) giving
+                        # the spins can be complicated, but the key is that it is in
+                        # parentheses.
+                        g = re.match(r"!([\da-zA-Z]*)\s*\([\w\:\=\d/\+,\.\s\_\{\}]*\)\s+\-\> ([\da-zA-Z]*)[\w,\-]*", line)
+                        reactant = g.group(1)
+                        product = g.group(2)
+                    header_lines += 1
+                    continue
+                if line.startswith("!"):
+                    header_lines += 1
+                    continue
+                line = line.strip()
+                # skip empty lines
+                if not line:
+                    continue
+                # split the column values on whitespace
+                t_data2d.append(line.split())
+
         try:
-            self.reactants.append(Nucleus.from_cache(f[0]))
-            self.products.append(Nucleus.from_cache(f[1]))
+            self.reactants.append(Nucleus.from_cache(reactant.lower()))
+            self.products.append(Nucleus.from_cache(product.lower()))
         except UnsupportedNucleus as ex:
             raise RateFileError(f'Nucleus objects could not be identified in {self.original_source}') from ex
 
-        self.table_file = s2.strip()
-        self.table_header_lines = int(s3.strip())
-        self.table_rhoy_lines = int(s4.strip())
-        self.table_temp_lines = int(s5.strip())
+        self.table_file = table_file
+
+        # convert the nested list of string values into a numpy float array
+        self.tabular_data_table = np.array(t_data2d, dtype=np.float64)
+
+        # get the number of rhoy lines
+        self.table_header_lines = header_lines
+        self.table_rhoy_lines = len(np.unique(self.tabular_data_table[:, 0]))
+        self.table_temp_lines = len(np.unique(self.tabular_data_table[:, 1]))
         self.table_num_vars = 6  # Hard-coded number of variables in tables for now.
         self.table_index_name = f'j_{self.reactants[0]}_{self.products[0]}'
         self.labelprops = 'tabular'
-
-        # set weak type
-        if "electroncapture" in self.table_file:
-            self.weak_type = "electron_capture"
-
-        elif "betadecay" in self.table_file:
-            self.weak_type = "beta_decay"
 
         # since the reactants and products were only now set, we need
         # to recompute Q -- this is used for finding rate pairs
         self._set_q()
 
     def _set_rhs_properties(self):
-        """ compute statistical prefactor and density exponent from the reactants. """
+        """Compute statistical prefactor and density exponent from the
+        reactants.
+
+        """
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
         self.inv_prefactor = 1
         if self.use_identical_particle_factor:
@@ -266,7 +370,10 @@ class TabularRate(Rate):
         self.dens_exp = len(self.reactants)-1
 
     def _set_screening(self):
-        """ tabular rates are not currently screened (they are e-capture or beta-decay)"""
+        """Tabular rates are not currently screened (they are
+        e-capture or beta-decay)
+
+        """
         self.ion_screen = []
         self.symmetric_screen = []
 
@@ -279,18 +386,25 @@ class TabularRate(Rate):
             self.fname = f'{reactants_str}__{products_str}'
 
     def get_rate_id(self):
-        """ Get an identifying string for this rate.
-        Don't include resonance state since we combine resonant and
-        non-resonant versions of reactions. """
+        """Get an identifying string for this rate.
+
+        Returns
+        -------
+        str
+
+        """
 
         ssrc = 'tabular'
 
         return f'{self.rid} <{self.label.strip()}_{ssrc}>'
 
     def function_string_py(self):
-        """
-        Return a string containing python function that computes the
-        rate
+        """Construct the python function that computes the rate.
+
+        Returns
+        -------
+        str
+
         """
 
         fstring = ""
@@ -306,36 +420,52 @@ class TabularRate(Rate):
 
         return fstring
 
-    def get_tabular_rate(self):
-        """read the rate data from .dat file """
-
-        # find .dat file and read it
-        self.table_path = _find_rate_file(self.table_file)
-        t_data2d = []
-        with self.table_path.open() as tabular_file:
-            for i, line in enumerate(tabular_file):
-                # skip header lines
-                if i < self.table_header_lines:
-                    continue
-                line = line.strip()
-                # skip empty lines
-                if not line:
-                    continue
-                # split the column values on whitespace
-                t_data2d.append(line.split())
-
-        # convert the nested list of string values into a numpy float array
-        self.tabular_data_table = np.array(t_data2d, dtype=np.float64)
-
     def eval(self, T, *, rho=None, comp=None):
-        """ evauate the reaction rate for temperature T """
+        """Evaluate the reaction rate.
+
+        Parameters
+        ----------
+        T : float
+            the temperature to evaluate the rate at
+        rho : float
+            the density to evaluate the rate at (not needed for ReacLib
+            rates).
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            to evaluate the rate with (not needed for ReacLib rates).
+
+        Returns
+        -------
+        float
+
+        """
+
         rhoY = rho * comp.ye
         r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
                                           TableIndex.RATE.value)
         return 10.0**r
 
     def get_nu_loss(self, T, *, rho=None, comp=None):
-        """ get the neutrino loss rate for the reaction if tabulated"""
+        """Evaluate the neutrino loss for the rate.
+
+        Parameters
+        ----------
+        T : float
+            the temperature to evaluate the rate at
+        rho : float
+            the density to evaluate the rate at.
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            to evaluate the rate with.
+
+        Returns
+        -------
+        float
+
+        """
+
         rhoY = rho * comp.ye
         r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
                                           TableIndex.NU.value)
@@ -343,16 +473,27 @@ class TabularRate(Rate):
 
     def plot(self, *, Tmin=None, Tmax=None, rhoYmin=None, rhoYmax=None,
              color_field='rate', figsize=(10, 10)):
-        """plot the rate's temperature sensitivity vs temperature
+        """Plot the rate or neutrino loss in the log10(ρ Y_e) and
+        log10(T) plane.
 
-        :param float Tmin:    minimum temperature for plot
-        :param float Tmax:    maximum temperature for plot
-        :param float rhoYmin: minimum electron density to plot (e-capture rates only)
-        :param float rhoYmax: maximum electron density to plot (e-capture rates only)
-        :param tuple figsize: figure size specification for matplotlib
+        Parameters
+        ----------
+        Tmin : float
+            minimum temperature for the plot
+        Tmax : float
+            maximum temperature for the plot
+        rhoYmin : float
+            minimum (ρ Y_e) for the plto
+        rhoYmax : float
+            maximum (ρ Y_e) for the plto
+        color_field : str
+            the field to plot.  Possible values are "rate" or "nu_loss"
+        figsize : tuple
+            the horizontal, vertical size (in inches) for the plot
 
-        :return: a matplotlib figure object
-        :rtype: matplotlib.figure.Figure
+        Returns
+        -------
+        matplotlib.figure.Figure
 
         """
 

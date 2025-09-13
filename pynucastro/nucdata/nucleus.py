@@ -1,6 +1,4 @@
-"""
-Classes and methods to interface with files storing rate data.
-"""
+"""Classes and methods to interface with files storing rate data."""
 
 import re
 from pathlib import Path
@@ -26,7 +24,7 @@ _pcollection = PartitionFunctionCollection(use_high_temperatures=True, use_set='
 
 
 class UnsupportedNucleus(Exception):
-    pass
+    """Exception for a nucleus that we do not know about."""
 
 
 class Nucleus:
@@ -35,7 +33,8 @@ class Nucleus:
     Parameters
     ----------
     name : str
-        name of the nucleus (e.g. "c12")
+        name of the nucleus (e.g. "c12" or "12C").  This is
+        case-insensitive.
     dummy : bool
         a dummy nucleus is one that we can use where
         a nucleus is needed, but it is not considered
@@ -135,16 +134,23 @@ class Nucleus:
             self.pretty = r"\mathrm{p}_\mathrm{NSE}"
             self.caps_name = "p_NSE"
             self.nse = True
-        elif name.strip() in ("al-6", "al*6"):
-            raise UnsupportedNucleus()
+        elif name.lower().strip() in ("al-6", "al*6"):
+            raise UnsupportedNucleus("isomers of Al26 are not currently supported")
         else:
-            e = re.match(r"([a-zA-Z]*)(\d*)", name)
-            self.el = e.group(1).title()  # chemical symbol
+            if e := re.match(r"^([a-zA-Z]+)(\d*)$", name):
+                self.el = e.group(1).title()  # chemical symbol
+                self.A = int(e.group(2))
+            elif e := re.match(r"^(\d*)([a-zA-Z]*)$", name):
+                self.el = e.group(2).title()  # chemical symbol
+                self.A = int(e.group(1))
+            if e is None:
+                raise ValueError(f"invalid nucleus string, {name}")
+
             assert self.el
-            self.A = int(e.group(2))
             assert self.A >= 0
-            self.short_spec_name = name
-            self.caps_name = name.capitalize()
+            self.short_spec_name = f"{self.el.lower()}{self.A}"
+            self.raw = f"{self.el.lower()}{self.A}"
+            self.caps_name = self.short_spec_name.capitalize()
 
         # use lowercase element abbreviation regardless the case of the input
         self.el = self.el.lower()
@@ -264,7 +270,7 @@ class Nucleus:
         return cls.from_cache(name, dummy)
 
     def summary(self):
-        """print a summary of the nuclear properties"""
+        """Print a summary of the nuclear properties"""
 
         heading = f"{self.caps_name} / {self.spec_name}"
         print(heading)
@@ -389,45 +395,85 @@ class Nucleus:
         return [cls.cast(obj) for obj in lst]
 
 
-def get_nuclei_in_range(zmin, zmax, amin, amax):
-    """Given a range of Z = [zmin, zmax], and A = [amin, amax],
-    return a list of Nucleus objects for all nuclei in this range
+def get_nuclei_in_range(name=None, *,
+                        Z_range=None, A_range=None, neutron_excess_range=None):
+    """Create a range of nuclei.  Both the proton number(s) and mass
+    range need to be specified.  This can be done in several ways:
+
+    * proton number: give either a single element name via `name`
+      (e.g., "Fe") or the range of proton numbers via ``Z_range``
+
+    * masses: give either the range of atomic weights via ``A_range`` or
+      the range of neutron excess, ``neutron_excess_range``.
 
     Parameters
     ----------
-    zmin : int
-        minimum atomic number
-    zmax : int
-        maximum atomic number
-    amin : int
-        minimum atomic weight
-    amax : int
-        maximum atomic weight
+    name : str
+        the element name for a single atomic number
+    Z_range : Iterable(int)
+        minimum and maximum atomic number
+    A_range : Iterable(int)
+        minimum and maximum atomic weight
+    neutron_excess_range : Iterable(int)
+        the minimum and maximum value of N-Z
 
     Returns
     -------
-    list
+    list(Nucleus)
+
+    Examples
+    --------
+    Get all of the oxygen isotopes that have anywhere from 2 fewer
+    neutrons than protons to 2 more neutrons than protons:
+
+    >>> nuc = get_nuclei_in_range("O", neutron_excess_range=[-2, 2])
+
+    Get all the iron, cobalt, and nickel nuclei with masses in the
+    range 52 to 64
+
+    >>> nuc = get_nuclei_in_range(Z_range=[26, 28], A_range=[52, 64])
+
     """
 
-    nuc_list = []
-    assert zmax >= zmin, "zmax must be >= zmin"
-    assert amax >= amin, "amax must be >= amin"
+    if name is None and Z_range is None:
+        raise ValueError("one of name or Z_range need to be provided")
 
-    for z in range(zmin, zmax+1):
-        element = PeriodicTable.lookup_Z(z)
-        for a in range(amin, amax+1):
-            name = f"{element.abbreviation}{a}"
-            nuc_list.append(Nucleus(name))
+    elements = []
+    if name:
+        elements.append(name)
+    else:
+        for z in range(Z_range[0], Z_range[1]+1):
+            elements.append(PeriodicTable.lookup_Z(z).abbreviation)
+
+    if A_range is None and neutron_excess_range is None:
+        raise ValueError("one of A_range or neutron_excess_range need to be provided")
+
+    nuc_list = []
+
+    for e in elements:
+        if A_range:
+            for a in range(A_range[0], A_range[1]+1):
+                nuc = f"{e}{a}"
+                nuc_list.append(Nucleus(nuc))
+        else:
+            # find the Z for this element
+            Z = PeriodicTable.lookup_abbreviation(e.lower()).Z
+            A_symmetric = 2 * Z
+            for a in range(A_symmetric + neutron_excess_range[0],
+                           A_symmetric + neutron_excess_range[1] + 1):
+                nuc = f"{e}{a}"
+                nuc_list.append(Nucleus(nuc))
 
     return nuc_list
 
 
 def get_all_nuclei():
-    """Return a list with every Nucleus that has a known mass
+    """Return a list with every Nucleus that has a known mass.
 
     Returns
     -------
     list
+
     """
 
     nuc_list = []

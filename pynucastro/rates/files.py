@@ -1,6 +1,5 @@
-"""Functions for finding and working with the rate data directories.
+"""Functions for finding and working with the rate data directories."""
 
-"""
 from pathlib import Path
 
 _pynucastro_dir = Path(__file__).parents[1]
@@ -9,9 +8,10 @@ _pynucastro_tabular_dir = _pynucastro_rates_dir/"tabular"
 _pynucastro_suzuki_dir = _pynucastro_tabular_dir/"suzuki"
 _pynucastro_langanke_dir = _pynucastro_tabular_dir/"langanke"
 _pynucastro_ffn_dir = _pynucastro_tabular_dir/"ffn"
+_pynucastro_oda_dir = _pynucastro_tabular_dir/"oda"
 _dirs = [
     _pynucastro_dir, _pynucastro_rates_dir, _pynucastro_tabular_dir,
-    _pynucastro_suzuki_dir, _pynucastro_langanke_dir, _pynucastro_ffn_dir
+    _pynucastro_suzuki_dir, _pynucastro_langanke_dir, _pynucastro_ffn_dir, _pynucastro_oda_dir
 ]
 
 
@@ -44,8 +44,11 @@ class RateFileError(Exception):
 
 
 def _find_rate_file(ratename):
-    """locate the Reaclib or tabular rate or library file given its name.  Return
-    None if the file cannot be located, otherwise return its path."""
+    """Locate the Reaclib or tabular rate or library file given its
+    name.  Return None if the file cannot be located, otherwise return
+    its path.
+
+    """
 
     # check to see if the rate file is in the working dir,
     # is already the full path, or is in _dirs

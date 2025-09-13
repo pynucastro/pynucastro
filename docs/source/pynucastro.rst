@@ -13,6 +13,7 @@ Subpackages
    :maxdepth: 4
 
    pynucastro.constants
+   pynucastro.eos
    pynucastro.networks
    pynucastro.neutrino_cooling
    pynucastro.nucdata
@@ -23,18 +24,9 @@ Subpackages
 Submodules
 ----------
 
-pynucastro.numba\_util module
------------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: pynucastro.numba_util
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pynucastro.yt\_utils module
----------------------------
-
-.. automodule:: pynucastro.yt_utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   pynucastro.numba_util
+   pynucastro.utils
+   pynucastro.yt_utils

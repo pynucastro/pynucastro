@@ -8,7 +8,7 @@
 
 #include <AMReX_Array.H>
 
-using namespace amrex;
+using namespace amrex::literals;
 
 void init_tabular();
 
@@ -144,7 +144,7 @@ evaluate_linear_1d(const amrex::Real fhi, const amrex::Real flo, const amrex::Re
     // This function is a 1-D linear interpolator, that keeps x constant to xlo or xhi, based
     // on the side, if x is outside [xlo, xhi] respectively.
 
-    amrex::Real xx = Clamp(x, xlo, xhi);
+    amrex::Real xx = amrex::Clamp(x, xlo, xhi);
     amrex::Real f = flo + (fhi - flo) * (xx - xlo) / (xhi - xlo);
 
     return f;
@@ -167,8 +167,8 @@ evaluate_linear_2d(const amrex::Real fip1jp1, const amrex::Real fip1j, const amr
     amrex::Real B = (fip1j - fij) / dx;
     amrex::Real A = (fip1jp1 - B * dx - C * dy - E) / (dx * dy);
 
-    amrex::Real xx = Clamp(x, xlo, xhi);
-    amrex::Real yy = Clamp(y, ylo, yhi);
+    amrex::Real xx = amrex::Clamp(x, xlo, xhi);
+    amrex::Real yy = amrex::Clamp(y, ylo, yhi);
 
     f =  A * (xx - xlo) * (yy - ylo) +
          B * (xx - xlo) +

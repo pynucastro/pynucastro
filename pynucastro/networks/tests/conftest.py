@@ -1,3 +1,5 @@
+"""A collection of fixtures for testing networks."""
+
 import filecmp
 import shutil
 from pathlib import Path
@@ -9,26 +11,37 @@ import pynucastro as pyna
 
 @pytest.fixture(scope="package")
 def reaclib_library():
+    """Return the ReacLibLibrary"""
     return pyna.ReacLibLibrary()
 
 
 @pytest.fixture(scope="package")
 def tabular_library():
+    """Return the TabularLibrary"""
     return pyna.TabularLibrary()
 
 
 @pytest.fixture(scope="package")
 def suzuki_library():
+    """Return the Suzukibrary"""
     return pyna.SuzukiLibrary()
 
 
 @pytest.fixture(scope="package")
 def langanke_library():
+    """Return the LangankebLibrary"""
     return pyna.LangankeLibrary()
 
 
 @pytest.fixture(scope="package")
+def oda_library():
+    """Return the OdaLibrary"""
+    return pyna.OdaLibrary()
+
+
+@pytest.fixture(scope="package")
 def compare_network_files(request):
+    """Compare files created during testing to the reference versions."""
     # this fixture returns a closure so we don't have to get the pytest config
     # in each test function and pass it through
     update_networks = request.config.getoption("--update-networks")

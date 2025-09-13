@@ -1,3 +1,4 @@
+(rho, T) = 2e+08 1e+09
 Ydot(He4) = -3187.33914112
 Ydot(C12) = 636.726877973
 Ydot(O16) = -1265.14889575
@@ -30,4 +31,4 @@ jac(3,5) = 0.310214898718
 jac(4,5) = 1.2369887515
 jac(5,5) = -1.54720365022
 
-instantaneous energy generation rate (erg/g/s) = 1.02874958576e+22
+instantaneous energy generation rate (erg/g/s) = 1.02874968013e+22
