@@ -1,8 +1,3 @@
-# create a class that holds all the data for a line
-# create a dict keyed by (ec_parent, ec_daughter)
-# apprend to a list in each key
-# loop over keys, find unique Ts 
-
 import re
 
 import numpy as np
@@ -83,4 +78,3 @@ with open("pruet_fowler_datafile2.txt") as df:
         print(T, rhoYe, uf, r1, r1em, r1cap, log_ec_nu, r2, r2em, r2cap, log_beta_nu)
         print(ec_parent, ec_daughter, beta_parent, beta_daughter)
         break
-
