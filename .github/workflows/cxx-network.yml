@@ -72,7 +72,7 @@ jobs:
       - name: Regenerate ECSN network
         run: |
           cd external/Microphysics/networks/ECSN
-          python ecsn_network_generation.py
+          python ecsn.py
 
       - name: Compile burn_cell (ECSN)
         run: |
