@@ -6,7 +6,7 @@ from numpy.testing import assert_allclose
 from pytest import approx
 
 import pynucastro as pyna
-from pynucastro.reduction import drgep, reduction
+import pynucastro.reduction as reduction
 
 
 class TestDrgepHelpers:
@@ -61,16 +61,16 @@ class TestDrgepHelpers:
         ]
 
         rvals = net.evaluate_rates(rho=1e4, T=1e8, composition=comp)
-        r_AB = drgep.calc_interaction_matrix(net, rvals)
+        r_AB = reduction.drgep.calc_interaction_matrix(net, rvals)
         assert_allclose(r_AB, expected, rtol=1e-10, atol=1e-100)
 
     def test_interaction_matrix_numpy(self, net, comp):
         rvals = net.evaluate_rates(rho=1e5, T=1e8, composition=comp)
         rvals_arr = [rvals[r] for r in net.rates]
-        expected = drgep.calc_interaction_matrix(net, rvals)
+        expected = reduction.drgep.calc_interaction_matrix(net, rvals)
 
         net.clear_arrays()
-        r_AB = drgep.calc_interaction_matrix_numpy(net, rvals_arr)
+        r_AB = reduction.drgep.calc_interaction_matrix_numpy(net, rvals_arr)
 
         assert_allclose(r_AB, expected, rtol=1e-10, atol=1e-100)
 
@@ -96,7 +96,7 @@ class TestDrgepHelpers:
             o15: {o15, n14, p, n15},
         }
 
-        adj_nuc = drgep.get_adj_nuc(net)
+        adj_nuc = reduction.drgep.get_adj_nuc(net)
         assert adj_nuc == expected
 
 
