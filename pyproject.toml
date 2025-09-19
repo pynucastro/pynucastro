@@ -51,6 +51,7 @@ pynucastro = [
   "library/tabular/*",
   "library/tabular/suzuki/*",
   "library/tabular/langanke/*",
+  "library/tabular/pruet_fuller/*",
   "library/tabular/ffn/*",
   "library/tabular/oda/*",
   "templates/**/*",

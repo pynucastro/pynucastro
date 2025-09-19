@@ -40,6 +40,12 @@ def oda_library():
 
 
 @pytest.fixture(scope="package")
+def pruetfuller_library():
+    """Return the PruetFullerLibrary"""
+    return pyna.PruetFullerLibrary()
+
+
+@pytest.fixture(scope="package")
 def compare_network_files(request):
     """Compare files created during testing to the reference versions."""
     # this fixture returns a closure so we don't have to get the pytest config

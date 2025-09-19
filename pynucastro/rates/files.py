@@ -9,9 +9,11 @@ _pynucastro_suzuki_dir = _pynucastro_tabular_dir/"suzuki"
 _pynucastro_langanke_dir = _pynucastro_tabular_dir/"langanke"
 _pynucastro_ffn_dir = _pynucastro_tabular_dir/"ffn"
 _pynucastro_oda_dir = _pynucastro_tabular_dir/"oda"
+_pynucastro_pruetfuller_dir = _pynucastro_tabular_dir/"pruet_fuller"
 _dirs = [
     _pynucastro_dir, _pynucastro_rates_dir, _pynucastro_tabular_dir,
-    _pynucastro_suzuki_dir, _pynucastro_langanke_dir, _pynucastro_ffn_dir, _pynucastro_oda_dir
+    _pynucastro_suzuki_dir, _pynucastro_langanke_dir, _pynucastro_ffn_dir,
+    _pynucastro_oda_dir, _pynucastro_pruetfuller_dir
 ]
 
 
