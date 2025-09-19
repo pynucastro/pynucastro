@@ -125,4 +125,3 @@ with open("pruet_fuller_datafile2.txt") as df:
         ecf.write(f" {rhoYe:20} {T:10.7f} {uf:20.14g} {0.0:20} {0.0:20} {log_ec_rate:20} {log_ec_nu:20} {-100.0:20}\n")
         if betaf:
             betaf.write(f" {rhoYe:20} {T:10.7f} {uf:20.14g} {0.0:20} {0.0:20} {log_beta_rate:20} {log_beta_nu:20} {-100.0:20}\n")
-
