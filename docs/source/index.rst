@@ -82,6 +82,7 @@ and interactively exploring nuclear reaction networks.
    unimportant-rates.ipynb
    network-cycles.ipynb
    stiffness.ipynb
+   reduction.ipynb
 
 .. toctree::
    :maxdepth: 1
