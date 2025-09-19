@@ -1,5 +1,5 @@
-Initializing AMReX (23.05-924-ga67a8c6ee6e7)...
-AMReX (23.05-924-ga67a8c6ee6e7) initialized
+Initializing AMReX (23.05-831-gdf1e7d01d26d)...
+AMReX (23.05-831-gdf1e7d01d26d) initialized
 starting the single zone burn...
 reading in network electron-capture / beta-decay tables...
 Maximum Time (s): 0.01
@@ -63,4 +63,4 @@ omegadot(Si28): 23.11237415
 omegadot(P31): -0.9999999993
 omegadot(S32): 72.05389512
 number of steps taken: 18719
-AMReX (23.05-924-ga67a8c6ee6e7) finalized
+AMReX (23.05-831-gdf1e7d01d26d) finalized
