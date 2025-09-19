@@ -1,8 +1,3 @@
-# create a class that holds all the data for a line
-# create a dict keyed by (ec_parent, ec_daughter)
-# apprend to a list in each key
-# loop over keys, find unique Ts
-
 import re
 
 import numpy as np
@@ -127,7 +122,7 @@ with open("pruet_fuller_datafile2.txt") as df:
                 betaf.write(f"!{'Log(g/cm^3)':20} {'Log(K)':20} {'erg':20} {'erg':20} {'erg':20} {'Log(1/s)':20} {'Log(erg/s)':20} {'Log(erg/s)':20}\n")
 
         # output
-
         ecf.write(f" {rhoYe:20} {T:10.7f} {uf:20.14g} {0.0:20} {0.0:20} {log_ec_rate:20} {log_ec_nu:20} {-100.0:20}\n")
         if betaf:
             betaf.write(f" {rhoYe:20} {T:10.7f} {uf:20.14g} {0.0:20} {0.0:20} {log_beta_rate:20} {log_beta_nu:20} {-100.0:20}\n")
+
