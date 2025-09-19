@@ -15,8 +15,8 @@ def calc_interaction_matrix(net, rvals):
 
     Parameters
     ----------
-    net : RateCollection or subclass of RateCollection
-        The network we are reducing
+    net : RateCollection
+        The network we are reducing (can be a subclass of ``RateCollection``)
     rvals : dict(Rate)
         A dictionary of reaction rate values, including all
         density, temperature, and composition dependencies.  This
@@ -103,8 +103,8 @@ def get_adj_nuc(net):
 
     Parameters
     ----------
-    net : RateCollection or subclass of RateCollection
-        The network we are reducing
+    net : RateCollection
+        The network we are reducing (can be a subclass of ``RateCollection``)
 
     Returns
     -------
@@ -135,8 +135,8 @@ def drgep_dijkstras(net, r_AB, target, adj_nuc):
 
     Parameters
     ----------
-    net : RateCollection or subclass of RateCollection
-        The network we are reducing
+    net : RateCollection
+        The network we are reducing (can be a subclass of ``RateCollection``)
     r_AB : numpy.ndarray
         The interaction coefficient matrix
     target : Nucleus
@@ -337,8 +337,8 @@ def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False, use_numpy=F
 
     Parameters
     ----------
-    net : RateCollection or subclass of RateCollection
-        The network to reduce
+    net : RateCollection
+        The network to reduce (can be a subclass of ``RateCollection``)
     conds : Iterable
         The set of thermodynamic conditions to reduce over. This can be:
 
