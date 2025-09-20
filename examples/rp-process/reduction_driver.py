@@ -1,5 +1,3 @@
-"""Methods and driver used in the reduction algorithm."""
-
 #!/usr/bin/env python3
 
 import argparse
@@ -9,7 +7,7 @@ from collections import namedtuple
 
 import numpy as np
 
-from pynucastro import Composition, Nucleus
+from pynucastro import Nucleus
 from pynucastro.constants import constants
 from pynucastro.reduction import mpi_importer, sens_analysis
 from pynucastro.reduction.drgep_module import drgep
@@ -17,21 +15,6 @@ from pynucastro.reduction.generate_data import dataset
 from pynucastro.reduction.load_network import load_network
 
 MPI = mpi_importer()
-
-
-def _wrap_conds(conds):
-    """Return [conds] if conds has 1 dimension, and give back conds otherwise."""
-
-    try:
-        _ = conds[0]
-        try:
-            _ = conds[0][0]
-            return conds
-        except IndexError:
-            return [conds]
-    except IndexError:
-        raise ValueError('Conditions must be non-empty subscriptable object') from None
-
 
 NetInfo = namedtuple("NetInfo", "y ydot z a ebind m")
 
@@ -82,20 +65,6 @@ def abar_dot(net_info):
 
     abar_inv = np.sum(net_info.y)
     return -1 / abar_inv**2 * np.sum(net_info.ydot)
-
-
-def map_comp(comp, net):
-    """Create new composition object with nuclei in net, and copy
-    their mass fractions over.
-
-    """
-
-    comp_new = Composition(net.unique_nuclei)
-
-    for nuc in comp_new.X:
-        comp_new.X[nuc] = comp.X[nuc]
-
-    return comp_new
 
 
 def rel_err(x, x0):

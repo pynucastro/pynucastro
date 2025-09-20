@@ -161,7 +161,7 @@ print(f"Number of Rates: {len(rp_net.rates)}")
 print()
 
 if args.write_lib:
-    final_lib.write_to_file(args.write_lib, True)
+    final_lib.write_to_file(args.write_lib, prepend_rates_dir=True)
 
 if args.write_network:
     print("Writing network...")
