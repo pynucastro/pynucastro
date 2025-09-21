@@ -8,11 +8,10 @@ from collections import namedtuple
 import numpy as np
 
 from pynucastro import Nucleus
-from pynucastro.constants import constants
 from pynucastro.reduction import mpi_importer, sens_analysis
 from pynucastro.reduction.drgep_module import drgep
-from pynucastro.reduction.generate_data import dataset
-from pynucastro.reduction.load_network import load_network
+from generate_data import dataset
+from load_network import load_network
 
 MPI = mpi_importer()
 
