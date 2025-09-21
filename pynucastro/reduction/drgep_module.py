@@ -18,7 +18,7 @@ def to_list(x, n=1):
     x : Iterable or float or int
         The object we want to convert to a list
     n : int
-        The number of times to repeat x (if x is not an interable)
+        The number of times to repeat x (if x is not an iterable)
 
     Returns
     -------

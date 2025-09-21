@@ -13,9 +13,7 @@ Submodules
    :maxdepth: 4
 
    pynucastro.reduction.drgep_module
-   pynucastro.reduction.flycheck_reduction_driver
    pynucastro.reduction.generate_data
    pynucastro.reduction.load_network
    pynucastro.reduction.reduction_driver
-   pynucastro.reduction.reduction_utils
    pynucastro.reduction.sensitivity_analysis
