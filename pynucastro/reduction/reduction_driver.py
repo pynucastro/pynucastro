@@ -12,10 +12,10 @@ import numpy as np
 from pynucastro import Composition, Nucleus
 from pynucastro.constants import constants
 from pynucastro.mpi_utils import mpi_importer
-from pynucastro.reduction.sensitivity_analysis import sens_analysis
 from pynucastro.reduction.drgep_module import drgep
 from pynucastro.reduction.generate_data import dataset
 from pynucastro.reduction.load_network import load_network
+from pynucastro.reduction.sensitivity_analysis import sens_analysis
 
 MPI = mpi_importer()
 

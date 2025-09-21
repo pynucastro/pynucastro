@@ -2,8 +2,8 @@
 
 import numpy as np
 
-from pynucastro.nucdata import Nucleus
 from pynucastro.mpi_utils import mpi_importer, mpi_numpy_decomp
+from pynucastro.nucdata import Nucleus
 
 MPI = mpi_importer()
 
