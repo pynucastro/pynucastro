@@ -40,12 +40,12 @@ namespace part_fun {
     void interpolate_pf(const amrex::Real t9, const T& temp_array, const T& pf_array,
                         amrex::Real& pf, amrex::Real& dpf_dT) {
 
-        if (t9 >= temp_array.lo() && t9 < temp_array.hi()) {
+        int left = temp_array.lo();
+        int right = temp_array.hi();
+
+        if (t9 >= temp_array(left) && t9 < temp_array(right)) {
 
             // find the largest temperature element <= t9 using a binary search
-
-            int left = temp_array.lo();
-            int right = temp_array.hi();
 
             while (left < right) {
                 int mid = (left + right) / 2;
