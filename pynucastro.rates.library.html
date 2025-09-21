@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.library module &#8212; pynucastro 2.7.1.post17+g191bc90c8 documentation</title>
+    <title>pynucastro.rates.library module &#8212; pynucastro 2.7.1.post18+g42e61a761 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=0b688d6c"></script>
+    <script src="_static/documentation_options.js?v=9fb9b3ed"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -587,7 +587,6 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.linking_nuclei"><code class="docutils literal notranslate"><span class="pre">Library.linking_nuclei()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.num_rates"><code class="docutils literal notranslate"><span class="pre">Library.num_rates</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.remove_rate"><code class="docutils literal notranslate"><span class="pre">Library.remove_rate()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.write_to_file"><code class="docutils literal notranslate"><span class="pre">Library.write_to_file()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.OdaLibrary"><code class="docutils literal notranslate"><span class="pre">OdaLibrary</span></code></a></li>
@@ -596,7 +595,10 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.RateFilter.matches"><code class="docutils literal notranslate"><span class="pre">RateFilter.matches()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.ReacLibLibrary"><code class="docutils literal notranslate"><span class="pre">ReacLibLibrary</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.ReacLibLibrary"><code class="docutils literal notranslate"><span class="pre">ReacLibLibrary</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.ReacLibLibrary.write_to_file"><code class="docutils literal notranslate"><span class="pre">ReacLibLibrary.write_to_file()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.SuzukiLibrary"><code class="docutils literal notranslate"><span class="pre">SuzukiLibrary</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.TabularLibrary"><code class="docutils literal notranslate"><span class="pre">TabularLibrary</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.TabularLibrary.lib_path"><code class="docutils literal notranslate"><span class="pre">TabularLibrary.lib_path</span></code></a></li>
@@ -909,22 +911,6 @@ short name “A(x,y)B”, a Rate object, or the rate id</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.rates.library.Library.write_to_file">
-<span class="sig-name descname"><span class="pre">write_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prepend_rates_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.write_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.write_to_file" title="Link to this definition">#</a></dt>
-<dd><p>Write the library out to a file of the given name in
-Reaclib format.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The filename to use for the library</p></li>
-<li><p><strong>prepend_rates_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, then output to the pynucastro rate file
-directory.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
@@ -1021,6 +1007,22 @@ O16 –&gt; He4 + C12 — you need to know how your library treats rates</p></li
 <dd><p>Bases: <a class="reference internal" href="#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><code class="xref py py-class docutils literal notranslate"><span class="pre">Library</span></code></a></p>
 <p>Create a <a class="reference internal" href="#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><code class="xref py py-class docutils literal notranslate"><span class="pre">Library</span></code></a> containing all of the rates in the
 latest stored version of the ReacLib library.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.rates.library.ReacLibLibrary.write_to_file">
+<span class="sig-name descname"><span class="pre">write_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prepend_rates_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#ReacLibLibrary.write_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.ReacLibLibrary.write_to_file" title="Link to this definition">#</a></dt>
+<dd><p>Write the library out to a file of the given name in
+Reaclib format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The filename to use for the library</p></li>
+<li><p><strong>prepend_rates_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, then output to the pynucastro rate file
+directory.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -1146,7 +1148,6 @@ The delimiter is usually either “_” or “ “</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.linking_nuclei"><code class="docutils literal notranslate"><span class="pre">Library.linking_nuclei()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.num_rates"><code class="docutils literal notranslate"><span class="pre">Library.num_rates</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.remove_rate"><code class="docutils literal notranslate"><span class="pre">Library.remove_rate()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.Library.write_to_file"><code class="docutils literal notranslate"><span class="pre">Library.write_to_file()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.OdaLibrary"><code class="docutils literal notranslate"><span class="pre">OdaLibrary</span></code></a></li>
@@ -1155,7 +1156,10 @@ The delimiter is usually either “_” or “ “</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.RateFilter.matches"><code class="docutils literal notranslate"><span class="pre">RateFilter.matches()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.ReacLibLibrary"><code class="docutils literal notranslate"><span class="pre">ReacLibLibrary</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.ReacLibLibrary"><code class="docutils literal notranslate"><span class="pre">ReacLibLibrary</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.ReacLibLibrary.write_to_file"><code class="docutils literal notranslate"><span class="pre">ReacLibLibrary.write_to_file()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.SuzukiLibrary"><code class="docutils literal notranslate"><span class="pre">SuzukiLibrary</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.TabularLibrary"><code class="docutils literal notranslate"><span class="pre">TabularLibrary</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.TabularLibrary.lib_path"><code class="docutils literal notranslate"><span class="pre">TabularLibrary.lib_path</span></code></a></li>

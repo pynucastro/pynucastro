@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.library &#8212; pynucastro 2.7.1.post17+g191bc90c8 documentation</title>
+    <title>pynucastro.rates.library &#8212; pynucastro 2.7.1.post18+g42e61a761 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=0b688d6c"></script>
+    <script src="../../../_static/documentation_options.js?v=9fb9b3ed"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -932,30 +932,6 @@ document.write(`
                     <span class="k">else</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">[</span><span class="n">rid</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span>
 
-<div class="viewcode-block" id="Library.write_to_file">
-<a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.Library.write_to_file">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prepend_rates_dir</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the library out to a file of the given name in</span>
-<span class="sd">        Reaclib format.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        filename : str</span>
-<span class="sd">            The filename to use for the library</span>
-<span class="sd">        prepend_rates_dir : bool</span>
-<span class="sd">            If ``True``, then output to the pynucastro rate file</span>
-<span class="sd">            directory.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="n">prepend_rates_dir</span><span class="p">:</span>
-            <span class="n">filename</span> <span class="o">=</span> <span class="n">get_rates_dir</span><span class="p">()</span><span class="o">/</span><span class="n">filename</span>
-
-        <span class="k">with</span> <span class="n">filename</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
-                <span class="n">rate</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
-
-
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string containing the rates IDs in this library.&quot;&quot;&quot;</span>
         <span class="n">rstrings</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1458,7 +1434,31 @@ document.write(`
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">libfile</span> <span class="o">=</span> <span class="s1">&#39;reaclib_default2_20250330&#39;</span>
-        <span class="n">Library</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libfile</span><span class="o">=</span><span class="n">libfile</span><span class="p">)</span></div>
+        <span class="n">Library</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libfile</span><span class="o">=</span><span class="n">libfile</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ReacLibLibrary.write_to_file">
+<a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.ReacLibLibrary.write_to_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prepend_rates_dir</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the library out to a file of the given name in</span>
+<span class="sd">        Reaclib format.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            The filename to use for the library</span>
+<span class="sd">        prepend_rates_dir : bool</span>
+<span class="sd">            If ``True``, then output to the pynucastro rate file</span>
+<span class="sd">            directory.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">prepend_rates_dir</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">get_rates_dir</span><span class="p">()</span><span class="o">/</span><span class="n">filename</span>
+
+        <span class="k">with</span> <span class="n">filename</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
+                <span class="n">rate</span><span class="o">.</span><span class="n">write_to_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
+</div>
 
 
 
