@@ -61,8 +61,8 @@ class TestRateFilter:
 
     def test_endpoint(self, reaclib_library):
 
-        filter = pyna.RateFilter(endpoint="zn60")
-        newlib = reaclib_library.filter(filter)
+        filt = pyna.RateFilter(endpoint="zn60")
+        newlib = reaclib_library.filter(filt)
 
         assert newlib.num_rates == 7761
         assert newlib.heaviest() == pyna.Nucleus("s60")
