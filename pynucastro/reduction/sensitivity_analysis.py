@@ -64,7 +64,8 @@ def _progress_bar(frac, size=50):
     print(progress_bar, f'{round(100*frac)}%', end=end)
 
 
-def sens_analysis(network, errfunc, thresh=0.05, use_mpi=False, print_prog=True):
+def sens_analysis(network, errfunc, thresh=0.05, args=None,
+                  use_mpi=False, print_prog=True):
     """Given a reaction network, remove nuclei from the network
     one-by-one until the induced error is as close to the given
     threshold as possible without exceeding it. This will test nuclei
@@ -80,6 +81,7 @@ def sens_analysis(network, errfunc, thresh=0.05, use_mpi=False, print_prog=True)
         the error function can be parallelized with MPI. Otherwise *sens_analysis* will be
         parallelized and the error function should not be.
     :param thresh: Threshold for acceptable error. Default is 0.05.
+    :param args: Tuple of arguments to pass through to the error function
     :param use_mpi: Whether to parallelize the loop over nuclei with each pass or not using MPI.
         For *p* MPI processes, the parallelized function will require O(n^2/p) error function
         evaluations per process. This option is *False* by default. If the error function is
@@ -120,7 +122,11 @@ def sens_analysis(network, errfunc, thresh=0.05, use_mpi=False, print_prog=True)
                 _progress_bar(i/len(nuclei))
 
             nuc = nuclei.pop(i)
-            err_i = errfunc(network.linking_nuclei(nuclei, print_warning=False))
+            if args is None:
+                err_i = errfunc(network.linking_nuclei(nuclei, print_warning=False))
+            else:
+                err_i = errfunc(network.linking_nuclei(nuclei, print_warning=False), *args)
+
             if err_i < err:
                 err = err_i
                 min_idx = i

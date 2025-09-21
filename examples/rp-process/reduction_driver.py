@@ -23,24 +23,14 @@ def rel_err(x, x0):
     return np.abs((x - x0) / x0)
 
 
-def get_errfunc_enuc(net_old, conds):
-    """Compute the error in nuclear energy generation."""
+def erf(net_new, conds, enucdot_list):
 
-    enucdot_list = []
+    err = 0.0
+    for (comp, rho, T), enucdot_old in zip(conds, enucdot_list):
+        enucdot_new = net_new.evaluate_energy_generation(rho, T, comp)
+        err = max(err, rel_err(enucdot_new, enucdot_old))
 
-    for comp, rho, T in conds:
-        enucdot_list.append(net_old.evaluate_energy_generation(rho, T, comp))
-
-    def erf(net_new):
-
-        err = 0.0
-        for (comp, rho, T), enucdot_old in zip(conds, enucdot_list):
-            enucdot_new = net_new.evaluate_energy_generation(rho, T, comp)
-            err = max(err, rel_err(enucdot_new, enucdot_old))
-
-        return err
-
-    return erf
+    return err
 
 
 def main():
@@ -145,7 +135,12 @@ def main():
     red_net = net.linking_nuclei(nuclei)
 
     second_data = list(dataset(net, args.datadim, True, args.brho, args.btemp, args.bmetal))
-    errfunc = get_errfunc_enuc(net, second_data)
+
+    enucdot_list = []
+    for comp, rho, T in second_data:
+        enucdot_list.append(net.evaluate_energy_generation(rho, T, comp))
+
+    erf_args = (second_data, enucdot_list)
 
     if not args.use_mpi or MPI.COMM_WORLD.Get_rank() == 0:
 
@@ -153,7 +148,7 @@ def main():
         print(f"DRGEP reduction took {dt:.3f} s.")
         print("Number of species in full network: ", len(net.unique_nuclei))
         print("Number of species in DRGEP reduced network: ", len(nuclei))
-        print("Reduced Network Error:", f"{errfunc(red_net)*100:.2f}%")
+        print("Reduced Network Error:", f"{erf(red_net, *erf_args)*100:.2f}%")
         print()
 
     #-----------------------------
@@ -163,7 +158,8 @@ def main():
     if args.use_mpi:
         MPI.COMM_WORLD.Barrier()
     t0 = time.time()
-    red_net = sens_analysis(red_net, errfunc, args.sens_analysis, args.use_mpi)
+    red_net = sens_analysis(red_net, erf, args.sens_analysis,
+                            args=erf_args, use_mpi=args.use_mpi)
     dt = time.time() - t0
 
     if not args.use_mpi or MPI.COMM_WORLD.Get_rank() == 0:
@@ -171,7 +167,7 @@ def main():
         print(f"Greedy sensitivity analysis reduction took {dt:.3f} s.")
         print("Number of species in DRGEP + sensitivity analysis reduced network: ",
               len(red_net.unique_nuclei))
-        print("Error: ", f"{errfunc(red_net)*100:.2f}%")
+        print("Error: ", f"{erf(red_net, *erf_args)*100:.2f}%")
 
     print("final network:")
     print(red_net.summary())
