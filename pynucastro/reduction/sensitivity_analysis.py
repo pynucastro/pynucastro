@@ -8,7 +8,7 @@ from pynucastro.reduction.reduction_utils import mpi_importer
 MPI = mpi_importer()
 
 
-def binary_search_trim(network, nuclei, errfunc, thresh=0.05):
+def binary_search_trim(network, nuclei, errfunc, thresh=0.05, args=None):
     """Given an array of nuclei sorted roughly by relative importance,
     perform a binary search to trim out nuclei from the network until
     the error is as close as possible to the given threshold without
@@ -18,17 +18,29 @@ def binary_search_trim(network, nuclei, errfunc, thresh=0.05):
 
     Parameters
     ----------
-    :param network: The network to reduce.
-    :param nuclei: Nuclei to consider for the final network, sorted by decreasing importance (i.e.
-        most important nuclei first). Importance can be determined by something like the *drgep*
-        function.
-    :param errfunc: Error function to use when evaluating error. Should take a reduced network as
-        an argument and return the relative error produced by the reduction. This can be a parallel
-        (MPI) function.
-    :param thresh: Threshold for acceptable error. Default is 0.05.
+    network : RateCollection
+        The network to reduce.
+    nuclei : Iterable(Nucleus) or Iterable(str)
+        Nuclei to consider for the final network, sorted by decreasing
+        importance (i.e.  most important nuclei first). Importance can
+        be determined by something like the *drgep* function.
+    errfunc : Callable
+        Error function to use when evaluating error, with the signature
+        ``error(net, *args)``, where ``net`` is the reduced network as
+        an argument and return the relative error produced by the reduction.
+        If ``use_mpi`` is ``False``, the error function can be parallelized
+        with MPI. Otherwise ``sens_analysis`` will be parallelized and the
+        error function should not be.
+    thresh : float
+        Threshold for acceptable error. Default is 0.05.
+    args : tuple
+        Additional arguments to pass through to the error function
 
-    :return: A reduced reaction network with an evaluated error approximately equal to the supplied
-        threshold.
+    Returns
+    -------
+    net : RateCollection
+        A reduced reaction network with an evaluated error
+        approximately equal to the supplied threshold.
 
     """
 
@@ -44,7 +56,10 @@ def binary_search_trim(network, nuclei, errfunc, thresh=0.05):
         red_net = network.linking_nuclei(nuclei[:end_idx])
 
         # Evaluate error
-        err = errfunc(red_net)
+        if args is None:
+            err = errfunc(red_net)
+        else:
+            err = errfunc(red_net, *args)
 
         if err <= thresh:
             seg_size /= 2
