@@ -332,6 +332,8 @@ class Library:
 
     def lightest(self):
         """Return the lightest nuclide in this library.
+        This will have the lowest A.  If two nuclei have the same A, then
+        the one with the highest Z is returned.
 
         Returns
         -------
