@@ -3,10 +3,33 @@
 import numpy as np
 
 from pynucastro.nucdata import Nucleus
-from pynucastro.reduction.reduction_utils import (mpi_importer,
-                                                  mpi_numpy_decomp, to_list)
+from pynucastro.mpi_utils import mpi_importer, mpi_numpy_decomp
 
 MPI = mpi_importer()
+
+
+def to_list(x, n=1):
+    """Convert a sequence or non-iterable to a list. In the
+    non-iterable case, the supplied object will be repeated *n* times
+    (default 1).
+
+    Parameters
+    ----------
+    x : Iterable or float or int
+        The object we want to convert to a list
+    n : int
+        The number of times to repeat x (if x is not an interable)
+
+    Returns
+    -------
+    list
+
+    """
+
+    try:
+        return list(x)
+    except TypeError:
+        return [x] * n
 
 
 def calc_interaction_matrix(net, rvals):
