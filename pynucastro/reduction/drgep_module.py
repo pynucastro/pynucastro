@@ -10,7 +10,24 @@ MPI = mpi_importer()
 
 
 def calc_interaction_matrix(net, rvals):
-    """Calculate direct interaction coefficients."""
+    """Calculate direct interaction coefficients.  This returns an N x N
+    matrix, where N is the number of nuclei in ``net``.
+
+    Parameters
+    ----------
+    net : RateCollection
+        The network we are reducing (can be a subclass of ``RateCollection``)
+    rvals : dict(Rate)
+        A dictionary of reaction rate values, including all
+        density, temperature, and composition dependencies.  This
+        is typically the result of
+        :py:func:`evaluate_rates <pynucastro.networks.rate_collection.RateCollection.evaluate_rates>`
+
+    Returns
+    -------
+    numpy.ndarray
+
+    """
 
     N_species = len(net.unique_nuclei)
 
@@ -82,8 +99,16 @@ def calc_interaction_matrix_numpy(net, rvals_arr):
 
 
 def get_adj_nuc(net):
-    """Get set of adjacent nuclei for each nucleus in the net. Returns
-    dictionary keyed by nuclei.
+    """Get set of adjacent nuclei for each nucleus in the net.
+
+    Parameters
+    ----------
+    net : RateCollection
+        The network we are reducing (can be a subclass of ``RateCollection``)
+
+    Returns
+    -------
+    dict(Nucleus)
 
     """
 
@@ -107,6 +132,22 @@ def drgep_dijkstras(net, r_AB, target, adj_nuc):
     """Implement modified Dijkstra's algorithm to find paths that
     maximize the overall interaction coefficient between the target
     and each other nucleus in the net.
+
+    Parameters
+    ----------
+    net : RateCollection
+        The network we are reducing (can be a subclass of ``RateCollection``)
+    r_AB : numpy.ndarray
+        The interaction coefficient matrix
+    target : Nucleus
+        The nucleus on which we are running the graph search
+    adj_nuc : dict(Nucleus)
+        A dictionary giving the set of nuclei that are connected
+        to the key nucleus.
+
+    Returns
+    -------
+    numpy.ndarray
 
     """
 
@@ -289,32 +330,58 @@ def _drgep_mpi_numpy(net, conds, targets, tols):
 
 
 def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False, use_numpy=False):
-    """Implement Directed Relation Graph with Error Propagation
-    (DRGEP) reduction method described in
-    :cite:t:`pepiot-desjardins:2008` and :cite:t:`niemeyer:2011`.
+    """Apply the Directed Relation Graph with Error Propagation
+    (DRGEP) reduction method to a network.  This implementation is
+    based on the description in :cite:t:`pepiot-desjardins:2008` and
+    :cite:t:`niemeyer:2011`.
 
-    :param net: The network (RateCollection) to reduce.
-    :param conds: A set of conditions to reduce over. Should either be a sequence of (composition,
-        density, temperature) sequences/tuples if running in standard mode, or a sequence of 3
-        sequences ((composition, density, temperature) ordering) if running in NumPy mode. In the
-        latter case, the sequences will be permuted to create the dataset. The compositions should
-        be pynucastro Composition objects.
-    :param targets: A collection of target nuclei (or a single target nucleus) to run the
-        graph search algorithm from. Should be supplied as pynucastro Nucleus objects or strings.
-    :param tols: Tolerance(s) or cutoff threshold(s) to use for paths from each of the target nuclei.
-        Nuclei whose interaction coefficients do not meet the specified tolerance will have their
-        interaction coefficients set to 0.0. Can be a single number (will be the same for all targets)
-        or a separate value for each target nucleus.
-    :param returnobj: The type of object to return. Options are 'net' (a reduced network, the default
-        setting), 'nuclei' (unique nuclei with nonzero interaction coefficients, ordered so the
-        interaction coefficients are descending), and 'coeff' (the interaction coefficients as a
-        NumPy array, with entries corresponding to nuclei in *net.unique_nuclei*).
-    :param use_mpi: Whether to divide up the set of conditions across MPI processes or not. Default
-        setting is *False*.
-    :param use_numpy: Whether to use NumPy to vectorize the interaction coefficient calculations or
-        not. This is more memory intensive and may actually hinder performance for some setups.
-        Conditions should be supplied as 3 lists that will be permuted to form the dataset (see
-        *conds* parameter). Default setting is *False*.
+    Parameters
+    ----------
+    net : RateCollection
+        The network to reduce (can be a subclass of ``RateCollection``)
+    conds : Iterable
+        The set of thermodynamic conditions to reduce over. This can be:
+
+        * a sequence of tuples: (``Composition``, density,
+          temperature) if running in the default mode
+
+        * a sequence of 3 sequences ((``Composition``, density,
+          temperature) ordering) if running in NumPy mode. In this
+          case, the sequences will be permuted to create the
+          dataset.
+
+    targets : Iterable(Nucleus) or Iterable(str)
+        A collection of target nuclei (or a single target nucleus) to
+        run the graph search algorithm from.
+    tols : Iterable(float) or float
+        Tolerance(s) or cutoff threshold(s) to use for paths from each
+        of the target nuclei.  Nuclei whose interaction coefficients
+        do not meet the specified tolerance will have their
+        interaction coefficients set to 0.0.  If supplied as a single
+        number then that value is used for all targets.
+    returnobj : str
+        The type of object to return.  Valid options are:
+
+        * 'net' : a reduced network (default)
+
+        * 'nuclei' : unique nuclei with nonzero interaction coefficients,
+          ordered so the interaction coefficients are descending
+
+        * 'coeff' : the interaction coefficients as a numpy.ndarray,
+          with entries corresponding to nuclei in ``net.unique_nuclei``).
+    use_mpi : bool
+        Do we divide up the set of conditions across MPI processes?
+    use_numpy: bool
+        Do we use NumPy to vectorize the interaction coefficient
+        calculations or not. This is more memory intensive and may
+        actually hinder performance for some setups.  Conditions
+        should be supplied as 3 lists that will be permuted to form
+        the dataset (see ``conds`` parameter).
+
+    Returns
+    -------
+    result : RateCollection or List(Nucleus) or numpy.ndarray
+        The return type depends on the value of ``returnobj``
 
     """
 
