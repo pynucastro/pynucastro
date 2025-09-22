@@ -332,6 +332,8 @@ class Library:
 
     def lightest(self):
         """Return the lightest nuclide in this library.
+        This will have the lowest A.  If two nuclei have the same A, then
+        the one with the highest Z is returned.
 
         Returns
         -------
@@ -411,27 +413,6 @@ class Library:
                         self._rates[rid] = self._rates[rid] + r
                     else:
                         self._rates[rid] = r
-
-    def write_to_file(self, filename, *, prepend_rates_dir=False):
-        """Write the library out to a file of the given name in
-        Reaclib format.
-
-        Parameters
-        ----------
-        filename : str
-            The filename to use for the library
-        prepend_rates_dir : bool
-            If ``True``, then output to the pynucastro rate file
-            directory.
-
-        """
-
-        if prepend_rates_dir:
-            filename = get_rates_dir()/filename
-
-        with filename.open("w") as f:
-            for rate in self.get_rates():
-                rate.write_to_file(f)
 
     def __repr__(self):
         """Return a string containing the rates IDs in this library."""
@@ -912,6 +893,27 @@ class ReacLibLibrary(Library):
     def __init__(self):
         libfile = 'reaclib_default2_20250330'
         Library.__init__(self, libfile=libfile)
+
+    def write_to_file(self, filename, *, prepend_rates_dir=False):
+        """Write the library out to a file of the given name in
+        Reaclib format.
+
+        Parameters
+        ----------
+        filename : str
+            The filename to use for the library
+        prepend_rates_dir : bool
+            If ``True``, then output to the pynucastro rate file
+            directory.
+
+        """
+
+        if prepend_rates_dir:
+            filename = get_rates_dir()/filename
+
+        with filename.open("w") as f:
+            for rate in self.get_rates():
+                rate.write_to_file(f)
 
 
 class TabularLibrary(Library):
