@@ -8,7 +8,7 @@ from pynucastro.reduction.reduction_utils import mpi_importer
 MPI = mpi_importer()
 
 
-def binary_search_trim(network, nuclei, errfunc, thresh=0.05, args=None):
+def binary_search_trim(network, nuclei, errfunc, *, thresh=0.05, args=None):
     """Given an array of nuclei sorted roughly by relative importance,
     perform a binary search to trim out nuclei from the network until
     the error is as close as possible to the given threshold without
@@ -81,7 +81,7 @@ def _progress_bar(frac, size=50):
     print(progress_bar, f'{round(100*frac)}%', end=end)
 
 
-def sens_analysis(network, errfunc, thresh=0.05, args=None,
+def sens_analysis(network, errfunc, *, thresh=0.05, args=None,
                   use_mpi=False, print_prog=True):
     """Given a reaction network, remove nuclei from the network
     one-by-one until the induced error is as close to the given
