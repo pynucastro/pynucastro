@@ -371,7 +371,7 @@ def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False, use_numpy=F
         * a sequence of 3 sequences ((``Composition``, density,
           temperature) ordering) if running in NumPy mode. In this
           case, the sequences will be permuted to create the
-          dataset. The compositions should
+          dataset.
 
     targets : Iterable(Nucleus) or Iterable(str)
         A collection of target nuclei (or a single target nucleus) to
@@ -381,7 +381,7 @@ def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False, use_numpy=F
         of the target nuclei.  Nuclei whose interaction coefficients
         do not meet the specified tolerance will have their
         interaction coefficients set to 0.0.  If supplied as a single
-        number than that value is used for all targets.
+        number then that value is used for all targets.
     returnobj : str
         The type of object to return.  Valid options are:
 

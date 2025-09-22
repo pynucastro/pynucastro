@@ -64,10 +64,10 @@ jobs:
           cd external/Microphysics/unit_test/burn_cell
           ./main3d.gnu.ex inputs_subch_simple > test.out
 
-      - name: Compare to stored output (he-burn-22a)
+      - name: Compare to stored output (he-burn-19am)
         run: |
           cd external/Microphysics/unit_test/burn_cell
-          diff -I "^Initializing AMReX" -I "^AMReX" -I "^reading in reaclib rates" test.out ${GITHUB_WORKSPACE}/.github/workflows/microphysics-benchmarks/subch_simple_unit_test.out
+          diff -I "^Initializing AMReX" -I "^AMReX" -I "^reading in reaclib rates" test.out ${GITHUB_WORKSPACE}/.github/workflows/microphysics-benchmarks/he-burn-19am_unit_test.out
 
       - name: Regenerate ECSN network
         run: |
