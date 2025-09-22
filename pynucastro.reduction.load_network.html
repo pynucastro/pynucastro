@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.reduction.load_network module &#8212; pynucastro 2.7.1.post19+ga1ccd028b documentation</title>
+    <title>pynucastro.reduction.load_network module &#8212; pynucastro 2.7.1.post20+g91586bc18 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=40ef77bf"></script>
+    <script src="_static/documentation_options.js?v=4a6d3ecb"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -49,7 +49,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'pynucastro.reduction.load_network';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pynucastro.reduction.reduction module" href="pynucastro.reduction.reduction.html" />
+    <link rel="next" title="pynucastro.reduction.reduction_driver module" href="pynucastro.reduction.reduction_driver.html" />
     <link rel="prev" title="pynucastro.reduction.generate_data module" href="pynucastro.reduction.generate_data.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -213,6 +213,7 @@
 <li class="toctree-l1"><a class="reference internal" href="unimportant-rates.html">Removing Unimportant Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="network-cycles.html">Finding Cycles (with NetworkX)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stiffness.html">Assessing the Stiffness of a Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reduction.html">Network Reduction</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
@@ -311,10 +312,10 @@
 </ul>
 </details></li>
 <li class="toctree-l3 current active has-children"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep.html">pynucastro.reduction.drgep module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep_module.html">pynucastro.reduction.drgep_module module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.generate_data.html">pynucastro.reduction.generate_data module</a></li>
 <li class="toctree-l4 current active"><a class="current reference internal" href="#">pynucastro.reduction.load_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.reduction.html">pynucastro.reduction.reduction module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html">pynucastro.reduction.reduction_driver module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.reduction_utils.html">pynucastro.reduction.reduction_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.sensitivity_analysis.html">pynucastro.reduction.sensitivity_analysis module</a></li>
 </ul>
@@ -583,9 +584,24 @@ document.write(`
 <p>Methods used for loading a previously-saved library.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.load_network.load_network">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.load_network.</span></span><span class="sig-name descname"><span class="pre">load_network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Te108</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">library_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rp-process-lib'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/load_network.html#load_network"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.load_network.load_network" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.load_network.</span></span><span class="sig-name descname"><span class="pre">load_network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Te108</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">library_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rp-process-lib'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">library</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/load_network.html#load_network"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.load_network.load_network" title="Link to this definition">#</a></dt>
 <dd><p>Load a network from a library, filtering the library so only
 nuclei with Z and A less than the endpoint’s Z and A are included.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>endpoint</strong> (<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The heaviest nucleus to consider.</p></li>
+<li><p><strong>library_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The name of a library file to read from disk.  This could be, e.g.,
+the entire ReacLib database</p></li>
+<li><p><strong>library</strong> (<a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><em>Library</em></a>) – a pynucastro library object that contains the rates you want
+to consider.  If this is provided, it takes precedence over
+<code class="docutils literal notranslate"><span class="pre">library_name</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="pynucastro.networks.numpy_network.html#pynucastro.networks.numpy_network.NumpyNetwork" title="pynucastro.networks.numpy_network.NumpyNetwork">NumpyNetwork</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -611,11 +627,11 @@ nuclei with Z and A less than the endpoint’s Z and A are included.</p>
       </div>
     </a>
     <a class="right-next"
-       href="pynucastro.reduction.reduction.html"
+       href="pynucastro.reduction.reduction_driver.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pynucastro.reduction.reduction module</p>
+        <p class="prev-next-title">pynucastro.reduction.reduction_driver module</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

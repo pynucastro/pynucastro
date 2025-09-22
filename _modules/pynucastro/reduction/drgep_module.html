@@ -1,0 +1,998 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pynucastro.reduction.drgep_module &#8212; pynucastro 2.7.1.post20+g91586bc18 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/myfile.css?v=15ab05d9" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=4a6d3ecb"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=eaa7b67c"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pynucastro/reduction/drgep_module';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt=""/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt=""/>`);</script>
+  
+  
+    <p class="title logo__title">pynucastro 2.7</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rate_types.html">Reaction Rate Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Properties</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../sources.html">Third Party Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nucleus.html">Nuclear Properties</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">pynucastro Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-examples.html">pynucastro Usage Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plot-types.html">Plotting Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic_network.html">Basic Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-integration.html">Integrating a Network</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Working with Libraries</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tabulated-weak-rates.html">Tabulated Weak Rate Sources</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../duplicate-rates.html">Dealing with Duplicate Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../validate-example.html">Checking Your Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../electron-capture-example.html">Tabulated Weak Rate Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../alternate-rates.html"><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code></a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Rate Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../screening-examples.html">Screening Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modify-example.html">Modifying Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../custom-rates.html">Creating a Custom Rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../partition-function.html">Reverse Rates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../approximate-rates.html">Approximate and Modified Rates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../alpha-gamma-approx.html">Approximating alpha-capture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../double-n-capture.html">Approximating double n-capture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modified-rates.html">Modified Rates</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nse-protons.html">Using NSE Protons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../unimportant-rates.html">Removing Unimportant Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../network-cycles.html">Finding Cycles (with NetworkX)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stiffness.html">Assessing the Stiffness of a Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reduction.html">Network Reduction</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../NSE-example.html">NSE Demonstrations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nse_table.html">Creating an NSE table</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Thermodynamics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../fermi-integrals.html">Fermi-Dirac Integrals</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../neutrino-cooling.html">Neutrino Cooling</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Exporting Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../networks.html">Exporting Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../python-network.html">Python network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../simple-cxx-network.html">Simple C++ network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../fortran-network.html">Fortran Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../amrex-astro-cxx-networks.html">AMReX Astro Microphysics Networks</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../julia.html">Integrating using DifferentialEquations.jl</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installing-diffeqpy-julia.html">Installing <code class="docutils literal notranslate"><span class="pre">diffeqpy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../Example-Integrating-Network-diffeqpy.html">Example of Integrating a Network</a></li>
+
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../he-burning-example.html">A He-burning Network</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/binding-energy.html">Binding Energy per Nucleon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/pp-cno.html">p-p chain vs. CNO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/hot-CNO-breakout-example.html">hot-CNO and breakout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/triple_alpha_eval.html">Computing the Screened Triple-alpha rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/he-burning.html">Ratio of C/O from He burning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/supernova-lightcurve.html">A Supernova Lightcurve</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changes.html">Changelog</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../modules.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../pynucastro.html">pynucastro package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.constants.html">pynucastro.constants package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.constants.constants.html">pynucastro.constants.constants module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.eos.html">pynucastro.eos package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.difference_utils.html">pynucastro.eos.difference_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.fermi_integrals.html">pynucastro.eos.fermi_integrals module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.quadrature_weights.html">pynucastro.eos.quadrature_weights module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.networks.html">pynucastro.networks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.amrexastro_cxx_network.html">pynucastro.networks.amrexastro_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.base_cxx_network.html">pynucastro.networks.base_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.fortran_network.html">pynucastro.networks.fortran_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.helper.html">pynucastro.networks.helper module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.nse_network.html">pynucastro.networks.nse_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.numpy_network.html">pynucastro.networks.numpy_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.python_network.html">pynucastro.networks.python_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.rate_collection.html">pynucastro.networks.rate_collection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.simple_cxx_network.html">pynucastro.networks.simple_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.sympy_network_support.html">pynucastro.networks.sympy_network_support module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.neutrino_cooling.html">pynucastro.neutrino_cooling package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.neutrino_cooling.neutrino_cooling.html">pynucastro.neutrino_cooling.neutrino_cooling module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.neutrino_cooling.sneut5_mod.html">pynucastro.neutrino_cooling.sneut5_mod module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.nucdata.html">pynucastro.nucdata package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.elements.html">pynucastro.nucdata.elements module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.halflife_table.html">pynucastro.nucdata.halflife_table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.mass_table.html">pynucastro.nucdata.mass_table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.nucleus.html">pynucastro.nucdata.nucleus module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.partition_function.html">pynucastro.nucdata.partition_function module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.spin_table.html">pynucastro.nucdata.spin_table module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.library.html">pynucastro.rates.library module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.modified_rate.html">pynucastro.rates.modified_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.rate.html">pynucastro.rates.rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.reaclib_rate.html">pynucastro.rates.reaclib_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.tabular_rate.html">pynucastro.rates.tabular_rate module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.drgep_module.html">pynucastro.reduction.drgep_module module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.generate_data.html">pynucastro.reduction.generate_data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.load_network.html">pynucastro.reduction.load_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.reduction_driver.html">pynucastro.reduction.reduction_driver module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.reduction_utils.html">pynucastro.reduction.reduction_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.sensitivity_analysis.html">pynucastro.reduction.sensitivity_analysis module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.screening.html">pynucastro.screening package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.screening.screen.html">pynucastro.screening.screen module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.screening.screening_util.html">pynucastro.screening.screening_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.numba_util.html">pynucastro.numba_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.utils.html">pynucastro.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.yt_utils.html">pynucastro.yt_utils module</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../zreferences.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Index</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../py-modindex.html">Module Index</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2F_modules/pynucastro/reduction/drgep_module.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pynucastro.reduction.drgep_module</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Classes and methods for implementing DRGEP reduction.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.reduction.reduction_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">mpi_importer</span><span class="p">,</span>
+                                                  <span class="n">mpi_numpy_decomp</span><span class="p">,</span> <span class="n">to_list</span><span class="p">)</span>
+
+<span class="n">MPI</span> <span class="o">=</span> <span class="n">mpi_importer</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="calc_interaction_matrix">
+<a class="viewcode-back" href="../../../pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.calc_interaction_matrix">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calc_interaction_matrix</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">rvals</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate direct interaction coefficients.  This returns an N x N</span>
+<span class="sd">    matrix, where N is the number of nuclei in ``net``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    net : RateCollection</span>
+<span class="sd">        The network we are reducing (can be a subclass of ``RateCollection``)</span>
+<span class="sd">    rvals : dict(Rate)</span>
+<span class="sd">        A dictionary of reaction rate values, including all</span>
+<span class="sd">        density, temperature, and composition dependencies.  This</span>
+<span class="sd">        is typically the result of</span>
+<span class="sd">        :py:func:`evaluate_rates &lt;pynucastro.networks.rate_collection.RateCollection.evaluate_rates&gt;`</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">N_species</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+
+    <span class="c1"># create index mapping</span>
+    <span class="n">j_map</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+        <span class="n">j_map</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span>
+
+    <span class="c1"># Calculate coefficients for A</span>
+    <span class="n">p_A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N_species</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">c_A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N_species</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="c1"># A along rows, B along columns</span>
+    <span class="n">p_AB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N_species</span><span class="p">,</span> <span class="n">N_species</span><span class="p">))</span>
+    <span class="n">c_AB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">N_species</span><span class="p">,</span> <span class="n">N_species</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_species</span><span class="p">):</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
+
+            <span class="n">rval</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">rvals</span><span class="p">[</span><span class="n">r</span><span class="p">]</span>
+            <span class="n">p_A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">rval</span>
+
+            <span class="n">bs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bs</span><span class="p">:</span>
+                <span class="n">p_AB</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j_map</span><span class="p">[</span><span class="n">b</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">rval</span>
+
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
+
+            <span class="n">rval</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">rvals</span><span class="p">[</span><span class="n">r</span><span class="p">]</span>
+            <span class="n">c_A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">rval</span>
+
+            <span class="n">bs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bs</span><span class="p">:</span>
+                <span class="n">c_AB</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j_map</span><span class="p">[</span><span class="n">b</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">rval</span>
+
+    <span class="n">denom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">p_A</span><span class="p">,</span> <span class="n">c_A</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+
+    <span class="c1"># Calculate direct interaction coefficients</span>
+    <span class="n">r_AB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">p_AB</span> <span class="o">-</span> <span class="n">c_AB</span><span class="p">)</span> <span class="o">/</span> <span class="n">denom</span>
+
+    <span class="k">return</span> <span class="n">r_AB</span></div>
+
+
+
+<div class="viewcode-block" id="calc_interaction_matrix_numpy">
+<a class="viewcode-back" href="../../../pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.calc_interaction_matrix_numpy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calc_interaction_matrix_numpy</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">rvals_arr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate direct interaction coefficients using NumPy.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Evaluate terms on RHS of ODE system</span>
+    <span class="n">prod_terms</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">nuc_prod_count</span> <span class="o">*</span> <span class="n">rvals_arr</span>
+    <span class="n">cons_terms</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">nuc_cons_count</span> <span class="o">*</span> <span class="n">rvals_arr</span>
+
+    <span class="c1"># Calculate total production and consumption of each nucleus A</span>
+    <span class="n">p_A</span> <span class="o">=</span> <span class="n">prod_terms</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">c_A</span> <span class="o">=</span> <span class="n">cons_terms</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Calculate production / consumption of A in reactions involving B</span>
+    <span class="n">p_AB</span> <span class="o">=</span> <span class="n">prod_terms</span> <span class="o">@</span> <span class="n">net</span><span class="o">.</span><span class="n">nuc_used</span>
+    <span class="n">c_AB</span> <span class="o">=</span> <span class="n">cons_terms</span> <span class="o">@</span> <span class="n">net</span><span class="o">.</span><span class="n">nuc_used</span>
+
+    <span class="c1"># We will normalize by maximum of production and consumption fluxes</span>
+    <span class="n">denom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">p_A</span><span class="p">,</span> <span class="n">c_A</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+
+    <span class="c1"># Calculate direct interaction coefficients</span>
+    <span class="n">r_AB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">p_AB</span> <span class="o">-</span> <span class="n">c_AB</span><span class="p">)</span> <span class="o">/</span> <span class="n">denom</span>
+
+    <span class="k">return</span> <span class="n">r_AB</span></div>
+
+
+
+<div class="viewcode-block" id="get_adj_nuc">
+<a class="viewcode-back" href="../../../pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.get_adj_nuc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_adj_nuc</span><span class="p">(</span><span class="n">net</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get set of adjacent nuclei for each nucleus in the net.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    net : RateCollection</span>
+<span class="sd">        The network we are reducing (can be a subclass of ``RateCollection``)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict(Nucleus)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">adj_nuc</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+
+        <span class="n">bs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
+            <span class="n">bs</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
+            <span class="n">bs</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+
+        <span class="n">adj_nuc</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">bs</span>
+
+    <span class="k">return</span> <span class="n">adj_nuc</span></div>
+
+
+
+<div class="viewcode-block" id="drgep_dijkstras">
+<a class="viewcode-back" href="../../../pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.drgep_dijkstras">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">drgep_dijkstras</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">r_AB</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">adj_nuc</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implement modified Dijkstra&#39;s algorithm to find paths that</span>
+<span class="sd">    maximize the overall interaction coefficient between the target</span>
+<span class="sd">    and each other nucleus in the net.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    net : RateCollection</span>
+<span class="sd">        The network we are reducing (can be a subclass of ``RateCollection``)</span>
+<span class="sd">    r_AB : numpy.ndarray</span>
+<span class="sd">        The interaction coefficient matrix</span>
+<span class="sd">    target : Nucleus</span>
+<span class="sd">        The nucleus on which we are running the graph search</span>
+<span class="sd">    adj_nuc : dict(Nucleus)</span>
+<span class="sd">        A dictionary giving the set of nuclei that are connected</span>
+<span class="sd">        to the key nucleus.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Number of species</span>
+    <span class="n">nspec</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+
+    <span class="c1"># Create data structures</span>
+    <span class="n">j_map</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">inf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nspec</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">R_TB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nspec</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+        <span class="n">j_map</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="n">dist</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">inf</span>
+        <span class="n">R_TB</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">inf</span>
+
+    <span class="n">dist</span><span class="p">[</span><span class="n">j_map</span><span class="p">[</span><span class="n">target</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">R_TB</span><span class="p">[</span><span class="n">j_map</span><span class="p">[</span><span class="n">target</span><span class="p">]]</span> <span class="o">=</span> <span class="n">inf</span>
+
+    <span class="n">imax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
+
+    <span class="c1"># Main loop</span>
+    <span class="k">while</span> <span class="n">dist</span><span class="p">[</span><span class="n">imax</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">inf</span><span class="p">:</span>
+
+        <span class="n">r_TA</span> <span class="o">=</span> <span class="n">dist</span><span class="p">[</span><span class="n">imax</span><span class="p">]</span>
+        <span class="n">R_TB</span><span class="p">[</span><span class="n">imax</span><span class="p">]</span> <span class="o">=</span> <span class="n">r_TA</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">[</span><span class="n">imax</span><span class="p">]</span>
+        <span class="n">bs</span> <span class="o">=</span> <span class="n">adj_nuc</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bs</span><span class="p">:</span>
+            <span class="n">jb</span> <span class="o">=</span> <span class="n">j_map</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">R_TB</span><span class="p">[</span><span class="n">jb</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">inf</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">dist</span><span class="p">[</span><span class="n">jb</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">dist</span><span class="p">[</span><span class="n">jb</span><span class="p">],</span> <span class="n">r_TA</span> <span class="o">*</span> <span class="n">r_AB</span><span class="p">[</span><span class="n">imax</span><span class="p">,</span> <span class="n">jb</span><span class="p">])</span>
+
+        <span class="n">dist</span><span class="p">[</span><span class="n">imax</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">inf</span>
+        <span class="n">imax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">R_TB</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_drgep_kernel</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">R_TB</span><span class="p">,</span> <span class="n">rvals</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">,</span> <span class="n">adj_nuc</span><span class="p">):</span>
+
+    <span class="n">r_AB</span> <span class="o">=</span> <span class="n">calc_interaction_matrix</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">rvals</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">target</span><span class="p">,</span> <span class="n">tol</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">):</span>
+
+        <span class="n">R_TB_i</span> <span class="o">=</span> <span class="n">drgep_dijkstras</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">r_AB</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">adj_nuc</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">R_TB</span><span class="p">,</span> <span class="n">R_TB_i</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">R_TB</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="n">R_TB_i</span> <span class="o">&gt;=</span> <span class="n">tol</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_drgep_kernel_numpy</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">R_TB</span><span class="p">,</span> <span class="n">rvals</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">,</span> <span class="n">adj_nuc</span><span class="p">):</span>
+
+    <span class="n">r_AB</span> <span class="o">=</span> <span class="n">calc_interaction_matrix_numpy</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">rvals</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">target</span><span class="p">,</span> <span class="n">tol</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">):</span>
+
+        <span class="n">R_TB_i</span> <span class="o">=</span> <span class="n">drgep_dijkstras</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">r_AB</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">adj_nuc</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">R_TB</span><span class="p">,</span> <span class="n">R_TB_i</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">R_TB</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="n">R_TB_i</span> <span class="o">&gt;=</span> <span class="n">tol</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_drgep</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">):</span>
+
+    <span class="c1">#-----------------------------------</span>
+    <span class="c1"># Calculate interaction coefficients</span>
+    <span class="c1">#-----------------------------------</span>
+
+    <span class="n">R_TB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">adj_nuc</span> <span class="o">=</span> <span class="n">get_adj_nuc</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">comp</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span> <span class="ow">in</span> <span class="n">conds</span><span class="p">:</span>
+        <span class="n">rvals</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
+        <span class="n">_drgep_kernel</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">R_TB</span><span class="p">,</span> <span class="n">rvals</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">,</span> <span class="n">adj_nuc</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">R_TB</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_drgep_mpi</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">):</span>
+
+    <span class="c1">#----------</span>
+    <span class="c1"># Init. MPI</span>
+    <span class="c1">#----------</span>
+
+    <span class="n">comm</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
+    <span class="n">MPI_N</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">Get_size</span><span class="p">()</span>
+    <span class="n">MPI_rank</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>
+
+    <span class="c1">#-----------------------------------------------</span>
+    <span class="c1"># Calculate interaction coefficients in parallel</span>
+    <span class="c1">#-----------------------------------------------</span>
+
+    <span class="n">R_TB_loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">adj_nuc</span> <span class="o">=</span> <span class="n">get_adj_nuc</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">MPI_rank</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">conds</span><span class="p">),</span> <span class="n">MPI_N</span><span class="p">):</span>
+        <span class="n">comp</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">conds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">rvals</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
+        <span class="n">_drgep_kernel</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">R_TB_loc</span><span class="p">,</span> <span class="n">rvals</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">,</span> <span class="n">adj_nuc</span><span class="p">)</span>
+
+    <span class="n">R_TB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">R_TB_loc</span><span class="p">)</span>
+    <span class="n">comm</span><span class="o">.</span><span class="n">Allreduce</span><span class="p">([</span><span class="n">R_TB_loc</span><span class="p">,</span> <span class="n">MPI</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">],</span> <span class="p">[</span><span class="n">R_TB</span><span class="p">,</span> <span class="n">MPI</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">],</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">MAX</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">R_TB</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_drgep_numpy</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">):</span>
+
+    <span class="c1">#----------------------------------------</span>
+    <span class="c1"># Unpack conditions; make precalculations</span>
+    <span class="c1">#----------------------------------------</span>
+
+    <span class="n">comp_L</span><span class="p">,</span> <span class="n">rho_L</span><span class="p">,</span> <span class="n">T_L</span> <span class="o">=</span> <span class="n">conds</span>
+
+    <span class="n">adj_nuc</span> <span class="o">=</span> <span class="n">get_adj_nuc</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+
+    <span class="c1">#------------------------------------------------</span>
+    <span class="c1"># Calculate interaction coefficients (vectorized)</span>
+    <span class="c1">#------------------------------------------------</span>
+
+    <span class="n">R_TB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">comp_L</span><span class="p">:</span>
+        <span class="n">net</span><span class="o">.</span><span class="n">update_yfac_arr</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">rho</span> <span class="ow">in</span> <span class="n">rho_L</span><span class="p">:</span>
+            <span class="n">net</span><span class="o">.</span><span class="n">update_prefac_arr</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">T</span> <span class="ow">in</span> <span class="n">T_L</span><span class="p">:</span>
+                <span class="n">rvals_arr</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">evaluate_rates_arr</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+                <span class="n">_drgep_kernel_numpy</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">R_TB</span><span class="p">,</span> <span class="n">rvals_arr</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">,</span> <span class="n">adj_nuc</span><span class="p">)</span>
+
+    <span class="n">net</span><span class="o">.</span><span class="n">clear_arrays</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">R_TB</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_drgep_mpi_numpy</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">):</span>
+
+    <span class="c1">#----------------------------------------</span>
+    <span class="c1"># Unpack conditions; make precalculations</span>
+    <span class="c1">#----------------------------------------</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">conds</span><span class="p">))</span>
+    <span class="n">comp_L</span><span class="p">,</span> <span class="n">rho_L</span><span class="p">,</span> <span class="n">T_L</span> <span class="o">=</span> <span class="n">conds</span>
+
+    <span class="n">adj_nuc</span> <span class="o">=</span> <span class="n">get_adj_nuc</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+
+    <span class="c1">#-----------------------------------</span>
+    <span class="c1"># Init. MPI and divide up conditions</span>
+    <span class="c1">#-----------------------------------</span>
+
+    <span class="n">comm</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
+    <span class="n">MPI_N</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">Get_size</span><span class="p">()</span>
+    <span class="n">MPI_rank</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>
+
+    <span class="n">comp_idx</span><span class="p">,</span> <span class="n">comp_step</span><span class="p">,</span> <span class="n">rho_idx</span><span class="p">,</span> <span class="n">rho_step</span><span class="p">,</span> <span class="n">T_idx</span><span class="p">,</span> <span class="n">T_step</span> <span class="o">=</span> <span class="n">mpi_numpy_decomp</span><span class="p">(</span><span class="n">MPI_N</span><span class="p">,</span> <span class="n">MPI_rank</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+    <span class="c1">#--------------------------------------------------------------</span>
+    <span class="c1"># Calculate interaction coefficients (vectorized and using MPI)</span>
+    <span class="c1">#--------------------------------------------------------------</span>
+
+    <span class="n">R_TB_loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">comp_idx</span><span class="p">,</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">comp_step</span><span class="p">):</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">comp_L</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">net</span><span class="o">.</span><span class="n">update_yfac_arr</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rho_idx</span><span class="p">,</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">rho_step</span><span class="p">):</span>
+            <span class="n">rho</span> <span class="o">=</span> <span class="n">rho_L</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">net</span><span class="o">.</span><span class="n">update_prefac_arr</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T_idx</span><span class="p">,</span> <span class="n">n</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">T_step</span><span class="p">):</span>
+                <span class="n">T</span> <span class="o">=</span> <span class="n">T_L</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="n">rvals_arr</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">evaluate_rates_arr</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+                <span class="n">_drgep_kernel_numpy</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">R_TB_loc</span><span class="p">,</span> <span class="n">rvals_arr</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">,</span> <span class="n">adj_nuc</span><span class="p">)</span>
+
+    <span class="n">R_TB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">R_TB_loc</span><span class="p">)</span>
+    <span class="n">comm</span><span class="o">.</span><span class="n">Allreduce</span><span class="p">([</span><span class="n">R_TB_loc</span><span class="p">,</span> <span class="n">MPI</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">],</span> <span class="p">[</span><span class="n">R_TB</span><span class="p">,</span> <span class="n">MPI</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">],</span> <span class="n">op</span><span class="o">=</span><span class="n">MPI</span><span class="o">.</span><span class="n">MAX</span><span class="p">)</span>
+
+    <span class="n">net</span><span class="o">.</span><span class="n">clear_arrays</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">R_TB</span>
+
+
+<div class="viewcode-block" id="drgep">
+<a class="viewcode-back" href="../../../pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.drgep">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">drgep</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">,</span> <span class="n">returnobj</span><span class="o">=</span><span class="s1">&#39;net&#39;</span><span class="p">,</span> <span class="n">use_mpi</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_numpy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply the Directed Relation Graph with Error Propagation</span>
+<span class="sd">    (DRGEP) reduction method to a network.  This implementation is</span>
+<span class="sd">    based on the description in :cite:t:`pepiot-desjardins:2008` and</span>
+<span class="sd">    :cite:t:`niemeyer:2011`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    net : RateCollection</span>
+<span class="sd">        The network to reduce (can be a subclass of ``RateCollection``)</span>
+<span class="sd">    conds : Iterable</span>
+<span class="sd">        The set of thermodynamic conditions to reduce over. This can be:</span>
+
+<span class="sd">        * a sequence of tuples: (``Composition``, density,</span>
+<span class="sd">          temperature) if running in the default mode</span>
+
+<span class="sd">        * a sequence of 3 sequences ((``Composition``, density,</span>
+<span class="sd">          temperature) ordering) if running in NumPy mode. In this</span>
+<span class="sd">          case, the sequences will be permuted to create the</span>
+<span class="sd">          dataset.</span>
+
+<span class="sd">    targets : Iterable(Nucleus) or Iterable(str)</span>
+<span class="sd">        A collection of target nuclei (or a single target nucleus) to</span>
+<span class="sd">        run the graph search algorithm from.</span>
+<span class="sd">    tols : Iterable(float) or float</span>
+<span class="sd">        Tolerance(s) or cutoff threshold(s) to use for paths from each</span>
+<span class="sd">        of the target nuclei.  Nuclei whose interaction coefficients</span>
+<span class="sd">        do not meet the specified tolerance will have their</span>
+<span class="sd">        interaction coefficients set to 0.0.  If supplied as a single</span>
+<span class="sd">        number then that value is used for all targets.</span>
+<span class="sd">    returnobj : str</span>
+<span class="sd">        The type of object to return.  Valid options are:</span>
+
+<span class="sd">        * &#39;net&#39; : a reduced network (default)</span>
+
+<span class="sd">        * &#39;nuclei&#39; : unique nuclei with nonzero interaction coefficients,</span>
+<span class="sd">          ordered so the interaction coefficients are descending</span>
+
+<span class="sd">        * &#39;coeff&#39; : the interaction coefficients as a numpy.ndarray,</span>
+<span class="sd">          with entries corresponding to nuclei in ``net.unique_nuclei``).</span>
+<span class="sd">    use_mpi : bool</span>
+<span class="sd">        Do we divide up the set of conditions across MPI processes?</span>
+<span class="sd">    use_numpy: bool</span>
+<span class="sd">        Do we use NumPy to vectorize the interaction coefficient</span>
+<span class="sd">        calculations or not. This is more memory intensive and may</span>
+<span class="sd">        actually hinder performance for some setups.  Conditions</span>
+<span class="sd">        should be supplied as 3 lists that will be permuted to form</span>
+<span class="sd">        the dataset (see ``conds`` parameter).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    result : RateCollection or List(Nucleus) or numpy.ndarray</span>
+<span class="sd">        The return type depends on the value of ``returnobj``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#------------------</span>
+    <span class="c1"># Process arguments</span>
+    <span class="c1">#------------------</span>
+
+    <span class="k">if</span> <span class="n">returnobj</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;net&#39;</span><span class="p">,</span> <span class="s1">&#39;nuclei&#39;</span><span class="p">,</span> <span class="s1">&#39;coeff&#39;</span><span class="p">}:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid &#39;returnobj&#39; argument: &#39;</span><span class="si">{</span><span class="n">returnobj</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+    <span class="n">targets</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span>
+    <span class="n">tols</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">tols</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="p">))</span>
+
+    <span class="c1">#-------------------------------------------------------</span>
+    <span class="c1"># Determine operation mode and launch appropriate helper</span>
+    <span class="c1">#-------------------------------------------------------</span>
+
+    <span class="k">if</span> <span class="n">use_mpi</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">use_numpy</span><span class="p">:</span>
+            <span class="n">R_TB</span> <span class="o">=</span> <span class="n">_drgep_mpi_numpy</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">R_TB</span> <span class="o">=</span> <span class="n">_drgep_mpi</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">use_numpy</span><span class="p">:</span>
+        <span class="n">R_TB</span> <span class="o">=</span> <span class="n">_drgep_numpy</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">R_TB</span> <span class="o">=</span> <span class="n">_drgep</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">)</span>
+
+    <span class="c1">#------------------------</span>
+    <span class="c1"># Return requested object</span>
+    <span class="c1">#------------------------</span>
+
+    <span class="k">if</span> <span class="n">returnobj</span> <span class="o">==</span> <span class="s1">&#39;net&#39;</span><span class="p">:</span>
+        <span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">))</span>
+                  <span class="k">if</span> <span class="n">R_TB</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">net</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">returnobj</span> <span class="o">==</span> <span class="s1">&#39;nuclei&#39;</span><span class="p">:</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">R_TB</span><span class="p">)),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="n">R_TB</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idx</span> <span class="k">if</span> <span class="n">R_TB</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">returnobj</span> <span class="o">==</span> <span class="s1">&#39;coeff&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">R_TB</span>
+    <span class="c1"># returnobj was checked at the start of the function</span>
+    <span class="k">assert</span> <span class="kc">False</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By pynucastro development team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024-2025, pynucastro development team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

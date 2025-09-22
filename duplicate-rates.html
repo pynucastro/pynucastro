@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Dealing with Duplicate Rates &#8212; pynucastro 2.7.1.post19+ga1ccd028b documentation</title>
+    <title>Dealing with Duplicate Rates &#8212; pynucastro 2.7.1.post20+g91586bc18 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=40ef77bf"></script>
+    <script src="_static/documentation_options.js?v=4a6d3ecb"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -215,6 +215,7 @@
 <li class="toctree-l1"><a class="reference internal" href="unimportant-rates.html">Removing Unimportant Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="network-cycles.html">Finding Cycles (with NetworkX)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stiffness.html">Assessing the Stiffness of a Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reduction.html">Network Reduction</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
@@ -313,10 +314,10 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep.html">pynucastro.reduction.drgep module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep_module.html">pynucastro.reduction.drgep_module module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.generate_data.html">pynucastro.reduction.generate_data module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.load_network.html">pynucastro.reduction.load_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.reduction.html">pynucastro.reduction.reduction module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html">pynucastro.reduction.reduction_driver module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.reduction_utils.html">pynucastro.reduction.reduction_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.sensitivity_analysis.html">pynucastro.reduction.sensitivity_analysis module</a></li>
 </ul>
@@ -625,6 +626,9 @@ warning: Mg24 was not able to be linked in TabularLibrary
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[n ⟶ p + e⁻ + 𝜈, n ⟶ p + e⁻ + 𝜈], [Mg23 ⟶ Na23 + e⁺ + 𝜈, Mg23 + e⁻ ⟶ Na23 + 𝜈]]
+</pre></div>
+</div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:732: UserWarning: ReacLib neutron decay rate (&lt;n_to_p_weak_wc12&gt;) does not account for degeneracy at high densities. Consider using tabular rate from Langanke.
   warnings.warn(msg)
 </pre></div>
@@ -639,11 +643,10 @@ warning: Mg24 was not able to be linked in TabularLibrary
 <span class="g g-Whitespace">    </span><span class="mi">596</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">+</span> <span class="n">combined_library</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
 <span class="ne">--&gt; </span><span class="mi">598</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:743,</span> in <span class="ni">RateCollection._build_collection</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">740</span> <span class="c1"># finally check for duplicate rates -- these are not</span>
-<span class="g g-Whitespace">    </span><span class="mi">741</span> <span class="c1"># allowed</span>
-<span class="g g-Whitespace">    </span><span class="mi">742</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">():</span>
-<span class="ne">--&gt; </span><span class="mi">743</span>     <span class="k">raise</span> <span class="n">RateDuplicationError</span><span class="p">(</span><span class="s2">&quot;Duplicate rates found&quot;</span><span class="p">)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:744,</span> in <span class="ni">RateCollection._build_collection</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">    </span><span class="mi">742</span> <span class="k">if</span> <span class="n">dupes</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">():</span>
+<span class="g g-Whitespace">    </span><span class="mi">743</span>     <span class="nb">print</span><span class="p">(</span><span class="n">dupes</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">744</span>     <span class="k">raise</span> <span class="n">RateDuplicationError</span><span class="p">(</span><span class="s2">&quot;Duplicate rates found&quot;</span><span class="p">)</span>
 
 <span class="ne">RateDuplicationError</span>: Duplicate rates found
 </pre></div>
