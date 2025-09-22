@@ -6,7 +6,8 @@ from numpy.testing import assert_allclose
 from pytest import approx
 
 import pynucastro as pyna
-from pynucastro.reduction import drgep, reduction
+import pynucastro.reduction.drgep_module as drgep
+import pynucastro.reduction.reduction_driver as rd
 
 
 class TestDrgepHelpers:
@@ -117,11 +118,11 @@ class TestReductionHelpers:
     @pytest.fixture(scope="class")
     def net_info(self, net, thermo_state):
         rho, T, comp = thermo_state
-        return reduction.get_net_info(net, comp, rho, T)
+        return rd.get_net_info(net, comp, rho, T)
 
     def test_enuc_dot(self, net_info, net, thermo_state):
         enuc_dot = net.evaluate_energy_generation(*thermo_state)
-        assert reduction.enuc_dot(net_info) == approx(enuc_dot)
+        assert rd.enuc_dot(net_info) == approx(enuc_dot)
 
     def test_ye_dot(self, net_info, net, thermo_state):
         comp = thermo_state[2]
@@ -137,7 +138,7 @@ class TestReductionHelpers:
             np.sum(Y_dot_A) / sum(comp.X[n] for n in nuc)
         )
 
-        assert reduction.ye_dot(net_info) == approx(ye_dot, rel=1e-6, abs=0)
+        assert rd.ye_dot(net_info) == approx(ye_dot, rel=1e-6, abs=0)
 
     def test_abar_dot(self, net_info, net, thermo_state):
         comp = thermo_state[2]
@@ -146,4 +147,4 @@ class TestReductionHelpers:
         ydots = net.evaluate_ydots(*thermo_state)
         abar_dot = -abar**2 * sum(Y for Y in ydots.values())
 
-        assert reduction.abar_dot(net_info) == approx(abar_dot)
+        assert rd.abar_dot(net_info) == approx(abar_dot)

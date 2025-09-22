@@ -12,7 +12,7 @@ import numpy as np
 from pynucastro import Composition, Nucleus
 from pynucastro.constants import constants
 from pynucastro.reduction import mpi_importer, sens_analysis
-from pynucastro.reduction.drgep import drgep
+from pynucastro.reduction.drgep_module import drgep
 from pynucastro.reduction.generate_data import dataset
 from pynucastro.reduction.load_network import load_network
 

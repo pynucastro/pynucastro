@@ -759,7 +759,8 @@ class RateCollection:
 
         # finally check for duplicate rates -- these are not
         # allowed
-        if self.find_duplicate_links():
+        if dupes := self.find_duplicate_links():
+            print(dupes)
             raise RateDuplicationError("Duplicate rates found")
 
     def _read_rate_files(self, rate_files):
