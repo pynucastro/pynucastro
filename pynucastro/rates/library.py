@@ -310,6 +310,9 @@ class Library:
 
     def heaviest(self):
         """Return the heaviest nuclide in this library.
+        This will have the highest A.  In event that multiple nuclei have
+        the same A, then the most neutron-rich nucleus with atomic weight
+        A is returned.
 
         Returns
         -------
@@ -329,6 +332,8 @@ class Library:
 
     def lightest(self):
         """Return the lightest nuclide in this library.
+        This will have the lowest A.  If two nuclei have the same A, then
+        the one with the highest Z is returned.
 
         Returns
         -------
@@ -702,6 +707,8 @@ class RateFilter:
         if ``True``, only match reverse-derived rates
         if ``False``, only match directly-derived rates
         if None, you don't care, match both
+    endpoint : Nucleus, str
+        The heaviest nucleus to keep in the library
     min_reactants : int
         match Rates that have at least this many reactants
     min_products : int
@@ -742,12 +749,17 @@ class RateFilter:
     """
 
     def __init__(self, reactants=None, products=None, exact=True,
-                 reverse=None, min_reactants=None, max_reactants=None,
+                 reverse=None, endpoint=None,
+                 min_reactants=None, max_reactants=None,
                  min_products=None, max_products=None, filter_function=None):
         self.reactants = []
         self.products = []
         self.exact = exact
         self.reverse = reverse
+        if endpoint is not None:
+            self.endpoint = Nucleus.cast(endpoint)
+        else:
+            self.endpoint = None
         self.min_reactants = min_reactants
         self.min_products = min_products
         self.max_reactants = max_reactants
@@ -817,6 +829,7 @@ class RateFilter:
         """
         # do cheaper checks first
         matches_reverse = True
+        matches_endpoint = True
         matches_min_reactants = True
         matches_min_products = True
         matches_max_reactants = True
@@ -831,10 +844,13 @@ class RateFilter:
             matches_max_reactants = len(r.reactants) <= self.max_reactants
         if isinstance(self.max_products, int):
             matches_max_products = len(r.products) <= self.max_products
+        if isinstance(self.endpoint, Nucleus):
+            matches_endpoint = (max(n.Z for n in r.reactants + r.products) <= self.endpoint.Z and
+                                max(n.A for n in r.reactants + r.products) <= self.endpoint.A)
         # exit early if any of these checks failed
-        if not (matches_reverse and matches_min_reactants and
-                matches_min_products and matches_max_reactants and
-                matches_max_products):
+        if not (matches_reverse and matches_endpoint and
+                matches_min_reactants and matches_min_products and
+                matches_max_reactants and matches_max_products):
             return False
         # now do more expensive checks, and exit immediately if any fail
         if self.reactants:
@@ -860,6 +876,7 @@ class RateFilter:
                                products=self.reactants,
                                exact=self.exact,
                                reverse=self.reverse,
+                               endpoint=self.endpoint,
                                min_reactants=self.min_products,
                                max_reactants=self.max_products,
                                min_products=self.min_reactants,
