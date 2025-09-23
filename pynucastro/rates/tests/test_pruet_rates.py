@@ -4,7 +4,7 @@ from pytest import approx
 import pynucastro as pyna
 
 # these are some tests that compare directly to the tables
-# in the Oda paper.
+# in the Pruet & Fuller paper.
 
 
 class TestPruetFullerLibibrary:
