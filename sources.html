@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Third Party Data &#8212; pynucastro 2.7.1.post20+g91586bc18 documentation</title>
+    <title>Third Party Data &#8212; pynucastro 2.7.1.post21+gfb878d815 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=4a6d3ecb"></script>
+    <script src="_static/documentation_options.js?v=6beaac18"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -640,7 +640,14 @@ limits.  Instead, an extrapolation is done using the data at the edge of the tab
 overlap.</p>
 </div>
 </li>
-<li><p><span id="id5">Suzuki <em>et al.</em> [<a class="reference internal" href="zreferences.html#id10" title="Toshio Suzuki, Hiroshi Toki, and Ken’ichi Nomoto. Electron-capture and β-decay rates for sd-shell nuclei in stellar environments relevant to high-density o–ne–mg cores. The Astrophysical Journal, 817(2):163, January 2016. doi:10.3847/0004-637X/817/2/163.">2016</a>]</span> (covers <span class="math notranslate nohighlight">\(A = 17\)</span> to <span class="math notranslate nohighlight">\(28\)</span>):</p>
+<li><p><span id="id5">Pruet and Fuller [<a class="reference internal" href="zreferences.html#id34" title="Jason Pruet and George M. Fuller. Estimates of stellar weak interaction rates for nuclei in the mass range a = 65-80. The Astrophysical Journal Supplement Series, 149(1):189, nov 2003. URL: https://dx.doi.org/10.1086/376753, doi:10.1086/376753.">2003</a>]</span> (covers <span class="math notranslate nohighlight">\(A = 65\)</span> to <span class="math notranslate nohighlight">\(80\)</span>)</p>
+<p>The density (g/cm<span class="math notranslate nohighlight">\(^3\)</span>) and temperature (K) ranges of the rates are:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(1 \le \log_{10}(\rho Y_e) \le 11.5\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(7 \le \log_{10}(T) \le 11\)</span></p></li>
+</ul>
+</li>
+<li><p><span id="id6">Suzuki <em>et al.</em> [<a class="reference internal" href="zreferences.html#id10" title="Toshio Suzuki, Hiroshi Toki, and Ken’ichi Nomoto. Electron-capture and β-decay rates for sd-shell nuclei in stellar environments relevant to high-density o–ne–mg cores. The Astrophysical Journal, 817(2):163, January 2016. doi:10.3847/0004-637X/817/2/163.">2016</a>]</span> (covers <span class="math notranslate nohighlight">\(A = 17\)</span> to <span class="math notranslate nohighlight">\(28\)</span>):</p>
 <p>These data tables were obtained from
 <a class="reference external" href="https://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html">https://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html</a>.</p>
 <p>The density (g/cm<span class="math notranslate nohighlight">\(^3\)</span>) and temperature (K) ranges of the rates are:</p>
@@ -650,7 +657,7 @@ overlap.</p>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The paper <span id="id6">[<a class="reference internal" href="zreferences.html#id10" title="Toshio Suzuki, Hiroshi Toki, and Ken’ichi Nomoto. Electron-capture and β-decay rates for sd-shell nuclei in stellar environments relevant to high-density o–ne–mg cores. The Astrophysical Journal, 817(2):163, January 2016. doi:10.3847/0004-637X/817/2/163.">Suzuki <em>et al.</em>, 2016</a>]</span> says that the rates are evaluated
+<p>The paper <span id="id7">[<a class="reference internal" href="zreferences.html#id10" title="Toshio Suzuki, Hiroshi Toki, and Ken’ichi Nomoto. Electron-capture and β-decay rates for sd-shell nuclei in stellar environments relevant to high-density o–ne–mg cores. The Astrophysical Journal, 817(2):163, January 2016. doi:10.3847/0004-637X/817/2/163.">Suzuki <em>et al.</em>, 2016</a>]</span> says that the rates are evaluated
 are in the range <span class="math notranslate nohighlight">\(8 \le \log_{10}(\rho Y_e) \le 11\)</span>, but the
 tables provided have the lower limit as <span class="math notranslate nohighlight">\(\log_{10}(\rho Y_e) =
 7\)</span>.</p>
@@ -663,12 +670,12 @@ tables provided have the lower limit as <span class="math notranslate nohighligh
 <h2>Physical constants<a class="headerlink" href="#physical-constants" title="Link to this heading">#</a></h2>
 <p>We use the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/constants.html">scipy.constants</a> module
 from SciPy to get all the physical constants.  This in turn gets the constants from the CODATA
-recommended values (for SciPy versions 1.14 and earlier, this is CODATA 2018, <span id="id7">Tiesinga <em>et al.</em> [<a class="reference internal" href="zreferences.html#id14" title="Eite Tiesinga, Peter J. Mohr, David B. Newell, and Barry N. Taylor. Codata recommended values of the fundamental physical constants: 2018. Journal of Physical and Chemical Reference Data, 50:033105, 2021. doi:10.1063/5.0064853.">2021</a>]</span>;
+recommended values (for SciPy versions 1.14 and earlier, this is CODATA 2018, <span id="id8">Tiesinga <em>et al.</em> [<a class="reference internal" href="zreferences.html#id14" title="Eite Tiesinga, Peter J. Mohr, David B. Newell, and Barry N. Taylor. Codata recommended values of the fundamental physical constants: 2018. Journal of Physical and Chemical Reference Data, 50:033105, 2021. doi:10.1063/5.0064853.">2021</a>]</span>;
 for SciPy 1.15 they are CODATA 2022).</p>
 </section>
 <section id="nuclei-properties">
 <h2>Nuclei properties<a class="headerlink" href="#nuclei-properties" title="Link to this heading">#</a></h2>
-<p>We get the basic nuclear properties from the Nubase 2020 evaluation <span id="id8">Kondev <em>et al.</em> [<a class="reference internal" href="zreferences.html#id20" title="F.G. Kondev, M. Wang, W.J. Huang, S. Naimi, and G. Audi. The nubase2020 evaluation of nuclear physics properties *. Chinese Physics C, 45(3):030001, mar 2021. URL: https://dx.doi.org/10.1088/1674-1137/abddae, doi:10.1088/1674-1137/abddae.">2021</a>]</span>.  This
+<p>We get the basic nuclear properties from the Nubase 2020 evaluation <span id="id9">Kondev <em>et al.</em> [<a class="reference internal" href="zreferences.html#id20" title="F.G. Kondev, M. Wang, W.J. Huang, S. Naimi, and G. Audi. The nubase2020 evaluation of nuclear physics properties *. Chinese Physics C, 45(3):030001, mar 2021. URL: https://dx.doi.org/10.1088/1674-1137/abddae, doi:10.1088/1674-1137/abddae.">2021</a>]</span>.  This
 is available online at <a class="reference external" href="https://www-nds.iaea.org/amdc/">Nuclear Data Services</a>.
 We are currently using the file <a class="reference external" href="https://www-nds.iaea.org/amdc/ame2020/nubase_4.mas20.txt">nubase_4.mas20.txt</a>.</p>
 <p>In particular, we get the mass excesses, <span class="math notranslate nohighlight">\(\Delta m\)</span>, and spins from there.  We then compute
@@ -680,7 +687,7 @@ mass of the nucleus as:</p>
 \[B = Z m_H + N m_n - (A m_u + \Delta m)\]</div>
 <p>where <span class="math notranslate nohighlight">\(m_H\)</span> is the mass of the hydrogen atom, computed from the mass
 excess of <code class="docutils literal notranslate"><span class="pre">1H</span></code> listed in the table.  This is consistent with the
-discussion in section 2 of the AME 2020 paper <span id="id9">[<a class="reference internal" href="zreferences.html#id17" title="W.J. Huang, Meng Wang, F.G. Kondev, G. Audi, and S. Naimi. The ame 2020 atomic mass evaluation (i). evaluation of input data, and adjustment procedures*. Chinese Physics C, 45(3):030002, mar 2021. URL: https://dx.doi.org/10.1088/1674-1137/abddb0, doi:10.1088/1674-1137/abddb0.">Huang <em>et al.</em>, 2021</a>]</span>, and
+discussion in section 2 of the AME 2020 paper <span id="id10">[<a class="reference internal" href="zreferences.html#id17" title="W.J. Huang, Meng Wang, F.G. Kondev, G. Audi, and S. Naimi. The ame 2020 atomic mass evaluation (i). evaluation of input data, and adjustment procedures*. Chinese Physics C, 45(3):030002, mar 2021. URL: https://dx.doi.org/10.1088/1674-1137/abddb0, doi:10.1088/1674-1137/abddb0.">Huang <em>et al.</em>, 2021</a>]</span>, and
 these numbers match the binding energies computed in the AME tables to
 the uncertainty in the nuclear masses.</p>
 <p>Binding energies are also computed and tablulated in the AME mass
@@ -698,8 +705,8 @@ Table I).</p>
 <h2>Partition functions<a class="headerlink" href="#partition-functions" title="Link to this heading">#</a></h2>
 <p>We use the tabulated partition functions from the following sources:</p>
 <ul class="simple">
-<li><p><span id="id10">Rauscher <em>et al.</em> [<a class="reference internal" href="zreferences.html#id21" title="Thomas Rauscher, Friedrich-Karl Thielemann, and Karl-Ludwig Kratz. Nuclear level density and the determination of thermonuclear rates for astrophysics. Phys. Rev. C, 56:1613–1625, September 1997. URL: https://link.aps.org/doi/10.1103/PhysRevC.56.1613, doi:10.1103/PhysRevC.56.1613.">1997</a>]</span></p></li>
-<li><p><span id="id11">Rauscher [<a class="reference internal" href="zreferences.html#id23" title="T. Rauscher. Nuclear partition functions at temperatures exceeding 10^10 K. The Astrophysical Journal Supplement Series, 147(2):403, August 2003. doi:10.1086/375733.">2003</a>]</span></p></li>
+<li><p><span id="id11">Rauscher <em>et al.</em> [<a class="reference internal" href="zreferences.html#id21" title="Thomas Rauscher, Friedrich-Karl Thielemann, and Karl-Ludwig Kratz. Nuclear level density and the determination of thermonuclear rates for astrophysics. Phys. Rev. C, 56:1613–1625, September 1997. URL: https://link.aps.org/doi/10.1103/PhysRevC.56.1613, doi:10.1103/PhysRevC.56.1613.">1997</a>]</span></p></li>
+<li><p><span id="id12">Rauscher [<a class="reference internal" href="zreferences.html#id23" title="T. Rauscher. Nuclear partition functions at temperatures exceeding 10^10 K. The Astrophysical Journal Supplement Series, 147(2):403, August 2003. doi:10.1086/375733.">2003</a>]</span></p></li>
 </ul>
 </section>
 </section>
