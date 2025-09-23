@@ -8,7 +8,7 @@ from pynucastro.reduction.reduction_utils import mpi_importer
 MPI = mpi_importer()
 
 
-def binary_search_trim(network, nuclei, errfunc, thresh=0.05):
+def binary_search_trim(network, nuclei, errfunc, *, thresh=0.05, args=None):
     """Given an array of nuclei sorted roughly by relative importance,
     perform a binary search to trim out nuclei from the network until
     the error is as close as possible to the given threshold without
@@ -16,17 +16,31 @@ def binary_search_trim(network, nuclei, errfunc, thresh=0.05):
     increase in error need to be packed towards the back of the array
     for the binary search to work effectively.
 
-    :param network: The network to reduce.
-    :param nuclei: Nuclei to consider for the final network, sorted by decreasing importance (i.e.
-        most important nuclei first). Importance can be determined by something like the *drgep*
-        function.
-    :param errfunc: Error function to use when evaluating error. Should take a reduced network as
-        an argument and return the relative error produced by the reduction. This can be a parallel
-        (MPI) function.
-    :param thresh: Threshold for acceptable error. Default is 0.05.
+    Parameters
+    ----------
+    network : RateCollection
+        The network to reduce.
+    nuclei : Iterable(Nucleus) or Iterable(str)
+        Nuclei to consider for the final network, sorted by decreasing
+        importance (i.e.  most important nuclei first). Importance can
+        be determined by something like the *drgep* function.
+    errfunc : Callable
+        Error function to use when evaluating error, with the signature
+        ``error(net, *args)``, where ``net`` is the reduced network as
+        an argument and return the relative error produced by the reduction.
+        If ``use_mpi`` is ``False``, the error function can be parallelized
+        with MPI. Otherwise ``sens_analysis`` will be parallelized and the
+        error function should not be.
+    thresh : float
+        Threshold for acceptable error. Default is 0.05.
+    args : tuple
+        Additional arguments to pass through to the error function
 
-    :return: A reduced reaction network with an evaluated error approximately equal to the supplied
-        threshold.
+    Returns
+    -------
+    net : RateCollection
+        A reduced reaction network with an evaluated error
+        approximately equal to the supplied threshold.
 
     """
 
@@ -42,7 +56,10 @@ def binary_search_trim(network, nuclei, errfunc, thresh=0.05):
         red_net = network.linking_nuclei(nuclei[:end_idx])
 
         # Evaluate error
-        err = errfunc(red_net)
+        if args is None:
+            err = errfunc(red_net)
+        else:
+            err = errfunc(red_net, *args)
 
         if err <= thresh:
             seg_size /= 2
@@ -64,31 +81,49 @@ def _progress_bar(frac, size=50):
     print(progress_bar, f'{round(100*frac)}%', end=end)
 
 
-def sens_analysis(network, errfunc, thresh=0.05, use_mpi=False, print_prog=True):
+def sens_analysis(network, errfunc, *, thresh=0.05, args=None,
+                  use_mpi=False, print_prog=True):
     """Given a reaction network, remove nuclei from the network
     one-by-one until the induced error is as close to the given
     threshold as possible without exceeding it. This will test nuclei
     for removal individually and remove the one that induces the
     smallest error on each pass. Since it requires O(n^2) error
     function evaluations, this routine is much more expensive than
-    *binary_search*, but it will typically trim the network down
+    ``binary_search``, but it will typically trim the network down
     significantly more.
 
-    :param network: The network to reduce.
-    :param errfunc: Error function to use when evaluating error. Should take a reduced network as
-        an argument and return the relative error produced by the reduction. If *use_mpi* is *False*,
-        the error function can be parallelized with MPI. Otherwise *sens_analysis* will be
-        parallelized and the error function should not be.
-    :param thresh: Threshold for acceptable error. Default is 0.05.
-    :param use_mpi: Whether to parallelize the loop over nuclei with each pass or not using MPI.
-        For *p* MPI processes, the parallelized function will require O(n^2/p) error function
-        evaluations per process. This option is *False* by default. If the error function is
-        parallelized using MPI, this option should be set to *False*.
-    :param print_prog: Whether to print out the progress of the function as it runs or not. Includes
-        a progress bar for each pass and messages indicating when the algorithm starts and ends.
+    Parameters
+    ----------
+    network : RateCollection
+        The network to reduce.  Can be a RateCollection or a subclass.
+    errfunc : Callable
+        Error function to use when evaluating error, with the signature
+        ``error(net, *args)``, where ``net`` is the reduced network as
+        an argument and return the relative error produced by the reduction.
+        If ``use_mpi`` is ``False``, the error function can be parallelized
+        with MPI. Otherwise ``sens_analysis`` will be parallelized and the
+        error function should not be.
+    thresh : float
+        Threshold for acceptable error. Default is 0.05.
+    args : tuple
+        Additional arguments to pass through to the error function
+    use_mpi : bool
+        Whether to parallelize the loop over nuclei with each pass or
+        not using MPI.  For p MPI processes, the parallelized
+        function will require O(n^2/p) error function evaluations per
+        process. This option is ``False`` by default. If the error
+        function is parallelized using MPI, this option should be set
+        to ``False``.
+    print_prog : bool
+        Whether to print out the progress of the function as it runs
+        or not. Includes a progress bar for each pass and messages
+        indicating when the algorithm starts and ends.
 
-    :return: A reduced reaction network with an evaluated error approximately equal to the supplied
-        threshold.
+    Returns
+    -------
+    net : RateCollection
+        A reduced reaction network with an evaluated error
+        approximately equal to the supplied threshold.
 
     """
 
@@ -120,7 +155,11 @@ def sens_analysis(network, errfunc, thresh=0.05, use_mpi=False, print_prog=True)
                 _progress_bar(i/len(nuclei))
 
             nuc = nuclei.pop(i)
-            err_i = errfunc(network.linking_nuclei(nuclei, print_warning=False))
+            if args is None:
+                err_i = errfunc(network.linking_nuclei(nuclei, print_warning=False))
+            else:
+                err_i = errfunc(network.linking_nuclei(nuclei, print_warning=False), *args)
+
             if err_i < err:
                 err = err_i
                 min_idx = i
