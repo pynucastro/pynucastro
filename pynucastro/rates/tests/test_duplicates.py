@@ -13,8 +13,13 @@ class TestDuplicates:
         return nuclei
 
     @pytest.fixture(scope="class")
-    def all_lib(self, reaclib_library, tabular_library):
-        return reaclib_library + tabular_library
+    def all_lib(self):
+        # we need to be careful about mutating the reaclib_library or
+        # tabular_library fixtures, so we'l create our own private
+        # copies here
+        rl = pyna.ReacLibLibrary()
+        tl = pyna.TabularLibrary()
+        return rl + tl
 
     def test_find_duplicate_links(self, nuclei, all_lib):
         lib = all_lib.linking_nuclei(nuclei)
