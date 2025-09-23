@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.rate_collection module &#8212; pynucastro 2.7.1.post21+gfb878d815 documentation</title>
+    <title>pynucastro.networks.rate_collection module &#8212; pynucastro 2.7.1.post22+gaaed52b3a documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=6beaac18"></script>
+    <script src="_static/documentation_options.js?v=6eb19e59"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -776,8 +776,15 @@ composition.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.Composition.normalize">
-<span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.normalize" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">half_life_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.normalize" title="Link to this definition">#</a></dt>
 <dd><p>Normalize the mass fractions to sum to 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>half_life_thresh</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The half life value below which to zero the mass fraction
+of a nucleus.  This prevents us from making a composition
+that is not really stable.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -860,12 +867,17 @@ parameters alpha and specified rng seed.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.Composition.set_solar_like">
-<span class="sig-name descname"><span class="pre">set_solar_like</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.set_solar_like"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.set_solar_like" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">set_solar_like</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">half_life_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#Composition.set_solar_like"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.Composition.set_solar_like" title="Link to this definition">#</a></dt>
 <dd><p>Approximate a solar abundance, setting p to 0.7, He4 to 0.3
-- Z and the remainder evenly distributed with Z</p>
+- Z and the remainder evenly distributed with Z.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>Z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The desired metalicity</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The desired metalicity</p></li>
+<li><p><strong>half_life_thresh</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The half life value below which to zero the mass fraction
+of a nucleus.  This prevents us from making a composition
+that is not really stable.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

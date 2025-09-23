@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.7.1.post21+gfb878d815 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.7.1.post22+gaaed52b3a documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=6beaac18"></script>
+    <script src="../../../_static/documentation_options.js?v=6eb19e59"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -705,14 +705,18 @@ document.write(`
 
 <div class="viewcode-block" id="Composition.set_solar_like">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition.set_solar_like">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_solar_like</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="mf">0.02</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_solar_like</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">half_life_thresh</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Approximate a solar abundance, setting p to 0.7, He4 to 0.3</span>
-<span class="sd">        - Z and the remainder evenly distributed with Z</span>
+<span class="sd">        - Z and the remainder evenly distributed with Z.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        Z : float</span>
 <span class="sd">            The desired metalicity</span>
+<span class="sd">        half_life_thresh : float</span>
+<span class="sd">            The half life value below which to zero the mass fraction</span>
+<span class="sd">            of a nucleus.  This prevents us from making a composition</span>
+<span class="sd">            that is not really stable.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -725,7 +729,7 @@ document.write(`
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">rem</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">half_life_thresh</span><span class="o">=</span><span class="n">half_life_thresh</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Composition.set_array">
@@ -808,8 +812,24 @@ document.write(`
 
 <div class="viewcode-block" id="Composition.normalize">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition.normalize">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalize the mass fractions to sum to 1.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">half_life_thresh</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalize the mass fractions to sum to 1.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        half_life_thresh : float</span>
+<span class="sd">            The half life value below which to zero the mass fraction</span>
+<span class="sd">            of a nucleus.  This prevents us from making a composition</span>
+<span class="sd">            that is not really stable.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">half_life_thresh</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">tau</span> <span class="o">!=</span> <span class="s2">&quot;stable&quot;</span> <span class="ow">and</span> <span class="n">k</span><span class="o">.</span><span class="n">tau</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">tau</span> <span class="o">&lt;</span> <span class="n">half_life_thresh</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
         <span class="n">X_sum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sum_X</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
