@@ -45,4 +45,3 @@ class TestDuplicates:
                            if isinstance(r, pyna.rates.TabularRate)])
 
         assert num_tabular == 7
-
