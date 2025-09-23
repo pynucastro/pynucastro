@@ -514,6 +514,34 @@ class Library:
 
         return duplicates
 
+    def eliminate_duplicates(self, *, rate_type_preference="tabular"):
+        """Attempt to eliminate duplicate rates for the same link.
+        Presently, this works for the case where there are 2 instances of the
+        same link, and one is a ``ReacLibRate`` (or derived from that) and
+        the other is a ``TabularRate``
+
+        Parameters
+        ----------
+        rate_type_preference : str
+            In the event of a duplicate, which type of rate do we keep?
+            Valid options are "tabular" or "reaclib"
+
+        """
+
+        duplicates = self.find_duplicate_links()
+
+        rates_to_remove = []
+        for pair in duplicates:
+            assert len(pair) == 2
+            for r in pair:
+                if rate_type_preference == "tabular" and isinstance(r, ReacLibRate):
+                    rates_to_remove.append(r)
+                elif rate_type_preference == "reaclib" and isinstance(r, TabularRate):
+                    rates_to_remove.append(r)
+
+        for r in rates_to_remove:
+            self.remove_rate(r)
+
     def linking_nuclei(self, nuclist, *, with_reverse=True,
                        print_warning=True):
         """Return a library containing the rates linking the list of
