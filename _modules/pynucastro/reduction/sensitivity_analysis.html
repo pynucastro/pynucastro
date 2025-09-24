@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.reduction.sensitivity_analysis &#8212; pynucastro 2.7.1.post23+g5fc29afd1 documentation</title>
+    <title>pynucastro.reduction.sensitivity_analysis &#8212; pynucastro 2.7.1.post24+g36e5a4d1b documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=d259943c"></script>
+    <script src="../../../_static/documentation_options.js?v=0a39d9a3"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -213,6 +213,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../network-cycles.html">Finding Cycles (with NetworkX)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../stiffness.html">Assessing the Stiffness of a Network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reduction.html">Network Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sens_analysis_example.html">Sensitivity Analysis</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
@@ -312,9 +313,6 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.drgep_module.html">pynucastro.reduction.drgep_module module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.generate_data.html">pynucastro.reduction.generate_data module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.load_network.html">pynucastro.reduction.load_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.reduction_driver.html">pynucastro.reduction.reduction_driver module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.reduction_utils.html">pynucastro.reduction.reduction_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.sensitivity_analysis.html">pynucastro.reduction.sensitivity_analysis module</a></li>
 </ul>
@@ -499,7 +497,7 @@ document.write(`
 
 <div class="viewcode-block" id="binary_search_trim">
 <a class="viewcode-back" href="../../../pynucastro.reduction.sensitivity_analysis.html#pynucastro.reduction.sensitivity_analysis.binary_search_trim">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">binary_search_trim</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">nuclei</span><span class="p">,</span> <span class="n">errfunc</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">binary_search_trim</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">nuclei</span><span class="p">,</span> <span class="n">errfunc</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Given an array of nuclei sorted roughly by relative importance,</span>
 <span class="sd">    perform a binary search to trim out nuclei from the network until</span>
 <span class="sd">    the error is as close as possible to the given threshold without</span>
@@ -507,17 +505,31 @@ document.write(`
 <span class="sd">    increase in error need to be packed towards the back of the array</span>
 <span class="sd">    for the binary search to work effectively.</span>
 
-<span class="sd">    :param network: The network to reduce.</span>
-<span class="sd">    :param nuclei: Nuclei to consider for the final network, sorted by decreasing importance (i.e.</span>
-<span class="sd">        most important nuclei first). Importance can be determined by something like the *drgep*</span>
-<span class="sd">        function.</span>
-<span class="sd">    :param errfunc: Error function to use when evaluating error. Should take a reduced network as</span>
-<span class="sd">        an argument and return the relative error produced by the reduction. This can be a parallel</span>
-<span class="sd">        (MPI) function.</span>
-<span class="sd">    :param thresh: Threshold for acceptable error. Default is 0.05.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    network : RateCollection</span>
+<span class="sd">        The network to reduce.</span>
+<span class="sd">    nuclei : Iterable(Nucleus) or Iterable(str)</span>
+<span class="sd">        Nuclei to consider for the final network, sorted by decreasing</span>
+<span class="sd">        importance (i.e.  most important nuclei first). Importance can</span>
+<span class="sd">        be determined by something like the *drgep* function.</span>
+<span class="sd">    errfunc : Callable</span>
+<span class="sd">        Error function to use when evaluating error, with the signature</span>
+<span class="sd">        ``error(net, *args)``, where ``net`` is the reduced network as</span>
+<span class="sd">        an argument and return the relative error produced by the reduction.</span>
+<span class="sd">        If ``use_mpi`` is ``False``, the error function can be parallelized</span>
+<span class="sd">        with MPI. Otherwise ``sens_analysis`` will be parallelized and the</span>
+<span class="sd">        error function should not be.</span>
+<span class="sd">    thresh : float</span>
+<span class="sd">        Threshold for acceptable error. Default is 0.05.</span>
+<span class="sd">    args : tuple</span>
+<span class="sd">        Additional arguments to pass through to the error function</span>
 
-<span class="sd">    :return: A reduced reaction network with an evaluated error approximately equal to the supplied</span>
-<span class="sd">        threshold.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    net : RateCollection</span>
+<span class="sd">        A reduced reaction network with an evaluated error</span>
+<span class="sd">        approximately equal to the supplied threshold.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -533,7 +545,10 @@ document.write(`
         <span class="n">red_net</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">[:</span><span class="n">end_idx</span><span class="p">])</span>
 
         <span class="c1"># Evaluate error</span>
-        <span class="n">err</span> <span class="o">=</span> <span class="n">errfunc</span><span class="p">(</span><span class="n">red_net</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">err</span> <span class="o">=</span> <span class="n">errfunc</span><span class="p">(</span><span class="n">red_net</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">err</span> <span class="o">=</span> <span class="n">errfunc</span><span class="p">(</span><span class="n">red_net</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">err</span> <span class="o">&lt;=</span> <span class="n">thresh</span><span class="p">:</span>
             <span class="n">seg_size</span> <span class="o">/=</span> <span class="mi">2</span>
@@ -558,31 +573,49 @@ document.write(`
 
 <div class="viewcode-block" id="sens_analysis">
 <a class="viewcode-back" href="../../../pynucastro.reduction.sensitivity_analysis.html#pynucastro.reduction.sensitivity_analysis.sens_analysis">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">sens_analysis</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">errfunc</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">use_mpi</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">print_prog</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sens_analysis</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">errfunc</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">use_mpi</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">print_prog</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Given a reaction network, remove nuclei from the network</span>
 <span class="sd">    one-by-one until the induced error is as close to the given</span>
 <span class="sd">    threshold as possible without exceeding it. This will test nuclei</span>
 <span class="sd">    for removal individually and remove the one that induces the</span>
 <span class="sd">    smallest error on each pass. Since it requires O(n^2) error</span>
 <span class="sd">    function evaluations, this routine is much more expensive than</span>
-<span class="sd">    *binary_search*, but it will typically trim the network down</span>
+<span class="sd">    ``binary_search``, but it will typically trim the network down</span>
 <span class="sd">    significantly more.</span>
 
-<span class="sd">    :param network: The network to reduce.</span>
-<span class="sd">    :param errfunc: Error function to use when evaluating error. Should take a reduced network as</span>
-<span class="sd">        an argument and return the relative error produced by the reduction. If *use_mpi* is *False*,</span>
-<span class="sd">        the error function can be parallelized with MPI. Otherwise *sens_analysis* will be</span>
-<span class="sd">        parallelized and the error function should not be.</span>
-<span class="sd">    :param thresh: Threshold for acceptable error. Default is 0.05.</span>
-<span class="sd">    :param use_mpi: Whether to parallelize the loop over nuclei with each pass or not using MPI.</span>
-<span class="sd">        For *p* MPI processes, the parallelized function will require O(n^2/p) error function</span>
-<span class="sd">        evaluations per process. This option is *False* by default. If the error function is</span>
-<span class="sd">        parallelized using MPI, this option should be set to *False*.</span>
-<span class="sd">    :param print_prog: Whether to print out the progress of the function as it runs or not. Includes</span>
-<span class="sd">        a progress bar for each pass and messages indicating when the algorithm starts and ends.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    network : RateCollection</span>
+<span class="sd">        The network to reduce.  Can be a RateCollection or a subclass.</span>
+<span class="sd">    errfunc : Callable</span>
+<span class="sd">        Error function to use when evaluating error, with the signature</span>
+<span class="sd">        ``error(net, *args)``, where ``net`` is the reduced network as</span>
+<span class="sd">        an argument and return the relative error produced by the reduction.</span>
+<span class="sd">        If ``use_mpi`` is ``False``, the error function can be parallelized</span>
+<span class="sd">        with MPI. Otherwise ``sens_analysis`` will be parallelized and the</span>
+<span class="sd">        error function should not be.</span>
+<span class="sd">    thresh : float</span>
+<span class="sd">        Threshold for acceptable error. Default is 0.05.</span>
+<span class="sd">    args : tuple</span>
+<span class="sd">        Additional arguments to pass through to the error function</span>
+<span class="sd">    use_mpi : bool</span>
+<span class="sd">        Whether to parallelize the loop over nuclei with each pass or</span>
+<span class="sd">        not using MPI.  For p MPI processes, the parallelized</span>
+<span class="sd">        function will require O(n^2/p) error function evaluations per</span>
+<span class="sd">        process. This option is ``False`` by default. If the error</span>
+<span class="sd">        function is parallelized using MPI, this option should be set</span>
+<span class="sd">        to ``False``.</span>
+<span class="sd">    print_prog : bool</span>
+<span class="sd">        Whether to print out the progress of the function as it runs</span>
+<span class="sd">        or not. Includes a progress bar for each pass and messages</span>
+<span class="sd">        indicating when the algorithm starts and ends.</span>
 
-<span class="sd">    :return: A reduced reaction network with an evaluated error approximately equal to the supplied</span>
-<span class="sd">        threshold.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    net : RateCollection</span>
+<span class="sd">        A reduced reaction network with an evaluated error</span>
+<span class="sd">        approximately equal to the supplied threshold.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -614,7 +647,11 @@ document.write(`
                 <span class="n">_progress_bar</span><span class="p">(</span><span class="n">i</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">nuclei</span><span class="p">))</span>
 
             <span class="n">nuc</span> <span class="o">=</span> <span class="n">nuclei</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-            <span class="n">err_i</span> <span class="o">=</span> <span class="n">errfunc</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="n">print_warning</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">err_i</span> <span class="o">=</span> <span class="n">errfunc</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="n">print_warning</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">err_i</span> <span class="o">=</span> <span class="n">errfunc</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="n">print_warning</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
             <span class="k">if</span> <span class="n">err_i</span> <span class="o">&lt;</span> <span class="n">err</span><span class="p">:</span>
                 <span class="n">err</span> <span class="o">=</span> <span class="n">err_i</span>
                 <span class="n">min_idx</span> <span class="o">=</span> <span class="n">i</span>

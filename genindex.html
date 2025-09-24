@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; pynucastro 2.7.1.post23+g5fc29afd1 documentation</title>
+    <title>Index &#8212; pynucastro 2.7.1.post24+g36e5a4d1b documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=d259943c"></script>
+    <script src="_static/documentation_options.js?v=0a39d9a3"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -211,6 +211,7 @@
 <li class="toctree-l1"><a class="reference internal" href="network-cycles.html">Finding Cycles (with NetworkX)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stiffness.html">Assessing the Stiffness of a Network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reduction.html">Network Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sens_analysis_example.html">Sensitivity Analysis</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
@@ -310,9 +311,6 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep_module.html">pynucastro.reduction.drgep_module module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.generate_data.html">pynucastro.reduction.generate_data module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.load_network.html">pynucastro.reduction.load_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html">pynucastro.reduction.reduction_driver module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.reduction_utils.html">pynucastro.reduction.reduction_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.sensitivity_analysis.html">pynucastro.reduction.sensitivity_analysis module</a></li>
 </ul>
@@ -525,8 +523,6 @@ document.write(`
         <li><a href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus.A">(pynucastro.nucdata.nucleus.Nucleus attribute)</a>
 </li>
       </ul></li>
-      <li><a href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.NetInfo.a">a (pynucastro.reduction.reduction_driver.NetInfo attribute)</a>
-</li>
       <li><a href="pynucastro.screening.screen.html#pynucastro.screening.screen.ScreenFactors.a1">a1 (pynucastro.screening.screen.ScreenFactors attribute)</a>
 </li>
       <li><a href="pynucastro.screening.screen.html#pynucastro.screening.screen.ScreenFactors.a2">a2 (pynucastro.screening.screen.ScreenFactors attribute)</a>
@@ -543,8 +539,6 @@ document.write(`
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.abar_dot">abar_dot() (in module pynucastro.reduction.reduction_driver)</a>
-</li>
       <li><a href="pynucastro.eos.difference_utils.html#pynucastro.eos.difference_utils.adaptive_diff">adaptive_diff() (in module pynucastro.eos.difference_utils)</a>
 </li>
       <li><a href="pynucastro.rates.library.html#pynucastro.rates.library.Library.add_rate">add_rate() (pynucastro.rates.library.Library method)</a>
@@ -659,8 +653,6 @@ document.write(`
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pynucastro.reduction.generate_data.html#pynucastro.reduction.generate_data.dataset">dataset() (in module pynucastro.reduction.generate_data)</a>
-</li>
       <li><a href="pynucastro.rates.alternate_rates.html#pynucastro.rates.alternate_rates.DeBoerC12agO16">DeBoerC12agO16 (class in pynucastro.rates.alternate_rates)</a>
 </li>
       <li><a href="pynucastro.screening.screen.html#pynucastro.screening.screen.debye_huckel">debye_huckel() (in module pynucastro.screening.screen)</a>
@@ -695,15 +687,11 @@ document.write(`
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.NetInfo.ebind">ebind (pynucastro.reduction.reduction_driver.NetInfo attribute)</a>
-</li>
       <li><a href="pynucastro.eos.difference_utils.html#pynucastro.eos.difference_utils.eighth_order_diff">eighth_order_diff() (in module pynucastro.eos.difference_utils)</a>
 </li>
       <li><a href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus.el">el (pynucastro.nucdata.nucleus.Nucleus attribute)</a>
 </li>
       <li><a href="pynucastro.nucdata.elements.html#pynucastro.nucdata.elements.Element">Element (class in pynucastro.nucdata.elements)</a>
-</li>
-      <li><a href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.enuc_dot">enuc_dot() (in module pynucastro.reduction.reduction_driver)</a>
 </li>
       <li><a href="pynucastro.constants.constants.html#pynucastro.constants.constants.erg2MeV">erg2MeV (in module pynucastro.constants.constants)</a>
 </li>
@@ -723,10 +711,10 @@ document.write(`
         <li><a href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.eval">(pynucastro.rates.tabular_rate.TabularRate method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.eval_deriv">eval_deriv() (pynucastro.rates.reaclib_rate.ReacLibRate method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval_jacobian_term">eval_jacobian_term() (pynucastro.rates.rate.Rate method)</a>
 </li>
       <li><a href="pynucastro.eos.fermi_integrals.html#pynucastro.eos.fermi_integrals.FermiIntegral.evaluate">evaluate() (pynucastro.eos.fermi_integrals.FermiIntegral method)</a>
@@ -849,8 +837,6 @@ document.write(`
 </li>
       <li><a href="pynucastro.networks.nse_network.html#pynucastro.networks.nse_network.NSENetwork.get_comp_nse">get_comp_nse() (pynucastro.networks.nse_network.NSENetwork method)</a>
 </li>
-      <li><a href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.get_errfunc_enuc">get_errfunc_enuc() (in module pynucastro.reduction.reduction_driver)</a>
-</li>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.get_forward_rates">get_forward_rates() (pynucastro.networks.rate_collection.RateCollection method)</a>
 </li>
       <li><a href="pynucastro.nucdata.halflife_table.html#pynucastro.nucdata.halflife_table.HalfLifeTable.get_halflife">get_halflife() (pynucastro.nucdata.halflife_table.HalfLifeTable method)</a>
@@ -862,8 +848,6 @@ document.write(`
       <li><a href="pynucastro.nucdata.mass_table.html#pynucastro.nucdata.mass_table.MassTable.get_mass_diff">get_mass_diff() (pynucastro.nucdata.mass_table.MassTable method)</a>
 </li>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition.get_molar">get_molar() (pynucastro.networks.rate_collection.Composition method)</a>
-</li>
-      <li><a href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.get_net_info">get_net_info() (in module pynucastro.reduction.reduction_driver)</a>
 </li>
       <li><a href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.get_nu_loss">get_nu_loss() (pynucastro.rates.tabular_rate.TabularRate method)</a>
 </li>
@@ -885,14 +869,14 @@ document.write(`
 </li>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.get_nuclei_needing_partition_functions">get_nuclei_needing_partition_functions() (pynucastro.networks.rate_collection.RateCollection method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunctionCollection.get_partition_function">get_partition_function() (pynucastro.nucdata.partition_function.PartitionFunctionCollection method)</a>
 
       <ul>
         <li><a href="pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunctionTable.get_partition_function">(pynucastro.nucdata.partition_function.PartitionFunctionTable method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.yt_utils.html#pynucastro.yt_utils.get_point">get_point() (in module pynucastro.yt_utils)</a>
 </li>
       <li><a href="pynucastro.eos.fermi_integrals.html#pynucastro.eos.fermi_integrals.BreakPoints.get_points">get_points() (pynucastro.eos.fermi_integrals.BreakPoints method)</a>
@@ -1041,8 +1025,6 @@ document.write(`
 </li>
       <li><a href="pynucastro.rates.rate.html#pynucastro.rates.rate.Tfactors.lnT9">lnT9 (pynucastro.rates.rate.Tfactors attribute)</a>
 </li>
-      <li><a href="pynucastro.reduction.load_network.html#pynucastro.reduction.load_network.load_network">load_network() (in module pynucastro.reduction.load_network)</a>
-</li>
       <li><a href="pynucastro.rates.html#pynucastro.rates.load_rate">load_rate() (in module pynucastro.rates)</a>
 </li>
       <li><a href="pynucastro.nucdata.elements.html#pynucastro.nucdata.elements.PeriodicTable.lookup_abbreviation">lookup_abbreviation() (pynucastro.nucdata.elements.PeriodicTable class method)</a>
@@ -1061,8 +1043,6 @@ document.write(`
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.NetInfo.m">m (pynucastro.reduction.reduction_driver.NetInfo attribute)</a>
-</li>
       <li><a href="pynucastro.constants.constants.html#pynucastro.constants.constants.m_e">m_e (in module pynucastro.constants.constants)</a>
 </li>
       <li><a href="pynucastro.constants.constants.html#pynucastro.constants.constants.m_e_MeV">m_e_MeV (in module pynucastro.constants.constants)</a>
@@ -1087,12 +1067,6 @@ document.write(`
 </li>
       <li><a href="pynucastro.constants.constants.html#pynucastro.constants.constants.m_u_MeV_C18">m_u_MeV_C18 (in module pynucastro.constants.constants)</a>
 </li>
-      <li><a href="pynucastro.reduction.generate_data.html#pynucastro.reduction.generate_data.main">main() (in module pynucastro.reduction.generate_data)</a>
-
-      <ul>
-        <li><a href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.main">(in module pynucastro.reduction.reduction_driver)</a>
-</li>
-      </ul></li>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.make_ap_pg_approx">make_ap_pg_approx() (pynucastro.networks.rate_collection.RateCollection method)</a>
 </li>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.make_nn_g_approx">make_nn_g_approx() (pynucastro.networks.rate_collection.RateCollection method)</a>
@@ -1102,8 +1076,6 @@ document.write(`
       <li><a href="pynucastro.screening.screen.html#pynucastro.screening.screen.make_plasma_state">make_plasma_state() (in module pynucastro.screening.screen)</a>
 </li>
       <li><a href="pynucastro.screening.screen.html#pynucastro.screening.screen.make_screen_factors">make_screen_factors() (in module pynucastro.screening.screen)</a>
-</li>
-      <li><a href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.map_comp">map_comp() (in module pynucastro.reduction.reduction_driver)</a>
 </li>
       <li><a href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus.mass">mass (pynucastro.nucdata.nucleus.Nucleus attribute)</a>
 </li>
@@ -1205,12 +1177,6 @@ document.write(`
 </li>
         <li><a href="pynucastro.reduction.drgep_module.html#module-pynucastro.reduction.drgep_module">pynucastro.reduction.drgep_module</a>
 </li>
-        <li><a href="pynucastro.reduction.generate_data.html#module-pynucastro.reduction.generate_data">pynucastro.reduction.generate_data</a>
-</li>
-        <li><a href="pynucastro.reduction.load_network.html#module-pynucastro.reduction.load_network">pynucastro.reduction.load_network</a>
-</li>
-        <li><a href="pynucastro.reduction.reduction_driver.html#module-pynucastro.reduction.reduction_driver">pynucastro.reduction.reduction_driver</a>
-</li>
         <li><a href="pynucastro.reduction.reduction_utils.html#module-pynucastro.reduction.reduction_utils">pynucastro.reduction.reduction_utils</a>
 </li>
         <li><a href="pynucastro.reduction.sensitivity_analysis.html#module-pynucastro.reduction.sensitivity_analysis">pynucastro.reduction.sensitivity_analysis</a>
@@ -1248,8 +1214,6 @@ document.write(`
 </li>
       <li><a href="pynucastro.screening.screen.html#pynucastro.screening.screen.PlasmaState.n_e">n_e (pynucastro.screening.screen.PlasmaState attribute)</a>
 </li>
-      <li><a href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.NetInfo">NetInfo (class in pynucastro.reduction.reduction_driver)</a>
-</li>
       <li><a href="pynucastro.networks.helper.html#pynucastro.networks.helper.network_helper">network_helper() (in module pynucastro.networks.helper)</a>
 </li>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.network_overview">network_overview() (pynucastro.networks.rate_collection.RateCollection method)</a>
@@ -1262,10 +1226,10 @@ document.write(`
 </li>
       <li><a href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus.nse">nse (pynucastro.nucdata.nucleus.Nucleus attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.networks.nse_network.html#pynucastro.networks.nse_network.NSENetwork">NSENetwork (class in pynucastro.networks.nse_network)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.screening.screen.html#pynucastro.screening.screen.NseState">NseState (class in pynucastro.screening.screen)</a>
 </li>
       <li><a href="pynucastro.networks.nse_network.html#pynucastro.networks.nse_network.NSETableEntry">NSETableEntry (class in pynucastro.networks.nse_network)</a>
@@ -1485,6 +1449,8 @@ document.write(`
         <li><a href="pynucastro.neutrino_cooling.sneut5_mod.html#module-pynucastro.neutrino_cooling.sneut5_mod">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pynucastro.nucdata
 
@@ -1492,8 +1458,6 @@ document.write(`
         <li><a href="pynucastro.nucdata.html#module-pynucastro.nucdata">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pynucastro.nucdata.elements
 
@@ -1635,27 +1599,6 @@ document.write(`
 </li>
       </ul></li>
       <li>
-    pynucastro.reduction.generate_data
-
-      <ul>
-        <li><a href="pynucastro.reduction.generate_data.html#module-pynucastro.reduction.generate_data">module</a>
-</li>
-      </ul></li>
-      <li>
-    pynucastro.reduction.load_network
-
-      <ul>
-        <li><a href="pynucastro.reduction.load_network.html#module-pynucastro.reduction.load_network">module</a>
-</li>
-      </ul></li>
-      <li>
-    pynucastro.reduction.reduction_driver
-
-      <ul>
-        <li><a href="pynucastro.reduction.reduction_driver.html#module-pynucastro.reduction.reduction_driver">module</a>
-</li>
-      </ul></li>
-      <li>
     pynucastro.reduction.reduction_utils
 
       <ul>
@@ -1744,10 +1687,10 @@ document.write(`
 </li>
       <li><a href="pynucastro.rates.rate.html#pynucastro.rates.rate.RatePair">RatePair (class in pynucastro.rates.rate)</a>
 </li>
-      <li><a href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.rates_string">rates_string() (pynucastro.networks.python_network.PythonNetwork method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.rates_string">rates_string() (pynucastro.networks.python_network.PythonNetwork method)</a>
+</li>
       <li><a href="pynucastro.rates.rate.html#pynucastro.rates.rate.RateSource">RateSource (class in pynucastro.rates.rate)</a>
 </li>
       <li><a href="pynucastro.rates.library.html#pynucastro.rates.library.ReacLibLibrary">ReacLibLibrary (class in pynucastro.rates.library)</a>
@@ -1755,8 +1698,6 @@ document.write(`
       <li><a href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate">ReacLibRate (class in pynucastro.rates.reaclib_rate)</a>
 </li>
       <li><a href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.reactant_count">reactant_count() (pynucastro.rates.rate.Rate method)</a>
-</li>
-      <li><a href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.rel_err">rel_err() (in module pynucastro.reduction.reduction_driver)</a>
 </li>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.remove_nuclei">remove_nuclei() (pynucastro.networks.rate_collection.RateCollection method)</a>
 </li>
@@ -1952,19 +1893,13 @@ document.write(`
 <h2 id="Y">Y</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.NetInfo.y">y (pynucastro.reduction.reduction_driver.NetInfo attribute)</a>
-</li>
-      <li><a href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.NetInfo.ydot">ydot (pynucastro.reduction.reduction_driver.NetInfo attribute)</a>
-</li>
       <li><a href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.ydot_string_py">ydot_string_py() (pynucastro.rates.rate.Rate method)</a>
+</li>
+      <li><a href="pynucastro.networks.sympy_network_support.html#pynucastro.networks.sympy_network_support.SympyRates.ydot_term_symbol">ydot_term_symbol() (pynucastro.networks.sympy_network_support.SympyRates method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pynucastro.networks.sympy_network_support.html#pynucastro.networks.sympy_network_support.SympyRates.ydot_term_symbol">ydot_term_symbol() (pynucastro.networks.sympy_network_support.SympyRates method)</a>
-</li>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition.ye">ye (pynucastro.networks.rate_collection.Composition property)</a>
-</li>
-      <li><a href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.ye_dot">ye_dot() (in module pynucastro.reduction.reduction_driver)</a>
 </li>
       <li><a href="pynucastro.networks.numpy_network.html#pynucastro.networks.numpy_network.NumpyNetwork.yfac">yfac (pynucastro.networks.numpy_network.NumpyNetwork attribute)</a>
 </li>
@@ -1980,8 +1915,6 @@ document.write(`
         <li><a href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus.Z">(pynucastro.nucdata.nucleus.Nucleus attribute)</a>
 </li>
       </ul></li>
-      <li><a href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.NetInfo.z">z (pynucastro.reduction.reduction_driver.NetInfo attribute)</a>
-</li>
       <li><a href="pynucastro.screening.screen.html#pynucastro.screening.screen.ScreenFactors.z1">z1 (pynucastro.screening.screen.ScreenFactors attribute)</a>
 </li>
       <li><a href="pynucastro.screening.screen.html#pynucastro.screening.screen.ScreenFactors.z2">z2 (pynucastro.screening.screen.ScreenFactors attribute)</a>

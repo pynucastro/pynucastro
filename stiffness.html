@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Assessing the Stiffness of a Network &#8212; pynucastro 2.7.1.post23+g5fc29afd1 documentation</title>
+    <title>Assessing the Stiffness of a Network &#8212; pynucastro 2.7.1.post24+g36e5a4d1b documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=d259943c"></script>
+    <script src="_static/documentation_options.js?v=0a39d9a3"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -216,6 +216,7 @@
 <li class="toctree-l1"><a class="reference internal" href="network-cycles.html">Finding Cycles (with NetworkX)</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Assessing the Stiffness of a Network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reduction.html">Network Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sens_analysis_example.html">Sensitivity Analysis</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
@@ -315,9 +316,6 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep_module.html">pynucastro.reduction.drgep_module module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.generate_data.html">pynucastro.reduction.generate_data module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.load_network.html">pynucastro.reduction.load_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html">pynucastro.reduction.reduction_driver module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.reduction_utils.html">pynucastro.reduction.reduction_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.sensitivity_analysis.html">pynucastro.reduction.sensitivity_analysis module</a></li>
 </ul>
@@ -639,7 +637,7 @@ step.</p>
 </div>
 </div>
 </div>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                <span class="n">node_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
@@ -673,7 +671,7 @@ step.</p>
 </div>
 </div>
 </div>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">trace_threshold</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
 </pre></div>
@@ -686,12 +684,13 @@ step.</p>
 <p>If we evaluate the spectral radius, we see that it is reasonably large.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">spectral_radius</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sprad</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">spectral_radius</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sprad</span><span class="si">:</span><span class="s2">12.7g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(345703.34445394535)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    345703.3
 </pre></div>
 </div>
 </div>
@@ -719,12 +718,14 @@ Ne18__F18__weak__wc12               (  4.44):  345703.34
 Ne19__F19__weak__wc12               (  3.24):  345703.34
 B8__He4_He4__weak__wc12             ( 18.07):  345703.34
 p_p__d__weak__bet_pos_              (  1.44):  345703.34
-p_p__d__weak__electron_capture      (  1.44):  345703.34
-p_d__He3                            (  5.49):  345703.34
-d_d__He4                            ( 23.85):  345703.34
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>He4_d__Li6                          (  1.47):  345703.34
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>p_p__d__weak__electron_capture      (  1.44):  345703.34
+p_d__He3                            (  5.49):  345703.34
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>d_d__He4                            ( 23.85):  345703.34
+He4_d__Li6                          (  1.47):  345703.34
 p_He3__He4__weak__bet_pos_          ( 19.80):  345703.34
 He4_He3__Be7                        (  1.59):  345703.34
 p_Li6__Be7                          (  5.61):  345691.74
@@ -734,12 +735,14 @@ He4_C12__O16                        (  7.16):  345703.34
 p_C13__N14                          (  7.55):  345703.34
 p_N13__O14                          (  4.63):  345703.34
 p_N14__O15                          (  7.30):  345703.34
-He4_N14__F18                        (  4.41):  345703.34
-p_N15__O16                          ( 12.13):  345703.34
-He4_N15__F19                        (  4.01):  345703.34
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>He4_O14__Ne18                       (  5.11):  345703.34
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>He4_N14__F18                        (  4.41):  345703.34
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>p_N15__O16                          ( 12.13):  345703.34
+He4_N15__F19                        (  4.01):  345703.34
+He4_O14__Ne18                       (  5.11):  345703.34
 He4_O15__Ne19                       (  3.53):  345703.34
 p_O16__F17                          (  0.60):  345703.34
 He4_O16__Ne20                       (  4.73):  345703.34
@@ -749,12 +752,14 @@ p_O18__F19                          (  7.99):  345703.34
 p_F17__Ne18                         (  3.92):  345703.34
 p_F18__Ne19                         (  6.41):  345703.34
 p_F19__Ne20                         ( 12.84):  345703.34
-d_He3__p_He4                        ( 18.35):  345703.34
-p_Li6__He4_He3                      (  4.02):    7094.29
-d_Li6__p_Li7                        (  5.03):  345703.19
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>p_Li7__He4_He4                      ( 17.35):  345703.34
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>d_He3__p_He4                        ( 18.35):  345703.34
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>p_Li6__He4_He3                      (  4.02):    7094.29
+d_Li6__p_Li7                        (  5.03):  345703.19
+p_Li7__He4_He4                      ( 17.35):  345703.34
 C12_C12__He4_Ne20                   (  4.62):  345703.34
 He4_N13__p_O16                      (  5.22):  345703.34
 p_N15__He4_C12                      (  4.97):  345703.34
@@ -764,13 +769,15 @@ p_O18__He4_N15                      (  3.98):  345703.34
 p_F18__He4_O15                      (  2.88):  345703.34
 He4_F18__p_Ne21                     (  1.74):  345703.34
 p_F19__He4_O16                      (  8.11):  345703.34
-p_Ne20__He4_F17                     ( -4.13):  345703.34
-He3_He3__p_p_He4                    ( 12.86):  345703.34
-d_Be7__p_He4_He4                    ( 16.77):  345703.34
-He3_Be7__p_p_He4_He4                ( 11.27):  345703.34
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>He4_He4_He4__C12                    (  7.28):  345703.34
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>p_Ne20__He4_F17                     ( -4.13):  345703.34
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>He3_He3__p_p_He4                    ( 12.86):  345703.34
+d_Be7__p_He4_He4                    ( 16.77):  345703.34
+He3_Be7__p_p_He4_He4                ( 11.27):  345703.34
+He4_He4_He4__C12                    (  7.28):  345703.34
 </pre></div>
 </div>
 </div>

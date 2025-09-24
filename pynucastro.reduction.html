@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.reduction package &#8212; pynucastro 2.7.1.post23+g5fc29afd1 documentation</title>
+    <title>pynucastro.reduction package &#8212; pynucastro 2.7.1.post24+g36e5a4d1b documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=d259943c"></script>
+    <script src="_static/documentation_options.js?v=0a39d9a3"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -214,6 +214,7 @@
 <li class="toctree-l1"><a class="reference internal" href="network-cycles.html">Finding Cycles (with NetworkX)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stiffness.html">Assessing the Stiffness of a Network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reduction.html">Network Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sens_analysis_example.html">Sensitivity Analysis</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
@@ -313,9 +314,6 @@
 </details></li>
 <li class="toctree-l3 current active has-children"><a class="current reference internal" href="#">pynucastro.reduction package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep_module.html">pynucastro.reduction.drgep_module module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.generate_data.html">pynucastro.reduction.generate_data module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.load_network.html">pynucastro.reduction.load_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html">pynucastro.reduction.reduction_driver module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.reduction_utils.html">pynucastro.reduction.reduction_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.sensitivity_analysis.html">pynucastro.reduction.sensitivity_analysis module</a></li>
 </ul>
@@ -592,35 +590,6 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.drgep"><code class="docutils literal notranslate"><span class="pre">drgep()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.drgep_dijkstras"><code class="docutils literal notranslate"><span class="pre">drgep_dijkstras()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.get_adj_nuc"><code class="docutils literal notranslate"><span class="pre">get_adj_nuc()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="pynucastro.reduction.generate_data.html">pynucastro.reduction.generate_data module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.reduction.generate_data.html#pynucastro.reduction.generate_data.dataset"><code class="docutils literal notranslate"><span class="pre">dataset()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.reduction.generate_data.html#pynucastro.reduction.generate_data.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="pynucastro.reduction.load_network.html">pynucastro.reduction.load_network module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.reduction.load_network.html#pynucastro.reduction.load_network.load_network"><code class="docutils literal notranslate"><span class="pre">load_network()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html">pynucastro.reduction.reduction_driver module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.NetInfo"><code class="docutils literal notranslate"><span class="pre">NetInfo</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.NetInfo.a"><code class="docutils literal notranslate"><span class="pre">NetInfo.a</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.NetInfo.ebind"><code class="docutils literal notranslate"><span class="pre">NetInfo.ebind</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.NetInfo.m"><code class="docutils literal notranslate"><span class="pre">NetInfo.m</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.NetInfo.y"><code class="docutils literal notranslate"><span class="pre">NetInfo.y</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.NetInfo.ydot"><code class="docutils literal notranslate"><span class="pre">NetInfo.ydot</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.NetInfo.z"><code class="docutils literal notranslate"><span class="pre">NetInfo.z</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.abar_dot"><code class="docutils literal notranslate"><span class="pre">abar_dot()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.enuc_dot"><code class="docutils literal notranslate"><span class="pre">enuc_dot()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.get_errfunc_enuc"><code class="docutils literal notranslate"><span class="pre">get_errfunc_enuc()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.get_net_info"><code class="docutils literal notranslate"><span class="pre">get_net_info()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.map_comp"><code class="docutils literal notranslate"><span class="pre">map_comp()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.rel_err"><code class="docutils literal notranslate"><span class="pre">rel_err()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html#pynucastro.reduction.reduction_driver.ye_dot"><code class="docutils literal notranslate"><span class="pre">ye_dot()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro.reduction.reduction_utils.html">pynucastro.reduction.reduction_utils module</a><ul>

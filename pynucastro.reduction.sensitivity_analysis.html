@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.reduction.sensitivity_analysis module &#8212; pynucastro 2.7.1.post23+g5fc29afd1 documentation</title>
+    <title>pynucastro.reduction.sensitivity_analysis module &#8212; pynucastro 2.7.1.post24+g36e5a4d1b documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=d259943c"></script>
+    <script src="_static/documentation_options.js?v=0a39d9a3"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -214,6 +214,7 @@
 <li class="toctree-l1"><a class="reference internal" href="network-cycles.html">Finding Cycles (with NetworkX)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stiffness.html">Assessing the Stiffness of a Network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reduction.html">Network Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sens_analysis_example.html">Sensitivity Analysis</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
@@ -313,9 +314,6 @@
 </details></li>
 <li class="toctree-l3 current active has-children"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep_module.html">pynucastro.reduction.drgep_module module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.generate_data.html">pynucastro.reduction.generate_data module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.load_network.html">pynucastro.reduction.load_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.reduction_driver.html">pynucastro.reduction.reduction_driver module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.reduction_utils.html">pynucastro.reduction.reduction_utils module</a></li>
 <li class="toctree-l4 current active"><a class="current reference internal" href="#">pynucastro.reduction.sensitivity_analysis module</a></li>
 </ul>
@@ -585,7 +583,7 @@ document.write(`
 <p>Methods and functions used for sensitivity analysis.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.sensitivity_analysis.binary_search_trim">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.sensitivity_analysis.</span></span><span class="sig-name descname"><span class="pre">binary_search_trim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nuclei</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errfunc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/sensitivity_analysis.html#binary_search_trim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.sensitivity_analysis.binary_search_trim" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.sensitivity_analysis.</span></span><span class="sig-name descname"><span class="pre">binary_search_trim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nuclei</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errfunc</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/sensitivity_analysis.html#binary_search_trim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.sensitivity_analysis.binary_search_trim" title="Link to this definition">#</a></dt>
 <dd><p>Given an array of nuclei sorted roughly by relative importance,
 perform a binary search to trim out nuclei from the network until
 the error is as close as possible to the given threshold without
@@ -595,54 +593,70 @@ for the binary search to work effectively.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>network</strong> – The network to reduce.</p></li>
-<li><p><strong>nuclei</strong> – Nuclei to consider for the final network, sorted by decreasing importance (i.e.
-most important nuclei first). Importance can be determined by something like the <em>drgep</em>
-function.</p></li>
-<li><p><strong>errfunc</strong> – Error function to use when evaluating error. Should take a reduced network as
-an argument and return the relative error produced by the reduction. This can be a parallel
-(MPI) function.</p></li>
-<li><p><strong>thresh</strong> – Threshold for acceptable error. Default is 0.05.</p></li>
+<li><p><strong>network</strong> (<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><em>RateCollection</em></a>) – The network to reduce.</p></li>
+<li><p><strong>nuclei</strong> (<em>Iterable</em><em>(</em><a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a><em>) or </em><em>Iterable</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>)</em>) – Nuclei to consider for the final network, sorted by decreasing
+importance (i.e.  most important nuclei first). Importance can
+be determined by something like the <em>drgep</em> function.</p></li>
+<li><p><strong>errfunc</strong> (<em>Callable</em>) – Error function to use when evaluating error, with the signature
+<code class="docutils literal notranslate"><span class="pre">error(net,</span> <span class="pre">*args)</span></code>, where <code class="docutils literal notranslate"><span class="pre">net</span></code> is the reduced network as
+an argument and return the relative error produced by the reduction.
+If <code class="docutils literal notranslate"><span class="pre">use_mpi</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code>, the error function can be parallelized
+with MPI. Otherwise <code class="docutils literal notranslate"><span class="pre">sens_analysis</span></code> will be parallelized and the
+error function should not be.</p></li>
+<li><p><strong>thresh</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Threshold for acceptable error. Default is 0.05.</p></li>
+<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a>) – Additional arguments to pass through to the error function</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A reduced reaction network with an evaluated error approximately equal to the supplied
-threshold.</p>
+<dd class="field-even"><p><strong>net</strong> – A reduced reaction network with an evaluated error
+approximately equal to the supplied threshold.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection">RateCollection</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.sensitivity_analysis.sens_analysis">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.sensitivity_analysis.</span></span><span class="sig-name descname"><span class="pre">sens_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errfunc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_mpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_prog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/sensitivity_analysis.html#sens_analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.sensitivity_analysis.sens_analysis" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.sensitivity_analysis.</span></span><span class="sig-name descname"><span class="pre">sens_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">errfunc</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_mpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_prog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/sensitivity_analysis.html#sens_analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.sensitivity_analysis.sens_analysis" title="Link to this definition">#</a></dt>
 <dd><p>Given a reaction network, remove nuclei from the network
 one-by-one until the induced error is as close to the given
 threshold as possible without exceeding it. This will test nuclei
 for removal individually and remove the one that induces the
 smallest error on each pass. Since it requires O(n^2) error
 function evaluations, this routine is much more expensive than
-<em>binary_search</em>, but it will typically trim the network down
+<code class="docutils literal notranslate"><span class="pre">binary_search</span></code>, but it will typically trim the network down
 significantly more.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>network</strong> – The network to reduce.</p></li>
-<li><p><strong>errfunc</strong> – Error function to use when evaluating error. Should take a reduced network as
-an argument and return the relative error produced by the reduction. If <em>use_mpi</em> is <em>False</em>,
-the error function can be parallelized with MPI. Otherwise <em>sens_analysis</em> will be
-parallelized and the error function should not be.</p></li>
-<li><p><strong>thresh</strong> – Threshold for acceptable error. Default is 0.05.</p></li>
-<li><p><strong>use_mpi</strong> – Whether to parallelize the loop over nuclei with each pass or not using MPI.
-For <em>p</em> MPI processes, the parallelized function will require O(n^2/p) error function
-evaluations per process. This option is <em>False</em> by default. If the error function is
-parallelized using MPI, this option should be set to <em>False</em>.</p></li>
-<li><p><strong>print_prog</strong> – Whether to print out the progress of the function as it runs or not. Includes
-a progress bar for each pass and messages indicating when the algorithm starts and ends.</p></li>
+<li><p><strong>network</strong> (<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><em>RateCollection</em></a>) – The network to reduce.  Can be a RateCollection or a subclass.</p></li>
+<li><p><strong>errfunc</strong> (<em>Callable</em>) – Error function to use when evaluating error, with the signature
+<code class="docutils literal notranslate"><span class="pre">error(net,</span> <span class="pre">*args)</span></code>, where <code class="docutils literal notranslate"><span class="pre">net</span></code> is the reduced network as
+an argument and return the relative error produced by the reduction.
+If <code class="docutils literal notranslate"><span class="pre">use_mpi</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code>, the error function can be parallelized
+with MPI. Otherwise <code class="docutils literal notranslate"><span class="pre">sens_analysis</span></code> will be parallelized and the
+error function should not be.</p></li>
+<li><p><strong>thresh</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Threshold for acceptable error. Default is 0.05.</p></li>
+<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a>) – Additional arguments to pass through to the error function</p></li>
+<li><p><strong>use_mpi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to parallelize the loop over nuclei with each pass or
+not using MPI.  For p MPI processes, the parallelized
+function will require O(n^2/p) error function evaluations per
+process. This option is <code class="docutils literal notranslate"><span class="pre">False</span></code> by default. If the error
+function is parallelized using MPI, this option should be set
+to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>print_prog</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to print out the progress of the function as it runs
+or not. Includes a progress bar for each pass and messages
+indicating when the algorithm starts and ends.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A reduced reaction network with an evaluated error approximately equal to the supplied
-threshold.</p>
+<dd class="field-even"><p><strong>net</strong> – A reduced reaction network with an evaluated error
+approximately equal to the supplied threshold.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection">RateCollection</a></p>
 </dd>
 </dl>
 </dd></dl>
