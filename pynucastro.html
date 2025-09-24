@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro package &#8212; pynucastro 2.7.1.post25+g9b52d606c documentation</title>
+    <title>pynucastro package &#8212; pynucastro 2.7.1.post26+g2f6ac8da9 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=1b21a1b1"></script>
+    <script src="_static/documentation_options.js?v=a68756e6"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -280,7 +280,6 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.fortran_network.html">pynucastro.networks.fortran_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.helper.html">pynucastro.networks.helper module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.nse_network.html">pynucastro.networks.nse_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.numpy_network.html">pynucastro.networks.numpy_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.python_network.html">pynucastro.networks.python_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.rate_collection.html">pynucastro.networks.rate_collection module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.simple_cxx_network.html">pynucastro.networks.simple_cxx_network module</a></li>
@@ -627,9 +626,6 @@ Jupyter notebooks.</p></li>
 <li><p><a class="reference internal" href="pynucastro.networks.nse_network.html#pynucastro.networks.nse_network.NSENetwork" title="pynucastro.networks.nse_network.NSENetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NSENetwork</span></code></a> :
 this extends the <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> to allow for solving for the
 nuclear statistical equilibrium state of a collection of nuclei.</p></li>
-<li><p><a class="reference internal" href="pynucastro.networks.numpy_network.html#pynucastro.networks.numpy_network.NumpyNetwork" title="pynucastro.networks.numpy_network.NumpyNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumpyNetwork</span></code></a> : this extends the
-<code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> to allow evaluating reaction rates using vectorized
-NumPy arrays, which may be more efficient for some applications.</p></li>
 </ul>
 <p>and the network classes intended for outputting the righthand side
 of the ODE system for use in python or other applications:</p>
@@ -799,10 +795,6 @@ routines for modifying the reaction rates.</p>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.nse_network.html#pynucastro.networks.nse_network.NSETableEntry"><code class="docutils literal notranslate"><span class="pre">NSETableEntry</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.networks.numpy_network.html">pynucastro.networks.numpy_network module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.numpy_network.html#pynucastro.networks.numpy_network.NumpyNetwork"><code class="docutils literal notranslate"><span class="pre">NumpyNetwork</span></code></a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.networks.python_network.html">pynucastro.networks.python_network module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork"><code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a></li>
 </ul>
@@ -951,7 +943,6 @@ routines for modifying the reaction rates.</p>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.reduction.html#submodules">Submodules</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.reduction.drgep_module.html">pynucastro.reduction.drgep_module module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.calc_interaction_matrix"><code class="docutils literal notranslate"><span class="pre">calc_interaction_matrix()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.calc_interaction_matrix_numpy"><code class="docutils literal notranslate"><span class="pre">calc_interaction_matrix_numpy()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.drgep"><code class="docutils literal notranslate"><span class="pre">drgep()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.drgep_dijkstras"><code class="docutils literal notranslate"><span class="pre">drgep_dijkstras()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.get_adj_nuc"><code class="docutils literal notranslate"><span class="pre">get_adj_nuc()</span></code></a></li>

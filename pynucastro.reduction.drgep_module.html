@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.reduction.drgep_module module &#8212; pynucastro 2.7.1.post25+g9b52d606c documentation</title>
+    <title>pynucastro.reduction.drgep_module module &#8212; pynucastro 2.7.1.post26+g2f6ac8da9 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=1b21a1b1"></script>
+    <script src="_static/documentation_options.js?v=a68756e6"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -278,7 +278,6 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.fortran_network.html">pynucastro.networks.fortran_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.helper.html">pynucastro.networks.helper module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.nse_network.html">pynucastro.networks.nse_network module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.numpy_network.html">pynucastro.networks.numpy_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.python_network.html">pynucastro.networks.python_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.rate_collection.html">pynucastro.networks.rate_collection module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.simple_cxx_network.html">pynucastro.networks.simple_cxx_network module</a></li>
@@ -566,7 +565,6 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep_module.calc_interaction_matrix"><code class="docutils literal notranslate"><span class="pre">calc_interaction_matrix()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep_module.calc_interaction_matrix_numpy"><code class="docutils literal notranslate"><span class="pre">calc_interaction_matrix_numpy()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep_module.drgep"><code class="docutils literal notranslate"><span class="pre">drgep()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep_module.drgep_dijkstras"><code class="docutils literal notranslate"><span class="pre">drgep_dijkstras()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep_module.get_adj_nuc"><code class="docutils literal notranslate"><span class="pre">get_adj_nuc()</span></code></a></li>
@@ -607,14 +605,8 @@ is typically the result of
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pynucastro.reduction.drgep_module.calc_interaction_matrix_numpy">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep_module.</span></span><span class="sig-name descname"><span class="pre">calc_interaction_matrix_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rvals_arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep_module.html#calc_interaction_matrix_numpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep_module.calc_interaction_matrix_numpy" title="Link to this definition">#</a></dt>
-<dd><p>Calculate direct interaction coefficients using NumPy.</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.drgep_module.drgep">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep_module.</span></span><span class="sig-name descname"><span class="pre">drgep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returnobj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'net'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_mpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_numpy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep_module.html#drgep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep_module.drgep" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep_module.</span></span><span class="sig-name descname"><span class="pre">drgep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returnobj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'net'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_mpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep_module.html#drgep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep_module.drgep" title="Link to this definition">#</a></dt>
 <dd><p>Apply the Directed Relation Graph with Error Propagation
 (DRGEP) reduction method to a network.  This implementation is
 based on the description in <span id="id1">Pepiot-Desjardins and Pitsch [<a class="reference internal" href="zreferences.html#id24" title="P. Pepiot-Desjardins and H. Pitsch. An efficient error-propagation-based reduction method for large chemical kinetic mechanisms. Combustion and Flame, 154(1):67-81, 2008. doi:10.1016/j.combustflame.2007.10.020.">2008</a>]</span> and
@@ -623,16 +615,8 @@ based on the description in <span id="id1">Pepiot-Desjardins and Pitsch [<a clas
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>net</strong> (<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><em>RateCollection</em></a>) – The network to reduce (can be a subclass of <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code>)</p></li>
-<li><p><strong>conds</strong> (<em>Iterable</em>) – <p>The set of thermodynamic conditions to reduce over. This can be:</p>
-<ul>
-<li><p>a sequence of tuples: (<code class="docutils literal notranslate"><span class="pre">Composition</span></code>, density,
-temperature) if running in the default mode</p></li>
-<li><p>a sequence of 3 sequences ((<code class="docutils literal notranslate"><span class="pre">Composition</span></code>, density,
-temperature) ordering) if running in NumPy mode. In this
-case, the sequences will be permuted to create the
-dataset.</p></li>
-</ul>
-</p></li>
+<li><p><strong>conds</strong> (<em>Iterable</em>) – The set of thermodynamic conditions to reduce over. This is a
+sequence of tuples: (<code class="docutils literal notranslate"><span class="pre">Composition</span></code>, density, temperature)</p></li>
 <li><p><strong>targets</strong> (<em>Iterable</em><em>(</em><a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a><em>) or </em><em>Iterable</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>)</em>) – A collection of target nuclei (or a single target nucleus) to
 run the graph search algorithm from.</p></li>
 <li><p><strong>tols</strong> (<em>Iterable</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>) or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Tolerance(s) or cutoff threshold(s) to use for paths from each
@@ -650,11 +634,6 @@ with entries corresponding to nuclei in <code class="docutils literal notranslat
 </ul>
 </p></li>
 <li><p><strong>use_mpi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Do we divide up the set of conditions across MPI processes?</p></li>
-<li><p><strong>use_numpy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Do we use NumPy to vectorize the interaction coefficient
-calculations or not. This is more memory intensive and may
-actually hinder performance for some setups.  Conditions
-should be supplied as 3 lists that will be permuted to form
-the dataset (see <code class="docutils literal notranslate"><span class="pre">conds</span></code> parameter).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -769,7 +748,6 @@ non-iterable case, the supplied object will be repeated <em>n</em> times
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep_module.calc_interaction_matrix"><code class="docutils literal notranslate"><span class="pre">calc_interaction_matrix()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep_module.calc_interaction_matrix_numpy"><code class="docutils literal notranslate"><span class="pre">calc_interaction_matrix_numpy()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep_module.drgep"><code class="docutils literal notranslate"><span class="pre">drgep()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep_module.drgep_dijkstras"><code class="docutils literal notranslate"><span class="pre">drgep_dijkstras()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep_module.get_adj_nuc"><code class="docutils literal notranslate"><span class="pre">get_adj_nuc()</span></code></a></li>
