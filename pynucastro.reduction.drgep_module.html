@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.reduction.drgep_module module &#8212; pynucastro 2.7.1.post24+g36e5a4d1b documentation</title>
+    <title>pynucastro.reduction.drgep_module module &#8212; pynucastro 2.7.1.post25+g9b52d606c documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=0a39d9a3"></script>
+    <script src="_static/documentation_options.js?v=1b21a1b1"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -49,7 +49,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'pynucastro.reduction.drgep_module';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pynucastro.reduction.reduction_utils module" href="pynucastro.reduction.reduction_utils.html" />
+    <link rel="next" title="pynucastro.reduction.sensitivity_analysis module" href="pynucastro.reduction.sensitivity_analysis.html" />
     <link rel="prev" title="pynucastro.reduction package" href="pynucastro.reduction.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -314,7 +314,6 @@
 </details></li>
 <li class="toctree-l3 current active has-children"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l4 current active"><a class="current reference internal" href="#">pynucastro.reduction.drgep_module module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.reduction_utils.html">pynucastro.reduction.reduction_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.sensitivity_analysis.html">pynucastro.reduction.sensitivity_analysis module</a></li>
 </ul>
 </details></li>
@@ -323,6 +322,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.screening_util.html">pynucastro.screening.screening_util module</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.mpi_utils.html">pynucastro.mpi_utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.numba_util.html">pynucastro.numba_util module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.utils.html">pynucastro.utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.yt_utils.html">pynucastro.yt_utils module</a></li>
@@ -570,6 +570,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep_module.drgep"><code class="docutils literal notranslate"><span class="pre">drgep()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep_module.drgep_dijkstras"><code class="docutils literal notranslate"><span class="pre">drgep_dijkstras()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep_module.get_adj_nuc"><code class="docutils literal notranslate"><span class="pre">get_adj_nuc()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep_module.to_list"><code class="docutils literal notranslate"><span class="pre">to_list()</span></code></a></li>
 </ul>
             </nav>
         </div>
@@ -701,6 +702,25 @@ to the key nucleus.</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="pynucastro.reduction.drgep_module.to_list">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep_module.</span></span><span class="sig-name descname"><span class="pre">to_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep_module.html#to_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep_module.to_list" title="Link to this definition">#</a></dt>
+<dd><p>Convert a sequence or non-iterable to a list. In the
+non-iterable case, the supplied object will be repeated <em>n</em> times
+(default 1).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>Iterable</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The object we want to convert to a list</p></li>
+<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of times to repeat x (if x is not an iterable)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -724,11 +744,11 @@ to the key nucleus.</p></li>
       </div>
     </a>
     <a class="right-next"
-       href="pynucastro.reduction.reduction_utils.html"
+       href="pynucastro.reduction.sensitivity_analysis.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pynucastro.reduction.reduction_utils module</p>
+        <p class="prev-next-title">pynucastro.reduction.sensitivity_analysis module</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -753,6 +773,7 @@ to the key nucleus.</p></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep_module.drgep"><code class="docutils literal notranslate"><span class="pre">drgep()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep_module.drgep_dijkstras"><code class="docutils literal notranslate"><span class="pre">drgep_dijkstras()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep_module.get_adj_nuc"><code class="docutils literal notranslate"><span class="pre">get_adj_nuc()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.reduction.drgep_module.to_list"><code class="docutils literal notranslate"><span class="pre">to_list()</span></code></a></li>
 </ul>
   </nav></div>
 

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.reduction.drgep_module &#8212; pynucastro 2.7.1.post24+g36e5a4d1b documentation</title>
+    <title>pynucastro.reduction.drgep_module &#8212; pynucastro 2.7.1.post25+g9b52d606c documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=0a39d9a3"></script>
+    <script src="../../../_static/documentation_options.js?v=1b21a1b1"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -313,7 +313,6 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.drgep_module.html">pynucastro.reduction.drgep_module module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.reduction_utils.html">pynucastro.reduction.reduction_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.sensitivity_analysis.html">pynucastro.reduction.sensitivity_analysis module</a></li>
 </ul>
 </details></li>
@@ -322,6 +321,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.screening.screening_util.html">pynucastro.screening.screening_util module</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.mpi_utils.html">pynucastro.mpi_utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.numba_util.html">pynucastro.numba_util module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.utils.html">pynucastro.utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.yt_utils.html">pynucastro.yt_utils module</a></li>
@@ -489,11 +489,37 @@ document.write(`
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.mpi_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">mpi_importer</span><span class="p">,</span> <span class="n">mpi_numpy_decomp</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.reduction.reduction_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">mpi_importer</span><span class="p">,</span>
-                                                  <span class="n">mpi_numpy_decomp</span><span class="p">,</span> <span class="n">to_list</span><span class="p">)</span>
 
 <span class="n">MPI</span> <span class="o">=</span> <span class="n">mpi_importer</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="to_list">
+<a class="viewcode-back" href="../../../pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.to_list">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_list</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a sequence or non-iterable to a list. In the</span>
+<span class="sd">    non-iterable case, the supplied object will be repeated *n* times</span>
+<span class="sd">    (default 1).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : Iterable or float or int</span>
+<span class="sd">        The object we want to convert to a list</span>
+<span class="sd">    n : int</span>
+<span class="sd">        The number of times to repeat x (if x is not an iterable)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span></div>
+
 
 
 <div class="viewcode-block" id="calc_interaction_matrix">

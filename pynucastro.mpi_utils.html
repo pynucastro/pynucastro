@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Creating a Custom Rate &#8212; pynucastro 2.7.1.post25+g9b52d606c documentation</title>
+    <title>pynucastro.mpi_utils module &#8212; pynucastro 2.7.1.post25+g9b52d606c documentation</title>
   
   
   
@@ -46,13 +46,11 @@
     <script src="_static/copybutton.js?v=eaa7b67c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'custom-rates';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pynucastro.mpi_utils';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Reverse Rates" href="partition-function.html" />
-    <link rel="prev" title="Modifying Rates" href="modify-example.html" />
+    <link rel="next" title="pynucastro.numba_util module" href="pynucastro.numba_util.html" />
+    <link rel="prev" title="pynucastro.screening.screening_util module" href="pynucastro.screening.screening_util.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -197,10 +195,10 @@
 <li class="toctree-l1"><a class="reference internal" href="alternate-rates.html"><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code></a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Rate Operations</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="screening-examples.html">Screening Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modify-example.html">Modifying Rates</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Creating a Custom Rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom-rates.html">Creating a Custom Rate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="partition-function.html">Reverse Rates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
@@ -259,11 +257,11 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/supernova-lightcurve.html">A Supernova Lightcurve</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="modules.html">API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.constants.html">pynucastro.constants package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.constants.constants.html">pynucastro.constants.constants module</a></li>
 </ul>
@@ -324,7 +322,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.screening_util.html">pynucastro.screening.screening_util module</a></li>
 </ul>
 </details></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.mpi_utils.html">pynucastro.mpi_utils module</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">pynucastro.mpi_utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.numba_util.html">pynucastro.numba_util module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.utils.html">pynucastro.utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.yt_utils.html">pynucastro.yt_utils module</a></li>
@@ -409,7 +407,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/custom-rates.ipynb?plain=1" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/pynucastro.mpi_utils.rst?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -426,7 +424,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/custom-rates.ipynb" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/pynucastro.mpi_utils.rst" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -443,7 +441,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fcustom-rates.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fpynucastro.mpi_utils.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -473,7 +471,7 @@
       
       
       
-      <li><a href="_sources/custom-rates.ipynb" target="_blank"
+      <li><a href="_sources/pynucastro.mpi_utils.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -483,7 +481,7 @@
 <span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="btn__text-container">.ipynb</span>
+<span class="btn__text-container">.rst</span>
 </a>
 </li>
       
@@ -557,7 +555,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Creating a Custom Rate</h1>
+    <h1>pynucastro.mpi_utils module</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -567,7 +565,10 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-network-with-our-rate">Creating a network with our rate</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mpi_utils.FailedMPIImport"><code class="docutils literal notranslate"><span class="pre">FailedMPIImport</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mpi_utils.MPIImportError"><code class="docutils literal notranslate"><span class="pre">MPIImportError</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mpi_utils.mpi_importer"><code class="docutils literal notranslate"><span class="pre">mpi_importer()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mpi_utils.mpi_numpy_decomp"><code class="docutils literal notranslate"><span class="pre">mpi_numpy_decomp()</span></code></a></li>
 </ul>
             </nav>
         </div>
@@ -579,238 +580,40 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="creating-a-custom-rate">
-<h1>Creating a Custom Rate<a class="headerlink" href="#creating-a-custom-rate" title="Link to this heading">#</a></h1>
-<p>Let’s imagine wanting to add a rate that has a temperature form not known to pynucastro.  We can accomplish this by creating a new class derived from <a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Rate</span></code></a>.</p>
-<p>We’ll consider a rate of the form:</p>
-<div class="math notranslate nohighlight">
-\[r = r_0 \left (\frac{T}{T_0} \right )^\nu\]</div>
-<p>representing a reaction of the form</p>
-<div class="math notranslate nohighlight">
-\[A + B \rightarrow C + D\]</div>
-<p>then we expect the <span class="math notranslate nohighlight">\(\dot{Y}\)</span> evolution equation for this rate to have the form:</p>
-<div class="math notranslate nohighlight">
-\[\frac{dY(A)}{dt} = -\rho Y(A) Y(B) r_0 \left ( \frac{T}{T_0} \right )^\nu\]</div>
-<p>and likewise for the other nuclei.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>We’ll use this to approximate the rate <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}(p, \gamma){}^{15}\mathrm{O}\)</span> around a temperature of
-<span class="math notranslate nohighlight">\(T = 3\times 10^7~\mathrm{K}\)</span></p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
-<span class="n">r</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;n14(p,g)o15&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>We can get the values of <span class="math notranslate nohighlight">\(r_0\)</span> and <span class="math notranslate nohighlight">\(\nu\)</span> about this temperature from the rate</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T0</span> <span class="o">=</span> <span class="mf">3.e7</span>
-<span class="n">nu</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">get_rate_exponent</span><span class="p">(</span><span class="n">T0</span><span class="p">)</span>
-<span class="n">r0</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T0</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">r0</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.416655077954945e-13 15.601859314950396
-</pre></div>
-</div>
-</div>
-</div>
-<p>Now we can write our custom rate.  A few bits are needed in the initialization:</p>
-<ul class="simple">
-<li><p>We need to set the “chapter” to “custom”—this will be used by <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a> to know how to group this rate with the others</p></li>
-<li><p>We call the parent <code class="docutils literal notranslate"><span class="pre">Rate</span></code> class’s <code class="docutils literal notranslate"><span class="pre">__init__()</span></code> to do all the remaining initialization.</p></li>
-</ul>
-<p>We only write 2 additional methods here:</p>
-<ul class="simple">
-<li><p><a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.function_string_py" title="pynucastro.rates.rate.Rate.function_string_py"><code class="xref py py-func docutils literal notranslate"><span class="pre">function_string_py</span></code></a> is used when outputting a <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> to a <code class="docutils literal notranslate"><span class="pre">.py</span></code> file that can be imported and used for integration</p></li>
-<li><p><a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval" title="pynucastro.rates.rate.Rate.eval"><code class="xref py py-func docutils literal notranslate"><span class="pre">eval</span></code></a> is used when evaluating the rate interactively (including when making plots)</p></li>
-</ul>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyRate</span><span class="p">(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Rate</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">r0</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">T0</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+  <section id="module-pynucastro.mpi_utils">
+<span id="pynucastro-mpi-utils-module"></span><h1>pynucastro.mpi_utils module<a class="headerlink" href="#module-pynucastro.mpi_utils" title="Link to this heading">#</a></h1>
+<p>MPI utilities used in the reduction algorithm.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pynucastro.mpi_utils.FailedMPIImport">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.mpi_utils.</span></span><span class="sig-name descname"><span class="pre">FailedMPIImport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/mpi_utils.html#FailedMPIImport"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.mpi_utils.FailedMPIImport" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Replacement for mpi4py.MPI import that will throw an error if used.</p>
+</dd></dl>
 
-        <span class="c1"># we set the chapter to custom so the network knows how to deal with it</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">=</span> <span class="s2">&quot;custom&quot;</span>
-    
-        <span class="c1"># call the Rate init to do the remaining initialization</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="n">products</span><span class="p">)</span>
+<dl class="py exception">
+<dt class="sig sig-object py" id="pynucastro.mpi_utils.MPIImportError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.mpi_utils.</span></span><span class="sig-name descname"><span class="pre">MPIImportError</span></span><a class="reference internal" href="_modules/pynucastro/mpi_utils.html#MPIImportError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.mpi_utils.MPIImportError" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>Exception for MPI errors</p>
+</dd></dl>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">=</span> <span class="n">r0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">T0</span> <span class="o">=</span> <span class="n">T0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nu</span> <span class="o">=</span> <span class="n">nu</span>
+<dl class="py function">
+<dt class="sig sig-object py" id="pynucastro.mpi_utils.mpi_importer">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.mpi_utils.</span></span><span class="sig-name descname"><span class="pre">mpi_importer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/mpi_utils.html#mpi_importer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.mpi_utils.mpi_importer" title="Link to this definition">#</a></dt>
+<dd><p>Import MPI (lazily), where we only throw an error if the import
+failed and then we attempt to use the object.</p>
+</dd></dl>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">function_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;return a string containing a python function that computes</span>
-<span class="sd">        the rate&quot;&quot;&quot;</span>
-        <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;@numba.njit()</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf):</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="si">}</span><span class="s2"> * (tf.T9 * 1.e9 / </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">T0</span><span class="si">}</span><span class="s2"> )**(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="si">}</span><span class="s2">)</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="k">return</span> <span class="n">fstring</span>
+<dl class="py function">
+<dt class="sig sig-object py" id="pynucastro.mpi_utils.mpi_numpy_decomp">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.mpi_utils.</span></span><span class="sig-name descname"><span class="pre">mpi_numpy_decomp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">MPI_N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MPI_rank</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/mpi_utils.html#mpi_numpy_decomp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.mpi_utils.mpi_numpy_decomp" title="Link to this definition">#</a></dt>
+<dd><p>Decompose a set of conditions for <em>MPI_N</em> MPI processes, where
+the conditions are a sequence of 3 sequences with ordering
+(composition_sequence, density_sequence,
+temperature_sequence). This structure for the dataset is necessary
+for the vectorized reduction algorithms.</p>
+</dd></dl>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">*</span> <span class="p">(</span><span class="n">T</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">T0</span><span class="p">)</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">nu</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Now we can create our custom rate</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r_custom</span> <span class="o">=</span> <span class="n">MyRate</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n14&quot;</span><span class="p">),</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)],</span>
-                  <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o15&quot;</span><span class="p">)],</span>
-                  <span class="n">r0</span><span class="o">=</span><span class="n">r0</span><span class="p">,</span> <span class="n">T0</span><span class="o">=</span><span class="n">T0</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="n">nu</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r_custom</span><span class="o">.</span><span class="n">fname</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;N14_p__O15__generic&#39;
-</pre></div>
-</div>
-</div>
-</div>
-<p>Notice that it can write out the function needed to evaluate this rate in a python module</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">r_custom</span><span class="o">.</span><span class="n">function_string_py</span><span class="p">())</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@numba.njit()
-def N14_p__O15__generic(rate_eval, tf):
-    rate_eval.N14_p__O15__generic = 1.416655077954945e-13 * (tf.T9 * 1.e9 / 30000000.0 )**(15.601859314950396)
-</pre></div>
-</div>
-</div>
-</div>
-<section id="creating-a-network-with-our-rate">
-<h2>Creating a network with our rate<a class="headerlink" href="#creating-a-network-with-our-rate" title="Link to this heading">#</a></h2>
-<p>Now let’s create a network that includes this rate.  We’ll base it off of the CNO net, but we’ll leave out the rate that we are approximating.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rate_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;c12(p,g)n13&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;c13(p,g)n14&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;n13(,)c13&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;n13(p,g)o14&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;n15(p,a)c12&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;o14(,)n14&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;o15(,)n15&quot;</span><span class="p">]</span>
-<span class="n">rates</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">rate_names</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Here we’ll add our custom rate to the remaining rates we pulled from ReacLib</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">rates</span><span class="o">+</span><span class="p">[</span><span class="n">r_custom</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>We can plot this to see how it behaves.  First a low temperature</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T</span> <span class="o">=</span> <span class="mf">3.e7</span>
-<span class="n">rho</span> <span class="o">=</span> <span class="mi">200</span>
-<span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">set_solar_like</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell tag_nbval-ignore-output docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/29a4bd738eac2ab289d4b139f7a6ad95cd6af0bc28302d34fed34ef1789a5eae.png" src="_images/29a4bd738eac2ab289d4b139f7a6ad95cd6af0bc28302d34fed34ef1789a5eae.png" />
-</div>
-</div>
-<p>Now a higher temperature</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T</span> <span class="o">=</span> <span class="mf">3.e8</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell tag_nbval-ignore-output docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/c2d3affb1921e3bc39436edf7b6460a3e8721b524bfb617a3647b851cb943281.png" src="_images/c2d3affb1921e3bc39436edf7b6460a3e8721b524bfb617a3647b851cb943281.png" />
-</div>
-</div>
-<p>Notice that at the higher temperature, this rate becomes higher than the beta decay to <span class="math notranslate nohighlight">\({}^{13}\mathrm{C}\)</span>.</p>
-<p>We can also see the values of the ydot terms in the network</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">evaluate_ydots</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{p: -140.31578946054762,
- He4: 124.10404295119419,
- C12: 124.09500217697241,
- C13: -0.017818574032238365,
- N13: 0.00701794538740977,
- N14: -16.16504349981351,
- N15: -124.1040418689929,
- O14: 0.002020570415053316,
- O15: 16.182863250063768}
-</pre></div>
-</div>
-</div>
-</div>
-<p>Finally, we can see that when the network constructs the <code class="docutils literal notranslate"><span class="pre">dYdt</span></code> term,
-when writing out the network (via <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.write_network" title="pynucastro.networks.rate_collection.RateCollection.write_network"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_network</span></code></a>), our rate
-is included.  For example, for the protons:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">full_ydot_string</span><span class="p">(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dYdt[jp] = (
-      -rho*Y[jp]*Y[jc12]*rate_eval.p_C12__N13  +
-      -rho*Y[jp]*Y[jc13]*rate_eval.p_C13__N14  +
-      -rho*Y[jp]*Y[jn13]*rate_eval.p_N13__O14  +
-      -rho*Y[jp]*Y[jn15]*rate_eval.p_N15__He4_C12  +
-      -rho*Y[jp]*Y[jn14]*rate_eval.N14_p__O15__generic
-   )
-</pre></div>
-</div>
-</div>
-</div>
-</section>
 </section>
 
 
@@ -825,20 +628,20 @@ is included.  For example, for the protons:</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="modify-example.html"
+       href="pynucastro.screening.screening_util.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Modifying Rates</p>
+        <p class="prev-next-title">pynucastro.screening.screening_util module</p>
       </div>
     </a>
     <a class="right-next"
-       href="partition-function.html"
+       href="pynucastro.numba_util.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Reverse Rates</p>
+        <p class="prev-next-title">pynucastro.numba_util module</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -858,7 +661,10 @@ is included.  For example, for the protons:</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-network-with-our-rate">Creating a network with our rate</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mpi_utils.FailedMPIImport"><code class="docutils literal notranslate"><span class="pre">FailedMPIImport</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mpi_utils.MPIImportError"><code class="docutils literal notranslate"><span class="pre">MPIImportError</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mpi_utils.mpi_importer"><code class="docutils literal notranslate"><span class="pre">mpi_importer()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mpi_utils.mpi_numpy_decomp"><code class="docutils literal notranslate"><span class="pre">mpi_numpy_decomp()</span></code></a></li>
 </ul>
   </nav></div>
 

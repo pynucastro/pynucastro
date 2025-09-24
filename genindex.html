@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; pynucastro 2.7.1.post24+g36e5a4d1b documentation</title>
+    <title>Index &#8212; pynucastro 2.7.1.post25+g9b52d606c documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=0a39d9a3"></script>
+    <script src="_static/documentation_options.js?v=1b21a1b1"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -311,7 +311,6 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep_module.html">pynucastro.reduction.drgep_module module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.reduction_utils.html">pynucastro.reduction.reduction_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.sensitivity_analysis.html">pynucastro.reduction.sensitivity_analysis module</a></li>
 </ul>
 </details></li>
@@ -320,6 +319,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.screening_util.html">pynucastro.screening.screening_util module</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.mpi_utils.html">pynucastro.mpi_utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.numba_util.html">pynucastro.numba_util module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.utils.html">pynucastro.utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.yt_utils.html">pynucastro.yt_utils module</a></li>
@@ -751,7 +751,7 @@ document.write(`
 </li>
       <li><a href="pynucastro.screening.screen.html#pynucastro.screening.screen.f0">f0() (in module pynucastro.screening.screen)</a>
 </li>
-      <li><a href="pynucastro.reduction.reduction_utils.html#pynucastro.reduction.reduction_utils.FailedMPIImport">FailedMPIImport (class in pynucastro.reduction.reduction_utils)</a>
+      <li><a href="pynucastro.mpi_utils.html#pynucastro.mpi_utils.FailedMPIImport">FailedMPIImport (class in pynucastro.mpi_utils)</a>
 </li>
       <li><a href="pynucastro.eos.fermi_integrals.html#pynucastro.eos.fermi_integrals.FermiIntegral">FermiIntegral (class in pynucastro.eos.fermi_integrals)</a>
 </li>
@@ -1107,6 +1107,8 @@ document.write(`
 </li>
         <li><a href="pynucastro.eos.quadrature_weights.html#module-pynucastro.eos.quadrature_weights">pynucastro.eos.quadrature_weights</a>
 </li>
+        <li><a href="pynucastro.mpi_utils.html#module-pynucastro.mpi_utils">pynucastro.mpi_utils</a>
+</li>
         <li><a href="pynucastro.networks.html#module-pynucastro.networks">pynucastro.networks</a>
 </li>
         <li><a href="pynucastro.networks.amrexastro_cxx_network.html#module-pynucastro.networks.amrexastro_cxx_network">pynucastro.networks.amrexastro_cxx_network</a>
@@ -1177,8 +1179,6 @@ document.write(`
 </li>
         <li><a href="pynucastro.reduction.drgep_module.html#module-pynucastro.reduction.drgep_module">pynucastro.reduction.drgep_module</a>
 </li>
-        <li><a href="pynucastro.reduction.reduction_utils.html#module-pynucastro.reduction.reduction_utils">pynucastro.reduction.reduction_utils</a>
-</li>
         <li><a href="pynucastro.reduction.sensitivity_analysis.html#module-pynucastro.reduction.sensitivity_analysis">pynucastro.reduction.sensitivity_analysis</a>
 </li>
         <li><a href="pynucastro.screening.html#module-pynucastro.screening">pynucastro.screening</a>
@@ -1194,11 +1194,11 @@ document.write(`
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pynucastro.reduction.reduction_utils.html#pynucastro.reduction.reduction_utils.mpi_importer">mpi_importer() (in module pynucastro.reduction.reduction_utils)</a>
+      <li><a href="pynucastro.mpi_utils.html#pynucastro.mpi_utils.mpi_importer">mpi_importer() (in module pynucastro.mpi_utils)</a>
 </li>
-      <li><a href="pynucastro.reduction.reduction_utils.html#pynucastro.reduction.reduction_utils.mpi_numpy_decomp">mpi_numpy_decomp() (in module pynucastro.reduction.reduction_utils)</a>
+      <li><a href="pynucastro.mpi_utils.html#pynucastro.mpi_utils.mpi_numpy_decomp">mpi_numpy_decomp() (in module pynucastro.mpi_utils)</a>
 </li>
-      <li><a href="pynucastro.reduction.reduction_utils.html#pynucastro.reduction.reduction_utils.MPIImportError">MPIImportError</a>
+      <li><a href="pynucastro.mpi_utils.html#pynucastro.mpi_utils.MPIImportError">MPIImportError</a>
 </li>
       <li><a href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TableIndex.MU">MU (pynucastro.rates.tabular_rate.TableIndex attribute)</a>
 </li>
@@ -1352,6 +1352,13 @@ document.write(`
 </li>
       </ul></li>
       <li>
+    pynucastro.mpi_utils
+
+      <ul>
+        <li><a href="pynucastro.mpi_utils.html#module-pynucastro.mpi_utils">module</a>
+</li>
+      </ul></li>
+      <li>
     pynucastro.networks
 
       <ul>
@@ -1442,6 +1449,8 @@ document.write(`
         <li><a href="pynucastro.neutrino_cooling.neutrino_cooling.html#module-pynucastro.neutrino_cooling.neutrino_cooling">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pynucastro.neutrino_cooling.sneut5_mod
 
@@ -1449,8 +1458,6 @@ document.write(`
         <li><a href="pynucastro.neutrino_cooling.sneut5_mod.html#module-pynucastro.neutrino_cooling.sneut5_mod">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pynucastro.nucdata
 
@@ -1596,13 +1603,6 @@ document.write(`
 
       <ul>
         <li><a href="pynucastro.reduction.drgep_module.html#module-pynucastro.reduction.drgep_module">module</a>
-</li>
-      </ul></li>
-      <li>
-    pynucastro.reduction.reduction_utils
-
-      <ul>
-        <li><a href="pynucastro.reduction.reduction_utils.html#module-pynucastro.reduction.reduction_utils">module</a>
 </li>
       </ul></li>
       <li>
@@ -1815,7 +1815,7 @@ document.write(`
 </li>
       <li><a href="pynucastro.yt_utils.html#pynucastro.yt_utils.to_conditions">to_conditions() (in module pynucastro.yt_utils)</a>
 </li>
-      <li><a href="pynucastro.reduction.reduction_utils.html#pynucastro.reduction.reduction_utils.to_list">to_list() (in module pynucastro.reduction.reduction_utils)</a>
+      <li><a href="pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.to_list">to_list() (in module pynucastro.reduction.drgep_module)</a>
 </li>
   </ul></td>
 </tr></table>
