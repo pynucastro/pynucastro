@@ -111,16 +111,3 @@ def mpi_numpy_decomp(MPI_N, MPI_rank, n):
             T_step = 1
 
     return comp_idx, comp_step, rho_idx, rho_step, T_idx, T_step
-
-
-def to_list(x, n=1):
-    """Convert a sequence or non-iterable to a list. In the
-    non-iterable case, the supplied object will be repeated *n* times
-    (default 1).
-
-    """
-
-    try:
-        return list(x)
-    except TypeError:
-        return [x] * n
