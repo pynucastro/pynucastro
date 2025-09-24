@@ -6,6 +6,7 @@ from collections import deque
 from pynucastro.networks import PythonNetwork
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import Library, RateFilter
+from pynucastro.rates.files import get_rates_dir
 
 #################################################
 #  Set up argument parser and process arguments #
@@ -153,7 +154,12 @@ rp_net = PythonNetwork(libraries=[final_lib])
 print(rp_net.summary())
 
 if args.write_lib:
-    final_lib.write_to_file(args.write_lib, prepend_rates_dir=True)
+    # we need a ReacLib library for this
+    filename = get_rates_dir() / args.write_lib
+
+    with filename.open("w") as f:
+        for rate in final_lib.get_rates():
+            rate.write_to_file(f)
 
 if args.write_network:
     print("Writing network...")

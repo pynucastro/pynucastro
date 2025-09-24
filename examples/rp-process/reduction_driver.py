@@ -159,7 +159,7 @@ def main():
     if args.use_mpi:
         MPI.COMM_WORLD.Barrier()
     t0 = time.time()
-    red_net = sens_analysis(red_net, erf, args.sens_analysis,
+    red_net = sens_analysis(red_net, erf, thresh=args.sens_analysis,
                             args=erf_args, use_mpi=args.use_mpi)
     dt = time.time() - t0
 
