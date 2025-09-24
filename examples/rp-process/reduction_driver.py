@@ -8,7 +8,8 @@ from collections import namedtuple
 import numpy as np
 
 from pynucastro import Nucleus
-from pynucastro.reduction import mpi_importer, sens_analysis
+from pynucastro.mpi_utils import mpi_importer
+from pynucastro.reduction import sens_analysis
 from pynucastro.reduction.drgep_module import drgep
 from generate_data import dataset
 from load_network import load_network
@@ -158,7 +159,7 @@ def main():
     if args.use_mpi:
         MPI.COMM_WORLD.Barrier()
     t0 = time.time()
-    red_net = sens_analysis(red_net, erf, args.sens_analysis,
+    red_net = sens_analysis(red_net, erf, thresh=args.sens_analysis,
                             args=erf_args, use_mpi=args.use_mpi)
     dt = time.time() - t0
 
