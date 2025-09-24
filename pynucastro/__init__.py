@@ -149,14 +149,14 @@ with some specialized library collections available as:
 -------------
 
 :py:mod:`reduction <pynucastro.reduction>` provides tools for directed
-relation graph with error propagation reduction of reaction networks.
+relation graph with error propagation and sensitivity analysis
+reduction of reaction networks.
 
 ``screening``
 -------------
 
 :py:mod:`screening <pynucastro.screening>` provides electron screening
 routines for modifying the reaction rates.
-
 
 """
 
@@ -179,5 +179,5 @@ from pynucastro.rates import (ApproximateRate, DerivedRate, FFNLibrary,
                               OdaLibrary, PruetFullerLibrary, Rate, RateFilter,
                               ReacLibLibrary, SuzukiLibrary, TabularLibrary,
                               Tfactors, list_known_rates, load_rate)
-from pynucastro.reduction import drgep, load_network
+from pynucastro.reduction import drgep, sens_analysis
 from pynucastro.screening import make_plasma_state, make_screen_factors

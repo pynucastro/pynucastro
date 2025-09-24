@@ -5,7 +5,7 @@
 import numpy as np
 
 from pynucastro import Composition, Nucleus
-from pynucastro.reduction.load_network import load_network
+from load_network import load_network
 
 
 def dataset(network, n=10, permute=True, b_rho=None, b_T=None, b_Z=None):
