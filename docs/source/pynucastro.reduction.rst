@@ -13,5 +13,4 @@ Submodules
    :maxdepth: 4
 
    pynucastro.reduction.drgep_module
-   pynucastro.reduction.reduction_utils
    pynucastro.reduction.sensitivity_analysis
