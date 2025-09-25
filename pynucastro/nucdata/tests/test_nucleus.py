@@ -28,6 +28,8 @@ class TestNucleus:
         self.ne41 = Nucleus("ne41")
         self.ni61 = Nucleus("ni61")
         self.pb237 = Nucleus("pb237")
+        self.ag95 = Nucleus("ag95")
+        self.ru95 = Nucleus("ru95")
 
     def teardown_method(self):
         """ this is run after each test """
@@ -67,6 +69,24 @@ class TestNucleus:
         assert int(self.d.spin_states) == 3
         assert int(self.c12.spin_states) == 1
         assert int(self.ni56.spin_states) == 1
+
+    def test_change_spin(self):
+
+        # default is reliable_spin = False
+        assert int(self.ag95.spin_states) == 10
+        assert int(self.ru95.spin_states) == 6
+
+        self.ag95.reliable_spin = True
+        self.ru95.reliable_spin = True
+
+        assert int(self.ag95.spin_states) is None
+        assert int(self.ru95.spin_states) == 6
+
+        self.ag95.reliable_spin = False
+        self.ru95.reliable_spin = False
+
+        assert int(self.ag95.spin_states) == 10
+        assert int(self.ru95.spin_states) == 6
 
     def test_partition_low_temp(self):
 
