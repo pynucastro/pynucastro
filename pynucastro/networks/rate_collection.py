@@ -575,8 +575,8 @@ class RateCollection:
         should we consider screening at all -- this mainly affects
         whether we build the screening map
     reliable_spins : bool
-        should we omit spin data that are arrived at through either 
-        theoretical means or experimentally weak arguments 
+        should we omit spin data that are arrived at through either
+        theoretical means or experimentally weak arguments
     """
 
     pynucastro_dir = Path(__file__).parents[1]
