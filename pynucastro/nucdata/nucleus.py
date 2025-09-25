@@ -77,6 +77,9 @@ class Nucleus:
     nse : bool
         an NSE proton has the same properties
         as a proton but compares as being distinct
+    reliable_spin : bool
+        whether to require experimentally strong arguments for
+        spin values (True) or to accept any argument (False)
     """
 
     _cache = {}
@@ -87,6 +90,7 @@ class Nucleus:
 
         self.dummy = dummy
         self.nse = False
+        self.reliable_spin = False
 
         # element symbol and atomic weight
         if name == "p":
@@ -173,7 +177,7 @@ class Nucleus:
 
         # set the number of spin states
         try:
-            self.spin_states = _spin_table.get_spin_states(a=self.A, z=self.Z)
+            self.spin_states = _spin_table.get_spin_states(a=self.A, z=self.Z, reliable=self.reliable_spin)
         except NotImplementedError:
             self.spin_states = None
 
