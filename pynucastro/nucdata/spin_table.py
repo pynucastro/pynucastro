@@ -18,6 +18,7 @@ class SpinTable:
     def __init__(self, datafile: str | Path = None) -> None:
 
         self._spin_states = {}
+        self._reliability_table = {}
 
         if datafile:
             self.datafile = Path(datafile)
@@ -38,8 +39,9 @@ class SpinTable:
                 A, Z, spin_states = int(A), int(Z), int(spin_states)
 
                 self._spin_states[A, Z] = spin_states
+                self._reliability_table[A, Z] = experimental == 's'
 
-    def get_spin_states(self, a: int, z: int) -> int:
+    def get_spin_states(self, a: int, z: int, reliable: bool = False) -> int:
         """Return the spin for a nucleus.
 
         Parameters
@@ -48,12 +50,25 @@ class SpinTable:
             Atomic weight
         z : int
             Atomic number
+        reliable : bool
+            setting this to True will only return spin states
+            for nuclei where the spin is known from strong
+            experimental arguments
 
         Returns
         -------
         float
 
         """
+        if reliable:
+            try:
+                if self._reliability_table[a, z]:
+                    return self._spin_states[a, z]
+                else:
+                    raise NotImplementedError(f"nuclear spin data for A={a} and Z={z} not reliable enough for your specifications")
+            except KeyError as exc:
+                raise NotImplementedError(f"nuclear spin data for A={a} and Z={z} not available") from exc
+
         try:
             return self._spin_states[a, z]
         except KeyError as exc:
