@@ -10,6 +10,11 @@ class TestRateCollection:
         mylib = reaclib_library.linking_nuclei(["he4", "c12", "o16"])
         return pyna.RateCollection(libraries=[mylib])
 
+    @pytest.fixture(scope="class")
+    def rc_reliable(self, reaclib_library):
+        mylib = reaclib_library.linking_nuclei(["he4", "c12", "o16"])
+        return pyna.RateCollection(libraries=[mylib], reliable_spins=True)
+
     def test_get_ratesg(self, rc):
         rr = rc.get_rates()
 
@@ -68,6 +73,12 @@ class TestRateCollection:
 
         assert rate not in rc.get_rates()
         assert len(rc.get_rates()) == 6
+
+    def test_reliable_spin(self, rc, rc_reliable):
+        for n in rc.unique_nuclei:
+            assert not n.reliable_spin
+        for n in rc_reliable.unique_nuclei:
+            assert n.reliable_spin
 
 
 class TestUnimportantRates:
