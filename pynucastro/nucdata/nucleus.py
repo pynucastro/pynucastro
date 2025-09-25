@@ -308,6 +308,7 @@ class Nucleus:
         print("")
         print(f"  dummy: {self.dummy}")
         print(f"  nse: {self.nse}")
+        print(f"  requiring reliable spin: {self.reliable_spin}")
 
     def __repr__(self):
         if self.raw not in ("p", "p_nse", "d", "t", "n"):
