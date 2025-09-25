@@ -27,6 +27,10 @@ class TestSpin:
         assert self.spintable_gs.get_spin_states(a=1, z=0, reliable=True) == 2
         assert self.spintable_gs.get_spin_states(a=14, z=4, reliable=True) == 1
         assert self.spintable_gs.get_spin_states(a=219, z=89, reliable=True) == 10
+        assert self.spintable_gs.get_spin_states(a=91, z=46, reliable=True) is None
+        assert self.spintable_gs.get_spin_states(a=275, z=107, reliable=True) is None
+        assert self.spintable_gs.get_spin_states(a=11, z=8, reliable=True) is None
+
         assert self.spintable_gs.get_spin_states(a=1, z=0, reliable=False) == 2
         assert self.spintable_gs.get_spin_states(a=14, z=4, reliable=False) == 1
         assert self.spintable_gs.get_spin_states(a=219, z=89, reliable=False) == 10
