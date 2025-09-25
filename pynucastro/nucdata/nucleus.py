@@ -90,7 +90,7 @@ class Nucleus:
 
         self.dummy = dummy
         self.nse = False
-        self.reliable_spin = False
+        self._reliable_spin = False
 
         # element symbol and atomic weight
         if name == "p":
@@ -208,6 +208,20 @@ class Nucleus:
             self.tau = _halflife_table.get_halflife(a=self.A, z=self.Z)
         except NotImplementedError:
             self.tau = None
+
+    @property
+    def reliable_spin(self):
+        return self._reliable_spin
+    
+    @reliable_spin.setter
+    def reliable_spin(self, value):
+        if self._reliable_spin != value:
+            self._reliable_spin = value
+            try:
+                self.spin_states = _spin_table.get_spin_states(a=self.A, z=self.Z, reliable=self.reliable_spin)
+            except NotImplementedError:
+                self.spin_states = None
+
 
     @classmethod
     def from_cache(cls, name, dummy=False):
