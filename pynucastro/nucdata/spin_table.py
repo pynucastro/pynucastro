@@ -60,16 +60,12 @@ class SpinTable:
         float
 
         """
-        if reliable:
-            try:
-                if self._reliability_table[a, z]:
-                    return self._spin_states[a, z]
-                else:
-                    raise NotImplementedError(f"nuclear spin data for A={a} and Z={z} not reliable enough for your specifications")
-            except KeyError as exc:
-                raise NotImplementedError(f"nuclear spin data for A={a} and Z={z} not available") from exc
-
         try:
-            return self._spin_states[a, z]
+            if not reliable:
+                return self._spin_states[a, z]
+            elif self._reliability_table[a, z]:
+                return self._spin_states[a, z]
+            else:
+                raise NotImplementedError(f"nuclear spin data for A={a} and Z={z} not reliable enough for your specifications")
         except KeyError as exc:
             raise NotImplementedError(f"nuclear spin data for A={a} and Z={z} not available") from exc
