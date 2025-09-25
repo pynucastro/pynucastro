@@ -580,7 +580,8 @@ class RateCollection:
 
     def __init__(self, rate_files=None, libraries=None, rates=None,
                  inert_nuclei=None,
-                 symmetric_screening=False, do_screening=True):
+                 symmetric_screening=False, do_screening=True,
+                 reliable_spins=False):
 
         self.rates = []
         combined_library = Library()
@@ -589,6 +590,7 @@ class RateCollection:
 
         self.symmetric_screening = symmetric_screening
         self.do_screening = do_screening
+        self.reliable_spins = reliable_spins
 
         if rate_files:
             if isinstance(rate_files, str):
@@ -638,6 +640,10 @@ class RateCollection:
             for nuc in self.inert_nuclei:
                 if nuc not in self.unique_nuclei:
                     self.unique_nuclei.append(nuc)
+
+        if self.reliable_spins:
+            for n in self.unique_nuclei + self.approx_nuclei:
+                n.reliable_spin = True
 
         # now make a list of each rate that touches each nucleus
         # we'll store this in a dictionary keyed on the nucleus
