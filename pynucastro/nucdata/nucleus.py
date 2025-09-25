@@ -212,7 +212,7 @@ class Nucleus:
     @property
     def reliable_spin(self):
         return self._reliable_spin
-    
+
     @reliable_spin.setter
     def reliable_spin(self, value):
         if self._reliable_spin != value:
@@ -221,7 +221,6 @@ class Nucleus:
                 self.spin_states = _spin_table.get_spin_states(a=self.A, z=self.Z, reliable=self.reliable_spin)
             except NotImplementedError:
                 self.spin_states = None
-
 
     @classmethod
     def from_cache(cls, name, dummy=False):
