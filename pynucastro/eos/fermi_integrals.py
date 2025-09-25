@@ -15,10 +15,13 @@ overcome the kernel singularity near the origin.
 """
 
 import numpy as np
+import math
 
 import pynucastro.numba_util as numba
 
 from .quadrature_weights import w_lag, w_leg, x_lag, x_leg
+
+MAX_EXPONENT = np.trunc(np.log(np.finfo(np.float64).max))
 
 
 class BreakPoints:
@@ -106,7 +109,7 @@ class BreakPoints:
 
         term = self.sigma * (eta - self.D)
         if term <= 50:
-            xi = np.log(1.0 + np.exp(term)) / self.sigma
+            xi = np.log1p(np.exp(term)) / self.sigma
         else:
             xi = eta - self.D
 
@@ -133,19 +136,32 @@ def _kernel_p(x, k, eta, beta,
     # in the conversion from x to z).
 
     xsq = x * x
-    sqrt_term = np.sqrt(1.0 + 0.5 * x * x * beta)
+    sqrt_term = np.sqrt(1.0 + 0.5 * xsq * beta)
     num = 2.0 * x**(2*k + 1.0) * sqrt_term
     # this is what we are usually exponentiating
     delta = xsq - eta
-    cosh_delta = np.cosh(delta)  # this is 0.5 * (exp(xsq - eta) + exp(eta - xsq))
-    tanh_half_delta = np.tanh(0.5 * delta)  # this is (exp(xsq - eta) - 1.0) / (exp(xsq - eta) + 1.0)
-    testm = delta < -700.0
+
+    # this is 1.0 / (2.0 + exp(-delta) + exp(delta)
+    # which is 1.0 / (2.0 * (1.0 + cosh(delta))
+    inv_cosh_term = 0.0
+    if abs(delta) < MAX_EXPONENT:
+        inv_cosh_term = 0.5 / (1.0 + np.cosh(delta))
+
+    # this is (exp(xsq - eta) - 1.0) / (exp(xsq - eta) + 1.0)
+    tanh_half_delta = np.tanh(0.5 * delta)
+
+    testm = delta < -MAX_EXPONENT
     if testm:
         denomi = 1.0
     else:
-        inv_exp_delta = np.exp(-delta)
-        # 1 / (exp(x**2 - eta) + 1) rewritten
-        denomi = inv_exp_delta / (1.0 + inv_exp_delta)
+        #inv_exp_delta = np.exp(-delta)
+        if delta > MAX_EXPONENT:
+            denomi = 0.0
+        else:
+            #inv_exp_delta = 1.0 / np.exp(delta)
+            inv_exp_delta = np.exp(-delta)
+            # 1 / (exp(x**2 - eta) + 1) rewritten
+            denomi = inv_exp_delta / (1.0 + inv_exp_delta)
 
     # now construct the integrand for what we are actual computing
     if eta_der == 0 and beta_der == 0:
@@ -157,7 +173,7 @@ def _kernel_p(x, k, eta, beta,
         # this is IB = 1 from Gong et al.
         # this corresponds to eq A.1 in terms of x**2
         if not testm:
-            result = num / (2.0 * (1.0 + cosh_delta))
+            result = num * inv_cosh_term
 
     elif eta_der == 0 and beta_der == 1:
         # this is IB = 2 from Gong et al.
@@ -170,13 +186,13 @@ def _kernel_p(x, k, eta, beta,
         # this is IB = 3 from Gong et al.
         # this corresponds to eq A.3 in terms of x**2
         if not testm:
-            result = num / (2.0 * (1.0 + cosh_delta)) * tanh_half_delta
+            result = num * inv_cosh_term * tanh_half_delta
 
     elif eta_der == 1 and beta_der == 1:
         # this is IB = 4 from Gong et al.
         # this corresponds to eq A.4 in terms of x**2
         if not testm:
-            result = 0.5 * x**(2.0*k + 3.0) / (2.0 * (1.0 + cosh_delta)) / sqrt_term
+            result = 0.5 * x**(2.0*k + 3.0) * inv_cosh_term / sqrt_term
 
     elif eta_der == 0 and beta_der == 2:
         # this is IB = 5 from Gong et al.
@@ -200,15 +216,26 @@ def _kernel_E(x, k, eta, beta,
     num = x**k * sqrt_term
     # this is what we are usually exponentiating
     delta = x - eta
-    cosh_delta = np.cosh(delta)
-    tanh_half_delta = np.tanh(0.5 * delta)  # this is (exp(x - eta) - 1.0) / (exp(x - eta) + 1.0)
-    testm = x - eta < -700
+
+    # this is 1.0 / (2.0 + exp(-delta) + exp(delta)
+    # which is 1.0 / (2.0 * (1.0 + cosh(delta))
+    inv_cosh_term = 0.0
+    if abs(delta) < MAX_EXPONENT:
+        inv_cosh_term = 0.5 / (1.0 + np.cosh(delta))
+
+    # this is (exp(x - eta) - 1.0) / (exp(x - eta) + 1.0)
+    tanh_half_delta = np.tanh(0.5 * delta)
+
+    testm = x - eta < -MAX_EXPONENT
     if testm:
         denomi = 1.0
     else:
-        inv_exp_delta = np.exp(-delta)
-        # 1 / (exp(x - eta) + 1) rewritten
-        denomi = inv_exp_delta / (1.0 + inv_exp_delta)
+        if delta > MAX_EXPONENT:
+            denomi = 0.0
+        else:
+            inv_exp_delta = np.exp(-delta)
+            # 1 / (exp(x - eta) + 1) rewritten
+            denomi = inv_exp_delta / (1.0 + inv_exp_delta)
 
     # now construct the integrand for what we are actual computing
     if eta_der == 0 and beta_der == 0:
@@ -220,7 +247,7 @@ def _kernel_E(x, k, eta, beta,
         # this is IB = 1 from Gong et al.
         # this corresponds to eq A.1
         if not testm:
-            result = num / (2.0 * (1.0 + cosh_delta))
+            result = num * inv_cosh_term
 
     elif eta_der == 0 and beta_der == 1:
         # this is IB = 2 from Gong et al.
@@ -233,13 +260,13 @@ def _kernel_E(x, k, eta, beta,
         # this is IB = 3 from Gong et al.
         # this corresponds to eq A.3
         if not testm:
-            result = num / (2.0 * (1.0 + cosh_delta)) * tanh_half_delta
+            result = num * inv_cosh_term * tanh_half_delta
 
     elif eta_der == 1 and beta_der == 1:
         # this is IB = 4 from Gong et al.
         # this corresponds to eq A.4
         if not testm:
-            result = 0.25 * x**(k + 1.0) / (2.0 * (1.0 + cosh_delta)) / sqrt_term
+            result = 0.25 * x**(k + 1.0) * inv_cosh_term / sqrt_term
 
     elif eta_der == 0 and beta_der == 2:
         # this is IB = 5 from Gong et al.
@@ -281,7 +308,7 @@ class FermiIntegral:
 
     """
 
-    def __init__(self, k, eta, beta):
+    def __init__(self, k, eta=None, beta=None):
         self.eta = eta
         self.beta = beta
         self.k = k
@@ -315,7 +342,7 @@ class FermiIntegral:
         fac1 = (a + b)/2
         fac2 = (b - a)/2
 
-        integral = sum((kernel(fac1 + fac2 * root, k, eta, beta,
+        integral = math.fsum((kernel(fac1 + fac2 * root, k, eta, beta,
                                eta_der=eta_der, beta_der=beta_der) +
                         kernel(fac1 - fac2 * root, k, eta, beta,
                                eta_der=eta_der, beta_der=beta_der)) * weight
@@ -357,7 +384,7 @@ class FermiIntegral:
         #                   eta_der=eta_der, beta_der=beta_der)
         #     integral += I * weight
 
-        integral = sum(_kernel_E(root + a, self.k, self.eta, self.beta,
+        integral = math.fsum(_kernel_E(root + a, self.k, self.eta, self.beta,
                                  eta_der=eta_der, beta_der=beta_der) * weight for
                        root, weight in zip(x_lag, w_lag))
 
