@@ -17,7 +17,7 @@ _pynucastro_tabular_dir = _pynucastro_rates_dir/'tabular'
 # read the various tables with nuclear properties at the module-level
 _mass_table = MassTable()
 _halflife_table = HalfLifeTable()
-_spin_table = SpinTable(reliable=False)
+_spin_table = SpinTable()
 
 # read the partition function table once and store it at the module-level
 _pcollection = PartitionFunctionCollection(use_high_temperatures=True, use_set='frdm')

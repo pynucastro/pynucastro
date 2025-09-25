@@ -15,10 +15,9 @@ class SpinTable:
 
     """
 
-    def __init__(self, datafile: str | Path = None, reliable: bool = False) -> None:
+    def __init__(self, datafile: str | Path = None) -> None:
 
         self._spin_states = {}
-        self.reliable = reliable
 
         if datafile:
             self.datafile = Path(datafile)
@@ -38,13 +37,7 @@ class SpinTable:
                 A, Z, _, spin_states, experimental = line.strip().split()[:5]
                 A, Z, spin_states = int(A), int(Z), int(spin_states)
 
-                if self.reliable:
-                    if experimental == 's':
-                        self._spin_states[A, Z] = spin_states
-                    else:
-                        continue
-                else:
-                    self._spin_states[A, Z] = spin_states
+                self._spin_states[A, Z] = spin_states
 
     def get_spin_states(self, a: int, z: int) -> int:
         """Return the spin for a nucleus.
