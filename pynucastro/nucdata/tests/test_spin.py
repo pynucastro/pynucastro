@@ -1,5 +1,6 @@
-from pynucastro.nucdata import SpinTable
 import pytest
+
+from pynucastro.nucdata import SpinTable
 
 
 class TestSpin:

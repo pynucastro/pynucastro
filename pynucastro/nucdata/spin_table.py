@@ -63,7 +63,7 @@ class SpinTable:
         try:
             if not reliable:                        # if you don't care about reliability
                 return self._spin_states[a, z]
-            elif self._reliability_table[a, z]:     # if you care about reliability and the spin is reliable
+            if self._reliability_table[a, z]:       # if you care about reliability and the spin is reliable
                 return self._spin_states[a, z]
             else:                                   # if you care about reliability and the spin is NOT reliable
                 raise NotImplementedError(f"nuclear spin data for A={a} and Z={z} not reliable enough for your specifications")

@@ -211,10 +211,14 @@ class Nucleus:
 
     @property
     def reliable_spin(self):
+        """Getter for attribute reliable_spin"""
+
         return self._reliable_spin
 
     @reliable_spin.setter
     def reliable_spin(self, value):
+        """Setter for attribute reliable_spin"""
+
         if self._reliable_spin != value:
             self._reliable_spin = value
             try:
