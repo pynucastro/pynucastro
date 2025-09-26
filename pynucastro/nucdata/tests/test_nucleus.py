@@ -70,23 +70,9 @@ class TestNucleus:
         assert int(self.c12.spin_states) == 1
         assert int(self.ni56.spin_states) == 1
 
-    def test_change_spin(self):
-
-        # default is reliable_spin = False
-        assert int(self.ag95.spin_states) == 10
-        assert int(self.ru95.spin_states) == 6
-
-        self.ag95.reliable_spin = True
-        self.ru95.reliable_spin = True
-
-        assert self.ag95.spin_states is None
-        assert int(self.ru95.spin_states) == 6
-
-        self.ag95.reliable_spin = False
-        self.ru95.reliable_spin = False
-
-        assert int(self.ag95.spin_states) == 10
-        assert int(self.ru95.spin_states) == 6
+    def test_spin_reliability(self):
+        assert self.ag95.spin_reliable is False
+        assert self.ru95.spin_reliable is True
 
     def test_partition_low_temp(self):
 
