@@ -436,7 +436,7 @@ class Library:
         both.
 
         """
-        new_rates = self._rates
+        new_rates = self._rates.copy()
         for rid, r in other._rates.items():
             if rid in new_rates:
                 if r != new_rates[rid]:
