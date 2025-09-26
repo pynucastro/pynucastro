@@ -77,9 +77,9 @@ class Nucleus:
     nse : bool
         an NSE proton has the same properties
         as a proton but compares as being distinct
-    reliable_spin : bool
-        whether to require experimentally strong arguments for
-        spin values (True) or to accept any argument (False)
+    spin_reliable : bool
+        whether the number of spin states is supported by 
+        experimentally strong arguments
     """
 
     _cache = {}
@@ -90,7 +90,6 @@ class Nucleus:
 
         self.dummy = dummy
         self.nse = False
-        self._reliable_spin = False
 
         # element symbol and atomic weight
         if name == "p":
@@ -177,9 +176,11 @@ class Nucleus:
 
         # set the number of spin states
         try:
-            self.spin_states = _spin_table.get_spin_states(a=self.A, z=self.Z, reliable=self.reliable_spin)
+            self.spin_states = _spin_table.get_spin_states(a=self.A, z=self.Z)
+            self.spin_reliable = _spin_table.get_spin_reliability(a=self.A, z=self.Z)
         except NotImplementedError:
             self.spin_states = None
+            self.spin_reliable = False
 
         # set a partition function object to every nucleus
         try:
@@ -208,23 +209,6 @@ class Nucleus:
             self.tau = _halflife_table.get_halflife(a=self.A, z=self.Z)
         except NotImplementedError:
             self.tau = None
-
-    @property
-    def reliable_spin(self):
-        """Getter for attribute reliable_spin"""
-
-        return self._reliable_spin
-
-    @reliable_spin.setter
-    def reliable_spin(self, value):
-        """Setter for attribute reliable_spin"""
-
-        if self._reliable_spin != value:
-            self._reliable_spin = value
-            try:
-                self.spin_states = _spin_table.get_spin_states(a=self.A, z=self.Z, reliable=self.reliable_spin)
-            except NotImplementedError:
-                self.spin_states = None
 
     @classmethod
     def from_cache(cls, name, dummy=False):

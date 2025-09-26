@@ -41,7 +41,28 @@ class SpinTable:
                 self._spin_states[A, Z] = spin_states
                 self._reliability_table[A, Z] = experimental == 's'
 
-    def get_spin_states(self, a: int, z: int, reliable: bool = False) -> int:
+    def get_spin_reliability(self, a: int, z: int) -> bool:
+        """Return whether the spin for a nucleus is reliable.
+
+        Parameters
+        ----------
+        a : int
+            Atomic weight
+        z : int
+            Atomic number
+
+        Returns
+        -------
+        bool
+
+        """
+        try:
+            return self._reliability_table[a, z]
+
+        except KeyError as exc:
+            raise NotImplementedError(f"nuclear spin data for A={a} and Z={z} not available") from exc    
+
+    def get_spin_states(self, a: int, z: int) -> int:
         """Return the spin for a nucleus.
 
         Parameters
@@ -50,10 +71,6 @@ class SpinTable:
             Atomic weight
         z : int
             Atomic number
-        reliable : bool
-            setting this to True will only return spin states
-            for nuclei where the spin is known from strong
-            experimental arguments
 
         Returns
         -------
@@ -61,16 +78,6 @@ class SpinTable:
 
         """
         try:
-            # if you don't care about reliability
-            if not reliable:
-                return self._spin_states[a, z]
-
-            # if you care about reliability and the spin is reliable
-            if self._reliability_table[a, z]:
-                return self._spin_states[a, z]
-
-            # if you care about reliability and the spin is NOT reliable
-            raise NotImplementedError(f"nuclear spin data for A={a} and Z={z} not reliable enough for your specifications")
-
+            return self._spin_states[a, z]
         except KeyError as exc:
             raise NotImplementedError(f"nuclear spin data for A={a} and Z={z} not available") from exc
