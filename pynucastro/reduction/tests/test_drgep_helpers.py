@@ -19,7 +19,7 @@ class TestDrgepHelpers:
                       "o14(,)n14",
                       "o15(,)n15"]
         rates = reaclib_library.get_rate_by_name(rate_names)
-        return pyna.NumpyNetwork(rates=rates)
+        return pyna.RateCollection(rates=rates)
 
     @pytest.fixture(scope="class")
     def comp(self, net):
@@ -60,16 +60,6 @@ class TestDrgepHelpers:
 
         rvals = net.evaluate_rates(rho=1e4, T=1e8, composition=comp)
         r_AB = drgep.calc_interaction_matrix(net, rvals)
-        assert_allclose(r_AB, expected, rtol=1e-10, atol=1e-100)
-
-    def test_interaction_matrix_numpy(self, net, comp):
-        rvals = net.evaluate_rates(rho=1e5, T=1e8, composition=comp)
-        rvals_arr = [rvals[r] for r in net.rates]
-        expected = drgep.calc_interaction_matrix(net, rvals)
-
-        net.clear_arrays()
-        r_AB = drgep.calc_interaction_matrix_numpy(net, rvals_arr)
-
         assert_allclose(r_AB, expected, rtol=1e-10, atol=1e-100)
 
     def test_adj_nuc(self, net):

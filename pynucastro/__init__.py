@@ -46,11 +46,6 @@ functions for organizing collection of rates, including:
   this extends the ``RateCollection`` to allow for solving for the
   nuclear statistical equilibrium state of a collection of nuclei.
 
-* :py:obj:`NumpyNetwork
-  <pynucastro.networks.numpy_network.NumpyNetwork>` : this extends the
-  ``RateCollection`` to allow evaluating reaction rates using vectorized
-  NumPy arrays, which may be more efficient for some applications.
-
 and the network classes intended for outputting the righthand side
 of the ODE system for use in python or other applications:
 
@@ -169,10 +164,9 @@ import pynucastro.screening
 from pynucastro.eos import FermiIntegral
 from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
                                  Composition, Explorer, FortranNetwork,
-                                 NSENetwork, NumpyNetwork, PythonNetwork,
-                                 RateCollection, SimpleCxxNetwork,
-                                 StarKillerCxxNetwork, SympyRates,
-                                 network_helper)
+                                 NSENetwork, PythonNetwork, RateCollection,
+                                 SimpleCxxNetwork, StarKillerCxxNetwork,
+                                 SympyRates, network_helper)
 from pynucastro.nucdata import Nucleus, get_all_nuclei, get_nuclei_in_range
 from pynucastro.rates import (ApproximateRate, DerivedRate, FFNLibrary,
                               LangankeLibrary, Library, ModifiedRate,
