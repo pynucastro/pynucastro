@@ -21,7 +21,7 @@ class TestPythonDerivedNetwork:
 
         derived = []
         for r in fwd_rates_lib.get_rates():
-            d = pyna.rates.DerivedRate(rate=r, compute_Q=False, use_pf=True)
+            d = pyna.rates.DerivedRate(rate=r, compute_Q=False, use_pf=True, use_unreliable_spins=False)
             derived.append(d)
 
         der_rates_lib = pyna.Library(rates=derived)
@@ -37,7 +37,7 @@ class TestPythonDerivedNetwork:
         n14agf18 = reaclib_library.get_rate_by_name("n14(a,g)f18")
         n14_new = pyna.ModifiedRate(n14agf18, new_products=["ne20"],
                                     stoichiometry={pyna.Nucleus("he4"): 1.5})
-        new_n14_reverse = pyna.DerivedRate(rate=n14_new, compute_Q=True, use_pf=True)
+        new_n14_reverse = pyna.DerivedRate(rate=n14_new, compute_Q=True, use_pf=True, use_unreliable_spins=False)
 
         my_net = pyna.Library(rates=[n14_new, new_n14_reverse])
         pynet = pyna.PythonNetwork(libraries=my_net)

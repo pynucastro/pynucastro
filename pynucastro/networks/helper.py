@@ -67,7 +67,7 @@ def network_helper(nuclei, *,
             if fr:
                 print(f"modifying {r} from {fr}")
                 lib.remove_rate(r)
-                d = DerivedRate(rate=fr, compute_Q=False, use_pf=True)
+                d = DerivedRate(rate=fr, compute_Q=False, use_pf=True, use_unreliable_spins=True)
                 lib.add_rate(d)
 
     if network_type == "python":
