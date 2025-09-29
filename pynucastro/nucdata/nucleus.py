@@ -78,7 +78,7 @@ class Nucleus:
         an NSE proton has the same properties
         as a proton but compares as being distinct
     spin_reliable : bool
-        whether the number of spin states is supported by 
+        whether the number of spin states is supported by
         experimentally strong arguments
     """
 

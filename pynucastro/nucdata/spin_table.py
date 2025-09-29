@@ -60,7 +60,7 @@ class SpinTable:
             return self._reliability_table[a, z]
 
         except KeyError as exc:
-            raise NotImplementedError(f"nuclear spin data for A={a} and Z={z} not available") from exc    
+            raise NotImplementedError(f"nuclear spin data for A={a} and Z={z} not available") from exc
 
     def get_spin_states(self, a: int, z: int) -> int:
         """Return the spin for a nucleus.
