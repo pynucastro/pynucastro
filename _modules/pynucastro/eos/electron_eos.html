@@ -1,0 +1,828 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pynucastro.eos.electron_eos &#8212; pynucastro 2.7.1.post29+g782b0ce96 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/myfile.css?v=15ab05d9" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=8f5f85c0"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=eaa7b67c"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pynucastro/eos/electron_eos';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt=""/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt=""/>`);</script>
+  
+  
+    <p class="title logo__title">pynucastro 2.7</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rate_types.html">Reaction Rate Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Properties</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../sources.html">Third Party Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nucleus.html">Nuclear Properties</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">pynucastro Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-examples.html">pynucastro Usage Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plot-types.html">Plotting Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic_network.html">Basic Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-integration.html">Integrating a Network</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Working with Libraries</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tabulated-weak-rates.html">Tabulated Weak Rate Sources</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../duplicate-rates.html">Dealing with Duplicate Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../validate-example.html">Checking Your Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../electron-capture-example.html">Tabulated Weak Rate Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../alternate-rates.html"><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code></a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Rate Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../screening-examples.html">Screening Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modify-example.html">Modifying Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../custom-rates.html">Creating a Custom Rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../partition-function.html">Reverse Rates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../approximate-rates.html">Approximate and Modified Rates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../alpha-gamma-approx.html">Approximating alpha-capture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../double-n-capture.html">Approximating double n-capture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modified-rates.html">Modified Rates</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nse-protons.html">Using NSE Protons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../unimportant-rates.html">Removing Unimportant Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../network-cycles.html">Finding Cycles (with NetworkX)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stiffness.html">Assessing the Stiffness of a Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reduction.html">Network Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sens_analysis_example.html">Sensitivity Analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../NSE-example.html">NSE Demonstrations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nse_table.html">Creating an NSE table</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Thermodynamics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../fermi-integrals.html">Fermi-Dirac Integrals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../electron-eos.html">The Electron-Positron EOS</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../neutrino-cooling.html">Neutrino Cooling</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Exporting Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../networks.html">Exporting Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../python-network.html">Python network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../simple-cxx-network.html">Simple C++ network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../fortran-network.html">Fortran Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../amrex-astro-cxx-networks.html">AMReX Astro Microphysics Networks</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../julia.html">Integrating using DifferentialEquations.jl</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installing-diffeqpy-julia.html">Installing <code class="docutils literal notranslate"><span class="pre">diffeqpy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../Example-Integrating-Network-diffeqpy.html">Example of Integrating a Network</a></li>
+
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../he-burning-example.html">A He-burning Network</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/binding-energy.html">Binding Energy per Nucleon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/pp-cno.html">p-p chain vs. CNO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/hot-CNO-breakout-example.html">hot-CNO and breakout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/triple_alpha_eval.html">Computing the Screened Triple-alpha rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/he-burning.html">Ratio of C/O from He burning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/supernova-lightcurve.html">A Supernova Lightcurve</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changes.html">Changelog</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../modules.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../pynucastro.html">pynucastro package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.constants.html">pynucastro.constants package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.constants.constants.html">pynucastro.constants.constants module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.eos.html">pynucastro.eos package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.difference_utils.html">pynucastro.eos.difference_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.electron_eos.html">pynucastro.eos.electron_eos module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.fermi_integrals.html">pynucastro.eos.fermi_integrals module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.quadrature_weights.html">pynucastro.eos.quadrature_weights module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.networks.html">pynucastro.networks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.amrexastro_cxx_network.html">pynucastro.networks.amrexastro_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.base_cxx_network.html">pynucastro.networks.base_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.fortran_network.html">pynucastro.networks.fortran_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.helper.html">pynucastro.networks.helper module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.nse_network.html">pynucastro.networks.nse_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.python_network.html">pynucastro.networks.python_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.rate_collection.html">pynucastro.networks.rate_collection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.simple_cxx_network.html">pynucastro.networks.simple_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.sympy_network_support.html">pynucastro.networks.sympy_network_support module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.neutrino_cooling.html">pynucastro.neutrino_cooling package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.neutrino_cooling.neutrino_cooling.html">pynucastro.neutrino_cooling.neutrino_cooling module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.neutrino_cooling.sneut5_mod.html">pynucastro.neutrino_cooling.sneut5_mod module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.nucdata.html">pynucastro.nucdata package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.elements.html">pynucastro.nucdata.elements module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.halflife_table.html">pynucastro.nucdata.halflife_table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.mass_table.html">pynucastro.nucdata.mass_table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.nucleus.html">pynucastro.nucdata.nucleus module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.partition_function.html">pynucastro.nucdata.partition_function module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.spin_table.html">pynucastro.nucdata.spin_table module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.library.html">pynucastro.rates.library module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.modified_rate.html">pynucastro.rates.modified_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.rate.html">pynucastro.rates.rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.reaclib_rate.html">pynucastro.rates.reaclib_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.tabular_rate.html">pynucastro.rates.tabular_rate module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.drgep_module.html">pynucastro.reduction.drgep_module module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.sensitivity_analysis.html">pynucastro.reduction.sensitivity_analysis module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.screening.html">pynucastro.screening package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.screening.screen.html">pynucastro.screening.screen module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.screening.screening_util.html">pynucastro.screening.screening_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.mpi_utils.html">pynucastro.mpi_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.numba_util.html">pynucastro.numba_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.utils.html">pynucastro.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.yt_utils.html">pynucastro.yt_utils module</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../zreferences.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Index</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../py-modindex.html">Module Index</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2F_modules/pynucastro/eos/electron_eos.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pynucastro.eos.electron_eos</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Classes and methods for managing an electron / positron equation of</span>
+<span class="sd">state.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">namedtuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">brentq</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.degeneracy_parameter_bounds</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_eta_bounds</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.fermi_integrals</span><span class="w"> </span><span class="kn">import</span> <span class="n">FermiIntegral</span>
+
+<span class="n">EOSState</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;EOSState&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;n_e&quot;</span><span class="p">,</span> <span class="s2">&quot;n_pos&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;p_e&quot;</span><span class="p">,</span> <span class="s2">&quot;p_pos&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;e_e&quot;</span><span class="p">,</span> <span class="s2">&quot;e_pos&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;eta&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;dne_drho&quot;</span><span class="p">,</span> <span class="s2">&quot;dne_dT&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;dnp_drho&quot;</span><span class="p">,</span> <span class="s2">&quot;dnp_dT&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;dpe_drho&quot;</span><span class="p">,</span> <span class="s2">&quot;dpe_dT&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;dpp_drho&quot;</span><span class="p">,</span> <span class="s2">&quot;dpp_dT&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;dee_drho&quot;</span><span class="p">,</span> <span class="s2">&quot;dee_dT&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;dep_drho&quot;</span><span class="p">,</span> <span class="s2">&quot;dep_dT&quot;</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="ElectronEOS">
+<a class="viewcode-back" href="../../../pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.ElectronEOS">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ElectronEOS</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An electron/positron EOS that works for arbitrary degeneracy or</span>
+<span class="sd">    relativity.  This works by performing the Fermi-Dirac integrals</span>
+<span class="sd">    directly.  This assumes complete ionization.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    include_positrons : bool</span>
+<span class="sd">        consider both positrons and electrons.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_positrons</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">include_positrons</span> <span class="o">=</span> <span class="n">include_positrons</span>
+
+<div class="viewcode-block" id="ElectronEOS.pe_state">
+<a class="viewcode-back" href="../../../pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.ElectronEOS.pe_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pe_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                 <span class="n">compute_derivs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">eta_guess_min</span><span class="o">=-</span><span class="mi">100</span><span class="p">,</span> <span class="n">eta_guess_max</span><span class="o">=</span><span class="mf">1.e7</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the pressure and energy given density, temperature,</span>
+<span class="sd">        and composition</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            Density (g/cm**3)</span>
+<span class="sd">        T : float</span>
+<span class="sd">            Temperature (K)</span>
+<span class="sd">        comp : Composition</span>
+<span class="sd">            Composition (abundances of each nucleus)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        EOSState</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># compute the number density of electrons</span>
+        <span class="n">zbar</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">zbar</span>
+        <span class="n">abar</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">abar</span>
+
+        <span class="n">n_e_net</span> <span class="o">=</span> <span class="p">(</span><span class="n">zbar</span> <span class="o">/</span> <span class="n">abar</span><span class="p">)</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">N_A</span> <span class="o">*</span> <span class="n">rho</span>
+
+        <span class="c1"># our Fermi integrals will use a dimensionless temperature</span>
+        <span class="n">inv_compton_wavelength</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_e</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">c_light</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">h</span>
+        <span class="n">rest_mass</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_e</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">c_light</span><span class="o">**</span><span class="mi">2</span>
+
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">k</span> <span class="o">*</span> <span class="n">T</span> <span class="o">/</span> <span class="n">rest_mass</span>
+
+        <span class="n">beta12</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span>
+        <span class="n">beta32</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">beta12</span>
+        <span class="n">beta52</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">beta32</span>
+
+        <span class="n">coeff</span> <span class="o">=</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">inv_compton_wavelength</span><span class="o">**</span><span class="mi">3</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">n_e_fermi</span><span class="p">(</span><span class="n">eta</span><span class="p">):</span>
+            <span class="n">f12</span> <span class="o">=</span> <span class="n">FermiIntegral</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+            <span class="n">f12</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">do_first_derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">do_second_derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="n">f32</span> <span class="o">=</span> <span class="n">FermiIntegral</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+            <span class="n">f32</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">do_first_derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">do_second_derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">beta32</span> <span class="o">*</span> <span class="p">(</span><span class="n">f12</span><span class="o">.</span><span class="n">F</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f32</span><span class="o">.</span><span class="n">F</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">n_pos_fermi</span><span class="p">(</span><span class="n">eta</span><span class="p">):</span>
+            <span class="n">eta_pos</span> <span class="o">=</span> <span class="o">-</span><span class="n">eta</span> <span class="o">-</span> <span class="mf">2.0</span><span class="o">/</span><span class="n">beta</span>
+
+            <span class="n">f12</span> <span class="o">=</span> <span class="n">FermiIntegral</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">eta_pos</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+            <span class="n">f12</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">do_first_derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">do_second_derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="n">f32</span> <span class="o">=</span> <span class="n">FermiIntegral</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">eta_pos</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+            <span class="n">f32</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">do_first_derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">do_second_derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">beta32</span> <span class="o">*</span> <span class="p">(</span><span class="n">f12</span><span class="o">.</span><span class="n">F</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f32</span><span class="o">.</span><span class="n">F</span><span class="p">)</span>
+
+        <span class="c1"># compute the degeneracy parameter</span>
+        <span class="n">root_find_limits</span> <span class="o">=</span> <span class="n">get_eta_bounds</span><span class="p">(</span><span class="n">rho</span> <span class="o">*</span> <span class="n">comp</span><span class="o">.</span><span class="n">ye</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span>
+                                          <span class="n">include_positrons</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">include_positrons</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_positrons</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+
+                <span class="n">eta</span> <span class="o">=</span> <span class="n">brentq</span><span class="p">(</span><span class="k">lambda</span> <span class="n">eta</span><span class="p">:</span> <span class="n">n_e_net</span> <span class="o">-</span> <span class="p">(</span><span class="n">n_e_fermi</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span> <span class="o">-</span> <span class="n">n_pos_fermi</span><span class="p">(</span><span class="n">eta</span><span class="p">)),</span>
+                             <span class="n">root_find_limits</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">root_find_limits</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">xtol</span><span class="o">=</span><span class="mf">1.e-100</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">eta</span> <span class="o">=</span> <span class="n">brentq</span><span class="p">(</span><span class="k">lambda</span> <span class="n">eta</span><span class="p">:</span> <span class="n">n_e_net</span> <span class="o">-</span> <span class="p">(</span><span class="n">n_e_fermi</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span> <span class="o">-</span> <span class="n">n_pos_fermi</span><span class="p">(</span><span class="n">eta</span><span class="p">)),</span>
+                             <span class="n">eta_guess_min</span><span class="p">,</span> <span class="n">eta_guess_max</span><span class="p">,</span> <span class="n">xtol</span><span class="o">=</span><span class="mf">1.e-100</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">eta</span> <span class="o">=</span> <span class="n">brentq</span><span class="p">(</span><span class="k">lambda</span> <span class="n">eta</span><span class="p">:</span> <span class="n">n_e_net</span> <span class="o">-</span> <span class="n">n_e_fermi</span><span class="p">(</span><span class="n">eta</span><span class="p">),</span>
+                             <span class="n">root_find_limits</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">root_find_limits</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">xtol</span><span class="o">=</span><span class="mf">1.e-100</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">eta</span> <span class="o">=</span> <span class="n">brentq</span><span class="p">(</span><span class="k">lambda</span> <span class="n">eta</span><span class="p">:</span> <span class="n">n_e_net</span> <span class="o">-</span> <span class="n">n_e_fermi</span><span class="p">(</span><span class="n">eta</span><span class="p">),</span>
+                             <span class="n">eta_guess_min</span><span class="p">,</span> <span class="n">eta_guess_max</span><span class="p">,</span> <span class="n">xtol</span><span class="o">=</span><span class="mf">1.e-100</span><span class="p">)</span>
+
+        <span class="c1"># for positrons</span>
+        <span class="n">eta_pos</span> <span class="o">=</span> <span class="o">-</span><span class="n">eta</span> <span class="o">-</span> <span class="mf">2.0</span><span class="o">/</span><span class="n">beta</span>
+
+        <span class="c1"># compute the number density, pressure and energy</span>
+        <span class="n">pcoeff</span> <span class="o">=</span> <span class="n">coeff</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">rest_mass</span>
+        <span class="n">ecoeff</span> <span class="o">=</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">rest_mass</span>
+
+        <span class="n">f12</span> <span class="o">=</span> <span class="n">FermiIntegral</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+        <span class="n">f12</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">do_first_derivs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">do_second_derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">f32</span> <span class="o">=</span> <span class="n">FermiIntegral</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+        <span class="n">f32</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">do_first_derivs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">do_second_derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">f52</span> <span class="o">=</span> <span class="n">FermiIntegral</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+        <span class="n">f52</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">do_first_derivs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">do_second_derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">n_e</span> <span class="o">=</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">beta32</span> <span class="o">*</span> <span class="p">(</span><span class="n">f12</span><span class="o">.</span><span class="n">F</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f32</span><span class="o">.</span><span class="n">F</span><span class="p">)</span>
+        <span class="n">p_e</span> <span class="o">=</span> <span class="n">pcoeff</span> <span class="o">*</span> <span class="n">beta52</span> <span class="o">*</span> <span class="p">(</span><span class="n">f32</span><span class="o">.</span><span class="n">F</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52</span><span class="o">.</span><span class="n">F</span><span class="p">)</span>
+
+        <span class="c1"># this is (energy / volume, what we usually write as rho e)</span>
+        <span class="n">E_e</span> <span class="o">=</span> <span class="n">ecoeff</span> <span class="o">*</span> <span class="n">beta52</span> <span class="o">*</span> <span class="p">(</span><span class="n">f32</span><span class="o">.</span><span class="n">F</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52</span><span class="o">.</span><span class="n">F</span><span class="p">)</span>
+
+        <span class="n">n_pos</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">p_pos</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">E_pos</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_positrons</span><span class="p">:</span>
+            <span class="n">f12_pos</span> <span class="o">=</span> <span class="n">FermiIntegral</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">eta_pos</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+            <span class="n">f12_pos</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">do_first_derivs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">do_second_derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="n">f32_pos</span> <span class="o">=</span> <span class="n">FermiIntegral</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">eta_pos</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+            <span class="n">f32_pos</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">do_first_derivs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">do_second_derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="n">f52_pos</span> <span class="o">=</span> <span class="n">FermiIntegral</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">eta_pos</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+            <span class="n">f52_pos</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">do_first_derivs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">do_second_derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="n">n_pos</span> <span class="o">=</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">beta32</span> <span class="o">*</span> <span class="p">(</span><span class="n">f12_pos</span><span class="o">.</span><span class="n">F</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f32_pos</span><span class="o">.</span><span class="n">F</span><span class="p">)</span>
+            <span class="n">p_pos</span> <span class="o">=</span> <span class="n">pcoeff</span> <span class="o">*</span> <span class="n">beta52</span> <span class="o">*</span> <span class="p">(</span><span class="n">f32_pos</span><span class="o">.</span><span class="n">F</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52_pos</span><span class="o">.</span><span class="n">F</span><span class="p">)</span>
+            <span class="n">E_pos</span> <span class="o">=</span> <span class="n">ecoeff</span> <span class="o">*</span> <span class="n">beta52</span> <span class="o">*</span> <span class="p">(</span><span class="n">f32_pos</span><span class="o">.</span><span class="n">F</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52_pos</span><span class="o">.</span><span class="n">F</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">rest_mass</span> <span class="o">*</span> <span class="n">n_pos</span>
+
+        <span class="n">dne_drho</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">dne_dT</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">dnp_drho</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">dnp_dT</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="n">dpe_drho</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">dpe_dT</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">dpp_drho</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">dpp_dT</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="n">dEe_drho</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">dEe_dT</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">dEp_drho</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">dEp_dT</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">if</span> <span class="n">compute_derivs</span><span class="p">:</span>
+
+            <span class="c1"># compute the derivatives of eta and beta with respect to</span>
+            <span class="c1"># density and temperature</span>
+            <span class="n">dne_deta</span> <span class="o">=</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">beta32</span> <span class="o">*</span> <span class="p">(</span><span class="n">f12</span><span class="o">.</span><span class="n">dF_deta</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f32</span><span class="o">.</span><span class="n">dF_deta</span><span class="p">)</span>
+            <span class="n">dne_dbeta</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">beta12</span> <span class="o">*</span> <span class="p">(</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">f12</span><span class="o">.</span><span class="n">F</span> <span class="o">+</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f32</span><span class="o">.</span><span class="n">F</span> <span class="o">+</span>
+                                                <span class="mi">2</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="n">f12</span><span class="o">.</span><span class="n">dF_dbeta</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f32</span><span class="o">.</span><span class="n">dF_dbeta</span><span class="p">))</span>
+
+            <span class="n">dnp_deta</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">dnp_dbeta</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_positrons</span><span class="p">:</span>
+                <span class="n">dnp_deta</span> <span class="o">=</span> <span class="n">coeff</span> <span class="o">*</span> <span class="n">beta32</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">f12_pos</span><span class="o">.</span><span class="n">dF_deta</span> <span class="o">-</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f32_pos</span><span class="o">.</span><span class="n">dF_deta</span><span class="p">)</span>
+                <span class="n">dnp_dbeta</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">coeff</span> <span class="o">/</span> <span class="n">beta12</span> <span class="o">*</span> <span class="p">(</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">f12_pos</span><span class="o">.</span><span class="n">F</span> <span class="o">+</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f32_pos</span><span class="o">.</span><span class="n">F</span><span class="p">)</span> <span class="o">+</span>
+                                                    <span class="mf">2.0</span> <span class="o">*</span> <span class="n">beta</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">f12_pos</span><span class="o">.</span><span class="n">dF_dbeta</span> <span class="o">+</span>
+                                                                     <span class="n">beta</span> <span class="o">*</span> <span class="n">f32_pos</span><span class="o">.</span><span class="n">dF_dbeta</span><span class="p">)</span> <span class="o">+</span>
+                                                    <span class="mf">4.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">f12_pos</span><span class="o">.</span><span class="n">dF_deta</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f32_pos</span><span class="o">.</span><span class="n">dF_deta</span><span class="p">))</span>
+
+            <span class="c1">#dbeta_drho = 0.0</span>
+            <span class="n">dbeta_dT</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">k</span> <span class="o">/</span> <span class="n">rest_mass</span>
+
+            <span class="n">deta_drho</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">N_A</span> <span class="o">*</span> <span class="p">(</span><span class="n">zbar</span> <span class="o">/</span> <span class="n">abar</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">dne_deta</span> <span class="o">-</span> <span class="n">dnp_deta</span><span class="p">)</span>
+            <span class="n">deta_dT</span> <span class="o">=</span> <span class="o">-</span><span class="n">dbeta_dT</span> <span class="o">*</span> <span class="p">(</span><span class="n">dne_dbeta</span> <span class="o">-</span> <span class="n">dnp_dbeta</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">dne_deta</span> <span class="o">-</span> <span class="n">dnp_deta</span><span class="p">)</span>
+
+            <span class="c1"># Compute partials of number density with density and temperature</span>
+            <span class="c1"># For debugging</span>
+            <span class="n">dne_drho</span> <span class="o">=</span> <span class="n">dne_deta</span> <span class="o">*</span> <span class="n">deta_drho</span>
+            <span class="n">dne_dT</span> <span class="o">=</span> <span class="n">dne_deta</span> <span class="o">*</span> <span class="n">deta_dT</span> <span class="o">+</span> <span class="n">dne_dbeta</span> <span class="o">*</span> <span class="n">dbeta_dT</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_positrons</span><span class="p">:</span>
+                <span class="n">dnp_drho</span> <span class="o">=</span> <span class="n">dnp_deta</span> <span class="o">*</span> <span class="n">deta_drho</span>
+                <span class="n">dnp_dT</span> <span class="o">=</span> <span class="n">dnp_deta</span> <span class="o">*</span> <span class="n">deta_dT</span> <span class="o">+</span> <span class="n">dnp_dbeta</span> <span class="o">*</span> <span class="n">dbeta_dT</span>
+
+            <span class="c1"># Compute partials of pressure with density and temperature via the chain rule</span>
+            <span class="n">dpe_deta</span> <span class="o">=</span> <span class="n">pcoeff</span> <span class="o">*</span> <span class="n">beta52</span> <span class="o">*</span> <span class="p">(</span><span class="n">f32</span><span class="o">.</span><span class="n">dF_deta</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52</span><span class="o">.</span><span class="n">dF_deta</span><span class="p">)</span>
+            <span class="n">dpe_dbeta</span> <span class="o">=</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="n">pcoeff</span> <span class="o">*</span> <span class="n">beta32</span> <span class="o">*</span> <span class="p">(</span><span class="mf">10.0</span> <span class="o">*</span> <span class="n">f32</span><span class="o">.</span><span class="n">F</span> <span class="o">+</span> <span class="mf">7.0</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52</span><span class="o">.</span><span class="n">F</span> <span class="o">+</span>
+                                                  <span class="mf">4.0</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="n">f32</span><span class="o">.</span><span class="n">dF_dbeta</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52</span><span class="o">.</span><span class="n">dF_dbeta</span><span class="p">))</span>
+
+            <span class="n">dpe_drho</span> <span class="o">=</span> <span class="n">dpe_deta</span> <span class="o">*</span> <span class="n">deta_drho</span>
+            <span class="n">dpe_dT</span> <span class="o">=</span> <span class="n">dpe_deta</span> <span class="o">*</span> <span class="n">deta_dT</span> <span class="o">+</span> <span class="n">dpe_dbeta</span> <span class="o">*</span> <span class="n">dbeta_dT</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_positrons</span><span class="p">:</span>
+                <span class="n">dpp_deta</span> <span class="o">=</span> <span class="o">-</span><span class="n">pcoeff</span> <span class="o">*</span> <span class="n">beta52</span> <span class="o">*</span> <span class="p">(</span><span class="n">f32_pos</span><span class="o">.</span><span class="n">dF_deta</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52_pos</span><span class="o">.</span><span class="n">dF_deta</span><span class="p">)</span>
+                <span class="n">dpp_dbeta</span> <span class="o">=</span> <span class="n">pcoeff</span> <span class="o">*</span> <span class="n">beta12</span> <span class="o">*</span> <span class="p">(</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.5</span> <span class="o">*</span> <span class="n">f32_pos</span><span class="o">.</span><span class="n">F</span> <span class="o">+</span> <span class="mf">1.75</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52_pos</span><span class="o">.</span><span class="n">F</span><span class="p">)</span> <span class="o">+</span>
+                                               <span class="n">beta</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">f32_pos</span><span class="o">.</span><span class="n">dF_dbeta</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52_pos</span><span class="o">.</span><span class="n">dF_dbeta</span><span class="p">)</span> <span class="o">+</span>
+                                               <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">f32_pos</span><span class="o">.</span><span class="n">dF_deta</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52_pos</span><span class="o">.</span><span class="n">dF_deta</span><span class="p">))</span>
+
+                <span class="n">dpp_drho</span> <span class="o">=</span> <span class="n">dpp_deta</span> <span class="o">*</span> <span class="n">deta_drho</span>
+                <span class="n">dpp_dT</span> <span class="o">=</span> <span class="n">dpp_deta</span> <span class="o">*</span> <span class="n">deta_dT</span> <span class="o">+</span> <span class="n">dpp_dbeta</span> <span class="o">*</span> <span class="n">dbeta_dT</span>
+
+            <span class="c1"># Compute partials of energy with density and temperature</span>
+            <span class="n">dEe_deta</span> <span class="o">=</span> <span class="n">ecoeff</span> <span class="o">*</span> <span class="n">beta52</span> <span class="o">*</span> <span class="p">(</span><span class="n">f32</span><span class="o">.</span><span class="n">dF_deta</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52</span><span class="o">.</span><span class="n">dF_deta</span><span class="p">)</span>
+            <span class="n">dEe_dbeta</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">ecoeff</span> <span class="o">*</span> <span class="n">beta32</span> <span class="o">*</span> <span class="p">(</span><span class="mf">5.0</span> <span class="o">*</span> <span class="n">f32</span><span class="o">.</span><span class="n">F</span> <span class="o">+</span> <span class="mf">7.0</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52</span><span class="o">.</span><span class="n">F</span> <span class="o">+</span>
+                                                 <span class="mf">2.0</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="n">f32</span><span class="o">.</span><span class="n">dF_dbeta</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52</span><span class="o">.</span><span class="n">dF_dbeta</span><span class="p">))</span>
+
+            <span class="n">dEe_drho</span> <span class="o">=</span> <span class="n">dEe_deta</span> <span class="o">*</span> <span class="n">deta_drho</span>   <span class="c1"># dbeta_drho = 0</span>
+            <span class="n">dEe_dT</span> <span class="o">=</span> <span class="n">dEe_deta</span> <span class="o">*</span> <span class="n">deta_dT</span> <span class="o">+</span> <span class="n">dEe_dbeta</span> <span class="o">*</span> <span class="n">dbeta_dT</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_positrons</span><span class="p">:</span>
+                <span class="c1"># these don&#39;t include the 2 m_e c**2 n_p part</span>
+                <span class="n">dEp_deta</span> <span class="o">=</span> <span class="o">-</span><span class="n">ecoeff</span> <span class="o">*</span> <span class="n">beta52</span> <span class="o">*</span> <span class="p">(</span><span class="n">f32_pos</span><span class="o">.</span><span class="n">dF_deta</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52_pos</span><span class="o">.</span><span class="n">dF_deta</span><span class="p">)</span>
+                <span class="n">dEp_dbeta</span> <span class="o">=</span> <span class="n">ecoeff</span> <span class="o">*</span> <span class="n">beta12</span> <span class="o">*</span> <span class="p">(</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.5</span> <span class="o">*</span> <span class="n">f32_pos</span><span class="o">.</span><span class="n">F</span> <span class="o">+</span> <span class="mf">3.5</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52_pos</span><span class="o">.</span><span class="n">F</span><span class="p">)</span> <span class="o">+</span>
+                                               <span class="n">beta</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">f32_pos</span><span class="o">.</span><span class="n">dF_dbeta</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52_pos</span><span class="o">.</span><span class="n">dF_dbeta</span><span class="p">)</span> <span class="o">+</span>
+                                               <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">f32_pos</span><span class="o">.</span><span class="n">dF_deta</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52_pos</span><span class="o">.</span><span class="n">dF_deta</span><span class="p">))</span>
+
+                <span class="n">dEp_drho</span> <span class="o">=</span> <span class="n">dEp_deta</span> <span class="o">*</span> <span class="n">deta_drho</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">rest_mass</span> <span class="o">*</span> <span class="n">dnp_drho</span>
+                <span class="n">dEp_dT</span> <span class="o">=</span> <span class="n">dEp_deta</span> <span class="o">*</span> <span class="n">deta_dT</span> <span class="o">+</span> <span class="n">dEp_dbeta</span> <span class="o">*</span> <span class="n">dbeta_dT</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">rest_mass</span> <span class="o">*</span> <span class="n">dnp_dT</span>
+
+        <span class="c1"># correct energy to be specific energy</span>
+        <span class="n">e_e</span> <span class="o">=</span> <span class="n">E_e</span> <span class="o">/</span> <span class="n">rho</span>
+        <span class="n">dee_drho</span> <span class="o">=</span> <span class="p">(</span><span class="n">dEe_drho</span> <span class="o">-</span> <span class="n">E_e</span> <span class="o">/</span> <span class="n">rho</span><span class="p">)</span> <span class="o">/</span> <span class="n">rho</span>
+        <span class="n">dee_dT</span> <span class="o">=</span> <span class="n">dEe_dT</span> <span class="o">/</span> <span class="n">rho</span>
+
+        <span class="n">e_pos</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">dep_drho</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">dep_dT</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_positrons</span><span class="p">:</span>
+            <span class="n">e_pos</span> <span class="o">=</span> <span class="n">E_pos</span> <span class="o">/</span> <span class="n">rho</span>
+            <span class="n">dep_drho</span> <span class="o">=</span> <span class="p">(</span><span class="n">dEp_drho</span> <span class="o">-</span> <span class="n">E_pos</span> <span class="o">/</span> <span class="n">rho</span><span class="p">)</span> <span class="o">/</span> <span class="n">rho</span>
+            <span class="n">dep_dT</span> <span class="o">=</span> <span class="n">dEp_dT</span> <span class="o">/</span> <span class="n">rho</span>
+
+        <span class="k">return</span> <span class="n">EOSState</span><span class="p">(</span><span class="n">eta</span><span class="o">=</span><span class="n">eta</span><span class="p">,</span>
+                        <span class="n">n_e</span><span class="o">=</span><span class="n">n_e</span><span class="p">,</span> <span class="n">p_e</span><span class="o">=</span><span class="n">p_e</span><span class="p">,</span> <span class="n">e_e</span><span class="o">=</span><span class="n">e_e</span><span class="p">,</span>
+                        <span class="n">n_pos</span><span class="o">=</span><span class="n">n_pos</span><span class="p">,</span> <span class="n">p_pos</span><span class="o">=</span><span class="n">p_pos</span><span class="p">,</span> <span class="n">e_pos</span><span class="o">=</span><span class="n">e_pos</span><span class="p">,</span>
+                        <span class="n">dne_drho</span><span class="o">=</span><span class="n">dne_drho</span><span class="p">,</span> <span class="n">dne_dT</span><span class="o">=</span><span class="n">dne_dT</span><span class="p">,</span>
+                        <span class="n">dnp_drho</span><span class="o">=</span><span class="n">dnp_drho</span><span class="p">,</span> <span class="n">dnp_dT</span><span class="o">=</span><span class="n">dnp_dT</span><span class="p">,</span>
+                        <span class="n">dpe_drho</span><span class="o">=</span><span class="n">dpe_drho</span><span class="p">,</span> <span class="n">dpe_dT</span><span class="o">=</span><span class="n">dpe_dT</span><span class="p">,</span>
+                        <span class="n">dpp_drho</span><span class="o">=</span><span class="n">dpp_drho</span><span class="p">,</span> <span class="n">dpp_dT</span><span class="o">=</span><span class="n">dpp_dT</span><span class="p">,</span>
+                        <span class="n">dee_drho</span><span class="o">=</span><span class="n">dee_drho</span><span class="p">,</span> <span class="n">dee_dT</span><span class="o">=</span><span class="n">dee_dT</span><span class="p">,</span>
+                        <span class="n">dep_drho</span><span class="o">=</span><span class="n">dep_drho</span><span class="p">,</span> <span class="n">dep_dT</span><span class="o">=</span><span class="n">dep_dT</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By pynucastro development team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024-2025, pynucastro development team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

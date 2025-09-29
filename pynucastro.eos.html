@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.eos package &#8212; pynucastro 2.7.1.post28+gfd6f5ac05 documentation</title>
+    <title>pynucastro.eos package &#8212; pynucastro 2.7.1.post29+g782b0ce96 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=4d9828d2"></script>
+    <script src="_static/documentation_options.js?v=8f5f85c0"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -226,6 +226,7 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Thermodynamics</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="fermi-integrals.html">Fermi-Dirac Integrals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="electron-eos.html">The Electron-Positron EOS</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
 <ul class="nav bd-sidenav">
@@ -270,6 +271,7 @@
 </details></li>
 <li class="toctree-l3 current active has-children"><a class="current reference internal" href="#">pynucastro.eos package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.difference_utils.html">pynucastro.eos.difference_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.electron_eos.html">pynucastro.eos.electron_eos module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.fermi_integrals.html">pynucastro.eos.fermi_integrals module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.quadrature_weights.html">pynucastro.eos.quadrature_weights module</a></li>
 </ul>
@@ -591,6 +593,35 @@ stellar material.</p>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.eos.difference_utils.html#pynucastro.eos.difference_utils.eighth_order_diff"><code class="docutils literal notranslate"><span class="pre">eighth_order_diff()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.eos.difference_utils.html#pynucastro.eos.difference_utils.fourth_order_diff"><code class="docutils literal notranslate"><span class="pre">fourth_order_diff()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.eos.difference_utils.html#pynucastro.eos.difference_utils.sixth_order_diff"><code class="docutils literal notranslate"><span class="pre">sixth_order_diff()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro.eos.electron_eos.html">pynucastro.eos.electron_eos module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState"><code class="docutils literal notranslate"><span class="pre">EOSState</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dee_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dee_dT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dee_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dee_drho</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dep_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dep_dT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dep_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dep_drho</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dne_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dne_dT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dne_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dne_drho</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dnp_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dnp_dT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dnp_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dnp_drho</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dpe_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dpe_dT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dpe_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dpe_drho</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dpp_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dpp_dT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dpp_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dpp_drho</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.e_e"><code class="docutils literal notranslate"><span class="pre">EOSState.e_e</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.e_pos"><code class="docutils literal notranslate"><span class="pre">EOSState.e_pos</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.eta"><code class="docutils literal notranslate"><span class="pre">EOSState.eta</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.n_e"><code class="docutils literal notranslate"><span class="pre">EOSState.n_e</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.n_pos"><code class="docutils literal notranslate"><span class="pre">EOSState.n_pos</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.p_e"><code class="docutils literal notranslate"><span class="pre">EOSState.p_e</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.p_pos"><code class="docutils literal notranslate"><span class="pre">EOSState.p_pos</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.ElectronEOS"><code class="docutils literal notranslate"><span class="pre">ElectronEOS</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.ElectronEOS.pe_state"><code class="docutils literal notranslate"><span class="pre">ElectronEOS.pe_state()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro.eos.fermi_integrals.html">pynucastro.eos.fermi_integrals module</a><ul>
