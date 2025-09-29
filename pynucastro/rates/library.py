@@ -549,7 +549,7 @@ class Library:
                 if nuc not in nucleus_set:
                     include = False
                     break
-            if not with_reverse and r.reverse:
+            if not with_reverse and r.derived_from_inverse:
                 include = False
             if include:
                 filtered_rates.append(r)
@@ -606,7 +606,7 @@ class Library:
 
         """
 
-        only_fwd_filter = RateFilter(reverse=False)
+        only_fwd_filter = RateFilter(derived_from_inverse=False)
         only_fwd = self.filter(only_fwd_filter)
         return only_fwd
 
@@ -621,7 +621,7 @@ class Library:
 
         """
 
-        only_bwd_filter = RateFilter(reverse=True)
+        only_bwd_filter = RateFilter(derived_from_inverse=True)
         only_bwd = self.filter(only_bwd_filter)
         return only_bwd
 
@@ -749,13 +749,13 @@ class RateFilter:
     """
 
     def __init__(self, reactants=None, products=None, exact=True,
-                 reverse=None, endpoint=None,
+                 derived_from_inverse=None, endpoint=None,
                  min_reactants=None, max_reactants=None,
                  min_products=None, max_products=None, filter_function=None):
         self.reactants = []
         self.products = []
         self.exact = exact
-        self.reverse = reverse
+        self.derived_from_inverse = derived_from_inverse
         if endpoint is not None:
             self.endpoint = Nucleus.cast(endpoint)
         else:
@@ -834,8 +834,8 @@ class RateFilter:
         matches_min_products = True
         matches_max_reactants = True
         matches_max_products = True
-        if isinstance(self.reverse, bool):
-            matches_reverse = self.reverse == r.reverse
+        if isinstance(self.derived_from_inverse, bool):
+            matches_reverse = self.derived_from_inverse == r.derived_from_inverse
         if isinstance(self.min_reactants, int):
             matches_min_reactants = len(r.reactants) >= self.min_reactants
         if isinstance(self.min_products, int):
@@ -875,7 +875,7 @@ class RateFilter:
         newfilter = RateFilter(reactants=self.products,
                                products=self.reactants,
                                exact=self.exact,
-                               reverse=self.reverse,
+                               derived_from_inverse=self.derived_from_inverse,
                                endpoint=self.endpoint,
                                min_reactants=self.min_products,
                                max_reactants=self.max_products,
