@@ -1,6 +1,9 @@
 # unit tests for rates
 
+import sys
+
 import numpy as np
+import pytest
 from pytest import approx
 
 from pynucastro import Composition
@@ -97,6 +100,7 @@ class TestElectronEOS:
                 dnedr_approx = (es_r.n_e - es.n_e) / (eps * rho)
                 assert es.dne_drho == approx(dnedr_approx)
 
+    @pytest.mark.skipif(sys.platform == "darwin", reason="Macs give different roundoff when the value is ~ 0")
     def test_ne_temp_derivs(self):
 
         # formally, dn_e/dT = 0 when we don't include positrons.  The
