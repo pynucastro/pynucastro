@@ -625,7 +625,7 @@ class Library:
         only_bwd = self.filter(only_bwd_filter)
         return only_bwd
 
-    def forward_for_detailed_balance(self):
+    def forward_for_detailed_balance(self, use_unreliable_spins=True):
         """Loop over the forward rates (as filtered by
         :py:meth:`.forward`) and return those that can be used to
         derive reverse rates via detailed balance.  This means that
@@ -643,7 +643,7 @@ class Library:
         for r in onlyfwd.get_rates():
 
             try:
-                DerivedRate(rate=r, compute_Q=False, use_pf=False)
+                DerivedRate(rate=r, compute_Q=False, use_pf=False, use_unreliable_spins=use_unreliable_spins)
             except ValueError:
                 continue
             else:
@@ -652,7 +652,7 @@ class Library:
         list1 = Library(rates=collect_rates)
         return list1
 
-    def derived_backward(self, compute_Q=False, use_pf=False):
+    def derived_backward(self, compute_Q=False, use_pf=False, use_unreliable_spins=True):
         """Loop over all of the forward rates that can be used to
         derive inverse rates (as returned by
         :py:meth:`.forward_for_detailed_balance`) and derive the
@@ -673,11 +673,11 @@ class Library:
         """
 
         derived_rates = []
-        onlyfwd = self.forward_for_detailed_balance()
+        onlyfwd = self.forward_for_detailed_balance(use_unreliable_spins=use_unreliable_spins)
 
         for r in onlyfwd.get_rates():
             try:
-                i = DerivedRate(rate=r, compute_Q=compute_Q, use_pf=use_pf)
+                i = DerivedRate(rate=r, compute_Q=compute_Q, use_pf=use_pf, use_unreliable_spins=use_unreliable_spins)
             except ValueError:
                 continue
             else:
