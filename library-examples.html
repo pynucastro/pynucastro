@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Selecting Rates from a Library &#8212; pynucastro 2.7.1.post29+g782b0ce96 documentation</title>
+    <title>Selecting Rates from a Library &#8212; pynucastro 2.7.1.post30+gc1fe33e82 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=8f5f85c0"></script>
+    <script src="_static/documentation_options.js?v=ca6b60df"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -712,15 +712,15 @@ O16 + C12 ⟶ p + Al27           [Q =   5.17 MeV] (O16 + C12 --&gt; p + Al27 &lt
 Ne20 + C12 ⟶ He4 + Si28        [Q =  12.02 MeV] (Ne20 + C12 --&gt; He4 + Si28 &lt;rolf_reaclib__&gt;)
 Ne20 + C12 ⟶ p + P31           [Q =  10.10 MeV] (Ne20 + C12 --&gt; p + P31 &lt;rolf_reaclib__&gt;)
 Ne20 + C12 ⟶ n + S31           [Q =   3.93 MeV] (Ne20 + C12 --&gt; n + S31 &lt;rolf_reaclib__&gt;)
-C12 + n ⟶ He4 + Be9            [Q =  -5.70 MeV] (C12 + n --&gt; He4 + Be9 &lt;cf88_reaclib__reverse&gt;)
-C12 + n ⟶ p + B12              [Q = -12.59 MeV] (C12 + n --&gt; p + B12 &lt;wag_reaclib__reverse&gt;)
-C12 + He4 ⟶ p + N15            [Q =  -4.97 MeV] (C12 + He4 --&gt; p + N15 &lt;nacr_reaclib__reverse&gt;)
-C12 + He4 ⟶ n + O15            [Q =  -8.50 MeV] (C12 + He4 --&gt; n + O15 &lt;cf88_reaclib__reverse&gt;)
-C12 + C12 ⟶ n + Mg23           [Q =  -2.60 MeV] (C12 + C12 --&gt; n + Mg23 &lt;cf88_reaclib__reverse&gt;)
-C12 ⟶ 3 He4                    [Q =  -7.28 MeV] (C12 --&gt; 3 He4 &lt;fy05_reaclib__reverse&gt;)
-C12 ⟶ p + B11                  [Q = -15.96 MeV] (C12 --&gt; p + B11 &lt;nw00_reaclib__reverse&gt;)
-C12 ⟶ n + C11                  [Q = -18.72 MeV] (C12 --&gt; n + C11 &lt;bb92_reaclib__reverse&gt;)
-O16 + C12 ⟶ n + Si27           [Q =  -0.42 MeV] (O16 + C12 --&gt; n + Si27 &lt;cf88_reaclib__reverse&gt;)
+C12 + n ⟶ He4 + Be9            [Q =  -5.70 MeV] (C12 + n --&gt; He4 + Be9 &lt;cf88_reaclib__derived_from_inverse&gt;)
+C12 + n ⟶ p + B12              [Q = -12.59 MeV] (C12 + n --&gt; p + B12 &lt;wag_reaclib__derived_from_inverse&gt;)
+C12 + He4 ⟶ p + N15            [Q =  -4.97 MeV] (C12 + He4 --&gt; p + N15 &lt;nacr_reaclib__derived_from_inverse&gt;)
+C12 + He4 ⟶ n + O15            [Q =  -8.50 MeV] (C12 + He4 --&gt; n + O15 &lt;cf88_reaclib__derived_from_inverse&gt;)
+C12 + C12 ⟶ n + Mg23           [Q =  -2.60 MeV] (C12 + C12 --&gt; n + Mg23 &lt;cf88_reaclib__derived_from_inverse&gt;)
+C12 ⟶ 3 He4                    [Q =  -7.28 MeV] (C12 --&gt; 3 He4 &lt;fy05_reaclib__derived_from_inverse&gt;)
+C12 ⟶ p + B11                  [Q = -15.96 MeV] (C12 --&gt; p + B11 &lt;nw00_reaclib__derived_from_inverse&gt;)
+C12 ⟶ n + C11                  [Q = -18.72 MeV] (C12 --&gt; n + C11 &lt;bb92_reaclib__derived_from_inverse&gt;)
+O16 + C12 ⟶ n + Si27           [Q =  -0.42 MeV] (O16 + C12 --&gt; n + Si27 &lt;cf88_reaclib__derived_from_inverse&gt;)
 </pre></div>
 </div>
 </div>
@@ -771,7 +771,7 @@ O16 + C12 ⟶ n + Si27           [Q =  -0.42 MeV] (O16 + C12 --&gt; n + Si27 &lt
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C12 + C12 ⟶ He4 + Ne20         [Q =   4.62 MeV] (C12 + C12 --&gt; He4 + Ne20 &lt;cf88_reaclib__&gt;)
 C12 + C12 ⟶ p + Na23           [Q =   2.24 MeV] (C12 + C12 --&gt; p + Na23 &lt;cf88_reaclib__&gt;)
-C12 + C12 ⟶ n + Mg23           [Q =  -2.60 MeV] (C12 + C12 --&gt; n + Mg23 &lt;cf88_reaclib__reverse&gt;)
+C12 + C12 ⟶ n + Mg23           [Q =  -2.60 MeV] (C12 + C12 --&gt; n + Mg23 &lt;cf88_reaclib__derived_from_inverse&gt;)
 </pre></div>
 </div>
 </div>
@@ -891,17 +891,17 @@ Ca40 + He4 ⟶ Ti44 + 𝛾          [Q =   5.13 MeV] (Ca40 + He4 --&gt; Ti44 &lt
 Ti44 + He4 ⟶ Cr48 + 𝛾          [Q =   7.70 MeV] (Ti44 + He4 --&gt; Cr48 &lt;ths8_reaclib__&gt;)
 Cr48 + He4 ⟶ Fe52 + 𝛾          [Q =   7.94 MeV] (Cr48 + He4 --&gt; Fe52 &lt;ths8_reaclib__&gt;)
 Fe52 + He4 ⟶ Ni56 + 𝛾          [Q =   8.00 MeV] (Fe52 + He4 --&gt; Ni56 &lt;ths8_reaclib__&gt;)
-O16 ⟶ He4 + C12                [Q =  -7.16 MeV] (O16 --&gt; He4 + C12 &lt;nac2_reaclib__reverse&gt;)
-Ne20 ⟶ He4 + O16               [Q =  -4.73 MeV] (Ne20 --&gt; He4 + O16 &lt;co10_reaclib__reverse&gt;)
-Mg24 ⟶ He4 + Ne20              [Q =  -9.32 MeV] (Mg24 --&gt; He4 + Ne20 &lt;il10_reaclib__reverse&gt;)
-Si28 ⟶ He4 + Mg24              [Q =  -9.98 MeV] (Si28 --&gt; He4 + Mg24 &lt;st08_reaclib__reverse&gt;)
-S32 ⟶ He4 + Si28               [Q =  -6.95 MeV] (S32 --&gt; He4 + Si28 &lt;ths8_reaclib__reverse&gt;)
-Ar36 ⟶ He4 + S32               [Q =  -6.64 MeV] (Ar36 --&gt; He4 + S32 &lt;ths8_reaclib__reverse&gt;)
-Ca40 ⟶ He4 + Ar36              [Q =  -7.04 MeV] (Ca40 --&gt; He4 + Ar36 &lt;ths8_reaclib__reverse&gt;)
-Ti44 ⟶ He4 + Ca40              [Q =  -5.13 MeV] (Ti44 --&gt; He4 + Ca40 &lt;chw0_reaclib__reverse&gt;)
-Cr48 ⟶ He4 + Ti44              [Q =  -7.70 MeV] (Cr48 --&gt; He4 + Ti44 &lt;ths8_reaclib__reverse&gt;)
-Fe52 ⟶ He4 + Cr48              [Q =  -7.94 MeV] (Fe52 --&gt; He4 + Cr48 &lt;ths8_reaclib__reverse&gt;)
-Ni56 ⟶ He4 + Fe52              [Q =  -8.00 MeV] (Ni56 --&gt; He4 + Fe52 &lt;ths8_reaclib__reverse&gt;)
+O16 ⟶ He4 + C12                [Q =  -7.16 MeV] (O16 --&gt; He4 + C12 &lt;nac2_reaclib__derived_from_inverse&gt;)
+Ne20 ⟶ He4 + O16               [Q =  -4.73 MeV] (Ne20 --&gt; He4 + O16 &lt;co10_reaclib__derived_from_inverse&gt;)
+Mg24 ⟶ He4 + Ne20              [Q =  -9.32 MeV] (Mg24 --&gt; He4 + Ne20 &lt;il10_reaclib__derived_from_inverse&gt;)
+Si28 ⟶ He4 + Mg24              [Q =  -9.98 MeV] (Si28 --&gt; He4 + Mg24 &lt;st08_reaclib__derived_from_inverse&gt;)
+S32 ⟶ He4 + Si28               [Q =  -6.95 MeV] (S32 --&gt; He4 + Si28 &lt;ths8_reaclib__derived_from_inverse&gt;)
+Ar36 ⟶ He4 + S32               [Q =  -6.64 MeV] (Ar36 --&gt; He4 + S32 &lt;ths8_reaclib__derived_from_inverse&gt;)
+Ca40 ⟶ He4 + Ar36              [Q =  -7.04 MeV] (Ca40 --&gt; He4 + Ar36 &lt;ths8_reaclib__derived_from_inverse&gt;)
+Ti44 ⟶ He4 + Ca40              [Q =  -5.13 MeV] (Ti44 --&gt; He4 + Ca40 &lt;chw0_reaclib__derived_from_inverse&gt;)
+Cr48 ⟶ He4 + Ti44              [Q =  -7.70 MeV] (Cr48 --&gt; He4 + Ti44 &lt;ths8_reaclib__derived_from_inverse&gt;)
+Fe52 ⟶ He4 + Cr48              [Q =  -7.94 MeV] (Fe52 --&gt; He4 + Cr48 &lt;ths8_reaclib__derived_from_inverse&gt;)
+Ni56 ⟶ He4 + Fe52              [Q =  -8.00 MeV] (Ni56 --&gt; He4 + Fe52 &lt;ths8_reaclib__derived_from_inverse&gt;)
 </pre></div>
 </div>
 </div>

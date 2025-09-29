@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Reaction Rate Types &#8212; pynucastro 2.7.1.post29+g782b0ce96 documentation</title>
+    <title>Reaction Rate Types &#8212; pynucastro 2.7.1.post30+gc1fe33e82 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=8f5f85c0"></script>
+    <script src="_static/documentation_options.js?v=ca6b60df"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -668,8 +668,9 @@ taking the form:</p>
 <ul>
 <li><p>The first 4 characters are the label that gives the source of the rate, according to:
 <a class="reference external" href="https://reaclib.jinaweb.org/labels.php">https://reaclib.jinaweb.org/labels.php</a></p>
-<p>This is stored in both <code class="docutils literal notranslate"><span class="pre">SingleSet</span></code> and <code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code> as the
-<code class="docutils literal notranslate"><span class="pre">.label</span></code> attribute.</p>
+<p>This is stored in both <a class="reference internal" href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.SingleSet" title="pynucastro.rates.reaclib_rate.SingleSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SingleSet</span></code></a> and
+<a class="reference internal" href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate" title="pynucastro.rates.reaclib_rate.ReacLibRate"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a>
+as the <code class="docutils literal notranslate"><span class="pre">.label</span></code> attribute.</p>
 </li>
 <li><p>The next character is <code class="docutils literal notranslate"><span class="pre">n</span></code> for a non-resonant set, <code class="docutils literal notranslate"><span class="pre">r</span></code> for a
 resonance, or <code class="docutils literal notranslate"><span class="pre">w</span></code> to indicate that it is a weak rate.</p>
@@ -685,8 +686,16 @@ for _combined_.</p></li>
 <p>If the weak flag, <code class="docutils literal notranslate"><span class="pre">w</span></code> is set, then <code class="docutils literal notranslate"><span class="pre">ReacLibRate.weak</span></code> will be <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
 </li>
 <li><p>The 6th character indicates it the rate is a derived reverse rate,
-by the presence of a <cite>v</cite>.  This is stored in both <code class="docutils literal notranslate"><span class="pre">SingleSet</span></code> and
-<code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code> as the <code class="docutils literal notranslate"><span class="pre">.reverse</span></code> attribute.</p></li>
+by the presence of a <cite>v</cite>.</p>
+<p>This is stored in both <a class="reference internal" href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.SingleSet" title="pynucastro.rates.reaclib_rate.SingleSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">SingleSet</span></code></a>
+and <a class="reference internal" href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate" title="pynucastro.rates.reaclib_rate.ReacLibRate"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a> as the
+<code class="docutils literal notranslate"><span class="pre">.derived_from_inverse</span></code> attribute.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is not necessarily a reverse rate (<span class="math notranslate nohighlight">\(Q &lt; 0\)</span>), so in
+pynucastro, we call it “derived from inverse”.</p>
+</div>
+</li>
 </ul>
 </section>
 <section id="weak-rates">

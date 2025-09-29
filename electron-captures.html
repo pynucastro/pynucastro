@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Combining ReacLib Rates with Electron Capture Tables &#8212; pynucastro 2.7.1.post29+g782b0ce96 documentation</title>
+    <title>Combining ReacLib Rates with Electron Capture Tables &#8212; pynucastro 2.7.1.post30+gc1fe33e82 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=8f5f85c0"></script>
+    <script src="_static/documentation_options.js?v=ca6b60df"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -616,17 +616,17 @@ Al27 + He4 ⟶ P31 + 𝛾           [Q =   9.67 MeV] (Al27 + He4 --&gt; P31 &lt;
 Si28 + He4 ⟶ S32 + 𝛾           [Q =   6.95 MeV] (Si28 + He4 --&gt; S32 &lt;ths8_reaclib__&gt;)
 P31 + p ⟶ He4 + Si28           [Q =   1.92 MeV] (P31 + p --&gt; He4 + Si28 &lt;il10_reaclib__&gt;)
 P31 + p ⟶ S32 + 𝛾              [Q =   8.86 MeV] (P31 + p --&gt; S32 &lt;il10_reaclib__&gt;)
-Ne20 ⟶ He4 + O16               [Q =  -4.73 MeV] (Ne20 --&gt; He4 + O16 &lt;co10_reaclib__reverse&gt;)
-Mg24 + He4 ⟶ p + Al27          [Q =  -1.60 MeV] (Mg24 + He4 --&gt; p + Al27 &lt;il10_reaclib__reverse&gt;)
-Mg24 ⟶ He4 + Ne20              [Q =  -9.32 MeV] (Mg24 --&gt; He4 + Ne20 &lt;il10_reaclib__reverse&gt;)
-Si28 + He4 ⟶ O16 + O16         [Q =  -9.59 MeV] (Si28 + He4 --&gt; O16 + O16 &lt;cf88_reaclib__reverse&gt;)
-Si28 + He4 ⟶ p + P31           [Q =  -1.92 MeV] (Si28 + He4 --&gt; p + P31 &lt;il10_reaclib__reverse&gt;)
-Si28 ⟶ He4 + Mg24              [Q =  -9.98 MeV] (Si28 --&gt; He4 + Mg24 &lt;st08_reaclib__reverse&gt;)
-Si28 ⟶ p + Al27                [Q = -11.59 MeV] (Si28 --&gt; p + Al27 &lt;il10_reaclib__reverse&gt;)
-P31 + p ⟶ O16 + O16            [Q =  -7.68 MeV] (P31 + p --&gt; O16 + O16 &lt;cf88_reaclib__reverse&gt;)
-P31 ⟶ He4 + Al27               [Q =  -9.67 MeV] (P31 --&gt; He4 + Al27 &lt;ths8_reaclib__reverse&gt;)
-S32 ⟶ He4 + Si28               [Q =  -6.95 MeV] (S32 --&gt; He4 + Si28 &lt;ths8_reaclib__reverse&gt;)
-S32 ⟶ p + P31                  [Q =  -8.86 MeV] (S32 --&gt; p + P31 &lt;il10_reaclib__reverse&gt;)
+Ne20 ⟶ He4 + O16               [Q =  -4.73 MeV] (Ne20 --&gt; He4 + O16 &lt;co10_reaclib__derived_from_inverse&gt;)
+Mg24 + He4 ⟶ p + Al27          [Q =  -1.60 MeV] (Mg24 + He4 --&gt; p + Al27 &lt;il10_reaclib__derived_from_inverse&gt;)
+Mg24 ⟶ He4 + Ne20              [Q =  -9.32 MeV] (Mg24 --&gt; He4 + Ne20 &lt;il10_reaclib__derived_from_inverse&gt;)
+Si28 + He4 ⟶ O16 + O16         [Q =  -9.59 MeV] (Si28 + He4 --&gt; O16 + O16 &lt;cf88_reaclib__derived_from_inverse&gt;)
+Si28 + He4 ⟶ p + P31           [Q =  -1.92 MeV] (Si28 + He4 --&gt; p + P31 &lt;il10_reaclib__derived_from_inverse&gt;)
+Si28 ⟶ He4 + Mg24              [Q =  -9.98 MeV] (Si28 --&gt; He4 + Mg24 &lt;st08_reaclib__derived_from_inverse&gt;)
+Si28 ⟶ p + Al27                [Q = -11.59 MeV] (Si28 --&gt; p + Al27 &lt;il10_reaclib__derived_from_inverse&gt;)
+P31 + p ⟶ O16 + O16            [Q =  -7.68 MeV] (P31 + p --&gt; O16 + O16 &lt;cf88_reaclib__derived_from_inverse&gt;)
+P31 ⟶ He4 + Al27               [Q =  -9.67 MeV] (P31 --&gt; He4 + Al27 &lt;ths8_reaclib__derived_from_inverse&gt;)
+S32 ⟶ He4 + Si28               [Q =  -6.95 MeV] (S32 --&gt; He4 + Si28 &lt;ths8_reaclib__derived_from_inverse&gt;)
+S32 ⟶ p + P31                  [Q =  -8.86 MeV] (S32 --&gt; p + P31 &lt;il10_reaclib__derived_from_inverse&gt;)
 </pre></div>
 </div>
 </div>

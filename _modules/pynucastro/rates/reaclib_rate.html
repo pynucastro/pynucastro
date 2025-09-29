@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.reaclib_rate &#8212; pynucastro 2.7.1.post29+g782b0ce96 documentation</title>
+    <title>pynucastro.rates.reaclib_rate &#8212; pynucastro 2.7.1.post30+gc1fe33e82 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=8f5f85c0"></script>
+    <script src="../../../_static/documentation_options.js?v=ca6b60df"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -526,7 +526,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_label_properties</span><span class="p">()</span>
 
@@ -541,7 +541,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;r&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;v&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;v&#39;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="kc">True</span>
@@ -552,7 +552,7 @@ document.write(`
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">resonant</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">weak</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">reverse</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">derived_from_inverse</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">x</span>
 
 <div class="viewcode-block" id="SingleSet.f">
@@ -825,7 +825,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">removed</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -929,7 +929,7 @@ document.write(`
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">label</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">weak</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">weak_type</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">reverse</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">derived_from_inverse</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">resonant</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_labelprops_combine_resonance</span><span class="p">()</span>
@@ -982,13 +982,13 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">==</span> <span class="s2">&quot;derived&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;derived&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Derived may be resonant in some cases</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
@@ -1001,7 +1001,7 @@ document.write(`
                     <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="s1">&#39;_pos_&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;_neg_&#39;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;v&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;v&#39;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">RateSource</span><span class="o">.</span><span class="n">source</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_read_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
@@ -1157,8 +1157,8 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">srev</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reverse</span><span class="p">:</span>
-            <span class="n">srev</span> <span class="o">=</span> <span class="s1">&#39;reverse&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span><span class="p">:</span>
+            <span class="n">srev</span> <span class="o">=</span> <span class="s1">&#39;derived_from_inverse&#39;</span>
 
         <span class="n">sweak</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak</span><span class="p">:</span>
