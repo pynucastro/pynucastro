@@ -1,6 +1,9 @@
 # unit tests for rates
 
+import sys
+
 import numpy as np
+import pytest
 from pytest import approx
 
 from pynucastro import Composition
@@ -146,6 +149,7 @@ class TestElectronPositronEOS:
                                          rho, drho, component="n_e")
                 assert es.dne_drho == approx(deriv, rel=3.e-6)
 
+    @pytest.mark.skipif(sys.platform == "darwin", reason="Macs give different roundoff when the value is ~ 0")
     def test_ne_temp_derivs(self):
 
         e = ElectronEOS(include_positrons=True)
@@ -194,6 +198,7 @@ class TestElectronPositronEOS:
 
                 assert es.dne_drho == approx(constants.N_A * comp.zbar / comp.abar + es.dnp_drho)
 
+    @pytest.mark.skipif(sys.platform == "darwin", reason="Macs give different roundoff when the value is ~ 0")
     def test_np_temp_derivs(self):
 
         e = ElectronEOS(include_positrons=True)
