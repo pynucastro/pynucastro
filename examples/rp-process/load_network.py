@@ -4,7 +4,7 @@
 
 import sys
 
-from pynucastro.networks import NumpyNetwork
+from pynucastro.networks import RateCollection
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import Library, RateFilter
 
@@ -28,7 +28,7 @@ def load_network(endpoint=Nucleus('te108'), *,
 
     Returns
     -------
-    NumpyNetwork
+    RateCollection
 
     """
 
@@ -59,7 +59,7 @@ def load_network(endpoint=Nucleus('te108'), *,
     else:
         lib = Library(library_name)
     lib = lib.filter(filt)
-    return NumpyNetwork(libraries=[lib])
+    return RateCollection(libraries=[lib])
 
 
 if __name__ == "__main__":
