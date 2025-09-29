@@ -54,6 +54,20 @@ class TestComposition:
         assert xsum == approx(1.0)
         assert comp["h1"] == approx(0.7)
 
+    def test_half_life_thresh(self):
+
+        # na18 is very short lived
+        comp = pyna.Composition(["p", "he4", "c12", "na18"])
+        comp.set_solar_like()
+
+        assert comp["na18"] == approx(0.01)
+        assert comp["c12"] == approx(0.01)
+
+        comp.set_solar_like(half_life_thresh=1.e-10)
+
+        assert comp["na18"] == 0.0
+        assert comp["c12"] == approx(0.01010101)
+
     def test_set_all(self, nuclei, comp):
         val = 1.0/len(nuclei)
         comp.set_all(1.0/len(nuclei))

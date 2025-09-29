@@ -48,31 +48,31 @@ jobs:
           sudo apt-get update -y -qq
           sudo apt-get -qq -y install curl cmake jq clang g++>=9.3.0
 
-      - name: Regenerate he-burn-22a network
+      - name: Regenerate he-burn-19am network
         run: |
-          cd external/Microphysics/networks/he-burn/he-burn-22a
-          python he_burn_22a.py
+          cd external/Microphysics/networks/he-burn/he-burn-19am
+          python he_burn_19am.py
 
-      - name: Compile burn_cell (he-burn-22a)
+      - name: Compile burn_cell (he-burn-19am)
         run: |
           cd external/Microphysics/unit_test/burn_cell
           make realclean
-          make NETWORK_DIR=he-burn/he-burn-22a -j 4
+          make NETWORK_DIR=he-burn/he-burn-19am -j 4
 
-      - name: Run burn_cell (he-burn-22a)
+      - name: Run burn_cell (he-burn-19am)
         run: |
           cd external/Microphysics/unit_test/burn_cell
           ./main3d.gnu.ex inputs_subch_simple > test.out
 
-      - name: Compare to stored output (he-burn-22a)
+      - name: Compare to stored output (he-burn-19am)
         run: |
           cd external/Microphysics/unit_test/burn_cell
-          diff -I "^Initializing AMReX" -I "^AMReX" -I "^reading in reaclib rates" test.out ${GITHUB_WORKSPACE}/.github/workflows/microphysics-benchmarks/subch_simple_unit_test.out
+          diff -I "^Initializing AMReX" -I "^AMReX" -I "^reading in reaclib rates" test.out ${GITHUB_WORKSPACE}/.github/workflows/microphysics-benchmarks/he-burn-19am_unit_test.out
 
       - name: Regenerate ECSN network
         run: |
           cd external/Microphysics/networks/ECSN
-          python ecsn_network_generation.py
+          python ecsn.py
 
       - name: Compile burn_cell (ECSN)
         run: |
