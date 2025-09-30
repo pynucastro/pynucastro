@@ -99,6 +99,7 @@ and interactively exploring nuclear reaction networks.
    :hidden:
 
    fermi-integrals
+   electron-eos
 
 .. toctree::
    :maxdepth: 1
