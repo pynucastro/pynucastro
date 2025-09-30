@@ -2,6 +2,12 @@
 
 ## 2.8.0
 
+  * for `ReacLibRate`, use `r.derived_from_inverse` instead of
+    `r.reverse` (#938)
+
+  * an electron-positron EOS was added.  This directly integrates the
+    Fermi-Dirac integrals and constructs n, p, and e. (#1076)
+
   * `NumpyNetwork` has been removed -- it did not give much of a
     performance boost (#1109)
 
