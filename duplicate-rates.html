@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Dealing with Duplicate Rates &#8212; pynucastro 2.7.1.post32+g63a745bb1 documentation</title>
+    <title>Dealing with Duplicate Rates &#8212; pynucastro 2.7.1.post33+g5dec90b0a documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=cba016c7"></script>
+    <script src="_static/documentation_options.js?v=5cc2d77f"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -717,6 +717,14 @@ of the <span class="math notranslate nohighlight">\({}^{23}\mathrm{Mg}\)</span> 
     <span class="n">lib</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Eliminating duplicates is a common process, so a <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library</span></code></a>
+has a method to automate this, <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library.eliminate_duplicates" title="pynucastro.rates.library.Library.eliminate_duplicates"><code class="xref py py-meth docutils literal notranslate"><span class="pre">eliminate_duplicates</span></code></a>.  We can achieve the same result as above by doing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">lib</span><span class="o">.</span><span class="n">eliminate_duplicates</span><span class="p">()</span>
+</pre></div>
 </div>
 </div>
 <p>Finally, we can make the <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> without error:</p>
