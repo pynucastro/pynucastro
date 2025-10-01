@@ -1388,8 +1388,10 @@ class RateCollection:
         return rvals
 
     def jacobian_mask(self):
-        """return a numpy array of 0 and 1 indicating the sparsity
-        pattern of the Jacobian"""
+        """Return a numpy array of 0 and 1 indicating the sparsity
+        pattern of the Jacobian
+
+        """
 
         nnuc = len(self.unique_nuclei)
         jac = np.zeros((nnuc, nnuc), dtype=np.int8)
