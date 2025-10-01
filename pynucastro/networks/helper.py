@@ -1,7 +1,6 @@
 """Methods to ease the creation of networks."""
 
-from pynucastro.rates import (DerivedRate, ReacLibLibrary, ReacLibRate,
-                              TabularLibrary)
+from pynucastro.rates import DerivedRate, ReacLibLibrary, TabularLibrary
 
 from .amrexastro_cxx_network import AmrexAstroCxxNetwork
 from .fortran_network import FortranNetwork
@@ -57,14 +56,7 @@ def network_helper(nuclei, *,
         # if we have both a tabular and ReacLib rate,
         # remove the ReacLib version
 
-        rates_to_remove = []
-        for pair in lib.find_duplicate_links():
-            for r in pair:
-                if isinstance(r, ReacLibRate):
-                    rates_to_remove.append(r)
-
-        for r in rates_to_remove:
-            lib.remove_rate(r)
+        lib.eliminate_duplicates(rate_type_preference="tabular")
 
     if use_detailed_balance:
         rates_to_derive = lib.backward().get_rates()
