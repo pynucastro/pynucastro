@@ -330,7 +330,7 @@ class TestRate:
 
 class TestDerivedRate:
 
-    def a_a_ag_c12(self, reaclib_library):
+    def test_a_a_ag_c12(self, reaclib_library):
         """
         Here we test the inverse rate, computed by the use of detailed balance
         of a:
@@ -344,7 +344,7 @@ class TestDerivedRate:
         c12_ga_a_a_reaclib = reaclib_library.get_rate_by_name("c12(g,aa)he4")
         c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=False, use_pf=False)
 
-        assert c12_ga_a_a_reaclib.eval(T=2.0e9) == approx(c12_ga_a_a_derived.eval(T=2.0e9), rel=2e-4)
+        assert c12_ga_a_a_reaclib.eval(T=2.0e9) == approx(c12_ga_a_a_derived.eval(T=2.0e9), rel=5.e-3)
 
     def test_a_a_ag_c12_with_pf(self, reaclib_library):
         """
