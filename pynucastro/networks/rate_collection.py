@@ -1389,7 +1389,7 @@ class RateCollection:
 
     def jacobian_mask(self):
         """Return a numpy array of 0 and 1 indicating the sparsity
-        pattern of the Jacobian
+        pattern of the Jacobian.
 
         """
 
