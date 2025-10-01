@@ -2,6 +2,15 @@
 
 ## 2.8.0
 
+  * fix a mutability issue in `Library` addition (#1112)
+
+  * add a method to `Library` to eliminate duplicate rates (#1111)
+
+  * load all nuclear spins by default, even those that are
+    "unreliable" (#1115)
+
+  * fix a CI issue on `DerivedRate` (#1124)
+
   * for `ReacLibRate`, use `r.derived_from_inverse` instead of
     `r.reverse` (#938)
 
