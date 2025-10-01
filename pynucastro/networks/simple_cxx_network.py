@@ -8,6 +8,8 @@ from pynucastro.screening import get_screening_map
 
 
 class SimpleCxxNetwork(BaseCxxNetwork):
+    """A basic C++ network."""
+
     def __init__(self, *args, **kwargs):
 
         # Initialize BaseCxxNetwork parent class
@@ -78,9 +80,10 @@ class SimpleCxxNetwork(BaseCxxNetwork):
             of.write('\n')
 
     def _write_network(self, odir=None):
-        """
-        This writes the RHS, jacobian and ancillary files for the system of ODEs that
-        this network describes, using the template files.
+        """Output the the RHS, jacobian and ancillary files for the
+        system of ODEs that this network describes, using the template
+        files.
+
         """
 
         # at the moment, we don't support TabularRates

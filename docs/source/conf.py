@@ -43,7 +43,7 @@ extensions = ['sphinx.ext.autodoc',
     'nbsphinx',
     'sphinx.ext.githubpages',
     'sphinx_copybutton',
-    'sphinx-prompt',
+    'sphinx_prompt',
     'sphinx_math_dollar',
     'sphinx_mdinclude',
     'myst_nb',
@@ -55,7 +55,9 @@ bibtex_bibfiles = ['refs.bib']
 bibtex_reference_style = 'author_year'
 
 linkcheck_ignore = [r"https://doi.org",
-                    r"https://link.aps.org"]
+                    r"https://link.aps.org",
+                    r"https://www-nds.iaea.org",
+                    r"https://www.sciencedirect.com"]
 
 linkcheck_retries = 3
 linkcheck_timeout = 100
@@ -141,6 +143,9 @@ intersphinx_mapping = {
     'yt': ('https://yt-project.org/doc', None),
     'unyt': ('https://unyt.readthedocs.io/en/stable', None),
 }
+
+# Don't include the extra CSS from sphinx-prompt when using the copy button
+copybutton_exclude = 'style'
 
 
 # -- Options for HTML output ----------------------------------------------

@@ -357,7 +357,7 @@ class TestDerivedRate:
 
         with pytest.warns(UserWarning, match="C12 partition function is not supported by tables"):
             rval = c12_ga_a_a_derived.eval(T=2.0e9)
-        assert rval == approx(2.8953989705969484e-07)
+        assert rval == approx(2.909561626679576e-7)
 
     def test_a_a_ag_c12_with_Q(self, reaclib_library):
         """
@@ -369,33 +369,33 @@ class TestDerivedRate:
         a_a_ag_c12 = reaclib_library.get_rate_by_name("he4(aa,g)c12")
         c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=True, use_pf=False)
 
-        assert c12_ga_a_a_derived.eval(T=2.0e9) == approx(2.899642192191721e-07)
+        assert c12_ga_a_a_derived.eval(T=2.0e9) == approx(2.913825603717208e-07)
 
 
 class TestWeakRates:
     @pytest.fixture(scope="class")
     def rate1(self):
-        return rates.TabularRate("suzuki-o18--f18-toki")
+        return rates.TabularRate("suzuki-18o-18f_betadecay.dat")
 
     @pytest.fixture(scope="class")
     def rate2(self):
-        return rates.TabularRate("suzuki-na22--ne22-toki")
+        return rates.TabularRate("suzuki-22na-22ne_electroncapture.dat")
 
     @pytest.fixture(scope="class")
     def rate3(self):
-        return rates.TabularRate("langanke-sc45--ca45-toki")
+        return rates.TabularRate("langanke-45sc-45ca_electroncapture.dat")
 
     @pytest.fixture(scope="class")
     def rate4(self):
-        return rates.TabularRate("langanke-ti45--sc45-toki")
+        return rates.TabularRate("langanke-45ti-45sc_electroncapture.dat")
 
     @pytest.fixture(scope="class")
     def rate5(self):
-        return rates.TabularRate("langanke-v45--ti45-toki")
+        return rates.TabularRate("langanke-45v-45ti_electroncapture.dat")
 
     @pytest.fixture(scope="class")
     def rate6(self):
-        return rates.TabularRate("langanke-ca45--sc45-toki")
+        return rates.TabularRate("langanke-45ca-45sc_betadecay.dat")
 
     def test_reactants(self, rate1, rate2, rate3, rate4, rate5, rate6):
 
