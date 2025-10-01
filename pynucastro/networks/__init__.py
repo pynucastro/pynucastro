@@ -17,9 +17,6 @@ network.
 :meth:`nse_network <pynucastro.networks.nse_network>`: a network
 specialized in solving for nuclear statistical equilibrium.
 
-:meth:`numpy_network <pynucastro.networks.numpy_network>`: a network
-that caches rates to allow for more efficient computation.
-
 :meth:`python_network <pynucastro.networks.python_network>`: the
 support routines to generate a full, integrable network in python.
 
@@ -44,7 +41,6 @@ from .base_cxx_network import BaseCxxNetwork
 from .fortran_network import FortranNetwork
 from .helper import network_helper
 from .nse_network import NSENetwork
-from .numpy_network import NumpyNetwork
 from .python_network import PythonNetwork
 from .rate_collection import (Composition, Explorer, RateCollection,
                               RateDuplicationError)

@@ -200,14 +200,18 @@ class Composition(collections.UserDict):
         """
         return math.fsum(self.values())
 
-    def set_solar_like(self, Z=0.02):
+    def set_solar_like(self, *, Z=0.02, half_life_thresh=None):
         """Approximate a solar abundance, setting p to 0.7, He4 to 0.3
-        - Z and the remainder evenly distributed with Z
+        - Z and the remainder evenly distributed with Z.
 
         Parameters
         ----------
         Z : float
             The desired metalicity
+        half_life_thresh : float
+            The half life value below which to zero the mass fraction
+            of a nucleus.  This prevents us from making a composition
+            that is not really stable.
 
         """
 
@@ -220,7 +224,7 @@ class Composition(collections.UserDict):
             else:
                 self[k] = rem
 
-        self.normalize()
+        self.normalize(half_life_thresh=half_life_thresh)
 
     def set_array(self, arr):
         """Set the mass fractions of all species to the values
@@ -285,8 +289,24 @@ class Composition(collections.UserDict):
         """
         self[name] = xval
 
-    def normalize(self):
-        """Normalize the mass fractions to sum to 1."""
+    def normalize(self, *, half_life_thresh=None):
+        """Normalize the mass fractions to sum to 1.
+
+        Parameters
+        ----------
+        half_life_thresh : float
+            The half life value below which to zero the mass fraction
+            of a nucleus.  This prevents us from making a composition
+            that is not really stable.
+
+        """
+
+        if half_life_thresh is not None:
+            for k in self:
+                if k.tau != "stable" and k.tau is not None:
+                    if k.tau < half_life_thresh:
+                        self[k] = 0.0
+
         X_sum = self.get_sum_X()
 
         for k in self:
@@ -739,7 +759,8 @@ class RateCollection:
 
         # finally check for duplicate rates -- these are not
         # allowed
-        if self.find_duplicate_links():
+        if dupes := self.find_duplicate_links():
+            print(dupes)
             raise RateDuplicationError("Duplicate rates found")
 
     def _read_rate_files(self, rate_files):
@@ -1535,14 +1556,14 @@ class RateCollection:
         passed_validation = True
 
         for rate in current_rates:
-            if rate.reverse:
+            if rate.derived_from_inverse:
                 continue
             for p in rate.products:
                 found = False
                 for orate in current_rates:
                     if orate == rate:
                         continue
-                    if orate.reverse:
+                    if orate.derived_from_inverse:
                         continue
                     if p in orate.reactants:
                         found = True
@@ -1559,7 +1580,7 @@ class RateCollection:
             other_by_reactants[tuple(sorted(rate.reactants))].append(rate)
 
         for rate in current_rates:
-            if forward_only and rate.reverse:
+            if forward_only and rate.derived_from_inverse:
                 continue
 
             key = tuple(sorted(rate.reactants))
@@ -2640,9 +2661,12 @@ class RateCollection:
 
     def plot_network_chart(self, rho=None, T=None, comp=None, *,
                            outfile=None,
-                           size=(800, 800), dpi=100, force_one_column=False):
-        """
-        Plot a heatmap showing which rates are affected by which nuclei.
+                           size=(800, 800), dpi=100,
+                           force_one_column=False,
+                           max_ydot_ratio=1.e15,
+                           plot_to_cbar_ratio=20):
+        """Plot a heatmap showing which rates are affected by which
+        nuclei.
 
         Parameters
         ----------
@@ -2652,11 +2676,23 @@ class RateCollection:
             temperature used to evaluate rates
         comp : Composition
             composition used to evaluate rates
-        outfile
+        outfile : str
+            filename to output image
+        size : Iterable(int)
+            image dimensions in pixels
+        dpi : int
+            dots per inch for physical size of image
+        force_one_column : bool
+            do we insist on a single column for the plot?
+        max_ydot_ratio : float
+            ratio between maximum ydot and minimum shown in the plot
+        plot_to_cbar_ratio : float
+            ratio of main axes to colorbar size
 
         Returns
         -------
         matplotlib.figure.Figure
+
         """
 
         nc = self._get_network_chart(rho, T, comp)
@@ -2671,7 +2707,7 @@ class RateCollection:
         valid_max = np.abs(_ydot[_ydot != 0]).max()
 
         # pylint: disable-next=redundant-keyword-arg
-        norm = SymLogNorm(valid_max/1.e15, vmin=-valid_max, vmax=valid_max)
+        norm = SymLogNorm(valid_max/max_ydot_ratio, vmin=-valid_max, vmax=valid_max)
 
         # if there are a lot of rates, we split the network chart into
         # two side-by-side panes, with the first half of the rates on
@@ -2687,23 +2723,31 @@ class RateCollection:
         if force_one_column:
             npanes = 1
 
-        fig, _ax = plt.subplots(1, npanes, constrained_layout=True)
+        fig = plt.figure(constrained_layout=True,
+                         figsize=(size[0]/dpi, size[1]/dpi))
 
-        fig.set_size_inches(size[0]/dpi, size[1]/dpi)
-
-        if npanes == 1:
-            drate = len(self.rates)
-        else:
+        if npanes == 2:
+            # we'll use a grid spec of 3x1 and make the main plot
+            # areas and colorbar from it (colorbar on the right)
+            gs = mpl.gridspec.GridSpec(figure=fig,
+                                       nrows=1, ncols=3,
+                                       width_ratios=[plot_to_cbar_ratio, plot_to_cbar_ratio, 1])
             drate = (len(self.rates) + 1) // 2
+        else:
+            # colorbar on the bottom
+            drate = len(self.rates)
+            gs = mpl.gridspec.GridSpec(figure=fig,
+                                       nrows=2, ncols=1,
+                                       height_ratios=[plot_to_cbar_ratio, 1])
 
         _rates = sorted(self.rates)
 
         for ipane in range(npanes):
 
             if npanes == 2:
-                ax = _ax[ipane]
+                ax = fig.add_subplot(gs[0, ipane])
             else:
-                ax = _ax
+                ax = fig.add_subplot(gs[0, 0])
 
             istart = ipane * drate
             iend = min((ipane + 1) * drate - 1, len(self.rates)-1)
@@ -2725,10 +2769,15 @@ class RateCollection:
                         data[irow, icol] = ydot
 
             # each pane has all the nuclei
-            ax.set_xticks(np.arange(len(self.unique_nuclei)), labels=[f"${n.pretty}$" for n in self.unique_nuclei], rotation=90)
+            ax.set_xticks(np.arange(len(self.unique_nuclei)),
+                          labels=[f"${n.pretty}$"
+                                  for n in self.unique_nuclei], rotation=90)
 
             # each pane only has its subset of rates
-            ax.set_yticks(np.arange(nrates), labels=[f"{r.pretty_string}" for irate, r in enumerate(_rates) if istart <= irate <= iend])
+            ax.set_yticks(np.arange(nrates),
+                          labels=[f"{r.pretty_string}"
+                                  for irate, r in enumerate(_rates)
+                                  if istart <= irate <= iend])
 
             im = ax.imshow(data, norm=norm, cmap=plt.cm.bwr)
 
@@ -2740,12 +2789,15 @@ class RateCollection:
             ax.set_xticks(np.arange(data.shape[1]+1)-.5, minor=True)
             ax.set_yticks(np.arange(data.shape[0]+1)-.5, minor=True)
             ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
-            ax.tick_params(which="minor", bottom=False, left=False)
+            ax.tick_params(which="minor", bottom=False, left=False,
+                           labelsize=8)
 
         if npanes == 1:
-            fig.colorbar(im, ax=ax, orientation="horizontal", shrink=0.75)
+            cax = fig.add_subplot(gs[1, 0])
+            fig.colorbar(im, cax=cax, orientation="horizontal")
         else:
-            fig.colorbar(im, ax=ax, orientation="vertical", shrink=0.25)
+            cax = fig.add_subplot(gs[0, 2])
+            fig.colorbar(im, cax=cax, orientation="vertical")
 
         if outfile is not None:
             fig.savefig(outfile, bbox_inches="tight")

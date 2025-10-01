@@ -21,7 +21,7 @@
 
 pynucastro is a python library for nuclear astrophysics.  It provides
 access to nuclear data and reaction rates, and tools for building
-and interactively nuclear reaction networks.
+and interactively exploring nuclear reaction networks.
 
 The main features are:
 
@@ -56,7 +56,7 @@ The main features are:
   * The ability to write out python or C++ code needed to integrate
     the network.
 
-  * Additional physic methods for thermal neutrino sources and
+  * Additional physics methods for thermal neutrino sources and
     Fermi-Dirac integrals.
 
 ## Documentation

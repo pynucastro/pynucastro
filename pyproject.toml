@@ -1,6 +1,6 @@
 # pyproject.toml
 [build-system]
-requires = ["setuptools>=64", "setuptools_scm>=8"]
+requires = ["setuptools>=77", "setuptools_scm>=8"]
 build-backend = "setuptools.build_meta"
 
 
@@ -10,7 +10,7 @@ build-backend = "setuptools.build_meta"
 name = "pynucastro"
 description = "A python library for nuclear astrophysics"
 readme = "README.md"
-license.text = "BSD"
+license = "BSD-3-Clause"
 authors = [
   {name="pynucastro development group"},
   {email="michael.zingale@stonybrook.edu"},
@@ -51,6 +51,7 @@ pynucastro = [
   "library/tabular/*",
   "library/tabular/suzuki/*",
   "library/tabular/langanke/*",
+  "library/tabular/pruet_fuller/*",
   "library/tabular/ffn/*",
   "library/tabular/oda/*",
   "templates/**/*",
@@ -135,8 +136,10 @@ addopts = """\
   --ignore=docs/source/pynucastro-examples.ipynb \
   --ignore=docs/source/pynucastro-integration.ipynb \
   --ignore=docs/source/duplicate-rates.ipynb \
+  --ignore=docs/source/electron-eos.ipynb \
   --ignore-glob=pynucastro/library/tabular/*/generate_*.ipynb \
   --ignore=pynucastro/eos/generate_quadrature_weights.ipynb \
+  --ignore=pynucastro/eos/degenerate_derivatives.ipynb \
   --ignore=examples/rxn-network-integration.ipynb \
   --nbval-sanitize-with .github/workflows/nbval_sanitize.cfg \
   """

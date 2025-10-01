@@ -59,6 +59,13 @@ The available sources are:
      These rates should be preferred to the FFN rates where there is
      overlap.
 
+* :cite:t:`pruetfuller:2003` (covers $A = 65$ to $80$)
+
+  The density (g/cm$^3$) and temperature (K) ranges of the rates are:
+
+  * $1 \le \log_{10}(\rho Y_e) \le 11.5$
+  * $7 \le \log_{10}(T) \le 11$
+
 * :cite:t:`suzuki:2016` (covers $A = 17$ to $28$):
 
   These data tables were obtained from
