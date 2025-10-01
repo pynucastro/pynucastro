@@ -1,3 +1,8 @@
+"""Classes and methods for deriving inverse rates from forward rates
+using detailed balance.
+
+"""
+
 import math
 import warnings
 from collections import Counter
@@ -6,6 +11,7 @@ import numpy as np
 
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
+from pynucastro.rates.modified_rate import ModifiedRate
 from pynucastro.rates.rate import Rate
 from pynucastro.rates.reaclib_rate import ReacLibRate, SingleSet
 from pynucastro.rates.tabular_rate import TabularRate
@@ -36,44 +42,56 @@ class DerivedRate(ReacLibRate):
             raise TypeError('rate must be a Rate subclass')
 
         if (isinstance(rate, TabularRate) or self.rate.weak or
-            self.rate.reverse):
-            raise ValueError('The rate is reverse or weak or tabular')
+            self.rate.derived_from_inverse):
+            raise ValueError('The rate is a ReacLib derived from inverse rate or weak or tabular')
 
         if not all(nuc.spin_states for nuc in self.rate.reactants):
-            raise ValueError('One of the reactants spin ground state, is not defined')
+            raise ValueError(f'One of the reactants spin ground state ({self.rate.reactants}), is not defined')
 
         if not all(nuc.spin_states for nuc in self.rate.products):
-            raise ValueError('One of the products spin ground state, is not defined')
+            raise ValueError(f'One of the products spin ground state ({self.rate.products}), is not defined')
 
         derived_sets = []
-        for ssets in self.rate.sets:
-            a = ssets.a
-            prefactor = 0.0
+
+        # The original rate of the modified rate is assumed to be ReacLibRate
+        # Note: if dealing with ModifiedRate, the actual number of counts for
+        # reactants and products come from rates.reactants and rates.product.
+        # In the case of stoichiometry, this only affects the full ydot.
+        # So it doesn't affect detailed balance calculation.
+        if isinstance(rate, ModifiedRate):
+            r = self.rate.original_rate
+        else:
+            r = self.rate
+
+        Q = self.rate.Q
+        if self.compute_Q:
             Q = 0.0
-            prefactor += -np.log(constants.N_A) * (len(self.rate.reactants) -
-                                                   len(self.rate.products))
+            for n in set(self.rate.reactants):
+                c = self.rate.reactant_count(n)
+                Q += c * n.A_nuc
+            for n in set(self.rate.products):
+                c = self.rate.product_count(n)
+                Q += -c * n.A_nuc
+            Q *= constants.m_u_MeV_C18
 
-            for nucr in self.rate.reactants:
-                prefactor += 1.5*np.log(nucr.A) + np.log(nucr.spin_states)
-                Q += nucr.A_nuc
-            for nucp in self.rate.products:
-                prefactor += -1.5*np.log(nucp.A) - np.log(nucp.spin_states)
-                Q -= nucp.A_nuc
+        prefactor = np.log(constants.m_u_C18) * (len(self.rate.reactants) -
+                                                  len(self.rate.products))
 
-            if self.compute_Q:
-                Q = Q * constants.m_u_MeV_C18
-            else:
-                Q = self.rate.Q
+        for nucr in self.rate.reactants:
+            prefactor += 2.5*np.log(nucr.A_nuc) - np.log(nucr.A) + np.log(nucr.spin_states)
+        for nucp in self.rate.products:
+            prefactor += -2.5*np.log(nucp.A_nuc) + np.log(nucp.A) - np.log(nucp.spin_states)
 
-            prefactor += np.log(self.counter_factors()[1]) - np.log(self.counter_factors()[0])
+        prefactor += np.log(self.counter_factors()[1]) - np.log(self.counter_factors()[0])
 
-            if len(self.rate.reactants) == len(self.rate.products):
-                prefactor += 0.0
-            else:
-                F = (constants.m_u_C18 * constants.k * 1.0e9 /
-                     (2.0*np.pi*constants.hbar**2))**(1.5*(len(self.rate.reactants) -
-                                                           len(self.rate.products)))
-                prefactor += np.log(F)
+        if len(self.rate.reactants) != len(self.rate.products):
+            F = (constants.m_u_C18 * constants.k * 1.0e9 /
+                 (2.0*np.pi*constants.hbar**2))**(1.5*(len(self.rate.reactants) -
+                                                       len(self.rate.products)))
+            prefactor += np.log(F)
+
+        for ssets in r.sets:
+            a = ssets.a
 
             a_rev = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
             a_rev[0] = prefactor + a[0]
@@ -84,17 +102,22 @@ class DerivedRate(ReacLibRate):
             a_rev[5] = a[5]
             a_rev[6] = a[6] + 1.5*(len(self.rate.reactants) -
                                    len(self.rate.products))
-            sset_d = SingleSet(a=a_rev, labelprops=rate.labelprops)
+            sset_d = SingleSet(a=a_rev, labelprops=r.labelprops)
             derived_sets.append(sset_d)
 
-        super().__init__(rfile=self.rate.rfile, chapter=self.rate.chapter,
-                         original_source=self.rate.original_source,
+        super().__init__(rfile=r.rfile, chapter=r.chapter,
+                         original_source=r.original_source,
                          reactants=self.rate.products,
                          products=self.rate.reactants,
                          sets=derived_sets, labelprops="derived", Q=-Q)
 
         # explicitly mark it as reverse
-        self.reverse = True
+        self.derived_from_inverse = True
+
+        # Update stoichiometry so that we are consistent in full ydot eqns
+        self.stoichiometry = self.rate.stoichiometry
+
+        self._set_print_representation()
 
     def _warn_about_missing_pf_tables(self):
         skip_nuclei = {Nucleus("h1"), Nucleus("n"), Nucleus("he4")}

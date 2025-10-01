@@ -6,9 +6,9 @@ from .approximate_rates import ApproximateRate, create_double_neutron_capture
 from .derived_rate import DerivedRate
 from .files import RateFileError, _find_rate_file
 from .known_duplicates import find_duplicate_rates, is_allowed_dupe
-from .library import (FFNLibrary, LangankeLibrary, Library, RateFilter,
-                      ReacLibLibrary, SuzukiLibrary, TabularLibrary,
-                      list_known_rates)
+from .library import (FFNLibrary, LangankeLibrary, Library, OdaLibrary,
+                      PruetFullerLibrary, RateFilter, ReacLibLibrary,
+                      SuzukiLibrary, TabularLibrary, list_known_rates)
 from .modified_rate import ModifiedRate
 from .rate import BaryonConservationError, Rate, RatePair, Tfactors
 from .reaclib_rate import ReacLibRate, SingleSet
@@ -36,7 +36,7 @@ def load_rate(rfile=None):
 
     try:
         rate = TabularRate(rfile=rfile)
-    except (RateFileError, UnsupportedNucleus):
+    except (AttributeError, RateFileError, UnsupportedNucleus):
         rate = ReacLibRate(rfile=rfile)
 
     return rate

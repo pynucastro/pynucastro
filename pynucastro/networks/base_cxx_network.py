@@ -16,10 +16,12 @@ from pathlib import Path
 import numpy as np
 import sympy
 
+from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
 from pynucastro.rates import DerivedRate
 from pynucastro.screening import get_screening_map
+from pynucastro.utils import pynucastro_version
 
 
 class BaseCxxNetwork(ABC, RateCollection):
@@ -59,6 +61,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<nrxn_enum_type>'] = self._nrxn_enum_type
         self.ftags['<rate_names>'] = self._rate_names
         self.ftags['<ebind>'] = self._ebind
+        self.ftags['<mion>'] = self._mion
         self.ftags['<compute_screening_factors>'] = self._compute_screening_factors
         self.ftags['<table_num>'] = self._table_num
         self.ftags['<declare_tables>'] = self._declare_tables
@@ -67,9 +70,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<compute_tabular_rates>'] = self._compute_tabular_rates
         self.ftags['<ydot>'] = self._ydot
         self.ftags['<ydot_weak>'] = self._ydot_weak
-        self.ftags['<enuc_add_energy_rate>'] = self._enuc_add_energy_rate
         self.ftags['<jacnuc>'] = self._jacnuc
-        self.ftags['<initial_mass_fractions>'] = self._initial_mass_fractions
         self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
         self.ftags['<rate_struct>'] = self._rate_struct
         self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
@@ -79,6 +80,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<part_fun_declare>'] = self._fill_partition_function_declare
         self.ftags['<part_fun_cases>'] = self._fill_partition_function_cases
         self.ftags['<spin_state_cases>'] = self._fill_spin_state_cases
+        self.ftags['<pynucastro_version>'] = self._fill_pynucastro_version
         self.indent = '    '
 
     @abstractmethod
@@ -110,9 +112,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         return int(rem.group(1))
 
     def _write_network(self, odir=None):
-        """This writes the RHS, jacobian and ancillary files for the
-        system of ODEs that this network describes, using the template
-        files.
+        """Output the RHS, jacobian and ancillary files for the system
+        of ODEs that this network describes, using the template files.
 
         """
         # pylint: disable=arguments-differ
@@ -326,6 +327,10 @@ class BaseCxxNetwork(ABC, RateCollection):
         for nuc in self.unique_nuclei:
             of.write(f'{self.indent*n_indent}ebind_per_nucleon({nuc.cindex()}) = {nuc.nucbind}_rt;\n')
 
+    def _mion(self, n_indent, of):
+        for nuc in self.unique_nuclei:
+            of.write(f'{self.indent*n_indent}mion({nuc.cindex()}) = {nuc.A_nuc * constants.m_u_C18}_rt;\n')
+
     def _table_num(self, n_indent, of):
         of.write(f'{self.indent*n_indent}const int num_tables = {len(self.tabular_rates)};\n')
 
@@ -358,7 +363,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f'{idnt}{r.table_index_name}_meta.nvars = {r.table_num_vars};\n')
             of.write(f'{idnt}{r.table_index_name}_meta.nheader = {r.table_header_lines};\n\n')
 
-            of.write(f'{idnt}init_tab_info({r.table_index_name}_meta, "{r.table_file}", {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data);\n\n')
+            of.write(f'{idnt}init_tab_info({r.table_index_name}_meta, "{r.rfile}", {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data);\n\n')
 
             of.write('\n')
 
@@ -378,7 +383,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{idnt}    rate_eval.dscreened_rates_dT(k_{r.cname()}) = drate_dt;\n')
                 of.write(f'{idnt}}}\n')
 
-                of.write(f'{idnt}rate_eval.enuc_weak += C::Legacy::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
+                of.write(f'{idnt}rate_eval.enuc_weak += C::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
 
                 of.write('\n')
 
@@ -452,7 +457,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                 of.write(f'{idnt}rate_eval.screened_rates(k_{r.cname()}) = rate;\n')
 
-                of.write(f'{idnt}rate_eval.enuc_weak += C::Legacy::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
+                of.write(f'{idnt}rate_eval.enuc_weak += C::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
 
                 of.write('\n')
             of.write(f'{idnt}auto screened_rates = rate_eval.screened_rates;\n')
@@ -489,19 +494,6 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             self._write_ydot_nuc(n_indent, of, ydot_sym_terms)
 
-    def _enuc_add_energy_rate(self, n_indent, of):
-        # Add tabular per-reaction neutrino energy generation rates to the energy generation rate
-        # (not thermal neutrinos)
-
-        idnt = self.indent * n_indent
-
-        for r in self.tabular_rates:
-            if len(r.reactants) != 1:
-                sys.exit('ERROR: Unknown energy rate corrections for a reaction where the number of reactants is not 1.')
-            else:
-                reactant = r.reactants[0]
-                of.write(f'{idnt}enuc += C::Legacy::n_A * {self.symbol_rates.name_y}({reactant.cindex()}) * rate_eval.add_energy_rate(k_{r.cname()});\n')
-
     def _jacnuc(self, n_indent, of):
         # now make the Jacobian
         n_unique_nuclei = len(self.unique_nuclei)
@@ -513,13 +505,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                                                                      standard="c++11"))
                     of.write(f"{self.indent*(n_indent)}scratch = {jvalue};\n")
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, scratch);\n\n")
-
-    def _initial_mass_fractions(self, n_indent, of):
-        for i, _ in enumerate(self.unique_nuclei):
-            if i == 0:
-                of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 1.0\n")
-            else:
-                of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 0.0\n")
 
     def _reaclib_rate_functions(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"
@@ -606,7 +591,10 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _fill_partition_function_data(self, n_indent, of):
         # itertools recipe
         def batched(iterable, n):
-            "Batch data into tuples of length n. The last batch may be shorter."
+            """Batch data into tuples of length n. The last batch may
+            be shorter.
+
+            """
             # batched('ABCDEFG', 3) --> ABC DEF G
             if n < 1:
                 raise ValueError('n must be at least one')
@@ -674,3 +662,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
             of.write(f"{self.indent*(n_indent+1)}spin = {spin_state};\n")
             of.write(f"{self.indent*(n_indent+1)}break;\n\n")
+
+    def _fill_pynucastro_version(self, n_indent, of):
+        of.write(f"{self.indent*n_indent}pynucastro version: {pynucastro_version()}\n")

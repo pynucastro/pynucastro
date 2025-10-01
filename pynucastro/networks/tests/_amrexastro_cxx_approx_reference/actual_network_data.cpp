@@ -4,7 +4,7 @@
 #ifdef NSE_NET
 namespace NSE_INDEX
 {
-    AMREX_GPU_MANAGED amrex::Array2D<int, 1, Rates::NumRates, 1, 7, Order::C> rate_indices {
+    AMREX_GPU_MANAGED amrex::Array2D<int, 1, Rates::NumRates, 1, 7, amrex::Order::C> rate_indices {
         -1, -1, -1, -1, -1, -1, -1,
         -1, -1, -1, -1, -1, -1, -1,
         -1, -1, -1, -1, -1, -1, -1,

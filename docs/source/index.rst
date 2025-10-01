@@ -10,12 +10,9 @@ pynucastro
 
 `https://github.com/pynucastro/pynucastro <https://github.com/pynucastro/pynucastro>`_
 
-pynucastro is a set of python interfaces to nuclear reaction rate
-databases (including the JINA reaclib nuclear reaction rate database).
-It is meant for both interactive exploration of rates (through Jupyter
-notebooks) and to create reaction networks for use in simulation
-codes.
-
+pynucastro is a python library for nuclear astrophysics.  It provides
+access to nuclear data and reaction rates, and tools for building
+and interactively exploring nuclear reaction networks.
 
 .. toctree::
    :maxdepth: 1
@@ -37,11 +34,12 @@ codes.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Exploring Networks in Python
+   :caption: pynucastro Overview
    :hidden:
 
    pynucastro-examples.ipynb
    plot-types.ipynb
+   basic_network.ipynb
    pynucastro-integration.ipynb
 
 
@@ -83,6 +81,9 @@ codes.
    nse-protons.ipynb
    unimportant-rates.ipynb
    network-cycles.ipynb
+   stiffness.ipynb
+   reduction.ipynb
+   sens_analysis_example.ipynb
 
 .. toctree::
    :maxdepth: 1
@@ -91,6 +92,14 @@ codes.
 
    NSE-example
    nse_table
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Thermodynamics
+   :hidden:
+
+   fermi-integrals
+   electron-eos
 
 .. toctree::
    :maxdepth: 1

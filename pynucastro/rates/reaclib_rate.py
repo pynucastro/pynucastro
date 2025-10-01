@@ -1,3 +1,8 @@
+"""Classes and methods for working with rates from the ReacLib
+library.
+
+"""
+
 import io
 from pathlib import Path
 
@@ -31,13 +36,13 @@ class SingleSet:
         self.label = None
         self.resonant = None
         self.weak = None
-        self.reverse = None
+        self.derived_from_inverse = None
 
         self._update_label_properties()
 
     def _update_label_properties(self):
         """Set label and flags indicating Set is resonant, weak, or
-            reverse.
+        reverse.
 
         """
         assert isinstance(self.labelprops, str)
@@ -46,7 +51,7 @@ class SingleSet:
         self.label = self.labelprops[0:4]
         self.resonant = self.labelprops[4] == 'r'
         self.weak = self.labelprops[4] == 'w'
-        self.reverse = self.labelprops[5] == 'v'
+        self.derived_from_inverse = self.labelprops[5] == 'v'
 
     def __eq__(self, other):
         x = True
@@ -57,7 +62,7 @@ class SingleSet:
         x = x and (self.label == other.label)
         x = x and (self.resonant == other.resonant)
         x = x and (self.weak == other.weak)
-        x = x and (self.reverse == other.reverse)
+        x = x and (self.derived_from_inverse == other.derived_from_inverse)
         return x
 
     def f(self):
@@ -264,6 +269,7 @@ class ReacLibRate(Rate):
         If the nucleus is unknown to pynucastro
 
     """
+
     def __init__(self, rfile=None, chapter=None, original_source=None,
                  reactants=None, products=None, sets=None, labelprops=None, Q=None):
         # pylint: disable=super-init-not-called
@@ -311,7 +317,7 @@ class ReacLibRate(Rate):
         self.resonant = None
         self.weak = None
         self.weak_type = None
-        self.reverse = None
+        self.derived_from_inverse = None
 
         self.removed = None
 
@@ -405,7 +411,7 @@ class ReacLibRate(Rate):
 
     def __add__(self, other):
         """Combine the sets of two Rate objects if they describe the
-           same reaction. Must be Reaclib rates.
+        same reaction. Must be Reaclib rates.
 
         """
         assert self.reactants == other.reactants
@@ -415,7 +421,7 @@ class ReacLibRate(Rate):
         assert self.label == other.label
         assert self.weak == other.weak
         assert self.weak_type == other.weak_type
-        assert self.reverse == other.reverse
+        assert self.derived_from_inverse == other.derived_from_inverse
 
         if self.resonant != other.resonant:
             self._labelprops_combine_resonance()
@@ -430,8 +436,8 @@ class ReacLibRate(Rate):
         return new_rate
 
     def _set_label_properties(self, labelprops=None):
-        """Calls _update_resonance_combined and then
-            _update_label_properties.
+        """Call _update_resonance_combined and then
+        _update_label_properties.
 
         """
         if labelprops:
@@ -443,8 +449,8 @@ class ReacLibRate(Rate):
         self._update_label_properties()
 
     def _update_resonance_combined(self):
-        """Checks the Sets in this Rate and updates the
-            resonance_combined flag as well as self.labelprops[4]
+        """Check the Sets in this Rate and updates the
+        resonance_combined flag as well as self.labelprops[4]
 
         """
         sres = [s.resonant for s in self.sets]
@@ -459,7 +465,7 @@ class ReacLibRate(Rate):
 
     def _update_label_properties(self):
         """Set label and flags indicating Rate is resonant, weak, or
-            reverse.
+        reverse.
 
         """
         assert isinstance(self.labelprops, str)
@@ -468,13 +474,13 @@ class ReacLibRate(Rate):
             self.resonant = False
             self.weak = False
             self.weak_type = None
-            self.reverse = False
+            self.derived_from_inverse = False
         elif self.labelprops == "derived":
             self.label = "derived"
             self.resonant = False  # Derived may be resonant in some cases
             self.weak = False
             self.weak_type = None
-            self.reverse = False
+            self.derived_from_inverse = False
         else:
             assert len(self.labelprops) == 6
             self.label = self.labelprops[0:4]
@@ -487,7 +493,7 @@ class ReacLibRate(Rate):
                     self.weak_type = self.label.strip().replace('+', '_pos_').replace('-', '_neg_')
             else:
                 self.weak_type = None
-            self.reverse = self.labelprops[5] == 'v'
+            self.derived_from_inverse = self.labelprops[5] == 'v'
             self.source = RateSource.source(self.label)
 
     def _read_from_file(self, f):
@@ -638,8 +644,8 @@ class ReacLibRate(Rate):
         """
 
         srev = ''
-        if self.reverse:
-            srev = 'reverse'
+        if self.derived_from_inverse:
+            srev = 'derived_from_inverse'
 
         sweak = ''
         if self.weak:

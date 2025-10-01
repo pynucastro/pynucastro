@@ -1,19 +1,19 @@
+"""Classes and methods that provide access to the AME mass excess data."""
+
 from pathlib import Path
 
 
 class MassTable:
-    """
-    The purpose of this class is to:
+    """Store the nuclear masses as a dictionary mapping nuclides to
+    their mass excess (A_nuc - A measured) in MeV from the table
+    mass_excess2020.txt.
 
-    a) Create a dictionary mapping nuclides to their mass excess A_nuc - A measured
-       in MeV from the table mass_excess2020.txt.
+    Parameters
+    ----------
+    filename : str, pathlib.Path
+        The name of the file containing nuclei and mass excesses
+        (mass_excess2020.txt is used by default).
 
-    b) Parse the information of the previously defined dictionary to the Nucleus
-       class.
-
-    The only required variable to construct an instance of this class is : var filename:
-    that contains the .txt table file with the nuclei and their mass excess. If this
-    variable is not provided, then mass_excess2020.txt is considered by default.
     """
 
     def __init__(self, filename: str | Path = None):
@@ -38,6 +38,21 @@ class MassTable:
                 self.mass_diff[int(A), int(Z)] = float(dm)
 
     def get_mass_diff(self, a: int, z: int) -> float:
+        """Return the mass excess for a nucleus
+
+        Parameters
+        ----------
+        a : int
+            Atomic weight
+        z : int
+            Atomic number
+
+        Returns
+        -------
+        float
+
+        """
+
         try:
             return self.mass_diff[a, z]
         except KeyError as exc:

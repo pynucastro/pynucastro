@@ -1,6 +1,4 @@
-"""Classes and methods to interface with files storing rate data.
-
-"""
+"""Classes and methods to interface with files storing rate data."""
 
 import math
 from pathlib import Path
@@ -14,7 +12,10 @@ from pynucastro.rates.files import _find_rate_file
 
 
 class BaryonConservationError(Exception):
-    pass
+    """Exception for the case where we don't have the same number of
+    baryons on the left and righthand sides of the reaction.
+
+    """
 
 
 @jitclass([
@@ -26,19 +27,31 @@ class BaryonConservationError(Exception):
     ('lnT9', numba.float64)
 ])
 class Tfactors:
-    """ precompute temperature factors for speed
+    """Precompute temperature factors for speed
 
-    :param float T: input temperature (Kelvin)
-    :var T9:    T / 1.e9 K
-    :var T9i:   1.0 / T9
-    :var T913i: 1.0 / T9 ** (1/3)
-    :var T913:  T9 ** (1/3)
-    :var T953:  T9 ** (5/3)
-    :var lnT9:  log(T9)
+    Parameters
+    ----------
+    T : float
+        Temperature in Kelvin.
+
+    Attributes
+    ----------
+    T9 : float
+        Temperature divided by 1.e9 K.
+    T9i : float
+        1.0 / T9
+    T913i : float
+        1.0 / T9**(1/3)
+    T913 : float
+        T9**(1/3)
+    T953 : float
+        T9**(5/3)
+    lnT9 : float
+        log(T9)
+
     """
 
     def __init__(self, T):
-        """ return the Tfactors object.  Here, T is temperature in Kelvin """
         self.T9 = T/1.e9
         self.T9i = 1.0/self.T9
         self.T913i = self.T9i**(1./3.)
@@ -86,6 +99,7 @@ class Rate:
         use_identical_particle_factor = False
 
     """
+
     def __init__(self, reactants=None, products=None,
                  Q=None, weak_type="", label="generic",
                  stoichiometry=None,
@@ -111,11 +125,6 @@ class Rate:
         products_str = '_'.join([repr(nuc) for nuc in self.products])
         self.fname = f'{reactants_str}__{products_str}__{label}'
 
-        if Q is None:
-            self._set_q()
-        else:
-            self.Q = Q
-
         self.weak_type = weak_type
 
         # the identical particle factor scales the rate to prevent
@@ -128,6 +137,12 @@ class Rate:
         # some subclasses might define a stoichmetry as a dict{Nucleus}
         # that gives the numbers for the dY/dt equations
         self.stoichiometry = stoichiometry
+
+        # Set Q-value of the reaction rate. Needs to go after stoichiometry.
+        if Q is None:
+            self._set_q()
+        else:
+            self.Q = Q
 
         self._set_rhs_properties()
         self._set_screening()
@@ -144,7 +159,7 @@ class Rate:
 
         self.tabular = False
 
-        self.reverse = None
+        self.derived_from_inverse = None
 
         self.rate_eval_needs_rho = False
         self.rate_eval_needs_comp = False
@@ -156,13 +171,18 @@ class Rate:
         return hash(self.__repr__())
 
     def __eq__(self, other):
-        """ Determine whether two Rate objects are equal.
-        They are equal if they contain identical reactants and products"""
+        """Determine whether two Rate objects are equal.  They are
+        equal if they contain identical reactants and products
+
+        """
 
         return (self.reactants, self.products) == (other.reactants, other.products)
 
     def __lt__(self, other):
-        """sort such that lightest reactants come first, and then look at products"""
+        """Sort such that lightest reactants come first, and then look
+        at products.
+
+        """
 
         # this sort will make two nuclei with the same A be in order of Z
         # (assuming there are no nuclei with A > 999
@@ -189,15 +209,17 @@ class Rate:
         return True
 
     def _set_q(self):
-        """set the Q value of the reaction (in MeV)"""
+        """Set the Q value of the reaction (in MeV)."""
 
         # from the masses of the nuclei, Q = M_products - M_reactants
 
         self.Q = 0
-        for n in self.reactants:
-            self.Q += n.mass
-        for n in self.products:
-            self.Q += -n.mass
+        for n in set(self.reactants):
+            c = self.reactant_count(n)
+            self.Q += c * n.mass
+        for n in set(self.products):
+            c = self.product_count(n)
+            self.Q += -c * n.mass
 
     def _set_print_representation(self):
 
@@ -359,7 +381,10 @@ class Rate:
         self.pretty_string += r"$"
 
     def _set_rhs_properties(self):
-        """ compute statistical prefactor and density exponent from the reactants. """
+        """Compute statistical prefactor and density exponent from the
+        reactants.
+
+        """
         self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
         self.inv_prefactor = 1
         if self.use_identical_particle_factor:
@@ -372,7 +397,9 @@ class Rate:
 
     def _set_screening(self):
         """Determine if this rate is eligible for screening and the
-        nuclei to use."""
+        nuclei to use.
+
+        """
         # Tells if this rate is eligible for screening, and if it is
         # then Rate.ion_screen is a 2-element (3 for 3-alpha) list of
         # Nucleus objects for screening; otherwise it is set to none
@@ -405,7 +432,7 @@ class Rate:
             self.symmetric_screen = self.ion_screen
 
     def cname(self):
-        """A C++-safe version of the rate name
+        """Get a C++-safe version of the rate name
 
         Returns
         -------
@@ -417,7 +444,7 @@ class Rate:
         return self.fname.replace("__", "_to_", 1).replace("__", "_")
 
     def get_rate_id(self):
-        """An identifying string for this rate.
+        """Get an identifying string for this rate.
 
         Returns
         -------
@@ -428,7 +455,7 @@ class Rate:
 
     @property
     def id(self):
-        """the rate's id string
+        """Get the rate's id string
 
         Returns
         -------
@@ -470,9 +497,11 @@ class Rate:
         return nuc
 
     def swap_protons(self):
-        """Change any protons in the rate to NSE protons.  These
-        act the same as protons but will be kept as distinct in
-        the network."""
+        """Change any protons in the rate to NSE protons.  These act
+        the same as protons but will be kept as distinct in the
+        network.
+
+        """
 
         p = Nucleus("p")
         p_nse = Nucleus("p_nse")
@@ -618,6 +647,18 @@ class Rate:
 
         raise NotImplementedError("base Rate class does not know how to eval()")
 
+    def function_string_py(self):
+        """Return a string containing the python function that
+        computes the rate.
+
+        Raises
+        ------
+        NotImplementedError
+
+        """
+
+        raise NotImplementedError("base Rate class does not implement function_string_py()")
+
     def jacobian_string_py(self, y_i):
         """Return a string containing the term in a jacobian matrix
         in a reaction network corresponding to this rate
@@ -746,12 +787,13 @@ class RateSource:
         "langanke": "https://doi.org/10.1006/adnd.2001.0865",
         "suzuki": "https://doi.org/10.3847/0004-637X/817/2/163",
         "ffn": "https://doi.org/10.1086/190779",
+        "pruet_fuller": "https://doi.org/10.1086/376753",
         "reaclib": "https://reaclib.jinaweb.org/labels.php?action=viewLabel&label="
     }
 
     @staticmethod
     def _read_rate_sources(urls: dict[str, str], csv_path: Path) -> dict[str, dict[str, str]]:
-        """Builds the labels dictionary from the supplied csv file."""
+        """Build the labels dictionary from the supplied csv file."""
 
         labels = {}
         with csv_path.open("r") as csv:
@@ -768,11 +810,13 @@ class RateSource:
 
     @classmethod
     def source(cls, label: str) -> dict[str, str] | None:
-        """Returns the source of a rate given its label, and None if not found.
+        """Return the source of a rate given its label, and None if
+        not found.
 
         Parameters
         ----------
         label : str
+
         """
 
         return cls.labels.get(label.lower().strip())

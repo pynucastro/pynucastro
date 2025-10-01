@@ -1,6 +1,6 @@
 # pyproject.toml
 [build-system]
-requires = ["setuptools>=64", "setuptools_scm>=8"]
+requires = ["setuptools>=77", "setuptools_scm>=8"]
 build-backend = "setuptools.build_meta"
 
 
@@ -10,7 +10,7 @@ build-backend = "setuptools.build_meta"
 name = "pynucastro"
 description = "A python library for nuclear astrophysics"
 readme = "README.md"
-license.text = "BSD"
+license = "BSD-3-Clause"
 authors = [
   {name="pynucastro development group"},
   {email="michael.zingale@stonybrook.edu"},
@@ -51,7 +51,9 @@ pynucastro = [
   "library/tabular/*",
   "library/tabular/suzuki/*",
   "library/tabular/langanke/*",
+  "library/tabular/pruet_fuller/*",
   "library/tabular/ffn/*",
+  "library/tabular/oda/*",
   "templates/**/*",
   "nucdata/*",
   "nucdata/AtomicMassEvaluation/*",
@@ -134,7 +136,10 @@ addopts = """\
   --ignore=docs/source/pynucastro-examples.ipynb \
   --ignore=docs/source/pynucastro-integration.ipynb \
   --ignore=docs/source/duplicate-rates.ipynb \
+  --ignore=docs/source/electron-eos.ipynb \
   --ignore-glob=pynucastro/library/tabular/*/generate_*.ipynb \
+  --ignore=pynucastro/eos/generate_quadrature_weights.ipynb \
+  --ignore=pynucastro/eos/degenerate_derivatives.ipynb \
   --ignore=examples/rxn-network-integration.ipynb \
   --nbval-sanitize-with .github/workflows/nbval_sanitize.cfg \
   """
@@ -178,3 +183,15 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
+
+[tool.pydocstyle]
+convention = "numpy"
+add-ignore = [
+  "D105",  # Missing docstring in magic method
+  "D202",  # No blank lines allowed after function docstring
+  "D205",  # 1 blank line required between summary line and description
+  "D400",  # First line should end with a period
+]
+# exclude directories that start with "." or "_", as well as the
+# scripts under pynucastro/library
+match-dir='^(?![._])(?!library$).*'
