@@ -109,7 +109,7 @@ class TestNucleus:
 
     def test_range(self):
 
-        nuc_list = get_nuclei_in_range(6, 8, 12, 16)
+        nuc_list = get_nuclei_in_range(Z_range=[6, 8], A_range=[12, 16])
 
         assert len(nuc_list) == 15
         assert nuc_list[0] == Nucleus("c12")
@@ -127,6 +127,17 @@ class TestNucleus:
         assert nuc_list[12] == Nucleus("o14")
         assert nuc_list[13] == Nucleus("o15")
         assert nuc_list[14] == Nucleus("o16")
+
+    def test_range2(self):
+
+        nuc_list = get_nuclei_in_range("O", neutron_excess_range=[-2, 2])
+
+        assert len(nuc_list) == 5
+        assert nuc_list[0] == Nucleus("o14")
+        assert nuc_list[1] == Nucleus("o15")
+        assert nuc_list[2] == Nucleus("o16")
+        assert nuc_list[3] == Nucleus("o17")
+        assert nuc_list[4] == Nucleus("o18")
 
     def test_cast(self):
         assert Nucleus.cast("c12") == self.c12
@@ -156,3 +167,48 @@ class TestNucleus:
             Nucleus.cast_list(None)
         assert Nucleus.cast_list(None, allow_None=True) is None
         assert Nucleus.cast_list([]) == []
+
+    def test_from_Z_A(self):
+        assert self.he4 == Nucleus.from_Z_A(2, 4)
+
+    def test_add_subtract(self):
+        assert self.c12 + self.n == Nucleus("c13")
+        assert self.d - self.n == self.h1
+
+    def test_parsing(self):
+        assert Nucleus("ni56") == Nucleus("56ni")
+
+        with raises(ValueError):
+            _ = Nucleus("ni56n")
+
+
+class TestNSEProtons:
+    @classmethod
+    def setup_class(cls):
+        """ this is run once for each class before any tests """
+
+    @classmethod
+    def teardown_class(cls):
+        """ this is run once for each class after all tests """
+
+    def setup_method(self):
+        """ this is run before each test """
+
+        self.p = Nucleus("p")
+        self.p_nse = Nucleus("p_nse")
+
+    def teardown_method(self):
+        """ this is run after each test """
+
+    def test_equal(self):
+        assert self.p != self.p_nse
+
+    def test_name(self):
+        assert self.p_nse.raw == "p_nse"
+
+    def test_properties(self):
+        assert self.p_nse.Z == self.p.Z
+        assert self.p_nse.A == self.p.A
+        assert self.p_nse.mass == self.p.mass
+        assert not self.p.nse
+        assert self.p_nse.nse

@@ -5,7 +5,7 @@
 
 #include <actual_network.H>
 #include <burn_type.H>
-
+#include <screen.H>
 #include <reaclib_rates.H>
 
 using namespace Species;
@@ -44,13 +44,43 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     // Calculate Reaclib rates
 
+    plasma_state_t pstate{};
+    fill_plasma_state(pstate, state.T, state.rho, Y);
+
     tf_t tfactors = evaluate_tfactors(state.T);
 
     fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
+#ifndef DISABLE_SCREENING
+
+    // Evaluating screening factors
+
+    Real scor;
+    [[maybe_unused]] Real scor2;
+
+
+    {
+        auto scn_fac = scrn::calculate_screen_factor(6.0_rt, 12.0_rt, 6.0_rt, 12.0_rt);
+        actual_screen(pstate, scn_fac, scor);
+    }
+
+    rate_eval.screened_rates(k_C12_C12_to_He4_Ne20) *= scor;
+    rate_eval.screened_rates(k_C12_C12_to_n_Mg23) *= scor;
+    rate_eval.screened_rates(k_C12_C12_to_p_Na23) *= scor;
+
+
+    {
+        auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 6.0_rt, 12.0_rt);
+        actual_screen(pstate, scn_fac, scor);
+    }
+
+    rate_eval.screened_rates(k_He4_C12_to_O16) *= scor;
+
+#endif
+
     // Fill approximate rates
 
-    fill_approx_rates<do_T_derivatives, T>(tfactors, rate_eval);
+    fill_approx_rates<do_T_derivatives, T>(tfactors, state.rho, Y, rate_eval);
 
 }
 
@@ -98,6 +128,9 @@ void rhs_nuc(const burn_t& state,
 inline
 void actual_rhs (burn_t& state, Array1D<Real, 1, NumSpec>& ydot)
 {
+
+    compute_ye(state);
+
     for (int i = 1; i <= NumSpec; ++i) {
         ydot(i) = 0.0_rt;
     }
@@ -177,8 +210,10 @@ void jac_nuc(const burn_t& state,
 
 template<class MatrixType>
 inline
-void actual_jac(const burn_t& state, MatrixType& jac)
+void actual_jac(burn_t& state, MatrixType& jac)
 {
+
+    compute_ye(state);
 
     // Set molar abundances
     Array1D<Real, 1, NumSpec> Y;

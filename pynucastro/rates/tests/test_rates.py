@@ -4,8 +4,9 @@ import math
 import pytest
 from pytest import approx
 
-from pynucastro import rates
+from pynucastro import Composition, Rate, rates
 from pynucastro.nucdata import Nucleus
+from pynucastro.rates import BaryonConservationError
 
 
 class TestTfactors:
@@ -101,6 +102,9 @@ class TestRate:
     def teardown_method(self):
         """ this is run after each test """
 
+    def test_source(self):
+        assert self.rate1.source["Year"] == "2012"
+
     def test_reactants(self):
 
         # o15--n15-wc12
@@ -179,6 +183,22 @@ class TestRate:
         assert self.rate9.products[1] == self.he3
         assert len(self.rate9.products) == 2
 
+    def test_count(self):
+        assert self.rate3.reactant_count(Nucleus("he6")) == 1
+        assert self.rate3.product_count(Nucleus("he6")) == 0
+
+        assert self.rate5.reactant_count(Nucleus("n15")) == 1
+        assert self.rate5.reactant_count(Nucleus("p")) == 1
+        assert self.rate5.reactant_count(Nucleus("a")) == 0
+        assert self.rate5.reactant_count(Nucleus("c12")) == 0
+
+        assert self.rate5.product_count(Nucleus("n15")) == 0
+        assert self.rate5.product_count(Nucleus("p")) == 0
+        assert self.rate5.product_count(Nucleus("a")) == 1
+        assert self.rate5.product_count(Nucleus("c12")) == 1
+
+        assert self.rate8.reactant_count(Nucleus("a")) == 3
+
     def test_prefactor(self):
         assert self.rate4.prefactor == 1.0
         assert self.rate8.prefactor == approx(0.16666666)
@@ -233,10 +253,84 @@ class TestRate:
         assert self.rate2.lightest() == Nucleus("n")
         assert self.rate2.heaviest() == Nucleus("t")
 
+    def test_identical_particle_factor(self):
+        assert self.rate8.prefactor == approx(0.16666667)
+
+        self.rate8.use_identical_particle_factor = False
+        self.rate8._set_rhs_properties()  # pylint: disable=protected-access
+
+        assert self.rate8.prefactor == 1.0
+
+    def test_stoichiometry(self, reaclib_library):
+        assert repr(self.rate4) == "C12 + He4 ⟶ O16 + 𝛾"
+
+        # create a separate version since rates are mutable
+        c12ag = reaclib_library.get_rate_by_name("c12(a,g)o16")
+        c12ag.stoichiometry = {Nucleus("he4"): 1.5,
+                               Nucleus("c12"): 1,
+                               Nucleus("o16"): 1}
+        c12ag._set_print_representation()  # pylint: disable=protected-access
+
+        assert repr(c12ag) == "C12 + 1.5 He4 ⟶ O16"
+        assert c12ag.rid == "C12 + 1.5 He4 --> O16"
+
+        assert c12ag.reactant_count(Nucleus("he4")) == 1.5
+
+        # restore it so the library is unchanged
+        c12ag.stoichiometry = None
+
+    def test_stoichiometry_3alpha(self, reaclib_library):
+
+        three_alpha = reaclib_library.get_rate_by_name("he4(aa,g)c12")
+        assert repr(three_alpha) == "3 He4 ⟶ C12 + 𝛾"
+        assert three_alpha.rid == "3 He4 --> C12"
+
+        three_alpha.stoichiometry = {Nucleus("he4"): 4,
+                                     Nucleus("c12"): 1}
+        three_alpha._set_print_representation()  # pylint: disable=protected-access
+
+        assert repr(three_alpha) == "4 He4 ⟶ C12"
+        assert three_alpha.rid == "4 He4 --> C12"
+
+        assert three_alpha.reactant_count(Nucleus("he4")) == 4
+
+        three_alpha.stoichiometry = None
+
+    def test_stoichiometry_dict(self, reaclib_library):
+
+        c12c12 = reaclib_library.get_rate_by_name("c12(c12,a)ne20")
+
+        c12c12.stoichiometry = {Nucleus("he4"): 4}
+        c12c12._set_print_representation()  # pylint: disable=protected-access
+
+        assert repr(c12c12) == "C12 + C12 ⟶ 4 He4 + Ne20"
+        assert c12c12.rid == "C12 + C12 --> 4 He4 + Ne20"
+
+        assert c12c12.reactant_count(Nucleus("he4")) == 0
+        assert c12c12.product_count(Nucleus("he4")) == 4
+
+        assert c12c12.reactant_count(Nucleus("c12")) == 2
+
+        assert c12c12.product_count(Nucleus("ne20")) == 1
+
+        c12c12.stoichiometry = None
+
+    def test_baryon_conservation(self):
+
+        # this will raise an exception
+        with pytest.raises(BaryonConservationError):
+            _ = Rate(reactants=[Nucleus("n14"), Nucleus("he4")],
+                     products=[Nucleus("ne20")])
+
+        # this conserves baryon number
+        _ = Rate(reactants=[Nucleus("n14"), Nucleus("he4")],
+                 products=[Nucleus("ne20")],
+                 stoichiometry={Nucleus("he4"): 1.5})
+
 
 class TestDerivedRate:
 
-    def a_a_ag_c12(self, reaclib_library):
+    def test_a_a_ag_c12(self, reaclib_library):
         """
         Here we test the inverse rate, computed by the use of detailed balance
         of a:
@@ -246,11 +340,11 @@ class TestDerivedRate:
         reaction type.
         """
 
-        a_a_ag_c12 = reaclib_library.get_rate('he4 + he4 + he4 --> c12 <fy05_reaclib__>')
-        c12_ga_a_a_reaclib = reaclib_library.get_rate('c12 --> he4 + he4 + he4 <fy05_reaclib__reverse>')
+        a_a_ag_c12 = reaclib_library.get_rate_by_name("he4(aa,g)c12")
+        c12_ga_a_a_reaclib = reaclib_library.get_rate_by_name("c12(g,aa)he4")
         c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=False, use_pf=False)
 
-        assert c12_ga_a_a_reaclib.eval(T=2.0e9) == approx(c12_ga_a_a_derived.eval(T=2.0e9), rel=2e-4)
+        assert c12_ga_a_a_reaclib.eval(T=2.0e9) == approx(c12_ga_a_a_derived.eval(T=2.0e9), rel=5.e-3)
 
     def test_a_a_ag_c12_with_pf(self, reaclib_library):
         """
@@ -258,12 +352,12 @@ class TestDerivedRate:
         functions on the range 1.0e9 to 100.0e9
         """
 
-        a_a_ag_c12 = reaclib_library.get_rate('he4 + he4 + he4 --> c12 <fy05_reaclib__>')
+        a_a_ag_c12 = reaclib_library.get_rate_by_name("he4(aa,g)c12")
         c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=False, use_pf=True)
 
         with pytest.warns(UserWarning, match="C12 partition function is not supported by tables"):
             rval = c12_ga_a_a_derived.eval(T=2.0e9)
-        assert rval == approx(2.8953989705969484e-07)
+        assert rval == approx(2.909561626679576e-7)
 
     def test_a_a_ag_c12_with_Q(self, reaclib_library):
         """
@@ -272,68 +366,72 @@ class TestDerivedRate:
         of the reaction rate.
         """
 
-        a_a_ag_c12 = reaclib_library.get_rate('he4 + he4 + he4 --> c12 <fy05_reaclib__>')
+        a_a_ag_c12 = reaclib_library.get_rate_by_name("he4(aa,g)c12")
         c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=True, use_pf=False)
 
-        assert c12_ga_a_a_derived.eval(T=2.0e9) == approx(2.899642192191721e-07)
+        assert c12_ga_a_a_derived.eval(T=2.0e9) == approx(2.913825603717208e-07)
 
 
 class TestWeakRates:
     @pytest.fixture(scope="class")
     def rate1(self):
-        return rates.TabularRate("o18--f18-toki")
+        return rates.TabularRate("suzuki-18o-18f_betadecay.dat")
 
     @pytest.fixture(scope="class")
     def rate2(self):
-        return rates.TabularRate("na22--ne22-toki")
+        return rates.TabularRate("suzuki-22na-22ne_electroncapture.dat")
 
     @pytest.fixture(scope="class")
     def rate3(self):
-        return rates.TabularRate("sc45--ca45-toki")
+        return rates.TabularRate("langanke-45sc-45ca_electroncapture.dat")
 
     @pytest.fixture(scope="class")
     def rate4(self):
-        return rates.TabularRate("ti45--sc45-toki")
+        return rates.TabularRate("langanke-45ti-45sc_electroncapture.dat")
 
     @pytest.fixture(scope="class")
     def rate5(self):
-        return rates.TabularRate("v45--ti45-toki")
+        return rates.TabularRate("langanke-45v-45ti_electroncapture.dat")
 
     @pytest.fixture(scope="class")
     def rate6(self):
-        return rates.TabularRate("ca45--sc45-toki")
+        return rates.TabularRate("langanke-45ca-45sc_betadecay.dat")
 
     def test_reactants(self, rate1, rate2, rate3, rate4, rate5, rate6):
+
+        # pick a composition that gives Ye = 0.5 just for testing
+        comp = Composition(["c12", "o16"])
+        comp.set_equal()
 
         assert len(rate1.reactants) == 1 and len(rate1.products) == 1
         assert rate1.products[0] == Nucleus("f18")
         assert rate1.reactants[0] == Nucleus("o18")
-        assert rate1.eval(2.5e9, 1.e8) == approx(8.032467196099662e-16, rel=1.e-6, abs=1.e-20)
+        assert rate1.eval(2.5e9, rho=2.e8, comp=comp) == approx(8.032467196099662e-16, rel=1.e-6, abs=1.e-20)
 
         assert len(rate2.reactants) == 1 and len(rate2.products) == 1
         assert rate2.products[0] == Nucleus("ne22")
         assert rate2.reactants[0] == Nucleus("na22")
-        assert rate2.eval(1.e9, 2.e7) == approx(3.232714235735518e-05, rel=1.e-6, abs=1.e-20)
+        assert rate2.eval(1.e9, rho=4.e7, comp=comp) == approx(3.232714235735518e-05, rel=1.e-6, abs=1.e-20)
 
         assert len(rate3.reactants) == 1 and len(rate3.products) == 1
         assert rate3.products[0] == Nucleus("ca45")
         assert rate3.reactants[0] == Nucleus("sc45")
-        assert math.log10(rate3.eval(1.e9, 1.e11)) == approx(3.4400000000000004)
+        assert math.log10(rate3.eval(1.e9, rho=2.e11, comp=comp)) == approx(3.4400000000000004)
 
         assert len(rate4.reactants) == 1 and len(rate4.products) == 1
         assert rate4.products[0] == Nucleus("sc45")
         assert rate4.reactants[0] == Nucleus("ti45")
-        assert math.log10(rate4.eval(1.e9, 1.e11)) == approx(3.853)
+        assert math.log10(rate4.eval(1.e9, rho=2.e11, comp=comp)) == approx(3.853)
 
         assert len(rate5.reactants) == 1 and len(rate5.products) == 1
         assert rate5.products[0] == Nucleus("ti45")
         assert rate5.reactants[0] == Nucleus("v45")
-        assert math.log10(rate5.eval(1.e9, 1.e11)) == approx(4.71501)
+        assert math.log10(rate5.eval(1.e9, rho=2.e11, comp=comp)) == approx(4.71501)
 
         assert len(rate6.reactants) == 1 and len(rate6.products) == 1
         assert rate6.products[0] == Nucleus("sc45")
         assert rate6.reactants[0] == Nucleus("ca45")
-        assert math.log10(rate6.eval(1.e9, 1.e11)) == approx(-99.69797)
+        assert math.log10(rate6.eval(1.e9, rho=2.e11, comp=comp)) == approx(-99.69797)
 
 
 class TestModify:

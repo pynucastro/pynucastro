@@ -16,23 +16,24 @@ from pathlib import Path
 import numpy as np
 import sympy
 
+from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
 from pynucastro.rates import DerivedRate
 from pynucastro.screening import get_screening_map
+from pynucastro.utils import pynucastro_version
 
 
 class BaseCxxNetwork(ABC, RateCollection):
-    """Interpret the collection of rates and nuclei and produce the
-    C++ code needed to integrate the network.
+    """Base class for a C++ network.  This takes the same arguments as
+    :py:class:`RateCollection
+    <pynucastro.networks.rate_collection.RateCollection>` and
+    interprets the collection of rates and nuclei to produce the C++
+    code needed to integrate the network.
 
     """
 
     def __init__(self, *args, **kwargs):
-        """Initialize the C++ network.  We take a single argument: a list
-        of rate files that will make up the network
-
-        """
 
         super().__init__(*args, **kwargs)
 
@@ -57,8 +58,10 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<nrat_reaclib>'] = self._nrat_reaclib
         self.ftags['<nrat_tabular>'] = self._nrat_tabular
         self.ftags['<nrxn>'] = self._nrxn
+        self.ftags['<nrxn_enum_type>'] = self._nrxn_enum_type
         self.ftags['<rate_names>'] = self._rate_names
         self.ftags['<ebind>'] = self._ebind
+        self.ftags['<mion>'] = self._mion
         self.ftags['<compute_screening_factors>'] = self._compute_screening_factors
         self.ftags['<table_num>'] = self._table_num
         self.ftags['<declare_tables>'] = self._declare_tables
@@ -67,20 +70,18 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<compute_tabular_rates>'] = self._compute_tabular_rates
         self.ftags['<ydot>'] = self._ydot
         self.ftags['<ydot_weak>'] = self._ydot_weak
-        self.ftags['<enuc_add_energy_rate>'] = self._enuc_add_energy_rate
         self.ftags['<jacnuc>'] = self._jacnuc
-        self.ftags['<initial_mass_fractions>'] = self._initial_mass_fractions
         self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
         self.ftags['<rate_struct>'] = self._rate_struct
         self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
         self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
         self.ftags['<fill_approx_rates>'] = self._fill_approx_rates
         self.ftags['<part_fun_data>'] = self._fill_partition_function_data
+        self.ftags['<part_fun_declare>'] = self._fill_partition_function_declare
         self.ftags['<part_fun_cases>'] = self._fill_partition_function_cases
         self.ftags['<spin_state_cases>'] = self._fill_spin_state_cases
+        self.ftags['<pynucastro_version>'] = self._fill_pynucastro_version
         self.indent = '    '
-
-        self.num_screen_calls = None
 
     @abstractmethod
     def _get_template_files(self):
@@ -90,14 +91,30 @@ class BaseCxxNetwork(ABC, RateCollection):
         return []
 
     def get_indent_amt(self, l, k):
-        """determine the amount of spaces to indent a line"""
+        """Determine the amount of spaces to indent a line.  This
+        looks for a string of the form "<key>(#)", where # is the a
+        number that is the amount of indent.
+
+        Parameters
+        ----------
+        l : str
+            a line from a template file to check for an indent
+        k : str
+            a keyword of the form "<key>" that appears in the line
+
+        Returns
+        -------
+        int
+
+        """
+
         rem = re.match(r'\A'+k+r'\(([0-9]*)\)\Z', l)
         return int(rem.group(1))
 
     def _write_network(self, odir=None):
-        """
-        This writes the RHS, jacobian and ancillary files for the system of ODEs that
-        this network describes, using the template files.
+        """Output the RHS, jacobian and ancillary files for the system
+        of ODEs that this network describes, using the template files.
+
         """
         # pylint: disable=arguments-differ
 
@@ -143,12 +160,14 @@ class BaseCxxNetwork(ABC, RateCollection):
                     warnings.warn(UserWarning(f'Table data file {tr.table_file} not found.'))
 
     def compose_ydot(self):
-        """create the expressions for dYdt for the nuclei, where Y is the
-        molar fraction.
+        """Create the expressions for dY/dt for each nucleus, where Y
+        is the molar fraction.
 
+        This stores the result in a dict where the key is a
+        :py:class:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>`, and
+        the value is a list of tuples, with the forward-reverse pairs
+        of a rate
 
-        This will take the form of a dict, where the key is a nucleus, and the
-        value is a list of tuples, with the forward-reverse pairs of a rate
         """
 
         ydot = {}
@@ -175,7 +194,13 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.solved_ydot = True
 
     def compose_jacobian(self):
-        """Create the Jacobian matrix, df/dY"""
+        """Create the Jacobian matrix, df/dY, where f is a dY/dt and Y
+        is a molar fraction
+
+        The Jacobian is stored as a list with each entry representing
+        a Jacobian element.  We also store whether the entry is null.
+
+        """
         jac_null = []
         jac_sym = []
         for nj in self.unique_nuclei:
@@ -267,12 +292,6 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write('\n')
 
-        # the C++ screen.H code requires that there be at least 1 screening
-        # factor because it statically allocates some arrays, so if we turned
-        # off screening, just set num_screen_calls = 1 here.
-
-        self.num_screen_calls = max(1, len(screening_map))
-
     def _nrat_reaclib(self, n_indent, of):
         # Writes the number of Reaclib rates
         of.write(f'{self.indent*n_indent}const int NrateReaclib = {len(self.reaclib_rates + self.derived_rates)};\n')
@@ -286,6 +305,16 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f'{self.indent*n_indent}k_{r.cname()} = {i+1},\n')
         of.write(f'{self.indent*n_indent}NumRates = k_{self.all_rates[-1].cname()}\n')
 
+    def _nrxn_enum_type(self, n_indent, of):
+        nrxn = len(self.all_rates)
+        dtype = "std::uint32_t"
+        # we need 1 additional int for NumRates
+        if nrxn < 255:
+            dtype = "std::uint8_t"
+        elif nrxn < 65535:
+            dtype = "std::uint16_t"
+        of.write(f'{self.indent*n_indent}{dtype}\n')
+
     def _rate_names(self, n_indent, of):
         for i, r in enumerate(self.all_rates):
             if i < len(self.all_rates)-1:
@@ -297,6 +326,10 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _ebind(self, n_indent, of):
         for nuc in self.unique_nuclei:
             of.write(f'{self.indent*n_indent}ebind_per_nucleon({nuc.cindex()}) = {nuc.nucbind}_rt;\n')
+
+    def _mion(self, n_indent, of):
+        for nuc in self.unique_nuclei:
+            of.write(f'{self.indent*n_indent}mion({nuc.cindex()}) = {nuc.A_nuc * constants.m_u_C18}_rt;\n')
 
     def _table_num(self, n_indent, of):
         of.write(f'{self.indent*n_indent}const int num_tables = {len(self.tabular_rates)};\n')
@@ -330,7 +363,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f'{idnt}{r.table_index_name}_meta.nvars = {r.table_num_vars};\n')
             of.write(f'{idnt}{r.table_index_name}_meta.nheader = {r.table_header_lines};\n\n')
 
-            of.write(f'{idnt}init_tab_info({r.table_index_name}_meta, "{r.table_file}", {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data);\n\n')
+            of.write(f'{idnt}init_tab_info({r.table_index_name}_meta, "{r.rfile}", {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data);\n\n')
 
             of.write('\n')
 
@@ -350,7 +383,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{idnt}    rate_eval.dscreened_rates_dT(k_{r.cname()}) = drate_dt;\n')
                 of.write(f'{idnt}}}\n')
 
-                of.write(f'{idnt}rate_eval.enuc_weak += C::Legacy::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
+                of.write(f'{idnt}rate_eval.enuc_weak += C::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
 
                 of.write('\n')
 
@@ -424,7 +457,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                 of.write(f'{idnt}rate_eval.screened_rates(k_{r.cname()}) = rate;\n')
 
-                of.write(f'{idnt}rate_eval.enuc_weak += C::Legacy::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
+                of.write(f'{idnt}rate_eval.enuc_weak += C::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
 
                 of.write('\n')
             of.write(f'{idnt}auto screened_rates = rate_eval.screened_rates;\n')
@@ -461,19 +494,6 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             self._write_ydot_nuc(n_indent, of, ydot_sym_terms)
 
-    def _enuc_add_energy_rate(self, n_indent, of):
-        # Add tabular per-reaction neutrino energy generation rates to the energy generation rate
-        # (not thermal neutrinos)
-
-        idnt = self.indent * n_indent
-
-        for r in self.tabular_rates:
-            if len(r.reactants) != 1:
-                sys.exit('ERROR: Unknown energy rate corrections for a reaction where the number of reactants is not 1.')
-            else:
-                reactant = r.reactants[0]
-                of.write(f'{idnt}enuc += C::Legacy::n_A * {self.symbol_rates.name_y}({reactant.cindex()}) * rate_eval.add_energy_rate(k_{r.cname()});\n')
-
     def _jacnuc(self, n_indent, of):
         # now make the Jacobian
         n_unique_nuclei = len(self.unique_nuclei)
@@ -486,16 +506,9 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f"{self.indent*(n_indent)}scratch = {jvalue};\n")
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, scratch);\n\n")
 
-    def _initial_mass_fractions(self, n_indent, of):
-        for i, _ in enumerate(self.unique_nuclei):
-            if i == 0:
-                of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 1.0\n")
-            else:
-                of.write(f"{self.indent*n_indent}unit_test.X{i+1} = 0.0\n")
-
     def _reaclib_rate_functions(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"
-        for r in self.reaclib_rates + self.derived_rates:
+        for r in self.reaclib_rates + self.derived_rates + self.modified_rates:
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
 
     def _rate_struct(self, n_indent, of):
@@ -520,7 +533,10 @@ class BaseCxxNetwork(ABC, RateCollection):
         if self.derived_rates:
             of.write(f"{self.indent*n_indent}part_fun::pf_cache_t pf_cache{{}};\n\n")
 
-        for r in self.reaclib_rates + self.derived_rates:
+        # note: modified_rates needs to be on the end here, since they
+        # likely will call the underlying reaclib rate for the actual
+        # rate evaluation
+        for r in self.reaclib_rates + self.derived_rates + self.modified_rates:
             if isinstance(r, DerivedRate):
                 of.write(f"{self.indent*n_indent}rate_{r.cname()}<do_T_derivatives>(tfactors, rate, drate_dT, pf_cache);\n")
             else:
@@ -532,16 +548,53 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _fill_approx_rates(self, n_indent, of):
         for r in self.approx_rates:
-            of.write(f"{self.indent*n_indent}rate_{r.cname()}<T>(rate_eval, rate, drate_dT);\n")
+            args = ["rate_eval"]
+            if r.rate_eval_needs_rho:
+                args.append("rho")
+            if r.rate_eval_needs_comp:
+                args.append("Y")
+            args += ["rate", "drate_dT"]
+
+            of.write(f"{self.indent*n_indent}rate_{r.cname()}<T>({', '.join(args)});\n")
             of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.cname()}) = rate;\n")
             of.write(f"{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
             of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.cname()}) = drate_dT;\n\n")
             of.write(f"{self.indent*n_indent}}}\n")
 
+    def _fill_partition_function_declare(self, n_indent, of):
+
+        temp_arrays, temp_indices = self.dedupe_partition_function_temperatures()
+
+        for i, temp in enumerate(temp_arrays):
+
+            decl = f"extern AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}>"
+
+            # number of points
+            of.write(f"{self.indent*n_indent}constexpr int npts_{i+1} = {len(temp)};\n\n")
+
+            # write the temperature out, but for readability, split it to 5 values per line
+
+            of.write(f"{self.indent*n_indent}// this is T9\n\n")
+
+            of.write(f"{self.indent*n_indent}{decl} temp_array_{i+1};\n\n")
+
+        for n, i in temp_indices.items():
+            # write the partition function data out, but for readability, split
+            # it to 5 values per line
+            # temp_indices is keyed by the nucleus and the value is the temperature index
+
+            of.write(f"{self.indent*n_indent}// this is log10(partition function)\n\n")
+
+            decl = f"extern AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}>"
+            of.write(f"{self.indent*n_indent}{decl} {n}_pf_array;\n\n")
+
     def _fill_partition_function_data(self, n_indent, of):
         # itertools recipe
         def batched(iterable, n):
-            "Batch data into tuples of length n. The last batch may be shorter."
+            """Batch data into tuples of length n. The last batch may
+            be shorter.
+
+            """
             # batched('ABCDEFG', 3) --> ABC DEF G
             if n < 1:
                 raise ValueError('n must be at least one')
@@ -551,17 +604,16 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         temp_arrays, temp_indices = self.dedupe_partition_function_temperatures()
 
-        decl = f"MICROPHYSICS_UNUSED HIP_CONSTEXPR static AMREX_GPU_MANAGED {self.dtype}"
-
         for i, temp in enumerate(temp_arrays):
             # number of points
-            of.write(f"{self.indent*n_indent}constexpr int npts_{i+1} = {len(temp)};\n\n")
+
+            decl = f"AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}>"
 
             # write the temperature out, but for readability, split it to 5 values per line
 
             of.write(f"{self.indent*n_indent}// this is T9\n\n")
 
-            of.write(f"{self.indent*n_indent}{decl} temp_array_{i+1}[npts_{i+1}] = {{\n")
+            of.write(f"{self.indent*n_indent}{decl} temp_array_{i+1}= {{\n")
 
             for data in batched(temp / 1.0e9, 5):
                 tmp = " ".join([f"{t}," for t in data])
@@ -577,7 +629,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write(f"{self.indent*n_indent}// this is log10(partition function)\n\n")
 
-            of.write(f"{self.indent*n_indent}{decl} {n}_pf_array[npts_{i+1}] = {{\n")
+            decl = f"AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}>"
+            of.write(f"{self.indent*n_indent}{decl} {n}_pf_array = {{\n")
 
             for data in batched(np.log10(n.partition_function.partition_function), 5):
                 tmp = " ".join([f"{x}," for x in data])
@@ -590,7 +643,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         for n, i in temp_indices.items():
             of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
-            of.write(f"{self.indent*(n_indent+1)}part_fun::interpolate_pf<part_fun::npts_{i+1}>(tfactors.T9, part_fun::temp_array_{i+1}, part_fun::{n}_pf_array, pf, dpf_dT);\n")
+            of.write(f"{self.indent*(n_indent+1)}part_fun::interpolate_pf(tfactors.T9, part_fun::temp_array_{i+1}, part_fun::{n}_pf_array, pf, dpf_dT);\n")
             of.write(f"{self.indent*(n_indent+1)}break;\n\n")
 
     def _fill_spin_state_cases(self, n_indent, of):
@@ -609,3 +662,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
             of.write(f"{self.indent*(n_indent+1)}spin = {spin_state};\n")
             of.write(f"{self.indent*(n_indent+1)}break;\n\n")
+
+    def _fill_pynucastro_version(self, n_indent, of):
+        of.write(f"{self.indent*n_indent}pynucastro version: {pynucastro_version()}\n")

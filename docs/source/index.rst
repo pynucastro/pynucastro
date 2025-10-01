@@ -10,12 +10,9 @@ pynucastro
 
 `https://github.com/pynucastro/pynucastro <https://github.com/pynucastro/pynucastro>`_
 
-pynucastro is a set of python interfaces to nuclear reaction rate
-databases (including the JINA reaclib nuclear reaction rate database).
-It is meant for both interactive exploration of rates (through Jupyter
-notebooks) and to create reaction networks for use in simulation
-codes.
-
+pynucastro is a python library for nuclear astrophysics.  It provides
+access to nuclear data and reaction rates, and tools for building
+and interactively exploring nuclear reaction networks.
 
 .. toctree::
    :maxdepth: 1
@@ -37,19 +34,28 @@ codes.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Exploring Networks in Python
+   :caption: pynucastro Overview
    :hidden:
 
    pynucastro-examples.ipynb
    plot-types.ipynb
+   basic_network.ipynb
    pynucastro-integration.ipynb
+
 
 .. toctree::
    :maxdepth: 1
-   :caption: Selecting Rates
+   :caption: Working with Libraries
    :hidden:
 
    library-examples.ipynb
+   tabulated-weak-rates.ipynb
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Building Networks
+   :hidden:
+
    duplicate-rates.ipynb
    validate-example.ipynb
    electron-capture-example.ipynb
@@ -63,10 +69,21 @@ codes.
 
    screening-examples
    modify-example.ipynb
-   approx-rates-examples.ipynb
    custom-rates.ipynb
-   unimportant-rates.ipynb
    partition-function
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Advanced Network Operations
+   :hidden:
+
+   approximate-rates
+   nse-protons.ipynb
+   unimportant-rates.ipynb
+   network-cycles.ipynb
+   stiffness.ipynb
+   reduction.ipynb
+   sens_analysis_example.ipynb
 
 .. toctree::
    :maxdepth: 1
@@ -75,6 +92,14 @@ codes.
 
    NSE-example
    nse_table
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Thermodynamics
+   :hidden:
+
+   fermi-integrals
+   electron-eos
 
 .. toctree::
    :maxdepth: 1
@@ -91,14 +116,16 @@ codes.
    networks
    python-network
    simple-cxx-network
+   fortran-network
    amrex-astro-cxx-networks
+   julia
 
 .. toctree::
    :maxdepth: 1
-   :caption: Interfacing With Other Languages
+   :caption: Some Useful Networks
    :hidden:
 
-   julia
+   he-burning-example
 
 .. toctree::
    :maxdepth: 1
@@ -109,6 +136,8 @@ codes.
    examples/pp-cno.ipynb
    examples/hot-CNO-breakout-example.ipynb
    examples/triple_alpha_eval.ipynb
+   examples/he-burning.ipynb
+   examples/supernova-lightcurve.ipynb
 
 .. toctree::
    :maxdepth: 1
@@ -116,6 +145,7 @@ codes.
    :hidden:
 
    citing
+   changes
    API <modules>
    zreferences
 

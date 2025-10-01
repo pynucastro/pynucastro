@@ -1,17 +1,22 @@
 """A C++ reaction network for integration into the AMReX Astro
-Microphysics set of reaction networks used by astrophysical hydrodynamics
-codes"""
+Microphysics set of reaction networks used by astrophysical
+hydrodynamics codes
+
+"""
 
 
 import re
 from pathlib import Path
 
+from pynucastro.constants import constants
 from pynucastro.networks.base_cxx_network import BaseCxxNetwork
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import ReacLibRate
 
 
 class AmrexAstroCxxNetwork(BaseCxxNetwork):
+    """A C++ network for simulation codes based on AMReX."""
+
     def __init__(self, *args, **kwargs):
 
         # this network can have a special kwarg called disable_rate_params
@@ -65,6 +70,15 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             of.write(f"{self.indent*(n_indent+1)}return {nuc.nucbind * nuc.A}_rt;\n")
             of.write(f"{self.indent*(n_indent)}}}\n")
 
+    def _mion(self, n_indent, of):
+        for n, nuc in enumerate(self.unique_nuclei):
+            if n == 0:
+                of.write(f"{self.indent*n_indent}if constexpr (spec == {nuc.cindex()}) {{\n")
+            else:
+                of.write(f"{self.indent*n_indent}else if constexpr (spec == {nuc.cindex()}) {{\n")
+            of.write(f"{self.indent*(n_indent+1)}return {nuc.A_nuc * constants.m_u_C18}_rt;\n")
+            of.write(f"{self.indent*(n_indent)}}}\n")
+
     def _cxxify(self, s):
         # Replace std::pow(x, n) with amrex::Math::powi<n>(x) for amrexastro_cxx_network
 
@@ -74,9 +88,9 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         return re.sub(std_pow_pattern, amrex_powi_replacement, cxx_code)
 
     def _write_network(self, odir=None):
-        """
-        This writes the RHS, jacobian and ancillary files for the system of ODEs that
-        this network describes, using the template files.
+        """Output the RHS, jacobian and ancillary files for the system
+        of ODEs that this network describes, using the template files.
+
         """
 
         super()._write_network(odir=odir)
@@ -117,7 +131,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
     def _fill_rate_indices(self, n_indent, of):
         """
-        Fills the index needed for the NSE_NET algorithm.
+        Fill the index needed for the NSE_NET algorithm.
 
         Fill rate_indices: 2D array with 1-based index of shape of size (NumRates, 7).
            - Each row represents a rate in self.all_rates.
@@ -130,7 +144,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         """
 
         # Fill in the rate indices
-        of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED amrex::Array2D<int, 1, Rates::NumRates, 1, 7, Order::C> rate_indices {{\n")
+        of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED amrex::Array2D<int, 1, Rates::NumRates, 1, 7, amrex::Order::C> rate_indices {{\n")
 
         for n, rate in enumerate(self.all_rates):
             tmp = ','

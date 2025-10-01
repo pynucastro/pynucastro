@@ -11,7 +11,7 @@ class TestPythonPartitionNetwork:
     @pytest.fixture(scope="class")
     def pynet(self, reaclib_library):
 
-        fwd_reactions = reaclib_library.derived_forward()
+        fwd_reactions = reaclib_library.forward_for_detailed_balance()
 
         nuclei = ["p", "he4", "fe52", "ni56", "co55"]
 
@@ -42,9 +42,9 @@ class TestPythonPartitionNetwork:
         der_net.p_Co55__He4_Fe52__derived(rate_eval, tf)
         der_net.Ni56__p_Co55__derived(rate_eval, tf)
 
-        assert rate_eval.p_Co55__He4_Fe52__derived == pytest.approx(4.570999237208017, rel=1.e-10)
+        assert rate_eval.p_Co55__He4_Fe52__derived == pytest.approx(4.490724385677499, rel=1.e-10)
 
-        assert rate_eval.Ni56__p_Co55__derived == pytest.approx(23790871.179938074, rel=1.e-10)
+        assert rate_eval.Ni56__p_Co55__derived == pytest.approx(24257731.147845287, rel=1.e-10)
 
         T = 9.e9
         tf = pyna.Tfactors(T)
@@ -54,8 +54,8 @@ class TestPythonPartitionNetwork:
         der_net.p_Co55__He4_Fe52__derived(rate_eval, tf)
         der_net.Ni56__p_Co55__derived(rate_eval, tf)
 
-        assert rate_eval.p_Co55__He4_Fe52__derived == pytest.approx(15485.753590182012, rel=1.e-10)
-        assert rate_eval.Ni56__p_Co55__derived == pytest.approx(428973340937.6744, rel=1.e-10)
+        assert rate_eval.p_Co55__He4_Fe52__derived == pytest.approx(15213.796298836147, rel=1.e-10)
+        assert rate_eval.Ni56__p_Co55__derived == pytest.approx(437391295764.6698, rel=1.e-10)
 
         # clean up generated files if the test passed
         Path("der_net.py").unlink()

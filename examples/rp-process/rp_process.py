@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import argparse
 from collections import deque
@@ -6,6 +6,7 @@ from collections import deque
 from pynucastro.networks import PythonNetwork
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import Library, RateFilter
+from pynucastro.rates.files import get_rates_dir
 
 #################################################
 #  Set up argument parser and process arguments #
@@ -128,7 +129,7 @@ while seeds:
     final_lib += new_lib
 
     # Append all unseen nuclei to the queue
-    prod_set = set(p for r in new_lib.get_rates() for p in r.products)
+    prod_set = {p for r in new_lib.get_rates() for p in r.products}
     prod = sorted(prod_set - encountered)
     seeds.extend(prod)
     encountered.update(prod_set)
@@ -150,18 +151,15 @@ for d in dupes:
         print(f"Kept only entry with label {r.label} out of {list(labels.keys())}.")
 
 rp_net = PythonNetwork(libraries=[final_lib])
-
-print("Network constructed.")
-print()
-print("Species Encountered:")
-print(encountered)
-print()
-print(f"Number of Species: {len(encountered)}")
-print(f"Number of Rates: {len(rp_net.rates)}")
-print()
+print(rp_net.summary())
 
 if args.write_lib:
-    final_lib.write_to_file(args.write_lib, True)
+    # we need a ReacLib library for this
+    filename = get_rates_dir() / args.write_lib
+
+    with filename.open("w") as f:
+        for rate in final_lib.get_rates():
+            rate.write_to_file(f)
 
 if args.write_network:
     print("Writing network...")

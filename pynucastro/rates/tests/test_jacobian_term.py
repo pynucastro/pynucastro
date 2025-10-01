@@ -77,5 +77,5 @@ class TestJacTerm:
         assert r.eval_jacobian_term(T, rho, comp, Nucleus("he4")) == 0.0
 
         # for dr/dY(ne20), we just have the raw rate from the table
-        dr_dne20 = r.eval(T, rhoY=rho*comp.eval_ye())
+        dr_dne20 = r.eval(T, rho=rho, comp=comp)
         assert r.eval_jacobian_term(T, rho, comp, Nucleus("ne20")) == dr_dne20

@@ -3,8 +3,6 @@
 #include <table_rates.H>
 #include <AMReX_Print.H>
 
-using namespace amrex;
-
 namespace rate_tables
 {
 

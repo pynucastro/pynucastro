@@ -1,5 +1,7 @@
 """A collection of classes and methods to deal with collections of
-rates that together make up a network."""
+rates that together make up a network.
+
+"""
 
 import collections
 import functools
@@ -18,18 +20,30 @@ from matplotlib.patches import ConnectionPatch
 from matplotlib.scale import SymmetricalLogTransform
 from matplotlib.ticker import MaxNLocator
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from scipy.linalg import eigvals
 
 # Import Rate
 from pynucastro.constants import constants
-from pynucastro.nucdata import Nucleus, PeriodicTable
-from pynucastro.rates import (ApproximateRate, DerivedRate, Library, Rate,
-                              RateFileError, RatePair, TabularRate,
-                              find_duplicate_rates, is_allowed_dupe, load_rate)
+from pynucastro.nucdata import Nucleus
+from pynucastro.rates import (ApproximateRate, DerivedRate, Library,
+                              ModifiedRate, Rate, RateFileError, RatePair,
+                              TabularRate, find_duplicate_rates,
+                              is_allowed_dupe, load_rate)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_rid
 from pynucastro.screening import (get_screening_map, make_plasma_state,
                                   make_screen_factors)
 
 mpl.rcParams['figure.dpi'] = 100
+
+# for plotting a legend on the network plot
+# the tuple is (dZ, dN)
+RATE_LINES = {r"$(\alpha, p)$": (1, 2),
+              r"$(\alpha, \gamma)$": (2, 2),
+              r"$(\alpha, n)$": (2, 1),
+              r"$(p, \gamma)$": (1, 0),
+              r"$(n, \gamma)$": (0, 1),
+              r"$\beta^-$": (1, -1),
+              r"$\beta^+$": (-1, 1)}
 
 
 class RateDuplicationError(Exception):
@@ -37,8 +51,10 @@ class RateDuplicationError(Exception):
 
 
 def _skip_xalpha(n, p, r):
-    """utility function to consider if we show an (a, x) or (x, a) rate.  Here, p is the
-    product we want to link to"""
+    """Check if we should show an (a, x) or (x, a) rate.  Here, p is
+    the product we want to link to
+
+    """
 
     # first check if alpha is the heaviest nucleus on the RHS
     rhs_heavy = max(r.products)
@@ -64,8 +80,10 @@ def _skip_xalpha(n, p, r):
 
 
 def _skip_xp(n, p, r):
-    """utility function to consider if we show an (p, x) or (x, p) rate.  Here, p is the
-    product we want to link to"""
+    """Check if we should show an (p, x) or (x, p) rate.  Here, p is
+    the product we want to link to
+
+    """
 
     # for rates that are A (x, p) B, where A and B are heavy nuclei,
     # don't show the connection of the nucleus to p, only show it to B
@@ -87,12 +105,19 @@ def _skip_xp(n, p, r):
 
 
 class Composition(collections.UserDict):
-    """a composition holds the mass fractions of the nuclei in a network
-    -- useful for evaluating the rates
+    """A composition holds the mass fractions of the nuclei in a
+    network.
+
+    Parameters
+    ----------
+    nuclei : list, tuple
+        an iterable of Nucleus objects
+    small : float
+        a floor for nuclei mass fractions, used as the default value
 
     """
+
     def __init__(self, nuclei, small=1.e-16):
-        """nuclei is an iterable of the nuclei in the network"""
         try:
             super().__init__({Nucleus.cast(k): small for k in nuclei})
         except TypeError:
@@ -125,29 +150,71 @@ class Composition(collections.UserDict):
 
     @property
     def A(self):
-        """ return nuclei: molar mass pairs for elements in composition"""
+        """Nucleus molar masses
+
+        Returns
+        -------
+        A : dict
+            {Nucleus : A} pairs
+        """
         return {n: n.A for n in self}
 
     @property
     def Z(self):
-        """ return nuclei: charge pairs for elements in composition"""
+        """Nucleus charge
+
+        Returns
+        -------
+        Z : dict
+            {Nucleus : Z} pairs
+        """
         return {n: n.Z for n in self}
 
     def get_nuclei(self):
-        """return a list of Nuclei objects that make up this composition"""
+        """Return a list of Nuclei objects that make up this
+        composition.
+
+        Returns
+        -------
+        list
+
+        """
         return list(self)
 
     def get_molar(self):
-        """ return a dictionary of molar fractions"""
+        """Return a dictionary of molar fractions, Y = X/A.
+
+        Returns
+        -------
+        molar : dict
+            {Nucleus : Y}
+        """
         return {k: v/k.A for k, v in self.items()}
 
     def get_sum_X(self):
-        """return the sum of the mass fractions"""
+        """Return the sum of the mass fractions.
+
+        Returns
+        -------
+        float
+        """
         return math.fsum(self.values())
 
-    def set_solar_like(self, Z=0.02):
-        """ approximate a solar abundance, setting p to 0.7, He4 to 0.3 - Z and
-        the remainder evenly distributed with Z """
+    def set_solar_like(self, *, Z=0.02, half_life_thresh=None):
+        """Approximate a solar abundance, setting p to 0.7, He4 to 0.3
+        - Z and the remainder evenly distributed with Z.
+
+        Parameters
+        ----------
+        Z : float
+            The desired metalicity
+        half_life_thresh : float
+            The half life value below which to zero the mass fraction
+            of a nucleus.  This prevents us from making a composition
+            that is not really stable.
+
+        """
+
         rem = Z/(len(self)-2)
         for k in self:
             if k == Nucleus("p"):
@@ -157,26 +224,47 @@ class Composition(collections.UserDict):
             else:
                 self[k] = rem
 
-        self.normalize()
+        self.normalize(half_life_thresh=half_life_thresh)
 
     def set_array(self, arr):
-        """ set all species from a sequence of mass fractions, in the same
-        order as returned by get_nuclei() """
+        """Set the mass fractions of all species to the values
+        in arr, `get_nuclei()`
+
+        Parameters
+        ----------
+        arr : list, tuple, numpy.ndarray
+            input values of mass fractions
+        """
         for i, k in enumerate(self):
             self[k] = arr[i]
 
-    def set_all(self, xval):
-        """ set all species to a particular value """
+    def set_all(self, xval: float):
+        """Set all species to the same scalar value.
+
+        Parameters
+        ----------
+        xval : float
+            mass fraction value for all species
+        """
         for k in self:
             self[k] = xval
 
     def set_equal(self):
-        """ set all species to be equal"""
+        """Set all species to be equal"""
         self.set_all(1.0 / len(self))
 
     def set_random(self, alpha=None, seed=None):
-        """ set all species using a Dirichlet distribution with
-        parameters alpha and specified rng seed """
+        """Set all species using a Dirichlet distribution with
+        parameters alpha and specified rng seed.
+
+        Parameters
+        ----------
+        alpha : list, tuple, numpy.ndarray
+            distribution length for the Dirichlet distribution
+        seed : float
+            seed for the random number generator
+        """
+
         # initializes random seed
         rng = np.random.default_rng(seed)
 
@@ -190,37 +278,93 @@ class Composition(collections.UserDict):
         # ensures exact normalization
         self.normalize()
 
-    def set_nuc(self, name, xval):
-        """ set nuclei name to the mass fraction xval """
+    def set_nuc(self, name, xval: float):
+        """Set nuclei name to the mass fraction xval.
+
+        Parameters
+        ----------
+        name : Nucleus
+            the nucleus to set
+        xval: float
+        """
         self[name] = xval
 
-    def normalize(self):
-        """ normalize the mass fractions to sum to 1 """
+    def normalize(self, *, half_life_thresh=None):
+        """Normalize the mass fractions to sum to 1.
+
+        Parameters
+        ----------
+        half_life_thresh : float
+            The half life value below which to zero the mass fraction
+            of a nucleus.  This prevents us from making a composition
+            that is not really stable.
+
+        """
+
+        if half_life_thresh is not None:
+            for k in self:
+                if k.tau != "stable" and k.tau is not None:
+                    if k.tau < half_life_thresh:
+                        self[k] = 0.0
+
         X_sum = self.get_sum_X()
 
         for k in self:
             self[k] /= X_sum
 
-    def eval_ye(self):
-        """ return the electron fraction """
+    @property
+    def ye(self):
+        """Return the electron fraction of the composition
+
+        Returns
+        -------
+        float
+        """
         electron_frac = math.fsum(self[n] * n.Z / n.A for n in self) / self.get_sum_X()
         return electron_frac
 
-    def eval_abar(self):
-        """ return the mean molecular weight """
+    @property
+    def abar(self):
+        """Return the mean molecular weight
+
+        Returns
+        -------
+        float
+        """
         abar = math.fsum(self[n] / n.A for n in self)
         return 1. / abar
 
-    def eval_zbar(self):
-        """ return the mean charge, Zbar """
-        return self.eval_abar() * self.eval_ye()
+    @property
+    def zbar(self):
+        """Return the mean charge, Zbar
+
+        Returns
+        -------
+        float
+        """
+        return self.abar * self.ye
 
     def bin_as(self, nuclei, *, verbose=False, exclude=None):
-        """given a list of nuclei, return a new Composition object with the
-        current composition mass fractions binned into the new nuclei.
+        """Given a list of nuclei, return a new Composition object
+        with the current composition mass fractions binned into the
+        new nuclei.
 
-        if a list of nuclei is provided by exclude, then only exact
-        matches will be binned into the nuclei in that list
+        Parameters
+        ----------
+        nuclei : list
+            Input nuclei (either as string names or
+            Nucleus objects) defining the new composition.
+        verbose : bool
+            Output more information
+        exclude : bool
+            List of nuclei in `nuclei` that only
+            exact matches from the original composition can
+            map into
+
+        Returns
+        -------
+        new_composition : Composition
+            The new binned composition
         """
 
         nuclei = Nucleus.cast_list(nuclei)
@@ -290,17 +434,22 @@ class Composition(collections.UserDict):
         return new_comp
 
     def plot(self, trace_threshold=0.1, hard_limit=None, size=(9, 5)):
-        """ Make a pie chart of Composition. group trace nuclei together and explode into bar chart
+        """Make a pie chart of Composition. group trace nuclei
+        together and explode into bar chart
 
-        parameters
+        Parameters
         ----------
+        trace_threshold : float
+            the threshold to consider a component to be trace.
+        hard_limit : float
+            limit below which an abundance will not be included
+            in the trace nuclei wedget of the plot.
+        size: tuple
+            width, height of the plot in inches
 
-        trace_threshold : the threshold to consider a component to be trace.
-
-        hard_limit : hard limit for nuclei to be labeled in the plot. Default is None which will set the limit to 5% of total trace abundance
-
-        size: tuple giving width x height of the plot in inches
-
+        Returns
+        -------
+        matplotlib.figure.Figure
         """
 
         # find trace nuclei
@@ -401,38 +550,38 @@ class Composition(collections.UserDict):
 
 
 class RateCollection:
-    """ a collection of rates that together define a network """
-    # pylint: disable=too-many-public-methods
+    """A collection of rates that together define a network.
+    There are several arguments to the constructor -- any combination
+    may be supplied.
+
+    Parameters
+    ----------
+    rate_files : str, list, tuple
+        a string or iterable of strings of file names that define valid
+        rates. This can include Reaclib library files storing multiple
+        rates.
+    libraries : Library, list, tuple
+        a Library or iterable of Library objects
+    rates : Rate, list, tuple
+        a Rate or iterable of Rate objects
+    inert_nuclei : list, tuple
+        an iterable of Nuclei that should be part of the collection but
+        are not linked via reactions to the other Nuclei in the network.
+    symmetric_screening : bool
+        symmetric screening means that we screen the reverse rates
+        using the same factor as the forward rates, for rates computed
+        via detailed balance.
+    do_screening : bool
+        should we consider screening at all -- this mainly affects
+        whether we build the screening map
+    """
 
     pynucastro_dir = Path(__file__).parents[1]
 
     def __init__(self, rate_files=None, libraries=None, rates=None,
                  inert_nuclei=None,
                  symmetric_screening=False, do_screening=True):
-        """rate_files are the files that together define the network.  This
-        can be any iterable or single string.
 
-        This can include Reaclib library files storing multiple rates.
-
-        If libraries is supplied, initialize a RateCollection using the rates
-        in the Library object(s) in list 'libraries'.
-
-        If rates is supplied, initialize a RateCollection using the
-        Rate objects in the list 'rates'.
-
-        inert_nuclei is a list of nuclei that should be part of the
-        collection but are not linked via reactions to the other nuclei
-        in the network.
-
-        symmetric_screening means that we screen the reverse rates
-        using the same factor as the forward rates, for rates computed
-        via detailed balance.
-
-        Any combination of these options may be supplied.
-
-        """
-
-        self.files = []
         self.rates = []
         combined_library = Library()
 
@@ -520,43 +669,73 @@ class RateCollection:
         self.custom_rates = []
         self.approx_rates = []
         self.derived_rates = []
+        self.modified_rates = []
 
         for r in self.rates:
             if isinstance(r, ApproximateRate):
                 self.approx_rates.append(r)
                 for cr in r.get_child_rates():
                     assert cr.chapter != "t"
-                    # child rates may be ReacLibRates or DerivedRates
-                    # make sure we don't double count
+
+                    # Check whether this child rate is removed or not.
+                    # "removed" means that this rate is never used on
+                    # its own to connect two nuclei in the network it
+                    # is only used in one or more ApproximateRate or
+                    # ModifiedRate
+                    if cr not in self.rates:
+                        cr.removed = True
+                    else:
+                        cr.removed = False
+
+                    cr.fname = None
+                    # pylint: disable-next=protected-access
+                    cr._set_print_representation()
+
+                    # child rates may be ReacLibRates, ModifiedRates,
+                    # or DerivedRates.  Make sure we don't double
+                    # count
                     if isinstance(cr, DerivedRate):
-
-                        # Here we check whether this child rate is removed or not.
-                        # removed means that this rate is never used on its own to connect two nuclei in the network
-                        # it is only used in one or more ApproximateRate.
-                        if cr not in self.rates:
-                            cr.removed = True
-                        else:
-                            cr.removed = False
-
-                        cr.fname = None
-                        # pylint: disable-next=protected-access
-                        cr._set_print_representation()
-
                         if cr not in self.derived_rates:
                             self.derived_rates.append(cr)
-
+                    elif isinstance(cr, ModifiedRate):
+                        if cr not in self.modified_rates:
+                            self.modified_rates.append(cr)
                     else:
-                        if cr not in self.rates:
-                            cr.removed = True
-                        else:
-                            cr.removed = False
-
-                        cr.fname = None
-                        # pylint: disable-next=protected-access
-                        cr._set_print_representation()
-
                         if cr not in self.reaclib_rates:
                             self.reaclib_rates.append(cr)
+
+            elif isinstance(r, ModifiedRate):
+                if r not in self.modified_rates:
+                    self.modified_rates.append(r)
+
+                cr = r.original_rate
+
+                # Check whether this child rate is removed or not.
+                # "removed" means that this rate is never used on
+                # its own to connect two nuclei in the network it
+                # is only used in one or more ApproximateRate or
+                # ModifiedRate
+                if cr not in self.rates:
+                    cr.removed = True
+                else:
+                    cr.removed = False
+
+                cr.fname = None
+                # pylint: disable-next=protected-access
+                cr._set_print_representation()
+
+                # child rates may be ReacLibRates, ModifiedRates,
+                # or DerivedRates.  Make sure we don't double
+                # count
+                if isinstance(cr, DerivedRate):
+                    if cr not in self.derived_rates:
+                        self.derived_rates.append(cr)
+                elif isinstance(cr, ModifiedRate):
+                    if cr not in self.modified_rates:
+                        self.modified_rates.append(cr)
+                else:
+                    if cr not in self.reaclib_rates:
+                        self.reaclib_rates.append(cr)
 
             elif r.chapter == 't':
                 self.tabular_rates.append(r)
@@ -568,25 +747,26 @@ class RateCollection:
             elif isinstance(r.chapter, int):
                 if r not in self.reaclib_rates:
                     self.reaclib_rates.append(r)
-                    if r.get_rate_id() == "n --> p <wc12_reaclib_weak_>":
+                    if r.id == "n --> p <wc12_reaclib_weak_>":
                         msg = "ReacLib neutron decay rate (<n_to_p_weak_wc12>) does not account for degeneracy at high densities. Consider using tabular rate from Langanke."
                         warnings.warn(msg)
             else:
                 raise NotImplementedError(f"Chapter type unknown for rate chapter {r.chapter}")
 
         self.all_rates = (self.reaclib_rates + self.custom_rates +
-                          self.tabular_rates + self.approx_rates + self.derived_rates)
+                          self.tabular_rates + self.approx_rates +
+                          self.modified_rates + self.derived_rates)
 
         # finally check for duplicate rates -- these are not
         # allowed
-        if self.find_duplicate_links():
+        if dupes := self.find_duplicate_links():
+            print(dupes)
             raise RateDuplicationError("Duplicate rates found")
 
     def _read_rate_files(self, rate_files):
         # get the rates
-        self.files = rate_files
         combined_library = Library()
-        for rf in self.files:
+        for rf in rate_files:
             # create the appropriate rate object first
             try:
                 rate = load_rate(rf)
@@ -599,7 +779,14 @@ class RateCollection:
         return combined_library
 
     def get_forward_rates(self):
-        """return a list of the forward (exothermic) rates"""
+        """Return a list of the forward (exothermic) rates in the
+        network
+
+        Returns
+        -------
+        list(Rate)
+
+        """
 
         # first handle the ones that have Q defined
         forward_rates = [r for r in self.rates if r.Q >= 0.0]
@@ -607,7 +794,15 @@ class RateCollection:
         return forward_rates
 
     def get_reverse_rates(self):
-        """return a list of the reverse (endothermic) rates)"""
+        """Return a list of the reverse (endothermic) rates).  Note
+        these may not be the same as the reverse rates identified by
+        ReacLib.
+
+        Returns
+        -------
+        list(Rate)
+
+        """
 
         # first handle the ones that have Q defined
         reverse_rates = [r for r in self.rates if r.Q < 0.0]
@@ -615,7 +810,12 @@ class RateCollection:
         return reverse_rates
 
     def find_reverse(self, forward_rate, reverse_rates=None):
-        """given a forward rate, locate the rate that is its reverse"""
+        """Given a forward rate, locate the rate that is its reverse.
+
+        Returns
+        -------
+        Rate
+        """
 
         if reverse_rates is None:
             reverse_rates = self.get_reverse_rates()
@@ -631,8 +831,14 @@ class RateCollection:
         return reverse
 
     def get_rate_pairs(self):
-        """ return a list of RatePair objects, grouping the rates together
-            by forward and reverse"""
+        """Find pairs of forward (Q > 0) and reverse (Q < 0) rates for the
+        same link between nuclei.
+
+        Return
+        ------
+        list(RatePair)
+
+        """
 
         rate_pairs = []
 
@@ -662,17 +868,35 @@ class RateCollection:
         return rate_pairs
 
     def get_nuclei(self):
-        """ get all the nuclei that are part of the network """
+        """Get all the nuclei that are part of the network.
+
+        Returns
+        -------
+        list(Nucleus)
+
+        """
         return self.unique_nuclei
 
     def linking_nuclei(self, nuclei, return_type=None, **kwargs):
-        """
-        Return a new RateCollection/Network object containing only rates linking the
-        given nuclei (parameter *nuclei*). Nuclei can be provided as an iterable of Nucleus
-        objects or a list of abbreviations. The *return_type* parameter allows the caller to
-        specify a different constructor (e.g. superclass constructor) if the current class does
-        not take a 'libraries' keyword. See method of same name in Library class for valid
-        keyword arguments.
+        """Return a new network containing only rates linking the
+        given nuclei.
+
+        Parameters
+        ----------
+        nuclei : list, tuple
+            An iterable of Nucleus objects or string names of nuclei.
+        return_type : Callable
+            A different constructor (e.g., a superclass constructor)
+            to use if the current class does not take a `libraries`
+            keyword.
+        kwargs : dict
+            Additional arguments to pass onto the library linking_nuclei
+            method.  See :py:mod:`pynucastro.rates.library.Library.linking_nuclei`
+
+        Returns
+        -------
+        RateCollection
+
         """
 
         if return_type is None:
@@ -681,12 +905,48 @@ class RateCollection:
         return return_type(libraries=lib.linking_nuclei(nuclei, **kwargs))
 
     def get_rates(self):
-        """ get a list of the reaction rates in this network"""
+        """Get a list of the reaction rates in this network.
+
+        Returns
+        -------
+        list(Rate)
+
+        """
         return self.rates
 
+    def get_hidden_rates(self):
+        """Get a list of all of the rates approximated out of the
+        network
+
+        Returns
+        -------
+        list(Rate)
+
+        """
+        hidden_rates = []
+        for r in self.get_rates():
+            if isinstance(r, ApproximateRate):
+                for c in r.get_child_rates():
+                    if c.removed:
+                        hidden_rates.append(c)
+            elif isinstance(r, ModifiedRate):
+                if r.original_rate.removed:
+                    hidden_rates.append(r.original_rate)
+        return set(hidden_rates)
+
     def get_rate(self, rid):
-        """ Return a rate matching the id provided.  Here rid should be
-        the string return by Rate.fname"""
+        """Return a rate matching the id provided.
+
+        Parameters
+        ----------
+        rid : str
+            The id of the rate, as returned by Rate.fname
+
+        Returns
+        -------
+        Rate
+
+        """
         try:
             rid_mod = capitalize_rid(rid, "_")
             return [r for r in self.rates if r.fname == rid_mod][0]
@@ -694,7 +954,25 @@ class RateCollection:
             raise LookupError(f"rate identifier {rid!r} does not match a rate in this network.") from None
 
     def get_rate_by_nuclei(self, reactants, products):
-        """given a list of reactants and products, return any matching rates"""
+        """Given a list of reactants and products, return any matching rates
+
+        Parameters
+        ----------
+        reactants : list(Nucleus), list(str)
+            the reactants for the reaction.  These can either be string
+            names or :py:class:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>`
+            objects.
+        products : list(Nucleus), list(str)
+            the products for the reaction.  These can either be string
+            names or :py:class:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>`
+            objects.
+
+        Returns
+        -------
+        rates : Rate, list(Rate)
+            any matching rates
+
+        """
         reactants = sorted(Nucleus.cast_list(reactants))
         products = sorted(Nucleus.cast_list(products))
         _tmp = [r for r in self.rates if
@@ -703,22 +981,40 @@ class RateCollection:
 
         if not _tmp:
             return None
+        if len(_tmp) == 1:
+            return _tmp[0]
         return _tmp
 
     def get_rate_by_name(self, name):
-        """given a rate in the form 'A(x,y)B' return the Rate"""
+        """Given a rate in the form 'A(x,y)B' return the rate
+
+        Parameters
+        ----------
+        name : str
+            the name of the rate, in the form "A(x,y)B"
+
+        Returns
+        -------
+        Rate
+
+        """
 
         reactants, products = _rate_name_to_nuc(name)
         _r = self.get_rate_by_nuclei(reactants, products)
         if _r is None:
             return None
-        if len(_r) == 1:
-            return _r[0]
         return _r
 
     def get_nuclei_needing_partition_functions(self):
-        """return a list of Nuclei that require partition functions for one or
-        more DerivedRates in the collection"""
+        """Return a list of nuclei that require partition functions
+        for one or more :py:class:`DerivedRate
+        <pynucastro.rates.derived_rate.DerivedRate>` in the collection
+
+        Returns
+        -------
+        list(Nucleus)
+
+        """
 
         nuclei_pfs = set()
         for r in self.all_rates:
@@ -729,8 +1025,20 @@ class RateCollection:
         return sorted(nuclei_pfs)
 
     def dedupe_partition_function_temperatures(self):
-        """return a list of unique temperature arrays, along with a dictionary
-        mapping each Nucleus to the corresponding index into that list"""
+        """Return a list of unique temperature arrays needed by
+        partition function tables, along with a dictionary mapping
+        each Nucleus to the corresponding index into that list
+
+        Returns
+        -------
+        temp_arrays : list
+            a list of NumPy ndarray specifying the temperature values
+            for a particular partition function tabulation.
+        temp_indices : dict
+            a dictionary that keyed on Nucleus that maps a nucleus to
+            the index in temp_arrays containing the temperature array
+            for its partition function data.
+        """
 
         nuclei = self.get_nuclei_needing_partition_functions()
         temp_arrays = []
@@ -752,9 +1060,12 @@ class RateCollection:
         return temp_arrays, temp_indices
 
     def remove_nuclei(self, nuc_list):
-        """remove the nuclei in nuc_list from the network along with any rates
-        that directly involve them (this doesn't affect approximate rates that
-        may have these nuclei as hidden intermediate links)"""
+        """Remove the nuclei in nuc_list from the network along with
+        any rates that directly involve them (this doesn't affect
+        approximate rates that may have these nuclei as hidden
+        intermediate links)
+
+        """
 
         nuc_list = Nucleus.cast_list(nuc_list)
         rates_to_delete = []
@@ -770,9 +1081,11 @@ class RateCollection:
         self._build_collection()
 
     def remove_rates(self, rates):
-        """remove the Rate objects in rates from the network.  Note, if
-        rate list is a dict, then the keys are assumed to be the rates
-        to remove"""
+        """Remove the Rate objects in rates from the network.  Note,
+        if rate list is a dict, then the keys are assumed to be the
+        rates to remove
+
+        """
 
         if isinstance(rates, Rate):
             self.rates.remove(rates)
@@ -783,7 +1096,17 @@ class RateCollection:
         self._build_collection()
 
     def add_rates(self, rates):
-        """add the Rate objects in rates from the network."""
+        """Add new rates to the network.  If the rate already exists,
+        it will not be added.  The network is then regenerated using
+        the updated rates
+
+        Parameters
+        ----------
+        rates : Rate, list(Rate)
+             a single Rate object or a list of Rate objects specifying the
+             rates to be added to the network.
+
+        """
 
         if isinstance(rates, Rate):
             if rates not in self.rates:
@@ -797,8 +1120,19 @@ class RateCollection:
         self._build_collection()
 
     def make_ap_pg_approx(self, intermediate_nuclei=None):
-        """combine the rates A(a,g)B and A(a,p)X(p,g)B (and the reverse) into a single
-        effective approximate rate."""
+        """Combine the rates A(a,g)B and A(a,p)X(p,g)B (and the
+        reverse) into a single effective approximate rate.  The new
+        approximate rates will be added to the network and the original
+        rates will be removed (although they are still carried by the
+        ApproximateRate object.
+
+        Parameters
+        ----------
+        intermediate_nuclei : list, tuple
+            an iterable of Nucleus objects or string names representing
+            the intermediate nucleus we wish to approximate out.
+
+        """
 
         # make sure that the intermediate_nuclei list are Nuclei objects
         intermediate_nuclei = Nucleus.cast_list(intermediate_nuclei, allow_None=True)
@@ -817,54 +1151,34 @@ class RateCollection:
             prim_nuc = sorted(r_ag.reactants)[-1]
             prim_prod = sorted(r_ag.products)[-1]
 
-            inter_nuc_Z = prim_nuc.Z + 1
-            inter_nuc_A = prim_nuc.A + 3
-
-            element = PeriodicTable.lookup_Z(inter_nuc_Z)
-
-            inter_nuc = Nucleus(f"{element.abbreviation}{inter_nuc_A}")
+            inter_nuc = Nucleus.from_Z_A(prim_nuc.Z+1, prim_nuc.A+3)
 
             if intermediate_nuclei and inter_nuc not in intermediate_nuclei:
                 continue
 
             # look for A(a,p)X
-            _r = self.get_rate_by_nuclei([prim_nuc, Nucleus("he4")], [inter_nuc, Nucleus("p")])
-
-            if _r:
-                r_ap = _r[-1]
-            else:
+            if not (r_ap := self.get_rate_by_nuclei([prim_nuc, Nucleus("he4")],
+                                                    [inter_nuc, Nucleus("p")])):
                 continue
 
             # look for X(p,g)B
-            _r = self.get_rate_by_nuclei([inter_nuc, Nucleus("p")], [prim_prod])
-
-            if _r:
-                r_pg = _r[-1]
-            else:
+            if not (r_pg := self.get_rate_by_nuclei([inter_nuc, Nucleus("p")],
+                                                    [prim_prod])):
                 continue
 
             # look for reverse B(g,a)A
-            _r = self.get_rate_by_nuclei([prim_prod], [prim_nuc, Nucleus("he4")])
-
-            if _r:
-                r_ga = _r[-1]
-            else:
+            if not (r_ga := self.get_rate_by_nuclei([prim_prod],
+                                                    [prim_nuc, Nucleus("he4")])):
                 continue
 
             # look for reverse B(g,p)X
-            _r = self.get_rate_by_nuclei([prim_prod], [inter_nuc, Nucleus("p")])
-
-            if _r:
-                r_gp = _r[-1]
-            else:
+            if not (r_gp := self.get_rate_by_nuclei([prim_prod],
+                                                    [inter_nuc, Nucleus("p")])):
                 continue
 
             # look for reverse X(p,a)A
-            _r = self.get_rate_by_nuclei([inter_nuc, Nucleus("p")], [Nucleus("he4"), prim_nuc])
-
-            if _r:
-                r_pa = _r[-1]
-            else:
+            if not (r_pa := self.get_rate_by_nuclei([inter_nuc, Nucleus("p")],
+                                                    [Nucleus("he4"), prim_nuc])):
                 continue
 
             # build the approximate rates
@@ -893,24 +1207,211 @@ class RateCollection:
         # regenerate the links
         self._build_collection()
 
+    def make_nn_g_approx(self, intermediate_nuclei=None):
+        """Combine the rates A(n,g)X(n,g)B into a single effective
+        rate. The new approximate rates will be added to the network
+        and the original rates will be removed (although they are
+        still carried by the ApproximateRate object.
+
+        Parameters
+        ----------
+        intermediate_nuclei : list, tuple
+            an iterable of `Nucleus <pynucastro.nucdata.nucleus.Nucleus>`
+            or string names representing the intermediate nucleus we
+            wish to approximate out.
+
+        """
+
+        # make sure that the intermediate_nuclei list are Nuclei objects
+        intermediate_nuclei = Nucleus.cast_list(intermediate_nuclei, allow_None=True)
+
+        # if we didn't pass in a list of nuclei, consider all as targets
+        # for approximation
+        if not intermediate_nuclei:
+            intermediate_nuclei = self.unique_nuclei
+
+        # for each intermediate nuclei X, look to see if we have A(n,g)X and X(n,g)B
+        approx_rates = []
+        nuclei_approximated_out = []
+
+        for inter_nuc in intermediate_nuclei:
+
+            if inter_nuc.A < 2:
+                # can't approximate out protons or neutrons
+                continue
+
+            nuc_A = inter_nuc - Nucleus("n")
+            nuc_B = inter_nuc + Nucleus("n")
+
+            if nuc_A in nuclei_approximated_out:
+                # don't try to approximate a rate sequence starting with
+                # a nucleus that we already approximated out
+                continue
+
+            # look for A(n,g)X
+            if not (rf1 := self.get_rate_by_nuclei([nuc_A, Nucleus("n")],
+                                                   [inter_nuc])):
+                continue
+
+            # look for X(n,g)B
+            if not (rf2 := self.get_rate_by_nuclei([inter_nuc, Nucleus("n")],
+                                                   [nuc_B])):
+                continue
+
+            # look for reverse B(g,n)X
+            if not (rr1 := self.get_rate_by_nuclei([nuc_B],
+                                                   [inter_nuc, Nucleus("n")])):
+                continue
+
+            # look for reverse X(g,n)A
+            if not (rr2 := self.get_rate_by_nuclei([inter_nuc],
+                                                   [nuc_A, Nucleus("n")])):
+                continue
+
+            # build the approximate rates
+            ar = ApproximateRate(None, [rf1, rf2],
+                                 None, [rr1, rr2],
+                                 approx_type="nn_g",
+                                 use_identical_particle_factor=False)
+
+            ar_reverse = ApproximateRate(None, [rf1, rf2],
+                                         None, [rr1, rr2],
+                                         is_reverse=True, approx_type="nn_g",
+                                         use_identical_particle_factor=False)
+
+            nuclei_approximated_out.append(inter_nuc)
+            print(f"approximating out {inter_nuc}")
+
+            print(f"using approximate rate {ar}")
+            print(f"using approximate rate {ar_reverse}")
+
+            # approximate rates
+            approx_rates += [ar, ar_reverse]
+
+        # remove the old rates from the rate list and add the approximate rate
+        for ar in approx_rates:
+            for r in ar.get_child_rates():
+                try:
+                    self.rates.remove(r)
+
+                    print(f"removing rate {r}")
+                except ValueError:
+                    pass
+
+            # add the approximate rates
+            self.rates.append(ar)
+
+        # regenerate the links
+        self._build_collection()
+
+    def make_nse_protons(self, A):
+        """Replace protons in rates involving nuclei with mass number
+        >= A with NSE protons.  This will decouple these rates from
+        the proton captures at lower mass number, simplifying the
+        linear algebra.
+
+        Parameters
+        ----------
+        A : int
+            mass number above which to swap regular protons for
+            NSE protons.
+
+        """
+
+        # we want to update both the forward and reverse rates,
+        # so we are consistent
+        for rp in self.get_rate_pairs():
+
+            update = False
+            if rp.forward is not None:
+                heavy = [n for n in rp.forward.reactants + rp.forward.products
+                         if n not in [Nucleus("p"), Nucleus("n"), Nucleus("he4")]]
+                if heavy:
+                    if (min(heavy, key=lambda x: x.A).A >= A and
+                        Nucleus("p") in rp.forward.reactants + rp.forward.products):
+                        update = True
+            elif rp.reverse is not None:
+                heavy = [n for n in rp.reverse.reactants + rp.reverse.products
+                         if n not in [Nucleus("p"), Nucleus("n"), Nucleus("he4")]]
+                if heavy:
+                    if (min(heavy, key=lambda x: x.A).A >= A and
+                        Nucleus("p") in rp.reverse.reactants + rp.reverse.products):
+                        update = True
+
+            if update:
+                if rp.forward is not None:
+                    print(f"modifying {rp.forward.fname} to use NSE protons")
+                    rp.forward.swap_protons()
+                if rp.reverse is not None:
+                    print(f"modifying {rp.reverse.fname} to use NSE protons")
+                    rp.reverse.swap_protons()
+
+        self._build_collection()
+
+    def summary(self):
+        """Print a summary of the nuclei and rates for this network"""
+
+        print("Network summary")
+        print("---------------")
+        print(f"  explicitly carried nuclei: {len(self.unique_nuclei)}")
+        print(f"  approximated-out nuclei: {len(self.approx_nuclei)}")
+        if self.inert_nuclei:
+            print(f"  inert nuclei (included in carried): {len(self.inert_nuclei)}")
+        else:
+            print("  inert nuclei (included in carried): 0")
+
+        print("")
+
+        print(f"  total number of rates: {len(self.all_rates)}")
+        print("")
+
+        print(f"  rates explicitly connecting nuclei: {len(self.rates)}")
+        print(f"  hidden rates: {len(self.get_hidden_rates())}")
+        print("")
+
+        print(f"  reaclib rates: {len(self.reaclib_rates)}")
+        print(f"  tabular rates: {len(self.tabular_rates)}")
+        print(f"  approximate rates: {len(self.approx_rates)}")
+        print(f"  derived rates: {len(self.derived_rates)}")
+        print(f"  modified rates: {len(self.modified_rates)}")
+        print(f"  custom rates: {len(self.custom_rates)}")
+
     def evaluate_rates(self, rho, T, composition, screen_func=None):
-        """evaluate the rates for a specific density, temperature, and
-        composition, with optional screening
+        """Evaluate the rates for a specific density, temperature, and
+        composition, with optional screening.  Note: this returns that
+        rate as dY/dt, where Y is the molar fraction.  For a 2 body
+        reaction, a + b, this will be of the form:
 
-        Note: this returns that rate as dY/dt, where Y is the molar fraction.
-        For a 2 body reaction, a + b, this will be of the form:
+        ρ Y_a Y_b N_A <σv> / (1 + δ_{ab})
 
-        rho Y_a Y_b N_A <sigma v> / (1 + delta_{ab}
-
-        where delta is the Kronecker delta that accounts for a = b.
+        where δ is the Kronecker delta that accounts for a = b.
 
         If you want dn/dt, where n is the number density (so you get
-        n_a n_b <sigma v>), then you need to multiply the results here
-        by rho N_A (where N_A is Avogadro's number).
+        n_a n_b <σv>), then you need to multiply the results here
+        by ρ N_A (where N_A is Avogadro's number).
+
+        Parameters
+        ----------
+        rho : float
+            density used to evaluate rates
+        T : float
+            temperature used to evaluate rates
+        composition : Composition
+            composition used to evaluate rates
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the evaluated rates will include the screening
+            correction.
+
+        Returns
+        -------
+        dict(Rate)
+
         """
+
         rvals = {}
         ys = composition.get_molar()
-        y_e = composition.eval_ye()
+        y_e = composition.ye
 
         if screen_func is not None:
             screen_factors = self.evaluate_screening(rho, T, composition, screen_func)
@@ -918,7 +1419,7 @@ class RateCollection:
             screen_factors = {}
 
         for r in self.rates:
-            val = r.prefactor * rho**r.dens_exp * r.eval(T, rho * y_e)
+            val = r.prefactor * rho**r.dens_exp * r.eval(T, rho=rho, comp=composition)
             if (r.weak_type == 'electron_capture' and not isinstance(r, TabularRate)):
                 val = val * y_e
             yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
@@ -926,8 +1427,31 @@ class RateCollection:
 
         return rvals
 
-    def evaluate_jacobian(self, rho, T, comp, screen_func=None):
-        """return an array of the form J_ij = dYdot_i/dY_j for the network"""
+    def evaluate_jacobian(self, rho, T, comp, *,
+                          screen_func=None, exclude_rates=None):
+        """Return an array of the form J_ij = dYdot_i/dY_j for the
+        network
+
+        Parameters
+        ----------
+        rho : float
+            density used to evaluate Jacobian terms
+        T : float
+            temperature used to evaluate Jacobian terms
+        comp : Composition
+            composition used to evaluate Jacobian terms
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the evaluated rates will include the screening
+            correction.
+        exclude_rates : Iterable(Rate)
+            a list of rates to omit from the construction of the Jacobian.
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
 
         # the rate.eval_jacobian_term does not compute the screening,
         # so we multiply by the factors afterwards
@@ -935,6 +1459,9 @@ class RateCollection:
             screen_factors = self.evaluate_screening(rho, T, comp, screen_func)
         else:
             screen_factors = {}
+
+        if exclude_rates is None:
+            exclude_rates = []
 
         nnuc = len(self.unique_nuclei)
         jac = np.zeros((nnuc, nnuc), dtype=np.float64)
@@ -947,25 +1474,78 @@ class RateCollection:
                 jac[i, j] = 0.0
 
                 for r in self.nuclei_consumed[n_i]:
+                    if r in exclude_rates:
+                        continue
+
                     # how many of n_i are destroyed by this reaction
-                    c = r.reactants.count(n_i)
+                    c = r.reactant_count(n_i)
                     jac[i, j] -= c * screen_factors.get(r, 1.0) *\
                         r.eval_jacobian_term(T, rho, comp, n_j)
 
                 for r in self.nuclei_produced[n_i]:
+                    if r in exclude_rates:
+                        continue
+
                     # how many of n_i are produced by this reaction
-                    c = r.products.count(n_i)
+                    c = r.product_count(n_i)
                     jac[i, j] += c * screen_factors.get(r, 1.0) *\
                         r.eval_jacobian_term(T, rho, comp, n_j)
 
         return jac
 
+    def spectral_radius(self, rho, T, comp, *,
+                        screen_func=None, exclude_rates=None):
+        """Compute the spectral radius of the Jacobian---this is the
+        max{abs(e_i)}, where e_i are the eigenvalues of the Jacobian.
+
+        Parameters
+        ----------
+        rho : float
+            density used to evaluate Jacobian terms
+        T : float
+            temperature used to evaluate Jacobian terms
+        comp : Composition
+            composition used to evaluate Jacobian terms
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the evaluated rates will include the screening
+            correction.
+        exclude_rates : Iterable(Rate)
+            a list of rates to omit from the calculation.  This is useful
+            for testing how the spectral radius / stiffness is affected by
+            the different rates.
+
+        Returns
+        -------
+        float
+
+        """
+
+        J = self.evaluate_jacobian(rho, T, comp,
+                                   screen_func=screen_func,
+                                   exclude_rates=exclude_rates)
+        e = eigvals(J)
+        return np.max(np.abs(e))
+
     def validate(self, other_library, *, forward_only=True):
-        """perform various checks on the library, comparing to other_library,
-        to ensure that we are not missing important rates.  The idea
-        is that self should be a reduced library where we filtered out
-        a few rates and then we want to compare to the larger
-        other_library to see if we missed something important.
+        """Perform various checks on the library, comparing to
+        ``other_library``, to ensure that we are not missing important
+        rates.  The idea is that the current library should be a
+        reduced library (perhaps the result of filtering) and then we
+        want to compare to the larger ``other_library`` to see if we
+        missed something important.
+
+        Parameters
+        ----------
+        other_library : Library
+            the library to compare to
+        forward_only : bool
+            do we only check the forward rates?
+
+        Returns
+        -------
+        bool
+
         """
 
         current_rates = sorted(self.get_rates())
@@ -976,14 +1556,14 @@ class RateCollection:
         passed_validation = True
 
         for rate in current_rates:
-            if rate.reverse:
+            if rate.derived_from_inverse:
                 continue
             for p in rate.products:
                 found = False
                 for orate in current_rates:
                     if orate == rate:
                         continue
-                    if orate.reverse:
+                    if orate.derived_from_inverse:
                         continue
                     if p in orate.reactants:
                         found = True
@@ -1000,7 +1580,7 @@ class RateCollection:
             other_by_reactants[tuple(sorted(rate.reactants))].append(rate)
 
         for rate in current_rates:
-            if forward_only and rate.reverse:
+            if forward_only and rate.derived_from_inverse:
                 continue
 
             key = tuple(sorted(rate.reactants))
@@ -1017,14 +1597,20 @@ class RateCollection:
         return passed_validation
 
     def find_duplicate_links(self):
-        """report on an rates where another rate exists that has the
-        same reactants and products.  These may not be the same Rate
-        object (e.g., one could be tabular the other a simple decay),
-        but they will present themselves in the network as the same
-        link.
+        """Check the network to see if there are multiple rates that
+        share the same reactants and products.  These may not be the
+        same Rate object (e.g., one could be tabular the other a
+        simple decay), but they will present themselves in the network
+        as the same link.
 
         We return a list, where each entry is a list of all the rates
-        that share the same link"""
+        that share the same link.
+
+        Returns
+        -------
+        list
+
+        """
 
         duplicates = find_duplicate_rates(self.get_rates())
 
@@ -1041,12 +1627,28 @@ class RateCollection:
         return duplicates
 
     def find_unimportant_rates(self, states, cutoff_ratio, screen_func=None):
-        """evaluate the rates at multiple thermodynamic states, and find the
-        rates that are always less than `cutoff_ratio` times the fastest rate
-        for each state
+        """Evaluate the rates at multiple thermodynamic states, and
+        find the rates that are always less than `cutoff_ratio` times
+        the fastest rate for each state.  This returns a dict keyed by
+        Rate giving the ratio of the rate to the largest rate.
 
-        Here, states is a list of tuple of the form (density, temperature, composition),
-        where composition is of type `Composition`.
+        Parameters
+        ----------
+        states : list, tuple
+             A tuple of the form (density, temperature, composition),
+             where composition is a Composition object
+        cutoff_ratio : float
+             The ratio of a rate to the fastest rate, below which we
+             consider this rate to be unimportant.
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the evaluated rates will include the screening
+            correction.
+
+        Return
+        ------
+        dict(Rate)
+
         """
         largest_ratio = {r: 0 for r in self.rates}
         for rho, T, comp in states:
@@ -1057,8 +1659,24 @@ class RateCollection:
         return {r: ratio for r, ratio in largest_ratio.items() if ratio < cutoff_ratio}
 
     def evaluate_screening(self, rho, T, composition, screen_func):
-        """Evaluate the screening factors for each rate, using one of the
-        methods in :py:mod:`pynucastro.screening`"""
+        """Evaluate the screening factors for each rate.
+
+        Parameters
+        ----------
+        rho : float
+            density used to evaluate screening
+        T : float
+            temperature used to evaluate screening
+        composition : Composition
+            composition used to evaluate screening
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+
+        Returns
+        -------
+        dict(Rate)
+
+        """
         # this follows the same logic as BaseCxxNetwork._compute_screening_factors()
         factors = {}
         ys = composition.get_molar()
@@ -1099,23 +1717,29 @@ class RateCollection:
 
         return factors
 
-    def evaluate_ydots(self, rho, T, composition, screen_func=None, rate_filter=None):
-        """evaluate net rate of change of molar abundance for each nucleus
-        for a specific density, temperature, and composition
+    def evaluate_ydots(self, rho, T, composition,
+                       screen_func=None, rate_filter=None):
+        """Evaluate net rate of change of molar abundance for each
+        nucleus for a specific density, temperature, and composition
 
-        rho: the density (g/cm^3)
+        Parameters
+        ----------
+        rho : float
+            density used to evaluate rates
+        T : float
+            temperature used to evaluate rates
+        composition : Composition
+            composition used to evaluate rates
+        screen_func : Callable
+            a function from :py:mod:`pynucastro.screening` used to compute the
+            screening enhancement for the rates.
+        rate_filter : Callable
+            a function that takes a :py:class:`Rate <pynucastro.rates.rate.Rate>`
+            and returns `True` or `False` if it is to be evaluated.
 
-        T: the temperature (K)
-
-        composition: a Composition object holding the mass fractions
-        of the nuclei
-
-        screen_func: (optional) the name of a screening function to call
-        to add electron screening to the rates
-
-        rate_filter_funcion: (optional) a function that takes a Rate
-        object and returns true or false if it is to be shown
-        as an edge.
+        Returns
+        -------
+        dict(Nucleus)
 
         """
 
@@ -1133,8 +1757,8 @@ class RateCollection:
                 producing_rates = [r for r in self.nuclei_produced[nuc] if rate_filter(r)]
 
             # Number of nuclei consumed / produced
-            nconsumed = (r.reactants.count(nuc) for r in consuming_rates)
-            nproduced = (r.products.count(nuc) for r in producing_rates)
+            nconsumed = (r.reactant_count(nuc) for r in consuming_rates)
+            nproduced = (r.product_count(nuc) for r in producing_rates)
 
             # Multiply each rate by the count
             consumed = (c * rvals[r] for c, r in zip(nconsumed, consuming_rates))
@@ -1147,13 +1771,31 @@ class RateCollection:
 
     def evaluate_energy_generation(self, rho, T, composition,
                                    screen_func=None, return_enu=False):
-        """evaluate the specific energy generation rate of the network for a specific
+        """Evaluate the specific energy generation rate of the network for a specific
         density, temperature and composition
 
-        screen_func: (optional) a function object to call to apply screening
+        Parameters
+        ----------
+        rho : float
+            density to evaluate the rates with
+        T : float
+            temperature to evaluate the rates with
+        composition : Composition
+            composition to evaluate the rates with
+        screen_func : Callable
+            a function from :py:mod:`pynucastro.screening` to
+            call to compute the screening factor
+        return_enu : bool
+            return both enuc and enu -- the energy loss
+            from neutrinos from weak reactions
 
-        return_enu: (optional) return both enuc and enu -- the energy loss
-        from neutrinos from weak reactions
+        Returns
+        -------
+        enuc : float
+            the energy generation rate
+        enu : float
+            the neutrino loss rate from weak reactions
+
         """
 
         ydots = self.evaluate_ydots(rho, T, composition, screen_func)
@@ -1163,11 +1805,7 @@ class RateCollection:
 
         # ion binding energy contributions. basically e=mc^2
         for nuc in self.unique_nuclei:
-            # add up mass in MeV then convert to erg
-            mass = ((nuc.A - nuc.Z) * constants.m_n_MeV +
-                    nuc.Z * (constants.m_p_MeV + constants.m_e_MeV) -
-                    nuc.A * nuc.nucbind) * constants.MeV2erg
-            enuc += ydots[nuc] * mass
+            enuc += ydots[nuc] * nuc.mass * constants.MeV2erg
 
         # convert from molar value to erg/g/s
         enuc *= -1*constants.N_A
@@ -1178,11 +1816,10 @@ class RateCollection:
             if isinstance(r, TabularRate):
                 # get composition
                 ys = composition.get_molar()
-                y_e = composition.eval_ye()
 
                 # need to get reactant nucleus
                 nuc = r.reactants[0]
-                enu += constants.N_A * ys[nuc] * r.get_nu_loss(T, rho * y_e)
+                enu += constants.N_A * ys[nuc] * r.get_nu_loss(T, rho=rho, comp=composition)
 
         enuc -= enu
         if return_enu:
@@ -1190,8 +1827,28 @@ class RateCollection:
         return enuc
 
     def evaluate_activity(self, rho, T, composition, screen_func=None):
-        """sum over all of the terms contributing to ydot,
-        neglecting sign"""
+        """Compute the activity for each nucleus--the sum of
+        abs(creation rate) + abs(destruction rate), i.e., this neglects the
+        sign of the terms.
+
+        Parameters
+        ----------
+        rho : float
+            density used to evaluate rates
+        T : float
+            temperature used to evaluate rates
+        composition : Composition
+            composition used to evaluate rates
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the evaluated rates will include the screening
+            correction.
+
+        Returns
+        -------
+        dict(Nucleus)
+
+        """
 
         rvals = self.evaluate_rates(rho, T, composition, screen_func)
         act = {}
@@ -1202,8 +1859,8 @@ class RateCollection:
             consuming_rates = self.nuclei_consumed[nuc]
             producing_rates = self.nuclei_produced[nuc]
             # Number of nuclei consumed / produced
-            nconsumed = (r.reactants.count(nuc) for r in consuming_rates)
-            nproduced = (r.products.count(nuc) for r in producing_rates)
+            nconsumed = (r.reactant_count(nuc) for r in consuming_rates)
+            nproduced = (r.product_count(nuc) for r in producing_rates)
             # Multiply each rate by the count
             consumed = (c * rvals[r] for c, r in zip(nconsumed, consuming_rates))
             produced = (c * rvals[r] for c, r in zip(nproduced, producing_rates))
@@ -1213,7 +1870,10 @@ class RateCollection:
         return act
 
     def _get_network_chart(self, rho, T, composition):
-        """a network chart is a dict, keyed by rate that holds a list of tuples (Nucleus, ydot)"""
+        """Create a dict, keyed by rate that holds a list of tuples
+        (Nucleus, ydot)
+
+        """
 
         rvals = self.evaluate_rates(rho, T, composition)
 
@@ -1222,15 +1882,23 @@ class RateCollection:
         for rate, rval in rvals.items():
             nucs = []
             for n in set(rate.reactants):
-                nucs.append((n, -rate.reactants.count(n) * rval))
+                nucs.append((n, -rate.reactant_count(n) * rval))
             for n in set(rate.products):
-                nucs.append((n, rate.products.count(n) * rval))
+                nucs.append((n, rate.product_count(n) * rval))
             nc[rate] = nucs
 
         return nc
 
     def network_overview(self):
-        """ return a verbose network overview """
+        """Return a verbose network overview showing for each nucleus
+        which rates consume it and which produce it.
+
+        Returns
+        -------
+        str
+
+        """
+
         ostr = ""
         for n in self.unique_nuclei:
             ostr += f"{n}\n"
@@ -1246,7 +1914,15 @@ class RateCollection:
         return ostr
 
     def rate_pair_overview(self):
-        """ return a verbose network overview in terms of forward-reverse pairs"""
+        """Return a verbose network overview in terms of
+        forward-reverse pairs
+
+        Returns
+        -------
+        str
+
+        """
+
         ostr = ""
         for n in self.unique_nuclei:
             ostr += f"{n}\n"
@@ -1255,7 +1931,13 @@ class RateCollection:
         return ostr
 
     def get_nuclei_latex_string(self):
-        """return a string listing the nuclei in latex format"""
+        """Return a string listing the nuclei in latex format
+
+        Returns
+        -------
+        str
+
+        """
 
         ostr = ""
         for i, n in enumerate(self.unique_nuclei):
@@ -1265,6 +1947,16 @@ class RateCollection:
         return ostr
 
     def get_rates_latex_table_string(self):
+        """Return a string giving the rows of a LaTeX table with
+        forward rates in the first column and reverse rates in the
+        second column.
+
+        Returns
+        -------
+        str
+
+        """
+
         ostr = ""
         for rp in sorted(self.get_rate_pairs()):
             if rp.forward:
@@ -1282,14 +1974,23 @@ class RateCollection:
         return ostr
 
     def write_network(self, *args, **kwargs):
-        """Before writing the network, check to make sure the rates
-        are distinguishable by name."""
+        """Write out the network.  For :py:class:`RateCollection`
+        this is a no-op.  But derived classes will use this to
+        create the network in a file (or files).
+
+        We do a find check here that the rates in the network
+        are distinguishable.
+
+        """
         assert self._distinguishable_rates(), "ERROR: Rates not uniquely identified by Rate.fname"
         self._write_network(*args, **kwargs)
 
     def _distinguishable_rates(self):
-        """Every Rate in this RateCollection should have a unique Rate.fname,
-        as the network writers distinguish the rates on this basis."""
+        """Every Rate in this RateCollection should have a unique
+        Rate.fname, as the network writers distinguish the rates on
+        this basis.
+
+        """
         names = [r.fname for r in self.rates]
         for n, r in zip(names, self.rates):
             k = names.count(n)
@@ -1300,90 +2001,70 @@ class RateCollection:
         return len(set(names)) == len(self.rates)
 
     def _write_network(self, *args, **kwargs):
-        """A stub for function to output the network -- this is implementation
-        dependent."""
+        """Output the network.  This version is a stub that will be
+        replaced by derived classes, as this is implementation
+        dependent.
+
+        """
         # pylint: disable=unused-argument
         print('To create network integration source code, use a class that implements a specific network type.')
 
-    def plot(self, rho=None, T=None, comp=None, *,
-             outfile=None,
-             size=(800, 600), dpi=100, title=None,
-             ydot_cutoff_value=None, show_small_ydot=False,
-             node_size=1000, node_font_size=13, node_color="#A0CBE2", node_shape="o",
-             curved_edges=False,
-             N_range=None, Z_range=None, rotated=False,
-             always_show_p=False, always_show_alpha=False,
-             hide_xp=False, hide_xalpha=False,
-             highlight_filter_function=None,
-             nucleus_filter_function=None, rate_filter_function=None):
-        """Make a plot of the network structure showing the links between
-        nuclei.  If a full set of thermodymamic conditions are
-        provided (rho, T, comp), then the links are colored by rate
-        strength.
+    def create_network_graph(self, node_nuclei, *,
+                             nuclei_custom_labels=None,
+                             rotated=False,
+                             rate_ydots=None, ydot_cutoff_value=None,
+                             consuming_rate_threshold=None,
+                             show_small_ydot=False,
+                             hide_xalpha=False, hide_xp=False,
+                             rate_filter_function=None,
+                             highlight_filter_function=None):
+        """Create a graph representation of the network using
+        NetworkX.  This arranges the nuclei as nodes on a grid
+        determined by their N and Z, and creates the edges that
+        connect the nuclei.  The various parameters control how
+        which edges are present and their weights.
 
-
-        parameters
+        Parameters
         ----------
+        node_nuclei : Iterable(Nucleus)
+            the nuclei to represent as nodes in the graph
+        nuclei_custom_labels : dict(Nucleus, str)
+            a dictionary giving alternate labels for the nodes.  If not present
+            the nuclei's isotope symbol is used.
+        rotated : bool
+            arrange the nodes as A - 2Z vs. Z or the default Z vs. N?
+        rate_ydots : dict(Rate)
+            the contribution of each rate to a nuclei's dY/dt evolution.
+            This can be obtained from :py:meth:`.evaluate_rates`
+        ydot_cutoff_value : float
+            rate threshold below which we do not add an edge connecting
+            nuclei.
+        consuming_rate_threshold : float
+            for a nucleus that has multiple rates that consume it, remove
+            any rates that are ``consuming_rate_threshold`` smaller than
+            the fastest rate consuming the nucleus.
+        show_small_ydot : bool
+            create edges for rates below ``ydot_cutoff_value``.  They will have
+            the property "real" set to -1.
+        hide_xalpha : bool
+            don't create edges connecting alpha particles and heavy
+            nuclei in reactions of the form A(alpha,X)B or A(X,alpha)B,
+            except if alpha is the heaviest product.
+        hide_xp : bool
+            don't create edges connecting protons and heavy
+            nuclei in reactions of the form A(p,X)B or A(X,p)B.
+        rate_filter_function : Callable
+            a function that takes a ``Rate`` object and returns True
+            or False if an edge should be created for the nuclei
+            it links.
+        highlight_filter_function : Callable
+            a function that takes a ``Rate`` object and returns True or
+            False if we want to highlight the edge in the network.  This
+            sets the "highlight" property of the edge.
 
-        outfile: output name of the plot -- extension determines the type
-
-        rho: density to evaluate rates with
-
-        T: temperature to evaluate rates with
-
-        comp: composition to evaluate rates with
-
-        size: tuple giving width x height of the plot in pixels
-
-        dpi: pixels per inch used by matplotlib in rendering bitmap
-
-        title: title to display on the plot
-
-        ydot_cutoff_value: rate threshold below which we do not show a
-        line corresponding to a rate
-
-        show_small_ydot: if true, then show visible lines for rates below
-        ydot_cutoff_value
-
-        node_size: size of a node
-
-        node_font_size: size of the font used to write the isotope in the node
-
-        node_color: color to make the nodes
-
-        node_shape: shape of the node (using matplotlib marker names)
-
-        curved_edges: do we use arcs to connect the nodes?
-
-        N_range: range of neutron number to zoom in on
-
-        Z_range: range of proton number to zoom in on
-
-        rotate: if True, we plot A - 2Z vs. Z instead of the default Z vs. N
-
-        always_show_p: include p as a node on the plot even if we
-        don't have p+p reactions
-
-        always_show_alpha: include He4 as a node on the plot even if
-        we don't have 3-alpha
-
-        hide_xalpha=False: dont connect the links to alpha for heavy
-        nuclei reactions of the form A(alpha,X)B or A(X,alpha)B,
-        except if alpha is the heaviest product.
-
-        hide_xp=False: dont connect the links to p for heavy
-        nuclei reactions of the form A(p,X)B or A(X,p)B.
-
-        highlight_filter_function: name of a custom function that
-        takes a Rate object and returns true or false if we want
-        to highlight the rate edge.
-
-        nucleus_filter_funcion: name of a custom function that takes a
-        Nucleus object and returns true or false if it is to be shown
-        as a node.
-
-        rate_filter_funcion: a function that takes a Rate object
-        and returns true or false if it is to be shown as an edge.
+        Returns
+        -------
+        networkx.classes.multidigraph.MultiDiGraph
 
         """
 
@@ -1391,49 +2072,8 @@ class RateCollection:
         G.position = {}
         G.labels = {}
 
-        fig, ax = plt.subplots()
-        #divider = make_axes_locatable(ax)
-        #cax = divider.append_axes('right', size='15%', pad=0.05)
-
-        #ax.plot([0, 0], [8, 8], 'b-')
-
-        # in general, we do not show p, n, alpha,
-        # unless we have p + p, 3-a, etc.
-        hidden_nuclei = ["n"]
-        if not always_show_p:
-            hidden_nuclei.append("p")
-        if not always_show_alpha:
-            hidden_nuclei.append("he4")
-
-        # nodes -- the node nuclei will be all of the heavies
-        # add all the nuclei into G.node
-        node_nuclei = []
-        colors = []
-        for n in self.unique_nuclei:
-            if n.raw not in hidden_nuclei:
-                node_nuclei.append(n)
-                colors.append(node_color)
-            else:
-                for r in self.rates:
-                    if r.reactants.count(n) > 1:
-                        node_nuclei.append(n)
-                        colors.append(node_color)
-                        break
-
-        # approx nuclei are given a different color
-        for n in self.approx_nuclei:
-            node_nuclei.append(n)
-            colors.append("#555555")
-
-        if nucleus_filter_function is not None:
-            node_nuclei = list(filter(nucleus_filter_function, node_nuclei))
-            # redo the colors:
-            colors = []
-            for n in node_nuclei:
-                if n in self.approx_nuclei:
-                    colors.append("#555555")
-                else:
-                    colors.append(node_color)
+        if nuclei_custom_labels is None:
+            nuclei_custom_labels = {}
 
         for n in node_nuclei:
             G.add_node(n)
@@ -1441,20 +2081,34 @@ class RateCollection:
                 G.position[n] = (n.Z, n.A - 2*n.Z)
             else:
                 G.position[n] = (n.N, n.Z)
-            G.labels[n] = fr"${n.pretty}$"
+            if n in nuclei_custom_labels:
+                G.labels[n] = nuclei_custom_labels[n]
+            else:
+                G.labels[n] = fr"${n.pretty}$"
 
-        # get the rates for each reaction
-        if rho is not None and T is not None and comp is not None:
-            ydots = self.evaluate_rates(rho, T, comp)
-        else:
-            ydots = None
-
-        # Do not show rates on the graph if their corresponding ydot is less than ydot_cutoff_value
+        # Do not show rates on the graph if their corresponding ydot
+        # is less than ydot_cutoff_value
         invisible_rates = set()
         if ydot_cutoff_value is not None:
             for r in self.rates:
-                if ydots[r] < ydot_cutoff_value:
+                if rate_ydots[r] < ydot_cutoff_value:
                     invisible_rates.add(r)
+
+        # Consider each nucleus heavier than He and all the rates that
+        # consume it.  If desired, only show rates that are within a
+        # threshold of the fastest rate consuming that nucleus
+        if consuming_rate_threshold is not None:
+            assert consuming_rate_threshold > 0.0
+            for n in node_nuclei:
+                if n.Z <= 2.0:
+                    continue
+                consump_rates = [r for r in self.rates if n in r.reactants]
+                if len(consump_rates) == 0:
+                    continue
+                max_rate = max(rate_ydots[r] for r in consump_rates)
+                for r in consump_rates:
+                    if rate_ydots[r] < consuming_rate_threshold * max_rate:
+                        invisible_rates.add(r)
 
         # edges for the rates that are explicitly in the network
         for n in node_nuclei:
@@ -1486,17 +2140,17 @@ class RateCollection:
                     # color it
                     # here real means that it is not an approximate rate
 
-                    if ydots is None:
+                    if rate_ydots is None:
                         G.add_edges_from([(n, p)], weight=0.5,
                                          real=1, highlight=highlight)
                         continue
 
                     try:
-                        rate_weight = math.log10(ydots[r])
+                        rate_weight = math.log10(rate_ydots[r])
                     except ValueError:
-                        # if ydots[r] is zero, then set the weight
-                        # to roughly the minimum exponent possible
-                        # for python floats
+                        # if rate_ydots[r] is zero, then set the
+                        # weight to roughly the minimum exponent
+                        # possible for python floats
                         rate_weight = -308
 
                     if r in invisible_rates:
@@ -1515,7 +2169,7 @@ class RateCollection:
         for r in self.rates:
             if not isinstance(r, ApproximateRate):
                 continue
-            for sr in r.secondary_rates + r.secondary_reverse:
+            for sr in r.hidden_rates:
                 if sr in rate_seen:
                     continue
                 rate_seen.append(sr)
@@ -1539,6 +2193,205 @@ class RateCollection:
 
                         G.add_edges_from([(n, p)], weight=0, real=0, highlight=highlight)
 
+        return G
+
+    def plot(self, rho=None, T=None, comp=None, *,
+             outfile=None,
+             size=(800, 600), dpi=100, title=None,
+             ydot_cutoff_value=None, show_small_ydot=False,
+             consuming_rate_threshold=None,
+             node_size=1000, node_font_size=12,
+             node_color="#444444", node_shape="o",
+             color_nodes_by_abundance=False, node_abundance_cutoff=1.e-10,
+             nuclei_custom_labels=None,
+             curved_edges=False,
+             N_range=None, Z_range=None, rotated=False,
+             always_show_p=False, always_show_alpha=False,
+             hide_xp=False, hide_xalpha=False,
+             edge_labels=None,
+             highlight_filter_function=None,
+             nucleus_filter_function=None, rate_filter_function=None,
+             legend_coord=None, plot_to_cbar_ratio=20):
+        """Make a plot of the network structure showing the links between
+        nuclei.  If a full set of thermodymamic conditions are
+        provided (rho, T, comp), then the links are colored by rate
+        strength.
+
+        Parameters
+        ----------
+        rho : float
+           density to evaluate rates with
+        T : float
+            temperature to evaluate rates with
+        comp : Composition
+            composition to evaluate rates with
+        outfile : str
+            output name of the plot (extension determines the type)
+        size : (tuple, list)
+            (width, height) of the plot in pixels
+        dpi : int
+            dots per inch used with size to set output image size
+        title : str
+            title to display on the plot
+        ydot_cutoff_value : float
+            rate threshold below which we do not show a
+            line corresponding to a rate
+        show_small_ydot : bool
+            show visible dashed lines for rates below ``ydot_cutoff_value``
+        consuming_rate_threshold : float
+            for a nucleus that has multiple rates that consume it, remove
+            any rates that are ``consuming_rate_threshold`` smaller than
+            the fastest rate consuming the nucleus.
+        node_size : float
+            size of a node (in networkx units)
+        node_font_size : float
+            size of the font used to write the isotope in the node
+        node_color : str, Callable
+            color to make the nodes. May be a callable that takes a Nucleus
+            object and returns a color.
+        node_shape : str
+            shape of the node (using matplotlib marker names)
+        nuclei_custom_labels : dict(Nucleus, str)
+            a dict of the form {Nucleus: str} that provides alternate
+            labels for nodes (instead of using the `pretty` attribute
+            of the Nucleus.
+        color_nodes_by_abundance : bool
+            if true, the color of the nodes is set via
+            log(X) for each nucleus.  Note: this cannot be
+            used with a callable for ``node_color``.
+        node_abundance_cutoff : float
+            the lower cutoff value used for coloring nodes by abundance.
+        curved_edges : bool
+            do we use arcs to connect the nodes?
+        N_range : Iterable
+            range of neutron number to zoom in on
+        Z_range : Iterable
+            range of proton number to zoom in on
+        rotate : bool
+            plot A - 2Z vs. Z instead of the default Z vs. N
+        always_show_p : bool
+            include p as a node on the plot even if we
+            don't have p+p reactions
+        always_show_alpha : bool
+            include He4 as a node on the plot even if
+            we don't have 3-alpha
+        hide_xalpha : bool
+            don't connect the links to alpha for heavy
+            nuclei reactions of the form A(alpha,X)B or A(X,alpha)B,
+            except if alpha is the heaviest product.
+        hide_xp : bool
+            don't connect the links to p for heavy
+            nuclei reactions of the form A(p,X)B or A(X,p)B.
+        edge_labels : dict
+            a dictionary of the form {(n1, n2): "label"}
+            that gives labels for the edges in the network connecting
+            nucleus n1 to n2.
+        highlight_filter_function : Callable
+            a function that takes a ``Rate`` object and returns True or
+            False if we want to highlight the rate edge.
+        nucleus_filter_function : Callable
+            a function that takes a ``Nucleus`` object and returns
+            True or False if it is to be shown as a node.
+        rate_filter_function : Callable
+            a function that takes a ``Rate`` object
+            and returns True or False if it is to be shown as an edge.
+        plot_to_cbar_ratio : float
+            ratio of main axes to colorbar size
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+        """
+
+        fig = plt.figure(constrained_layout=True,
+                         figsize=(size[0]/dpi, size[1]/dpi))
+
+        # we'll use a grid spec of 2 x 2.  We can merge columns / rows
+        # as needed to give us the flexibility to have colorbars
+        if rotated:
+            gs = mpl.gridspec.GridSpec(nrows=2, ncols=2,
+                                       height_ratios=[plot_to_cbar_ratio, 1], figure=fig)
+            # plot is the top row, colorbar(s) will be the bottom
+            ax = fig.add_subplot(gs[0, :])
+        else:
+            gs = mpl.gridspec.GridSpec(nrows=2, ncols=2,
+                                       width_ratios=[plot_to_cbar_ratio, 1], figure=fig)
+            # plot is the left column, colorbar(s) will be on the right
+            ax = fig.add_subplot(gs[:, 0])
+
+        # in general, we do not show p, n, alpha,
+        # unless we have p + p, 3-a, etc.
+        hidden_nuclei = ["n"]
+        if not always_show_p:
+            hidden_nuclei.append("p")
+            hidden_nuclei.append("p_nse")
+        if not always_show_alpha:
+            hidden_nuclei.append("he4")
+
+        # nodes -- the node nuclei will be all of the heavies
+        # add all the nuclei into G.node
+        node_nuclei = []
+        colors = []
+
+        if callable(node_color) and color_nodes_by_abundance:
+            raise NotImplementedError("setting node_color to a callable and using color_nodes_by_abundance together is not supported.")
+
+        if callable(node_color):
+            get_node_color = node_color
+        elif color_nodes_by_abundance:
+            nuc_norm = mpl.colors.LogNorm(vmin=node_abundance_cutoff, vmax=1.0)
+            nuc_sm = mpl.cm.ScalarMappable(norm=nuc_norm, cmap=mpl.colormaps.get_cmap("magma"))
+
+            def get_node_color(_nuc):
+                return nuc_sm.to_rgba(comp[_nuc])
+        else:
+            def get_node_color(_nuc):
+                return node_color
+
+        for n in self.unique_nuclei:
+            if n.raw not in hidden_nuclei:
+                node_nuclei.append(n)
+                colors.append(get_node_color(n))
+            else:
+                # show hidden nuclei only if they react with themselves
+                for r in self.rates:
+                    if not isinstance(r, (ApproximateRate, ModifiedRate)) and r.reactant_count(n) > 1:
+                        node_nuclei.append(n)
+                        colors.append(get_node_color(n))
+                        break
+
+        # approx nuclei are given a different color
+        for n in self.approx_nuclei:
+            node_nuclei.append(n)
+            colors.append("#888888")
+
+        if nucleus_filter_function is not None:
+            node_nuclei = list(filter(nucleus_filter_function, node_nuclei))
+            # redo the colors:
+            colors = []
+            for n in node_nuclei:
+                if n in self.approx_nuclei:
+                    colors.append("#888888")
+                else:
+                    colors.append(get_node_color(n))
+
+        # get the rates for each reaction
+        if rho is not None and T is not None and comp is not None:
+            rate_ydots = self.evaluate_rates(rho, T, comp)
+        else:
+            rate_ydots = None
+
+        G = self.create_network_graph(node_nuclei,
+                                      rate_ydots=rate_ydots,
+                                      ydot_cutoff_value=ydot_cutoff_value,
+                                      hide_xalpha=hide_xalpha, hide_xp=hide_xp,
+                                      show_small_ydot=show_small_ydot,
+                                      consuming_rate_threshold=consuming_rate_threshold,
+                                      rate_filter_function=rate_filter_function,
+                                      highlight_filter_function=highlight_filter_function,
+                                      rotated=rotated,
+                                      nuclei_custom_labels=nuclei_custom_labels)
+
         # It seems that networkx broke backwards compatibility, and 'zorder' is no longer a valid
         # keyword argument. The 'linewidth' argument has also changed to 'linewidths'.
 
@@ -1546,20 +2399,42 @@ class RateCollection:
                                node_color=colors, alpha=1.0,
                                node_shape=node_shape, node_size=node_size, linewidths=2.0, ax=ax)
 
-        nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
-                                font_size=node_font_size, font_color="w", ax=ax)
+        if color_nodes_by_abundance:
+            node_font_color = {}
+            for n in node_nuclei:
+                try:
+                    r, g, b = get_node_color(n)[:3]
+                    # simple rgb -> luminance conversion
+                    # see: https://en.wikipedia.org/wiki/Luma_(video)
+                    luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
+                    node_font_color[n] = "black" if luminance > 0.5 else "white"
+                except KeyError:
+                    # hidden nucleus
+                    node_font_color[n] = "white"
+        else:
+            node_font_color = "w"
 
-        # now we'll draw edges in two groups -- real links and approximate links
+        nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
+                                font_size=node_font_size, font_color=node_font_color, ax=ax)
+
+        # now we'll draw edges in several groups
 
         if curved_edges:
             connectionstyle = "arc3, rad = 0.2"
+            sort_reverse = False
         else:
             connectionstyle = "arc3"
+            sort_reverse = True
 
-        real_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 1]
-        real_weights = [e["weight"] for u, v, e in G.edges(data=True) if e["real"] == 1]
+        sorted_edges = sorted(G.edges(data=True), key=lambda edge: edge[-1].get("weight", 0),
+                              reverse=sort_reverse)
+        real_edges = [(u, v) for u, v, e in sorted_edges if e["real"] == 1]
+        real_weights = [e["weight"] for u, v, e in sorted_edges if e["real"] == 1]
 
-        edge_color = real_weights
+        if rate_ydots is None:
+            edge_color = "C0"
+        else:
+            edge_color = real_weights
         ww = np.array(real_weights)
         min_weight = ww.min()
         max_weight = ww.max()
@@ -1572,60 +2447,86 @@ class RateCollection:
         else:
             widths *= 2
 
-        # plot the arrow of reaction
+        # draw the approximate rate edges
+        approx_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 0]
+
+        _ = nx.draw_networkx_edges(G, G.position, width=1,
+                                   edgelist=approx_edges, edge_color="0.5",
+                                   connectionstyle=connectionstyle,
+                                   style="dashed", node_size=node_size, ax=ax)
+
+        # draw the edges for the rates that are below ydot_cutoff_value
+        invis_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == -1]
+
+        _ = nx.draw_networkx_edges(G, G.position, width=1,
+                                   edgelist=invis_edges, edge_color="gray",
+                                   connectionstyle=connectionstyle,
+                                   style="dotted", node_size=node_size, ax=ax)
+
+        # draw the edges that are real rates, and above any cutoffs
         real_edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
                                                edgelist=real_edges, edge_color=edge_color,
                                                connectionstyle=connectionstyle,
                                                node_size=node_size,
                                                edge_cmap=plt.cm.viridis, ax=ax)
 
-        approx_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 0]
-
-        _ = nx.draw_networkx_edges(G, G.position, width=1,
-                                   edgelist=approx_edges, edge_color="0.5",
-                                   connectionstyle=connectionstyle,
-                                   style="dotted", node_size=node_size, ax=ax)
-
-        # plot invisible rates, rates that are below ydot_cutoff_value
-        invis_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == -1]
-
-        _ = nx.draw_networkx_edges(G, G.position, width=1,
-                                   edgelist=invis_edges, edge_color="gray",
-                                   connectionstyle=connectionstyle,
-                                   style="dashed", node_size=node_size, ax=ax)
-
         # highlight edges
         highlight_edges = [(u, v) for u, v, e in G.edges(data=True) if e["highlight"]]
 
+        if rho is None:
+            # we are not coloring edges by reaction rate, so highlight in yellow
+            highlight_color = "yellow"
+        else:
+            # use C0 since it doesn't blend in with viridis
+            highlight_color = "C0"
+
         _ = nx.draw_networkx_edges(G, G.position, width=5,
-                                   edgelist=highlight_edges, edge_color="C0", alpha=0.25,
+                                   edgelist=highlight_edges, edge_color=highlight_color, alpha=0.5,
                                    connectionstyle=connectionstyle,
                                    node_size=node_size, ax=ax)
 
-        if ydots is not None:
+        if edge_labels:
+            nx.draw_networkx_edge_labels(G, G.position,
+                                         connectionstyle=connectionstyle,
+                                         font_size=node_font_size,
+                                         edge_labels=edge_labels)
+
+        # figure out the colorbar axes -- we have a single colorbar if we are doing the
+        # rate_ydots.  We have 2 colorbars if we are also doing the color_nodes_by_abundance
+        rate_cb_ax = None
+        node_cb_ax = None
+        if rate_ydots and color_nodes_by_abundance:
+            if rotated:
+                rate_cb_ax = fig.add_subplot(gs[1, 0])
+                node_cb_ax = fig.add_subplot(gs[1, 1])
+            else:
+                rate_cb_ax = fig.add_subplot(gs[0, 1])
+                node_cb_ax = fig.add_subplot(gs[1, 1])
+        elif rate_ydots:
+            if rotated:
+                rate_cb_ax = fig.add_subplot(gs[1, :])
+            else:
+                rate_cb_ax = fig.add_subplot(gs[:, 1])
+
+        orientation = "vertical"
+        if rotated:
+            orientation = "horizontal"
+
+        if rate_ydots is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
             pc.set_array(real_weights)
-            if not rotated:
-                plt.colorbar(pc, ax=ax, label="log10(rate)")
-            else:
-                plt.colorbar(pc, ax=ax, label="log10(rate)", orientation="horizontal", fraction=0.05)
+            fig.colorbar(pc, cax=rate_cb_ax, label="log10(rate)", orientation=orientation)
 
-        Ns = [n.N for n in node_nuclei]
-        Zs = [n.Z for n in node_nuclei]
+        if color_nodes_by_abundance:
+            fig.colorbar(nuc_sm, cax=node_cb_ax, label="log10(X)",
+                         orientation=orientation)
 
         if not rotated:
-            ax.set_xlim(min(Ns)-1, max(Ns)+1)
+            ax.set_xlabel(r"$N$", fontsize="large")
+            ax.set_ylabel(r"$Z$", fontsize="large")
         else:
-            ax.set_xlim(min(Zs)-1, max(Zs)+1)
-
-        #plt.ylim(min(Zs)-1, max(Zs)+1)
-
-        if not rotated:
-            plt.xlabel(r"$N$", fontsize="large")
-            plt.ylabel(r"$Z$", fontsize="large")
-        else:
-            plt.xlabel(r"$Z$", fontsize="large")
-            plt.ylabel(r"$A - 2Z$", fontsize="large")
+            ax.set_xlabel(r"$Z$", fontsize="large")
+            ax.set_ylabel(r"$A - 2Z$", fontsize="large")
 
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
@@ -1639,24 +2540,48 @@ class RateCollection:
         ax.xaxis.set_major_locator(MaxNLocator(integer=True))
         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
-        if Z_range is not None and N_range is not None:
-            if not rotated:
+        if not rotated:
+            if Z_range is not None and N_range is not None:
                 ax.set_xlim(N_range[0], N_range[1])
                 ax.set_ylim(Z_range[0], Z_range[1])
-            else:
+        else:
+            if Z_range is not None:
                 ax.set_xlim(Z_range[0], Z_range[1])
+
+        # if we are rotated and all nuclei have Z = A, then make
+        # the vertical axis symmetric
+        if rotated:
+            ZA = np.array([n.A - 2 * n.Z for n in node_nuclei])
+            if ZA.min() == ZA.max():
+                ax.set_ylim(ZA.min() - 0.5, ZA.min() + 0.5)
 
         if not rotated:
             ax.set_aspect("equal", "datalim")
 
-        fig.set_size_inches(size[0]/dpi, size[1]/dpi)
+        if legend_coord is not None:
+            assert len(legend_coord) == 2
+            eps = 0.1
+            for label, dd in RATE_LINES.items():
+                dZ = dd[0]
+                dN = dd[1]
+                if rotated:
+                    ax.arrow(legend_coord[0], legend_coord[1],
+                             dZ, dN-dZ, width=0.04,
+                             length_includes_head=True)
+                    ax.text(legend_coord[0]+dZ+eps, legend_coord[1]+dN-dZ+np.sign(dN-dZ)*eps,
+                            label, fontsize="small")
+                else:
+                    ax.arrow(legend_coord[1], legend_coord[0],
+                             dN, dZ, width=0.04,
+                             length_includes_head=True)
+                    ax.text(legend_coord[1]+dN+eps, legend_coord[0]+dZ+eps,
+                            label, fontsize="small")
 
         if title is not None:
             fig.suptitle(title)
 
         if outfile is not None:
-            plt.tight_layout()
-            plt.savefig(outfile, dpi=dpi)
+            fig.savefig(outfile, dpi=dpi)
 
         return fig
 
@@ -1664,9 +2589,31 @@ class RateCollection:
                       outfile=None, screen_func=None,
                       rate_scaling=1.e10,
                       size=(800, 800), dpi=100):
-        """plot the Jacobian matrix of the system.  Here, rate_scaling is used
-        to set the cutoff of values that we show, relative to the peak.  Any
-        Jacobian element smaller than this will not be shown."""
+        """Plot the Jacobian matrix of the system.
+
+        Parameters
+        ----------
+        rho : float
+            density used to evaluate terms
+        T : float
+            temperature used to evaluate terms
+        comp : Composition
+            composition used to evaluate terms
+        outfile : str
+            output file for plot (extension is used to specify file type)
+        rate_scaling : float
+            the cutoff of values that we show, relative to the peak.  Any
+            Jacobian element smaller than this will not be shown.
+        size : (tuple, list)
+            size in pixels for the output plot
+        dpi : float
+            dots per inch for the output plot
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+
+        """
 
         jac = self.evaluate_jacobian(rho, T, comp, screen_func=screen_func)
 
@@ -1705,7 +2652,39 @@ class RateCollection:
 
     def plot_network_chart(self, rho=None, T=None, comp=None, *,
                            outfile=None,
-                           size=(800, 800), dpi=100, force_one_column=False):
+                           size=(800, 800), dpi=100,
+                           force_one_column=False,
+                           max_ydot_ratio=1.e15,
+                           plot_to_cbar_ratio=20):
+        """Plot a heatmap showing which rates are affected by which
+        nuclei.
+
+        Parameters
+        ----------
+        rho : float
+            density used to evaluate rates
+        T : float
+            temperature used to evaluate rates
+        comp : Composition
+            composition used to evaluate rates
+        outfile : str
+            filename to output image
+        size : Iterable(int)
+            image dimensions in pixels
+        dpi : int
+            dots per inch for physical size of image
+        force_one_column : bool
+            do we insist on a single column for the plot?
+        max_ydot_ratio : float
+            ratio between maximum ydot and minimum shown in the plot
+        plot_to_cbar_ratio : float
+            ratio of main axes to colorbar size
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+
+        """
 
         nc = self._get_network_chart(rho, T, comp)
 
@@ -1719,7 +2698,7 @@ class RateCollection:
         valid_max = np.abs(_ydot[_ydot != 0]).max()
 
         # pylint: disable-next=redundant-keyword-arg
-        norm = SymLogNorm(valid_max/1.e15, vmin=-valid_max, vmax=valid_max)
+        norm = SymLogNorm(valid_max/max_ydot_ratio, vmin=-valid_max, vmax=valid_max)
 
         # if there are a lot of rates, we split the network chart into
         # two side-by-side panes, with the first half of the rates on
@@ -1735,23 +2714,31 @@ class RateCollection:
         if force_one_column:
             npanes = 1
 
-        fig, _ax = plt.subplots(1, npanes, constrained_layout=True)
+        fig = plt.figure(constrained_layout=True,
+                         figsize=(size[0]/dpi, size[1]/dpi))
 
-        fig.set_size_inches(size[0]/dpi, size[1]/dpi)
-
-        if npanes == 1:
-            drate = len(self.rates)
-        else:
+        if npanes == 2:
+            # we'll use a grid spec of 3x1 and make the main plot
+            # areas and colorbar from it (colorbar on the right)
+            gs = mpl.gridspec.GridSpec(figure=fig,
+                                       nrows=1, ncols=3,
+                                       width_ratios=[plot_to_cbar_ratio, plot_to_cbar_ratio, 1])
             drate = (len(self.rates) + 1) // 2
+        else:
+            # colorbar on the bottom
+            drate = len(self.rates)
+            gs = mpl.gridspec.GridSpec(figure=fig,
+                                       nrows=2, ncols=1,
+                                       height_ratios=[plot_to_cbar_ratio, 1])
 
         _rates = sorted(self.rates)
 
         for ipane in range(npanes):
 
             if npanes == 2:
-                ax = _ax[ipane]
+                ax = fig.add_subplot(gs[0, ipane])
             else:
-                ax = _ax
+                ax = fig.add_subplot(gs[0, 0])
 
             istart = ipane * drate
             iend = min((ipane + 1) * drate - 1, len(self.rates)-1)
@@ -1773,10 +2760,15 @@ class RateCollection:
                         data[irow, icol] = ydot
 
             # each pane has all the nuclei
-            ax.set_xticks(np.arange(len(self.unique_nuclei)), labels=[f"${n.pretty}$" for n in self.unique_nuclei], rotation=90)
+            ax.set_xticks(np.arange(len(self.unique_nuclei)),
+                          labels=[f"${n.pretty}$"
+                                  for n in self.unique_nuclei], rotation=90)
 
             # each pane only has its subset of rates
-            ax.set_yticks(np.arange(nrates), labels=[f"{r.pretty_string}" for irate, r in enumerate(_rates) if istart <= irate <= iend])
+            ax.set_yticks(np.arange(nrates),
+                          labels=[f"{r.pretty_string}"
+                                  for irate, r in enumerate(_rates)
+                                  if istart <= irate <= iend])
 
             im = ax.imshow(data, norm=norm, cmap=plt.cm.bwr)
 
@@ -1788,12 +2780,15 @@ class RateCollection:
             ax.set_xticks(np.arange(data.shape[1]+1)-.5, minor=True)
             ax.set_yticks(np.arange(data.shape[0]+1)-.5, minor=True)
             ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
-            ax.tick_params(which="minor", bottom=False, left=False)
+            ax.tick_params(which="minor", bottom=False, left=False,
+                           labelsize=8)
 
         if npanes == 1:
-            fig.colorbar(im, ax=ax, orientation="horizontal", shrink=0.75)
+            cax = fig.add_subplot(gs[1, 0])
+            fig.colorbar(im, cax=cax, orientation="horizontal")
         else:
-            fig.colorbar(im, ax=ax, orientation="vertical", shrink=0.25)
+            cax = fig.add_subplot(gs[0, 2])
+            fig.colorbar(im, cax=cax, orientation="vertical")
 
         if outfile is not None:
             fig.savefig(outfile, bbox_inches="tight")
@@ -1833,44 +2828,67 @@ class RateCollection:
         scaled[scaled > 1.0] = 1.0
         return scaled
 
-    def gridplot(self, comp=None, color_field="X", rho=None, T=None, **kwargs):
-        """
-        Plot nuclides as cells on a grid of Z vs. N, colored by *color_field*. If called
-        without a composition, the function will just plot the grid with no color field.
+    def gridplot(self, rho=None, T=None, comp=None, color_field="X", **kwargs):
+        """Plot nuclides as cells on a grid of Z vs. N, colored by `color_field`.
+        If called without a composition, the function will just plot the grid
+        with no color field.
 
-        :param comp: Composition of the environment.
-        :param color_field: Field to color by. Must be one of 'X' (mass fraction),
+        Parameters
+        ----------
+        rho : float
+            density used to evaluate color_field
+        T : float
+            temperature used to evaluate color_field
+        comp : Composition
+            composition used to evaluate color_field
+        color_field : str
+            field to color by. Must be one of 'X' (mass fraction),
             'Y' (molar abundance), 'Xdot' (time derivative of X), 'Ydot' (time
             derivative of Y), or 'activity' (sum of contributions to Ydot of
             all rates, ignoring sign).
-        :param rho: Density to evaluate rates at. Needed for fields involving time
-            derivatives.
-        :param T: Temperature to evaluate rates at. Needed for fields involving time
-            derivatives.
+        scale : str
+            One of 'linear', 'log', and 'symlog'. Linear by default.
+        small : float
+            If using logarithmic scaling, zeros will be replaced with
+            this value. 1e-30 by default.
+        linthresh : float
+            Linearity threshold for symlog scaling.
+        linscale : float
+            The number of decades to use for each half of the linear
+            range. Stretches linear range relative to the logarithmic range.
+        filter_function : Callable
+            A callable to filter :py:class:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>`
+            objects with. Should return `True` if the nuclide should be plotted.
+        outfile : str
+            Output file to save the plot to. The plot will be shown if
+            not specified.
+        dpi : float
+            DPI to save the image file at.
+        cmap : str
+            Name of the matplotlib colormap to use. Default is 'magma'.
+        edgecolor : str
+            Color of grid cell edges.
+        area : float
+            Area of the figure without the colorbar, in square inches. 64
+            by default.
+        no_axes : bool
+            Set to True to omit axis spines.
+        no_ticks : bool
+            Set to True to omit tickmarks.
+        no_cbar : bool
+            Set to True to omit colorbar.
+        cbar_label : str
+            Colorbar label.
+        cbar_bounds : list, tuple
+            Explicit colorbar bounds.
+        cbar_format : str, matplotlib.ticker.Formatter
+            Format string or formatter object for the colorbar ticks.
+        cbar_ticks : int
+            Number of ticks to use on the colorbar
 
-        :Keyword Arguments:
-
-            - *scale* -- One of 'linear', 'log', and 'symlog'. Linear by default.
-            - *small* -- If using logarithmic scaling, zeros will be replaced with
-              this value. 1e-30 by default.
-            - *linthresh* -- Linearity threshold for symlog scaling.
-            - *linscale* --  The number of decades to use for each half of the linear
-              range. Stretches linear range relative to the logarithmic range.
-            - *filter_function* -- A callable to filter Nucleus objects with. Should
-              return *True* if the nuclide should be plotted.
-            - *outfile* -- Output file to save the plot to. The plot will be shown if
-              not specified.
-            - *dpi* -- DPI to save the image file at.
-            - *cmap* -- Name of the matplotlib colormap to use. Default is 'magma'.
-            - *edgecolor* -- Color of grid cell edges.
-            - *area* -- Area of the figure without the colorbar, in square inches. 64
-              by default.
-            - *no_axes* -- Set to *True* to omit axis spines.
-            - *no_ticks* -- Set to *True* to omit tickmarks.
-            - *no_cbar* -- Set to *True* to omit colorbar.
-            - *cbar_label* -- Colorbar label.
-            - *cbar_bounds* -- Explicit colorbar bounds.
-            - *cbar_format* -- Format string or Formatter object for the colorbar ticks.
+        Returns
+        -------
+        matplotlib.figure.Figure
         """
 
         # Process kwargs
@@ -1955,7 +2973,7 @@ class RateCollection:
         for nuc, weight in zip(nuclei, weights):
 
             square = plt.Rectangle((nuc.N - 0.5, nuc.Z - 0.5), width=1, height=1,
-                    facecolor=cmap(weight), edgecolor=edgecolor)
+                                   facecolor=cmap(weight), edgecolor=edgecolor)
             ax.add_patch(square)
 
         # Set limits
@@ -2052,9 +3070,24 @@ class RateCollection:
 
 
 class Explorer:
-    """ interactively explore a rate collection """
+    """A simple class that enables interactive exploration a
+    RateCollection, presenting density and temperature sliders to
+    update the reaction rate values.
+
+    Parameters
+    ----------
+    rc : RateCollection
+        The RateCollection we will visualize.
+    comp : Composition
+        A composition that will be used for evaluating the rates
+    kwargs : dict
+        Additional parameters that will be passed through to the
+        RateCollection plot() function.  Note that "T" and "rho"
+        will be ignored.
+
+    """
+
     def __init__(self, rc, comp, **kwargs):
-        """ take a RateCollection and a composition """
         self.rc = rc
         self.comp = comp
         self.kwargs = kwargs
@@ -2068,5 +3101,19 @@ class Explorer:
                      comp=self.comp, **self.kwargs)
 
     def explore(self, logrho=(2, 6, 0.1), logT=(7, 9, 0.1)):
-        """Perform interactive exploration of the network structure."""
+        """Create the interactive visualization.  This uses ipywidgets.interact
+        to create an interactive visualization.
+
+        Parameters
+        ----------
+        logrho : list, tuple
+            a tuple of (starting log(rho), ending log(rho), dlogrho) that
+            defines the range of densities to explore with an interactive
+            slider.
+        logT : list, tuple
+            a tuple of (starting log(T), ending log(T), dlogT) that
+            defines the range of temperatures to explore with an interactive
+            slider.
+        """
+
         interact(self._make_plot, logrho=logrho, logT=logT)

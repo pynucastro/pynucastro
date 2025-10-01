@@ -9,65 +9,15 @@ pynucastro.networks package
 Submodules
 ----------
 
-pynucastro.networks.amrexastro\_cxx\_network module
----------------------------------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: pynucastro.networks.amrexastro_cxx_network
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pynucastro.networks.base\_cxx\_network module
----------------------------------------------
-
-.. automodule:: pynucastro.networks.base_cxx_network
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pynucastro.networks.nse\_network module
----------------------------------------
-
-.. automodule:: pynucastro.networks.nse_network
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pynucastro.networks.numpy\_network module
------------------------------------------
-
-.. automodule:: pynucastro.networks.numpy_network
-   :members:
-   :show-inheritance:
-
-pynucastro.networks.python\_network module
-------------------------------------------
-
-.. automodule:: pynucastro.networks.python_network
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pynucastro.networks.rate\_collection module
--------------------------------------------
-
-.. automodule:: pynucastro.networks.rate_collection
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pynucastro.networks.simple\_cxx\_network module
------------------------------------------------
-
-.. automodule:: pynucastro.networks.simple_cxx_network
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pynucastro.networks.sympy\_network\_support module
---------------------------------------------------
-
-.. automodule:: pynucastro.networks.sympy_network_support
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   pynucastro.networks.amrexastro_cxx_network
+   pynucastro.networks.base_cxx_network
+   pynucastro.networks.fortran_network
+   pynucastro.networks.helper
+   pynucastro.networks.nse_network
+   pynucastro.networks.python_network
+   pynucastro.networks.rate_collection
+   pynucastro.networks.simple_cxx_network
+   pynucastro.networks.sympy_network_support

@@ -13,10 +13,10 @@ ReacLib
 
 The `JINA ReacLib database <https://reaclib.jinaweb.org/>`_ provides
 the core thermonuclear rates.  These are managed in pynucastro through
-the :func:`ReacLibRate <pynucastro.rates.rate.ReacLibRate>` class.
+the :func:`ReacLibRate <pynucastro.rates.reaclib_rate.ReacLibRate>` class.
 
 A ReacLib rate is composed of several sets (managed as
-:func:`SingleSet <pynucastro.rates.rate.SingleSet>` objects, each
+:func:`SingleSet <pynucastro.rates.reaclib_rate.SingleSet>` objects, each
 taking the form:
 
 .. math::
@@ -62,8 +62,10 @@ The ReacLib database lists the source / reference of each rate with a 6 characte
 * The first 4 characters are the label that gives the source of the rate, according to:
   https://reaclib.jinaweb.org/labels.php
 
-  This is stored in both ``SingleSet`` and ``ReacLibRate`` as the
-  ``.label`` attribute.
+  This is stored in both :py:class:`SingleSet
+  <pynucastro.rates.reaclib_rate.SingleSet>` and
+  :py:class:`ReacLibRate <pynucastro.rates.reaclib_rate.ReacLibRate>`
+  as the ``.label`` attribute.
 
 * The next character is ``n`` for a non-resonant set, ``r`` for a
   resonance, or ``w`` to indicate that it is a weak rate.
@@ -81,8 +83,16 @@ The ReacLib database lists the source / reference of each rate with a 6 characte
   If the weak flag, ``w`` is set, then ``ReacLibRate.weak`` will be ``True``.
 
 * The 6th character indicates it the rate is a derived reverse rate,
-  by the presence of a `v`.  This is stored in both ``SingleSet`` and
-  ``ReacLibRate`` as the ``.reverse`` attribute.
+  by the presence of a `v`.
+
+  This is stored in both :py:class:`SingleSet <pynucastro.rates.reaclib_rate.SingleSet>`
+  and :py:class:`ReacLibRate <pynucastro.rates.reaclib_rate.ReacLibRate>` as the
+  ``.derived_from_inverse`` attribute.
+
+  .. note::
+
+     This is not necessarily a reverse rate ($Q < 0$), so in
+     pynucastro, we call it "derived from inverse".  
 
 
 Weak rates
@@ -114,12 +124,12 @@ As noted above, rates with the ``v`` flag in the label are reverse
 rates that were computed from the forward rate via detailed balance.
 These rates do not include the corrections from partition functions,
 and therefore, should not be used directly.  Instead, the
-:func:`DerivedRate <pynucastro.rates.rate.DerivedRate>` functionality in pynucastro can be used to redo the
+:func:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>` functionality in pynucastro can be used to redo the
 detailed balance including the effects of partition functions.
 
 .. note::
 
-   In ReacLib, _reverse_ does not always mean :math:`Q < 0`.  Sometimes the
+   In ReacLib, *reverse* does not always mean :math:`Q < 0`.  Sometimes the
    rate with :math:`Q < 0` is easier to measure experimentally, and so
    that is measured and then the :math:`Q > 0` rate is computed via
    detailed balance.
@@ -128,9 +138,9 @@ Rate evaluation functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The ``ReacLibRate`` class has functions :func:`function_string_py
-<pynucastro.rates.rate.ReacLibRate.function_string_py>` and
+<pynucastro.rates.reaclib_rate.ReacLibRate.function_string_py>` and
 :func:`function_string_cxx
-<pynucastro.rates.rate.ReacLibRate.function_string_cxx>` to write out
+<pynucastro.rates.reaclib_rate.ReacLibRate.function_string_cxx>` to write out
 the python and C++ code needed to evaluate the T-dependent portion of
 the reaction rate (basically what is encoded in the ReacLib database).
 
@@ -165,7 +175,7 @@ and for a trinary reaction, it is:
 
    \dot{Y} = \rho^2 Y(A)^{n_A} Y(B)^{n_B} Y(C)^{n_C} \frac{N_A^2 \langle \sigma v \rangle}{n_A! n_B! n_C!}
 
-where :math:`n_A` is the number of nucleus :math:`A` in the reaction.  
+where :math:`n_A` is the number of nucleus :math:`A` in the reaction.
 
 .. note::
 
@@ -173,7 +183,8 @@ where :math:`n_A` is the number of nucleus :math:`A` in the reaction.
    is the responsibility of the network.
 
 
-Similarly, ``ReacLib.jacobian_string_py()`` outputs the contribution to the Jacobian for this rate.
+Similarly,  :func:`jacobian_string_py <pynucastro.rates.rate.Rate.jacobian_string_py>`
+outputs the contribution to the Jacobian for this rate.
 
 
 Tabulated Rates
@@ -181,36 +192,57 @@ Tabulated Rates
 
 For electron captures and beta-decays (which are of the form
 :math:`\rm{A \rightarrow B}`), we use tabulated rates.  These are
-two-dimensional tables, in terms of :math:`T` and :math:`\rho Y_e`.
+two-dimensional tables, in terms of :math:`T` and :math:`\rho Y_e`,
+and managed by the :func:`TabularRate <pynucastro.rates.tabular_rate.TabularRate>` class.
 
 .. note::
 
-   If positron captures and decays are available, then these are
-   included with the appropriate electron counterpart into a single
-   rate.
+   If positron captures and decays are available in the data source,
+   then these are combined with the appropriate electron counterpart
+   into a single rate.
 
-A tabular rate is described by 2 files.  The first file mimics the
-ReacLib header, with a chapter indicated as ``t`` and gives the name
-of the table and the number of columns, density, and temperature
-points.  For example,
-`pynucastro/library/tabular/suzuki/na23--ne23-toki <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/na23--ne23-toki>`_ demonstrates the following
-format:
+A tabular rate is described by a single file for each reaction
+(i.e., beta-decays and electron-captures are in separate files).
 
-.. code-block:: none
+The data reading and interpolation are managed by the
+:py:obj:`TabularRate <pynucastro.rates.tabular_rate.TabularRate>`
+class.
 
-   t
-   [parent nuclide]  [daughter nuclide]
-   [rate table file name]
-   [number of header lines before the first line of data]
-   [number of density*ye values]
-   [number of temperature values]
+ydot term
+^^^^^^^^^
+
+The form of the reaction :math:`A \rightarrow B` is:
+
+.. math::
+
+   \dot{Y}_A = -Y(A) \lambda
+
+where :math:`\lambda` is the rate returned from the table.
 
 
-The second file is the table itself.  For now they must be in
-the form of, e.g. `23na-23ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/23na-23ne_electroncapture.dat>`_ in
-``pynucastro/library/tabular/suzuki``, indexed by the product of density and
-electron fraction :math:`\rm{\rho Y_e}` and temperature
-:math:`\rm{T}`, with the same number and order of variables.
+Table format
+^^^^^^^^^^^^
+
+Each rate table has a header (with lines starting with ``!``), followed
+by the data.  An example can be seen as:
+`suzuki-23na-23ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/suzuki-23na-23ne_electroncapture.dat>`_ in
+``pynucastro/library/tabular/suzuki``
+
+.. important::
+
+   The first line header needs to include a line giving the reaction.
+   It should take the form, e.g.,
+
+   ::
+
+      !65zn -> 65cu, e- capture
+
+   where ``!`` is the comment character, ``65zn`` is the reactant, and ``65cu`` is
+   the product.  Any additional information is ignored.
+
+   An alternate form including the spins works as well, but the above
+   it preferred.
+
 The columns of the tables (and
 units) are:
 
@@ -234,14 +266,18 @@ units) are:
 and the data is ordered with ``rhoY`` varying the slowest (i.e., for a
 given ``rhoY`` we loop over all of the temperatures).
 
-pynucastro uses linear interpolation to return the rate given the
-temperature and electron density.
+.. note::
 
-The form of the reaction :math:`A \rightarrow B`
+   The number of temperature and $\rho Y_e$ points used in the tabulation
+   is inferred from the data file itself.
 
-.. math::
 
-   \dot{Y}_A = -Y(A) \lambda
+Rate evaluation functions
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
-where :math:`\lambda` is the rate returned from the table.
-
+Analogous to ``ReacLibRate``, ``TabularRate`` provides functions to
+evaluate the rate and output the python code.  The function
+:func:`function_string_py
+<pynucastro.rates.tabular_rate.TabularRate.function_string_py>`
+outputs the python code for managing the interpolation of the data.
+For C++ networks, this interpolation is handled directly by the network class.

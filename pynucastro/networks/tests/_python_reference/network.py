@@ -106,13 +106,13 @@ class RateEval:
 
 # note: we cannot make the TableInterpolator global, since numba doesn't like global jitclass
 # load data for Na23 --> Ne23
-Na23__Ne23_rate = TabularRate(rfile='na23--ne23-toki')
+Na23__Ne23_rate = TabularRate(rfile='suzuki-23na-23ne_electroncapture.dat')
 Na23__Ne23_info = (Na23__Ne23_rate.table_rhoy_lines,
                   Na23__Ne23_rate.table_temp_lines,
                   Na23__Ne23_rate.tabular_data_table)
 
 # load data for Ne23 --> Na23
-Ne23__Na23_rate = TabularRate(rfile='ne23--na23-toki')
+Ne23__Na23_rate = TabularRate(rfile='suzuki-23ne-23na_betadecay.dat')
 Ne23__Na23_info = (Ne23__Na23_rate.table_rhoy_lines,
                   Ne23__Na23_rate.table_temp_lines,
                   Ne23__Na23_rate.tabular_data_table)
@@ -180,31 +180,33 @@ def n__p__weak__wc12(rate_eval, tf):
 
 @numba.njit()
 def He4_He4_He4__C12(rate_eval, tf):
-    # He4 + He4 + He4 --> C12
+    # 3 He4 --> C12
     rate = 0.0
 
-    # fy05r
-    rate += np.exp(  -24.3505 + -4.12656*tf.T9i + -13.49*tf.T913i + 21.4259*tf.T913
-                  + -1.34769*tf.T9 + 0.0879816*tf.T953 + -13.1653*tf.lnT9)
     # fy05r
     rate += np.exp(  -11.7884 + -1.02446*tf.T9i + -23.57*tf.T913i + 20.4886*tf.T913
                   + -12.9882*tf.T9 + -20.0*tf.T953 + -2.16667*tf.lnT9)
     # fy05n
     rate += np.exp(  -0.971052 + -37.06*tf.T913i + 29.3493*tf.T913
                   + -115.507*tf.T9 + -10.0*tf.T953 + -1.33333*tf.lnT9)
+    # fy05r
+    rate += np.exp(  -24.3505 + -4.12656*tf.T9i + -13.49*tf.T913i + 21.4259*tf.T913
+                  + -1.34769*tf.T9 + 0.0879816*tf.T953 + -13.1653*tf.lnT9)
 
     rate_eval.He4_He4_He4__C12 = rate
 
 @numba.njit()
-def Na23__Ne23(rate_eval, T, rhoY):
+def Na23__Ne23(rate_eval, T, rho, Y):
     # Na23 --> Ne23
+    rhoY = rho * ye(Y)
     Na23__Ne23_interpolator = TableInterpolator(*Na23__Ne23_info)
     r = Na23__Ne23_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)
     rate_eval.Na23__Ne23 = 10.0**r
 
 @numba.njit()
-def Ne23__Na23(rate_eval, T, rhoY):
+def Ne23__Na23(rate_eval, T, rho, Y):
     # Ne23 --> Na23
+    rhoY = rho * ye(Y)
     Ne23__Na23_interpolator = TableInterpolator(*Ne23__Na23_info)
     r = Ne23__Na23_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)
     rate_eval.Ne23__Na23 = 10.0**r
@@ -227,8 +229,8 @@ def rhs_eq(t, Y, rho, T, screen_func):
     He4_He4_He4__C12(rate_eval, tf)
 
     # tabular rates
-    Na23__Ne23(rate_eval, T, rho*ye(Y))
-    Ne23__Na23(rate_eval, T, rho*ye(Y))
+    Na23__Ne23(rate_eval, T, rho=rho, Y=Y)
+    Ne23__Na23(rate_eval, T, rho=rho, Y=Y)
 
     if screen_func is not None:
         plasma_state = PlasmaState(T, rho, Y, Z)
@@ -316,8 +318,8 @@ def jacobian_eq(t, Y, rho, T, screen_func):
     He4_He4_He4__C12(rate_eval, tf)
 
     # tabular rates
-    Na23__Ne23(rate_eval, T, rho*ye(Y))
-    Ne23__Na23(rate_eval, T, rho*ye(Y))
+    Na23__Ne23(rate_eval, T, rho=rho, Y=Y)
+    Ne23__Na23(rate_eval, T, rho=rho, Y=Y)
 
     if screen_func is not None:
         plasma_state = PlasmaState(T, rho, Y, Z)

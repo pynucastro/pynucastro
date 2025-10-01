@@ -5,7 +5,7 @@ AMReX Astro Microphysics Networks
 pynucastro can generate a C++ network that works in the
 AMReX-Astro `Microphysics
 <https://github.com/amrex-astro/Microphysics>`_.  This is done through
-the ``AmrexAstroCxxNetwork`` class.  A simple 
+the :class:`AmrexAstroCxxNetwork <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>` class.  A simple 
 C++ 3-alpha network that works with ``Microphysics`` can be created via:
 
 .. code:: python
@@ -28,7 +28,7 @@ placeholders of the form ``<func>(num)``.  Here,
 
 * ``num`` is the number of indentations for that line of code
 
-In ``BaseCxxNetwork``, there is a dictionary of function tags and the corresponding function
+In :class:`BaseCxxNetwork <pynucastro.networks.base_cxx_network.BaseCxxNetwork>`, there is a dictionary of function tags and the corresponding function
 called ``ftags``.  Any network class that derives from this can add to this list to specialize
 the output.
 
@@ -37,7 +37,7 @@ the code output by a function if the line has a function tag in it.
 
 For the generation of the righthand side of the network itself, we use
 SymPy to build up an expression for each term and then use SymPy's
-``cxxcode`` function to translate it into C++ code.
+`cxxcode <https://docs.sympy.org/latest/modules/printing.html#sympy.printing.codeprinter.cxxcode>`_ function to translate it into C++ code.  This is managed by the :class:`SympyRates <pynucastro.networks.sympy_network_support.SympyRates>` class.
 
 
 This will directly write out the C++ code into a collection of headers
@@ -63,8 +63,16 @@ and source files.  These are:
 
 * ``table_rates.H``
 
-  This manages reading in tabular rates.  It has function tags to define how many tables
+  This manages reading in tabular rates and interpolating the data.
+  It has function tags to define how many tables
   there are as well as declare the memory for storing the tables.
+
+  .. warning::
+
+     We do not check if the thermodynamic conditions for evaluating the
+     rate fall outside of the tabulation.  Instead we simply extrapolate
+     from the edge of the table.  See :ref:`tabulated_rate_sources` for
+     the bounds of the data.
 
 * ``tfactors.H``
 
