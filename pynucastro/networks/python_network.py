@@ -77,6 +77,42 @@ class PythonNetwork(RateCollection):
 
         return ostr
 
+    def enforce_equilibrium(self, indent=""):
+        """Write a function that zeros out rate pairs that are in
+        equilibrium.
+
+        Parameters
+        ----------
+        indent : str
+            A string that will be prepended to each line of the output,
+            typically consisting of just spaces representing the amount
+            of indent desired.
+
+        Returns
+        -------
+        str
+
+        """
+
+        ostr = ""
+        ostr = f"{indent}eps = 1.e-4\n"
+
+        for rp in self.get_rate_pairs():
+
+            if rp.forward is None or rp.reverse is None:
+                continue
+
+            # todo -- we need to deal with the count
+            forward = rp.forward.ydot_string_py()
+            reverse = rp.reverse.ydot_string_py()
+
+            ostr += f"{indent}if (-{forward} + {reverse}) < eps * (abs({forward}) + abs({reverse})):\n"
+            ostr += f"{indent}   rate_eval.{rp.forward.fname} = 0\n"
+            ostr += f"{indent}   rate_eval.{rp.reverse.fname} = 0\n"
+            ostr += "\n"
+
+        return ostr
+
     def full_jacobian_element_string(self, ydot_i_nucleus, y_j_nucleus, indent=""):
         """Construct a string containing the python code for a single
         element of the Jacobian, dYdot(ydot_i_nucleus)/dY(y_j_nucleus)
@@ -458,6 +494,9 @@ class PythonNetwork(RateCollection):
 
         of.write(f"{indent}dYdt = np.zeros((nnuc), dtype=np.float64)\n\n")
 
+        # zero out rates in equilibrium
+        of.write(self.enforce_equilibrium(indent=indent))
+
         # now make the RHSs
         for n in self.unique_nuclei:
             of.write(self.full_ydot_string(n, indent=indent))
@@ -479,6 +518,9 @@ class PythonNetwork(RateCollection):
         of.write(self.rates_string(indent=indent))
 
         of.write("\n")
+
+        # zero out rates in equilibrium
+        of.write(self.enforce_equilibrium(indent=indent))
 
         of.write(f"{indent}jac = np.zeros((nnuc, nnuc), dtype=np.float64)\n\n")
 
