@@ -29,14 +29,17 @@ class DerivedRate(ReacLibRate):
         Do we recompute the Q-value of the rate from the masses?
     use_pf : bool
         Do we apply the partition function?
+    use_unreliable_spins : bool
+        Do we use spins that are weakly experimentally supported?
 
     """
 
-    def __init__(self, rate, compute_Q=False, use_pf=False):
+    def __init__(self, rate, compute_Q=False, use_pf=False, use_unreliable_spins=True):
 
         self.use_pf = use_pf
         self.rate = rate
         self.compute_Q = compute_Q
+        self.use_unreliable_spins = use_unreliable_spins
 
         if not isinstance(rate, Rate):
             raise TypeError('rate must be a Rate subclass')
@@ -50,6 +53,12 @@ class DerivedRate(ReacLibRate):
 
         if not all(nuc.spin_states for nuc in self.rate.products):
             raise ValueError(f'One of the products spin ground state ({self.rate.products}), is not defined')
+
+        if not use_unreliable_spins:
+            if not all(nuc.spin_reliable for nuc in self.rate.reactants):
+                raise ValueError(f'One of the reactants spin ground state ({self.rate.reactants}), is considered unreliable')
+            if not all(nuc.spin_reliable for nuc in self.rate.products):
+                raise ValueError(f'One of the products spin ground state ({self.rate.products}), is considered unreliable')
 
         derived_sets = []
 
