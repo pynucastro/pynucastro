@@ -2198,6 +2198,7 @@ class RateCollection:
     def plot(self, rho=None, T=None, comp=None, *,
              outfile=None,
              size=(800, 600), dpi=100, title=None,
+             screen_func=None,
              ydot_cutoff_value=None, show_small_ydot=False,
              consuming_rate_threshold=None,
              node_size=1000, node_font_size=12,
@@ -2211,7 +2212,8 @@ class RateCollection:
              edge_labels=None,
              highlight_filter_function=None,
              nucleus_filter_function=None, rate_filter_function=None,
-             legend_coord=None, plot_to_cbar_ratio=20):
+             legend_coord=None, plot_to_cbar_ratio=20,
+             grid_spec=None):
         """Make a plot of the network structure showing the links between
         nuclei.  If a full set of thermodymamic conditions are
         provided (rho, T, comp), then the links are colored by rate
@@ -2233,6 +2235,10 @@ class RateCollection:
             dots per inch used with size to set output image size
         title : str
             title to display on the plot
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the evaluated rates will include the screening
+            correction.
         ydot_cutoff_value : float
             rate threshold below which we do not show a
             line corresponding to a rate
@@ -2297,25 +2303,41 @@ class RateCollection:
             and returns True or False if it is to be shown as an edge.
         plot_to_cbar_ratio : float
             ratio of main axes to colorbar size
+        grid_spec : matplotlib.gridspec.GridSpec
+            a 2x2 matplotlib GridSpec to use in arranging the plot.
+            If the colorbar is on the right, only the columns will be
+            used.  If the colorbar is on the left, only the rows will
+            be used.  This is only needed if you want to override the
+            GridSpec created internally.
 
         Returns
         -------
         matplotlib.figure.Figure
+
         """
 
-        fig = plt.figure(constrained_layout=True,
-                         figsize=(size[0]/dpi, size[1]/dpi))
+        if grid_spec is not None:
+            fig = grid_spec.figure
+        else:
+            fig = plt.figure(constrained_layout=True,
+                             figsize=(size[0]/dpi, size[1]/dpi))
 
         # we'll use a grid spec of 2 x 2.  We can merge columns / rows
         # as needed to give us the flexibility to have colorbars
         if rotated:
-            gs = mpl.gridspec.GridSpec(nrows=2, ncols=2,
-                                       height_ratios=[plot_to_cbar_ratio, 1], figure=fig)
+            if grid_spec is None:
+                gs = mpl.gridspec.GridSpec(nrows=2, ncols=2,
+                                           height_ratios=[plot_to_cbar_ratio, 1], figure=fig)
+            else:
+                gs = grid_spec
             # plot is the top row, colorbar(s) will be the bottom
             ax = fig.add_subplot(gs[0, :])
         else:
-            gs = mpl.gridspec.GridSpec(nrows=2, ncols=2,
-                                       width_ratios=[plot_to_cbar_ratio, 1], figure=fig)
+            if grid_spec is None:
+                gs = mpl.gridspec.GridSpec(nrows=2, ncols=2,
+                                           width_ratios=[plot_to_cbar_ratio, 1], figure=fig)
+            else:
+                gs = grid_spec
             # plot is the left column, colorbar(s) will be on the right
             ax = fig.add_subplot(gs[:, 0])
 
@@ -2377,7 +2399,8 @@ class RateCollection:
 
         # get the rates for each reaction
         if rho is not None and T is not None and comp is not None:
-            rate_ydots = self.evaluate_rates(rho, T, comp)
+            rate_ydots = self.evaluate_rates(rho, T, comp,
+                                             screen_func=screen_func)
         else:
             rate_ydots = None
 
@@ -2601,6 +2624,10 @@ class RateCollection:
             composition used to evaluate terms
         outfile : str
             output file for plot (extension is used to specify file type)
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the evaluated rates will include the screening
+            correction.
         rate_scaling : float
             the cutoff of values that we show, relative to the peak.  Any
             Jacobian element smaller than this will not be shown.
