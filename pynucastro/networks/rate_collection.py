@@ -200,14 +200,18 @@ class Composition(collections.UserDict):
         """
         return math.fsum(self.values())
 
-    def set_solar_like(self, Z=0.02):
+    def set_solar_like(self, *, Z=0.02, half_life_thresh=None):
         """Approximate a solar abundance, setting p to 0.7, He4 to 0.3
-        - Z and the remainder evenly distributed with Z
+        - Z and the remainder evenly distributed with Z.
 
         Parameters
         ----------
         Z : float
             The desired metalicity
+        half_life_thresh : float
+            The half life value below which to zero the mass fraction
+            of a nucleus.  This prevents us from making a composition
+            that is not really stable.
 
         """
 
@@ -220,7 +224,7 @@ class Composition(collections.UserDict):
             else:
                 self[k] = rem
 
-        self.normalize()
+        self.normalize(half_life_thresh=half_life_thresh)
 
     def set_array(self, arr):
         """Set the mass fractions of all species to the values
@@ -285,8 +289,24 @@ class Composition(collections.UserDict):
         """
         self[name] = xval
 
-    def normalize(self):
-        """Normalize the mass fractions to sum to 1."""
+    def normalize(self, *, half_life_thresh=None):
+        """Normalize the mass fractions to sum to 1.
+
+        Parameters
+        ----------
+        half_life_thresh : float
+            The half life value below which to zero the mass fraction
+            of a nucleus.  This prevents us from making a composition
+            that is not really stable.
+
+        """
+
+        if half_life_thresh is not None:
+            for k in self:
+                if k.tau != "stable" and k.tau is not None:
+                    if k.tau < half_life_thresh:
+                        self[k] = 0.0
+
         X_sum = self.get_sum_X()
 
         for k in self:
@@ -739,7 +759,8 @@ class RateCollection:
 
         # finally check for duplicate rates -- these are not
         # allowed
-        if self.find_duplicate_links():
+        if dupes := self.find_duplicate_links():
+            print(dupes)
             raise RateDuplicationError("Duplicate rates found")
 
     def _read_rate_files(self, rate_files):
@@ -1535,14 +1556,14 @@ class RateCollection:
         passed_validation = True
 
         for rate in current_rates:
-            if rate.reverse:
+            if rate.derived_from_inverse:
                 continue
             for p in rate.products:
                 found = False
                 for orate in current_rates:
                     if orate == rate:
                         continue
-                    if orate.reverse:
+                    if orate.derived_from_inverse:
                         continue
                     if p in orate.reactants:
                         found = True
@@ -1559,7 +1580,7 @@ class RateCollection:
             other_by_reactants[tuple(sorted(rate.reactants))].append(rate)
 
         for rate in current_rates:
-            if forward_only and rate.reverse:
+            if forward_only and rate.derived_from_inverse:
                 continue
 
             key = tuple(sorted(rate.reactants))

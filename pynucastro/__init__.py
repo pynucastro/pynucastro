@@ -46,11 +46,6 @@ functions for organizing collection of rates, including:
   this extends the ``RateCollection`` to allow for solving for the
   nuclear statistical equilibrium state of a collection of nuclei.
 
-* :py:obj:`NumpyNetwork
-  <pynucastro.networks.numpy_network.NumpyNetwork>` : this extends the
-  ``RateCollection`` to allow evaluating reaction rates using vectorized
-  NumPy arrays, which may be more efficient for some applications.
-
 and the network classes intended for outputting the righthand side
 of the ODE system for use in python or other applications:
 
@@ -149,14 +144,14 @@ with some specialized library collections available as:
 -------------
 
 :py:mod:`reduction <pynucastro.reduction>` provides tools for directed
-relation graph with error propagation reduction of reaction networks.
+relation graph with error propagation and sensitivity analysis
+reduction of reaction networks.
 
 ``screening``
 -------------
 
 :py:mod:`screening <pynucastro.screening>` provides electron screening
 routines for modifying the reaction rates.
-
 
 """
 
@@ -169,14 +164,14 @@ import pynucastro.screening
 from pynucastro.eos import FermiIntegral
 from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
                                  Composition, Explorer, FortranNetwork,
-                                 NSENetwork, NumpyNetwork, PythonNetwork,
-                                 RateCollection, SimpleCxxNetwork,
-                                 StarKillerCxxNetwork, SympyRates,
-                                 network_helper)
+                                 NSENetwork, PythonNetwork, RateCollection,
+                                 SimpleCxxNetwork, StarKillerCxxNetwork,
+                                 SympyRates, network_helper)
 from pynucastro.nucdata import Nucleus, get_all_nuclei, get_nuclei_in_range
 from pynucastro.rates import (ApproximateRate, DerivedRate, FFNLibrary,
                               LangankeLibrary, Library, ModifiedRate,
-                              OdaLibrary, Rate, RateFilter, ReacLibLibrary,
-                              SuzukiLibrary, TabularLibrary, Tfactors,
-                              list_known_rates, load_rate)
+                              OdaLibrary, PruetFullerLibrary, Rate, RateFilter,
+                              ReacLibLibrary, SuzukiLibrary, TabularLibrary,
+                              Tfactors, list_known_rates, load_rate)
+from pynucastro.reduction import drgep, sens_analysis
 from pynucastro.screening import make_plasma_state, make_screen_factors
