@@ -17,7 +17,7 @@ class TestNSE:
         T = 6.0e9
         ye = 0.5
 
-        nse_comp = pynet.get_comp_nse(rho, T, ye, use_coulomb_corr=True)
+        nse_comp = pynet.get_comp_nse(rho, T, ye, use_coulomb_corr=True, use_unreliable_spins=False)
 
         nse_Xs = list(nse_comp.X.values())
         xsum = sum(nse_Xs)
@@ -37,7 +37,7 @@ class TestNSE:
         T = 6.0e9
         ye = 0.5
 
-        nse_comp = pynet.get_comp_nse(rho, T, ye, use_coulomb_corr=False)
+        nse_comp = pynet.get_comp_nse(rho, T, ye, use_coulomb_corr=False, use_unreliable_spins=False)
 
         nse_Xs = list(nse_comp.X.values())
         xsum = sum(nse_Xs)

@@ -56,7 +56,8 @@ class TestNSETable:
         nse_net.generate_table(rho_values=rhos,
                                T_values=Ts,
                                Ye_values=yes,
-                               comp_reduction_func=self.get_reduced_comp)
+                               comp_reduction_func=self.get_reduced_comp,
+                               use_unreliable_spins=False)
 
         # this creates a file called `nse.tbl`, which we want to compare
         # to the stored benchmark
