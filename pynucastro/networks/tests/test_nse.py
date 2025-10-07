@@ -71,7 +71,7 @@ class TestNSE:
         assert nse_Xs == pytest.approx(expected, rel=1.0e-10)
 
     def test_nse_all_spin(self, upper_net):
-        
+
         rho = 1.0e9
         T = 1.0e9
         ye = 0.45  # neutron-rich environment
@@ -86,7 +86,7 @@ class TestNSE:
         assert nse_Xs == pytest.approx([0, 0.0790697674418601, 0, 0, 0.9209302325578685, 0], rel=1.0e-10)
 
     def test_nse_reliable_spin(self, upper_net):
-        
+
         rho = 1.0e9
         T = 1.0e9
         ye = 0.45
