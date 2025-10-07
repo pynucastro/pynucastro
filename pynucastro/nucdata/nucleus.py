@@ -17,7 +17,7 @@ _pynucastro_tabular_dir = _pynucastro_rates_dir/'tabular'
 # read the various tables with nuclear properties at the module-level
 _mass_table = MassTable()
 _halflife_table = HalfLifeTable()
-_spin_table = SpinTable(reliable=False)
+_spin_table = SpinTable()
 
 # read the partition function table once and store it at the module-level
 _pcollection = PartitionFunctionCollection(use_high_temperatures=True, use_set='frdm')
@@ -77,6 +77,9 @@ class Nucleus:
     nse : bool
         an NSE proton has the same properties
         as a proton but compares as being distinct
+    spin_reliable : bool
+        whether the number of spin states is supported by
+        experimentally strong arguments
     """
 
     _cache = {}
@@ -174,8 +177,10 @@ class Nucleus:
         # set the number of spin states
         try:
             self.spin_states = _spin_table.get_spin_states(a=self.A, z=self.Z)
+            self.spin_reliable = _spin_table.get_spin_reliability(a=self.A, z=self.Z)
         except NotImplementedError:
             self.spin_states = None
+            self.spin_reliable = False
 
         # set a partition function object to every nucleus
         try:
@@ -304,6 +309,7 @@ class Nucleus:
         print("")
         print(f"  dummy: {self.dummy}")
         print(f"  nse: {self.nse}")
+        print(f"  spin states are reliable: {self.spin_reliable}")
 
     def __repr__(self):
         if self.raw not in ("p", "p_nse", "d", "t", "n"):
