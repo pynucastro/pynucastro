@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.reduction.sensitivity_analysis module &#8212; pynucastro 2.7.1.post35+g34910caf2 documentation</title>
+    <title>pynucastro.reduction.sensitivity_analysis module &#8212; pynucastro 2.7.1.post36+gce0915070 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=feed927d"></script>
+    <script src="_static/documentation_options.js?v=f5c29ef4"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -595,7 +595,7 @@ for the binary search to work effectively.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>network</strong> (<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><em>RateCollection</em></a>) – The network to reduce.</p></li>
-<li><p><strong>nuclei</strong> (<em>Iterable</em><em>(</em><a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a><em>) or </em><em>Iterable</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>)</em>) – Nuclei to consider for the final network, sorted by decreasing
+<li><p><strong>nuclei</strong> (<em>Iterable</em><em>(</em><a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a><em>) or </em><em>Iterable</em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>)</em>) – Nuclei to consider for the final network, sorted by decreasing
 importance (i.e.  most important nuclei first). Importance can
 be determined by something like the <em>drgep</em> function.</p></li>
 <li><p><strong>errfunc</strong> (<em>Callable</em>) – Error function to use when evaluating error, with the signature
@@ -604,8 +604,8 @@ an argument and return the relative error produced by the reduction.
 If <code class="docutils literal notranslate"><span class="pre">use_mpi</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code>, the error function can be parallelized
 with MPI. Otherwise <code class="docutils literal notranslate"><span class="pre">sens_analysis</span></code> will be parallelized and the
 error function should not be.</p></li>
-<li><p><strong>thresh</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Threshold for acceptable error. Default is 0.05.</p></li>
-<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a>) – Additional arguments to pass through to the error function</p></li>
+<li><p><strong>thresh</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Threshold for acceptable error. Default is 0.05.</p></li>
+<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – Additional arguments to pass through to the error function</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -639,15 +639,15 @@ an argument and return the relative error produced by the reduction.
 If <code class="docutils literal notranslate"><span class="pre">use_mpi</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code>, the error function can be parallelized
 with MPI. Otherwise <code class="docutils literal notranslate"><span class="pre">sens_analysis</span></code> will be parallelized and the
 error function should not be.</p></li>
-<li><p><strong>thresh</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Threshold for acceptable error. Default is 0.05.</p></li>
-<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a>) – Additional arguments to pass through to the error function</p></li>
-<li><p><strong>use_mpi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to parallelize the loop over nuclei with each pass or
+<li><p><strong>thresh</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Threshold for acceptable error. Default is 0.05.</p></li>
+<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – Additional arguments to pass through to the error function</p></li>
+<li><p><strong>use_mpi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to parallelize the loop over nuclei with each pass or
 not using MPI.  For p MPI processes, the parallelized
 function will require O(n^2/p) error function evaluations per
 process. This option is <code class="docutils literal notranslate"><span class="pre">False</span></code> by default. If the error
 function is parallelized using MPI, this option should be set
 to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
-<li><p><strong>print_prog</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to print out the progress of the function as it runs
+<li><p><strong>print_prog</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to print out the progress of the function as it runs
 or not. Includes a progress bar for each pass and messages
 indicating when the algorithm starts and ends.</p></li>
 </ul>
