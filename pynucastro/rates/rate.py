@@ -326,7 +326,10 @@ class Rate:
                     factor = f"{c} "
                 self.string += f"{factor}{r.c()}"
                 self.rid += f"{factor}{r}"
-                self.pretty_string += fr"{factor}{r.pretty}"
+                if c != 1:
+                    self.pretty_string += fr"{factor}~{r.pretty}"
+                else:
+                    self.pretty_string += fr"{r.pretty}"
             if not n == len(react_set)-1:
                 self.string += " + "
                 self.rid += " + "
