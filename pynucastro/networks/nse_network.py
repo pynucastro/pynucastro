@@ -196,7 +196,7 @@ class NSENetwork(RateCollection):
 
             if not nuc.spin_states:
                 raise ValueError(f"The spin of {nuc} is not implemented for now.")
-            if not use_unreliable_spins and not nuc.spin_states_reliable:
+            if not use_unreliable_spins and not nuc.spin_reliable:
                 raise ValueError(f"The spin of {nuc} is determined by a weak experimental or theoretical argument. "
                                  "Pass in use_unreliable_spins=True as a parameter to override.")
 
