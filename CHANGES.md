@@ -2,6 +2,15 @@
 
 ## 2.8.0
 
+  * `RateCollection.plot` can now use screening and take a
+    matplotlib `GridSpec` that defines the axes (instead of
+    creating them internally. (#1126)
+
+  * `RateCollection` now takes a `verbose` option, and most
+    informational prints are disabled by default (#1130)
+
+  * Fix LaTeX rate rendering (#1128)
+
   * fix a mutability issue in `Library` addition (#1112)
 
   * add a method to `Library` to eliminate duplicate rates (#1111)
@@ -52,7 +61,7 @@
   * Binding energy example has been updated with a better example (#1087)
 
   * Doc and API docstring improvements (#1079, #1082, #1083, #1084,
-    #1116, #1117)
+    #1116, #1117, #1127)
 
   * `pyproject.toml` updated with license info (#1081)
 
