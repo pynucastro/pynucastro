@@ -61,6 +61,7 @@ and interactively exploring nuclear reaction networks.
    electron-capture-example.ipynb
    electron-captures.ipynb
    alternate-rates.ipynb
+   inert-nuclei.ipynb
 
 .. toctree::
    :maxdepth: 1
