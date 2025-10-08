@@ -16,7 +16,7 @@ class TestNseProtons:
 
         lib = rl.linking_nuclei(nuc)
 
-        rc = pyna.RateCollection(libraries=lib)
+        rc = pyna.RateCollection(libraries=lib, verbose=True)
 
         rc.make_nse_protons(51)
 
