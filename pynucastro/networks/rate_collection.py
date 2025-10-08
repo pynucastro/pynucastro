@@ -574,13 +574,17 @@ class RateCollection:
     do_screening : bool
         should we consider screening at all -- this mainly affects
         whether we build the screening map
+    verbose : bool
+        do we show informational messages?
+
     """
 
     pynucastro_dir = Path(__file__).parents[1]
 
     def __init__(self, rate_files=None, libraries=None, rates=None,
                  inert_nuclei=None,
-                 symmetric_screening=False, do_screening=True):
+                 symmetric_screening=False, do_screening=True,
+                 verbose=False):
 
         self.rates = []
         combined_library = Library()
@@ -589,6 +593,8 @@ class RateCollection:
 
         self.symmetric_screening = symmetric_screening
         self.do_screening = do_screening
+
+        self.verbose = verbose
 
         if rate_files:
             if isinstance(rate_files, str):
@@ -1072,7 +1078,8 @@ class RateCollection:
         for nuc in nuc_list:
             for rate in self.rates:
                 if nuc in rate.reactants + rate.products:
-                    print(f"looking to remove {rate}")
+                    if self.verbose:
+                        print(f"looking to remove {rate}")
                     rates_to_delete.append(rate)
 
         for rate in set(rates_to_delete):
@@ -1185,8 +1192,9 @@ class RateCollection:
             ar = ApproximateRate(r_ag, [r_ap, r_pg], r_ga, [r_gp, r_pa], approx_type="ap_pg")
             ar_reverse = ApproximateRate(r_ag, [r_ap, r_pg], r_ga, [r_gp, r_pa], is_reverse=True, approx_type="ap_pg")
 
-            print(f"using approximate rate {ar}")
-            print(f"using approximate rate {ar_reverse}")
+            if self.verbose:
+                print(f"using approximate rate {ar}")
+                print(f"using approximate rate {ar_reverse}")
 
             # approximate rates
             approx_rates += [ar, ar_reverse]
@@ -1196,8 +1204,8 @@ class RateCollection:
             for r in ar.get_child_rates():
                 try:
                     self.rates.remove(r)
-
-                    print(f"removing rate {r}")
+                    if self.verbose:
+                        print(f"removing rate {r}")
                 except ValueError:
                     pass
 
@@ -1280,10 +1288,10 @@ class RateCollection:
                                          use_identical_particle_factor=False)
 
             nuclei_approximated_out.append(inter_nuc)
-            print(f"approximating out {inter_nuc}")
-
-            print(f"using approximate rate {ar}")
-            print(f"using approximate rate {ar_reverse}")
+            if self.verbose:
+                print(f"approximating out {inter_nuc}")
+                print(f"using approximate rate {ar}")
+                print(f"using approximate rate {ar_reverse}")
 
             # approximate rates
             approx_rates += [ar, ar_reverse]
@@ -1293,8 +1301,8 @@ class RateCollection:
             for r in ar.get_child_rates():
                 try:
                     self.rates.remove(r)
-
-                    print(f"removing rate {r}")
+                    if self.verbose:
+                        print(f"removing rate {r}")
                 except ValueError:
                     pass
 
@@ -1340,10 +1348,12 @@ class RateCollection:
 
             if update:
                 if rp.forward is not None:
-                    print(f"modifying {rp.forward.fname} to use NSE protons")
+                    if self.verbose:
+                        print(f"modifying {rp.forward.fname} to use NSE protons")
                     rp.forward.swap_protons()
                 if rp.reverse is not None:
-                    print(f"modifying {rp.reverse.fname} to use NSE protons")
+                    if self.verbose:
+                        print(f"modifying {rp.reverse.fname} to use NSE protons")
                     rp.reverse.swap_protons()
 
         self._build_collection()
