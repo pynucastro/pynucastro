@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.7.1.post36+gce0915070 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.7.1.post37+ge479d0a04 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=f5c29ef4"></script>
+    <script src="../../../_static/documentation_options.js?v=92a5610f"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1106,13 +1106,17 @@ document.write(`
 <span class="sd">    do_screening : bool</span>
 <span class="sd">        should we consider screening at all -- this mainly affects</span>
 <span class="sd">        whether we build the screening map</span>
+<span class="sd">    verbose : bool</span>
+<span class="sd">        do we show informational messages?</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">pynucastro_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">libraries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">inert_nuclei</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">symmetric_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">do_screening</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                 <span class="n">symmetric_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">do_screening</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">combined_library</span> <span class="o">=</span> <span class="n">Library</span><span class="p">()</span>
@@ -1121,6 +1125,8 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screening</span> <span class="o">=</span> <span class="n">symmetric_screening</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">do_screening</span> <span class="o">=</span> <span class="n">do_screening</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
 
         <span class="k">if</span> <span class="n">rate_files</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rate_files</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -1645,7 +1651,8 @@ document.write(`
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">nuc_list</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">rate</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;looking to remove </span><span class="si">{</span><span class="n">rate</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;looking to remove </span><span class="si">{</span><span class="n">rate</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                     <span class="n">rates_to_delete</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">rates_to_delete</span><span class="p">):</span>
@@ -1767,8 +1774,9 @@ document.write(`
             <span class="n">ar</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">r_ag</span><span class="p">,</span> <span class="p">[</span><span class="n">r_ap</span><span class="p">,</span> <span class="n">r_pg</span><span class="p">],</span> <span class="n">r_ga</span><span class="p">,</span> <span class="p">[</span><span class="n">r_gp</span><span class="p">,</span> <span class="n">r_pa</span><span class="p">],</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;ap_pg&quot;</span><span class="p">)</span>
             <span class="n">ar_reverse</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">r_ag</span><span class="p">,</span> <span class="p">[</span><span class="n">r_ap</span><span class="p">,</span> <span class="n">r_pg</span><span class="p">],</span> <span class="n">r_ga</span><span class="p">,</span> <span class="p">[</span><span class="n">r_gp</span><span class="p">,</span> <span class="n">r_pa</span><span class="p">],</span> <span class="n">is_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;ap_pg&quot;</span><span class="p">)</span>
 
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;using approximate rate </span><span class="si">{</span><span class="n">ar</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;using approximate rate </span><span class="si">{</span><span class="n">ar_reverse</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;using approximate rate </span><span class="si">{</span><span class="n">ar</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;using approximate rate </span><span class="si">{</span><span class="n">ar_reverse</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
             <span class="c1"># approximate rates</span>
             <span class="n">approx_rates</span> <span class="o">+=</span> <span class="p">[</span><span class="n">ar</span><span class="p">,</span> <span class="n">ar_reverse</span><span class="p">]</span>
@@ -1778,8 +1786,8 @@ document.write(`
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ar</span><span class="o">.</span><span class="n">get_child_rates</span><span class="p">():</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;removing rate </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;removing rate </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                     <span class="k">pass</span>
 
@@ -1865,10 +1873,10 @@ document.write(`
                                          <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
             <span class="n">nuclei_approximated_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inter_nuc</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;approximating out </span><span class="si">{</span><span class="n">inter_nuc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;using approximate rate </span><span class="si">{</span><span class="n">ar</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;using approximate rate </span><span class="si">{</span><span class="n">ar_reverse</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;approximating out </span><span class="si">{</span><span class="n">inter_nuc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;using approximate rate </span><span class="si">{</span><span class="n">ar</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;using approximate rate </span><span class="si">{</span><span class="n">ar_reverse</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
             <span class="c1"># approximate rates</span>
             <span class="n">approx_rates</span> <span class="o">+=</span> <span class="p">[</span><span class="n">ar</span><span class="p">,</span> <span class="n">ar_reverse</span><span class="p">]</span>
@@ -1878,8 +1886,8 @@ document.write(`
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ar</span><span class="o">.</span><span class="n">get_child_rates</span><span class="p">():</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;removing rate </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;removing rate </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                     <span class="k">pass</span>
 
@@ -1928,10 +1936,12 @@ document.write(`
 
             <span class="k">if</span> <span class="n">update</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;modifying </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> to use NSE protons&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;modifying </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> to use NSE protons&quot;</span><span class="p">)</span>
                     <span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="o">.</span><span class="n">swap_protons</span><span class="p">()</span>
                 <span class="k">if</span> <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;modifying </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> to use NSE protons&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;modifying </span><span class="si">{</span><span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> to use NSE protons&quot;</span><span class="p">)</span>
                     <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="o">.</span><span class="n">swap_protons</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span></div>

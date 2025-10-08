@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>A He-burning Network &#8212; pynucastro 2.7.1.post36+gce0915070 documentation</title>
+    <title>A He-burning Network &#8212; pynucastro 2.7.1.post37+ge479d0a04 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=f5c29ef4"></script>
+    <script src="_static/documentation_options.js?v=92a5610f"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -937,7 +937,7 @@ modifying Ni58 + p ⟶ He4 + Co55 from Co55 + He4 ⟶ p + Ni58
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">all_lib</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">all_lib</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -950,58 +950,6 @@ modifying Ni58 + p ⟶ He4 + Co55 from Co55 + He4 ⟶ p + Ni58
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>using approximate rate S32 + He4 ⟶ Ar36 + 𝛾
-using approximate rate Ar36 ⟶ S32 + He4
-using approximate rate Ar36 + He4 ⟶ Ca40 + 𝛾
-using approximate rate Ca40 ⟶ Ar36 + He4
-using approximate rate Ca40 + He4 ⟶ Ti44 + 𝛾
-using approximate rate Ti44 ⟶ Ca40 + He4
-using approximate rate Ti44 + He4 ⟶ Cr48 + 𝛾
-using approximate rate Cr48 ⟶ Ti44 + He4
-removing rate S32 + He4 ⟶ Ar36 + 𝛾
-removing rate S32 + He4 ⟶ p + Cl35
-removing rate Cl35 + p ⟶ Ar36 + 𝛾
-removing rate Ar36 ⟶ He4 + S32
-removing rate Ar36 ⟶ p + Cl35
-removing rate Cl35 + p ⟶ He4 + S32
-removing rate Ar36 + He4 ⟶ Ca40 + 𝛾
-removing rate Ar36 + He4 ⟶ p + K39
-removing rate K39 + p ⟶ Ca40 + 𝛾
-removing rate Ca40 ⟶ He4 + Ar36
-removing rate Ca40 ⟶ p + K39
-removing rate K39 + p ⟶ He4 + Ar36
-removing rate Ca40 + He4 ⟶ Ti44 + 𝛾
-removing rate Ca40 + He4 ⟶ p + Sc43
-removing rate Sc43 + p ⟶ Ti44 + 𝛾
-removing rate Ti44 ⟶ He4 + Ca40
-removing rate Ti44 ⟶ p + Sc43
-removing rate Sc43 + p ⟶ He4 + Ca40
-removing rate Ti44 + He4 ⟶ Cr48 + 𝛾
-removing rate Ti44 + He4 ⟶ p + V47
-removing rate V47 + p ⟶ Cr48 + 𝛾
-removing rate Cr48 ⟶ He4 + Ti44
-removing rate Cr48 ⟶ p + V47
-removing rate V47 + p ⟶ He4 + Ti44
-looking to remove P31 + He4 ⟶ Cl35 + 𝛾
-looking to remove Cl35 + He4 ⟶ K39 + 𝛾
-looking to remove Cl35 ⟶ He4 + P31
-looking to remove K39 ⟶ He4 + Cl35
-looking to remove Cl35 + He4 ⟶ K39 + 𝛾
-looking to remove K39 + He4 ⟶ Sc43 + 𝛾
-looking to remove K39 ⟶ He4 + Cl35
-looking to remove Sc43 ⟶ He4 + K39
-looking to remove K39 + He4 ⟶ Sc43 + 𝛾
-looking to remove Sc43 + He4 ⟶ V47 + 𝛾
-looking to remove Sc43 ⟶ He4 + K39
-looking to remove V47 ⟶ He4 + Sc43
-looking to remove Sc43 + He4 ⟶ V47 + 𝛾
-looking to remove V47 + He4 ⟶ Mn51 + 𝛾
-looking to remove V47 ⟶ He4 + Sc43
-looking to remove Mn51 ⟶ He4 + V47
-</pre></div>
-</div>
-</div>
 </div>
 <p>We will also approximate some of the neutron captures:</p>
 <div class="cell docutils container">
@@ -1011,89 +959,12 @@ looking to remove Mn51 ⟶ He4 + V47
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>approximating out Fe53
-using approximate rate Fe52 + n + n ⟶ Fe54 + 𝛾
-using approximate rate Fe54 ⟶ Fe52 + n + n
-approximating out Fe55
-using approximate rate Fe54 + n + n ⟶ Fe56 + 𝛾
-using approximate rate Fe56 ⟶ Fe54 + n + n
-approximating out Ni57
-using approximate rate Ni56 + n + n ⟶ Ni58 + 𝛾
-using approximate rate Ni58 ⟶ Ni56 + n + n
-removing rate Fe52 + n ⟶ Fe53 + 𝛾
-removing rate Fe53 + n ⟶ Fe54 + 𝛾
-removing rate Fe54 ⟶ n + Fe53
-removing rate Fe53 ⟶ n + Fe52
-removing rate Fe54 + n ⟶ Fe55 + 𝛾
-removing rate Fe55 + n ⟶ Fe56 + 𝛾
-removing rate Fe56 ⟶ n + Fe55
-removing rate Fe55 ⟶ n + Fe54
-removing rate Ni56 + n ⟶ Ni57 + 𝛾
-removing rate Ni57 + n ⟶ Ni58 + 𝛾
-removing rate Ni58 ⟶ n + Ni57
-removing rate Ni57 ⟶ n + Ni56
-looking to remove Fe53 + He4 ⟶ Ni57 + 𝛾
-looking to remove Fe53 + He4 ⟶ p + Co56
-looking to remove Ni56 + n ⟶ He4 + Fe53
-looking to remove Ni57 ⟶ He4 + Fe53
-looking to remove Fe53 + He4 ⟶ n + Ni56
-looking to remove Co56 + p ⟶ He4 + Fe53
-looking to remove Fe55 + p ⟶ Co56 + 𝛾
-looking to remove Co55 + n ⟶ p + Fe55
-looking to remove Ni58 + n ⟶ He4 + Fe55
-looking to remove Co56 ⟶ p + Fe55
-looking to remove Fe55 + p ⟶ n + Co55
-looking to remove Fe55 + He4 ⟶ n + Ni58
-looking to remove Co55 + e⁻ ⟶ Fe55 + 𝜈
-looking to remove Fe55 ⟶ Co55 + e⁻ + 𝜈
-looking to remove Fe53 + He4 ⟶ Ni57 + 𝛾
-looking to remove Co56 + p ⟶ Ni57 + 𝛾
-looking to remove Ni57 + n ⟶ p + Co57
-looking to remove Ni57 + n ⟶ He4 + Fe54
-looking to remove Ni57 ⟶ p + Co56
-looking to remove Ni57 ⟶ He4 + Fe53
-looking to remove Fe54 + He4 ⟶ n + Ni57
-looking to remove Co57 + p ⟶ n + Ni57
-looking to remove Co57 ⟶ Ni57 + e⁻ + 𝜈
-looking to remove Ni57 + e⁻ ⟶ Co57 + 𝜈
-</pre></div>
-</div>
-</div>
 </div>
 <p>and finally, make some of the protons into NSE protons</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># make all rates with A &gt;= 48 use NSE protons</span>
 <span class="n">net</span><span class="o">.</span><span class="n">make_nse_protons</span><span class="p">(</span><span class="mi">48</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>modifying p_Mn51__Fe52 to use NSE protons
-modifying Fe52__p_Mn51__derived to use NSE protons
-modifying p_Co55__Ni56 to use NSE protons
-modifying Ni56__p_Co55__derived to use NSE protons
-modifying He4_Cr48__p_Mn51 to use NSE protons
-modifying p_Mn51__He4_Cr48__derived to use NSE protons
-modifying He4_Fe52__p_Co55 to use NSE protons
-modifying p_Co55__He4_Fe52__derived to use NSE protons
-modifying p_Fe54__Co55 to use NSE protons
-modifying Co55__p_Fe54__derived to use NSE protons
-modifying p_Fe56__Co57 to use NSE protons
-modifying Co57__p_Fe56__derived to use NSE protons
-modifying p_Co57__Ni58 to use NSE protons
-modifying Ni58__p_Co57__derived to use NSE protons
-modifying He4_Mn51__p_Fe54 to use NSE protons
-modifying p_Fe54__He4_Mn51__derived to use NSE protons
-modifying He4_Co55__p_Ni58 to use NSE protons
-modifying p_Ni58__He4_Co55__derived to use NSE protons
-modifying n_Co56__p_Fe56 to use NSE protons
-modifying p_Fe56__n_Co56__derived to use NSE protons
-modifying p_Co57__He4_Fe54 to use NSE protons
-modifying He4_Fe54__p_Co57__derived to use NSE protons
-modifying n_Ni56__p_Co56 to use NSE protons
-modifying p_Co56__n_Ni56__derived to use NSE protons
 </pre></div>
 </div>
 </div>

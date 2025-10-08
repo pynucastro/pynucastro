@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Sensitivity Analysis &#8212; pynucastro 2.7.1.post36+gce0915070 documentation</title>
+    <title>Sensitivity Analysis &#8212; pynucastro 2.7.1.post37+ge479d0a04 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=f5c29ef4"></script>
+    <script src="_static/documentation_options.js?v=92a5610f"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -633,7 +633,7 @@ and setup a <a class="reference internal" href="pynucastro.rates.library.html#py
 a <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateCollection</span></code></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -653,46 +653,6 @@ to create the energy release.</p>
         <span class="n">nuclei_to_remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
 <span class="n">net</span><span class="o">.</span><span class="n">remove_nuclei</span><span class="p">(</span><span class="n">nuclei_to_remove</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>looking to remove O29 ⟶ F29 + e⁻ + 𝜈
-looking to remove O29 ⟶ n + F28 + e⁻ + 𝜈
-looking to remove O29 ⟶ n + n + F27 + e⁻ + 𝜈
-looking to remove O29 + He4 ⟶ n + Ne32
-looking to remove O29 + He4 ⟶ p + F32
-looking to remove F32 + p ⟶ He4 + O29
-looking to remove Ne32 + n ⟶ He4 + O29
-looking to remove O30 ⟶ F30 + e⁻ + 𝜈
-looking to remove O30 ⟶ n + F29 + e⁻ + 𝜈
-looking to remove O30 ⟶ n + n + F28 + e⁻ + 𝜈
-looking to remove O31 ⟶ F31 + e⁻ + 𝜈
-looking to remove O31 ⟶ n + F30 + e⁻ + 𝜈
-looking to remove O31 ⟶ n + n + F29 + e⁻ + 𝜈
-looking to remove O32 ⟶ F32 + e⁻ + 𝜈
-looking to remove O32 ⟶ n + F31 + e⁻ + 𝜈
-looking to remove O32 ⟶ n + n + F30 + e⁻ + 𝜈
-looking to remove O32 ⟶ F32 + e⁻ + 𝜈
-looking to remove F32 ⟶ Ne32 + e⁻ + 𝜈
-looking to remove F32 ⟶ n + Ne31 + e⁻ + 𝜈
-looking to remove F32 ⟶ n + n + Ne30 + e⁻ + 𝜈
-looking to remove O29 + He4 ⟶ p + F32
-looking to remove F32 + p ⟶ n + Ne32
-looking to remove F32 + p ⟶ He4 + O29
-looking to remove Ne32 + n ⟶ p + F32
-looking to remove F32 ⟶ 3 n + Ne29 + e⁻ + 𝜈
-looking to remove P23 ⟶ Si23 + e⁺ + 𝜈
-looking to remove P23 + He4 ⟶ p + S26
-looking to remove S26 + p ⟶ He4 + P23
-looking to remove S24 ⟶ P24 + e⁺ + 𝜈
-looking to remove S25 ⟶ P25 + e⁺ + 𝜈
-looking to remove S26 ⟶ n + S25
-looking to remove S25 + n ⟶ S26 + 𝛾
-looking to remove Si22 + He4 ⟶ n + S25
-looking to remove P25 + p ⟶ n + S25
-looking to remove S25 + n ⟶ p + P25
-looking to remove S25 + n ⟶ He4 + Si22
 </pre></div>
 </div>
 </div>
