@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.7.1.post37+ge479d0a04 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.7.1.post38+gc48fd9475 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=92a5610f"></script>
+    <script src="../../../_static/documentation_options.js?v=35b41ddb"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -2850,6 +2850,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
              <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_small_ydot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">consuming_rate_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">node_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
@@ -2863,7 +2864,8 @@ document.write(`
              <span class="n">edge_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">highlight_filter_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">nucleus_filter_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rate_filter_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-             <span class="n">legend_coord</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_to_cbar_ratio</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+             <span class="n">legend_coord</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_to_cbar_ratio</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+             <span class="n">grid_spec</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a plot of the network structure showing the links between</span>
 <span class="sd">        nuclei.  If a full set of thermodymamic conditions are</span>
 <span class="sd">        provided (rho, T, comp), then the links are colored by rate</span>
@@ -2885,6 +2887,10 @@ document.write(`
 <span class="sd">            dots per inch used with size to set output image size</span>
 <span class="sd">        title : str</span>
 <span class="sd">            title to display on the plot</span>
+<span class="sd">        screen_func : Callable</span>
+<span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
+<span class="sd">            -- if provided, then the evaluated rates will include the screening</span>
+<span class="sd">            correction.</span>
 <span class="sd">        ydot_cutoff_value : float</span>
 <span class="sd">            rate threshold below which we do not show a</span>
 <span class="sd">            line corresponding to a rate</span>
@@ -2949,25 +2955,41 @@ document.write(`
 <span class="sd">            and returns True or False if it is to be shown as an edge.</span>
 <span class="sd">        plot_to_cbar_ratio : float</span>
 <span class="sd">            ratio of main axes to colorbar size</span>
+<span class="sd">        grid_spec : matplotlib.gridspec.GridSpec</span>
+<span class="sd">            a 2x2 matplotlib GridSpec to use in arranging the plot.</span>
+<span class="sd">            If the colorbar is on the right, only the columns will be</span>
+<span class="sd">            used.  If the colorbar is on the left, only the rows will</span>
+<span class="sd">            be used.  This is only needed if you want to override the</span>
+<span class="sd">            GridSpec created internally.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        matplotlib.figure.Figure</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                         <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">dpi</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">dpi</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">grid_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">grid_spec</span><span class="o">.</span><span class="n">figure</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                             <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">dpi</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">dpi</span><span class="p">))</span>
 
         <span class="c1"># we&#39;ll use a grid spec of 2 x 2.  We can merge columns / rows</span>
         <span class="c1"># as needed to give us the flexibility to have colorbars</span>
         <span class="k">if</span> <span class="n">rotated</span><span class="p">:</span>
-            <span class="n">gs</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-                                       <span class="n">height_ratios</span><span class="o">=</span><span class="p">[</span><span class="n">plot_to_cbar_ratio</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">grid_spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">gs</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                                           <span class="n">height_ratios</span><span class="o">=</span><span class="p">[</span><span class="n">plot_to_cbar_ratio</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">gs</span> <span class="o">=</span> <span class="n">grid_spec</span>
             <span class="c1"># plot is the top row, colorbar(s) will be the bottom</span>
             <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">gs</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-                                       <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="n">plot_to_cbar_ratio</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">grid_spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">gs</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                                           <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="n">plot_to_cbar_ratio</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">gs</span> <span class="o">=</span> <span class="n">grid_spec</span>
             <span class="c1"># plot is the left column, colorbar(s) will be on the right</span>
             <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
 
@@ -3029,7 +3051,8 @@ document.write(`
 
         <span class="c1"># get the rates for each reaction</span>
         <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">T</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">comp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">rate_ydots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+            <span class="n">rate_ydots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span>
+                                             <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">rate_ydots</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -3256,6 +3279,10 @@ document.write(`
 <span class="sd">            composition used to evaluate terms</span>
 <span class="sd">        outfile : str</span>
 <span class="sd">            output file for plot (extension is used to specify file type)</span>
+<span class="sd">        screen_func : Callable</span>
+<span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
+<span class="sd">            -- if provided, then the evaluated rates will include the screening</span>
+<span class="sd">            correction.</span>
 <span class="sd">        rate_scaling : float</span>
 <span class="sd">            the cutoff of values that we show, relative to the peak.  Any</span>
 <span class="sd">            Jacobian element smaller than this will not be shown.</span>
