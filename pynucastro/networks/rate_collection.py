@@ -2326,6 +2326,8 @@ class RateCollection:
 
         """
 
+        # create the figure object and gridspec (if not provided)
+
         if grid_spec is not None:
             fig = grid_spec.figure
         else:
@@ -2353,6 +2355,7 @@ class RateCollection:
 
         # in general, we do not show p, n, alpha,
         # unless we have p + p, 3-a, etc.
+
         hidden_nuclei = ["n"]
         if not always_show_p:
             hidden_nuclei.append("p")
@@ -2360,8 +2363,9 @@ class RateCollection:
         if not always_show_alpha:
             hidden_nuclei.append("he4")
 
-        # nodes -- the node nuclei will be all of the heavies
-        # add all the nuclei into G.node
+        # create the list of node nuclei
+        # and setup their colors
+
         node_nuclei = []
         colors = []
 
@@ -2393,6 +2397,7 @@ class RateCollection:
                         break
 
         # approx nuclei are given a different color
+
         for n in self.approx_nuclei:
             node_nuclei.append(n)
             colors.append("#888888")
@@ -2408,11 +2413,14 @@ class RateCollection:
                     colors.append(get_node_color(n))
 
         # get the rates for each reaction
+
         if rho is not None and T is not None and comp is not None:
             rate_ydots = self.evaluate_rates(rho, T, comp,
                                              screen_func=screen_func)
         else:
             rate_ydots = None
+
+        # create the graph
 
         G = self.create_network_graph(node_nuclei,
                                       rate_ydots=rate_ydots,
@@ -2425,12 +2433,12 @@ class RateCollection:
                                       rotated=rotated,
                                       nuclei_custom_labels=nuclei_custom_labels)
 
-        # It seems that networkx broke backwards compatibility, and 'zorder' is no longer a valid
-        # keyword argument. The 'linewidth' argument has also changed to 'linewidths'.
+        # draw the nodes and their labels
 
-        nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
+        nx.draw_networkx_nodes(G, G.position,
                                node_color=colors, alpha=1.0,
-                               node_shape=node_shape, node_size=node_size, linewidths=2.0, ax=ax)
+                               node_shape=node_shape, node_size=node_size,
+                               linewidths=2.0, ax=ax)
 
         if color_nodes_by_abundance:
             node_font_color = {}
@@ -2450,7 +2458,7 @@ class RateCollection:
         nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
                                 font_size=node_font_size, font_color=node_font_color, ax=ax)
 
-        # now we'll draw edges in several groups
+        # draw the edges -- we'll do this in several groups
 
         if curved_edges:
             connectionstyle = "arc3, rad = 0.2"
@@ -2461,6 +2469,31 @@ class RateCollection:
 
         sorted_edges = sorted(G.edges(data=True), key=lambda edge: edge[-1].get("weight", 0),
                               reverse=sort_reverse)
+
+        # draw the approximate rate edges.  These have "real" = 0
+
+        approx_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 0]
+
+        _ = nx.draw_networkx_edges(G, G.position, width=1,
+                                   edgelist=approx_edges, edge_color="0.5",
+                                   connectionstyle=connectionstyle,
+                                   style="dashed", node_size=node_size, ax=ax)
+
+        # draw the invisible edges -- these are only shown if we set "show_small_ydot"
+
+        invis_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == -1]
+
+        _ = nx.draw_networkx_edges(G, G.position, width=1,
+                                   edgelist=invis_edges, edge_color="gray",
+                                   connectionstyle=connectionstyle,
+                                   style="dotted", node_size=node_size, ax=ax)
+
+        # draw the edges that are real rates, and above any cutoffs
+
+        # "real" = 1 edges are those that are not hidden approximate
+        # rate links, rates that are below the
+        # "consuming_rate_threshold", and not below ydot_cutoff_value
+
         real_edges = [(u, v) for u, v, e in sorted_edges if e["real"] == 1]
         real_weights = [e["weight"] for u, v, e in sorted_edges if e["real"] == 1]
 
@@ -2480,30 +2513,14 @@ class RateCollection:
         else:
             widths *= 2
 
-        # draw the approximate rate edges
-        approx_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 0]
-
-        _ = nx.draw_networkx_edges(G, G.position, width=1,
-                                   edgelist=approx_edges, edge_color="0.5",
-                                   connectionstyle=connectionstyle,
-                                   style="dashed", node_size=node_size, ax=ax)
-
-        # draw the edges for the rates that are below ydot_cutoff_value
-        invis_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == -1]
-
-        _ = nx.draw_networkx_edges(G, G.position, width=1,
-                                   edgelist=invis_edges, edge_color="gray",
-                                   connectionstyle=connectionstyle,
-                                   style="dotted", node_size=node_size, ax=ax)
-
-        # draw the edges that are real rates, and above any cutoffs
         real_edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
                                                edgelist=real_edges, edge_color=edge_color,
                                                connectionstyle=connectionstyle,
                                                node_size=node_size,
                                                edge_cmap=plt.cm.viridis, ax=ax)
 
-        # highlight edges
+        # highlight edges -- this is basically overplotting the edges we already drew
+
         highlight_edges = [(u, v) for u, v, e in G.edges(data=True) if e["highlight"]]
 
         if rho is None:
@@ -2514,9 +2531,12 @@ class RateCollection:
             highlight_color = "C0"
 
         _ = nx.draw_networkx_edges(G, G.position, width=5,
-                                   edgelist=highlight_edges, edge_color=highlight_color, alpha=0.5,
+                                   edgelist=highlight_edges,
+                                   edge_color=highlight_color, alpha=0.5,
                                    connectionstyle=connectionstyle,
                                    node_size=node_size, ax=ax)
+
+        # now consider any edge labels that were passed in
 
         if edge_labels:
             nx.draw_networkx_edge_labels(G, G.position,
@@ -2524,8 +2544,11 @@ class RateCollection:
                                          font_size=node_font_size,
                                          edge_labels=edge_labels)
 
-        # figure out the colorbar axes -- we have a single colorbar if we are doing the
-        # rate_ydots.  We have 2 colorbars if we are also doing the color_nodes_by_abundance
+        # colorbars
+
+        # We have a single colorbar if we are doing the rate_ydots.
+        # We have 2 colorbars if we are also doing the color_nodes_by_abundance
+
         rate_cb_ax = None
         node_cb_ax = None
         if rate_ydots and color_nodes_by_abundance:
@@ -2553,6 +2576,8 @@ class RateCollection:
         if color_nodes_by_abundance:
             fig.colorbar(nuc_sm, cax=node_cb_ax, label="log10(X)",
                          orientation=orientation)
+
+        # Finally set the axis properties
 
         if not rotated:
             ax.set_xlabel(r"$N$", fontsize="large")
@@ -2590,6 +2615,9 @@ class RateCollection:
 
         if not rotated:
             ax.set_aspect("equal", "datalim")
+
+        # add a legend showing the direction that each type of capture
+        # moves you in the plane
 
         if legend_coord is not None:
             assert len(legend_coord) == 2
