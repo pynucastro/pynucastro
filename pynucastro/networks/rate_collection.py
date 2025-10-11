@@ -2488,15 +2488,24 @@ class RateCollection:
                                    connectionstyle=connectionstyle,
                                    style="dashed", node_size=node_size, ax=ax)
 
-        # draw the edges for the rates that are below ydot_cutoff_value
+        # plot invisible rates, rates that are below ydot_cutoff_value
         invis_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == -1]
 
+        # if both the forward and reverse are invisible, then plot without curves
+        invis_straight = [(u, v) for u, v in invis_edges if (v, u) in invis_edges]
+        invis_curved = [(u, v) for u, v in invis_edges if (v, u) not in invis_edges]
+
         _ = nx.draw_networkx_edges(G, G.position, width=1,
-                                   edgelist=invis_edges, edge_color="gray",
+                                   edgelist=invis_straight, edge_color="gray",
+                                   connectionstyle="arc3",
+                                   style="dotted", node_size=node_size, ax=ax)
+
+        _ = nx.draw_networkx_edges(G, G.position, width=1,
+                                   edgelist=invis_curved, edge_color="gray",
                                    connectionstyle=connectionstyle,
                                    style="dotted", node_size=node_size, ax=ax)
 
-        # draw the edges that are real rates, and above any cutoffs
+        # plot the arrow of reaction
         real_edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
                                                edgelist=real_edges, edge_color=edge_color,
                                                connectionstyle=connectionstyle,
