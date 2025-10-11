@@ -2023,6 +2023,7 @@ class RateCollection:
                              nuclei_custom_labels=None,
                              rotated=False,
                              rate_ydots=None, ydot_cutoff_value=None,
+                             use_net_rate=False,
                              consuming_rate_threshold=None,
                              show_small_ydot=False,
                              hide_xalpha=False, hide_xp=False,
@@ -2049,6 +2050,9 @@ class RateCollection:
         ydot_cutoff_value : float
             rate threshold below which we do not add an edge connecting
             nuclei.
+        use_net_rate : bool
+            for rate pairs, compute the difference between the forward and
+            reverse rate, and only show the net rate as a single arrow.
         consuming_rate_threshold : float
             for a nucleus that has multiple rates that consume it, remove
             any rates that are ``consuming_rate_threshold`` smaller than
@@ -2096,13 +2100,28 @@ class RateCollection:
             else:
                 G.labels[n] = fr"${n.pretty}$"
 
+        # use the difference of forward - reverse rate for the graph
+        if use_net_rate:
+            for rp in self.get_rate_pairs():
+                if rp.forward is not None and rp.reverse is not None:
+                    net_rate = rate_ydots[rp.forward] - rate_ydots[rp.reverse]
+                    if net_rate > 0.0:
+                        rate_ydots[rp.forward] = net_rate
+                        rate_ydots[rp.reverse] = 0.0
+                    else:
+                        rate_ydots[rp.forward] = 0.0
+                        rate_ydots[rp.reverse] = abs(net_rate)
+
         # Do not show rates on the graph if their corresponding ydot
         # is less than ydot_cutoff_value
         invisible_rates = set()
         if ydot_cutoff_value is not None:
-            for r in self.rates:
-                if rate_ydots[r] < ydot_cutoff_value:
-                    invisible_rates.add(r)
+            invisible_rates |= {r for r in self.rates if rate_ydots[r] < ydot_cutoff_value}
+
+        # also make invisible any rates that were zeroed out if we are
+        # using the net rate
+        if use_net_rate:
+            invisible_rates |= {r for r in self.rates if rate_ydots[r] == 0.0}
 
         # Consider each nucleus heavier than He and all the rates that
         # consume it.  If desired, only show rates that are within a
@@ -2210,6 +2229,7 @@ class RateCollection:
              size=(800, 600), dpi=100, title=None,
              screen_func=None,
              ydot_cutoff_value=None, show_small_ydot=False,
+             use_net_rate=False,
              consuming_rate_threshold=None,
              node_size=1000, node_font_size=12,
              node_color="#444444", node_shape="o",
@@ -2254,6 +2274,9 @@ class RateCollection:
             line corresponding to a rate
         show_small_ydot : bool
             show visible dashed lines for rates below ``ydot_cutoff_value``
+        use_net_rate : bool
+            for rate pairs, compute the difference between the forward and
+            reverse rate, and only show the net rate as a single arrow.
         consuming_rate_threshold : float
             for a nucleus that has multiple rates that consume it, remove
             any rates that are ``consuming_rate_threshold`` smaller than
@@ -2427,6 +2450,7 @@ class RateCollection:
                                       ydot_cutoff_value=ydot_cutoff_value,
                                       hide_xalpha=hide_xalpha, hide_xp=hide_xp,
                                       show_small_ydot=show_small_ydot,
+                                      use_net_rate=use_net_rate,
                                       consuming_rate_threshold=consuming_rate_threshold,
                                       rate_filter_function=rate_filter_function,
                                       highlight_filter_function=highlight_filter_function,
