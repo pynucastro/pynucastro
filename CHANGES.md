@@ -2,6 +2,13 @@
 
 ## 2.8.0
 
+  * `network_heloper` now takes a `verbose` flag (#1134)
+
+  * numerous redundant examples (from the `examples/` directory)
+    were removed (#1131)
+
+  * He burning example has been updated (#1129)
+
   * `RateCollection.plot` can now use screening and take a
     matplotlib `GridSpec` that defines the axes (instead of
     creating them internally. (#1126)
@@ -61,7 +68,7 @@
   * Binding energy example has been updated with a better example (#1087)
 
   * Doc and API docstring improvements (#1079, #1082, #1083, #1084,
-    #1116, #1117, #1127)
+    #1116, #1117, #1127, #1132)
 
   * `pyproject.toml` updated with license info (#1081)
 
