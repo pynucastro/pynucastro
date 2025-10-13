@@ -653,7 +653,7 @@ class Library:
         only_bwd = self.filter(only_bwd_filter)
         return only_bwd
 
-    def forward_for_detailed_balance(self, use_unreliable_spins=True):
+    def forward_for_detailed_balance(self, *, use_unreliable_spins=True):
         """Loop over the forward rates (as filtered by
         :py:meth:`.forward`) and return those that can be used to
         derive reverse rates via detailed balance.  This means that
