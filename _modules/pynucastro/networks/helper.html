@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.helper &#8212; pynucastro 2.7.1.post41+g2a55da2ac documentation</title>
+    <title>pynucastro.networks.helper &#8212; pynucastro 2.7.1.post42+g19ab8b553 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=2a8f7c45"></script>
+    <script src="../../../_static/documentation_options.js?v=06582908"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -503,7 +503,8 @@ document.write(`
                    <span class="n">network_type</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span>
                    <span class="n">use_detailed_balance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                    <span class="n">use_tabular_rates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                   <span class="n">tabular_ordering</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                   <span class="n">tabular_ordering</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                   <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a basic network connecting all of the input nuclei</span>
 <span class="sd">    using all of the rates known to pynucastro.</span>
 
@@ -512,20 +513,22 @@ document.write(`
 <span class="sd">    nuclei : Iterable(Nucleus)</span>
 <span class="sd">        the nuclei to use for the network</span>
 <span class="sd">    network_type : str</span>
-<span class="sd">        the type of network to create.  Allowed values are:</span>
+<span class="sd">        The type of network to create.  Allowed values are:</span>
 
 <span class="sd">        * &quot;python&quot; : create a :py:obj:`PythonNetwork &lt;pynucastro.networks.python_network.PythonNetwork&gt;`</span>
 <span class="sd">        * &quot;cxx&quot; : create a :py:obj:`SimpleCxxNetwork &lt;pynucastro.networks.simple_cxx_network.SimpleCxxNetwork&gt;`</span>
 <span class="sd">        * &quot;fortran&quot; : create a :py:obj:`FortranNetwork &lt;pynucastro.networks.fortran_network.FortranNetwork&gt;`</span>
 <span class="sd">        * &quot;amrex&quot; : create a :py:obj:`AmrexAstroCxxNetwork &lt;pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork&gt;`</span>
 <span class="sd">    use_detailed_balanace : bool</span>
-<span class="sd">        do we rederive inverse rates using detailed balance?</span>
+<span class="sd">        Do we rederive inverse rates using detailed balance?</span>
 <span class="sd">    use_tabular_rates : bool</span>
-<span class="sd">        do we include tabulated weak rates?</span>
+<span class="sd">        Do we include tabulated weak rates?</span>
 <span class="sd">    tabular_ordering : Iterable(str)</span>
-<span class="sd">        if we are including tabular rates, a list of sources</span>
+<span class="sd">        If we are including tabular rates, a list of sources</span>
 <span class="sd">        can be provided to specify which rate sources are used,</span>
 <span class="sd">        and the priority that each source should have.</span>
+<span class="sd">    verbose : bool</span>
+<span class="sd">        Output more information</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -556,22 +559,23 @@ document.write(`
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rates_to_derive</span><span class="p">:</span>
             <span class="n">fr</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_nuclei</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">fr</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;modifying </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2"> from </span><span class="si">{</span><span class="n">fr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;modifying </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2"> from </span><span class="si">{</span><span class="n">fr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="n">lib</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
                 <span class="n">d</span> <span class="o">=</span> <span class="n">DerivedRate</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="n">fr</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="n">lib</span><span class="o">.</span><span class="n">add_rate</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">network_type</span> <span class="o">==</span> <span class="s2">&quot;python&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">network_type</span> <span class="o">==</span> <span class="s2">&quot;cxx&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">SimpleCxxNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">SimpleCxxNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">network_type</span> <span class="o">==</span> <span class="s2">&quot;fortran&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">FortranNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">FortranNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">network_type</span> <span class="o">==</span> <span class="s2">&quot;amrex&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">AmrexAstroCxxNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">AmrexAstroCxxNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid network_type&quot;</span><span class="p">)</span></div>
 
