@@ -20,7 +20,7 @@ class TestAmrexAstroCxxNetwork:
         derived = []
         for r in lib.get_rates():
             try:
-                d = pyna.DerivedRate(rate=r, compute_Q=False, use_pf=True)
+                d = pyna.DerivedRate(rate=r, compute_Q=False, use_pf=True, use_unreliable_spins=False)
             except ValueError:
                 continue
             fwd_rates.append(r)

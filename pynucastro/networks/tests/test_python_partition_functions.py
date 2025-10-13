@@ -11,7 +11,7 @@ class TestPythonPartitionNetwork:
     @pytest.fixture(scope="class")
     def pynet(self, reaclib_library):
 
-        fwd_reactions = reaclib_library.forward_for_detailed_balance()
+        fwd_reactions = reaclib_library.forward_for_detailed_balance(use_unreliable_spins=False)
 
         nuclei = ["p", "he4", "fe52", "ni56", "co55"]
 
@@ -20,7 +20,7 @@ class TestPythonPartitionNetwork:
 
         derived = []
         for r in fwd_rates_lib.get_rates():
-            d = pyna.DerivedRate(rate=r, compute_Q=False, use_pf=True)
+            d = pyna.DerivedRate(rate=r, compute_Q=False, use_pf=True, use_unreliable_spins=False)
             derived.append(d)
 
         der_rates_lib = pyna.Library(rates=derived)
