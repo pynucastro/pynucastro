@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>A He-burning Network &#8212; pynucastro 2.7.1.post38+gc48fd9475 documentation</title>
+    <title>A He-burning Network &#8212; pynucastro 2.7.1.post39+gd7e97f75f documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=35b41ddb"></script>
+    <script src="_static/documentation_options.js?v=9217656c"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -575,9 +575,18 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detailed-balance">Detailed balance</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#removing-duplicates">Removing duplicates</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-the-network-and-rate-approximations">Creating the network and rate approximations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-the-network">Creating the network</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rate-approximations">Rate approximations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#final-stats">Final stats</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-the-network">Visualizing the network</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-integration">Test integration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-integration">Test integration</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#species-evolution">Species evolution</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#network-flow">Network flow</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#y-e-evolution"><span class="math notranslate nohighlight">\(Y_e\)</span> evolution</a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -627,7 +636,7 @@ be very important for the ignition of a detonation.</p>
 </div>
 </div>
 </div>
-<p>Since we didn’t include neutrons in our list of nuclei, we are missing some potentially important rates, which we now add manually.  However, we do not want to carry neutrons, so we modify the endpoints of these reactions to assume
+<p>Since we didn’t include neutrons in our list of nuclei, we are missing some potentially important rates, which we now add manually.  However, we do not want to carry neutrons, so we modify the endpoints of these reactions, using <a class="reference internal" href="pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate" title="pynucastro.rates.modified_rate.ModifiedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModifiedRate</span></code></a> to assume
 that the original <span class="math notranslate nohighlight">\((X, n)\)</span> reaction is immediately followed by a neutron capture.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -637,139 +646,8 @@ that the original <span class="math notranslate nohighlight">\((X, n)\)</span> r
 
 <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">mp</span> <span class="ow">in</span> <span class="n">other_rates</span><span class="p">:</span>
     <span class="n">_r</span> <span class="o">=</span> <span class="n">reaclib_lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-    <span class="n">_r</span><span class="o">.</span><span class="n">modify_products</span><span class="p">(</span><span class="n">mp</span><span class="p">)</span>
-    <span class="n">core_lib</span> <span class="o">+=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="p">[</span><span class="n">_r</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Now we remove some rates that traditionally are not present in the <code class="docutils literal notranslate"><span class="pre">aprox</span></code>-style networks.  This includes the
-reverse rates of <span class="math notranslate nohighlight">\({}^{12}\mathrm{C} + {}^{12}\mathrm{C}\)</span>, <span class="math notranslate nohighlight">\({}^{16}\mathrm{O} + {}^{12}\mathrm{C}\)</span>, and <span class="math notranslate nohighlight">\({}^{16}\mathrm{O} + {}^{16}\mathrm{O}\)</span>.  We also remove some <span class="math notranslate nohighlight">\(\alpha\)</span>-captures and <span class="math notranslate nohighlight">\(p\)</span>-captures on neutron-rich nuclei that will be eliminated when we approximate them out of the network.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">core_lib</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
-    <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">),</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">)],</span>
-                              <span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">),</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">)],</span>
-                              <span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">),</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">)]]:</span>
-        <span class="n">core_lib</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-
-<span class="n">rates_to_remove</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;p31(p,c12)ne20&quot;</span><span class="p">,</span>
-                   <span class="s2">&quot;si28(a,c12)ne20&quot;</span><span class="p">,</span>
-                   <span class="s2">&quot;ne20(c12,p)p31&quot;</span><span class="p">,</span>
-                   <span class="s2">&quot;ne20(c12,a)si28&quot;</span><span class="p">,</span>
-                   <span class="s2">&quot;na23(a,g)al27&quot;</span><span class="p">,</span>
-                   <span class="s2">&quot;al27(g,a)na23&quot;</span><span class="p">,</span>
-                   <span class="s2">&quot;al27(a,g)p31&quot;</span><span class="p">,</span>
-                   <span class="s2">&quot;p31(g,a)al27&quot;</span><span class="p">]</span>
-
-<span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rates_to_remove</span><span class="p">:</span>
-    <span class="n">_r</span> <span class="o">=</span> <span class="n">core_lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-    <span class="n">core_lib</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">_r</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Here’s the current list of rates</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">core_lib</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3 He4 ⟶ C12 + 𝛾                [Q =   7.28 MeV] (3 He4 --&gt; C12 &lt;fy05_reaclib__&gt;)
-C12 + p ⟶ N13 + 𝛾              [Q =   1.94 MeV] (C12 + p --&gt; N13 &lt;ls09_reaclib__&gt;)
-C12 + He4 ⟶ O16 + 𝛾            [Q =   7.16 MeV] (C12 + He4 --&gt; O16 &lt;nac2_reaclib__&gt;)
-C12 + C12 ⟶ He4 + Ne20         [Q =   4.62 MeV] (C12 + C12 --&gt; He4 + Ne20 &lt;cf88_reaclib__&gt;)
-C12 + C12 ⟶ p + Na23           [Q =   2.24 MeV] (C12 + C12 --&gt; p + Na23 &lt;cf88_reaclib__&gt;)
-C12 + C12 ⟶ Mg24 + 𝛾           [Q =  13.93 MeV] (C12 + C12 --&gt; Mg24 &lt;cf88_reaclib__derived_from_inverse&gt;)
-N13 + He4 ⟶ p + O16            [Q =   5.22 MeV] (N13 + He4 --&gt; p + O16 &lt;cf88_reaclib__&gt;)
-N14 + He4 ⟶ F18 + 𝛾            [Q =   4.41 MeV] (N14 + He4 --&gt; F18 &lt;il10_reaclib__&gt;)
-O16 + He4 ⟶ Ne20 + 𝛾           [Q =   4.73 MeV] (O16 + He4 --&gt; Ne20 &lt;co10_reaclib__&gt;)
-O16 + C12 ⟶ He4 + Mg24         [Q =   6.77 MeV] (O16 + C12 --&gt; He4 + Mg24 &lt;cf88_reaclib__&gt;)
-O16 + C12 ⟶ p + Al27           [Q =   5.17 MeV] (O16 + C12 --&gt; p + Al27 &lt;cf88_reaclib__&gt;)
-O16 + C12 ⟶ Si28 + 𝛾           [Q =  16.76 MeV] (O16 + C12 --&gt; Si28 &lt;cf88_reaclib__derived_from_inverse&gt;)
-O16 + O16 ⟶ He4 + Si28         [Q =   9.59 MeV] (O16 + O16 --&gt; He4 + Si28 &lt;cf88_reaclib__&gt;)
-O16 + O16 ⟶ p + P31            [Q =   7.68 MeV] (O16 + O16 --&gt; p + P31 &lt;cf88_reaclib__&gt;)
-O16 + O16 ⟶ S32 + 𝛾            [Q =  16.54 MeV] (O16 + O16 --&gt; S32 &lt;cf88_reaclib__&gt;)
-F18 + He4 ⟶ p + Ne21           [Q =   1.74 MeV] (F18 + He4 --&gt; p + Ne21 &lt;rpsm_reaclib__&gt;)
-F18 + He4 ⟶ Na22 + 𝛾           [Q =   8.48 MeV] (F18 + He4 --&gt; Na22 &lt;rpsm_reaclib__&gt;)
-Ne20 + He4 ⟶ Mg24 + 𝛾          [Q =   9.32 MeV] (Ne20 + He4 --&gt; Mg24 &lt;il10_reaclib__&gt;)
-Ne21 + p ⟶ Na22 + 𝛾            [Q =   6.74 MeV] (Ne21 + p --&gt; Na22 &lt;il10_reaclib__&gt;)
-Na23 + p ⟶ He4 + Ne20          [Q =   2.38 MeV] (Na23 + p --&gt; He4 + Ne20 &lt;il10_reaclib__&gt;)
-Na23 + p ⟶ Mg24 + 𝛾            [Q =  11.69 MeV] (Na23 + p --&gt; Mg24 &lt;il10_reaclib__&gt;)
-Mg24 + He4 ⟶ Si28 + 𝛾          [Q =   9.98 MeV] (Mg24 + He4 --&gt; Si28 &lt;st08_reaclib__&gt;)
-Al27 + p ⟶ He4 + Mg24          [Q =   1.60 MeV] (Al27 + p --&gt; He4 + Mg24 &lt;il10_reaclib__&gt;)
-Al27 + p ⟶ Si28 + 𝛾            [Q =  11.59 MeV] (Al27 + p --&gt; Si28 &lt;il10_reaclib__&gt;)
-Si28 + He4 ⟶ S32 + 𝛾           [Q =   6.95 MeV] (Si28 + He4 --&gt; S32 &lt;ths8_reaclib__&gt;)
-P31 + p ⟶ He4 + Si28           [Q =   1.92 MeV] (P31 + p --&gt; He4 + Si28 &lt;il10_reaclib__&gt;)
-P31 + p ⟶ S32 + 𝛾              [Q =   8.86 MeV] (P31 + p --&gt; S32 &lt;il10_reaclib__&gt;)
-P31 + He4 ⟶ Cl35 + 𝛾           [Q =   7.00 MeV] (P31 + He4 --&gt; Cl35 &lt;ths8_reaclib__&gt;)
-S32 + He4 ⟶ Ar36 + 𝛾           [Q =   6.64 MeV] (S32 + He4 --&gt; Ar36 &lt;ths8_reaclib__&gt;)
-Cl35 + p ⟶ He4 + S32           [Q =   1.87 MeV] (Cl35 + p --&gt; He4 + S32 &lt;il10_reaclib__&gt;)
-Cl35 + p ⟶ Ar36 + 𝛾            [Q =   8.51 MeV] (Cl35 + p --&gt; Ar36 &lt;il10_reaclib__&gt;)
-Cl35 + He4 ⟶ K39 + 𝛾           [Q =   7.22 MeV] (Cl35 + He4 --&gt; K39 &lt;ths8_reaclib__&gt;)
-Ar36 + He4 ⟶ Ca40 + 𝛾          [Q =   7.04 MeV] (Ar36 + He4 --&gt; Ca40 &lt;ths8_reaclib__&gt;)
-K39 + p ⟶ He4 + Ar36           [Q =   1.29 MeV] (K39 + p --&gt; He4 + Ar36 &lt;ths8_reaclib__&gt;)
-K39 + p ⟶ Ca40 + 𝛾             [Q =   8.33 MeV] (K39 + p --&gt; Ca40 &lt;lo18_reaclib__&gt;)
-K39 + He4 ⟶ Sc43 + 𝛾           [Q =   4.81 MeV] (K39 + He4 --&gt; Sc43 &lt;ths8_reaclib__&gt;)
-Ca40 + He4 ⟶ Ti44 + 𝛾          [Q =   5.13 MeV] (Ca40 + He4 --&gt; Ti44 &lt;chw0_reaclib__&gt;)
-Sc43 + p ⟶ He4 + Ca40          [Q =   3.52 MeV] (Sc43 + p --&gt; He4 + Ca40 &lt;ths8_reaclib__&gt;)
-Sc43 + p ⟶ Ti44 + 𝛾            [Q =   8.65 MeV] (Sc43 + p --&gt; Ti44 &lt;ths8_reaclib__&gt;)
-Sc43 + He4 ⟶ V47 + 𝛾           [Q =   8.24 MeV] (Sc43 + He4 --&gt; V47 &lt;ths8_reaclib__&gt;)
-Ti44 + He4 ⟶ Cr48 + 𝛾          [Q =   7.70 MeV] (Ti44 + He4 --&gt; Cr48 &lt;ths8_reaclib__&gt;)
-V47 + p ⟶ He4 + Ti44           [Q =   0.41 MeV] (V47 + p --&gt; He4 + Ti44 &lt;chw0_reaclib__derived_from_inverse&gt;)
-V47 + p ⟶ Cr48 + 𝛾             [Q =   8.11 MeV] (V47 + p --&gt; Cr48 &lt;nfis_reaclib__&gt;)
-V47 + He4 ⟶ Mn51 + 𝛾           [Q =   8.66 MeV] (V47 + He4 --&gt; Mn51 &lt;ths8_reaclib__&gt;)
-Cr48 + He4 ⟶ p + Mn51          [Q =   0.56 MeV] (Cr48 + He4 --&gt; p + Mn51 &lt;ths8_reaclib__&gt;)
-Cr48 + He4 ⟶ Fe52 + 𝛾          [Q =   7.94 MeV] (Cr48 + He4 --&gt; Fe52 &lt;ths8_reaclib__&gt;)
-Mn51 + p ⟶ Fe52 + 𝛾            [Q =   7.38 MeV] (Mn51 + p --&gt; Fe52 &lt;ths8_reaclib__&gt;)
-Mn51 + He4 ⟶ Co55 + 𝛾          [Q =   8.21 MeV] (Mn51 + He4 --&gt; Co55 &lt;ths8_reaclib__&gt;)
-Fe52 + He4 ⟶ p + Co55          [Q =   0.83 MeV] (Fe52 + He4 --&gt; p + Co55 &lt;ths8_reaclib__&gt;)
-Fe52 + He4 ⟶ Ni56 + 𝛾          [Q =   8.00 MeV] (Fe52 + He4 --&gt; Ni56 &lt;ths8_reaclib__&gt;)
-Co55 + p ⟶ Ni56 + 𝛾            [Q =   7.17 MeV] (Co55 + p --&gt; Ni56 &lt;ths8_reaclib__&gt;)
-C12 ⟶ 3 He4                    [Q =  -7.28 MeV] (C12 --&gt; 3 He4 &lt;fy05_reaclib__derived_from_inverse&gt;)
-N13 ⟶ p + C12                  [Q =  -1.94 MeV] (N13 --&gt; p + C12 &lt;ls09_reaclib__derived_from_inverse&gt;)
-O16 + p ⟶ He4 + N13            [Q =  -5.22 MeV] (O16 + p --&gt; He4 + N13 &lt;cf88_reaclib__derived_from_inverse&gt;)
-O16 ⟶ He4 + C12                [Q =  -7.16 MeV] (O16 --&gt; He4 + C12 &lt;nac2_reaclib__derived_from_inverse&gt;)
-F18 ⟶ He4 + N14                [Q =  -4.41 MeV] (F18 --&gt; He4 + N14 &lt;il10_reaclib__derived_from_inverse&gt;)
-Ne20 + He4 ⟶ p + Na23          [Q =  -2.38 MeV] (Ne20 + He4 --&gt; p + Na23 &lt;il10_reaclib__derived_from_inverse&gt;)
-Ne20 ⟶ He4 + O16               [Q =  -4.73 MeV] (Ne20 --&gt; He4 + O16 &lt;co10_reaclib__derived_from_inverse&gt;)
-Ne21 + p ⟶ He4 + F18           [Q =  -1.74 MeV] (Ne21 + p --&gt; He4 + F18 &lt;rpsm_reaclib__derived_from_inverse&gt;)
-Na22 ⟶ He4 + F18               [Q =  -8.48 MeV] (Na22 --&gt; He4 + F18 &lt;rpsm_reaclib__derived_from_inverse&gt;)
-Na22 ⟶ p + Ne21                [Q =  -6.74 MeV] (Na22 --&gt; p + Ne21 &lt;il10_reaclib__derived_from_inverse&gt;)
-Mg24 + He4 ⟶ p + Al27          [Q =  -1.60 MeV] (Mg24 + He4 --&gt; p + Al27 &lt;il10_reaclib__derived_from_inverse&gt;)
-Mg24 ⟶ He4 + Ne20              [Q =  -9.32 MeV] (Mg24 --&gt; He4 + Ne20 &lt;il10_reaclib__derived_from_inverse&gt;)
-Mg24 ⟶ p + Na23                [Q = -11.69 MeV] (Mg24 --&gt; p + Na23 &lt;il10_reaclib__derived_from_inverse&gt;)
-Si28 + He4 ⟶ p + P31           [Q =  -1.92 MeV] (Si28 + He4 --&gt; p + P31 &lt;il10_reaclib__derived_from_inverse&gt;)
-Si28 ⟶ He4 + Mg24              [Q =  -9.98 MeV] (Si28 --&gt; He4 + Mg24 &lt;st08_reaclib__derived_from_inverse&gt;)
-Si28 ⟶ p + Al27                [Q = -11.59 MeV] (Si28 --&gt; p + Al27 &lt;il10_reaclib__derived_from_inverse&gt;)
-S32 + He4 ⟶ p + Cl35           [Q =  -1.87 MeV] (S32 + He4 --&gt; p + Cl35 &lt;il10_reaclib__derived_from_inverse&gt;)
-S32 ⟶ He4 + Si28               [Q =  -6.95 MeV] (S32 --&gt; He4 + Si28 &lt;ths8_reaclib__derived_from_inverse&gt;)
-S32 ⟶ p + P31                  [Q =  -8.86 MeV] (S32 --&gt; p + P31 &lt;il10_reaclib__derived_from_inverse&gt;)
-Cl35 ⟶ He4 + P31               [Q =  -7.00 MeV] (Cl35 --&gt; He4 + P31 &lt;ths8_reaclib__derived_from_inverse&gt;)
-Ar36 + He4 ⟶ p + K39           [Q =  -1.29 MeV] (Ar36 + He4 --&gt; p + K39 &lt;ths8_reaclib__derived_from_inverse&gt;)
-Ar36 ⟶ He4 + S32               [Q =  -6.64 MeV] (Ar36 --&gt; He4 + S32 &lt;ths8_reaclib__derived_from_inverse&gt;)
-Ar36 ⟶ p + Cl35                [Q =  -8.51 MeV] (Ar36 --&gt; p + Cl35 &lt;il10_reaclib__derived_from_inverse&gt;)
-K39 ⟶ He4 + Cl35               [Q =  -7.22 MeV] (K39 --&gt; He4 + Cl35 &lt;ths8_reaclib__derived_from_inverse&gt;)
-Ca40 + He4 ⟶ p + Sc43          [Q =  -3.52 MeV] (Ca40 + He4 --&gt; p + Sc43 &lt;ths8_reaclib__derived_from_inverse&gt;)
-Ca40 ⟶ He4 + Ar36              [Q =  -7.04 MeV] (Ca40 --&gt; He4 + Ar36 &lt;ths8_reaclib__derived_from_inverse&gt;)
-Ca40 ⟶ p + K39                 [Q =  -8.33 MeV] (Ca40 --&gt; p + K39 &lt;lo18_reaclib__derived_from_inverse&gt;)
-Sc43 ⟶ He4 + K39               [Q =  -4.81 MeV] (Sc43 --&gt; He4 + K39 &lt;ths8_reaclib__derived_from_inverse&gt;)
-Ti44 + He4 ⟶ p + V47           [Q =  -0.41 MeV] (Ti44 + He4 --&gt; p + V47 &lt;chw0_reaclib__&gt;)
-Ti44 ⟶ He4 + Ca40              [Q =  -5.13 MeV] (Ti44 --&gt; He4 + Ca40 &lt;chw0_reaclib__derived_from_inverse&gt;)
-Ti44 ⟶ p + Sc43                [Q =  -8.65 MeV] (Ti44 --&gt; p + Sc43 &lt;ths8_reaclib__derived_from_inverse&gt;)
-V47 ⟶ He4 + Sc43               [Q =  -8.24 MeV] (V47 --&gt; He4 + Sc43 &lt;ths8_reaclib__derived_from_inverse&gt;)
-Cr48 ⟶ He4 + Ti44              [Q =  -7.70 MeV] (Cr48 --&gt; He4 + Ti44 &lt;ths8_reaclib__derived_from_inverse&gt;)
-Cr48 ⟶ p + V47                 [Q =  -8.11 MeV] (Cr48 --&gt; p + V47 &lt;nfis_reaclib__derived_from_inverse&gt;)
-Mn51 + p ⟶ He4 + Cr48          [Q =  -0.56 MeV] (Mn51 + p --&gt; He4 + Cr48 &lt;ths8_reaclib__derived_from_inverse&gt;)
-Mn51 ⟶ He4 + V47               [Q =  -8.66 MeV] (Mn51 --&gt; He4 + V47 &lt;ths8_reaclib__derived_from_inverse&gt;)
-Fe52 ⟶ He4 + Cr48              [Q =  -7.94 MeV] (Fe52 --&gt; He4 + Cr48 &lt;ths8_reaclib__derived_from_inverse&gt;)
-Fe52 ⟶ p + Mn51                [Q =  -7.38 MeV] (Fe52 --&gt; p + Mn51 &lt;ths8_reaclib__derived_from_inverse&gt;)
-Co55 + p ⟶ He4 + Fe52          [Q =  -0.83 MeV] (Co55 + p --&gt; He4 + Fe52 &lt;ths8_reaclib__derived_from_inverse&gt;)
-Co55 ⟶ He4 + Mn51              [Q =  -8.21 MeV] (Co55 --&gt; He4 + Mn51 &lt;ths8_reaclib__derived_from_inverse&gt;)
-Ni56 ⟶ He4 + Fe52              [Q =  -8.00 MeV] (Ni56 --&gt; He4 + Fe52 &lt;ths8_reaclib__derived_from_inverse&gt;)
-Ni56 ⟶ p + Co55                [Q =  -7.17 MeV] (Ni56 --&gt; p + Co55 &lt;ths8_reaclib__derived_from_inverse&gt;)
+    <span class="n">new_rate</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ModifiedRate</span><span class="p">(</span><span class="n">_r</span><span class="p">,</span> <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">mp</span><span class="p">])</span>    
+    <span class="n">core_lib</span> <span class="o">+=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="p">[</span><span class="n">new_rate</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -777,7 +655,7 @@ Ni56 ⟶ p + Co55                [Q =  -7.17 MeV] (Ni56 --&gt; p + Co55 &lt;ths8
 </section>
 <section id="iron-group">
 <h3>Iron group<a class="headerlink" href="#iron-group" title="Link to this heading">#</a></h3>
-<p>Now we’ll add some more nuclei in the iron group.</p>
+<p>Next we’ll add some more nuclei in the iron group.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">iron_peak</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span>
@@ -789,6 +667,7 @@ Ni56 ⟶ p + Co55                [Q =  -7.17 MeV] (Ni56 --&gt; p + Co55 &lt;ths8
 </div>
 </div>
 </div>
+<p>We want to get the rates from both ReacLib and our tabulate weak rate library.  Also note that we make sure there is some overlap with the list of nuclei used previously, so these rates will connect to what we already assembled.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">iron_reaclib</span> <span class="o">=</span> <span class="n">reaclib_lib</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">iron_peak</span><span class="p">)</span>
@@ -809,6 +688,7 @@ warning: Fe54 was not able to be linked in TabularLibrary
 </div>
 </div>
 </div>
+<p>Finally, we assemble a <code class="docutils literal notranslate"><span class="pre">Library</span></code> containing all the rates we selected.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_lib</span> <span class="o">=</span> <span class="n">core_lib</span> <span class="o">+</span> <span class="n">iron_reaclib</span> <span class="o">+</span> <span class="n">iron_weak_lib</span>
@@ -820,98 +700,19 @@ warning: Fe54 was not able to be linked in TabularLibrary
 </section>
 <section id="detailed-balance">
 <h2>Detailed balance<a class="headerlink" href="#detailed-balance" title="Link to this heading">#</a></h2>
-<p>Finally, we replace the reverse rates from ReacLib by rederiving them via detailed balance, and including the partition functions.</p>
+<p>We want to replace the reverse rates from ReacLib by rederiving them via detailed balance, and including the partition functions.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rates_to_derive</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">all_lib</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
-    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">derived_from_inverse</span><span class="p">:</span>
-        <span class="c1"># this rate was computed using detailed balance, regardless</span>
-        <span class="c1"># of whether Q &lt; 0 or not.  We want to remove it and then</span>
-        <span class="c1"># recompute it</span>
-        <span class="n">rates_to_derive</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rates_to_derive</span> <span class="o">=</span> <span class="n">all_lib</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
 
 <span class="c1"># now for each of those derived rates, look to see if the pair exists</span>
 
 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rates_to_derive</span><span class="p">:</span>
     <span class="n">fr</span> <span class="o">=</span> <span class="n">all_lib</span><span class="o">.</span><span class="n">get_rate_by_nuclei</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">fr</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;modifying </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2"> from </span><span class="si">{</span><span class="n">fr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">all_lib</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">DerivedRate</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="n">fr</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">DerivedRate</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="n">fr</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">all_lib</span><span class="o">.</span><span class="n">add_rate</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>modifying N13 ⟶ p + C12 from C12 + p ⟶ N13 + 𝛾
-modifying O16 ⟶ He4 + C12 from C12 + He4 ⟶ O16 + 𝛾
-modifying F18 ⟶ He4 + N14 from N14 + He4 ⟶ F18 + 𝛾
-modifying Ne20 ⟶ He4 + O16 from O16 + He4 ⟶ Ne20 + 𝛾
-modifying Na22 ⟶ p + Ne21 from Ne21 + p ⟶ Na22 + 𝛾
-modifying Na22 ⟶ He4 + F18 from F18 + He4 ⟶ Na22 + 𝛾
-modifying Mg24 ⟶ p + Na23 from Na23 + p ⟶ Mg24 + 𝛾
-modifying Mg24 ⟶ He4 + Ne20 from Ne20 + He4 ⟶ Mg24 + 𝛾
-modifying Si28 ⟶ p + Al27 from Al27 + p ⟶ Si28 + 𝛾
-modifying Si28 ⟶ He4 + Mg24 from Mg24 + He4 ⟶ Si28 + 𝛾
-modifying S32 ⟶ p + P31 from P31 + p ⟶ S32 + 𝛾
-modifying S32 ⟶ He4 + Si28 from Si28 + He4 ⟶ S32 + 𝛾
-modifying Cl35 ⟶ He4 + P31 from P31 + He4 ⟶ Cl35 + 𝛾
-modifying Ar36 ⟶ p + Cl35 from Cl35 + p ⟶ Ar36 + 𝛾
-modifying Ar36 ⟶ He4 + S32 from S32 + He4 ⟶ Ar36 + 𝛾
-modifying K39 ⟶ He4 + Cl35 from Cl35 + He4 ⟶ K39 + 𝛾
-modifying Ca40 ⟶ p + K39 from K39 + p ⟶ Ca40 + 𝛾
-modifying Ca40 ⟶ He4 + Ar36 from Ar36 + He4 ⟶ Ca40 + 𝛾
-modifying Sc43 ⟶ He4 + K39 from K39 + He4 ⟶ Sc43 + 𝛾
-modifying Ti44 ⟶ p + Sc43 from Sc43 + p ⟶ Ti44 + 𝛾
-modifying Ti44 ⟶ He4 + Ca40 from Ca40 + He4 ⟶ Ti44 + 𝛾
-modifying V47 ⟶ He4 + Sc43 from Sc43 + He4 ⟶ V47 + 𝛾
-modifying Cr48 ⟶ p + V47 from V47 + p ⟶ Cr48 + 𝛾
-modifying Cr48 ⟶ He4 + Ti44 from Ti44 + He4 ⟶ Cr48 + 𝛾
-modifying Mn51 ⟶ He4 + V47 from V47 + He4 ⟶ Mn51 + 𝛾
-modifying Fe52 ⟶ p + Mn51 from Mn51 + p ⟶ Fe52 + 𝛾
-modifying Fe52 ⟶ He4 + Cr48 from Cr48 + He4 ⟶ Fe52 + 𝛾
-modifying Co55 ⟶ He4 + Mn51 from Mn51 + He4 ⟶ Co55 + 𝛾
-modifying Ni56 ⟶ p + Co55 from Co55 + p ⟶ Ni56 + 𝛾
-modifying Ni56 ⟶ He4 + Fe52 from Fe52 + He4 ⟶ Ni56 + 𝛾
-modifying C12 ⟶ 3 He4 from 3 He4 ⟶ C12 + 𝛾
-modifying O16 + p ⟶ He4 + N13 from N13 + He4 ⟶ p + O16
-modifying Ne20 + He4 ⟶ p + Na23 from Na23 + p ⟶ He4 + Ne20
-modifying Ne21 + p ⟶ He4 + F18 from F18 + He4 ⟶ p + Ne21
-modifying Mg24 + He4 ⟶ p + Al27 from Al27 + p ⟶ He4 + Mg24
-modifying Si28 + He4 ⟶ p + P31 from P31 + p ⟶ He4 + Si28
-modifying S32 + He4 ⟶ p + Cl35 from Cl35 + p ⟶ He4 + S32
-modifying Ar36 + He4 ⟶ p + K39 from K39 + p ⟶ He4 + Ar36
-modifying Ca40 + He4 ⟶ p + Sc43 from Sc43 + p ⟶ He4 + Ca40
-modifying V47 + p ⟶ He4 + Ti44 from Ti44 + He4 ⟶ p + V47
-modifying Mn51 + p ⟶ He4 + Cr48 from Cr48 + He4 ⟶ p + Mn51
-modifying Co55 + p ⟶ He4 + Fe52 from Fe52 + He4 ⟶ p + Co55
-modifying Fe53 ⟶ n + Fe52 from Fe52 + n ⟶ Fe53 + 𝛾
-modifying Fe54 ⟶ n + Fe53 from Fe53 + n ⟶ Fe54 + 𝛾
-modifying Fe55 ⟶ n + Fe54 from Fe54 + n ⟶ Fe55 + 𝛾
-modifying Fe56 ⟶ n + Fe55 from Fe55 + n ⟶ Fe56 + 𝛾
-modifying Co55 ⟶ p + Fe54 from Fe54 + p ⟶ Co55 + 𝛾
-modifying Co56 ⟶ n + Co55 from Co55 + n ⟶ Co56 + 𝛾
-modifying Co56 ⟶ p + Fe55 from Fe55 + p ⟶ Co56 + 𝛾
-modifying Co57 ⟶ n + Co56 from Co56 + n ⟶ Co57 + 𝛾
-modifying Co57 ⟶ p + Fe56 from Fe56 + p ⟶ Co57 + 𝛾
-modifying Ni57 ⟶ n + Ni56 from Ni56 + n ⟶ Ni57 + 𝛾
-modifying Ni57 ⟶ p + Co56 from Co56 + p ⟶ Ni57 + 𝛾
-modifying Ni57 ⟶ He4 + Fe53 from Fe53 + He4 ⟶ Ni57 + 𝛾
-modifying Ni58 ⟶ n + Ni57 from Ni57 + n ⟶ Ni58 + 𝛾
-modifying Ni58 ⟶ p + Co57 from Co57 + p ⟶ Ni58 + 𝛾
-modifying Ni58 ⟶ He4 + Fe54 from Fe54 + He4 ⟶ Ni58 + 𝛾
-modifying Fe53 + He4 ⟶ n + Ni56 from Ni56 + n ⟶ He4 + Fe53
-modifying Fe54 + p ⟶ He4 + Mn51 from Mn51 + He4 ⟶ p + Fe54
-modifying Fe54 + He4 ⟶ n + Ni57 from Ni57 + n ⟶ He4 + Fe54
-modifying Fe54 + He4 ⟶ p + Co57 from Co57 + p ⟶ He4 + Fe54
-modifying Fe55 + p ⟶ n + Co55 from Co55 + n ⟶ p + Fe55
-modifying Fe55 + He4 ⟶ n + Ni58 from Ni58 + n ⟶ He4 + Fe55
-modifying Fe56 + p ⟶ n + Co56 from Co56 + n ⟶ p + Fe56
-modifying Co56 + p ⟶ n + Ni56 from Ni56 + n ⟶ p + Co56
-modifying Co56 + p ⟶ He4 + Fe53 from Fe53 + He4 ⟶ p + Co56
-modifying Co57 + p ⟶ n + Ni57 from Ni57 + n ⟶ p + Co57
-modifying Ni58 + p ⟶ He4 + Co55 from Co55 + He4 ⟶ p + Ni58
 </pre></div>
 </div>
 </div>
@@ -928,8 +729,8 @@ modifying Ni58 + p ⟶ He4 + Co55 from Co55 + He4 ⟶ p + Ni58
 </div>
 </div>
 </section>
-<section id="creating-the-network-and-rate-approximations">
-<h2>Creating the network and rate approximations<a class="headerlink" href="#creating-the-network-and-rate-approximations" title="Link to this heading">#</a></h2>
+<section id="creating-the-network">
+<h2>Creating the network<a class="headerlink" href="#creating-the-network" title="Link to this heading">#</a></h2>
 <p>Now that we have our library, we can make a network.  This can be a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code>, <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code>, or <code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -937,11 +738,13 @@ modifying Ni58 + p ⟶ He4 + Co55 from Co55 + He4 ⟶ p + Ni58
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">all_lib</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">all_lib</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 </div>
+<section id="rate-approximations">
+<h3>Rate approximations<a class="headerlink" href="#rate-approximations" title="Link to this heading">#</a></h3>
 <p>Next, we will do the <span class="math notranslate nohighlight">\((\alpha,p)(p,\gamma)\)</span> approximation and eliminate the intermediate nuclei</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -963,47 +766,62 @@ modifying Ni58 + p ⟶ He4 + Co55 from Co55 + He4 ⟶ p + Ni58
 <p>and finally, make some of the protons into NSE protons</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># make all rates with A &gt;= 48 use NSE protons</span>
-<span class="n">net</span><span class="o">.</span><span class="n">make_nse_protons</span><span class="p">(</span><span class="mi">48</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">make_nse_protons</span><span class="p">(</span><span class="mi">48</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
+</section>
+<section id="final-stats">
+<h3>Final stats<a class="headerlink" href="#final-stats" title="Link to this heading">#</a></h3>
+<p>The final network has a variety of different rates supported by pynucastro</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Network summary
+---------------
+  explicitly carried nuclei: 31
+  approximated-out nuclei: 7
+  inert nuclei (included in carried): 0
+
+  total number of rates: 154
+
+  rates explicitly connecting nuclei: 115
+  hidden rates: 39
+
+  reaclib rates: 67
+  tabular rates: 6
+  approximate rates: 14
+  derived rates: 64
+  modified rates: 3
+  custom rates: 0
+</pre></div>
+</div>
+</div>
+</div>
+<p>In all, there are 31 nuclei, but with the approximations, this behaves like a 38-nuclei network.</p>
+</section>
 </section>
 <section id="visualizing-the-network">
 <h2>Visualizing the network<a class="headerlink" href="#visualizing-the-network" title="Link to this heading">#</a></h2>
 <p>Let’s visualize the network</p>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">())</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">set_all</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">set_nuc</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">)</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
-
-<span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e6</span>
-<span class="n">T</span> <span class="o">=</span> <span class="mf">1.e9</span>
-
-<span class="n">fig</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="s2">&quot;subch_simple.png&quot;</span><span class="p">,</span>
-               <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-               <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1500</span><span class="p">,</span> <span class="mi">450</span><span class="p">),</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+               <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1500</span><span class="p">,</span> <span class="mi">550</span><span class="p">),</span>
                <span class="n">node_size</span><span class="o">=</span><span class="mi">550</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/pynucastro/rates/derived_rate.py:126: UserWarning: C12 partition function is not supported by tables: set pf = 1.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
-/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/pynucastro/rates/derived_rate.py:126: UserWarning: N13 partition function is not supported by tables: set pf = 1.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
-/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/pynucastro/rates/derived_rate.py:126: UserWarning: N14 partition function is not supported by tables: set pf = 1.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
-/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/pynucastro/rates/derived_rate.py:126: UserWarning: p_nse partition function is not supported by tables: set pf = 1.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
-</pre></div>
-</div>
-<img alt="_images/e4f8283ef210785d92f989037a67bffef970630e93777470804a8d5ba0789b20.png" src="_images/e4f8283ef210785d92f989037a67bffef970630e93777470804a8d5ba0789b20.png" />
+<img alt="_images/c2df31c6d3601e9156b0c2b75df51aad31d446837769b702520478d6122fe062.png" src="_images/c2df31c6d3601e9156b0c2b75df51aad31d446837769b702520478d6122fe062.png" />
 </div>
 </div>
+<p>We see a basic <span class="math notranslate nohighlight">\(\alpha\)</span>-network with a few additional nuclei and then a small iron-group NSE set of nuclei.</p>
 </section>
 <section id="test-integration">
 <h2>Test integration<a class="headerlink" href="#test-integration" title="Link to this heading">#</a></h2>
@@ -1042,10 +860,12 @@ modifying Ni58 + p ⟶ He4 + Co55 from Co55 + He4 ⟶ p + Ni58
 </div>
 </div>
 </div>
+<p>We’ll pick very high temperature and density conditions.  At these conditions, electron-captures should be important.</p>
+<p>We’ll also set the initial composition to be mostly He with some C–this has <span class="math notranslate nohighlight">\(Y_e = 0.5\)</span> initially.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e6</span>
-<span class="n">T</span> <span class="o">=</span> <span class="mf">3.e9</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">5.e8</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mf">6.e9</span>
 
 <span class="n">X0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">he_burn</span><span class="o">.</span><span class="n">nnuc</span><span class="p">)</span>
 <span class="n">X0</span><span class="p">[</span><span class="n">he_burn</span><span class="o">.</span><span class="n">jhe4</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.95</span>
@@ -1056,6 +876,7 @@ modifying Ni58 + p ⟶ He4 + Co55 from Co55 + He4 ⟶ p + Ni58
 </div>
 </div>
 </div>
+<p>We’ll include screening in the network</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">chugunov_2007</span>
@@ -1065,15 +886,31 @@ modifying Ni58 + p ⟶ He4 + Co55 from Co55 + He4 ⟶ p + Ni58
 </div>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">10.0</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.0</span>
 
 <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">he_burn</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">he_burn</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span>
                 <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">chugunov_2007</span><span class="p">),</span>
-                <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">)</span>
+                <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-8</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
+<p>and check if we were successful</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sol</span><span class="o">.</span><span class="n">success</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
+</pre></div>
+</div>
+</div>
+</div>
+<section id="species-evolution">
+<h3>Species evolution<a class="headerlink" href="#species-evolution" title="Link to this heading">#</a></h3>
+<p>We can plot the evolution of <span class="math notranslate nohighlight">\(X\)</span> with time.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
@@ -1081,28 +918,98 @@ modifying Ni58 + p ⟶ He4 + Co55 from Co55 + He4 ⟶ p + Ni58
 </div>
 </div>
 </div>
-<p>Here we only plot the most abundant species</p>
+<p>Here we only plot the most abundant species.</p>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">he_burn</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">*</span> <span class="n">he_burn</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">5.e-3</span><span class="p">:</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">he_burn</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+    <span class="n">max_X</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">*</span> <span class="n">he_burn</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">lw</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;--&quot;</span>
+    <span class="k">if</span> <span class="n">max_X</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
+        <span class="n">lw</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+    <span class="k">elif</span> <span class="n">max_X</span> <span class="o">&gt;</span> <span class="mf">0.01</span><span class="p">:</span>
+        <span class="n">lw</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+    <span class="k">if</span> <span class="n">max_X</span> <span class="o">&gt;</span> <span class="mf">5.e-3</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">he_burn</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">lw</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="n">ls</span><span class="p">,</span>
                   <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">he_burn</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
 
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;t (s)&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">margins</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/9e75935fee7e4e7c62321b36a65f93af2a7b3e20c77eefc5c9680a4a399c37d3.png" src="_images/9e75935fee7e4e7c62321b36a65f93af2a7b3e20c77eefc5c9680a4a399c37d3.png" />
+<img alt="_images/2e5714baa80f7e887f72d40d48668e7a857d3b089d97f53e469c7015bba417ae.png" src="_images/2e5714baa80f7e887f72d40d48668e7a857d3b089d97f53e469c7015bba417ae.png" />
 </div>
 </div>
+<p>At the very end, we see that the electron-captures on <span class="math notranslate nohighlight">\({}^{56}\mathrm{Ni}\)</span> are starting to decrease its abundance appreciably.</p>
+</section>
+<section id="network-flow">
+<h3>Network flow<a class="headerlink" href="#network-flow" title="Link to this heading">#</a></h3>
+<p>We can also show the flow through the network at the final time.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Xs</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">he_burn</span><span class="o">.</span><span class="n">A</span>
+<span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="n">Xs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_nbval-ignore-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span>
+               <span class="n">screen_func</span><span class="o">=</span><span class="n">chugunov_2007</span><span class="p">,</span>
+               <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+               <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+               <span class="n">color_nodes_by_abundance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+               <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1500</span><span class="p">,</span> <span class="mi">550</span><span class="p">),</span>
+               <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="mf">1.e-20</span><span class="p">,</span>
+               <span class="n">Z_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">29</span><span class="p">),</span>
+               <span class="n">node_size</span><span class="o">=</span><span class="mi">550</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/pynucastro/rates/derived_rate.py:126: UserWarning: C12 partition function is not supported by tables: set pf = 1.0 by default
+  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
+/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/pynucastro/rates/derived_rate.py:126: UserWarning: N13 partition function is not supported by tables: set pf = 1.0 by default
+  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
+/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/pynucastro/rates/derived_rate.py:126: UserWarning: N14 partition function is not supported by tables: set pf = 1.0 by default
+  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
+/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/pynucastro/rates/derived_rate.py:126: UserWarning: p_nse partition function is not supported by tables: set pf = 1.0 by default
+  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
+</pre></div>
+</div>
+<img alt="_images/e557af0b3a52bdc7653b1186ebac9ebea0b5baf5690a9882c263c1c23b804203.png" src="_images/e557af0b3a52bdc7653b1186ebac9ebea0b5baf5690a9882c263c1c23b804203.png" />
+</div>
+</div>
+<p>At this point we see that we are really in the iron-group, with some lingering He.</p>
+</section>
+<section id="y-e-evolution">
+<h3><span class="math notranslate nohighlight">\(Y_e\)</span> evolution<a class="headerlink" href="#y-e-evolution" title="Link to this heading">#</a></h3>
+<p>We also see that the electron captures have decreased our <span class="math notranslate nohighlight">\(Y_e\)</span> a bit:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ye = </span><span class="si">{</span><span class="n">comp</span><span class="o">.</span><span class="n">ye</span><span class="si">:</span><span class="s2">6.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ye =  0.491
+</pre></div>
+</div>
+</div>
+</div>
+</section>
 </section>
 </section>
 
@@ -1158,9 +1065,18 @@ modifying Ni58 + p ⟶ He4 + Co55 from Co55 + He4 ⟶ p + Ni58
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detailed-balance">Detailed balance</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#removing-duplicates">Removing duplicates</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-the-network-and-rate-approximations">Creating the network and rate approximations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-the-network">Creating the network</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rate-approximations">Rate approximations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#final-stats">Final stats</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-the-network">Visualizing the network</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-integration">Test integration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-integration">Test integration</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#species-evolution">Species evolution</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#network-flow">Network flow</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#y-e-evolution"><span class="math notranslate nohighlight">\(Y_e\)</span> evolution</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
