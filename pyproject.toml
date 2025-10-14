@@ -67,8 +67,10 @@ version_file = "pynucastro/_version.py"
 
 # development tools
 
-[tool.pylint.MAIN]
-ignore = ['_python_reference', 'test_full_python_net.py']
+[tool.pylint.main]
+ignore-paths = ['pynucastro/networks/tests/_python_reference/network.py',
+                'pynucastro/networks/tests/test_full_python_net.py']
+
 extension-pkg-allow-list = ['mpi4py']
 
 [tool.pylint."MESSAGES CONTROL"]
