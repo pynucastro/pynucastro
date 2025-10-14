@@ -2,12 +2,14 @@
 
 ## 2.8.0
 
+  * update `pyproject.toml` for pylint 4.0 (#1138)
+
   * `network_heloper` now takes a `verbose` flag (#1134)
 
   * numerous redundant examples (from the `examples/` directory)
     were removed (#1131)
 
-  * He burning example has been updated (#1129)
+  * He burning example has been updated (#1129, #1139)
 
   * `RateCollection.plot` can now use screening and take a
     matplotlib `GridSpec` that defines the axes (instead of
