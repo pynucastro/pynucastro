@@ -159,7 +159,7 @@ class Rate:
 
         self.tabular = False
 
-        self.reverse = None
+        self.derived_from_inverse = None
 
         self.rate_eval_needs_rho = False
         self.rate_eval_needs_comp = False
@@ -326,7 +326,10 @@ class Rate:
                     factor = f"{c} "
                 self.string += f"{factor}{r.c()}"
                 self.rid += f"{factor}{r}"
-                self.pretty_string += fr"{factor}{r.pretty}"
+                if c != 1:
+                    self.pretty_string += fr"{factor}~{r.pretty}"
+                else:
+                    self.pretty_string += fr"{r.pretty}"
             if not n == len(react_set)-1:
                 self.string += " + "
                 self.rid += " + "
@@ -787,6 +790,7 @@ class RateSource:
         "langanke": "https://doi.org/10.1006/adnd.2001.0865",
         "suzuki": "https://doi.org/10.3847/0004-637X/817/2/163",
         "ffn": "https://doi.org/10.1086/190779",
+        "pruet_fuller": "https://doi.org/10.1086/376753",
         "reaclib": "https://reaclib.jinaweb.org/labels.php?action=viewLabel&label="
     }
 

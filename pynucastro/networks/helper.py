@@ -1,7 +1,6 @@
 """Methods to ease the creation of networks."""
 
-from pynucastro.rates import (DerivedRate, ReacLibLibrary, ReacLibRate,
-                              TabularLibrary)
+from pynucastro.rates import DerivedRate, ReacLibLibrary, TabularLibrary
 
 from .amrexastro_cxx_network import AmrexAstroCxxNetwork
 from .fortran_network import FortranNetwork
@@ -13,7 +12,8 @@ def network_helper(nuclei, *,
                    network_type="python",
                    use_detailed_balance=True,
                    use_tabular_rates=True,
-                   tabular_ordering=None):
+                   tabular_ordering=None,
+                   verbose=False):
     """Generate a basic network connecting all of the input nuclei
     using all of the rates known to pynucastro.
 
@@ -22,20 +22,22 @@ def network_helper(nuclei, *,
     nuclei : Iterable(Nucleus)
         the nuclei to use for the network
     network_type : str
-        the type of network to create.  Allowed values are:
+        The type of network to create.  Allowed values are:
 
         * "python" : create a :py:obj:`PythonNetwork <pynucastro.networks.python_network.PythonNetwork>`
         * "cxx" : create a :py:obj:`SimpleCxxNetwork <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`
         * "fortran" : create a :py:obj:`FortranNetwork <pynucastro.networks.fortran_network.FortranNetwork>`
         * "amrex" : create a :py:obj:`AmrexAstroCxxNetwork <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`
     use_detailed_balanace : bool
-        do we rederive inverse rates using detailed balance?
+        Do we rederive inverse rates using detailed balance?
     use_tabular_rates : bool
-        do we include tabulated weak rates?
+        Do we include tabulated weak rates?
     tabular_ordering : Iterable(str)
-        if we are including tabular rates, a list of sources
+        If we are including tabular rates, a list of sources
         can be provided to specify which rate sources are used,
         and the priority that each source should have.
+    verbose : bool
+        Output more information
 
     Returns
     -------
@@ -57,14 +59,7 @@ def network_helper(nuclei, *,
         # if we have both a tabular and ReacLib rate,
         # remove the ReacLib version
 
-        rates_to_remove = []
-        for pair in lib.find_duplicate_links():
-            for r in pair:
-                if isinstance(r, ReacLibRate):
-                    rates_to_remove.append(r)
-
-        for r in rates_to_remove:
-            lib.remove_rate(r)
+        lib.eliminate_duplicates(rate_type_preference="tabular")
 
     if use_detailed_balance:
         rates_to_derive = lib.backward().get_rates()
@@ -73,21 +68,22 @@ def network_helper(nuclei, *,
         for r in rates_to_derive:
             fr = lib.get_rate_by_nuclei(r.products, r.reactants)
             if fr:
-                print(f"modifying {r} from {fr}")
+                if verbose:
+                    print(f"modifying {r} from {fr}")
                 lib.remove_rate(r)
                 d = DerivedRate(rate=fr, compute_Q=False, use_pf=True)
                 lib.add_rate(d)
 
     if network_type == "python":
-        return PythonNetwork(libraries=[lib])
+        return PythonNetwork(libraries=[lib], verbose=verbose)
 
     if network_type == "cxx":
-        return SimpleCxxNetwork(libraries=[lib])
+        return SimpleCxxNetwork(libraries=[lib], verbose=verbose)
 
     if network_type == "fortran":
-        return FortranNetwork(libraries=[lib])
+        return FortranNetwork(libraries=[lib], verbose=verbose)
 
     if network_type == "amrex":
-        return AmrexAstroCxxNetwork(libraries=[lib])
+        return AmrexAstroCxxNetwork(libraries=[lib], verbose=verbose)
 
     raise ValueError("invalid network_type")

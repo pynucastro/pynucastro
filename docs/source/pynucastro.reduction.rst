@@ -12,9 +12,5 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   pynucastro.reduction.drgep
-   pynucastro.reduction.generate_data
-   pynucastro.reduction.load_network
-   pynucastro.reduction.reduction
-   pynucastro.reduction.reduction_utils
+   pynucastro.reduction.drgep_module
    pynucastro.reduction.sensitivity_analysis

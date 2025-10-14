@@ -58,3 +58,11 @@ class TestRateFilter:
         assert len(rates) == 2
         assert str(rates[0]) == "N15 + p ⟶ He4 + C12"
         assert str(rates[1]) == "N15 + p ⟶ O16 + 𝛾"
+
+    def test_endpoint(self, reaclib_library):
+
+        filt = pyna.RateFilter(endpoint="zn60")
+        newlib = reaclib_library.filter(filt)
+
+        assert newlib.num_rates == 7761
+        assert newlib.heaviest() == pyna.Nucleus("s60")

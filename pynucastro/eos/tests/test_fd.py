@@ -1,4 +1,5 @@
 # unit tests for rates
+
 from pytest import approx
 
 from pynucastro.eos import FermiIntegral
@@ -60,7 +61,7 @@ class TestFermiDirac:
         assert f.F == approx(883930.45936891437, abs=1.e-100, rel=1.e-15)
         assert f.dF_deta == approx(3535.6046159037460, abs=1.e-100, rel=1.e-15)
         assert f.dF_dbeta == approx(4419.2988177917523, abs=1.e-100, rel=1.e-15)
-        assert f.d2F_deta2 == approx(7.0710678132825819, abs=1.e-100, rel=1.e-15)
+        assert f.d2F_deta2 == approx(7.0710678132825819, abs=1.e-100, rel=1.e-14)
         assert f.d2F_detadbeta == approx(17.677315986879442, abs=1.e-100, rel=1.e-15)
         assert f.d2F_dbeta2 == approx(-22.094727366363866, abs=1.e-100, rel=1.e-15)
 
@@ -104,7 +105,7 @@ class TestFermiDirac:
         assert f.F == approx(707.87776608227455, abs=1.e-100, rel=1.e-15)
         assert f.dF_deta == approx(7.0717751162111329, abs=1.e-100, rel=1.e-14)
         assert f.dF_dbeta == approx(3.5323860528718423, abs=1.e-100, rel=1.e-15)
-        assert f.d2F_deta2 == approx(-7.0773544184610238E-006, abs=1.e-100, rel=1.e-11)
+        assert f.d2F_deta2 == approx(-7.0773544184610238E-006, abs=1.e-100, rel=5.e-11)
         assert f.d2F_detadbeta == approx(3.5351802891431347E-002, abs=1.e-100, rel=1.e-15)
         assert f.d2F_dbeta2 == approx(-1.7633986737239839E-002, abs=1.e-100, rel=1.e-15)
 

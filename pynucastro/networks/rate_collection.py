@@ -200,14 +200,18 @@ class Composition(collections.UserDict):
         """
         return math.fsum(self.values())
 
-    def set_solar_like(self, Z=0.02):
+    def set_solar_like(self, *, Z=0.02, half_life_thresh=None):
         """Approximate a solar abundance, setting p to 0.7, He4 to 0.3
-        - Z and the remainder evenly distributed with Z
+        - Z and the remainder evenly distributed with Z.
 
         Parameters
         ----------
         Z : float
             The desired metalicity
+        half_life_thresh : float
+            The half life value below which to zero the mass fraction
+            of a nucleus.  This prevents us from making a composition
+            that is not really stable.
 
         """
 
@@ -220,7 +224,7 @@ class Composition(collections.UserDict):
             else:
                 self[k] = rem
 
-        self.normalize()
+        self.normalize(half_life_thresh=half_life_thresh)
 
     def set_array(self, arr):
         """Set the mass fractions of all species to the values
@@ -285,8 +289,24 @@ class Composition(collections.UserDict):
         """
         self[name] = xval
 
-    def normalize(self):
-        """Normalize the mass fractions to sum to 1."""
+    def normalize(self, *, half_life_thresh=None):
+        """Normalize the mass fractions to sum to 1.
+
+        Parameters
+        ----------
+        half_life_thresh : float
+            The half life value below which to zero the mass fraction
+            of a nucleus.  This prevents us from making a composition
+            that is not really stable.
+
+        """
+
+        if half_life_thresh is not None:
+            for k in self:
+                if k.tau != "stable" and k.tau is not None:
+                    if k.tau < half_life_thresh:
+                        self[k] = 0.0
+
         X_sum = self.get_sum_X()
 
         for k in self:
@@ -554,13 +574,17 @@ class RateCollection:
     do_screening : bool
         should we consider screening at all -- this mainly affects
         whether we build the screening map
+    verbose : bool
+        do we show informational messages?
+
     """
 
     pynucastro_dir = Path(__file__).parents[1]
 
     def __init__(self, rate_files=None, libraries=None, rates=None,
                  inert_nuclei=None,
-                 symmetric_screening=False, do_screening=True):
+                 symmetric_screening=False, do_screening=True,
+                 verbose=False):
 
         self.rates = []
         combined_library = Library()
@@ -569,6 +593,8 @@ class RateCollection:
 
         self.symmetric_screening = symmetric_screening
         self.do_screening = do_screening
+
+        self.verbose = verbose
 
         if rate_files:
             if isinstance(rate_files, str):
@@ -739,7 +765,8 @@ class RateCollection:
 
         # finally check for duplicate rates -- these are not
         # allowed
-        if self.find_duplicate_links():
+        if dupes := self.find_duplicate_links():
+            print(dupes)
             raise RateDuplicationError("Duplicate rates found")
 
     def _read_rate_files(self, rate_files):
@@ -1051,7 +1078,8 @@ class RateCollection:
         for nuc in nuc_list:
             for rate in self.rates:
                 if nuc in rate.reactants + rate.products:
-                    print(f"looking to remove {rate}")
+                    if self.verbose:
+                        print(f"looking to remove {rate}")
                     rates_to_delete.append(rate)
 
         for rate in set(rates_to_delete):
@@ -1164,8 +1192,9 @@ class RateCollection:
             ar = ApproximateRate(r_ag, [r_ap, r_pg], r_ga, [r_gp, r_pa], approx_type="ap_pg")
             ar_reverse = ApproximateRate(r_ag, [r_ap, r_pg], r_ga, [r_gp, r_pa], is_reverse=True, approx_type="ap_pg")
 
-            print(f"using approximate rate {ar}")
-            print(f"using approximate rate {ar_reverse}")
+            if self.verbose:
+                print(f"using approximate rate {ar}")
+                print(f"using approximate rate {ar_reverse}")
 
             # approximate rates
             approx_rates += [ar, ar_reverse]
@@ -1175,8 +1204,8 @@ class RateCollection:
             for r in ar.get_child_rates():
                 try:
                     self.rates.remove(r)
-
-                    print(f"removing rate {r}")
+                    if self.verbose:
+                        print(f"removing rate {r}")
                 except ValueError:
                     pass
 
@@ -1259,10 +1288,10 @@ class RateCollection:
                                          use_identical_particle_factor=False)
 
             nuclei_approximated_out.append(inter_nuc)
-            print(f"approximating out {inter_nuc}")
-
-            print(f"using approximate rate {ar}")
-            print(f"using approximate rate {ar_reverse}")
+            if self.verbose:
+                print(f"approximating out {inter_nuc}")
+                print(f"using approximate rate {ar}")
+                print(f"using approximate rate {ar_reverse}")
 
             # approximate rates
             approx_rates += [ar, ar_reverse]
@@ -1272,8 +1301,8 @@ class RateCollection:
             for r in ar.get_child_rates():
                 try:
                     self.rates.remove(r)
-
-                    print(f"removing rate {r}")
+                    if self.verbose:
+                        print(f"removing rate {r}")
                 except ValueError:
                     pass
 
@@ -1319,10 +1348,12 @@ class RateCollection:
 
             if update:
                 if rp.forward is not None:
-                    print(f"modifying {rp.forward.fname} to use NSE protons")
+                    if self.verbose:
+                        print(f"modifying {rp.forward.fname} to use NSE protons")
                     rp.forward.swap_protons()
                 if rp.reverse is not None:
-                    print(f"modifying {rp.reverse.fname} to use NSE protons")
+                    if self.verbose:
+                        print(f"modifying {rp.reverse.fname} to use NSE protons")
                     rp.reverse.swap_protons()
 
         self._build_collection()
@@ -1535,14 +1566,14 @@ class RateCollection:
         passed_validation = True
 
         for rate in current_rates:
-            if rate.reverse:
+            if rate.derived_from_inverse:
                 continue
             for p in rate.products:
                 found = False
                 for orate in current_rates:
                     if orate == rate:
                         continue
-                    if orate.reverse:
+                    if orate.derived_from_inverse:
                         continue
                     if p in orate.reactants:
                         found = True
@@ -1559,7 +1590,7 @@ class RateCollection:
             other_by_reactants[tuple(sorted(rate.reactants))].append(rate)
 
         for rate in current_rates:
-            if forward_only and rate.reverse:
+            if forward_only and rate.derived_from_inverse:
                 continue
 
             key = tuple(sorted(rate.reactants))
@@ -2177,6 +2208,7 @@ class RateCollection:
     def plot(self, rho=None, T=None, comp=None, *,
              outfile=None,
              size=(800, 600), dpi=100, title=None,
+             screen_func=None,
              ydot_cutoff_value=None, show_small_ydot=False,
              consuming_rate_threshold=None,
              node_size=1000, node_font_size=12,
@@ -2190,7 +2222,8 @@ class RateCollection:
              edge_labels=None,
              highlight_filter_function=None,
              nucleus_filter_function=None, rate_filter_function=None,
-             legend_coord=None, plot_to_cbar_ratio=20):
+             legend_coord=None, plot_to_cbar_ratio=20,
+             grid_spec=None):
         """Make a plot of the network structure showing the links between
         nuclei.  If a full set of thermodymamic conditions are
         provided (rho, T, comp), then the links are colored by rate
@@ -2212,6 +2245,10 @@ class RateCollection:
             dots per inch used with size to set output image size
         title : str
             title to display on the plot
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the evaluated rates will include the screening
+            correction.
         ydot_cutoff_value : float
             rate threshold below which we do not show a
             line corresponding to a rate
@@ -2276,25 +2313,41 @@ class RateCollection:
             and returns True or False if it is to be shown as an edge.
         plot_to_cbar_ratio : float
             ratio of main axes to colorbar size
+        grid_spec : matplotlib.gridspec.GridSpec
+            a 2x2 matplotlib GridSpec to use in arranging the plot.
+            If the colorbar is on the right, only the columns will be
+            used.  If the colorbar is on the left, only the rows will
+            be used.  This is only needed if you want to override the
+            GridSpec created internally.
 
         Returns
         -------
         matplotlib.figure.Figure
+
         """
 
-        fig = plt.figure(constrained_layout=True,
-                         figsize=(size[0]/dpi, size[1]/dpi))
+        if grid_spec is not None:
+            fig = grid_spec.figure
+        else:
+            fig = plt.figure(constrained_layout=True,
+                             figsize=(size[0]/dpi, size[1]/dpi))
 
         # we'll use a grid spec of 2 x 2.  We can merge columns / rows
         # as needed to give us the flexibility to have colorbars
         if rotated:
-            gs = mpl.gridspec.GridSpec(nrows=2, ncols=2,
-                                       height_ratios=[plot_to_cbar_ratio, 1], figure=fig)
+            if grid_spec is None:
+                gs = mpl.gridspec.GridSpec(nrows=2, ncols=2,
+                                           height_ratios=[plot_to_cbar_ratio, 1], figure=fig)
+            else:
+                gs = grid_spec
             # plot is the top row, colorbar(s) will be the bottom
             ax = fig.add_subplot(gs[0, :])
         else:
-            gs = mpl.gridspec.GridSpec(nrows=2, ncols=2,
-                                       width_ratios=[plot_to_cbar_ratio, 1], figure=fig)
+            if grid_spec is None:
+                gs = mpl.gridspec.GridSpec(nrows=2, ncols=2,
+                                           width_ratios=[plot_to_cbar_ratio, 1], figure=fig)
+            else:
+                gs = grid_spec
             # plot is the left column, colorbar(s) will be on the right
             ax = fig.add_subplot(gs[:, 0])
 
@@ -2356,7 +2409,8 @@ class RateCollection:
 
         # get the rates for each reaction
         if rho is not None and T is not None and comp is not None:
-            rate_ydots = self.evaluate_rates(rho, T, comp)
+            rate_ydots = self.evaluate_rates(rho, T, comp,
+                                             screen_func=screen_func)
         else:
             rate_ydots = None
 
@@ -2580,6 +2634,10 @@ class RateCollection:
             composition used to evaluate terms
         outfile : str
             output file for plot (extension is used to specify file type)
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the evaluated rates will include the screening
+            correction.
         rate_scaling : float
             the cutoff of values that we show, relative to the peak.  Any
             Jacobian element smaller than this will not be shown.

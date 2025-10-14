@@ -310,6 +310,9 @@ class Library:
 
     def heaviest(self):
         """Return the heaviest nuclide in this library.
+        This will have the highest A.  In event that multiple nuclei have
+        the same A, then the most neutron-rich nucleus with atomic weight
+        A is returned.
 
         Returns
         -------
@@ -329,6 +332,8 @@ class Library:
 
     def lightest(self):
         """Return the lightest nuclide in this library.
+        This will have the lowest A.  If two nuclei have the same A, then
+        the one with the highest Z is returned.
 
         Returns
         -------
@@ -409,27 +414,6 @@ class Library:
                     else:
                         self._rates[rid] = r
 
-    def write_to_file(self, filename, *, prepend_rates_dir=False):
-        """Write the library out to a file of the given name in
-        Reaclib format.
-
-        Parameters
-        ----------
-        filename : str
-            The filename to use for the library
-        prepend_rates_dir : bool
-            If ``True``, then output to the pynucastro rate file
-            directory.
-
-        """
-
-        if prepend_rates_dir:
-            filename = get_rates_dir()/filename
-
-        with filename.open("w") as f:
-            for rate in self.get_rates():
-                rate.write_to_file(f)
-
     def __repr__(self):
         """Return a string containing the rates IDs in this library."""
         rstrings = []
@@ -452,7 +436,7 @@ class Library:
         both.
 
         """
-        new_rates = self._rates
+        new_rates = self._rates.copy()
         for rid, r in other._rates.items():
             if rid in new_rates:
                 if r != new_rates[rid]:
@@ -530,6 +514,34 @@ class Library:
 
         return duplicates
 
+    def eliminate_duplicates(self, *, rate_type_preference="tabular"):
+        """Attempt to eliminate duplicate rates for the same link.
+        Presently, this works for the case where there are 2 instances of the
+        same link, and one is a ``ReacLibRate`` (or derived from that) and
+        the other is a ``TabularRate``
+
+        Parameters
+        ----------
+        rate_type_preference : str
+            In the event of a duplicate, which type of rate do we keep?
+            Valid options are "tabular" or "reaclib"
+
+        """
+
+        duplicates = self.find_duplicate_links()
+
+        rates_to_remove = []
+        for pair in duplicates:
+            assert len(pair) == 2
+            for r in pair:
+                if rate_type_preference == "tabular" and isinstance(r, ReacLibRate):
+                    rates_to_remove.append(r)
+                elif rate_type_preference == "reaclib" and isinstance(r, TabularRate):
+                    rates_to_remove.append(r)
+
+        for r in rates_to_remove:
+            self.remove_rate(r)
+
     def linking_nuclei(self, nuclist, *, with_reverse=True,
                        print_warning=True):
         """Return a library containing the rates linking the list of
@@ -565,7 +577,7 @@ class Library:
                 if nuc not in nucleus_set:
                     include = False
                     break
-            if not with_reverse and r.reverse:
+            if not with_reverse and r.derived_from_inverse:
                 include = False
             if include:
                 filtered_rates.append(r)
@@ -622,7 +634,7 @@ class Library:
 
         """
 
-        only_fwd_filter = RateFilter(reverse=False)
+        only_fwd_filter = RateFilter(derived_from_inverse=False)
         only_fwd = self.filter(only_fwd_filter)
         return only_fwd
 
@@ -637,7 +649,7 @@ class Library:
 
         """
 
-        only_bwd_filter = RateFilter(reverse=True)
+        only_bwd_filter = RateFilter(derived_from_inverse=True)
         only_bwd = self.filter(only_bwd_filter)
         return only_bwd
 
@@ -723,6 +735,8 @@ class RateFilter:
         if ``True``, only match reverse-derived rates
         if ``False``, only match directly-derived rates
         if None, you don't care, match both
+    endpoint : Nucleus, str
+        The heaviest nucleus to keep in the library
     min_reactants : int
         match Rates that have at least this many reactants
     min_products : int
@@ -763,12 +777,17 @@ class RateFilter:
     """
 
     def __init__(self, reactants=None, products=None, exact=True,
-                 reverse=None, min_reactants=None, max_reactants=None,
+                 derived_from_inverse=None, endpoint=None,
+                 min_reactants=None, max_reactants=None,
                  min_products=None, max_products=None, filter_function=None):
         self.reactants = []
         self.products = []
         self.exact = exact
-        self.reverse = reverse
+        self.derived_from_inverse = derived_from_inverse
+        if endpoint is not None:
+            self.endpoint = Nucleus.cast(endpoint)
+        else:
+            self.endpoint = None
         self.min_reactants = min_reactants
         self.min_products = min_products
         self.max_reactants = max_reactants
@@ -838,12 +857,13 @@ class RateFilter:
         """
         # do cheaper checks first
         matches_reverse = True
+        matches_endpoint = True
         matches_min_reactants = True
         matches_min_products = True
         matches_max_reactants = True
         matches_max_products = True
-        if isinstance(self.reverse, bool):
-            matches_reverse = self.reverse == r.reverse
+        if isinstance(self.derived_from_inverse, bool):
+            matches_reverse = self.derived_from_inverse == r.derived_from_inverse
         if isinstance(self.min_reactants, int):
             matches_min_reactants = len(r.reactants) >= self.min_reactants
         if isinstance(self.min_products, int):
@@ -852,10 +872,13 @@ class RateFilter:
             matches_max_reactants = len(r.reactants) <= self.max_reactants
         if isinstance(self.max_products, int):
             matches_max_products = len(r.products) <= self.max_products
+        if isinstance(self.endpoint, Nucleus):
+            matches_endpoint = (max(n.Z for n in r.reactants + r.products) <= self.endpoint.Z and
+                                max(n.A for n in r.reactants + r.products) <= self.endpoint.A)
         # exit early if any of these checks failed
-        if not (matches_reverse and matches_min_reactants and
-                matches_min_products and matches_max_reactants and
-                matches_max_products):
+        if not (matches_reverse and matches_endpoint and
+                matches_min_reactants and matches_min_products and
+                matches_max_reactants and matches_max_products):
             return False
         # now do more expensive checks, and exit immediately if any fail
         if self.reactants:
@@ -880,7 +903,8 @@ class RateFilter:
         newfilter = RateFilter(reactants=self.products,
                                products=self.reactants,
                                exact=self.exact,
-                               reverse=self.reverse,
+                               derived_from_inverse=self.derived_from_inverse,
+                               endpoint=self.endpoint,
                                min_reactants=self.min_products,
                                max_reactants=self.max_products,
                                min_products=self.min_reactants,
@@ -898,6 +922,27 @@ class ReacLibLibrary(Library):
         libfile = 'reaclib_default2_20250330'
         Library.__init__(self, libfile=libfile)
 
+    def write_to_file(self, filename, *, prepend_rates_dir=False):
+        """Write the library out to a file of the given name in
+        Reaclib format.
+
+        Parameters
+        ----------
+        filename : str
+            The filename to use for the library
+        prepend_rates_dir : bool
+            If ``True``, then output to the pynucastro rate file
+            directory.
+
+        """
+
+        if prepend_rates_dir:
+            filename = get_rates_dir()/filename
+
+        with filename.open("w") as f:
+            for rate in self.get_rates():
+                rate.write_to_file(f)
+
 
 class TabularLibrary(Library):
     """Create a :py:class:`Library` containing all of the tabular
@@ -910,8 +955,8 @@ class TabularLibrary(Library):
         precedence.  We will read from the first source, and then for
         any later sources, for any duplicate rates, we will replace
         the existing rate with the version from the higher-priority
-        library.  The default ordering is ``["ffn", "oda", "langanke",
-        "suzuki"]``
+        library.  The default ordering is ``["ffn", "oda", "pruet_fuller",
+        "langanke", "suzuki"]``
 
     """
 
@@ -923,7 +968,7 @@ class TabularLibrary(Library):
         # *electroncapture.dat
 
         if ordering is None:
-            ordering = ["ffn", "oda", "langanke", "suzuki"]
+            ordering = ["ffn", "oda", "pruet_fuller", "langanke", "suzuki"]
 
         trates = []
 
@@ -963,6 +1008,16 @@ class LangankeLibrary(TabularLibrary):
 
     def __init__(self):
         super().__init__(ordering=["langanke"])
+
+
+class PruetFullerLibrary(TabularLibrary):
+    """Create a :py:class:`Library` containing all of the tabular
+    rates inside the "pruet_fuller" subdirectory.
+
+    """
+
+    def __init__(self):
+        super().__init__(ordering=["pruet_fuller"])
 
 
 class FFNLibrary(TabularLibrary):

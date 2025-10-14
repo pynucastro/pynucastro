@@ -51,6 +51,7 @@ pynucastro = [
   "library/tabular/*",
   "library/tabular/suzuki/*",
   "library/tabular/langanke/*",
+  "library/tabular/pruet_fuller/*",
   "library/tabular/ffn/*",
   "library/tabular/oda/*",
   "templates/**/*",
@@ -66,8 +67,10 @@ version_file = "pynucastro/_version.py"
 
 # development tools
 
-[tool.pylint.MAIN]
-ignore = ['_python_reference', 'test_full_python_net.py']
+[tool.pylint.main]
+ignore-paths = ['pynucastro/networks/tests/_python_reference/network.py',
+                'pynucastro/networks/tests/test_full_python_net.py']
+
 extension-pkg-allow-list = ['mpi4py']
 
 [tool.pylint."MESSAGES CONTROL"]
@@ -135,8 +138,10 @@ addopts = """\
   --ignore=docs/source/pynucastro-examples.ipynb \
   --ignore=docs/source/pynucastro-integration.ipynb \
   --ignore=docs/source/duplicate-rates.ipynb \
+  --ignore=docs/source/electron-eos.ipynb \
   --ignore-glob=pynucastro/library/tabular/*/generate_*.ipynb \
   --ignore=pynucastro/eos/generate_quadrature_weights.ipynb \
+  --ignore=pynucastro/eos/degenerate_derivatives.ipynb \
   --ignore=examples/rxn-network-integration.ipynb \
   --nbval-sanitize-with .github/workflows/nbval_sanitize.cfg \
   """

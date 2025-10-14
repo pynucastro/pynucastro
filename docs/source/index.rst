@@ -61,6 +61,7 @@ and interactively exploring nuclear reaction networks.
    electron-capture-example.ipynb
    electron-captures.ipynb
    alternate-rates.ipynb
+   inert-nuclei.ipynb
 
 .. toctree::
    :maxdepth: 1
@@ -82,6 +83,8 @@ and interactively exploring nuclear reaction networks.
    unimportant-rates.ipynb
    network-cycles.ipynb
    stiffness.ipynb
+   reduction.ipynb
+   sens_analysis_example.ipynb
 
 .. toctree::
    :maxdepth: 1
@@ -97,6 +100,7 @@ and interactively exploring nuclear reaction networks.
    :hidden:
 
    fermi-integrals
+   electron-eos
 
 .. toctree::
    :maxdepth: 1
