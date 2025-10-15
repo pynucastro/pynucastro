@@ -8,7 +8,7 @@ import pytest
 from pytest import approx
 
 import pynucastro as pyna
-
+from pynucastro.screening import chugunov_2007
 
 class MyRate(pyna.Rate):
     def __init__(self, reactants=None, products=None,
@@ -35,7 +35,18 @@ class MyRate(pyna.Rate):
 
     def eval(self, T, *, rho=None, comp=None,
              screen_func=None, symmetric_screening=False):
-        return self.r0 * (T / self.T0)**self.nu
+        """Evaluate the rate along with screening correction."""
+
+        r = self.r0 * (T / self.T0)**self.nu
+
+        scor = 1.0
+        if screen_func is not None:
+            if rho is None or comp is None:
+                raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
+            scor = self.evaluate_screening(rho, T, comp, screen_func,
+                                           symmetric_screening=symmetric_screening)
+        r *= scor
+        return r
 
 
 class TestPythonCustomNetwork:
@@ -69,6 +80,18 @@ class TestPythonCustomNetwork:
     def test_eval(self, pynet):
         r_custom = pynet.get_rate_by_name("n14(p,g)o15")
         assert r_custom.eval(1.e8) == approx(2.0377211133509627e-5)
+
+    def test_eval_screening(self, pynet):
+        T = 1.e8
+        rho = 1.e7
+        comp = pyna.Composition(pynet.unique_nuclei)
+        comp.set_equal()
+
+        r_custom = pynet.get_rate_by_name("n14(p,g)o15")
+        r = r_custom.eval(T, rho=rho, comp=comp,
+                          screen_func=chugunov_2007)
+
+        assert r  == approx(2.0377211133509627e-5)
 
     def test_ydot_string(self, pynet):
 
