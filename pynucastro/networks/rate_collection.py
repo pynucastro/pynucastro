@@ -1423,17 +1423,16 @@ class RateCollection:
         ys = composition.get_molar()
         y_e = composition.ye
 
-        if screen_func is not None:
-            screen_factors = self.evaluate_screening(rho, T, composition, screen_func)
-        else:
-            screen_factors = {}
-
         for r in self.rates:
-            val = r.prefactor * rho**r.dens_exp * r.eval(T, rho=rho, comp=composition)
+            # Note screening effect is already included
+            print(r)
+            val = r.prefactor * rho**r.dens_exp * r.eval(T, rho=rho, comp=composition,
+                                                         screen_func=screen_func,
+                                                         symmetric_screening=self.symmetric_screening)
             if (r.weak_type == 'electron_capture' and not isinstance(r, TabularRate)):
                 val = val * y_e
             yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
-            rvals[r] = yfac * val * screen_factors.get(r, 1.0)
+            rvals[r] = yfac * val
 
         return rvals
 
@@ -1463,13 +1462,6 @@ class RateCollection:
 
         """
 
-        # the rate.eval_jacobian_term does not compute the screening,
-        # so we multiply by the factors afterwards
-        if screen_func is not None:
-            screen_factors = self.evaluate_screening(rho, T, comp, screen_func)
-        else:
-            screen_factors = {}
-
         if exclude_rates is None:
             exclude_rates = []
 
@@ -1489,8 +1481,12 @@ class RateCollection:
 
                     # how many of n_i are destroyed by this reaction
                     c = r.reactant_count(n_i)
+
+                    # Note eval_jacobian_term already includes screening
                     jac[i, j] -= c * screen_factors.get(r, 1.0) *\
-                        r.eval_jacobian_term(T, rho, comp, n_j)
+                        r.eval_jacobian_term(T, rho, comp, n_j,
+                                             screen_func=screen_func,
+                                             symmetric_screening=self.symmetric_screening)
 
                 for r in self.nuclei_produced[n_i]:
                     if r in exclude_rates:
@@ -1667,65 +1663,6 @@ class RateCollection:
             for r, value in rvals.items():
                 largest_ratio[r] = max(largest_ratio[r], value / fastest)
         return {r: ratio for r, ratio in largest_ratio.items() if ratio < cutoff_ratio}
-
-    def evaluate_screening(self, rho, T, composition, screen_func):
-        """Evaluate the screening factors for each rate.
-
-        Parameters
-        ----------
-        rho : float
-            density used to evaluate screening
-        T : float
-            temperature used to evaluate screening
-        composition : Composition
-            composition used to evaluate screening
-        screen_func : Callable
-            one of the screening functions from :py:mod:`pynucastro.screening`
-
-        Returns
-        -------
-        dict(Rate)
-
-        """
-        # this follows the same logic as BaseCxxNetwork._compute_screening_factors()
-        factors = {}
-        ys = composition.get_molar()
-        plasma_state = make_plasma_state(T, rho, ys)
-        if not self.do_screening:
-            screening_map = []
-        else:
-            screening_map = get_screening_map(self.get_rates(),
-                                              symmetric_screening=self.symmetric_screening)
-
-        for i, scr in enumerate(screening_map):
-            if not (scr.n1.dummy or scr.n2.dummy):
-                scn_fac = make_screen_factors(scr.n1, scr.n2)
-                scor = screen_func(plasma_state, scn_fac)
-            if scr.name == "He4_He4_He4":
-                # we don't need to do anything here, but we want to avoid
-                # immediately applying the screening
-                pass
-            elif scr.name == "He4_He4_He4_dummy":
-                # make sure the previous iteration was the first part of 3-alpha
-                assert screening_map[i - 1].name == "He4_He4_He4"
-                # handle the second part of the screening for 3-alpha
-                scn_fac2 = make_screen_factors(scr.n1, scr.n2)
-                scor2 = screen_func(plasma_state, scn_fac2)
-
-                # there might be both the forward and reverse 3-alpha
-                # if we are doing symmetric screening
-                for r in scr.rates:
-                    # use scor from the previous loop iteration
-                    # pylint: disable-next=possibly-used-before-assignment
-                    factors[r] = scor * scor2
-            else:
-                # there might be several rates that have the same
-                # reactants and therefore the same screening applies
-                # -- handle them all now
-                for r in scr.rates:
-                    factors[r] = scor
-
-        return factors
 
     def evaluate_ydots(self, rho, T, composition,
                        screen_func=None, rate_filter=None):
