@@ -1480,7 +1480,7 @@ class RateCollection:
                     c = r.reactant_count(n_i)
 
                     # Note eval_jacobian_term already includes screening
-                    jac[i, j] -= c *\
+                    jac[i, j] -= c * \
                         r.eval_jacobian_term(T, rho, comp, n_j,
                                              screen_func=screen_func,
                                              symmetric_screening=self.symmetric_screening)
