@@ -30,8 +30,6 @@ from pynucastro.rates import (ApproximateRate, DerivedRate, Library,
                               TabularRate, find_duplicate_rates,
                               is_allowed_dupe, load_rate)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_rid
-from pynucastro.screening import (get_screening_map, make_plasma_state,
-                                  make_screen_factors)
 
 mpl.rcParams['figure.dpi'] = 100
 
@@ -1483,7 +1481,7 @@ class RateCollection:
                     c = r.reactant_count(n_i)
 
                     # Note eval_jacobian_term already includes screening
-                    jac[i, j] -= c * screen_factors.get(r, 1.0) *\
+                    jac[i, j] -= c *\
                         r.eval_jacobian_term(T, rho, comp, n_j,
                                              screen_func=screen_func,
                                              symmetric_screening=self.symmetric_screening)
@@ -1494,8 +1492,10 @@ class RateCollection:
 
                     # how many of n_i are produced by this reaction
                     c = r.product_count(n_i)
-                    jac[i, j] += c * screen_factors.get(r, 1.0) *\
-                        r.eval_jacobian_term(T, rho, comp, n_j)
+                    jac[i, j] += c * \
+                        r.eval_jacobian_term(T, rho, comp, n_j,
+                                             screen_func=screen_func,
+                                             symmetric_screening=self.symmetric_screening)
 
         return jac
 
