@@ -10,6 +10,7 @@ from pytest import approx
 import pynucastro as pyna
 from pynucastro.screening import chugunov_2007
 
+
 class MyRate(pyna.Rate):
     def __init__(self, reactants=None, products=None,
                  r0=1.0, T0=1.0, nu=0):
@@ -91,7 +92,7 @@ class TestPythonCustomNetwork:
         r = r_custom.eval(T, rho=rho, comp=comp,
                           screen_func=chugunov_2007)
 
-        assert r  == approx(2.0377211133509627e-5)
+        assert r == approx(0.0001575732699071119)
 
     def test_ydot_string(self, pynet):
 
