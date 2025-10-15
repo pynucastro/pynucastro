@@ -589,7 +589,7 @@ class Rate:
 
     def evaluate_screening(self, rho, T, composition, screen_func, *,
                            symmetric_screening=False):
-        """Evaluates the screening correction for this rate.
+        """Evaluate the screening correction for this rate.
 
         Parameters
         ----------
