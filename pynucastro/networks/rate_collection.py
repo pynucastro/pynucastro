@@ -1222,7 +1222,7 @@ class RateCollection:
         Parameters
         ----------
         intermediate_nuclei : list, tuple
-            an iterable of `Nucleus <pynucastro.nucdata.nucleus.Nucleus>`
+            an iterable of :py:obj:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>`
             or string names representing the intermediate nucleus we
             wish to approximate out.
 
