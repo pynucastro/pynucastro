@@ -1423,7 +1423,6 @@ class RateCollection:
 
         for r in self.rates:
             # Note screening effect is already included
-            print(r)
             val = r.prefactor * rho**r.dens_exp * r.eval(T, rho=rho, comp=composition,
                                                          screen_func=screen_func,
                                                          symmetric_screening=self.symmetric_screening)
