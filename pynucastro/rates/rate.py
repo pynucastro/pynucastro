@@ -10,6 +10,7 @@ from pynucastro.nucdata import Nucleus
 from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import _find_rate_file
 
+
 class BaryonConservationError(Exception):
     """Exception for the case where we don't have the same number of
     baryons on the left and righthand sides of the reaction.
