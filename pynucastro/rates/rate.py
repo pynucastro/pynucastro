@@ -631,7 +631,7 @@ class Rate:
         if not screening_map:
             return scor
 
-        # Handle 3-alpha case explicitely
+        # Handle 3-alpha case explicitly
         if "He4_He4_He4" in [scr.name for scr in screening_map]:
 
             # We should have two ScreeningPair's in this case
