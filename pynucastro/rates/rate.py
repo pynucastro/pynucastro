@@ -9,6 +9,8 @@ import pynucastro.numba_util as numba
 from pynucastro.nucdata import Nucleus
 from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import _find_rate_file
+from pynucastro.screening import (get_screening_map, make_plasma_state,
+                                  make_screen_factors)
 
 
 class BaryonConservationError(Exception):
@@ -610,10 +612,6 @@ class Rate:
         float
 
         """
-
-        # Local import to avoid circular dependency
-        from pynucastro.screening import (get_screening_map, make_plasma_state,
-                                          make_screen_factors)
 
         ys = composition.get_molar()
         plasma_state = make_plasma_state(T, rho, ys)
