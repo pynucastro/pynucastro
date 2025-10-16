@@ -92,6 +92,7 @@ and interactively exploring nuclear reaction networks.
    :hidden:
 
    NSE-example
+   NSE-direct-integration
    nse_table
 
 .. toctree::
