@@ -92,28 +92,6 @@ class ModifiedRate(Rate):
             if len(nucz) == 3:
                 self.ion_screen.append(nucz[2])
 
-        # if the rate is a reverse rate (defined as Q < 0), then we
-        # might actually want to compute the screening based on the
-        # reactants of the forward rate that was used in the detailed
-        # balance.  Rate.symmetric_screen is what should be used in
-        # the screening in this case
-        self.symmetric_screen = []
-        if self.Q < 0:
-            if self.update_screening:
-                _prod = self.products
-            else:
-                _prod = self.original_rate.products
-            nucz = [q for q in _prod if q.Z != 0]
-            if len(nucz) > 1:
-                nucz.sort(key=lambda x: x.Z)
-                self.symmetric_screen = []
-                self.symmetric_screen.append(nucz[0])
-                self.symmetric_screen.append(nucz[1])
-                if len(nucz) == 3:
-                    self.symmetric_screen.append(nucz[2])
-        else:
-            self.symmetric_screen = self.ion_screen
-
     def eval(self, T, *, rho=None, comp=None):
         """Evaluate the modified rate.  This simply calls the
         evaluation of the underlying original rate.

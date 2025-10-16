@@ -29,8 +29,7 @@ class SimpleCxxNetwork(BaseCxxNetwork):
         if not self.do_screening:
             screening_map = []
         else:
-            screening_map = get_screening_map(self.get_rates(),
-                                              symmetric_screening=self.symmetric_screening)
+            screening_map = get_screening_map(self.get_rates())
         for i, scr in enumerate(screening_map):
 
             nuc1_info = f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt'
@@ -62,12 +61,13 @@ class SimpleCxxNetwork(BaseCxxNetwork):
 
                 of.write(f'{self.indent*n_indent}' + '}\n')
 
-                # there might be both the forward and reverse 3-alpha
-                # if we are doing symmetric screening
+                # there should only be a single forward 3-alpha rate
+                assert len(scr.rates) == 1
 
                 of.write('\n')
-                for rr in scr.rates:
-                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.cname()}) *= scor * scor2;\n')
+                rr = scr.rates
+                of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.cname()}) *= scor * scor2;\n')
+
             else:
                 # there might be several rates that have the same
                 # reactants and therefore the same screening applies

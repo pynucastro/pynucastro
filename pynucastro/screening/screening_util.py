@@ -49,20 +49,15 @@ class ScreeningPair:
         return self.name == other.name
 
 
-def get_screening_map(rates, *, symmetric_screening=False):
+def get_screening_map(rates):
     """Create a screening map---this is just a list of ScreeningPair
     objects containing the information about nuclei pairs for
-    screening If symmetric_screening=True, then for reverse rates, we
-    screen using the forward rate nuclei (assuming that we got here
-    via detailed balance).
+    screening.
 
     Parameters
     ----------
     rates : Iterable(Rate)
         A list of the rates in our network.
-    symmetric_screening : bool
-        Do we use the same screening factor for the forward and reverse
-        rate of a single reaction process?
 
     Returns
     -------
@@ -81,8 +76,6 @@ def get_screening_map(rates, *, symmetric_screening=False):
 
     for r in all_rates:
         screen_nuclei = r.ion_screen
-        if symmetric_screening:
-            screen_nuclei = r.symmetric_screen
 
         # screen_nuclei may be [] if it is a decay, gamma-capture, or
         # neutron-capture

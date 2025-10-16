@@ -375,7 +375,6 @@ class TabularRate(Rate):
 
         """
         self.ion_screen = []
-        self.symmetric_screen = []
 
         if not self.fname:
             # This is used to determine which rates to detect as the same reaction

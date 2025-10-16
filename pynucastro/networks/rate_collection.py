@@ -567,10 +567,6 @@ class RateCollection:
     inert_nuclei : list, tuple
         an iterable of Nuclei that should be part of the collection but
         are not linked via reactions to the other Nuclei in the network.
-    symmetric_screening : bool
-        symmetric screening means that we screen the reverse rates
-        using the same factor as the forward rates, for rates computed
-        via detailed balance.
     do_screening : bool
         should we consider screening at all -- this mainly affects
         whether we build the screening map
@@ -583,7 +579,7 @@ class RateCollection:
 
     def __init__(self, rate_files=None, libraries=None, rates=None,
                  inert_nuclei=None,
-                 symmetric_screening=False, do_screening=True,
+                 do_screening=True,
                  verbose=False):
 
         self.rates = []
@@ -591,7 +587,6 @@ class RateCollection:
 
         self.inert_nuclei = Nucleus.cast_list(inert_nuclei, allow_None=True)
 
-        self.symmetric_screening = symmetric_screening
         self.do_screening = do_screening
 
         self.verbose = verbose
@@ -1694,8 +1689,7 @@ class RateCollection:
         if not self.do_screening:
             screening_map = []
         else:
-            screening_map = get_screening_map(self.get_rates(),
-                                              symmetric_screening=self.symmetric_screening)
+            screening_map = get_screening_map(self.get_rates())
 
         for i, scr in enumerate(screening_map):
             if not (scr.n1.dummy or scr.n2.dummy):
@@ -1712,12 +1706,12 @@ class RateCollection:
                 scn_fac2 = make_screen_factors(scr.n1, scr.n2)
                 scor2 = screen_func(plasma_state, scn_fac2)
 
-                # there might be both the forward and reverse 3-alpha
-                # if we are doing symmetric screening
-                for r in scr.rates:
-                    # use scor from the previous loop iteration
-                    # pylint: disable-next=possibly-used-before-assignment
-                    factors[r] = scor * scor2
+                # there should only be a single forward 3-alpha rate
+                assert len(scr.rates) == 1
+                r = scr.rates
+                # use scor from the previous loop iteration
+                # pylint: disable-next=possibly-used-before-assignment
+                factors[r] = scor * scor2
             else:
                 # there might be several rates that have the same
                 # reactants and therefore the same screening applies
