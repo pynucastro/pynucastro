@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.7.1.post47+gec107f0c7 documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.7.1.post48+g4b2e0e7fe documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=58bc457b"></script>
+    <script src="../../../_static/documentation_options.js?v=aa39e91d"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -499,6 +499,8 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.numba_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">jitclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.files</span><span class="w"> </span><span class="kn">import</span> <span class="n">_find_rate_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">get_screening_map</span><span class="p">,</span> <span class="n">make_plasma_state</span><span class="p">,</span>
+                                  <span class="n">make_screen_factors</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="BaryonConservationError">
@@ -1109,6 +1111,74 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span></div>
 
 
+<div class="viewcode-block" id="Rate.evaluate_screening">
+<a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.evaluate_screening">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_screening</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                           <span class="n">symmetric_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the screening correction for this rate.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            density used to evaluate screening</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature used to evaluate screening</span>
+<span class="sd">        composition : Composition</span>
+<span class="sd">            composition used to evaluate screening</span>
+<span class="sd">        screen_func : Callable</span>
+<span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
+<span class="sd">        symmetric_screening : bool</span>
+<span class="sd">            Do we use the screening factor based on the products if</span>
+<span class="sd">            this is a reverse rate (Q &lt; 0)?</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">ys</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
+        <span class="n">plasma_state</span> <span class="o">=</span> <span class="n">make_plasma_state</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span>
+        <span class="n">scor</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+        <span class="c1"># We can have three cases:</span>
+        <span class="c1"># 3-body reaction, i.e. 3-alpha: 2 ScreeningPair&#39;s</span>
+        <span class="c1"># 2-body reaction              : 1 ScreeningPair</span>
+        <span class="c1"># Photodisintegration (1-body) : 0 ScreeningPair</span>
+
+        <span class="n">screening_map</span> <span class="o">=</span> <span class="n">get_screening_map</span><span class="p">([</span><span class="bp">self</span><span class="p">],</span>
+                                          <span class="n">symmetric_screening</span><span class="o">=</span><span class="n">symmetric_screening</span><span class="p">)</span>
+
+        <span class="c1"># Handle 0 ScreeningPair case</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">screening_map</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">scor</span>
+
+        <span class="c1"># Handle 3-alpha case explicitly</span>
+        <span class="k">if</span> <span class="s2">&quot;He4_He4_He4&quot;</span> <span class="ow">in</span> <span class="p">[</span><span class="n">scr</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">scr</span> <span class="ow">in</span> <span class="n">screening_map</span><span class="p">]:</span>
+
+            <span class="c1"># We should have two ScreeningPair&#39;s in this case</span>
+            <span class="c1"># He4_He4_He4 and He4_He4_He4_dummy</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">screening_map</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+
+            <span class="k">for</span> <span class="n">scr</span> <span class="ow">in</span> <span class="n">screening_map</span><span class="p">:</span>
+                <span class="n">scn_fac</span> <span class="o">=</span> <span class="n">make_screen_factors</span><span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="p">,</span> <span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="p">)</span>
+                <span class="n">scor</span> <span class="o">*=</span> <span class="n">screen_func</span><span class="p">(</span><span class="n">plasma_state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">)</span>
+
+        <span class="c1"># Now handle 2-body reaction</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">scr</span> <span class="o">=</span> <span class="n">screening_map</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># Make sure no dummy nuclei exist in this case</span>
+            <span class="c1"># Otherwise we have more than 2-body reaction</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">dummy</span> <span class="ow">or</span> <span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">dummy</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">screening_map</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+            <span class="n">scn_fac</span> <span class="o">=</span> <span class="n">make_screen_factors</span><span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="p">,</span> <span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="p">)</span>
+            <span class="n">scor</span> <span class="o">=</span> <span class="n">screen_func</span><span class="p">(</span><span class="n">plasma_state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">scor</span></div>
+
+
 <div class="viewcode-block" id="Rate.ydot_string_py">
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.ydot_string_py">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ydot_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1153,7 +1223,8 @@ document.write(`
 
 <div class="viewcode-block" id="Rate.eval">
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">symmetric_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the reaction rate for temperature T.  This is a stub</span>
 <span class="sd">        and should be implemented by the derived class.</span>
 
@@ -1162,12 +1233,17 @@ document.write(`
 <span class="sd">        T : float</span>
 <span class="sd">            the temperature to evaluate the rate at</span>
 <span class="sd">        rho : float</span>
-<span class="sd">            the density to evaluate the rate at (not needed for ReacLib</span>
-<span class="sd">            rates).</span>
+<span class="sd">            the density to evaluate the rate and screening effects at.</span>
 <span class="sd">        comp : float</span>
 <span class="sd">            the composition (of type</span>
 <span class="sd">            :py:class:`Composition &lt;pynucastro.networks.rate_collection.Composition&gt;`)</span>
-<span class="sd">            to evaluate the rate with (not needed for ReacLib rates).</span>
+<span class="sd">            to evaluate the rate and screening effects with.</span>
+<span class="sd">        screen_func : Callable</span>
+<span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
+<span class="sd">            -- if provided, then the rate will include the screening correction</span>
+<span class="sd">        symmetric_screening : bool</span>
+<span class="sd">            Do we use the screening factor based on the products if</span>
+<span class="sd">            this is a reverse rate (Q &lt; 0)?</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -1256,7 +1332,8 @@ document.write(`
 
 <div class="viewcode-block" id="Rate.eval_jacobian_term">
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval_jacobian_term">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">eval_jacobian_term</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">y_i</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval_jacobian_term</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">y_i</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                           <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">symmetric_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate drate/d(y_i), the derivative of the rate with</span>
 <span class="sd">        respect to ``y_i``.  This rate term has the full composition</span>
 <span class="sd">        and density dependence, i.e.:</span>
@@ -1276,6 +1353,13 @@ document.write(`
 <span class="sd">            the composition to use in the rate evaluation</span>
 <span class="sd">        y_i : Nucleus</span>
 <span class="sd">            the nucleus we are differentiating with respect to</span>
+<span class="sd">        screen_func : Callable</span>
+<span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
+<span class="sd">            -- if provided, then the jacobian_term will include the</span>
+<span class="sd">            screening correction.</span>
+<span class="sd">        symmetric_screening : bool</span>
+<span class="sd">            Do we use the screening factor based on the products if</span>
+<span class="sd">            this is a reverse rate (Q &lt; 0)?</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1311,7 +1395,9 @@ document.write(`
             <span class="n">y_e_term</span> <span class="o">=</span> <span class="mf">1.0</span>
 
         <span class="c1"># finally evaluate the rate -- for tabular rates, we need to set rhoY</span>
-        <span class="n">rate_eval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
+        <span class="n">rate_eval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                              <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">,</span>
+                              <span class="n">symmetric_screening</span><span class="o">=</span><span class="n">symmetric_screening</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">*</span> <span class="n">dens_term</span> <span class="o">*</span> <span class="n">y_e_term</span> <span class="o">*</span> <span class="n">Y_term</span> <span class="o">*</span> <span class="n">rate_eval</span></div>
 </div>

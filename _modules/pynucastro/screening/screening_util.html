@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.screening.screening_util &#8212; pynucastro 2.7.1.post47+gec107f0c7 documentation</title>
+    <title>pynucastro.screening.screening_util &#8212; pynucastro 2.7.1.post48+g4b2e0e7fe documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=58bc457b"></script>
+    <script src="../../../_static/documentation_options.js?v=aa39e91d"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -491,7 +491,6 @@ document.write(`
 <span></span><span class="sd">&quot;&quot;&quot;Some helper functions for determining which rates need screening&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApproximateRate</span>
 
 
 <div class="viewcode-block" id="ScreeningPair">
@@ -572,7 +571,10 @@ document.write(`
     <span class="c1"># we need to consider the child rates that come with ApproximateRate</span>
     <span class="n">all_rates</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rates</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ApproximateRate</span><span class="p">):</span>
+        <span class="c1"># check if rate is an ApproximateRate</span>
+        <span class="c1"># by checking if it has attribute approx_type</span>
+        <span class="c1"># Don&#39;t do isinstance(r, ApproximateRate) to avoid circular dependency</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="s2">&quot;approx_type&quot;</span><span class="p">):</span>
             <span class="n">all_rates</span> <span class="o">+=</span> <span class="n">r</span><span class="o">.</span><span class="n">get_child_rates</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">all_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
