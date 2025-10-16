@@ -2,7 +2,7 @@
 
 ## 2.8.0
 
-  * fix pylint 4.0 compability (#1138)
+  * fix pylint 4.0 compatibility (#1138)
 
   * `network_heloper` now takes a `verbose` flag (#1134)
 
