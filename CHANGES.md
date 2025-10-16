@@ -2,6 +2,8 @@
 
 ## 2.8.0
 
+  * fix pylint 4.0 compability (#1138)
+
   * `network_heloper` now takes a `verbose` flag (#1134)
 
   * numerous redundant examples (from the `examples/` directory)
@@ -68,7 +70,7 @@
   * Binding energy example has been updated with a better example (#1087)
 
   * Doc and API docstring improvements (#1079, #1082, #1083, #1084,
-    #1116, #1117, #1127, #1132)
+    #1116, #1117, #1127, #1132, #1139, #1141, #1146)
 
   * `pyproject.toml` updated with license info (#1081)
 
