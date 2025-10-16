@@ -189,7 +189,7 @@ class PythonNetwork(RateCollection):
                 # there should only be a single forward rate here
                 assert len(scr.rates) == 1
 
-                r = scr.rates
+                r = scr.rates[0]
                 # use scor from the previous loop iteration
                 ostr += f"{indent}rate_eval.{r.fname} *= scor * scor2\n"
 

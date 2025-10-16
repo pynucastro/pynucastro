@@ -267,7 +267,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 # there should be only a single rate here -- the forward 3-alpha
                 assert len(scr.rates) == 1
 
-                rr = scr.rates
+                rr = scr.rates[0]
                 of.write('\n')
                 of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.cname()});\n')
                 of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.cname()}) *= scor * scor2;\n')

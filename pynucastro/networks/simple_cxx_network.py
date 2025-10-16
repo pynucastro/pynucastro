@@ -65,7 +65,7 @@ class SimpleCxxNetwork(BaseCxxNetwork):
                 assert len(scr.rates) == 1
 
                 of.write('\n')
-                rr = scr.rates
+                rr = scr.rates[0]
                 of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.cname()}) *= scor * scor2;\n')
 
             else:

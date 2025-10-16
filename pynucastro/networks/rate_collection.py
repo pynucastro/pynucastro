@@ -1708,7 +1708,7 @@ class RateCollection:
 
                 # there should only be a single forward 3-alpha rate
                 assert len(scr.rates) == 1
-                r = scr.rates
+                r = scr.rates[0]
                 # use scor from the previous loop iteration
                 # pylint: disable-next=possibly-used-before-assignment
                 factors[r] = scor * scor2
