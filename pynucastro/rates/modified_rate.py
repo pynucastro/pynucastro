@@ -114,7 +114,8 @@ class ModifiedRate(Rate):
         else:
             self.symmetric_screen = self.ion_screen
 
-    def eval(self, T, *, rho=None, comp=None):
+    def eval(self, T, *, rho=None, comp=None,
+             screen_func=None, symmetric_screening=False):
         """Evaluate the modified rate.  This simply calls the
         evaluation of the underlying original rate.
 
@@ -123,16 +124,26 @@ class ModifiedRate(Rate):
         T : float
             the temperature to evaluate the rate at
         rho : float
-            the density to evaluate the rate at
-        comp : Composition
-            the composition to evaluate the rate with
+            the density to evaluate screening effects at.
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            to evaluate screening effects with.
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the rate will include screening correction.
+        symmetric_screening : bool
+            Do we use the screening factor based on the products if
+            this is a reverse rate (Q < 0)?
+
         Returns
         -------
         float
 
         """
 
-        return self.original_rate.eval(T, rho=rho, comp=comp)
+        return self.original_rate.eval(T, rho=rho, comp=comp, screen_func=screen_func,
+                                       symmetric_screening=symmetric_screening)
 
     def function_string_py(self):
         """Return a string containing the python function that
