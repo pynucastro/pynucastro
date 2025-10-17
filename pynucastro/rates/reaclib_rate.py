@@ -864,7 +864,7 @@ class ReacLibRate(Rate):
         return (T0/r1)*drdT
 
     def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9,
-             figsize=(10, 10), *, rho=None, comp=None, screen_func=None)
+             figsize=(10, 10), *, rho=None, comp=None, screen_func=None):
         """Plot the rate's temperature sensitivity vs temperature
 
         Parameters
