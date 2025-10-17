@@ -1952,9 +1952,9 @@ class RateCollection:
 
         assert issubclass(new_type, RateCollection)
 
-        net = new_type(rates=self.get_rates(), *args, *kwargs)
+        net = new_type(rates=self.get_rates(), inert_nuclei=self.inert_nuclei,
+                       *args, *kwargs)
 
-        net.inert_nuclei = self.inert_nuclei
         net.symmetric_screening = self.symmetric_screening
         net.do_screening = self.do_screening
         net.verbose = self.verbose
