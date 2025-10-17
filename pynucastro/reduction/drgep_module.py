@@ -270,10 +270,10 @@ def drgep(net, conds, targets, tols, *,
         do not meet the specified tolerance will have their
         interaction coefficients set to 0.0.  If supplied as a single
         number then that value is used for all targets.
-        screen_func : Callable
-            one of the screening functions from :py:mod:`pynucastro.screening`
-            -- if provided, then the evaluated rates will include the screening
-            correction.
+    screen_func : Callable
+        one of the screening functions from :py:mod:`pynucastro.screening`
+        -- if provided, then the evaluated rates will include the screening
+        correction.
     returnobj : str
         The type of object to return.  Valid options are:
 
