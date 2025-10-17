@@ -2,6 +2,11 @@
 
 ## 2.8.0
 
+  * screening when evaluating rates in python is now handled by the
+    `Rate` class instead of the `RateCollection` class.  This fixes an
+    issue where `ApproximateRate` child rates were not being screened
+    (C++ and `PythonNetwork` were unaffected). (#1144)
+
   * fix pylint 4.0 compatibility (#1138)
 
   * `network_heloper` now takes a `verbose` flag (#1134)
@@ -70,7 +75,7 @@
   * Binding energy example has been updated with a better example (#1087)
 
   * Doc and API docstring improvements (#1079, #1082, #1083, #1084,
-    #1116, #1117, #1127, #1132, #1139, #1141, #1146)
+    #1116, #1117, #1127, #1132, #1139, #1141, #1143, #1146)
 
   * `pyproject.toml` updated with license info (#1081)
 
