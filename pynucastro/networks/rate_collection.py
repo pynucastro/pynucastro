@@ -2551,7 +2551,7 @@ class RateCollection:
             fig.colorbar(pc, cax=rate_cb_ax, label=label, orientation=orientation)
 
         if color_nodes_by_abundance:
-            fig.colorbar(nuc_sm, cax=node_cb_ax, label=r"$\log_{10}(X)$",
+            fig.colorbar(nuc_sm, cax=node_cb_ax, label=r"$X$",
                          orientation=orientation)
 
         # Finally set the axis properties
