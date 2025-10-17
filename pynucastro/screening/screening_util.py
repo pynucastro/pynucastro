@@ -1,7 +1,6 @@
 """Some helper functions for determining which rates need screening"""
 
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates import ApproximateRate
 
 
 class ScreeningPair:
@@ -69,7 +68,10 @@ def get_screening_map(rates):
     # we need to consider the child rates that come with ApproximateRate
     all_rates = []
     for r in rates:
-        if isinstance(r, ApproximateRate):
+        # check if rate is an ApproximateRate
+        # by checking if it has attribute approx_type
+        # Don't do isinstance(r, ApproximateRate) to avoid circular dependency
+        if hasattr(r, "approx_type"):
             all_rates += r.get_child_rates()
         else:
             all_rates.append(r)
