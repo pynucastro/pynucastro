@@ -2046,7 +2046,7 @@ class RateCollection:
                 if rp.forward is not None and rp.reverse is not None:
                     net_rate = rate_ydots[rp.forward] - rate_ydots[rp.reverse]
                     if normalize_net_rate:
-                        net_rate /= (rate_ydots[rp.forward] + rate_ydots[rp.reverse])
+                        net_rate /= 0.5 * (rate_ydots[rp.forward] + rate_ydots[rp.reverse])
                     if net_rate > 0.0:
                         rate_ydots[rp.forward] = net_rate
                         rate_ydots[rp.reverse] = 0.0
@@ -2545,7 +2545,7 @@ class RateCollection:
             label = r"$\log_{10}(\mathrm{rate})$"
             if use_net_rate:
                 if normalize_net_rate:
-                    label = r"$\log_{10}((\lambda_\mathrm{forward} - \lambda_\mathrm{reverse}) / (\lambda_\mathrm{forward} + \lambda_\mathrm{reverse}))$"
+                    label = r"$\log_{10}((\lambda_\mathrm{forward} - \lambda_\mathrm{reverse}) / [\frac{1}{2} (\lambda_\mathrm{forward} + \lambda_\mathrm{reverse}))]$"
                 else:
                     label = r"$\log_{10}(\lambda_\mathrm{forward} - \lambda_\mathrm{reverse})$"
             fig.colorbar(pc, cax=rate_cb_ax, label=label, orientation=orientation)
