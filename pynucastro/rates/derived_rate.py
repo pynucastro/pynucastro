@@ -126,7 +126,7 @@ class DerivedRate(ReacLibRate):
                 warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set pf = 1.0 by default'))
 
     def eval(self, T, *, rho=None, comp=None,
-             screen_func=None, symmetric_screening=False):
+             screen_func=None):
         """Evaluate the derived reverse rate.
 
         Parameters
@@ -142,9 +142,6 @@ class DerivedRate(ReacLibRate):
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the rate will include screening correction.
-        symmetric_screening : bool
-            Do we use the screening factor based on the products if
-            this is a reverse rate (Q < 0)?
 
         Returns
         -------
@@ -154,8 +151,7 @@ class DerivedRate(ReacLibRate):
 
         # Note screening effect is already included when we do eval
 
-        r = super().eval(T=T, rho=rho, comp=comp, screen_func=screen_func,
-                         symmetric_screening=symmetric_screening)
+        r = super().eval(T=T, rho=rho, comp=comp, screen_func=screen_func)
         z_r = 1.0
         z_p = 1.0
         if self.use_pf:

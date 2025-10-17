@@ -753,7 +753,7 @@ class ReacLibRate(Rate):
         return fstring
 
     def eval(self, T, *, rho=None, comp=None,
-             screen_func=None, symmetric_screening=False):
+             screen_func=None):
         """Evaluate the reaction rate for temperature T
 
         Parameters
@@ -771,9 +771,6 @@ class ReacLibRate(Rate):
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the rate will include screening correction.
-        symmetric_screening : bool
-            Do we use the screening factor based on the products if
-            this is a reverse rate (Q < 0)?
 
         Returns
         -------
@@ -791,8 +788,7 @@ class ReacLibRate(Rate):
         if screen_func is not None:
             if rho is None or comp is None:
                 raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
-            scor = self.evaluate_screening(rho, T, comp, screen_func,
-                                           symmetric_screening=symmetric_screening)
+            scor = self.evaluate_screening(rho, T, comp, screen_func)
 
         r *= scor
 
@@ -832,7 +828,7 @@ class ReacLibRate(Rate):
         return drdT
 
     def get_rate_exponent(self, T0, *, rho=None, comp=None,
-                          screen_func=None, symmetric_screening=False):
+                          screen_func=None):
         """For a rate written as a power law, r = r_0 (T/T0)**nu,
         return nu corresponding to T0. This also considers electron
         screening effect if screen_func is passed in.
@@ -852,9 +848,6 @@ class ReacLibRate(Rate):
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the rate exponent will include screening correction.
-        symmetric_screening : bool
-            Do we use the screening factor based on the products if
-            this is a reverse rate (Q < 0)?
 
         Returns
         -------
@@ -863,18 +856,15 @@ class ReacLibRate(Rate):
         """
 
         # nu = dln r /dln T, so we need dr/dT
-        r1 = self.eval(T0, rho=rho, comp=comp, screen_func=screen_func,
-                       symmetric_screening=symmetric_screening)
+        r1 = self.eval(T0, rho=rho, comp=comp, screen_func=screen_func)
         dT = 1.e-8*T0
-        r2 = self.eval(T0 + dT, rho=rho, comp=comp, screen_func=screen_func,
-                       symmetric_screening=symmetric_screening)
+        r2 = self.eval(T0 + dT, rho=rho, comp=comp, screen_func=screen_func)
 
         drdT = (r2 - r1)/dT
         return (T0/r1)*drdT
 
     def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9,
-             figsize=(10, 10), *, rho=None, comp=None, screen_func=None,
-             symmetric_screening=False):
+             figsize=(10, 10), *, rho=None, comp=None, screen_func=None)
         """Plot the rate's temperature sensitivity vs temperature
 
         Parameters
@@ -898,9 +888,6 @@ class ReacLibRate(Rate):
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the rate will include the screening correction.
-        symmetric_screening : bool
-            Do we use the screening factor based on the products if
-            this is a reverse rate (Q < 0)?
 
         Returns
         -------
@@ -915,8 +902,7 @@ class ReacLibRate(Rate):
         r = np.zeros_like(temps)
 
         for n, T in enumerate(temps):
-            r[n] = self.eval(T, rho=rho, comp=comp, screen_func=screen_func,
-                             symmetric_screening=symmetric_screening)
+            r[n] = self.eval(T, rho=rho, comp=comp, screen_func=screen_func)
 
         ax.loglog(temps, r)
         ax.set_xlabel(r"$T$")
