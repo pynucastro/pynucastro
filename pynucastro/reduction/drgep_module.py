@@ -201,7 +201,7 @@ def _drgep_kernel(net, R_TB, rvals, targets, tols, adj_nuc):
         np.maximum(R_TB, R_TB_i, out=R_TB, where=R_TB_i >= tol)
 
 
-def _drgep(net, conds, targets, tols):
+def _drgep(net, conds, targets, tols, *, screen_func=None):
 
     #-----------------------------------
     # Calculate interaction coefficients
@@ -211,13 +211,14 @@ def _drgep(net, conds, targets, tols):
     adj_nuc = get_adj_nuc(net)
 
     for comp, rho, T in conds:
-        rvals = net.evaluate_rates(rho=rho, T=T, composition=comp)
+        rvals = net.evaluate_rates(rho=rho, T=T, composition=comp,
+                                   screen_func=screen_func)
         _drgep_kernel(net, R_TB, rvals, targets, tols, adj_nuc)
 
     return R_TB
 
 
-def _drgep_mpi(net, conds, targets, tols):
+def _drgep_mpi(net, conds, targets, tols, *, screen_func=None):
 
     #----------
     # Init. MPI
@@ -236,7 +237,8 @@ def _drgep_mpi(net, conds, targets, tols):
 
     for i in range(MPI_rank, len(conds), MPI_N):
         comp, rho, T = conds[i]
-        rvals = net.evaluate_rates(rho=rho, T=T, composition=comp)
+        rvals = net.evaluate_rates(rho=rho, T=T, composition=comp,
+                                   screen_func=screen_func)
         _drgep_kernel(net, R_TB_loc, rvals, targets, tols, adj_nuc)
 
     R_TB = np.zeros_like(R_TB_loc)
@@ -245,7 +247,8 @@ def _drgep_mpi(net, conds, targets, tols):
     return R_TB
 
 
-def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False):
+def drgep(net, conds, targets, tols, *,
+          screen_func=None, returnobj='net', use_mpi=False):
     """Apply the Directed Relation Graph with Error Propagation
     (DRGEP) reduction method to a network.  This implementation is
     based on the description in :cite:t:`pepiot-desjardins:2008` and
@@ -267,6 +270,10 @@ def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False):
         do not meet the specified tolerance will have their
         interaction coefficients set to 0.0.  If supplied as a single
         number then that value is used for all targets.
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the evaluated rates will include the screening
+            correction.
     returnobj : str
         The type of object to return.  Valid options are:
 
@@ -301,9 +308,9 @@ def drgep(net, conds, targets, tols, returnobj='net', use_mpi=False):
     #-------------------------------------------------------
 
     if use_mpi:
-        R_TB = _drgep_mpi(net, conds, targets, tols)
+        R_TB = _drgep_mpi(net, conds, targets, tols, screen_func=screen_func)
     else:
-        R_TB = _drgep(net, conds, targets, tols)
+        R_TB = _drgep(net, conds, targets, tols, screen_func=screen_func)
 
     #------------------------
     # Return requested object
