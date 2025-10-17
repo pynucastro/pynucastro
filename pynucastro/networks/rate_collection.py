@@ -2542,7 +2542,7 @@ class RateCollection:
         if rate_ydots is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
             pc.set_array(real_weights)
-            label = "log10(rate)"
+            label = r"$\log_{10}(\mathrm{rate})$"
             if use_net_rate:
                 if normalize_net_rate:
                     label = r"$\log_{10}((\lambda_\mathrm{forward} - \lambda_\mathrm{reverse}) / (\lambda_\mathrm{forward} + \lambda_\mathrm{reverse}))$"
@@ -2551,7 +2551,7 @@ class RateCollection:
             fig.colorbar(pc, cax=rate_cb_ax, label=label, orientation=orientation)
 
         if color_nodes_by_abundance:
-            fig.colorbar(nuc_sm, cax=node_cb_ax, label="log10(X)",
+            fig.colorbar(nuc_sm, cax=node_cb_ax, label=r"$\log_{10}(X)$",
                          orientation=orientation)
 
         # Finally set the axis properties
