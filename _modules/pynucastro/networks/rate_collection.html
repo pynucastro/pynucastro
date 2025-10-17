@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.7.1.post48+g4b2e0e7fe documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.7.1.post49+g7f6cf9c40 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=aa39e91d"></script>
+    <script src="../../../_static/documentation_options.js?v=15579d86"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -2597,6 +2597,8 @@ document.write(`
                              <span class="n">nuclei_custom_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                              <span class="n">rotated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                              <span class="n">rate_ydots</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                             <span class="n">use_net_rate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                             <span class="n">normalize_net_rate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                              <span class="n">consuming_rate_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                              <span class="n">show_small_ydot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                              <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hide_xp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -2623,6 +2625,12 @@ document.write(`
 <span class="sd">        ydot_cutoff_value : float</span>
 <span class="sd">            rate threshold below which we do not add an edge connecting</span>
 <span class="sd">            nuclei.</span>
+<span class="sd">        use_net_rate : bool</span>
+<span class="sd">            for rate pairs, compute the difference between the forward and</span>
+<span class="sd">            reverse rate, and only show the net rate as a single arrow.</span>
+<span class="sd">        normalize_net_rate : bool</span>
+<span class="sd">            if we are plotting the net rate, do we normalize it, e.g., to</span>
+<span class="sd">            show (forward - reverse) / 0.5 * (forward + reverse)?</span>
 <span class="sd">        consuming_rate_threshold : float</span>
 <span class="sd">            for a nucleus that has multiple rates that consume it, remove</span>
 <span class="sd">            any rates that are ``consuming_rate_threshold`` smaller than</span>
@@ -2670,13 +2678,30 @@ document.write(`
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">G</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="sa">fr</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">n</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">$&quot;</span>
 
+        <span class="c1"># use the difference of forward - reverse rate for the graph</span>
+        <span class="k">if</span> <span class="n">use_net_rate</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">rp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate_pairs</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">net_rate</span> <span class="o">=</span> <span class="n">rate_ydots</span><span class="p">[</span><span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="p">]</span> <span class="o">-</span> <span class="n">rate_ydots</span><span class="p">[</span><span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">normalize_net_rate</span><span class="p">:</span>
+                        <span class="n">net_rate</span> <span class="o">/=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">rate_ydots</span><span class="p">[</span><span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="p">]</span> <span class="o">+</span> <span class="n">rate_ydots</span><span class="p">[</span><span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">net_rate</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+                        <span class="n">rate_ydots</span><span class="p">[</span><span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="p">]</span> <span class="o">=</span> <span class="n">net_rate</span>
+                        <span class="n">rate_ydots</span><span class="p">[</span><span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">rate_ydots</span><span class="p">[</span><span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                        <span class="n">rate_ydots</span><span class="p">[</span><span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">net_rate</span><span class="p">)</span>
+
         <span class="c1"># Do not show rates on the graph if their corresponding ydot</span>
         <span class="c1"># is less than ydot_cutoff_value</span>
         <span class="n">invisible_rates</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">ydot_cutoff_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">rate_ydots</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">ydot_cutoff_value</span><span class="p">:</span>
-                    <span class="n">invisible_rates</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="n">invisible_rates</span> <span class="o">|=</span> <span class="p">{</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="k">if</span> <span class="n">rate_ydots</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">ydot_cutoff_value</span><span class="p">}</span>
+
+        <span class="c1"># also make invisible any rates that were zeroed out if we are</span>
+        <span class="c1"># using the net rate</span>
+        <span class="k">if</span> <span class="n">use_net_rate</span><span class="p">:</span>
+            <span class="n">invisible_rates</span> <span class="o">|=</span> <span class="p">{</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="k">if</span> <span class="n">rate_ydots</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">}</span>
 
         <span class="c1"># Consider each nucleus heavier than He and all the rates that</span>
         <span class="c1"># consume it.  If desired, only show rates that are within a</span>
@@ -2787,6 +2812,8 @@ document.write(`
              <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_small_ydot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+             <span class="n">use_net_rate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+             <span class="n">normalize_net_rate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">consuming_rate_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">node_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
              <span class="n">node_color</span><span class="o">=</span><span class="s2">&quot;#444444&quot;</span><span class="p">,</span> <span class="n">node_shape</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
@@ -2831,6 +2858,12 @@ document.write(`
 <span class="sd">            line corresponding to a rate</span>
 <span class="sd">        show_small_ydot : bool</span>
 <span class="sd">            show visible dashed lines for rates below ``ydot_cutoff_value``</span>
+<span class="sd">        use_net_rate : bool</span>
+<span class="sd">            for rate pairs, compute the difference between the forward and</span>
+<span class="sd">            reverse rate, and only show the net rate as a single arrow.</span>
+<span class="sd">        normalize_net_rate : bool</span>
+<span class="sd">            if we are plotting the net rate, do we normalize it, e.g., to</span>
+<span class="sd">            show (forward - reverse) / 0.5 * (forward + reverse)?</span>
 <span class="sd">        consuming_rate_threshold : float</span>
 <span class="sd">            for a nucleus that has multiple rates that consume it, remove</span>
 <span class="sd">            any rates that are ``consuming_rate_threshold`` smaller than</span>
@@ -2903,6 +2936,8 @@ document.write(`
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="c1"># create the figure object and gridspec (if not provided)</span>
+
         <span class="k">if</span> <span class="n">grid_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">fig</span> <span class="o">=</span> <span class="n">grid_spec</span><span class="o">.</span><span class="n">figure</span>
         <span class="k">else</span><span class="p">:</span>
@@ -2930,6 +2965,7 @@ document.write(`
 
         <span class="c1"># in general, we do not show p, n, alpha,</span>
         <span class="c1"># unless we have p + p, 3-a, etc.</span>
+
         <span class="n">hidden_nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">always_show_p</span><span class="p">:</span>
             <span class="n">hidden_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span>
@@ -2937,8 +2973,9 @@ document.write(`
         <span class="k">if</span> <span class="ow">not</span> <span class="n">always_show_alpha</span><span class="p">:</span>
             <span class="n">hidden_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span>
 
-        <span class="c1"># nodes -- the node nuclei will be all of the heavies</span>
-        <span class="c1"># add all the nuclei into G.node</span>
+        <span class="c1"># create the list of node nuclei</span>
+        <span class="c1"># and setup their colors</span>
+
         <span class="n">node_nuclei</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -2970,6 +3007,7 @@ document.write(`
                         <span class="k">break</span>
 
         <span class="c1"># approx nuclei are given a different color</span>
+
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_nuclei</span><span class="p">:</span>
             <span class="n">node_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
             <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;#888888&quot;</span><span class="p">)</span>
@@ -2985,29 +3023,34 @@ document.write(`
                     <span class="n">colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_node_color</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
 
         <span class="c1"># get the rates for each reaction</span>
+
         <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">T</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">comp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">rate_ydots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span>
                                              <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">rate_ydots</span> <span class="o">=</span> <span class="kc">None</span>
 
+        <span class="c1"># create the graph</span>
+
         <span class="n">G</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_network_graph</span><span class="p">(</span><span class="n">node_nuclei</span><span class="p">,</span>
                                       <span class="n">rate_ydots</span><span class="o">=</span><span class="n">rate_ydots</span><span class="p">,</span>
                                       <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="n">ydot_cutoff_value</span><span class="p">,</span>
                                       <span class="n">hide_xalpha</span><span class="o">=</span><span class="n">hide_xalpha</span><span class="p">,</span> <span class="n">hide_xp</span><span class="o">=</span><span class="n">hide_xp</span><span class="p">,</span>
                                       <span class="n">show_small_ydot</span><span class="o">=</span><span class="n">show_small_ydot</span><span class="p">,</span>
+                                      <span class="n">use_net_rate</span><span class="o">=</span><span class="n">use_net_rate</span><span class="p">,</span>
+                                      <span class="n">normalize_net_rate</span><span class="o">=</span><span class="n">normalize_net_rate</span><span class="p">,</span>
                                       <span class="n">consuming_rate_threshold</span><span class="o">=</span><span class="n">consuming_rate_threshold</span><span class="p">,</span>
                                       <span class="n">rate_filter_function</span><span class="o">=</span><span class="n">rate_filter_function</span><span class="p">,</span>
                                       <span class="n">highlight_filter_function</span><span class="o">=</span><span class="n">highlight_filter_function</span><span class="p">,</span>
                                       <span class="n">rotated</span><span class="o">=</span><span class="n">rotated</span><span class="p">,</span>
                                       <span class="n">nuclei_custom_labels</span><span class="o">=</span><span class="n">nuclei_custom_labels</span><span class="p">)</span>
 
-        <span class="c1"># It seems that networkx broke backwards compatibility, and &#39;zorder&#39; is no longer a valid</span>
-        <span class="c1"># keyword argument. The &#39;linewidth&#39; argument has also changed to &#39;linewidths&#39;.</span>
+        <span class="c1"># draw the nodes and their labels</span>
 
-        <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span>      <span class="c1"># plot the element at the correct position</span>
+        <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span>
                                <span class="n">node_color</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-                               <span class="n">node_shape</span><span class="o">=</span><span class="n">node_shape</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="n">node_size</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+                               <span class="n">node_shape</span><span class="o">=</span><span class="n">node_shape</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="n">node_size</span><span class="p">,</span>
+                               <span class="n">linewidths</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">color_nodes_by_abundance</span><span class="p">:</span>
             <span class="n">node_font_color</span> <span class="o">=</span> <span class="p">{}</span>
@@ -3027,7 +3070,7 @@ document.write(`
         <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_labels</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span>   <span class="c1"># label the name of element at the correct position</span>
                                 <span class="n">font_size</span><span class="o">=</span><span class="n">node_font_size</span><span class="p">,</span> <span class="n">font_color</span><span class="o">=</span><span class="n">node_font_color</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 
-        <span class="c1"># now we&#39;ll draw edges in several groups</span>
+        <span class="c1"># draw the edges -- we&#39;ll do this in several groups</span>
 
         <span class="k">if</span> <span class="n">curved_edges</span><span class="p">:</span>
             <span class="n">connectionstyle</span> <span class="o">=</span> <span class="s2">&quot;arc3, rad = 0.2&quot;</span>
@@ -3038,6 +3081,31 @@ document.write(`
 
         <span class="n">sorted_edges</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">edge</span><span class="p">:</span> <span class="n">edge</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;weight&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
                               <span class="n">reverse</span><span class="o">=</span><span class="n">sort_reverse</span><span class="p">)</span>
+
+        <span class="c1"># draw the approximate rate edges.  These have &quot;real&quot; = 0</span>
+
+        <span class="n">approx_edges</span> <span class="o">=</span> <span class="p">[(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="s2">&quot;real&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">_</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                   <span class="n">edgelist</span><span class="o">=</span><span class="n">approx_edges</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="s2">&quot;0.5&quot;</span><span class="p">,</span>
+                                   <span class="n">connectionstyle</span><span class="o">=</span><span class="n">connectionstyle</span><span class="p">,</span>
+                                   <span class="n">style</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="n">node_size</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+
+        <span class="c1"># draw the invisible edges -- these are only shown if we set &quot;show_small_ydot&quot;</span>
+
+        <span class="n">invis_edges</span> <span class="o">=</span> <span class="p">[(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="s2">&quot;real&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">_</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                   <span class="n">edgelist</span><span class="o">=</span><span class="n">invis_edges</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+                                   <span class="n">connectionstyle</span><span class="o">=</span><span class="n">connectionstyle</span><span class="p">,</span>
+                                   <span class="n">style</span><span class="o">=</span><span class="s2">&quot;dotted&quot;</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="n">node_size</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+
+        <span class="c1"># draw the edges that are real rates, and above any cutoffs</span>
+
+        <span class="c1"># &quot;real&quot; = 1 edges are those that are not hidden approximate</span>
+        <span class="c1"># rate links, rates that are below the</span>
+        <span class="c1"># &quot;consuming_rate_threshold&quot;, and not below ydot_cutoff_value</span>
+
         <span class="n">real_edges</span> <span class="o">=</span> <span class="p">[(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">sorted_edges</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="s2">&quot;real&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
         <span class="n">real_weights</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="s2">&quot;weight&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">sorted_edges</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="s2">&quot;real&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
 
@@ -3057,30 +3125,14 @@ document.write(`
         <span class="k">else</span><span class="p">:</span>
             <span class="n">widths</span> <span class="o">*=</span> <span class="mi">2</span>
 
-        <span class="c1"># draw the approximate rate edges</span>
-        <span class="n">approx_edges</span> <span class="o">=</span> <span class="p">[(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="s2">&quot;real&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
-
-        <span class="n">_</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                                   <span class="n">edgelist</span><span class="o">=</span><span class="n">approx_edges</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="s2">&quot;0.5&quot;</span><span class="p">,</span>
-                                   <span class="n">connectionstyle</span><span class="o">=</span><span class="n">connectionstyle</span><span class="p">,</span>
-                                   <span class="n">style</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="n">node_size</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
-
-        <span class="c1"># draw the edges for the rates that are below ydot_cutoff_value</span>
-        <span class="n">invis_edges</span> <span class="o">=</span> <span class="p">[(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="s2">&quot;real&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
-        <span class="n">_</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                                   <span class="n">edgelist</span><span class="o">=</span><span class="n">invis_edges</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
-                                   <span class="n">connectionstyle</span><span class="o">=</span><span class="n">connectionstyle</span><span class="p">,</span>
-                                   <span class="n">style</span><span class="o">=</span><span class="s2">&quot;dotted&quot;</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="n">node_size</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
-
-        <span class="c1"># draw the edges that are real rates, and above any cutoffs</span>
         <span class="n">real_edges_lc</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">widths</span><span class="p">),</span>
                                                <span class="n">edgelist</span><span class="o">=</span><span class="n">real_edges</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="n">edge_color</span><span class="p">,</span>
                                                <span class="n">connectionstyle</span><span class="o">=</span><span class="n">connectionstyle</span><span class="p">,</span>
                                                <span class="n">node_size</span><span class="o">=</span><span class="n">node_size</span><span class="p">,</span>
                                                <span class="n">edge_cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 
-        <span class="c1"># highlight edges</span>
+        <span class="c1"># highlight edges -- this is basically overplotting the edges we already drew</span>
+
         <span class="n">highlight_edges</span> <span class="o">=</span> <span class="p">[(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="s2">&quot;highlight&quot;</span><span class="p">]]</span>
 
         <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -3091,9 +3143,12 @@ document.write(`
             <span class="n">highlight_color</span> <span class="o">=</span> <span class="s2">&quot;C0&quot;</span>
 
         <span class="n">_</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-                                   <span class="n">edgelist</span><span class="o">=</span><span class="n">highlight_edges</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="n">highlight_color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                                   <span class="n">edgelist</span><span class="o">=</span><span class="n">highlight_edges</span><span class="p">,</span>
+                                   <span class="n">edge_color</span><span class="o">=</span><span class="n">highlight_color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
                                    <span class="n">connectionstyle</span><span class="o">=</span><span class="n">connectionstyle</span><span class="p">,</span>
                                    <span class="n">node_size</span><span class="o">=</span><span class="n">node_size</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+
+        <span class="c1"># now consider any edge labels that were passed in</span>
 
         <span class="k">if</span> <span class="n">edge_labels</span><span class="p">:</span>
             <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edge_labels</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span>
@@ -3101,8 +3156,11 @@ document.write(`
                                          <span class="n">font_size</span><span class="o">=</span><span class="n">node_font_size</span><span class="p">,</span>
                                          <span class="n">edge_labels</span><span class="o">=</span><span class="n">edge_labels</span><span class="p">)</span>
 
-        <span class="c1"># figure out the colorbar axes -- we have a single colorbar if we are doing the</span>
-        <span class="c1"># rate_ydots.  We have 2 colorbars if we are also doing the color_nodes_by_abundance</span>
+        <span class="c1"># colorbars</span>
+
+        <span class="c1"># We have a single colorbar if we are doing the rate_ydots.</span>
+        <span class="c1"># We have 2 colorbars if we are also doing the color_nodes_by_abundance</span>
+
         <span class="n">rate_cb_ax</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">node_cb_ax</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">rate_ydots</span> <span class="ow">and</span> <span class="n">color_nodes_by_abundance</span><span class="p">:</span>
@@ -3125,11 +3183,19 @@ document.write(`
         <span class="k">if</span> <span class="n">rate_ydots</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">pc</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">collections</span><span class="o">.</span><span class="n">PatchCollection</span><span class="p">(</span><span class="n">real_edges_lc</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">)</span>
             <span class="n">pc</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="n">real_weights</span><span class="p">)</span>
-            <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">pc</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">rate_cb_ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;log10(rate)&quot;</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="n">orientation</span><span class="p">)</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(\mathrm</span><span class="si">{rate}</span><span class="s2">)$&quot;</span>
+            <span class="k">if</span> <span class="n">use_net_rate</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">normalize_net_rate</span><span class="p">:</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">((\lambda_\mathrm</span><span class="si">{forward}</span><span class="s2"> - \lambda_\mathrm</span><span class="si">{reverse}</span><span class="s2">) / [\frac</span><span class="si">{1}{2}</span><span class="s2"> (\lambda_\mathrm</span><span class="si">{forward}</span><span class="s2"> + \lambda_\mathrm</span><span class="si">{reverse}</span><span class="s2">)])$&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(\lambda_\mathrm</span><span class="si">{forward}</span><span class="s2"> - \lambda_\mathrm</span><span class="si">{reverse}</span><span class="s2">)$&quot;</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">pc</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">rate_cb_ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="n">orientation</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">color_nodes_by_abundance</span><span class="p">:</span>
-            <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">nuc_sm</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">node_cb_ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;log10(X)&quot;</span><span class="p">,</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">nuc_sm</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">node_cb_ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$X$&quot;</span><span class="p">,</span>
                          <span class="n">orientation</span><span class="o">=</span><span class="n">orientation</span><span class="p">)</span>
+
+        <span class="c1"># Finally set the axis properties</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">rotated</span><span class="p">:</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$N$&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;large&quot;</span><span class="p">)</span>
@@ -3167,6 +3233,9 @@ document.write(`
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">rotated</span><span class="p">:</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="s2">&quot;datalim&quot;</span><span class="p">)</span>
+
+        <span class="c1"># add a legend showing the direction that each type of capture</span>
+        <span class="c1"># moves you in the plane</span>
 
         <span class="k">if</span> <span class="n">legend_coord</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">legend_coord</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
