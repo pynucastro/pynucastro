@@ -35,7 +35,7 @@ class MyRate(pyna.Rate):
         return fstring
 
     def eval(self, T, *, rho=None, comp=None,
-             screen_func=None, symmetric_screening=False):
+             screen_func=None):
         """Evaluate the rate along with screening correction."""
 
         r = self.r0 * (T / self.T0)**self.nu
@@ -44,8 +44,7 @@ class MyRate(pyna.Rate):
         if screen_func is not None:
             if rho is None or comp is None:
                 raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
-            scor = self.evaluate_screening(rho, T, comp, screen_func,
-                                           symmetric_screening=symmetric_screening)
+            scor = self.evaluate_screening(rho, T, comp, screen_func)
         r *= scor
         return r
 

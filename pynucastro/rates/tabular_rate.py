@@ -375,7 +375,6 @@ class TabularRate(Rate):
 
         """
         self.ion_screen = []
-        self.symmetric_screen = []
 
         if not self.fname:
             # This is used to determine which rates to detect as the same reaction
@@ -421,7 +420,7 @@ class TabularRate(Rate):
         return fstring
 
     def eval(self, T, *, rho=None, comp=None,
-             screen_func=None, symmetric_screening=False):
+             screen_func=None):
         """Evaluate the reaction rate.
 
         Parameters
@@ -438,10 +437,6 @@ class TabularRate(Rate):
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the rate will include screening correction.
             Unused for Tabular weak rates since screening does not affect weak reactions.
-        symmetric_screening : bool
-            Do we use the screening factor based on the products if
-            this is a reverse rate (Q < 0)?
-            Unused for Tabular weak rates.
 
         Returns
         -------

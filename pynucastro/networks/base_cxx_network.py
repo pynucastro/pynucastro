@@ -226,8 +226,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         if not self.do_screening:
             screening_map = []
         else:
-            screening_map = get_screening_map(self.get_rates(),
-                                              symmetric_screening=self.symmetric_screening)
+            screening_map = get_screening_map(self.get_rates())
         for i, scr in enumerate(screening_map):
 
             nuc1_info = f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt'
@@ -265,17 +264,17 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                 of.write(f'\n{self.indent*n_indent}' + '}\n\n')
 
-                # there might be both the forward and reverse 3-alpha
-                # if we are doing symmetric screening
+                # there should be only a single rate here -- the forward 3-alpha
+                assert len(scr.rates) == 1
 
-                for rr in scr.rates:
-                    of.write('\n')
-                    of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.cname()});\n')
-                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.cname()}) *= scor * scor2;\n')
-                    of.write(f'{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
-                    of.write(f'{self.indent*n_indent}    dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.cname()});\n')
-                    of.write(f'{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{rr.cname()}) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor * scor2;\n')
-                    of.write(f'{self.indent*n_indent}}}\n')
+                rr = scr.rates[0]
+                of.write('\n')
+                of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.cname()});\n')
+                of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.cname()}) *= scor * scor2;\n')
+                of.write(f'{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
+                of.write(f'{self.indent*n_indent}    dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.cname()});\n')
+                of.write(f'{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{rr.cname()}) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor * scor2;\n')
+                of.write(f'{self.indent*n_indent}}}\n')
             else:
                 # there might be several rates that have the same
                 # reactants and therefore the same screening applies
