@@ -1960,6 +1960,7 @@ class RateCollection:
                              rotated=False,
                              rate_ydots=None, ydot_cutoff_value=None,
                              use_net_rate=False,
+                             normalize_net_rate=False,
                              consuming_rate_threshold=None,
                              show_small_ydot=False,
                              hide_xalpha=False, hide_xp=False,
@@ -1989,6 +1990,9 @@ class RateCollection:
         use_net_rate : bool
             for rate pairs, compute the difference between the forward and
             reverse rate, and only show the net rate as a single arrow.
+        normalize_net_rate : bool
+            if we are plotting the net rate, do we normalize it, e.g., to
+            show (forward - reverse) / (forward + reverse)?
         consuming_rate_threshold : float
             for a nucleus that has multiple rates that consume it, remove
             any rates that are ``consuming_rate_threshold`` smaller than
@@ -2041,6 +2045,8 @@ class RateCollection:
             for rp in self.get_rate_pairs():
                 if rp.forward is not None and rp.reverse is not None:
                     net_rate = rate_ydots[rp.forward] - rate_ydots[rp.reverse]
+                    if normalize_net_rate:
+                        net_rate /= (rate_ydots[rp.forward] + rate_ydots[rp.reverse])
                     if net_rate > 0.0:
                         rate_ydots[rp.forward] = net_rate
                         rate_ydots[rp.reverse] = 0.0
@@ -2166,6 +2172,7 @@ class RateCollection:
              screen_func=None,
              ydot_cutoff_value=None, show_small_ydot=False,
              use_net_rate=False,
+             normalize_net_rate=False,
              consuming_rate_threshold=None,
              node_size=1000, node_font_size=12,
              node_color="#444444", node_shape="o",
@@ -2213,6 +2220,9 @@ class RateCollection:
         use_net_rate : bool
             for rate pairs, compute the difference between the forward and
             reverse rate, and only show the net rate as a single arrow.
+        normalize_net_rate : bool
+            if we are plotting the net rate, do we normalize it, e.g., to
+            show (forward - reverse) / (forward + reverse)?
         consuming_rate_threshold : float
             for a nucleus that has multiple rates that consume it, remove
             any rates that are ``consuming_rate_threshold`` smaller than
@@ -2387,6 +2397,7 @@ class RateCollection:
                                       hide_xalpha=hide_xalpha, hide_xp=hide_xp,
                                       show_small_ydot=show_small_ydot,
                                       use_net_rate=use_net_rate,
+                                      normalize_net_rate=normalize_net_rate,
                                       consuming_rate_threshold=consuming_rate_threshold,
                                       rate_filter_function=rate_filter_function,
                                       highlight_filter_function=highlight_filter_function,
@@ -2531,7 +2542,13 @@ class RateCollection:
         if rate_ydots is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
             pc.set_array(real_weights)
-            fig.colorbar(pc, cax=rate_cb_ax, label="log10(rate)", orientation=orientation)
+            label = "log10(rate)"
+            if use_net_rate:
+                if normalize_net_rate:
+                    label = r"$\log_{10}((\lambda_\mathrm{forward} - \lambda_\mathrm{reverse}) / (\lambda_\mathrm{forward} + \lambda_\mathrm{reverse}))$"
+                else:
+                    label = r"$\log_{10}(\lambda_\mathrm{forward} - \lambda_\mathrm{reverse})$"
+            fig.colorbar(pc, cax=rate_cb_ax, label=label, orientation=orientation)
 
         if color_nodes_by_abundance:
             fig.colorbar(nuc_sm, cax=node_cb_ax, label="log10(X)",
