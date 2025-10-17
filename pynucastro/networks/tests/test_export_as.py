@@ -24,4 +24,3 @@ class TestNetworkExport:
 
         assert len(net.reaclib_rates) == len(new_net.reaclib_rates)
         assert len(net.derived_rates) == len(new_net.derived_rates)
-
