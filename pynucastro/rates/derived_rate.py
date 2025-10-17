@@ -75,7 +75,7 @@ class DerivedRate(ReacLibRate):
             Q *= constants.m_u_MeV_C18
 
         prefactor = np.log(constants.m_u_C18) * (len(self.rate.reactants) -
-                                                  len(self.rate.products))
+                                                 len(self.rate.products))
 
         for nucr in self.rate.reactants:
             prefactor += 2.5*np.log(nucr.A_nuc) - np.log(nucr.A) + np.log(nucr.spin_states)
@@ -125,7 +125,8 @@ class DerivedRate(ReacLibRate):
             if not nuc.partition_function:
                 warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set pf = 1.0 by default'))
 
-    def eval(self, T, *, rho=None, comp=None):
+    def eval(self, T, *, rho=None, comp=None,
+             screen_func=None, symmetric_screening=False):
         """Evaluate the derived reverse rate.
 
         Parameters
@@ -133,9 +134,17 @@ class DerivedRate(ReacLibRate):
         T : float
             the temperature to evaluate the rate at
         rho : float
-            the density to evaluate the rate at
-        comp : Composition
-            the composition to evaluate the rate with
+            the density to evaluate screening effects at.
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            to evaluate screening effects with.
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the rate will include screening correction.
+        symmetric_screening : bool
+            Do we use the screening factor based on the products if
+            this is a reverse rate (Q < 0)?
 
         Returns
         -------
@@ -143,7 +152,10 @@ class DerivedRate(ReacLibRate):
 
         """
 
-        r = super().eval(T=T, rho=rho, comp=comp)
+        # Note screening effect is already included when we do eval
+
+        r = super().eval(T=T, rho=rho, comp=comp, screen_func=screen_func,
+                         symmetric_screening=symmetric_screening)
         z_r = 1.0
         z_p = 1.0
         if self.use_pf:
