@@ -1952,12 +1952,21 @@ class RateCollection:
 
         assert issubclass(new_type, RateCollection)
 
-        net = new_type(rates=self.get_rates(), inert_nuclei=self.inert_nuclei,
-                       *args, *kwargs)
+        # see if kwargs contains any of the properties held by
+        # all network classes.
+        props = ["inert_nuclei", "do_screening",
+                 "symmetric_screening", "verbose"]
+        for p in props:
+            val = kwargs.pop(p, None)
+            if val:
+                print(f"WARNING: keyword arg {p} cannot be used to override current network's value")
 
-        net.symmetric_screening = self.symmetric_screening
-        net.do_screening = self.do_screening
-        net.verbose = self.verbose
+        net = new_type(rates=self.get_rates(),
+                       inert_nuclei=self.inert_nuclei,
+                       do_screening=self.do_screening,
+                       symmetric_screening=self.symmetric_screening,
+                       verbose=self.verbose,
+                       *args, *kwargs)
 
         return net
 
