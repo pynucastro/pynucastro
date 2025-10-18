@@ -2,6 +2,8 @@
 
 ## 2.8.0
 
+  * add the ability to plot the net rate (forward - reverse) (#1135)
+
   * screening when evaluating rates in python is now handled by the
     `Rate` class instead of the `RateCollection` class.  This fixes an
     issue where `ApproximateRate` child rates were not being screened
