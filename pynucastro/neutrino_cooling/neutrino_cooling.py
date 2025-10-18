@@ -23,6 +23,29 @@ class NeutrinoCooling:
         """Plot the cooling term in as a function of density and
         temperature given a fixed abar/zbar.
 
+        Parameters
+        ----------
+        Tmin : float
+            Minimum temperature to plot
+        Tmax : float
+            Maximum temperature to plot
+        rhomin : float
+            Minimum density to plot
+        rhomax : float
+            Maximum density to plot
+        abar : float
+            Mean molecular weight of composition
+        zbar : float
+            Average charge of composition
+        npts_temp : int
+            Number of temperature samples to use
+        npts_rho : int
+            Number of density samples to use
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+
         """
 
         Ts = np.logspace(np.log10(Tmin), np.log10(Tmax), npts_temp)
