@@ -31,7 +31,7 @@ namespace part_fun {
             // find the largest temperature element <= t9 using a binary search
 
             while (left < right) {
-                int mid = 0.5_rt * (left + right);
+                int mid = (left + right) / 2;
                 if (temp_array(mid) > t9) {
                     right = mid;
                 } else {
