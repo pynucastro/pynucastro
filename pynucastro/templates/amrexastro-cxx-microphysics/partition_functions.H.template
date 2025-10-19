@@ -31,7 +31,7 @@ namespace part_fun {
             // find the largest temperature element <= t9 using a binary search
 
             while (left < right) {
-                int mid = (left + right) / 2;
+                int mid = 0.5_rt * (left + right);
                 if (temp_array(mid) > t9) {
                     right = mid;
                 } else {
@@ -56,7 +56,7 @@ namespace part_fun {
             // find the derivative (with respect to T, not T9)
 
             amrex::Real dpf_dT9 = pf * M_LN10 * slope;
-            dpf_dT = dpf_dT9 / 1.e9_rt;
+            dpf_dT = dpf_dT9 * 1.e-9_rt;
 
         } else {
 

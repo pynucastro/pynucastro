@@ -744,7 +744,7 @@ class ReacLibRate(Rate):
             fstring += "    rate += set_rate;\n"
 
             fstring += "    if constexpr (do_T_derivatives) {\n"
-            fstring += "        drate_dT += set_rate * dln_set_rate_dT9 / 1.0e9;\n"
+            fstring += "        drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;\n"
             fstring += "    }\n\n"
 
         if not leave_open:
