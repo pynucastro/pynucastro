@@ -1966,7 +1966,7 @@ class RateCollection:
                        do_screening=self.do_screening,
                        symmetric_screening=self.symmetric_screening,
                        verbose=self.verbose,
-                       *args, *kwargs)
+                       *args, **kwargs)
 
         return net
 
