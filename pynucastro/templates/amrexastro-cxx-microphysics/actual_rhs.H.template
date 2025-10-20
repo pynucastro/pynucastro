@@ -234,7 +234,9 @@ void actual_jac(const burn_t& state, MatrixType& jac)
 
     for (int j = 1; j <= NumSpec; ++j) {
         auto jac_slice_2 = [&](int i) -> amrex::Real { return jac.get(i, j); };
-        ener_gener_rate(jac_slice_2, jac(net_ienuc,j));
+        amrex::Real tmp{};
+        ener_gener_rate(jac_slice_2, tmp);
+        jac(net_ienuc,j) = tmp;
     }
 
     // Account for the thermal neutrino losses
