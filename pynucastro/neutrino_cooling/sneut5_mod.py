@@ -157,7 +157,7 @@ def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
     abar : float
         mean molecular weight of the plasma (1 / sum{X_k/A_k})
     zbar : float
-        average charge of the plasma (sum{X_k Z_k / A_k})
+        average charge of the plasma (abar * sum{X_k Z_k / A_k})
     full_output : bool
         do we return the individual contributions to the cooling in
         addition to the total cooling rate?
