@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.neutrino_cooling.sneut5_mod &#8212; pynucastro 2.7.1.post49+g7f6cf9c40 documentation</title>
+    <title>pynucastro.neutrino_cooling.sneut5_mod &#8212; pynucastro 2.7.1.post50+g7b6e9c296 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=15579d86"></script>
+    <script src="../../../_static/documentation_options.js?v=8f966370"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -502,6 +502,19 @@ document.write(`
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple container that holds the individual components to the</span>
 <span class="sd">    neutrino cooling.</span>
 
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    splas : float</span>
+<span class="sd">        Plasma neutrino cooling rate</span>
+<span class="sd">    spair : float</span>
+<span class="sd">        Pair neutrino cooling rate</span>
+<span class="sd">    sphot : float</span>
+<span class="sd">        Photo-ionization neutrino cooling rate</span>
+<span class="sd">    sbrem : float</span>
+<span class="sd">        Bremmstrahlung neutrino cooling rate</span>
+<span class="sd">    sreco : float</span>
+<span class="sd">        Recombination neutrino cooling rate</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -524,6 +537,15 @@ document.write(`
 
 <span class="sd">    The maximum error is 4.19e-9_rt (see Antia ApJS 84,101 1993)</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    f : float</span>
+<span class="sd">        Value of the Fermi integral</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># coefficients of the expansion from Table 8 of Antia</span>
@@ -533,9 +555,16 @@ document.write(`
     <span class="n">m2</span> <span class="o">=</span> <span class="mi">5</span>
     <span class="n">k2</span> <span class="o">=</span> <span class="mi">4</span>
 
-    <span class="n">a1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.999266880833e4</span><span class="p">,</span> <span class="mf">5.702479099336e3</span><span class="p">,</span> <span class="mf">6.610132843877e2</span><span class="p">,</span> <span class="mf">3.818838129486e1</span><span class="p">,</span> <span class="mf">1.0e0</span><span class="p">])</span>
+    <span class="n">a1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.999266880833e4</span><span class="p">,</span>
+                   <span class="mf">5.702479099336e3</span><span class="p">,</span>
+                   <span class="mf">6.610132843877e2</span><span class="p">,</span>
+                   <span class="mf">3.818838129486e1</span><span class="p">,</span>
+                   <span class="mf">1.0e0</span><span class="p">])</span>
 
-    <span class="n">b1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.771804140488e4</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.014785161019e3</span><span class="p">,</span> <span class="mf">9.130355392717e1</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.670718177489e0</span><span class="p">])</span>
+    <span class="n">b1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.771804140488e4</span><span class="p">,</span>
+                   <span class="o">-</span><span class="mf">2.014785161019e3</span><span class="p">,</span>
+                   <span class="mf">9.130355392717e1</span><span class="p">,</span>
+                   <span class="o">-</span><span class="mf">1.670718177489e0</span><span class="p">])</span>
 
     <span class="n">a2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.277060388085e-2</span><span class="p">,</span>
                    <span class="mf">7.187946804945e-2</span><span class="p">,</span>
@@ -611,20 +640,35 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.neutrino_cooling.sneut5_mod.html#pynucastro.neutrino_cooling.sneut5_mod.sneut5">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">sneut5</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">abar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">zbar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
            <span class="n">full_output</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute thermal neutrino losses from the analytic fits of Itoh</span>
-<span class="sd">    et al. ApJS 102, 411, 1996.  Note that either a Composition object</span>
-<span class="sd">    of abar/zbar need to be provided.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute thermal neutrino losses (in erg/g/s) from the analytic</span>
+<span class="sd">    fits of Itoh et al. ApJS 102, 411, 1996.  Note that either a</span>
+<span class="sd">    Composition object of abar/zbar need to be provided.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rho : float</span>
+<span class="sd">        density</span>
+<span class="sd">    T : float</span>
+<span class="sd">        temperature</span>
+<span class="sd">    comp : Composition</span>
+<span class="sd">        composition of the plasma</span>
+<span class="sd">    abar : float</span>
+<span class="sd">        mean molecular weight of the plasma (1 / sum{X_k/A_k})</span>
+<span class="sd">    zbar : float</span>
+<span class="sd">        average charge of the plasma (abar * sum{X_k Z_k / A_k})</span>
+<span class="sd">    full_output : bool</span>
+<span class="sd">        do we return the individual contributions to the cooling in</span>
+<span class="sd">        addition to the total cooling rate?</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        The cooling rate if `full_output` is False</span>
+
+<span class="sd">    tuple of (float, NeutrinoComponents)</span>
+<span class="sd">        The cooling rate and components if `full_output` is True</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># input:</span>
-    <span class="c1"># T = temperature</span>
-    <span class="c1"># rho  = density</span>
-    <span class="c1"># abar = mean atomic weight</span>
-    <span class="c1"># zbar = mean charge</span>
-
-    <span class="c1"># output:</span>
-    <span class="c1"># snu    = total neutrino loss rate in erg/g/sec</span>
 
     <span class="k">if</span> <span class="n">abar</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">zbar</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">abar</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">abar</span>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Neutrino Cooling &#8212; pynucastro 2.7.1.post49+g7f6cf9c40 documentation</title>
+    <title>Neutrino Cooling &#8212; pynucastro 2.7.1.post50+g7b6e9c296 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=15579d86"></script>
+    <script src="_static/documentation_options.js?v=8f966370"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -597,20 +597,21 @@ document.write(`
 </div>
 <section id="evaluating-epsilon-nu-for-a-thermodynamic-state">
 <h2>Evaluating <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> for a thermodynamic state<a class="headerlink" href="#evaluating-epsilon-nu-for-a-thermodynamic-state" title="Link to this heading">#</a></h2>
-<p>We can evaluate the cooling term given a density, temperature and composition.</p>
+<p>We can evaluate the cooling term given a density, temperature and composition.  First we setup the thermodynamic state:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e8</span>
 <span class="n">T</span> <span class="o">=</span> <span class="mf">2.e9</span>
-<span class="n">c</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">([</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe56&quot;</span><span class="p">)])</span>
-<span class="n">c</span><span class="o">.</span><span class="n">set_equal</span><span class="p">()</span>
+<span class="n">comp</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">([</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe56&quot;</span><span class="p">)])</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">set_equal</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 </div>
+<p>Now we call the <a class="reference internal" href="pynucastro.neutrino_cooling.sneut5_mod.html#pynucastro.neutrino_cooling.sneut5_mod.sneut5" title="pynucastro.neutrino_cooling.sneut5_mod.sneut5"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sneut5</span></code></a> function.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">snu</span> <span class="o">=</span> <span class="n">sneut5</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">snu</span> <span class="o">=</span> <span class="n">sneut5</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">snu</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -625,7 +626,7 @@ document.write(`
 <p>If we want to see the breakdown of the different contributions, we pass <code class="docutils literal notranslate"><span class="pre">full_output=True</span></code></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">snu</span><span class="p">,</span> <span class="n">scomps</span> <span class="o">=</span> <span class="n">sneut5</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">full_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">snu</span><span class="p">,</span> <span class="n">scomps</span> <span class="o">=</span> <span class="n">sneut5</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">full_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">scomps</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -639,12 +640,12 @@ document.write(`
 </section>
 <section id="plotting-epsilon-nu-in-the-rho-t-plane">
 <h2>Plotting <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> in the <span class="math notranslate nohighlight">\(\rho\)</span>-<span class="math notranslate nohighlight">\(T\)</span> plane<a class="headerlink" href="#plotting-epsilon-nu-in-the-rho-t-plane" title="Link to this heading">#</a></h2>
-<p>We can see the trend with thermodynamics state by using the <code class="docutils literal notranslate"><span class="pre">NeutrinoCooling</span></code> class</p>
+<p>We can see the trend with thermodynamics state by using the <a class="reference internal" href="pynucastro.neutrino_cooling.neutrino_cooling.html#pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling" title="pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NeutrinoCooling</span></code></a> class</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nc</span> <span class="o">=</span> <span class="n">NeutrinoCooling</span><span class="p">()</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Tmin</span><span class="o">=</span><span class="mf">1.e7</span><span class="p">,</span> <span class="n">Tmax</span><span class="o">=</span><span class="mf">1.e10</span><span class="p">,</span> <span class="n">rhomin</span><span class="o">=</span><span class="mf">1.e3</span><span class="p">,</span> <span class="n">rhomax</span><span class="o">=</span><span class="mf">1.e10</span><span class="p">,</span>
-              <span class="n">abar</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">abar</span><span class="p">,</span> <span class="n">zbar</span><span class="o">=</span><span class="n">c</span><span class="o">.</span><span class="n">zbar</span><span class="p">)</span>
+              <span class="n">abar</span><span class="o">=</span><span class="n">comp</span><span class="o">.</span><span class="n">abar</span><span class="p">,</span> <span class="n">zbar</span><span class="o">=</span><span class="n">comp</span><span class="o">.</span><span class="n">zbar</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

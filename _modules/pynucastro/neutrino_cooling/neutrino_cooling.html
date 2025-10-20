@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.neutrino_cooling.neutrino_cooling &#8212; pynucastro 2.7.1.post49+g7f6cf9c40 documentation</title>
+    <title>pynucastro.neutrino_cooling.neutrino_cooling &#8212; pynucastro 2.7.1.post50+g7b6e9c296 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=15579d86"></script>
+    <script src="../../../_static/documentation_options.js?v=8f966370"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -516,6 +516,29 @@ document.write(`
              <span class="n">abar</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">zbar</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">npts_temp</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">npts_rho</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the cooling term in as a function of density and</span>
 <span class="sd">        temperature given a fixed abar/zbar.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Tmin : float</span>
+<span class="sd">            Minimum temperature to plot</span>
+<span class="sd">        Tmax : float</span>
+<span class="sd">            Maximum temperature to plot</span>
+<span class="sd">        rhomin : float</span>
+<span class="sd">            Minimum density to plot</span>
+<span class="sd">        rhomax : float</span>
+<span class="sd">            Maximum density to plot</span>
+<span class="sd">        abar : float</span>
+<span class="sd">            Mean molecular weight of composition</span>
+<span class="sd">        zbar : float</span>
+<span class="sd">            Average charge of composition</span>
+<span class="sd">        npts_temp : int</span>
+<span class="sd">            Number of temperature samples to use</span>
+<span class="sd">        npts_rho : int</span>
+<span class="sd">            Number of density samples to use</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matplotlib.figure.Figure</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 

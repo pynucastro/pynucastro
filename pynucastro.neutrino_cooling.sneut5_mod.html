@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.neutrino_cooling.sneut5_mod module &#8212; pynucastro 2.7.1.post49+g7f6cf9c40 documentation</title>
+    <title>pynucastro.neutrino_cooling.sneut5_mod module &#8212; pynucastro 2.7.1.post50+g7b6e9c296 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=15579d86"></script>
+    <script src="_static/documentation_options.js?v=8f966370"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -568,7 +568,14 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents"><code class="docutils literal notranslate"><span class="pre">NeutrinoComponents</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents"><code class="docutils literal notranslate"><span class="pre">NeutrinoComponents</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.splas"><code class="docutils literal notranslate"><span class="pre">NeutrinoComponents.splas</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.spair"><code class="docutils literal notranslate"><span class="pre">NeutrinoComponents.spair</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.sphot"><code class="docutils literal notranslate"><span class="pre">NeutrinoComponents.sphot</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.sbrem"><code class="docutils literal notranslate"><span class="pre">NeutrinoComponents.sbrem</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.sreco"><code class="docutils literal notranslate"><span class="pre">NeutrinoComponents.sreco</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.ifermi12"><code class="docutils literal notranslate"><span class="pre">ifermi12()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.sneut5"><code class="docutils literal notranslate"><span class="pre">sneut5()</span></code></a></li>
 </ul>
@@ -592,6 +599,61 @@ neutron loss terms.</p>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A simple container that holds the individual components to the
 neutrino cooling.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.splas">
+<span class="sig-name descname"><span class="pre">splas</span></span><a class="headerlink" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.splas" title="Link to this definition">#</a></dt>
+<dd><p>Plasma neutrino cooling rate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.spair">
+<span class="sig-name descname"><span class="pre">spair</span></span><a class="headerlink" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.spair" title="Link to this definition">#</a></dt>
+<dd><p>Pair neutrino cooling rate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.sphot">
+<span class="sig-name descname"><span class="pre">sphot</span></span><a class="headerlink" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.sphot" title="Link to this definition">#</a></dt>
+<dd><p>Photo-ionization neutrino cooling rate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.sbrem">
+<span class="sig-name descname"><span class="pre">sbrem</span></span><a class="headerlink" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.sbrem" title="Link to this definition">#</a></dt>
+<dd><p>Bremmstrahlung neutrino cooling rate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.sreco">
+<span class="sig-name descname"><span class="pre">sreco</span></span><a class="headerlink" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.sreco" title="Link to this definition">#</a></dt>
+<dd><p>Recombination neutrino cooling rate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
@@ -600,14 +662,42 @@ neutrino cooling.</p>
 <dd><p>Apply a rational function expansion to get the inverse
 fermi-dirac integral of order 1/2 when it is equal to f.</p>
 <p>The maximum error is 4.19e-9_rt (see Antia ApJS 84,101 1993)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Value of the Fermi integral</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.neutrino_cooling.sneut5_mod.sneut5">
 <span class="sig-prename descclassname"><span class="pre">pynucastro.neutrino_cooling.sneut5_mod.</span></span><span class="sig-name descname"><span class="pre">sneut5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/neutrino_cooling/sneut5_mod.html#sneut5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.neutrino_cooling.sneut5_mod.sneut5" title="Link to this definition">#</a></dt>
-<dd><p>Compute thermal neutrino losses from the analytic fits of Itoh
-et al. ApJS 102, 411, 1996.  Note that either a Composition object
-of abar/zbar need to be provided.</p>
+<dd><p>Compute thermal neutrino losses (in erg/g/s) from the analytic
+fits of Itoh et al. ApJS 102, 411, 1996.  Note that either a
+Composition object of abar/zbar need to be provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – density</p></li>
+<li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – temperature</p></li>
+<li><p><strong>comp</strong> (<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><em>Composition</em></a>) – composition of the plasma</p></li>
+<li><p><strong>abar</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – mean molecular weight of the plasma (1 / sum{X_k/A_k})</p></li>
+<li><p><strong>zbar</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – average charge of the plasma (abar * sum{X_k Z_k / A_k})</p></li>
+<li><p><strong>full_output</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – do we return the individual contributions to the cooling in
+addition to the total cooling rate?</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>float</em> – The cooling rate if <cite>full_output</cite> is False</p></li>
+<li><p><em>tuple of (float, NeutrinoComponents)</em> – The cooling rate and components if <cite>full_output</cite> is True</p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -657,7 +747,14 @@ of abar/zbar need to be provided.</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents"><code class="docutils literal notranslate"><span class="pre">NeutrinoComponents</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents"><code class="docutils literal notranslate"><span class="pre">NeutrinoComponents</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.splas"><code class="docutils literal notranslate"><span class="pre">NeutrinoComponents.splas</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.spair"><code class="docutils literal notranslate"><span class="pre">NeutrinoComponents.spair</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.sphot"><code class="docutils literal notranslate"><span class="pre">NeutrinoComponents.sphot</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.sbrem"><code class="docutils literal notranslate"><span class="pre">NeutrinoComponents.sbrem</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.sreco"><code class="docutils literal notranslate"><span class="pre">NeutrinoComponents.sreco</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.ifermi12"><code class="docutils literal notranslate"><span class="pre">ifermi12()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.sneut5_mod.sneut5"><code class="docutils literal notranslate"><span class="pre">sneut5()</span></code></a></li>
 </ul>
