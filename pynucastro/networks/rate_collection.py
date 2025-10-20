@@ -30,8 +30,6 @@ from pynucastro.rates import (ApproximateRate, DerivedRate, Library,
                               TabularRate, find_duplicate_rates,
                               is_allowed_dupe, load_rate)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_rid
-from pynucastro.screening import (get_screening_map, make_plasma_state,
-                                  make_screen_factors)
 
 mpl.rcParams['figure.dpi'] = 100
 
@@ -1224,7 +1222,7 @@ class RateCollection:
         Parameters
         ----------
         intermediate_nuclei : list, tuple
-            an iterable of `Nucleus <pynucastro.nucdata.nucleus.Nucleus>`
+            an iterable of :py:obj:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>`
             or string names representing the intermediate nucleus we
             wish to approximate out.
 
@@ -1423,17 +1421,15 @@ class RateCollection:
         ys = composition.get_molar()
         y_e = composition.ye
 
-        if screen_func is not None:
-            screen_factors = self.evaluate_screening(rho, T, composition, screen_func)
-        else:
-            screen_factors = {}
-
         for r in self.rates:
-            val = r.prefactor * rho**r.dens_exp * r.eval(T, rho=rho, comp=composition)
+            # Note screening effect is already included
+            val = r.prefactor * rho**r.dens_exp * r.eval(T, rho=rho, comp=composition,
+                                                         screen_func=screen_func,
+                                                         symmetric_screening=self.symmetric_screening)
             if (r.weak_type == 'electron_capture' and not isinstance(r, TabularRate)):
                 val = val * y_e
             yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
-            rvals[r] = yfac * val * screen_factors.get(r, 1.0)
+            rvals[r] = yfac * val
 
         return rvals
 
@@ -1463,13 +1459,6 @@ class RateCollection:
 
         """
 
-        # the rate.eval_jacobian_term does not compute the screening,
-        # so we multiply by the factors afterwards
-        if screen_func is not None:
-            screen_factors = self.evaluate_screening(rho, T, comp, screen_func)
-        else:
-            screen_factors = {}
-
         if exclude_rates is None:
             exclude_rates = []
 
@@ -1489,8 +1478,12 @@ class RateCollection:
 
                     # how many of n_i are destroyed by this reaction
                     c = r.reactant_count(n_i)
-                    jac[i, j] -= c * screen_factors.get(r, 1.0) *\
-                        r.eval_jacobian_term(T, rho, comp, n_j)
+
+                    # Note eval_jacobian_term already includes screening
+                    jac[i, j] -= c * \
+                        r.eval_jacobian_term(T, rho, comp, n_j,
+                                             screen_func=screen_func,
+                                             symmetric_screening=self.symmetric_screening)
 
                 for r in self.nuclei_produced[n_i]:
                     if r in exclude_rates:
@@ -1498,8 +1491,10 @@ class RateCollection:
 
                     # how many of n_i are produced by this reaction
                     c = r.product_count(n_i)
-                    jac[i, j] += c * screen_factors.get(r, 1.0) *\
-                        r.eval_jacobian_term(T, rho, comp, n_j)
+                    jac[i, j] += c * \
+                        r.eval_jacobian_term(T, rho, comp, n_j,
+                                             screen_func=screen_func,
+                                             symmetric_screening=self.symmetric_screening)
 
         return jac
 
@@ -1667,65 +1662,6 @@ class RateCollection:
             for r, value in rvals.items():
                 largest_ratio[r] = max(largest_ratio[r], value / fastest)
         return {r: ratio for r, ratio in largest_ratio.items() if ratio < cutoff_ratio}
-
-    def evaluate_screening(self, rho, T, composition, screen_func):
-        """Evaluate the screening factors for each rate.
-
-        Parameters
-        ----------
-        rho : float
-            density used to evaluate screening
-        T : float
-            temperature used to evaluate screening
-        composition : Composition
-            composition used to evaluate screening
-        screen_func : Callable
-            one of the screening functions from :py:mod:`pynucastro.screening`
-
-        Returns
-        -------
-        dict(Rate)
-
-        """
-        # this follows the same logic as BaseCxxNetwork._compute_screening_factors()
-        factors = {}
-        ys = composition.get_molar()
-        plasma_state = make_plasma_state(T, rho, ys)
-        if not self.do_screening:
-            screening_map = []
-        else:
-            screening_map = get_screening_map(self.get_rates(),
-                                              symmetric_screening=self.symmetric_screening)
-
-        for i, scr in enumerate(screening_map):
-            if not (scr.n1.dummy or scr.n2.dummy):
-                scn_fac = make_screen_factors(scr.n1, scr.n2)
-                scor = screen_func(plasma_state, scn_fac)
-            if scr.name == "He4_He4_He4":
-                # we don't need to do anything here, but we want to avoid
-                # immediately applying the screening
-                pass
-            elif scr.name == "He4_He4_He4_dummy":
-                # make sure the previous iteration was the first part of 3-alpha
-                assert screening_map[i - 1].name == "He4_He4_He4"
-                # handle the second part of the screening for 3-alpha
-                scn_fac2 = make_screen_factors(scr.n1, scr.n2)
-                scor2 = screen_func(plasma_state, scn_fac2)
-
-                # there might be both the forward and reverse 3-alpha
-                # if we are doing symmetric screening
-                for r in scr.rates:
-                    # use scor from the previous loop iteration
-                    # pylint: disable-next=possibly-used-before-assignment
-                    factors[r] = scor * scor2
-            else:
-                # there might be several rates that have the same
-                # reactants and therefore the same screening applies
-                # -- handle them all now
-                for r in scr.rates:
-                    factors[r] = scor
-
-        return factors
 
     def evaluate_ydots(self, rho, T, composition,
                        screen_func=None, rate_filter=None):
@@ -1995,6 +1931,45 @@ class RateCollection:
         assert self._distinguishable_rates(), "ERROR: Rates not uniquely identified by Rate.fname"
         self._write_network(*args, **kwargs)
 
+    def export_as(self, new_type, *args, **kwargs):
+        """Convert the existing network into a different subclass
+
+        Parameters
+        ----------
+        new_type : RateCollection
+            any network type that is based on RateCollection
+        args : Iterable
+            extra arguments to pass into the new class constructor.
+        kwargs : Dict
+            extra keyword arguments to pass into the new class
+            constructor.
+
+        Returns
+        -------
+        RateCollection
+
+        """
+
+        assert issubclass(new_type, RateCollection)
+
+        # see if kwargs contains any of the properties held by
+        # all network classes.
+        props = ["inert_nuclei", "do_screening",
+                 "symmetric_screening", "verbose"]
+        for p in props:
+            val = kwargs.pop(p, None)
+            if val:
+                print(f"WARNING: keyword arg {p} cannot be used to override current network's value")
+
+        net = new_type(rates=self.get_rates(),
+                       inert_nuclei=self.inert_nuclei,
+                       do_screening=self.do_screening,
+                       symmetric_screening=self.symmetric_screening,
+                       verbose=self.verbose,
+                       *args, **kwargs)
+
+        return net
+
     def _distinguishable_rates(self):
         """Every Rate in this RateCollection should have a unique
         Rate.fname, as the network writers distinguish the rates on
@@ -2023,6 +1998,8 @@ class RateCollection:
                              nuclei_custom_labels=None,
                              rotated=False,
                              rate_ydots=None, ydot_cutoff_value=None,
+                             use_net_rate=False,
+                             normalize_net_rate=False,
                              consuming_rate_threshold=None,
                              show_small_ydot=False,
                              hide_xalpha=False, hide_xp=False,
@@ -2049,6 +2026,12 @@ class RateCollection:
         ydot_cutoff_value : float
             rate threshold below which we do not add an edge connecting
             nuclei.
+        use_net_rate : bool
+            for rate pairs, compute the difference between the forward and
+            reverse rate, and only show the net rate as a single arrow.
+        normalize_net_rate : bool
+            if we are plotting the net rate, do we normalize it, e.g., to
+            show (forward - reverse) / 0.5 * (forward + reverse)?
         consuming_rate_threshold : float
             for a nucleus that has multiple rates that consume it, remove
             any rates that are ``consuming_rate_threshold`` smaller than
@@ -2096,13 +2079,30 @@ class RateCollection:
             else:
                 G.labels[n] = fr"${n.pretty}$"
 
+        # use the difference of forward - reverse rate for the graph
+        if use_net_rate:
+            for rp in self.get_rate_pairs():
+                if rp.forward is not None and rp.reverse is not None:
+                    net_rate = rate_ydots[rp.forward] - rate_ydots[rp.reverse]
+                    if normalize_net_rate:
+                        net_rate /= 0.5 * (rate_ydots[rp.forward] + rate_ydots[rp.reverse])
+                    if net_rate > 0.0:
+                        rate_ydots[rp.forward] = net_rate
+                        rate_ydots[rp.reverse] = 0.0
+                    else:
+                        rate_ydots[rp.forward] = 0.0
+                        rate_ydots[rp.reverse] = abs(net_rate)
+
         # Do not show rates on the graph if their corresponding ydot
         # is less than ydot_cutoff_value
         invisible_rates = set()
         if ydot_cutoff_value is not None:
-            for r in self.rates:
-                if rate_ydots[r] < ydot_cutoff_value:
-                    invisible_rates.add(r)
+            invisible_rates |= {r for r in self.rates if rate_ydots[r] < ydot_cutoff_value}
+
+        # also make invisible any rates that were zeroed out if we are
+        # using the net rate
+        if use_net_rate:
+            invisible_rates |= {r for r in self.rates if rate_ydots[r] == 0.0}
 
         # Consider each nucleus heavier than He and all the rates that
         # consume it.  If desired, only show rates that are within a
@@ -2210,6 +2210,8 @@ class RateCollection:
              size=(800, 600), dpi=100, title=None,
              screen_func=None,
              ydot_cutoff_value=None, show_small_ydot=False,
+             use_net_rate=False,
+             normalize_net_rate=False,
              consuming_rate_threshold=None,
              node_size=1000, node_font_size=12,
              node_color="#444444", node_shape="o",
@@ -2254,6 +2256,12 @@ class RateCollection:
             line corresponding to a rate
         show_small_ydot : bool
             show visible dashed lines for rates below ``ydot_cutoff_value``
+        use_net_rate : bool
+            for rate pairs, compute the difference between the forward and
+            reverse rate, and only show the net rate as a single arrow.
+        normalize_net_rate : bool
+            if we are plotting the net rate, do we normalize it, e.g., to
+            show (forward - reverse) / 0.5 * (forward + reverse)?
         consuming_rate_threshold : float
             for a nucleus that has multiple rates that consume it, remove
             any rates that are ``consuming_rate_threshold`` smaller than
@@ -2326,6 +2334,8 @@ class RateCollection:
 
         """
 
+        # create the figure object and gridspec (if not provided)
+
         if grid_spec is not None:
             fig = grid_spec.figure
         else:
@@ -2353,6 +2363,7 @@ class RateCollection:
 
         # in general, we do not show p, n, alpha,
         # unless we have p + p, 3-a, etc.
+
         hidden_nuclei = ["n"]
         if not always_show_p:
             hidden_nuclei.append("p")
@@ -2360,8 +2371,9 @@ class RateCollection:
         if not always_show_alpha:
             hidden_nuclei.append("he4")
 
-        # nodes -- the node nuclei will be all of the heavies
-        # add all the nuclei into G.node
+        # create the list of node nuclei
+        # and setup their colors
+
         node_nuclei = []
         colors = []
 
@@ -2393,6 +2405,7 @@ class RateCollection:
                         break
 
         # approx nuclei are given a different color
+
         for n in self.approx_nuclei:
             node_nuclei.append(n)
             colors.append("#888888")
@@ -2408,29 +2421,34 @@ class RateCollection:
                     colors.append(get_node_color(n))
 
         # get the rates for each reaction
+
         if rho is not None and T is not None and comp is not None:
             rate_ydots = self.evaluate_rates(rho, T, comp,
                                              screen_func=screen_func)
         else:
             rate_ydots = None
 
+        # create the graph
+
         G = self.create_network_graph(node_nuclei,
                                       rate_ydots=rate_ydots,
                                       ydot_cutoff_value=ydot_cutoff_value,
                                       hide_xalpha=hide_xalpha, hide_xp=hide_xp,
                                       show_small_ydot=show_small_ydot,
+                                      use_net_rate=use_net_rate,
+                                      normalize_net_rate=normalize_net_rate,
                                       consuming_rate_threshold=consuming_rate_threshold,
                                       rate_filter_function=rate_filter_function,
                                       highlight_filter_function=highlight_filter_function,
                                       rotated=rotated,
                                       nuclei_custom_labels=nuclei_custom_labels)
 
-        # It seems that networkx broke backwards compatibility, and 'zorder' is no longer a valid
-        # keyword argument. The 'linewidth' argument has also changed to 'linewidths'.
+        # draw the nodes and their labels
 
-        nx.draw_networkx_nodes(G, G.position,      # plot the element at the correct position
+        nx.draw_networkx_nodes(G, G.position,
                                node_color=colors, alpha=1.0,
-                               node_shape=node_shape, node_size=node_size, linewidths=2.0, ax=ax)
+                               node_shape=node_shape, node_size=node_size,
+                               linewidths=2.0, ax=ax)
 
         if color_nodes_by_abundance:
             node_font_color = {}
@@ -2450,7 +2468,7 @@ class RateCollection:
         nx.draw_networkx_labels(G, G.position, G.labels,   # label the name of element at the correct position
                                 font_size=node_font_size, font_color=node_font_color, ax=ax)
 
-        # now we'll draw edges in several groups
+        # draw the edges -- we'll do this in several groups
 
         if curved_edges:
             connectionstyle = "arc3, rad = 0.2"
@@ -2461,6 +2479,31 @@ class RateCollection:
 
         sorted_edges = sorted(G.edges(data=True), key=lambda edge: edge[-1].get("weight", 0),
                               reverse=sort_reverse)
+
+        # draw the approximate rate edges.  These have "real" = 0
+
+        approx_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 0]
+
+        _ = nx.draw_networkx_edges(G, G.position, width=1,
+                                   edgelist=approx_edges, edge_color="0.5",
+                                   connectionstyle=connectionstyle,
+                                   style="dashed", node_size=node_size, ax=ax)
+
+        # draw the invisible edges -- these are only shown if we set "show_small_ydot"
+
+        invis_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == -1]
+
+        _ = nx.draw_networkx_edges(G, G.position, width=1,
+                                   edgelist=invis_edges, edge_color="gray",
+                                   connectionstyle=connectionstyle,
+                                   style="dotted", node_size=node_size, ax=ax)
+
+        # draw the edges that are real rates, and above any cutoffs
+
+        # "real" = 1 edges are those that are not hidden approximate
+        # rate links, rates that are below the
+        # "consuming_rate_threshold", and not below ydot_cutoff_value
+
         real_edges = [(u, v) for u, v, e in sorted_edges if e["real"] == 1]
         real_weights = [e["weight"] for u, v, e in sorted_edges if e["real"] == 1]
 
@@ -2480,30 +2523,14 @@ class RateCollection:
         else:
             widths *= 2
 
-        # draw the approximate rate edges
-        approx_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == 0]
-
-        _ = nx.draw_networkx_edges(G, G.position, width=1,
-                                   edgelist=approx_edges, edge_color="0.5",
-                                   connectionstyle=connectionstyle,
-                                   style="dashed", node_size=node_size, ax=ax)
-
-        # draw the edges for the rates that are below ydot_cutoff_value
-        invis_edges = [(u, v) for u, v, e in G.edges(data=True) if e["real"] == -1]
-
-        _ = nx.draw_networkx_edges(G, G.position, width=1,
-                                   edgelist=invis_edges, edge_color="gray",
-                                   connectionstyle=connectionstyle,
-                                   style="dotted", node_size=node_size, ax=ax)
-
-        # draw the edges that are real rates, and above any cutoffs
         real_edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
                                                edgelist=real_edges, edge_color=edge_color,
                                                connectionstyle=connectionstyle,
                                                node_size=node_size,
                                                edge_cmap=plt.cm.viridis, ax=ax)
 
-        # highlight edges
+        # highlight edges -- this is basically overplotting the edges we already drew
+
         highlight_edges = [(u, v) for u, v, e in G.edges(data=True) if e["highlight"]]
 
         if rho is None:
@@ -2514,9 +2541,12 @@ class RateCollection:
             highlight_color = "C0"
 
         _ = nx.draw_networkx_edges(G, G.position, width=5,
-                                   edgelist=highlight_edges, edge_color=highlight_color, alpha=0.5,
+                                   edgelist=highlight_edges,
+                                   edge_color=highlight_color, alpha=0.5,
                                    connectionstyle=connectionstyle,
                                    node_size=node_size, ax=ax)
+
+        # now consider any edge labels that were passed in
 
         if edge_labels:
             nx.draw_networkx_edge_labels(G, G.position,
@@ -2524,8 +2554,11 @@ class RateCollection:
                                          font_size=node_font_size,
                                          edge_labels=edge_labels)
 
-        # figure out the colorbar axes -- we have a single colorbar if we are doing the
-        # rate_ydots.  We have 2 colorbars if we are also doing the color_nodes_by_abundance
+        # colorbars
+
+        # We have a single colorbar if we are doing the rate_ydots.
+        # We have 2 colorbars if we are also doing the color_nodes_by_abundance
+
         rate_cb_ax = None
         node_cb_ax = None
         if rate_ydots and color_nodes_by_abundance:
@@ -2548,11 +2581,19 @@ class RateCollection:
         if rate_ydots is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
             pc.set_array(real_weights)
-            fig.colorbar(pc, cax=rate_cb_ax, label="log10(rate)", orientation=orientation)
+            label = r"$\log_{10}(\mathrm{rate})$"
+            if use_net_rate:
+                if normalize_net_rate:
+                    label = r"$\log_{10}((\lambda_\mathrm{forward} - \lambda_\mathrm{reverse}) / [\frac{1}{2} (\lambda_\mathrm{forward} + \lambda_\mathrm{reverse})])$"
+                else:
+                    label = r"$\log_{10}(\lambda_\mathrm{forward} - \lambda_\mathrm{reverse})$"
+            fig.colorbar(pc, cax=rate_cb_ax, label=label, orientation=orientation)
 
         if color_nodes_by_abundance:
-            fig.colorbar(nuc_sm, cax=node_cb_ax, label="log10(X)",
+            fig.colorbar(nuc_sm, cax=node_cb_ax, label=r"$X$",
                          orientation=orientation)
+
+        # Finally set the axis properties
 
         if not rotated:
             ax.set_xlabel(r"$N$", fontsize="large")
@@ -2590,6 +2631,9 @@ class RateCollection:
 
         if not rotated:
             ax.set_aspect("equal", "datalim")
+
+        # add a legend showing the direction that each type of capture
+        # moves you in the plane
 
         if legend_coord is not None:
             assert len(legend_coord) == 2
