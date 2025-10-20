@@ -1946,8 +1946,7 @@ class RateCollection:
 
         # see if kwargs contains any of the properties held by
         # all network classes.
-        props = ["inert_nuclei", "do_screening",
-                 "symmetric_screening", "verbose"]
+        props = ["inert_nuclei", "do_screening", "verbose"]
         for p in props:
             val = kwargs.pop(p, None)
             if val:
@@ -1956,7 +1955,6 @@ class RateCollection:
         net = new_type(rates=self.get_rates(),
                        inert_nuclei=self.inert_nuclei,
                        do_screening=self.do_screening,
-                       symmetric_screening=self.symmetric_screening,
                        verbose=self.verbose,
                        *args, **kwargs)
 
