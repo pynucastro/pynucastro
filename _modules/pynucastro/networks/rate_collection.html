@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.7.1.post51+g456c72378 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.7.1.post52+ga8dea16bc documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=354c69ea"></script>
+    <script src="../../../_static/documentation_options.js?v=86d932dd"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -2565,6 +2565,48 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distinguishable_rates</span><span class="p">(),</span> <span class="s2">&quot;ERROR: Rates not uniquely identified by Rate.fname&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_write_network</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RateCollection.export_as">
+<a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.export_as">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">export_as</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the existing network into a different subclass</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_type : RateCollection</span>
+<span class="sd">            any network type that is based on RateCollection</span>
+<span class="sd">        args : Iterable</span>
+<span class="sd">            extra arguments to pass into the new class constructor.</span>
+<span class="sd">        kwargs : Dict</span>
+<span class="sd">            extra keyword arguments to pass into the new class</span>
+<span class="sd">            constructor.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        RateCollection</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">new_type</span><span class="p">,</span> <span class="n">RateCollection</span><span class="p">)</span>
+
+        <span class="c1"># see if kwargs contains any of the properties held by</span>
+        <span class="c1"># all network classes.</span>
+        <span class="n">props</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;inert_nuclei&quot;</span><span class="p">,</span> <span class="s2">&quot;do_screening&quot;</span><span class="p">,</span>
+                 <span class="s2">&quot;symmetric_screening&quot;</span><span class="p">,</span> <span class="s2">&quot;verbose&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">val</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WARNING: keyword arg </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2"> cannot be used to override current network&#39;s value&quot;</span><span class="p">)</span>
+
+        <span class="n">net</span> <span class="o">=</span> <span class="n">new_type</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">(),</span>
+                       <span class="n">inert_nuclei</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inert_nuclei</span><span class="p">,</span>
+                       <span class="n">do_screening</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">do_screening</span><span class="p">,</span>
+                       <span class="n">symmetric_screening</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screening</span><span class="p">,</span>
+                       <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+                       <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">net</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_distinguishable_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
