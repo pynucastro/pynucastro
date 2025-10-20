@@ -1923,6 +1923,45 @@ class RateCollection:
         assert self._distinguishable_rates(), "ERROR: Rates not uniquely identified by Rate.fname"
         self._write_network(*args, **kwargs)
 
+    def export_as(self, new_type, *args, **kwargs):
+        """Convert the existing network into a different subclass
+
+        Parameters
+        ----------
+        new_type : RateCollection
+            any network type that is based on RateCollection
+        args : Iterable
+            extra arguments to pass into the new class constructor.
+        kwargs : Dict
+            extra keyword arguments to pass into the new class
+            constructor.
+
+        Returns
+        -------
+        RateCollection
+
+        """
+
+        assert issubclass(new_type, RateCollection)
+
+        # see if kwargs contains any of the properties held by
+        # all network classes.
+        props = ["inert_nuclei", "do_screening",
+                 "symmetric_screening", "verbose"]
+        for p in props:
+            val = kwargs.pop(p, None)
+            if val:
+                print(f"WARNING: keyword arg {p} cannot be used to override current network's value")
+
+        net = new_type(rates=self.get_rates(),
+                       inert_nuclei=self.inert_nuclei,
+                       do_screening=self.do_screening,
+                       symmetric_screening=self.symmetric_screening,
+                       verbose=self.verbose,
+                       *args, **kwargs)
+
+        return net
+
     def _distinguishable_rates(self):
         """Every Rate in this RateCollection should have a unique
         Rate.fname, as the network writers distinguish the rates on
