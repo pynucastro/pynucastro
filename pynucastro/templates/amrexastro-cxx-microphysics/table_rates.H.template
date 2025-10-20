@@ -160,8 +160,10 @@ evaluate_linear_2d(const amrex::Real fip1jp1, const amrex::Real fip1j, const amr
     // This is the 2-D linear interpolator, as an extension of evaluate_linear_1d.
 
     amrex::Real f;
-    amrex::Real dxinv = 1.0_rt / (xhi - xlo);
-    amrex::Real dyinv = 1.0_rt / (yhi - ylo);
+    amrex::Real dx = xhi - xlo;
+    amrex::Real dxinv = 1.0_rt / dx;
+    amrex::Real dy = yhi - ylo;
+    amrex::Real dyinv = 1.0_rt / dy;
 
     amrex::Real E =  fij;
     amrex::Real C = (fijp1 - fij) * dyinv;
@@ -345,7 +347,7 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rhoy_table, const T& l
         amrex::Real dlogTinv2 = 1.0_rt / (log_temp_jp2 - log_temp_j);
         amrex::Real dlogr_dlogt_ij     = (fijp1 - fijm1) * dlogTinv1;
         amrex::Real dlogr_dlogt_ijp1   = (fijp2 - fij) * dlogTinv2;
-        amrex::Real dlogr_dlogt_ip1j   = (fip1jp1 - fip1jm1) * dlogTinv;
+        amrex::Real dlogr_dlogt_ip1j   = (fip1jp1 - fip1jm1) * dlogTinv1;
         amrex::Real dlogr_dlogt_ip1jp1 = (fip1jp2 - fip1j) * dlogTinv2;
 
         dlogr_dlogt = evaluate_linear_2d(dlogr_dlogt_ip1jp1,  dlogr_dlogt_ip1j, dlogr_dlogt_ijp1, dlogr_dlogt_ij,
