@@ -91,7 +91,7 @@ In [6]: fig.savefig("c13pg.png")
 ```
 
 The resulting figure is:
-![](https://raw.githubusercontent.com/pynucastro/pynucastro/main/examples/c13pg.png)
+![](https://raw.githubusercontent.com/pynucastro/pynucastro/main/docs/images/c13pg.png)
 
 ### Creating a network
 
@@ -105,17 +105,6 @@ In [1]: import pynucastro as pyna
 In [2]: nuclei = ["p", "he4", "c12", "n13", "o16", "ne20", "na23", "mg24"]
 
 In [3]: net = pyna.network_helper(nuclei, use_tabular_rates=False)
-modifying N13 ⟶ p + C12 from C12 + p ⟶ N13 + 𝛾
-modifying O16 ⟶ He4 + C12 from C12 + He4 ⟶ O16 + 𝛾
-modifying Ne20 ⟶ He4 + O16 from O16 + He4 ⟶ Ne20 + 𝛾
-modifying Mg24 ⟶ p + Na23 from Na23 + p ⟶ Mg24 + 𝛾
-modifying Mg24 ⟶ He4 + Ne20 from Ne20 + He4 ⟶ Mg24 + 𝛾
-modifying C12 ⟶ 3 He4 from 3 He4 ⟶ C12 + 𝛾
-modifying O16 + p ⟶ He4 + N13 from N13 + He4 ⟶ p + O16
-modifying Ne20 + He4 ⟶ p + Na23 from Na23 + p ⟶ He4 + Ne20
-modifying Ne20 + He4 ⟶ C12 + C12 from C12 + C12 ⟶ He4 + Ne20
-modifying Na23 + p ⟶ C12 + C12 from C12 + C12 ⟶ p + Na23
-modifying Mg24 + He4 ⟶ C12 + O16 from O16 + C12 ⟶ He4 + Mg24
 
 In [4]: rho = 1.e7
 
@@ -155,12 +144,13 @@ In [9]: fig = net.plot(rotated=True, hide_xalpha=True)
 In [10]: fig.savefig("c-net.png")
 ```
 
-After the network is created, we see messages saying that a number
-of reverse rates were rederived using detailed balance.
+Here `network_helper` found all of the rates that link the input
+nuclei and rederived the reverse rates to be in detailed balance with
+the forward rates.
 
 The resulting figure is:
 
-![](https://raw.githubusercontent.com/pynucastro/pynucastro/main/examples/c-net.png)
+![](https://raw.githubusercontent.com/pynucastro/pynucastro/main/docs/images/c-net.png)
 
 ### Interactive exploration
 

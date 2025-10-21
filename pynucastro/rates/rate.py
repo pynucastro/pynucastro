@@ -9,6 +9,8 @@ import pynucastro.numba_util as numba
 from pynucastro.nucdata import Nucleus
 from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import _find_rate_file
+from pynucastro.screening import (get_screening_map, make_plasma_state,
+                                  make_screen_factors)
 
 
 class BaryonConservationError(Exception):
@@ -416,24 +418,6 @@ class Rate:
             if len(nucz) == 3:
                 self.ion_screen.append(nucz[2])
 
-        # if the rate is a reverse rate (defined as Q < 0), then we
-        # might actually want to compute the screening based on the
-        # reactants of the forward rate that was used in the detailed
-        # balance.  Rate.symmetric_screen is what should be used in
-        # the screening in this case
-        self.symmetric_screen = []
-        if self.Q < 0:
-            nucz = [q for q in self.products if q.Z != 0]
-            if len(nucz) > 1:
-                nucz.sort(key=lambda x: x.Z)
-                self.symmetric_screen = []
-                self.symmetric_screen.append(nucz[0])
-                self.symmetric_screen.append(nucz[1])
-                if len(nucz) == 3:
-                    self.symmetric_screen.append(nucz[2])
-        else:
-            self.symmetric_screen = self.ion_screen
-
     def cname(self):
         """Get a C++-safe version of the rate name
 
@@ -587,6 +571,66 @@ class Rate:
         self.fname = None    # reset so it will be updated
         self._set_print_representation()
 
+    def evaluate_screening(self, rho, T, composition, screen_func):
+        """Evaluate the screening correction for this rate.
+
+        Parameters
+        ----------
+        rho : float
+            density used to evaluate screening
+        T : float
+            temperature used to evaluate screening
+        composition : Composition
+            composition used to evaluate screening
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+
+        Returns
+        -------
+        float
+
+        """
+
+        ys = composition.get_molar()
+        plasma_state = make_plasma_state(T, rho, ys)
+        scor = 1.0
+
+        # We can have three cases:
+        # 3-body reaction, i.e. 3-alpha: 2 ScreeningPair's
+        # 2-body reaction              : 1 ScreeningPair
+        # Photodisintegration (1-body) : 0 ScreeningPair
+
+        screening_map = get_screening_map([self])
+
+        # Handle 0 ScreeningPair case
+        if not screening_map:
+            return scor
+
+        # Handle 3-alpha case explicitly
+        if "He4_He4_He4" in [scr.name for scr in screening_map]:
+
+            # We should have two ScreeningPair's in this case
+            # He4_He4_He4 and He4_He4_He4_dummy
+            assert len(screening_map) == 2
+
+            for scr in screening_map:
+                scn_fac = make_screen_factors(scr.n1, scr.n2)
+                scor *= screen_func(plasma_state, scn_fac)
+
+        # Now handle 2-body reaction
+        else:
+            scr = screening_map[0]
+
+            # Make sure no dummy nuclei exist in this case
+            # Otherwise we have more than 2-body reaction
+            assert not (scr.n1.dummy or scr.n2.dummy)
+            assert len(screening_map) == 1
+
+            scn_fac = make_screen_factors(scr.n1, scr.n2)
+            scor = screen_func(plasma_state, scn_fac)
+
+        return scor
+
     def ydot_string_py(self):
         """Construct the string containing the term in a dY/dt
         equation in a reaction network corresponding to this rate.
@@ -626,7 +670,8 @@ class Rate:
 
         return "*".join(ydot_string_components)
 
-    def eval(self, T, *, rho=None, comp=None):
+    def eval(self, T, *, rho=None, comp=None,
+             screen_func=None):
         """Evaluate the reaction rate for temperature T.  This is a stub
         and should be implemented by the derived class.
 
@@ -635,12 +680,14 @@ class Rate:
         T : float
             the temperature to evaluate the rate at
         rho : float
-            the density to evaluate the rate at (not needed for ReacLib
-            rates).
+            the density to evaluate the rate and screening effects at.
         comp : float
             the composition (of type
             :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
-            to evaluate the rate with (not needed for ReacLib rates).
+            to evaluate the rate and screening effects with.
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the rate will include the screening correction
 
         Raises
         ------
@@ -720,7 +767,8 @@ class Rate:
 
         return "*".join(jac_string_components)
 
-    def eval_jacobian_term(self, T, rho, comp, y_i):
+    def eval_jacobian_term(self, T, rho, comp, y_i, *,
+                           screen_func=None):
         """Evaluate drate/d(y_i), the derivative of the rate with
         respect to ``y_i``.  This rate term has the full composition
         and density dependence, i.e.:
@@ -740,6 +788,10 @@ class Rate:
             the composition to use in the rate evaluation
         y_i : Nucleus
             the nucleus we are differentiating with respect to
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the jacobian_term will include the
+            screening correction.
 
         Returns
         -------
@@ -775,7 +827,8 @@ class Rate:
             y_e_term = 1.0
 
         # finally evaluate the rate -- for tabular rates, we need to set rhoY
-        rate_eval = self.eval(T, rho=rho, comp=comp)
+        rate_eval = self.eval(T, rho=rho, comp=comp,
+                              screen_func=screen_func)
 
         return self.prefactor * dens_term * y_e_term * Y_term * rate_eval
 

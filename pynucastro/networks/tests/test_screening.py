@@ -20,8 +20,7 @@ class TestScreening:
 
     def test_screening_map(self, rc):
 
-        screening_map = get_screening_map(rc.get_rates(),
-                                          symmetric_screening=rc.symmetric_screening)
+        screening_map = get_screening_map(rc.get_rates())
 
         assert len(screening_map) == 4
         assert len(screening_map[0].rates) == 1
@@ -41,7 +40,9 @@ class TestScreening:
                  "C12 + C12 --> p + Na23 <cf88_reaclib__>": 103.21274049093526,
                  "3 He4 --> C12 <fy05_reaclib__>": 6.502599619793744}
 
-        factors = rc.evaluate_screening(1.e6, 1.e8, c, screen_func=chugunov_2007)
+        factors = {}
+        for r in rc.get_rates():
+            factors[r] = r.evaluate_screening(1.e6, 1.e8, c, screen_func=chugunov_2007)
 
         for r, factor in factors.items():
             assert factor == approx(rates[r.id])
@@ -56,7 +57,9 @@ class TestScreening:
                  "C12 + C12 --> p + Na23 <cf88_reaclib__>": 89.6640543016441,
                  "3 He4 --> C12 <fy05_reaclib__>": 4.380701422122169}
 
-        factors = rc.evaluate_screening(1.e6, 1.e8, c, screen_func=chugunov_2009)
+        factors = {}
+        for r in rc.get_rates():
+            factors[r] = r.evaluate_screening(1.e6, 1.e8, c, screen_func=chugunov_2009)
 
         for r, factor in factors.items():
             assert factor == approx(rates[r.id])

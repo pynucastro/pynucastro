@@ -165,8 +165,7 @@ class PythonNetwork(RateCollection):
         if not self.do_screening:
             screening_map = []
         else:
-            screening_map = get_screening_map(self.get_rates(),
-                                              symmetric_screening=self.symmetric_screening)
+            screening_map = get_screening_map(self.get_rates())
 
         for i, scr in enumerate(screening_map):
             if not (scr.n1.dummy or scr.n2.dummy):
@@ -187,12 +186,13 @@ class PythonNetwork(RateCollection):
                 ostr += f"{indent}scn_fac2 = ScreenFactors({scr.n1.Z}, {scr.n1.A}, {scr.n2.Z}, {scr.n2.A})\n"
                 ostr += f"{indent}scor2 = screen_func(plasma_state, scn_fac2)\n"
 
-                # there might be both the forward and reverse 3-alpha
-                # if we are doing symmetric screening
+                # there should only be a single forward rate here
+                assert len(scr.rates) == 1
 
-                for r in scr.rates:
-                    # use scor from the previous loop iteration
-                    ostr += f"{indent}rate_eval.{r.fname} *= scor * scor2\n"
+                r = scr.rates[0]
+                # use scor from the previous loop iteration
+                ostr += f"{indent}rate_eval.{r.fname} *= scor * scor2\n"
+
             else:
                 # there might be several rates that have the same
                 # reactants and therefore the same screening applies
