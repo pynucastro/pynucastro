@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.reduction.drgep_module &#8212; pynucastro 2.7.1.post53+g3acaa5806 documentation</title>
+    <title>pynucastro.reduction.drgep_module &#8212; pynucastro 2.7.1.post54+g39968d02c documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=1a75946a"></script>
+    <script src="../../../_static/documentation_options.js?v=110ffa5a"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -703,7 +703,7 @@ document.write(`
         <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">R_TB</span><span class="p">,</span> <span class="n">R_TB_i</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">R_TB</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="n">R_TB_i</span> <span class="o">&gt;=</span> <span class="n">tol</span><span class="p">)</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_drgep</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_drgep</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
     <span class="c1">#-----------------------------------</span>
     <span class="c1"># Calculate interaction coefficients</span>
@@ -713,13 +713,14 @@ document.write(`
     <span class="n">adj_nuc</span> <span class="o">=</span> <span class="n">get_adj_nuc</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">comp</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span> <span class="ow">in</span> <span class="n">conds</span><span class="p">:</span>
-        <span class="n">rvals</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
+        <span class="n">rvals</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                   <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
         <span class="n">_drgep_kernel</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">R_TB</span><span class="p">,</span> <span class="n">rvals</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">,</span> <span class="n">adj_nuc</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">R_TB</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_drgep_mpi</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_drgep_mpi</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
     <span class="c1">#----------</span>
     <span class="c1"># Init. MPI</span>
@@ -738,7 +739,8 @@ document.write(`
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">MPI_rank</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">conds</span><span class="p">),</span> <span class="n">MPI_N</span><span class="p">):</span>
         <span class="n">comp</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">conds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-        <span class="n">rvals</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
+        <span class="n">rvals</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                   <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
         <span class="n">_drgep_kernel</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">R_TB_loc</span><span class="p">,</span> <span class="n">rvals</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">,</span> <span class="n">adj_nuc</span><span class="p">)</span>
 
     <span class="n">R_TB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">R_TB_loc</span><span class="p">)</span>
@@ -749,7 +751,8 @@ document.write(`
 
 <div class="viewcode-block" id="drgep">
 <a class="viewcode-back" href="../../../pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.drgep">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">drgep</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">,</span> <span class="n">returnobj</span><span class="o">=</span><span class="s1">&#39;net&#39;</span><span class="p">,</span> <span class="n">use_mpi</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">drgep</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+          <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">returnobj</span><span class="o">=</span><span class="s1">&#39;net&#39;</span><span class="p">,</span> <span class="n">use_mpi</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply the Directed Relation Graph with Error Propagation</span>
 <span class="sd">    (DRGEP) reduction method to a network.  This implementation is</span>
 <span class="sd">    based on the description in :cite:t:`pepiot-desjardins:2008` and</span>
@@ -771,6 +774,10 @@ document.write(`
 <span class="sd">        do not meet the specified tolerance will have their</span>
 <span class="sd">        interaction coefficients set to 0.0.  If supplied as a single</span>
 <span class="sd">        number then that value is used for all targets.</span>
+<span class="sd">    screen_func : Callable</span>
+<span class="sd">        one of the screening functions from :py:mod:`pynucastro.screening`</span>
+<span class="sd">        -- if provided, then the evaluated rates will include the screening</span>
+<span class="sd">        correction.</span>
 <span class="sd">    returnobj : str</span>
 <span class="sd">        The type of object to return.  Valid options are:</span>
 
@@ -805,9 +812,9 @@ document.write(`
     <span class="c1">#-------------------------------------------------------</span>
 
     <span class="k">if</span> <span class="n">use_mpi</span><span class="p">:</span>
-        <span class="n">R_TB</span> <span class="o">=</span> <span class="n">_drgep_mpi</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">)</span>
+        <span class="n">R_TB</span> <span class="o">=</span> <span class="n">_drgep_mpi</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">R_TB</span> <span class="o">=</span> <span class="n">_drgep</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">)</span>
+        <span class="n">R_TB</span> <span class="o">=</span> <span class="n">_drgep</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
 
     <span class="c1">#------------------------</span>
     <span class="c1"># Return requested object</span>

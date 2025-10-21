@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.reduction.drgep_module module &#8212; pynucastro 2.7.1.post53+g3acaa5806 documentation</title>
+    <title>pynucastro.reduction.drgep_module module &#8212; pynucastro 2.7.1.post54+g39968d02c documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=1a75946a"></script>
+    <script src="_static/documentation_options.js?v=110ffa5a"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -610,7 +610,7 @@ is typically the result of
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.reduction.drgep_module.drgep">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep_module.</span></span><span class="sig-name descname"><span class="pre">drgep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returnobj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'net'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_mpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep_module.html#drgep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep_module.drgep" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.reduction.drgep_module.</span></span><span class="sig-name descname"><span class="pre">drgep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">net</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tols</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returnobj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'net'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_mpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/reduction/drgep_module.html#drgep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.reduction.drgep_module.drgep" title="Link to this definition">#</a></dt>
 <dd><p>Apply the Directed Relation Graph with Error Propagation
 (DRGEP) reduction method to a network.  This implementation is
 based on the description in <span id="id1">Pepiot-Desjardins and Pitsch [<a class="reference internal" href="zreferences.html#id24" title="P. Pepiot-Desjardins and H. Pitsch. An efficient error-propagation-based reduction method for large chemical kinetic mechanisms. Combustion and Flame, 154(1):67-81, 2008. doi:10.1016/j.combustflame.2007.10.020.">2008</a>]</span> and
@@ -628,6 +628,9 @@ of the target nuclei.  Nuclei whose interaction coefficients
 do not meet the specified tolerance will have their
 interaction coefficients set to 0.0.  If supplied as a single
 number then that value is used for all targets.</p></li>
+<li><p><strong>screen_func</strong> (<em>Callable</em>) – one of the screening functions from <a class="reference internal" href="pynucastro.screening.html#module-pynucastro.screening" title="pynucastro.screening"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pynucastro.screening</span></code></a>
+– if provided, then the evaluated rates will include the screening
+correction.</p></li>
 <li><p><strong>returnobj</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – <p>The type of object to return.  Valid options are:</p>
 <ul>
 <li><p>’net’ : a reduced network (default)</p></li>
