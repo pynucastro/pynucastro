@@ -70,7 +70,7 @@ void evaluate_rates(const burn_t& state,
     fill_plasma_state(pstate, temp, state.rho, Y);
 #endif
 
-    tf_t tfactors = evaluate_tfactors(state.T);
+    const tf_t tfactors = evaluate_tfactors(state.T);
 
     fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
@@ -164,6 +164,23 @@ void evaluate_rates(const burn_t& state,
 
 
 }
+
+
+// backwards-compatible wrapper
+template <int do_T_derivatives, typename T>
+AMREX_GPU_HOST_DEVICE AMREX_INLINE
+void evaluate_rates(const burn_t& state,
+                    T& rate_eval) {
+
+    // create molar fractions
+    amrex::Array1D<amrex::Real, 1, NumSpec> Y;
+    for (int n = 1; n <= NumSpec; ++n) {
+        Y(n) = state.xn[n-1] * aion_inv[n-1];
+    }
+
+    evaluate_rates<do_T_derivatives>(state, Y, rate_eval);
+}
+
 
 #ifdef NSE_NET
 AMREX_GPU_HOST_DEVICE AMREX_INLINE

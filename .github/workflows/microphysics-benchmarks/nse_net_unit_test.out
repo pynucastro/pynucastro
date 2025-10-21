@@ -1,5 +1,5 @@
-Initializing AMReX (24.10-309-g5042c9bf7de2)...
-AMReX (24.10-309-g5042c9bf7de2) initialized
+Initializing AMReX (25.10-11-g26054b26bb65)...
+AMReX (25.10-11-g26054b26bb65) initialized
 starting the single zone burn...
 reading in network electron-capture / beta-decay tables...
 chemical potential of proton is -3
@@ -42,4 +42,4 @@ recovered energy: 2.785112645e+18 2.785112645e+18
 Constraint Eqns using solved input are: 3.607392163e-13 1.78745907e-14 1.509903313e-13 
 Constraint Jacobian using solved input are: 19.59903205 19.6957298 3.008596137e-09 9.77695683 9.822075222 1.5035807e-09 0.2615655771 0.2615655771 7.452183831e-10 
 -----------------------------------------------
-AMReX (24.10-309-g5042c9bf7de2) finalized
+AMReX (25.10-11-g26054b26bb65) finalized
