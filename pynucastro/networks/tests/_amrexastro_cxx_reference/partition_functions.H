@@ -55,7 +55,7 @@ namespace part_fun {
             // find the derivative (with respect to T, not T9)
 
             amrex::Real dpf_dT9 = pf * M_LN10 * slope;
-            dpf_dT = dpf_dT9 / 1.e9_rt;
+            dpf_dT = dpf_dT9 * 1.e-9_rt;
 
         } else {
 
