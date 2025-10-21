@@ -565,10 +565,6 @@ class RateCollection:
     inert_nuclei : list, tuple
         an iterable of Nuclei that should be part of the collection but
         are not linked via reactions to the other Nuclei in the network.
-    symmetric_screening : bool
-        symmetric screening means that we screen the reverse rates
-        using the same factor as the forward rates, for rates computed
-        via detailed balance.
     do_screening : bool
         should we consider screening at all -- this mainly affects
         whether we build the screening map
@@ -581,7 +577,7 @@ class RateCollection:
 
     def __init__(self, rate_files=None, libraries=None, rates=None,
                  inert_nuclei=None,
-                 symmetric_screening=False, do_screening=True,
+                 do_screening=True,
                  verbose=False):
 
         self.rates = []
@@ -589,7 +585,6 @@ class RateCollection:
 
         self.inert_nuclei = Nucleus.cast_list(inert_nuclei, allow_None=True)
 
-        self.symmetric_screening = symmetric_screening
         self.do_screening = do_screening
 
         self.verbose = verbose
@@ -1424,8 +1419,7 @@ class RateCollection:
         for r in self.rates:
             # Note screening effect is already included
             val = r.prefactor * rho**r.dens_exp * r.eval(T, rho=rho, comp=composition,
-                                                         screen_func=screen_func,
-                                                         symmetric_screening=self.symmetric_screening)
+                                                         screen_func=screen_func)
             if (r.weak_type == 'electron_capture' and not isinstance(r, TabularRate)):
                 val = val * y_e
             yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
@@ -1482,8 +1476,7 @@ class RateCollection:
                     # Note eval_jacobian_term already includes screening
                     jac[i, j] -= c * \
                         r.eval_jacobian_term(T, rho, comp, n_j,
-                                             screen_func=screen_func,
-                                             symmetric_screening=self.symmetric_screening)
+                                             screen_func=screen_func)
 
                 for r in self.nuclei_produced[n_i]:
                     if r in exclude_rates:
@@ -1493,8 +1486,7 @@ class RateCollection:
                     c = r.product_count(n_i)
                     jac[i, j] += c * \
                         r.eval_jacobian_term(T, rho, comp, n_j,
-                                             screen_func=screen_func,
-                                             symmetric_screening=self.symmetric_screening)
+                                             screen_func=screen_func)
 
         return jac
 
@@ -1954,8 +1946,7 @@ class RateCollection:
 
         # see if kwargs contains any of the properties held by
         # all network classes.
-        props = ["inert_nuclei", "do_screening",
-                 "symmetric_screening", "verbose"]
+        props = ["inert_nuclei", "do_screening", "verbose"]
         for p in props:
             val = kwargs.pop(p, None)
             if val:
@@ -1964,7 +1955,6 @@ class RateCollection:
         net = new_type(rates=self.get_rates(),
                        inert_nuclei=self.inert_nuclei,
                        do_screening=self.do_screening,
-                       symmetric_screening=self.symmetric_screening,
                        verbose=self.verbose,
                        *args, **kwargs)
 
