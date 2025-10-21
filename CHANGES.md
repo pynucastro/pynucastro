@@ -13,7 +13,7 @@
 
   * fix pylint 4.0 compatibility (#1138)
 
-  * `network_heloper` now takes a `verbose` flag (#1134)
+  * `network_helper` now takes a `verbose` flag (#1134)
 
   * numerous redundant examples (from the `examples/` directory)
     were removed (#1131)
