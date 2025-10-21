@@ -20,8 +20,7 @@ class TestScreening:
 
     def test_screening_map(self, rc):
 
-        screening_map = get_screening_map(rc.get_rates(),
-                                          symmetric_screening=rc.symmetric_screening)
+        screening_map = get_screening_map(rc.get_rates())
 
         assert len(screening_map) == 4
         assert len(screening_map[0].rates) == 1
