@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Screening Rates &#8212; pynucastro 2.7.1.post52+ga8dea16bc documentation</title>
+    <title>Screening Rates &#8212; pynucastro 2.7.1.post53+g3acaa5806 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=86d932dd"></script>
+    <script src="_static/documentation_options.js?v=1a75946a"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -688,12 +688,8 @@ reaction rate information is contained in the <code class="docutils literal notr
 <p>For a <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateCollection</span></code></a> or a network derived from it, there are a lot of rates that will need to be screened, and some might have the same nuclei that need to be screened.  A “screening map” keeps track of all of the rates that need to be screened for the same set of reactants.</p>
 <p>The screening map is a <code class="docutils literal notranslate"><span class="pre">list</span></code> of <a class="reference internal" href="pynucastro.screening.screening_util.html#pynucastro.screening.screening_util.ScreeningPair" title="pynucastro.screening.screening_util.ScreeningPair"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScreeningPair</span></code></a> objects which contain the pair of nuclei that need a screening factor computed as well as the list of all
 the rates that screening factor applies to.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Some networks (like the <code class="docutils literal notranslate"><span class="pre">aprox</span></code> networks in the literature) use the same screening factor for the forward and reverse rates.  A <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> takes a keyword argument <code class="docutils literal notranslate"><span class="pre">symmetric_screening</span></code> that tells the network to use the same screening for forward and reverse.  The screening map will then take this into account.</p>
-</div>
 <p>Here’s an example: let’s build a helium and carbon burning network.</p>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mynet</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">,</span>
                                         <span class="s2">&quot;na23&quot;</span><span class="p">,</span> <span class="s2">&quot;mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">])</span>
@@ -702,7 +698,7 @@ the rates that screening factor applies to.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.14/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:756: UserWarning: ReacLib neutron decay rate (&lt;n_to_p_weak_wc12&gt;) does not account for degeneracy at high densities. Consider using tabular rate from Langanke.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:751: UserWarning: ReacLib neutron decay rate (&lt;n_to_p_weak_wc12&gt;) does not account for degeneracy at high densities. Consider using tabular rate from Langanke.
   warnings.warn(msg)
 </pre></div>
 </div>
@@ -712,7 +708,7 @@ the rates that screening factor applies to.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_screening_map</span>
-<span class="n">screen_map</span> <span class="o">=</span> <span class="n">get_screening_map</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">get_rates</span><span class="p">(),</span> <span class="n">symmetric_screening</span><span class="o">=</span><span class="n">pynet</span><span class="o">.</span><span class="n">symmetric_screening</span><span class="p">)</span>
+<span class="n">screen_map</span> <span class="o">=</span> <span class="n">get_screening_map</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">get_rates</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>

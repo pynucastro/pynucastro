@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.reaclib_rate module &#8212; pynucastro 2.7.1.post52+ga8dea16bc documentation</title>
+    <title>pynucastro.rates.reaclib_rate module &#8212; pynucastro 2.7.1.post53+g3acaa5806 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=86d932dd"></script>
+    <script src="_static/documentation_options.js?v=1a75946a"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -632,7 +632,7 @@ rates together.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.reaclib_rate.ReacLibRate.eval">
-<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetric_screening</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/reaclib_rate.html#ReacLibRate.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.reaclib_rate.ReacLibRate.eval" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/reaclib_rate.html#ReacLibRate.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.reaclib_rate.ReacLibRate.eval" title="Link to this definition">#</a></dt>
 <dd><p>Evaluate the reaction rate for temperature T</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -646,8 +646,6 @@ to evaluate the rate with (not needed for ReacLib rates),
 but needed for evaluating screening effects.</p></li>
 <li><p><strong>screen_func</strong> (<em>Callable</em>) – one of the screening functions from <a class="reference internal" href="pynucastro.screening.html#module-pynucastro.screening" title="pynucastro.screening"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pynucastro.screening</span></code></a>
 – if provided, then the rate will include screening correction.</p></li>
-<li><p><strong>symmetric_screening</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Do we use the screening factor based on the products if
-this is a reverse rate (Q &lt; 0)?</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -717,7 +715,7 @@ computes the rate.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.reaclib_rate.ReacLibRate.get_rate_exponent">
-<span class="sig-name descname"><span class="pre">get_rate_exponent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetric_screening</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/reaclib_rate.html#ReacLibRate.get_rate_exponent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.reaclib_rate.ReacLibRate.get_rate_exponent" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_rate_exponent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/reaclib_rate.html#ReacLibRate.get_rate_exponent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.reaclib_rate.ReacLibRate.get_rate_exponent" title="Link to this definition">#</a></dt>
 <dd><p>For a rate written as a power law, r = r_0 (T/T0)**nu,
 return nu corresponding to T0. This also considers electron
 screening effect if screen_func is passed in.</p>
@@ -733,8 +731,6 @@ to evaluate the rate with (not needed for ReacLib rates),
 but needed for evaluating screening effects.</p></li>
 <li><p><strong>screen_func</strong> (<em>Callable</em>) – one of the screening functions from <a class="reference internal" href="pynucastro.screening.html#module-pynucastro.screening" title="pynucastro.screening"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pynucastro.screening</span></code></a>
 – if provided, then the rate exponent will include screening correction.</p></li>
-<li><p><strong>symmetric_screening</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Do we use the screening factor based on the products if
-this is a reverse rate (Q &lt; 0)?</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -758,7 +754,7 @@ versions of reactions.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.reaclib_rate.ReacLibRate.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Tmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1600000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoYmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">390000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoYmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">10)</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetric_screening</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/reaclib_rate.html#ReacLibRate.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.reaclib_rate.ReacLibRate.plot" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Tmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1600000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoYmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">390000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoYmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">10)</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/reaclib_rate.html#ReacLibRate.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.reaclib_rate.ReacLibRate.plot" title="Link to this definition">#</a></dt>
 <dd><p>Plot the rate’s temperature sensitivity vs temperature</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -774,8 +770,6 @@ versions of reactions.</p>
 to evaluate the screening effect.</p></li>
 <li><p><strong>screen_func</strong> (<em>Callable</em>) – one of the screening functions from <a class="reference internal" href="pynucastro.screening.html#module-pynucastro.screening" title="pynucastro.screening"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pynucastro.screening</span></code></a>
 – if provided, then the rate will include the screening correction.</p></li>
-<li><p><strong>symmetric_screening</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Do we use the screening factor based on the products if
-this is a reverse rate (Q &lt; 0)?</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>

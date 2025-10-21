@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.screening.screening_util &#8212; pynucastro 2.7.1.post52+ga8dea16bc documentation</title>
+    <title>pynucastro.screening.screening_util &#8212; pynucastro 2.7.1.post53+g3acaa5806 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=86d932dd"></script>
+    <script src="../../../_static/documentation_options.js?v=1a75946a"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -546,20 +546,15 @@ document.write(`
 
 <div class="viewcode-block" id="get_screening_map">
 <a class="viewcode-back" href="../../../pynucastro.screening.screening_util.html#pynucastro.screening.screening_util.get_screening_map">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_screening_map</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">symmetric_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_screening_map</span><span class="p">(</span><span class="n">rates</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a screening map---this is just a list of ScreeningPair</span>
 <span class="sd">    objects containing the information about nuclei pairs for</span>
-<span class="sd">    screening If symmetric_screening=True, then for reverse rates, we</span>
-<span class="sd">    screen using the forward rate nuclei (assuming that we got here</span>
-<span class="sd">    via detailed balance).</span>
+<span class="sd">    screening.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    rates : Iterable(Rate)</span>
 <span class="sd">        A list of the rates in our network.</span>
-<span class="sd">    symmetric_screening : bool</span>
-<span class="sd">        Do we use the same screening factor for the forward and reverse</span>
-<span class="sd">        rate of a single reaction process?</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -581,8 +576,6 @@ document.write(`
 
     <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">all_rates</span><span class="p">:</span>
         <span class="n">screen_nuclei</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span>
-        <span class="k">if</span> <span class="n">symmetric_screening</span><span class="p">:</span>
-            <span class="n">screen_nuclei</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">symmetric_screen</span>
 
         <span class="c1"># screen_nuclei may be [] if it is a decay, gamma-capture, or</span>
         <span class="c1"># neutron-capture</span>

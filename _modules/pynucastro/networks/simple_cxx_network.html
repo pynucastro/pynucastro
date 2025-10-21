@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.simple_cxx_network &#8212; pynucastro 2.7.1.post52+ga8dea16bc documentation</title>
+    <title>pynucastro.networks.simple_cxx_network &#8212; pynucastro 2.7.1.post53+g3acaa5806 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=86d932dd"></script>
+    <script src="../../../_static/documentation_options.js?v=1a75946a"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -521,8 +521,7 @@ document.write(`
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_screening</span><span class="p">:</span>
             <span class="n">screening_map</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">screening_map</span> <span class="o">=</span> <span class="n">get_screening_map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">(),</span>
-                                              <span class="n">symmetric_screening</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screening</span><span class="p">)</span>
+            <span class="n">screening_map</span> <span class="o">=</span> <span class="n">get_screening_map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">())</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">scr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">screening_map</span><span class="p">):</span>
 
             <span class="n">nuc1_info</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span><span class="si">}</span><span class="s1">_rt, </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">A</span><span class="p">)</span><span class="si">}</span><span class="s1">_rt&#39;</span>
@@ -554,12 +553,13 @@ document.write(`
 
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
-                <span class="c1"># there might be both the forward and reverse 3-alpha</span>
-                <span class="c1"># if we are doing symmetric screening</span>
+                <span class="c1"># there should only be a single forward 3-alpha rate</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
 
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">rr</span> <span class="ow">in</span> <span class="n">scr</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
-                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s1">rate_eval.screened_rates(k_</span><span class="si">{</span><span class="n">rr</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s1">) *= scor * scor2;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">rr</span> <span class="o">=</span> <span class="n">scr</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s1">rate_eval.screened_rates(k_</span><span class="si">{</span><span class="n">rr</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s1">) *= scor * scor2;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># there might be several rates that have the same</span>
                 <span class="c1"># reactants and therefore the same screening applies</span>

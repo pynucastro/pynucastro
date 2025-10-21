@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.7.1.post52+ga8dea16bc documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.7.1.post53+g3acaa5806 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=86d932dd"></script>
+    <script src="../../../_static/documentation_options.js?v=1a75946a"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -916,24 +916,6 @@ document.write(`
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nucz</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nucz</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 
-        <span class="c1"># if the rate is a reverse rate (defined as Q &lt; 0), then we</span>
-        <span class="c1"># might actually want to compute the screening based on the</span>
-        <span class="c1"># reactants of the forward rate that was used in the detailed</span>
-        <span class="c1"># balance.  Rate.symmetric_screen is what should be used in</span>
-        <span class="c1"># the screening in this case</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screen</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">nucz</span> <span class="o">=</span> <span class="p">[</span><span class="n">q</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="k">if</span> <span class="n">q</span><span class="o">.</span><span class="n">Z</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nucz</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">nucz</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screen</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nucz</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nucz</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nucz</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nucz</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span>
-
 <div class="viewcode-block" id="Rate.cname">
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.cname">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">cname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1113,8 +1095,7 @@ document.write(`
 
 <div class="viewcode-block" id="Rate.evaluate_screening">
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.evaluate_screening">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_screening</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-                           <span class="n">symmetric_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_screening</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the screening correction for this rate.</span>
 
 <span class="sd">        Parameters</span>
@@ -1127,9 +1108,6 @@ document.write(`
 <span class="sd">            composition used to evaluate screening</span>
 <span class="sd">        screen_func : Callable</span>
 <span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
-<span class="sd">        symmetric_screening : bool</span>
-<span class="sd">            Do we use the screening factor based on the products if</span>
-<span class="sd">            this is a reverse rate (Q &lt; 0)?</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1146,8 +1124,7 @@ document.write(`
         <span class="c1"># 2-body reaction              : 1 ScreeningPair</span>
         <span class="c1"># Photodisintegration (1-body) : 0 ScreeningPair</span>
 
-        <span class="n">screening_map</span> <span class="o">=</span> <span class="n">get_screening_map</span><span class="p">([</span><span class="bp">self</span><span class="p">],</span>
-                                          <span class="n">symmetric_screening</span><span class="o">=</span><span class="n">symmetric_screening</span><span class="p">)</span>
+        <span class="n">screening_map</span> <span class="o">=</span> <span class="n">get_screening_map</span><span class="p">([</span><span class="bp">self</span><span class="p">])</span>
 
         <span class="c1"># Handle 0 ScreeningPair case</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">screening_map</span><span class="p">:</span>
@@ -1224,7 +1201,7 @@ document.write(`
 <div class="viewcode-block" id="Rate.eval">
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-             <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">symmetric_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+             <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the reaction rate for temperature T.  This is a stub</span>
 <span class="sd">        and should be implemented by the derived class.</span>
 
@@ -1241,9 +1218,6 @@ document.write(`
 <span class="sd">        screen_func : Callable</span>
 <span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
 <span class="sd">            -- if provided, then the rate will include the screening correction</span>
-<span class="sd">        symmetric_screening : bool</span>
-<span class="sd">            Do we use the screening factor based on the products if</span>
-<span class="sd">            this is a reverse rate (Q &lt; 0)?</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -1333,7 +1307,7 @@ document.write(`
 <div class="viewcode-block" id="Rate.eval_jacobian_term">
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval_jacobian_term">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">eval_jacobian_term</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">y_i</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-                           <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">symmetric_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                           <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate drate/d(y_i), the derivative of the rate with</span>
 <span class="sd">        respect to ``y_i``.  This rate term has the full composition</span>
 <span class="sd">        and density dependence, i.e.:</span>
@@ -1357,9 +1331,6 @@ document.write(`
 <span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
 <span class="sd">            -- if provided, then the jacobian_term will include the</span>
 <span class="sd">            screening correction.</span>
-<span class="sd">        symmetric_screening : bool</span>
-<span class="sd">            Do we use the screening factor based on the products if</span>
-<span class="sd">            this is a reverse rate (Q &lt; 0)?</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1396,8 +1367,7 @@ document.write(`
 
         <span class="c1"># finally evaluate the rate -- for tabular rates, we need to set rhoY</span>
         <span class="n">rate_eval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
-                              <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">,</span>
-                              <span class="n">symmetric_screening</span><span class="o">=</span><span class="n">symmetric_screening</span><span class="p">)</span>
+                              <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">*</span> <span class="n">dens_term</span> <span class="o">*</span> <span class="n">y_e_term</span> <span class="o">*</span> <span class="n">Y_term</span> <span class="o">*</span> <span class="n">rate_eval</span></div>
 </div>

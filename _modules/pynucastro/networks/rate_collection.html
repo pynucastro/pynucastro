@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.7.1.post52+ga8dea16bc documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.7.1.post53+g3acaa5806 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=86d932dd"></script>
+    <script src="../../../_static/documentation_options.js?v=1a75946a"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1099,10 +1099,6 @@ document.write(`
 <span class="sd">    inert_nuclei : list, tuple</span>
 <span class="sd">        an iterable of Nuclei that should be part of the collection but</span>
 <span class="sd">        are not linked via reactions to the other Nuclei in the network.</span>
-<span class="sd">    symmetric_screening : bool</span>
-<span class="sd">        symmetric screening means that we screen the reverse rates</span>
-<span class="sd">        using the same factor as the forward rates, for rates computed</span>
-<span class="sd">        via detailed balance.</span>
 <span class="sd">    do_screening : bool</span>
 <span class="sd">        should we consider screening at all -- this mainly affects</span>
 <span class="sd">        whether we build the screening map</span>
@@ -1115,7 +1111,7 @@ document.write(`
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">libraries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">inert_nuclei</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">symmetric_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">do_screening</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">do_screening</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                  <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1123,7 +1119,6 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">inert_nuclei</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">inert_nuclei</span><span class="p">,</span> <span class="n">allow_None</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screening</span> <span class="o">=</span> <span class="n">symmetric_screening</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">do_screening</span> <span class="o">=</span> <span class="n">do_screening</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
@@ -2020,8 +2015,7 @@ document.write(`
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
             <span class="c1"># Note screening effect is already included</span>
             <span class="n">val</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">*</span> <span class="n">rho</span><span class="o">**</span><span class="n">r</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">*</span> <span class="n">r</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">composition</span><span class="p">,</span>
-                                                         <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">,</span>
-                                                         <span class="n">symmetric_screening</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screening</span><span class="p">)</span>
+                                                         <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">TabularRate</span><span class="p">)):</span>
                 <span class="n">val</span> <span class="o">=</span> <span class="n">val</span> <span class="o">*</span> <span class="n">y_e</span>
             <span class="n">yfac</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">mul</span><span class="p">,</span> <span class="p">[</span><span class="n">ys</span><span class="p">[</span><span class="n">q</span><span class="p">]</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">])</span>
@@ -2081,8 +2075,7 @@ document.write(`
                     <span class="c1"># Note eval_jacobian_term already includes screening</span>
                     <span class="n">jac</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">-=</span> <span class="n">c</span> <span class="o">*</span> \
                         <span class="n">r</span><span class="o">.</span><span class="n">eval_jacobian_term</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">n_j</span><span class="p">,</span>
-                                             <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">,</span>
-                                             <span class="n">symmetric_screening</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screening</span><span class="p">)</span>
+                                             <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
 
                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">n_i</span><span class="p">]:</span>
                     <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">exclude_rates</span><span class="p">:</span>
@@ -2092,8 +2085,7 @@ document.write(`
                     <span class="n">c</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">product_count</span><span class="p">(</span><span class="n">n_i</span><span class="p">)</span>
                     <span class="n">jac</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">c</span> <span class="o">*</span> \
                         <span class="n">r</span><span class="o">.</span><span class="n">eval_jacobian_term</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">n_j</span><span class="p">,</span>
-                                             <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">,</span>
-                                             <span class="n">symmetric_screening</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screening</span><span class="p">)</span>
+                                             <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">jac</span></div>
 
@@ -2592,8 +2584,7 @@ document.write(`
 
         <span class="c1"># see if kwargs contains any of the properties held by</span>
         <span class="c1"># all network classes.</span>
-        <span class="n">props</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;inert_nuclei&quot;</span><span class="p">,</span> <span class="s2">&quot;do_screening&quot;</span><span class="p">,</span>
-                 <span class="s2">&quot;symmetric_screening&quot;</span><span class="p">,</span> <span class="s2">&quot;verbose&quot;</span><span class="p">]</span>
+        <span class="n">props</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;inert_nuclei&quot;</span><span class="p">,</span> <span class="s2">&quot;do_screening&quot;</span><span class="p">,</span> <span class="s2">&quot;verbose&quot;</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
             <span class="n">val</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">val</span><span class="p">:</span>
@@ -2602,7 +2593,6 @@ document.write(`
         <span class="n">net</span> <span class="o">=</span> <span class="n">new_type</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">(),</span>
                        <span class="n">inert_nuclei</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inert_nuclei</span><span class="p">,</span>
                        <span class="n">do_screening</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">do_screening</span><span class="p">,</span>
-                       <span class="n">symmetric_screening</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">symmetric_screening</span><span class="p">,</span>
                        <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
                        <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
