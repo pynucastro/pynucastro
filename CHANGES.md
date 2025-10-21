@@ -2,9 +2,23 @@
 
 ## 2.8.0
 
-  * update `pyproject.toml` for pylint 4.0 (#1138)
+  * DRGEP reduction now supports screening (#1148)
 
-  * `network_heloper` now takes a `verbose` flag (#1134)
+  * symmetric screening support (using the same screening factor for
+    forward and reverse rate) has been removed (#1147)
+
+  * add the ability to convert a network into a different type (#1140)
+
+  * add the ability to plot the net rate (forward - reverse) (#1135)
+
+  * screening when evaluating rates in python is now handled by the
+    `Rate` class instead of the `RateCollection` class.  This fixes an
+    issue where `ApproximateRate` child rates were not being screened
+    (C++ and `PythonNetwork` were unaffected). (#1144)
+
+  * fix pylint 4.0 compatibility (#1138)
+
+  * `network_helper` now takes a `verbose` flag (#1134)
 
   * numerous redundant examples (from the `examples/` directory)
     were removed (#1131)
@@ -67,10 +81,12 @@
   * `AmrexAstroCxxNetwork` templates now use the new neutrino cooling
     method (#1069)
 
-  * Binding energy example has been updated with a better example (#1087)
+  * Binding energy example has been updated with a better example
+    (#1087)
 
   * Doc and API docstring improvements (#1079, #1082, #1083, #1084,
-    #1116, #1117, #1127, #1132)
+    #1116, #1117, #1127, #1132, #1139, #1141, #1143, #1146, #1149,
+    #1152)
 
   * `pyproject.toml` updated with license info (#1081)
 
