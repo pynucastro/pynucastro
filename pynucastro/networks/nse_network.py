@@ -96,6 +96,16 @@ class NSENetwork(RateCollection):
 
     """
 
+    def __init__(self, *args, use_unreliable_spins=True, **kwargs):
+        """Parameters
+        ----------
+        use_unreliable_spins : bool
+            whether to allow nuclei with weakly supported spin data
+        """
+
+        self.use_unreliable_spins = use_unreliable_spins
+        super().__init__(*args, **kwargs)
+
     def _evaluate_mu_c(self, state, use_coulomb_corr=True):
         """Find the Coulomb potential of each nuclide in NSE state.
         The Coulomb potential is evaluated using the Helmholtz free
@@ -143,7 +153,7 @@ class NSENetwork(RateCollection):
 
         return u_c
 
-    def _nucleon_fraction_nse(self, u, u_c, state, use_unreliable_spins):
+    def _nucleon_fraction_nse(self, u, u_c, state):
         """Compute the NSE mass fraction for a given NSE state.
 
         NSE condition says that the chemical potential of the i-th nuclei
@@ -177,8 +187,6 @@ class NSENetwork(RateCollection):
             A dictionary of coulomb potential keyed by Nucleus.
         state : NseState
             NSE state.
-        use_unreliable_spins : bool
-            whether to allow nuclei with weakly supported spin data
 
         Returns
         -------
@@ -196,9 +204,9 @@ class NSENetwork(RateCollection):
 
             if not nuc.spin_states:
                 raise ValueError(f"The spin of {nuc} is not implemented for now.")
-            if not use_unreliable_spins and not nuc.spin_reliable:
+            if not self.use_unreliable_spins and not nuc.spin_reliable:
                 raise ValueError(f"The spin of {nuc} is determined by a weak experimental or theoretical argument. "
-                                 "Pass in use_unreliable_spins=True as a parameter to override.")
+                                 "Pass in use_unreliable_spins=True as a parameter to NSENetwork() to override.")
 
             nse_exponent = (nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.nucbind * nuc.A) / (constants.k_MeV * state.temp)
             nse_exponent = min(500.0, nse_exponent)
@@ -208,7 +216,7 @@ class NSENetwork(RateCollection):
 
         return Xs
 
-    def _constraint_eq(self, u, u_c, state, use_unreliable_spins):
+    def _constraint_eq(self, u, u_c, state):
         """Implement the constraints for our system to evaluate
         chemical potential for proton and neutron, which is used when
         evaluating composition at NSE.
@@ -225,8 +233,6 @@ class NSENetwork(RateCollection):
             A dictionary of coulomb potential keyed by Nucleus.
         state : NseState
             NSE state
-        use_unreliable_spins : bool
-            whether to allow nuclei with weakly supported spin data
 
         Returns
         -------
@@ -235,14 +241,14 @@ class NSENetwork(RateCollection):
 
         """
 
-        Xs = self._nucleon_fraction_nse(u, u_c, state, use_unreliable_spins)
+        Xs = self._nucleon_fraction_nse(u, u_c, state)
         constraint_eqs = [sum(Xs[nuc] for nuc in self.unique_nuclei) - 1.0,
                           sum(Xs[nuc] * nuc.Z / nuc.A for nuc in self.unique_nuclei) - state.ye]
 
         return constraint_eqs
 
     def get_comp_nse(self, rho, T, ye, init_guess=(-3.5, -15),
-                     tol=1.0e-11, use_coulomb_corr=False, use_unreliable_spins=True,
+                     tol=1.0e-11, use_coulomb_corr=False,
                      return_sol=False):
         """Return the NSE composition given density, temperature and
         prescribed electron fraction using scipy.fsolve.
@@ -261,8 +267,6 @@ class NSENetwork(RateCollection):
             tolerance of scipy.fsolve
         use_coulomb_corr : bool
             whether to include coulomb correction terms
-        use_unreliable_spins : bool
-            whether to allow nuclei whose spin data is determined by a weak experimental or theoretical argument
         return_sol : bool
             whether to return the solution of the proton and neutron chemical potential.
 
@@ -301,14 +305,14 @@ class NSENetwork(RateCollection):
                 # Filter out runtimewarnings from fsolve, here we check convergence by np.isclose
                 with warnings.catch_warnings():
                     warnings.filterwarnings("ignore", category=RuntimeWarning)
-                    u = fsolve(self._constraint_eq, guess, args=(u_c, state, use_unreliable_spins), xtol=tol, maxfev=800)
-                Xs = self._nucleon_fraction_nse(u, u_c, state, use_unreliable_spins)
-                res = self._constraint_eq(u, u_c, state, use_unreliable_spins)
+                    u = fsolve(self._constraint_eq, guess, args=(u_c, state), xtol=tol, maxfev=800)
+                Xs = self._nucleon_fraction_nse(u, u_c, state)
+                res = self._constraint_eq(u, u_c, state)
                 is_pos_new = all(k > 0 for k in res)
                 found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1.0e-11, atol=1.0e-11))
 
                 if found_sol:
-                    Xs = self._nucleon_fraction_nse(u, u_c, state, use_unreliable_spins)
+                    Xs = self._nucleon_fraction_nse(u, u_c, state)
                     comp = Composition(self.unique_nuclei)
                     comp.X = Xs
 
@@ -334,7 +338,7 @@ class NSENetwork(RateCollection):
         raise ValueError("Unable to find a solution, try to adjust initial guess manually")
 
     def generate_table(self, rho_values=None, T_values=None, Ye_values=None,
-                       comp_reduction_func=None, use_unreliable_spins=True,
+                       comp_reduction_func=None,
                        verbose=False, outfile="nse.tbl"):
         """Generate a table of NSE properties.  For every combination
         of density, temperature, and Ye, we solve for the NSE state
@@ -351,8 +355,6 @@ class NSENetwork(RateCollection):
         comp_reduction_func : Callable
             a function that takes the NSE composition and return a reduced
             composition
-        use_unreliable_spins : bool
-            whether to allow nuclei whose spin data is determined by a weak experimental or theoretical argument
         verbose : bool
             output progress on creating the table as we go along
         outfile : str
@@ -376,13 +378,11 @@ class NSENetwork(RateCollection):
                     try:
                         comp, sol = self.get_comp_nse(rho, T, ye, use_coulomb_corr=True,
                                                       init_guess=initial_guess,
-                                                      use_unreliable_spins=use_unreliable_spins,
                                                       return_sol=True)
                     except ValueError:
                         initial_guess = (-3.5, -15)
                         comp, sol = self.get_comp_nse(rho, T, ye, use_coulomb_corr=True,
                                                       init_guess=initial_guess,
-                                                      use_unreliable_spins=use_unreliable_spins,
                                                       return_sol=True)
 
                     mu_p[irho, iye] = sol[0]
