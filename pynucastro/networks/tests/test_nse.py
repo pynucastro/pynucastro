@@ -12,25 +12,6 @@ class TestNSE:
         return pyna.NSENetwork(libraries=lib, use_unreliable_spins=False)
 
     @pytest.fixture(scope="class")
-    def upper_net_reliable_spins(self, tabular_library, reaclib_library):
-
-        nuclei = ["p", "n", "cu72", "cu73", "ni72", "ni73"]
-        tablib = tabular_library.linking_nuclei(nuclei)
-        reaclib = reaclib_library.linking_nuclei(nuclei)
-
-        lib = tablib + reaclib
-
-        rates_to_remove = []
-        for pair in lib.find_duplicate_links():
-            for r in pair:
-                if isinstance(r, pyna.rates.ReacLibRate):
-                    rates_to_remove.append(r)
-        for r in rates_to_remove:
-            lib.remove_rate(r)
-
-        return pyna.NSENetwork(libraries=lib)
-    
-    @pytest.fixture(scope="class")
     def upper_net_unreliable_spins(self, tabular_library, reaclib_library):
 
         nuclei = ["p", "n", "cu72", "cu73", "ni72", "ni73"]
@@ -48,7 +29,7 @@ class TestNSE:
             lib.remove_rate(r)
 
         return pyna.NSENetwork(libraries=lib, use_unreliable_spins=True)
-    
+
     @pytest.fixture(scope="class")
     def upper_net_reliable_spins(self, tabular_library, reaclib_library):
 
@@ -133,4 +114,5 @@ class TestNSE:
             upper_net_reliable_spins.get_comp_nse(rho, T, ye, use_coulomb_corr=True)
 
         assert errorcode.value.args[0] == 'The spin of Ni73 is determined by a weak experimental' + \
-            ' or theoretical argument. Pass in use_unreliable_spins=True as a parameter to override.'
+            ' or theoretical argument. Pass in use_unreliable_spins=True as a parameter to NSENetwork()' + \
+            ' to override.'
