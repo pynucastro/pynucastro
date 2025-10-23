@@ -33,7 +33,7 @@ class TestNSETable:
         for r in rates_to_remove:
             all_lib.remove_rate(r)
 
-        nse = pyna.NSENetwork(libraries=[all_lib])
+        nse = pyna.NSENetwork(libraries=[all_lib], use_unreliable_spins=False)
 
         return nse
 
@@ -56,8 +56,7 @@ class TestNSETable:
         nse_net.generate_table(rho_values=rhos,
                                T_values=Ts,
                                Ye_values=yes,
-                               comp_reduction_func=self.get_reduced_comp,
-                               use_unreliable_spins=False)
+                               comp_reduction_func=self.get_reduced_comp)
 
         # this creates a file called `nse.tbl`, which we want to compare
         # to the stored benchmark
