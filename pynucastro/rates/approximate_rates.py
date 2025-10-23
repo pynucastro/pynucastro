@@ -310,7 +310,8 @@ class ApproximateRate(Rate):
         # the individual rates are screened -- we don't screen the combination of them
         pass
 
-    def eval(self, T, *, rho=None, comp=None):
+    def eval(self, T, *, rho=None, comp=None,
+             screen_func=None):
         """Evaluate the approximate rate.
 
         Parameters
@@ -318,9 +319,14 @@ class ApproximateRate(Rate):
         T : float
             the temperature to evaluate the rate at
         rho : float
-            the density to evaluate the rate at
-        comp : Composition
-            the composition to evaluate the rate with
+            the density to evaluate screening effects at.
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            to evaluate screening effects with.
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the rate will include screening correction.
 
         Returns
         -------
@@ -330,22 +336,30 @@ class ApproximateRate(Rate):
         if self.approx_type == "ap_pg":
             if not self.is_reverse:  # pylint: disable=no-else-return
                 # the approximate forward rate is r_ag + r_ap r_pg / (r_pg + r_pa)
-                r_ag = self.rates["A(a,g)B"].eval(T)
-                r_ap = self.rates["A(a,p)X"].eval(T)
-                r_pg = self.rates["X(p,g)B"].eval(T)
+                r_ag = self.rates["A(a,g)B"].eval(T, rho=rho, comp=comp,
+                                                  screen_func=screen_func)
+                r_ap = self.rates["A(a,p)X"].eval(T, rho=rho, comp=comp,
+                                                  screen_func=screen_func)
+                r_pg = self.rates["X(p,g)B"].eval(T, rho=rho, comp=comp,
+                                                  screen_func=screen_func)
 
-                r_pa = self.rates["X(p,a)A"].eval(T)
+                r_pa = self.rates["X(p,a)A"].eval(T, rho=rho, comp=comp,
+                                                  screen_func=screen_func)
 
                 return r_ag + r_ap * r_pg / (r_pg + r_pa)
 
             else:
                 # the approximate reverse rate is r_ga + r_pa r_gp / (r_pg + r_pa)
 
-                r_ga = self.rates["B(g,a)A"].eval(T)
-                r_gp = self.rates["B(g,p)X"].eval(T)
-                r_pa = self.rates["X(p,a)A"].eval(T)
+                r_ga = self.rates["B(g,a)A"].eval(T, rho=rho, comp=comp,
+                                                  screen_func=screen_func)
+                r_gp = self.rates["B(g,p)X"].eval(T, rho=rho, comp=comp,
+                                                  screen_func=screen_func)
+                r_pa = self.rates["X(p,a)A"].eval(T, rho=rho, comp=comp,
+                                                  screen_func=screen_func)
 
-                r_pg = self.rates["X(p,g)B"].eval(T)
+                r_pg = self.rates["X(p,g)B"].eval(T, rho=rho, comp=comp,
+                                                  screen_func=screen_func)
 
                 return r_ga + r_pa * r_gp / (r_pg + r_pa)
 
@@ -357,19 +371,25 @@ class ApproximateRate(Rate):
 
             if not self.is_reverse:  # pylint: disable=no-else-return
                 # the forward rate
-                A_ng_X = self.rates["A(n,g)X"].eval(T)
-                X_ng_B = self.rates["X(n,g)B"].eval(T)
+                A_ng_X = self.rates["A(n,g)X"].eval(T, rho=rho, comp=comp,
+                                                    screen_func=screen_func)
+                X_ng_B = self.rates["X(n,g)B"].eval(T, rho=rho, comp=comp,
+                                                    screen_func=screen_func)
 
-                X_gn_A = self.rates["X(g,n)A"].eval(T)
+                X_gn_A = self.rates["X(g,n)A"].eval(T, rho=rho, comp=comp,
+                                                    screen_func=screen_func)
 
                 return A_ng_X * X_ng_B / (rho * Yn * X_ng_B + X_gn_A)
 
             else:
                 # the reverse rate
-                B_gn_X = self.rates["B(g,n)X"].eval(T)
-                X_gn_A = self.rates["X(g,n)A"].eval(T)
+                B_gn_X = self.rates["B(g,n)X"].eval(T, rho=rho, comp=comp,
+                                                    screen_func=screen_func)
+                X_gn_A = self.rates["X(g,n)A"].eval(T, rho=rho, comp=comp,
+                                                    screen_func=screen_func)
 
-                X_ng_B = self.rates["X(n,g)B"].eval(T)
+                X_ng_B = self.rates["X(n,g)B"].eval(T, rho=rho, comp=comp,
+                                                    screen_func=screen_func)
 
                 return B_gn_X * X_gn_A / (rho * Yn * X_ng_B + X_gn_A)
 
