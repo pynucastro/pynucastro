@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.nse_network &#8212; pynucastro 2.7.1.post55+ga4ff16a54 documentation</title>
+    <title>pynucastro.networks.nse_network &#8212; pynucastro 2.7.1.post56+g6e8518830 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=9b946bd9"></script>
+    <script src="../../../_static/documentation_options.js?v=b4870f06"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -594,6 +594,16 @@ document.write(`
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        use_unreliable_spins : bool</span>
+<span class="sd">            whether to allow nuclei with weakly supported spin data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_unreliable_spins</span> <span class="o">=</span> <span class="n">use_unreliable_spins</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_evaluate_mu_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">use_coulomb_corr</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the Coulomb potential of each nuclide in NSE state.</span>
 <span class="sd">        The Coulomb potential is evaluated using the Helmholtz free</span>
@@ -692,6 +702,9 @@ document.write(`
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">nuc</span><span class="o">.</span><span class="n">spin_states</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The spin of </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2"> is not implemented for now.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_unreliable_spins</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">nuc</span><span class="o">.</span><span class="n">spin_reliable</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The spin of </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2"> is determined by a weak experimental or theoretical argument. &quot;</span>
+                                 <span class="s2">&quot;Pass in use_unreliable_spins=True as a parameter to NSENetwork() to override.&quot;</span><span class="p">)</span>
 
             <span class="n">nse_exponent</span> <span class="o">=</span> <span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">*</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">nuc</span><span class="o">.</span><span class="n">N</span> <span class="o">*</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">u_c</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">+</span> <span class="n">nuc</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">k_MeV</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span><span class="p">)</span>
             <span class="n">nse_exponent</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mf">500.0</span><span class="p">,</span> <span class="n">nse_exponent</span><span class="p">)</span>
@@ -735,7 +748,8 @@ document.write(`
 <div class="viewcode-block" id="NSENetwork.get_comp_nse">
 <a class="viewcode-back" href="../../../pynucastro.networks.nse_network.html#pynucastro.networks.nse_network.NSENetwork.get_comp_nse">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_comp_nse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">ye</span><span class="p">,</span> <span class="n">init_guess</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="o">-</span><span class="mi">15</span><span class="p">),</span>
-                     <span class="n">tol</span><span class="o">=</span><span class="mf">1.0e-11</span><span class="p">,</span> <span class="n">use_coulomb_corr</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_sol</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                     <span class="n">tol</span><span class="o">=</span><span class="mf">1.0e-11</span><span class="p">,</span> <span class="n">use_coulomb_corr</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                     <span class="n">return_sol</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the NSE composition given density, temperature and</span>
 <span class="sd">        prescribed electron fraction using scipy.fsolve.</span>
 

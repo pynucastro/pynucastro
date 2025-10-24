@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.library module &#8212; pynucastro 2.7.1.post55+ga4ff16a54 documentation</title>
+    <title>pynucastro.rates.library module &#8212; pynucastro 2.7.1.post56+g6e8518830 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=9b946bd9"></script>
+    <script src="_static/documentation_options.js?v=b4870f06"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -699,7 +699,7 @@ by detailed balance, and not that Q &lt; 0.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.derived_backward">
-<span class="sig-name descname"><span class="pre">derived_backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compute_Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_pf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.derived_backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.derived_backward" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">derived_backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compute_Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_pf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_unreliable_spins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.derived_backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.derived_backward" title="Link to this definition">#</a></dt>
 <dd><p>Loop over all of the forward rates that can be used to
 derive inverse rates (as returned by
 <a class="reference internal" href="#pynucastro.rates.library.Library.forward_for_detailed_balance" title="pynucastro.rates.library.Library.forward_for_detailed_balance"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward_for_detailed_balance()</span></code></a>) and derive the
@@ -782,7 +782,7 @@ and does not necessarily mean Q &gt; 0.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.forward_for_detailed_balance">
-<span class="sig-name descname"><span class="pre">forward_for_detailed_balance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.forward_for_detailed_balance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.forward_for_detailed_balance" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">forward_for_detailed_balance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_unreliable_spins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.forward_for_detailed_balance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.forward_for_detailed_balance" title="Link to this definition">#</a></dt>
 <dd><p>Loop over the forward rates (as filtered by
 <a class="reference internal" href="#pynucastro.rates.library.Library.forward" title="pynucastro.rates.library.Library.forward"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code></a>) and return those that can be used to
 derive reverse rates via detailed balance.  This means that

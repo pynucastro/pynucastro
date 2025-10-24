@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.nucdata.spin_table module &#8212; pynucastro 2.7.1.post55+ga4ff16a54 documentation</title>
+    <title>pynucastro.nucdata.spin_table module &#8212; pynucastro 2.7.1.post56+g6e8518830 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=9b946bd9"></script>
+    <script src="_static/documentation_options.js?v=b4870f06"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -569,6 +569,7 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.spin_table.SpinTable"><code class="docutils literal notranslate"><span class="pre">SpinTable</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.spin_table.SpinTable.get_spin_reliability"><code class="docutils literal notranslate"><span class="pre">SpinTable.get_spin_reliability()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.spin_table.SpinTable.get_spin_states"><code class="docutils literal notranslate"><span class="pre">SpinTable.get_spin_states()</span></code></a></li>
 </ul>
 </li>
@@ -588,7 +589,7 @@ document.write(`
 <p>Classes and methods for dealing with nuclear spin data.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.nucdata.spin_table.SpinTable">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.spin_table.</span></span><span class="sig-name descname"><span class="pre">SpinTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datafile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reliable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/spin_table.html#SpinTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.spin_table.SpinTable" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.spin_table.</span></span><span class="sig-name descname"><span class="pre">SpinTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datafile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/spin_table.html#SpinTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.spin_table.SpinTable" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Manage the nuclear spin data in a dictionary data structure
 that maps nuclides to their number of nuclear spin states.
@@ -597,6 +598,23 @@ retrieve the spin states for a designated Nucleus class.</p>
 <p>The variable reliable switch between using all the values of the
 tables, excluding the nuclei where only intervals are given and
 the values measured by strong experimental arguments.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.spin_table.SpinTable.get_spin_reliability">
+<span class="sig-name descname"><span class="pre">get_spin_reliability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/spin_table.html#SpinTable.get_spin_reliability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.spin_table.SpinTable.get_spin_reliability" title="Link to this definition">#</a></dt>
+<dd><p>Return whether the spin for a nucleus is reliable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Atomic weight</p></li>
+<li><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Atomic number</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.nucdata.spin_table.SpinTable.get_spin_states">
 <span class="sig-name descname"><span class="pre">get_spin_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/spin_table.html#SpinTable.get_spin_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.spin_table.SpinTable.get_spin_states" title="Link to this definition">#</a></dt>
@@ -664,6 +682,7 @@ the values measured by strong experimental arguments.</p>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.spin_table.SpinTable"><code class="docutils literal notranslate"><span class="pre">SpinTable</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.spin_table.SpinTable.get_spin_reliability"><code class="docutils literal notranslate"><span class="pre">SpinTable.get_spin_reliability()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.spin_table.SpinTable.get_spin_states"><code class="docutils literal notranslate"><span class="pre">SpinTable.get_spin_states()</span></code></a></li>
 </ul>
 </li>

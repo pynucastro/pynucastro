@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>NSE Examples &#8212; pynucastro 2.7.1.post55+ga4ff16a54 documentation</title>
+    <title>NSE Examples &#8212; pynucastro 2.7.1.post56+g6e8518830 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=9b946bd9"></script>
+    <script src="_static/documentation_options.js?v=b4870f06"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -627,7 +627,7 @@ and solved using <code class="docutils literal notranslate"><span class="pre">sc
 <p>Then initialize an <a class="reference internal" href="pynucastro.networks.nse_network.html#pynucastro.networks.nse_network.NSENetwork" title="pynucastro.networks.nse_network.NSENetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NSENetwork</span></code></a> by using the the rates created by the <code class="docutils literal notranslate"><span class="pre">Library</span></code> object.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nse</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">NSENetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">lib</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nse</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">NSENetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">lib</span><span class="p">,</span> <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -637,7 +637,7 @@ for the proton and neutron chemical potentials.  Then using this solution, it ca
 The main interface for this is <a class="reference internal" href="pynucastro.networks.nse_network.html#pynucastro.networks.nse_network.NSENetwork.get_comp_nse" title="pynucastro.networks.nse_network.NSENetwork.get_comp_nse"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_comp_nse(rho,</span> <span class="pre">T,</span> <span class="pre">ye)</span></code></a> which returns the composition at NSE as a <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Composition</span></code></a> object.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p><code class="docutils literal notranslate"><span class="pre">get_comp_nse()</span></code> has options of incorporating Coulomb correction terms by setting <code class="docutils literal notranslate"><span class="pre">use_coulomb_corr=True</span></code>, and to return the proton and neutron chemical potentials by <code class="docutils literal notranslate"><span class="pre">return_sol=True</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">get_comp_nse()</span></code> has options of incorporating Coulomb correction terms by setting <code class="docutils literal notranslate"><span class="pre">use_coulomb_corr=True</span></code>, and to return the proton and neutron chemical potentials by <code class="docutils literal notranslate"><span class="pre">return_sol=True</span></code>.<code class="docutils literal notranslate"><span class="pre">NSENetwork</span></code> also has an option of choosing to be more strict about the confidence of spin data with <code class="docutils literal notranslate"><span class="pre">use_unreliable_spins=True</span></code>.</p>
 </div>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">

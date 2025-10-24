@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Nuclear Properties &#8212; pynucastro 2.7.1.post55+ga4ff16a54 documentation</title>
+    <title>Nuclear Properties &#8212; pynucastro 2.7.1.post56+g6e8518830 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=9b946bd9"></script>
+    <script src="_static/documentation_options.js?v=b4870f06"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -679,6 +679,18 @@ All of these are equivalent:</p>
 </div>
 </div>
 </div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ni56</span><span class="o">.</span><span class="n">spin_states</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1
+</pre></div>
+</div>
+</div>
+</div>
 <p>We can also look at a summary:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -704,6 +716,7 @@ All of these are equivalent:</p>
 
   dummy: False
   nse: False
+  spin states are reliable: True
 </pre></div>
 </div>
 </div>
@@ -814,6 +827,23 @@ Fe56         -60.60716  52103.06257552      8.79035626
 </div>
 <div class="cell_output docutils container">
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.1368683772161603e-13
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s look at a less common nucleus. From Nubase 2020 data, the spin for <span class="math notranslate nohighlight">\({}^{61}\mathrm{Fe}\)</span> is determined experimentally but the argument to determine it was judged to be weak. We are able to choose whether to use these unreliable spin data or omit them.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fe61</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe61&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">fe61</span><span class="o">.</span><span class="n">spin_reliable</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">fe61</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">fe61</span><span class="o">.</span><span class="n">spin_states</span><span class="si">}</span><span class="s2"> spin states&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">fe61</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">fe61</span><span class="o">.</span><span class="n">spin_states</span><span class="si">}</span><span class="s2"> spin states (not strongly experimentally substantiated. Consider dropping </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">fe61</span><span class="p">)</span><span class="si">}</span><span class="s2"> from your network.)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Fe61: 4 spin states (not strongly experimentally substantiated. Consider dropping Fe61 from your network.)
 </pre></div>
 </div>
 </div>

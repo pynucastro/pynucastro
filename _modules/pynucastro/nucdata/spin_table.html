@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.nucdata.spin_table &#8212; pynucastro 2.7.1.post55+ga4ff16a54 documentation</title>
+    <title>pynucastro.nucdata.spin_table &#8212; pynucastro 2.7.1.post56+g6e8518830 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=9b946bd9"></script>
+    <script src="../../../_static/documentation_options.js?v=b4870f06"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -507,10 +507,10 @@ document.write(`
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datafile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">reliable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datafile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_spin_states</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reliable</span> <span class="o">=</span> <span class="n">reliable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reliability_table</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">if</span> <span class="n">datafile</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">datafile</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">datafile</span><span class="p">)</span>
@@ -530,13 +530,32 @@ document.write(`
                 <span class="n">A</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">spin_states</span><span class="p">,</span> <span class="n">experimental</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[:</span><span class="mi">5</span><span class="p">]</span>
                 <span class="n">A</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">spin_states</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">A</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">Z</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">spin_states</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reliable</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">experimental</span> <span class="o">==</span> <span class="s1">&#39;s&#39;</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_spin_states</span><span class="p">[</span><span class="n">A</span><span class="p">,</span> <span class="n">Z</span><span class="p">]</span> <span class="o">=</span> <span class="n">spin_states</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">continue</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_spin_states</span><span class="p">[</span><span class="n">A</span><span class="p">,</span> <span class="n">Z</span><span class="p">]</span> <span class="o">=</span> <span class="n">spin_states</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_spin_states</span><span class="p">[</span><span class="n">A</span><span class="p">,</span> <span class="n">Z</span><span class="p">]</span> <span class="o">=</span> <span class="n">spin_states</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reliability_table</span><span class="p">[</span><span class="n">A</span><span class="p">,</span> <span class="n">Z</span><span class="p">]</span> <span class="o">=</span> <span class="n">experimental</span> <span class="o">==</span> <span class="s1">&#39;s&#39;</span>
+
+<div class="viewcode-block" id="SpinTable.get_spin_reliability">
+<a class="viewcode-back" href="../../../pynucastro.nucdata.spin_table.html#pynucastro.nucdata.spin_table.SpinTable.get_spin_reliability">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_spin_reliability</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return whether the spin for a nucleus is reliable.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        a : int</span>
+<span class="sd">            Atomic weight</span>
+<span class="sd">        z : int</span>
+<span class="sd">            Atomic number</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reliability_table</span><span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">z</span><span class="p">]</span>
+
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;nuclear spin data for A=</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2"> and Z=</span><span class="si">{</span><span class="n">z</span><span class="si">}</span><span class="s2"> not available&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span></div>
+
 
 <div class="viewcode-block" id="SpinTable.get_spin_states">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.spin_table.html#pynucastro.nucdata.spin_table.SpinTable.get_spin_states">[docs]</a>

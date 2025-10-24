@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.library &#8212; pynucastro 2.7.1.post55+ga4ff16a54 documentation</title>
+    <title>pynucastro.rates.library &#8212; pynucastro 2.7.1.post56+g6e8518830 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=9b946bd9"></script>
+    <script src="../../../_static/documentation_options.js?v=b4870f06"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1201,7 +1201,7 @@ document.write(`
 
 <div class="viewcode-block" id="Library.forward_for_detailed_balance">
 <a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.Library.forward_for_detailed_balance">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward_for_detailed_balance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward_for_detailed_balance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Loop over the forward rates (as filtered by</span>
 <span class="sd">        :py:meth:`.forward`) and return those that can be used to</span>
 <span class="sd">        derive reverse rates via detailed balance.  This means that</span>
@@ -1219,7 +1219,7 @@ document.write(`
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">onlyfwd</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
 
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">DerivedRate</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">DerivedRate</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="n">use_unreliable_spins</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1231,7 +1231,7 @@ document.write(`
 
 <div class="viewcode-block" id="Library.derived_backward">
 <a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.Library.derived_backward">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">derived_backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">derived_backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Loop over all of the forward rates that can be used to</span>
 <span class="sd">        derive inverse rates (as returned by</span>
 <span class="sd">        :py:meth:`.forward_for_detailed_balance`) and derive the</span>
@@ -1252,11 +1252,11 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">derived_rates</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">onlyfwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_for_detailed_balance</span><span class="p">()</span>
+        <span class="n">onlyfwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_for_detailed_balance</span><span class="p">(</span><span class="n">use_unreliable_spins</span><span class="o">=</span><span class="n">use_unreliable_spins</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">onlyfwd</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">i</span> <span class="o">=</span> <span class="n">DerivedRate</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="n">compute_Q</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="n">use_pf</span><span class="p">)</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">DerivedRate</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="n">compute_Q</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="n">use_pf</span><span class="p">,</span> <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="n">use_unreliable_spins</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">else</span><span class="p">:</span>
