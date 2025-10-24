@@ -2,6 +2,11 @@
 
 ## 2.8.0
 
+  * DRGEP reduction now supports screening (#1148)
+
+  * symmetric screening support (using the same screening factor for
+    forward and reverse rate) has been removed (#1147)
+
   * add the ability to convert a network into a different type (#1140)
 
   * add the ability to plot the net rate (forward - reverse) (#1135)
@@ -18,7 +23,7 @@
   * numerous redundant examples (from the `examples/` directory)
     were removed (#1131)
 
-  * He burning example has been updated (#1129)
+  * He burning example has been updated (#1129, #1139)
 
   * `RateCollection.plot` can now use screening and take a
     matplotlib `GridSpec` that defines the axes (instead of
