@@ -33,7 +33,7 @@ class TestNSETable:
         for r in rates_to_remove:
             all_lib.remove_rate(r)
 
-        nse = pyna.NSENetwork(libraries=[all_lib])
+        nse = pyna.NSENetwork(libraries=[all_lib], use_unreliable_spins=False)
 
         return nse
 
