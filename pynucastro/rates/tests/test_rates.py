@@ -342,7 +342,7 @@ class TestDerivedRate:
 
         a_a_ag_c12 = reaclib_library.get_rate_by_name("he4(aa,g)c12")
         c12_ga_a_a_reaclib = reaclib_library.get_rate_by_name("c12(g,aa)he4")
-        c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=False, use_pf=False)
+        c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=False, use_pf=False, use_unreliable_spins=False)
 
         assert c12_ga_a_a_reaclib.eval(T=2.0e9) == approx(c12_ga_a_a_derived.eval(T=2.0e9), rel=5.e-3)
 
@@ -353,7 +353,7 @@ class TestDerivedRate:
         """
 
         a_a_ag_c12 = reaclib_library.get_rate_by_name("he4(aa,g)c12")
-        c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=False, use_pf=True)
+        c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=False, use_pf=True, use_unreliable_spins=False)
 
         with pytest.warns(UserWarning, match="C12 partition function is not supported by tables"):
             rval = c12_ga_a_a_derived.eval(T=2.0e9)
@@ -367,7 +367,7 @@ class TestDerivedRate:
         """
 
         a_a_ag_c12 = reaclib_library.get_rate_by_name("he4(aa,g)c12")
-        c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=True, use_pf=False)
+        c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=True, use_pf=False, use_unreliable_spins=False)
 
         assert c12_ga_a_a_derived.eval(T=2.0e9) == approx(2.913825603717208e-07)
 

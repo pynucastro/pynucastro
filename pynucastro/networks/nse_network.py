@@ -96,6 +96,16 @@ class NSENetwork(RateCollection):
 
     """
 
+    def __init__(self, *args, use_unreliable_spins=True, **kwargs):
+        """Parameters
+        ----------
+        use_unreliable_spins : bool
+            whether to allow nuclei with weakly supported spin data
+        """
+
+        self.use_unreliable_spins = use_unreliable_spins
+        super().__init__(*args, **kwargs)
+
     def _evaluate_mu_c(self, state, use_coulomb_corr=True):
         """Find the Coulomb potential of each nuclide in NSE state.
         The Coulomb potential is evaluated using the Helmholtz free
@@ -194,6 +204,9 @@ class NSENetwork(RateCollection):
 
             if not nuc.spin_states:
                 raise ValueError(f"The spin of {nuc} is not implemented for now.")
+            if not self.use_unreliable_spins and not nuc.spin_reliable:
+                raise ValueError(f"The spin of {nuc} is determined by a weak experimental or theoretical argument. "
+                                 "Pass in use_unreliable_spins=True as a parameter to NSENetwork() to override.")
 
             nse_exponent = (nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.nucbind * nuc.A) / (constants.k_MeV * state.temp)
             nse_exponent = min(500.0, nse_exponent)
@@ -235,7 +248,8 @@ class NSENetwork(RateCollection):
         return constraint_eqs
 
     def get_comp_nse(self, rho, T, ye, init_guess=(-3.5, -15),
-                     tol=1.0e-11, use_coulomb_corr=False, return_sol=False):
+                     tol=1.0e-11, use_coulomb_corr=False,
+                     return_sol=False):
         """Return the NSE composition given density, temperature and
         prescribed electron fraction using scipy.fsolve.
 
