@@ -2497,6 +2497,9 @@ class RateCollection:
         real_edges = [(u, v) for u, v, e in sorted_edges if e["real"] == 1]
         real_weights = [e["weight"] for u, v, e in sorted_edges if e["real"] == 1]
 
+        if len(real_weights) == 0:
+            raise ValueError("No rates to show below ydot_cutoff_value.")
+
         if rate_ydots is None:
             edge_color = "C0"
         else:
