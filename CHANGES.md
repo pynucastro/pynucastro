@@ -2,6 +2,11 @@
 
 ## 2.8.0
 
+  * allow `NSENetwork` and `DerivedRate` control over spin reliability
+    (#1118)
+
+  * add an error if `ydot_cutoff_value` is too high (#1154)
+
   * DRGEP reduction now supports screening (#1148)
 
   * symmetric screening support (using the same screening factor for
