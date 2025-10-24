@@ -18,7 +18,7 @@ tf_t evaluate_tfactors(const amrex::Real T)
 {
 
     tf_t tf;
-    tf.T9 = T / 1.e9_rt;
+    tf.T9 = T * 1.e-9_rt;
     tf.T9i = 1.0_rt / tf.T9;
     tf.T913 = std::cbrt(tf.T9);
     tf.T913i = 1.0_rt / tf.T913;
