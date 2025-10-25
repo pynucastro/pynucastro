@@ -2,6 +2,10 @@
 
 ## 2.8.0
 
+  * update zenodo authors (#1155)
+
+  * some optimization of `AmrexAstroCxxNetwork` C++ code (#1150)
+
   * allow `NSENetwork` and `DerivedRate` control over spin reliability
     (#1118)
 
