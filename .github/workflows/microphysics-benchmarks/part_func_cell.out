@@ -1,0 +1,9 @@
+Initializing AMReX (25.09-20-g6e2d7bbde65e)...
+AMReX (25.09-20-g6e2d7bbde65e) initialized
+starting the single zone burn...
+reading in network electron-capture / beta-decay tables...
+temperature = 5000000000
+Ni56: 1.010868 2.337172328e-11
+Fe52: 1.743116 3.226066771e-10
+spins: 2 1 1 8 1
+AMReX (25.09-20-g6e2d7bbde65e) finalized

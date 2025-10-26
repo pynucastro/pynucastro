@@ -566,7 +566,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         for i, temp in enumerate(temp_arrays):
 
-            decl = f"extern AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}>"
+            decl = f"extern AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
 
             # number of points
             of.write(f"{self.indent*n_indent}constexpr int npts_{i+1} = {len(temp)};\n\n")
@@ -584,7 +584,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write(f"{self.indent*n_indent}// this is log10(partition function)\n\n")
 
-            decl = f"extern AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}>"
+            decl = f"extern AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
             of.write(f"{self.indent*n_indent}{decl} {n}_pf_array;\n\n")
 
     def _fill_partition_function_data(self, n_indent, of):
@@ -606,7 +606,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         for i, temp in enumerate(temp_arrays):
             # number of points
 
-            decl = f"AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}>"
+            decl = f"AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
 
             # write the temperature out, but for readability, split it to 5 values per line
 
@@ -628,7 +628,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write(f"{self.indent*n_indent}// this is log10(partition function)\n\n")
 
-            decl = f"AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}>"
+            decl = f"AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
             of.write(f"{self.indent*n_indent}{decl} {n}_pf_array = {{\n")
 
             for data in batched(np.log10(n.partition_function.partition_function), 5):

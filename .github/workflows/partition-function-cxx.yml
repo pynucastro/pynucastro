@@ -1,0 +1,70 @@
+name: partition function
+
+on: [pull_request, workflow_dispatch]
+jobs:
+  part_func_cell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Install Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install pynucastro
+        run: pip install .
+
+      - name: Get AMReX
+        run: |
+          mkdir external
+          cd external
+          git clone https://github.com/AMReX-Codes/amrex.git
+          cd amrex
+          git checkout development
+          echo 'AMREX_HOME=$(GITHUB_WORKSPACE)/external/amrex' >> $GITHUB_ENV
+          echo $AMREX_HOME
+          if [[ -n "${AMREX_HOME}" ]]; then exit 1; fi
+          cd ../..
+
+      - name: Get Microphysics
+        run: |
+          cd external
+          git clone https://github.com/AMReX-Astro/Microphysics.git
+          cd Microphysics
+          git checkout development
+          cd ../..
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -y -qq
+          sudo apt-get -qq -y install curl cmake jq clang g++>=9.3.0
+
+      - name: Regenerate partition_test network
+        run: |
+          cd external/Microphysics/networks/partition_test
+          python part_test.py
+
+      - name: Compile part_func_cell
+        run: |
+          cd external/Microphysics/unit_test/part_func_cell
+          make realclean
+          make -j 4
+
+      - name: Run part_func_cell
+        run: |
+          cd external/Microphysics/unit_test/part_func_cell
+          ./main3d.gnu.ex > test.out
+
+      - name: Compare to stored output
+        run: |
+          cd external/Microphysics/unit_test/part_func_cell
+          diff -I "^Initializing AMReX" -I "^AMReX"  test.out ${GITHUB_WORKSPACE}/.github/workflows/microphysics-benchmarks/part_func_cell.out
