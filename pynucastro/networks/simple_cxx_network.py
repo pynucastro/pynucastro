@@ -61,12 +61,10 @@ class SimpleCxxNetwork(BaseCxxNetwork):
 
                 of.write(f'{self.indent*n_indent}' + '}\n')
 
-                # there should only be a single forward 3-alpha rate
-                assert len(scr.rates) == 1
-
+                # we can have both a(aa,g)c12 and a(aa,p)b11
                 of.write('\n')
-                rr = scr.rates[0]
-                of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.cname()}) *= scor * scor2;\n')
+                for rr in scr.rates:
+                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.cname()}) *= scor * scor2;\n')
 
             else:
                 # there might be several rates that have the same
