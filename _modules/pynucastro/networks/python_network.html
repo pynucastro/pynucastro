@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 2.7.1.post59+gfc826d1f2 documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 2.7.1.post60+gda26b3386 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=268d4d4d"></script>
+    <script src="../../../_static/documentation_options.js?v=69e076ed"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -686,12 +686,10 @@ document.write(`
                 <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">scn_fac2 = ScreenFactors(</span><span class="si">{</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">Z</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">Z</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">scor2 = screen_func(plasma_state, scn_fac2)</span><span class="se">\n</span><span class="s2">&quot;</span>
 
-                <span class="c1"># there should only be a single forward rate here</span>
-                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-
-                <span class="n">r</span> <span class="o">=</span> <span class="n">scr</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="c1"># use scor from the previous loop iteration</span>
-                <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">rate_eval.</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> *= scor * scor2</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="c1"># we can have both a(aa,g)c12 and a(aa,p)b11</span>
+                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">scr</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+                    <span class="c1"># use scor from the previous loop iteration</span>
+                    <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">rate_eval.</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> *= scor * scor2</span><span class="se">\n</span><span class="s2">&quot;</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># there might be several rates that have the same</span>
