@@ -85,14 +85,9 @@ void evaluate_rates(const burn_t& state,
 
     {
         constexpr auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 12.0_rt, 24.0_rt);
-
-
         static_assert(scn_fac.z1 == 2.0_rt);
-
-
         actual_screen(pstate, scn_fac, scor, dscor_dt);
     }
-
 
     ratraw = rate_eval.screened_rates(k_He4_Mg24_to_Si28_removed);
     rate_eval.screened_rates(k_He4_Mg24_to_Si28_removed) *= scor;
@@ -111,14 +106,9 @@ void evaluate_rates(const burn_t& state,
 
     {
         constexpr auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 13.0_rt, 27.0_rt);
-
-
         static_assert(scn_fac.z1 == 1.0_rt);
-
-
         actual_screen(pstate, scn_fac, scor, dscor_dt);
     }
-
 
     ratraw = rate_eval.screened_rates(k_p_Al27_to_Si28_removed);
     rate_eval.screened_rates(k_p_Al27_to_Si28_removed) *= scor;
@@ -137,14 +127,9 @@ void evaluate_rates(const burn_t& state,
 
     {
         constexpr auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 14.0_rt, 28.0_rt);
-
-
         static_assert(scn_fac.z1 == 2.0_rt);
-
-
         actual_screen(pstate, scn_fac, scor, dscor_dt);
     }
-
 
     ratraw = rate_eval.screened_rates(k_He4_Si28_to_S32_removed);
     rate_eval.screened_rates(k_He4_Si28_to_S32_removed) *= scor;
@@ -163,14 +148,9 @@ void evaluate_rates(const burn_t& state,
 
     {
         constexpr auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 15.0_rt, 31.0_rt);
-
-
         static_assert(scn_fac.z1 == 1.0_rt);
-
-
         actual_screen(pstate, scn_fac, scor, dscor_dt);
     }
-
 
     ratraw = rate_eval.screened_rates(k_p_P31_to_S32_removed);
     rate_eval.screened_rates(k_p_P31_to_S32_removed) *= scor;
