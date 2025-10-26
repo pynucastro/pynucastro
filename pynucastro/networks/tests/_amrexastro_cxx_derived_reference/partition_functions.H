@@ -17,19 +17,19 @@ namespace part_fun {
 
     // this is T9
 
-    extern AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1> temp_array_1;
+    extern AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1-1> temp_array_1;
 
     // this is log10(partition function)
 
-    extern AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1> Fe52_pf_array;
+    extern AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1-1> Fe52_pf_array;
 
     // this is log10(partition function)
 
-    extern AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1> Co55_pf_array;
+    extern AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1-1> Co55_pf_array;
 
     // this is log10(partition function)
 
-    extern AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1> Ni56_pf_array;
+    extern AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1-1> Ni56_pf_array;
 
 
 
