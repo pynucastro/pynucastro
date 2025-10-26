@@ -80,7 +80,7 @@
     `ReacLibLibrary` since it only works with those rates. (#1105)
 
   * A bounds issue has been fixed in the partition function C++ code
-    (#1100)
+    (#1100, #1159)
 
   * CI fixes due to python or Microphysics library changes (#1086,
     #1092, #1094, #1099, #1102)
