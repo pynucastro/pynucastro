@@ -14,7 +14,7 @@
   * DRGEP reduction now supports screening (#1148)
 
   * symmetric screening support (using the same screening factor for
-    forward and reverse rate) has been removed (#1147)
+    forward and reverse rate) has been removed (#1147, #1158)
 
   * add the ability to convert a network into a different type (#1140)
 
@@ -95,7 +95,7 @@
 
   * Doc and API docstring improvements (#1079, #1082, #1083, #1084,
     #1116, #1117, #1127, #1132, #1139, #1141, #1143, #1146, #1149,
-    #1152)
+    #1152, #1157)
 
   * `pyproject.toml` updated with license info (#1081)
 
