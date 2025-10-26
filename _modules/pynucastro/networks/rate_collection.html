@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.7.1.post58+g3c7d75a2c documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.7.1.post59+gfc826d1f2 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=b4d0beea"></script>
+    <script src="../../../_static/documentation_options.js?v=268d4d4d"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1633,15 +1633,19 @@ document.write(`
 
 <div class="viewcode-block" id="RateCollection.remove_nuclei">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.remove_nuclei">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">remove_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuc_list</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the nuclei in nuc_list from the network along with</span>
-<span class="sd">        any rates that directly involve them (this doesn&#39;t affect</span>
-<span class="sd">        approximate rates that may have these nuclei as hidden</span>
-<span class="sd">        intermediate links)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuclei</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the nuclei in from the network along with any rates</span>
+<span class="sd">        that directly involve them (this doesn&#39;t affect approximate</span>
+<span class="sd">        rates that may have these nuclei as hidden intermediate links)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nuclei : Iterable(Nucleus)</span>
+<span class="sd">            The nuclei to remove.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">nuc_list</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">nuc_list</span><span class="p">)</span>
+        <span class="n">nuc_list</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
         <span class="n">rates_to_delete</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">nuc_list</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
@@ -1662,6 +1666,11 @@ document.write(`
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove the Rate objects in rates from the network.  Note,</span>
 <span class="sd">        if rate list is a dict, then the keys are assumed to be the</span>
 <span class="sd">        rates to remove</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rates : Rate, Iterable(Rate)</span>
+<span class="sd">            The rates to remove.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 

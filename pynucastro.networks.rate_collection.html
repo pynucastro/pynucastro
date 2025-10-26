@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.rate_collection module &#8212; pynucastro 2.7.1.post58+g3c7d75a2c documentation</title>
+    <title>pynucastro.networks.rate_collection module &#8212; pynucastro 2.7.1.post59+gfc826d1f2 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=b4d0beea"></script>
+    <script src="_static/documentation_options.js?v=268d4d4d"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1681,11 +1681,15 @@ forward-reverse pairs</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.remove_nuclei">
-<span class="sig-name descname"><span class="pre">remove_nuclei</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuc_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.remove_nuclei"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.remove_nuclei" title="Link to this definition">#</a></dt>
-<dd><p>Remove the nuclei in nuc_list from the network along with
-any rates that directly involve them (this doesn’t affect
-approximate rates that may have these nuclei as hidden
-intermediate links)</p>
+<span class="sig-name descname"><span class="pre">remove_nuclei</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuclei</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.remove_nuclei"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.remove_nuclei" title="Link to this definition">#</a></dt>
+<dd><p>Remove the nuclei in from the network along with any rates
+that directly involve them (this doesn’t affect approximate
+rates that may have these nuclei as hidden intermediate links)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nuclei</strong> (<em>Iterable</em><em>(</em><a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a><em>)</em>) – The nuclei to remove.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1694,6 +1698,11 @@ intermediate links)</p>
 <dd><p>Remove the Rate objects in rates from the network.  Note,
 if rate list is a dict, then the keys are assumed to be the
 rates to remove</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rates</strong> (<a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><em>Rate</em></a><em>, </em><em>Iterable</em><em>(</em><a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><em>Rate</em></a><em>)</em>) – The rates to remove.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
