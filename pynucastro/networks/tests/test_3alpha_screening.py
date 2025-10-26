@@ -9,6 +9,7 @@ import pytest
 
 import pynucastro as pyna
 
+
 class Test3alphaScreening:
     @pytest.fixture(scope="class")
     def net(self):
