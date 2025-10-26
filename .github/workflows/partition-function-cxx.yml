@@ -1,8 +1,8 @@
-name: C++ network
+name: partition function
 
 on: [pull_request, workflow_dispatch]
 jobs:
-  compilation:
+  part_func_cell:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
