@@ -1,5 +1,110 @@
 # Changelog
 
+## 2.8.0
+
+  * update CI artifact action version (##1160)
+
+  * update zenodo authors (#1155)
+
+  * some optimization of `AmrexAstroCxxNetwork` C++ code (#1150)
+
+  * allow `NSENetwork` and `DerivedRate` control over spin reliability
+    (#1118)
+
+  * add an error if `ydot_cutoff_value` is too high (#1154)
+
+  * DRGEP reduction now supports screening (#1148)
+
+  * symmetric screening support (using the same screening factor for
+    forward and reverse rate) has been removed (#1147, #1158)
+
+  * add the ability to convert a network into a different type (#1140)
+
+  * add the ability to plot the net rate (forward - reverse) (#1135)
+
+  * screening when evaluating rates in python is now handled by the
+    `Rate` class instead of the `RateCollection` class.  This fixes an
+    issue where `ApproximateRate` child rates were not being screened
+    (C++ and `PythonNetwork` were unaffected). (#1144)
+
+  * fix pylint 4.0 compatibility (#1138)
+
+  * `network_helper` now takes a `verbose` flag (#1134)
+
+  * numerous redundant examples (from the `examples/` directory)
+    were removed (#1131)
+
+  * He burning example has been updated (#1129, #1139)
+
+  * `RateCollection.plot` can now use screening and take a
+    matplotlib `GridSpec` that defines the axes (instead of
+    creating them internally. (#1126)
+
+  * `RateCollection` now takes a `verbose` option, and most
+    informational prints are disabled by default (#1130)
+
+  * Fix LaTeX rate rendering (#1128)
+
+  * fix a mutability issue in `Library` addition (#1112)
+
+  * add a method to `Library` to eliminate duplicate rates (#1111)
+
+  * load all nuclear spins by default, even those that are
+    "unreliable" (#1115)
+
+  * fix a CI issue on `DerivedRate` (#1124)
+
+  * for `ReacLibRate`, use `r.derived_from_inverse` instead of
+    `r.reverse` (#938)
+
+  * an electron-positron EOS was added.  This directly integrates the
+    Fermi-Dirac integrals and constructs n, p, and e. (#1076)
+
+  * `NumpyNetwork` has been removed -- it did not give much of a
+    performance boost (#1109)
+
+  * MPI utils have been moved from `reduction/` to a higher-level
+    for reuse (#1104)
+
+  * Clean-up of the reduction code and new example documentation
+    (#1098, #1103)
+
+  * update links docs CI block list (#1113)
+
+  * `Composition` can now zero out short-lived species (#1107)
+
+  * Weak rates from Pruet & Fuller for A = 65 to 80 have been added
+    (#1091, #1093)
+
+  * `RateFilter` can now filter on an endpoint (#1106)
+
+  * The `write_to_file` method has been moved from `Library` to
+    `ReacLibLibrary` since it only works with those rates. (#1105)
+
+  * A bounds issue has been fixed in the partition function C++ code
+    (#1100, #1159)
+
+  * CI fixes due to python or Microphysics library changes (#1086,
+    #1092, #1094, #1099, #1102)
+
+  * added an adaptived-difference method for differencing (#1075)
+
+  * `AmrexAstroCxxNetwork` templates now use the new neutrino cooling
+    method (#1069)
+
+  * Binding energy example has been updated with a better example
+    (#1087)
+
+  * Doc and API docstring improvements (#1079, #1082, #1083, #1084,
+    #1116, #1117, #1127, #1132, #1139, #1141, #1143, #1146, #1149,
+    #1152, #1157)
+
+  * `pyproject.toml` updated with license info (#1081)
+
+  * `plot_network_chart` now uses a `GridSpec` for a better layout
+    (#1060)
+
+
 ## 2.7.1
 
   * fix a numba import for conda-forge (#1078)
