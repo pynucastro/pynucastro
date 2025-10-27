@@ -2,6 +2,8 @@
 
 ## 2.8.0
 
+  * update CI artifact action version (##1160)
+
   * update zenodo authors (#1155)
 
   * some optimization of `AmrexAstroCxxNetwork` C++ code (#1150)
