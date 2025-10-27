@@ -1,4 +1,4 @@
-name: pytest-mac
+name: pytest-win
 
 on:
   # Trigger the workflow on push or pull request,
