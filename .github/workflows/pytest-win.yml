@@ -39,7 +39,6 @@ jobs:
       - name: Print system info
         run: |
           echo '::group::NumPy'
-          pip install threadpoolctl &>/dev/null
           python -c "import sys, numpy; print(numpy.__version__); print(sys.version); print(numpy.show_runtime())"
           echo '::endgroup::'
           echo '::group::Package versions'
