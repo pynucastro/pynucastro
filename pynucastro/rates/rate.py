@@ -2,6 +2,7 @@
 
 import math
 from pathlib import Path
+import platform
 
 import numpy as np
 
@@ -342,7 +343,10 @@ class Rate:
                 self.string += " + e⁻"
                 self.pretty_string += r" + \mathrm{e}^-"
 
-        self.string += " ⟶ "
+        if not platform.system() == "Windows":
+            self.string += " ⟶ "
+        else:
+            self.string += " → "
         self.rid += " --> "
         self.pretty_string += r" \rightarrow "
 
