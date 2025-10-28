@@ -170,12 +170,14 @@ evaluate_linear_2d(const amrex::Real fip1jp1, const amrex::Real fip1j, const amr
 
     amrex::Real f;
     amrex::Real dx = xhi - xlo;
+    amrex::Real dxinv = 1.0_rt / dx;
     amrex::Real dy = yhi - ylo;
+    amrex::Real dyinv = 1.0_rt / dy;
 
     amrex::Real E =  fij;
-    amrex::Real C = (fijp1 - fij) / dy;
-    amrex::Real B = (fip1j - fij) / dx;
-    amrex::Real A = (fip1jp1 - B * dx - C * dy - E) / (dx * dy);
+    amrex::Real C = (fijp1 - fij) * dyinv;
+    amrex::Real B = (fip1j - fij) * dxinv;
+    amrex::Real A = (fip1jp1 - B * dx - C * dy - E) * (dxinv * dyinv);
 
     amrex::Real xx = amrex::Clamp(x, xlo, xhi);
     amrex::Real yy = amrex::Clamp(y, ylo, yhi);
@@ -229,11 +231,11 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rhoy_table, const T& l
 {
     // The main objective of this function is compute dlogr_dlogt.
 
-    int irhoy_lo = vector_index_lu(table_meta.nrhoy, log_rhoy_table, log_rhoy);
-    int irhoy_hi = irhoy_lo + 1;
+    const int irhoy_lo = vector_index_lu(table_meta.nrhoy, log_rhoy_table, log_rhoy);
+    const int irhoy_hi = irhoy_lo + 1;
 
-    int jtemp_lo = vector_index_lu(table_meta.ntemp, log_temp_table, log_temp);
-    int jtemp_hi = jtemp_lo + 1;
+    const int jtemp_lo = vector_index_lu(table_meta.ntemp, log_temp_table, log_temp);
+    const int jtemp_hi = jtemp_lo + 1;
 
     amrex::Real dlogr_dlogt;
 
@@ -264,19 +266,19 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rhoy_table, const T& l
         // Finally, we perform a 1d-linear interpolation between dlogr_dlogt_ip1
         // and dlogr_dlogt_i to compute dlogr_dlogt
 
-        amrex::Real log_rhoy_lo = log_rhoy_table(irhoy_lo);
-        amrex::Real log_rhoy_hi = log_rhoy_table(irhoy_hi);
+        const amrex::Real log_rhoy_lo = log_rhoy_table(irhoy_lo);
+        const amrex::Real log_rhoy_hi = log_rhoy_table(irhoy_hi);
 
-        amrex::Real log_temp_lo = log_temp_table(jtemp_lo);
-        amrex::Real log_temp_hi = log_temp_table(jtemp_hi);
+        const amrex::Real log_temp_lo = log_temp_table(jtemp_lo);
+        const amrex::Real log_temp_hi = log_temp_table(jtemp_hi);
 
-        amrex::Real fij     = data(jtemp_lo, irhoy_lo, jtab_rate);
-        amrex::Real fip1j   = data(jtemp_lo, irhoy_hi, jtab_rate);
-        amrex::Real fijp1   = data(jtemp_hi, irhoy_lo, jtab_rate);
-        amrex::Real fip1jp1 = data(jtemp_hi, irhoy_hi, jtab_rate);
+        const amrex::Real fij     = data(jtemp_lo, irhoy_lo, jtab_rate);
+        const amrex::Real fip1j   = data(jtemp_lo, irhoy_hi, jtab_rate);
+        const amrex::Real fijp1   = data(jtemp_hi, irhoy_lo, jtab_rate);
+        const amrex::Real fip1jp1 = data(jtemp_hi, irhoy_hi, jtab_rate);
 
-        amrex::Real dlogr_dlogt_i   = (fijp1 - fij) / (log_temp_hi - log_temp_lo);
-        amrex::Real dlogr_dlogt_ip1 = (fip1jp1 - fip1j) / (log_temp_hi - log_temp_lo);
+        const amrex::Real dlogr_dlogt_i   = (fijp1 - fij) / (log_temp_hi - log_temp_lo);
+        const amrex::Real dlogr_dlogt_ip1 = (fip1jp1 - fip1j) / (log_temp_hi - log_temp_lo);
 
         if ((log_temp < log_temp_lo) || (log_temp > log_temp_hi)) {
             dlogr_dlogt = 0.0_rt;
@@ -332,28 +334,30 @@ evaluate_dr_dtemp(const table_t& table_meta, const R& log_rhoy_table, const T& l
         // Finally, we perform a 2d-linear interpolation to
         // compute dlogr_dlogt.
 
-        amrex::Real log_temp_jm1  = log_temp_table(jtemp_lo-1);
-        amrex::Real log_temp_j    = log_temp_table(jtemp_lo);
-        amrex::Real log_temp_jp1  = log_temp_table(jtemp_hi);
-        amrex::Real log_temp_jp2  = log_temp_table(jtemp_hi+1);
+        const amrex::Real log_temp_jm1  = log_temp_table(jtemp_lo-1);
+        const amrex::Real log_temp_j    = log_temp_table(jtemp_lo);
+        const amrex::Real log_temp_jp1  = log_temp_table(jtemp_hi);
+        const amrex::Real log_temp_jp2  = log_temp_table(jtemp_hi+1);
 
-        amrex::Real log_rhoy_lo = log_rhoy_table(irhoy_lo);
-        amrex::Real log_rhoy_hi = log_rhoy_table(irhoy_hi);
+        const amrex::Real log_rhoy_lo = log_rhoy_table(irhoy_lo);
+        const amrex::Real log_rhoy_hi = log_rhoy_table(irhoy_hi);
 
-        amrex::Real fijm1   = data(jtemp_lo-1, irhoy_lo, jtab_rate);
-        amrex::Real fij     = data(jtemp_lo, irhoy_lo, jtab_rate);
-        amrex::Real fijp1   = data(jtemp_hi, irhoy_lo, jtab_rate);
-        amrex::Real fijp2   = data(jtemp_hi+1, irhoy_lo, jtab_rate);
+        const amrex::Real fijm1   = data(jtemp_lo-1, irhoy_lo, jtab_rate);
+        const amrex::Real fij     = data(jtemp_lo, irhoy_lo, jtab_rate);
+        const amrex::Real fijp1   = data(jtemp_hi, irhoy_lo, jtab_rate);
+        const amrex::Real fijp2   = data(jtemp_hi+1, irhoy_lo, jtab_rate);
 
-        amrex::Real fip1jm1 = data(jtemp_lo-1, irhoy_hi, jtab_rate);
-        amrex::Real fip1j   = data(jtemp_lo, irhoy_hi, jtab_rate);
-        amrex::Real fip1jp1 = data(jtemp_hi, irhoy_hi, jtab_rate);
-        amrex::Real fip1jp2 = data(jtemp_hi+1, irhoy_hi, jtab_rate);
+        const amrex::Real fip1jm1 = data(jtemp_lo-1, irhoy_hi, jtab_rate);
+        const amrex::Real fip1j   = data(jtemp_lo, irhoy_hi, jtab_rate);
+        const amrex::Real fip1jp1 = data(jtemp_hi, irhoy_hi, jtab_rate);
+        const amrex::Real fip1jp2 = data(jtemp_hi+1, irhoy_hi, jtab_rate);
 
-        amrex::Real dlogr_dlogt_ij     = (fijp1 - fijm1)/(log_temp_jp1 - log_temp_jm1);
-        amrex::Real dlogr_dlogt_ijp1   = (fijp2 - fij)/(log_temp_jp2 - log_temp_j);
-        amrex::Real dlogr_dlogt_ip1j   = (fip1jp1 - fip1jm1)/(log_temp_jp1 - log_temp_jm1);
-        amrex::Real dlogr_dlogt_ip1jp1 = (fip1jp2 - fip1j)/(log_temp_jp2 - log_temp_j);
+        const amrex::Real dlogTinv1 = 1.0_rt / (log_temp_jp1 - log_temp_jm1);
+        const amrex::Real dlogTinv2 = 1.0_rt / (log_temp_jp2 - log_temp_j);
+        const amrex::Real dlogr_dlogt_ij     = (fijp1 - fijm1) * dlogTinv1;
+        const amrex::Real dlogr_dlogt_ijp1   = (fijp2 - fij) * dlogTinv2;
+        const amrex::Real dlogr_dlogt_ip1j   = (fip1jp1 - fip1jm1) * dlogTinv1;
+        const amrex::Real dlogr_dlogt_ip1jp1 = (fip1jp2 - fip1j) * dlogTinv2;
 
         dlogr_dlogt = evaluate_linear_2d(dlogr_dlogt_ip1jp1,  dlogr_dlogt_ip1j, dlogr_dlogt_ijp1, dlogr_dlogt_ij,
                                          log_rhoy_hi, log_rhoy_lo, log_temp_jp1, log_temp_j,
@@ -391,8 +395,8 @@ tabular_evaluate(const table_t& table_meta,
 
     // Get the table entries at this rhoy, temp
 
-    amrex::Real log_rhoy = std::log10(rhoy);
-    amrex::Real log_temp = std::log10(temp);
+    const amrex::Real log_rhoy = std::log10(rhoy);
+    const amrex::Real log_temp = std::log10(temp);
 
     get_entries(table_meta, log_rhoy_table, log_temp_table, data,
                 log_rhoy, log_temp, entries);

@@ -48,15 +48,11 @@ void ener_gener_rate(T const& dydt, amrex::Real& enuc)
 
 template <int do_T_derivatives, typename T>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void evaluate_rates(const burn_t& state, T& rate_eval) {
+void evaluate_rates(const burn_t& state,
+                    const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
+                    T& rate_eval) {
 
-
-    // create molar fractions
-
-    amrex::Array1D<amrex::Real, 1, NumSpec> Y;
-    for (int n = 1; n <= NumSpec; ++n) {
-        Y(n) = state.xn[n-1] * aion_inv[n-1];
-    }
+    // here Y is consistent with state.xn
 
     [[maybe_unused]] amrex::Real rhoy = state.rho * state.y_e;
 
@@ -74,7 +70,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
     fill_plasma_state(pstate, temp, state.rho, Y);
 #endif
 
-    tf_t tfactors = evaluate_tfactors(state.T);
+    const tf_t tfactors = evaluate_tfactors(state.T);
 
     fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
@@ -89,14 +85,9 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     {
         constexpr auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 12.0_rt, 24.0_rt);
-
-
         static_assert(scn_fac.z1 == 2.0_rt);
-
-
         actual_screen(pstate, scn_fac, scor, dscor_dt);
     }
-
 
     ratraw = rate_eval.screened_rates(k_He4_Mg24_to_Si28_removed);
     rate_eval.screened_rates(k_He4_Mg24_to_Si28_removed) *= scor;
@@ -115,14 +106,9 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     {
         constexpr auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 13.0_rt, 27.0_rt);
-
-
         static_assert(scn_fac.z1 == 1.0_rt);
-
-
         actual_screen(pstate, scn_fac, scor, dscor_dt);
     }
-
 
     ratraw = rate_eval.screened_rates(k_p_Al27_to_Si28_removed);
     rate_eval.screened_rates(k_p_Al27_to_Si28_removed) *= scor;
@@ -141,14 +127,9 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     {
         constexpr auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 14.0_rt, 28.0_rt);
-
-
         static_assert(scn_fac.z1 == 2.0_rt);
-
-
         actual_screen(pstate, scn_fac, scor, dscor_dt);
     }
-
 
     ratraw = rate_eval.screened_rates(k_He4_Si28_to_S32_removed);
     rate_eval.screened_rates(k_He4_Si28_to_S32_removed) *= scor;
@@ -167,14 +148,9 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     {
         constexpr auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 15.0_rt, 31.0_rt);
-
-
         static_assert(scn_fac.z1 == 1.0_rt);
-
-
         actual_screen(pstate, scn_fac, scor, dscor_dt);
     }
-
 
     ratraw = rate_eval.screened_rates(k_p_P31_to_S32_removed);
     rate_eval.screened_rates(k_p_P31_to_S32_removed) *= scor;
@@ -204,6 +180,23 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
 
 }
+
+
+// backwards-compatible wrapper
+template <int do_T_derivatives, typename T>
+AMREX_GPU_HOST_DEVICE AMREX_INLINE
+void evaluate_rates(const burn_t& state,
+                    T& rate_eval) {
+
+    // create molar fractions
+    amrex::Array1D<amrex::Real, 1, NumSpec> Y;
+    for (int n = 1; n <= NumSpec; ++n) {
+        Y(n) = state.xn[n-1] * aion_inv[n-1];
+    }
+
+    evaluate_rates<do_T_derivatives>(state, Y, rate_eval);
+}
+
 
 #ifdef NSE_NET
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
@@ -273,12 +266,8 @@ void rhs_nuc(const burn_t& state,
 
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void actual_rhs (burn_t& state, amrex::Array1D<amrex::Real, 1, neqs>& ydot)
+void actual_rhs (const burn_t& state, amrex::Array1D<amrex::Real, 1, neqs>& ydot)
 {
-    for (int i = 1; i <= neqs; ++i) {
-        ydot(i) = 0.0_rt;
-    }
-
 
     // Set molar abundances
     amrex::Array1D<amrex::Real, 1, NumSpec> Y;
@@ -292,7 +281,7 @@ void actual_rhs (burn_t& state, amrex::Array1D<amrex::Real, 1, neqs>& ydot)
 
     constexpr int do_T_derivatives = 0;
 
-    evaluate_rates<do_T_derivatives, rate_t>(state, rate_eval);
+    evaluate_rates<do_T_derivatives, rate_t>(state, Y, rate_eval);
 
     rhs_nuc(state, ydot, Y, rate_eval.screened_rates);
 
@@ -353,6 +342,8 @@ void jac_nuc(const burn_t& state,
     scratch = screened_rates(k_Si28_to_Mg24_He4_approx);
     jac.set(Mg24, Si28, scratch);
 
+    jac.set(Mg24, S32, 0.0);
+
     scratch = screened_rates(k_Mg24_He4_to_Si28_approx)*Y(Mg24)*state.rho - screened_rates(k_Si28_He4_to_S32_approx)*Y(Si28)*state.rho;
     jac.set(Si28, He4, scratch);
 
@@ -367,6 +358,8 @@ void jac_nuc(const burn_t& state,
 
     scratch = screened_rates(k_Si28_He4_to_S32_approx)*Y(Si28)*state.rho;
     jac.set(S32, He4, scratch);
+
+    jac.set(S32, Mg24, 0.0);
 
     scratch = screened_rates(k_Si28_He4_to_S32_approx)*Y(He4)*state.rho;
     jac.set(S32, Si28, scratch);
@@ -391,13 +384,11 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     }
 
 
-    jac.zero();
-
     rate_derivs_t rate_eval;
 
     constexpr int do_T_derivatives = 1;
 
-    evaluate_rates<do_T_derivatives, rate_derivs_t>(state, rate_eval);
+    evaluate_rates<do_T_derivatives, rate_derivs_t>(state, Y, rate_eval);
 
     // Species Jacobian elements with respect to other species
 
@@ -407,7 +398,9 @@ void actual_jac(const burn_t& state, MatrixType& jac)
 
     for (int j = 1; j <= NumSpec; ++j) {
         auto jac_slice_2 = [&](int i) -> amrex::Real { return jac.get(i, j); };
-        ener_gener_rate(jac_slice_2, jac(net_ienuc,j));
+        amrex::Real tmp{};
+        ener_gener_rate(jac_slice_2, tmp);
+        jac(net_ienuc,j) = tmp;
     }
 
     // Account for the thermal neutrino losses

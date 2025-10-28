@@ -1058,15 +1058,19 @@ class RateCollection:
 
         return temp_arrays, temp_indices
 
-    def remove_nuclei(self, nuc_list):
-        """Remove the nuclei in nuc_list from the network along with
-        any rates that directly involve them (this doesn't affect
-        approximate rates that may have these nuclei as hidden
-        intermediate links)
+    def remove_nuclei(self, nuclei):
+        """Remove the nuclei in from the network along with any rates
+        that directly involve them (this doesn't affect approximate
+        rates that may have these nuclei as hidden intermediate links)
+
+        Parameters
+        ----------
+        nuclei : Iterable(Nucleus)
+            The nuclei to remove.
 
         """
 
-        nuc_list = Nucleus.cast_list(nuc_list)
+        nuc_list = Nucleus.cast_list(nuclei)
         rates_to_delete = []
         for nuc in nuc_list:
             for rate in self.rates:
@@ -1084,6 +1088,11 @@ class RateCollection:
         """Remove the Rate objects in rates from the network.  Note,
         if rate list is a dict, then the keys are assumed to be the
         rates to remove
+
+        Parameters
+        ----------
+        rates : Rate, Iterable(Rate)
+            The rates to remove.
 
         """
 
