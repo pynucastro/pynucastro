@@ -36,6 +36,20 @@ jobs:
       - name: Install pynucastro
         run: pip install --editable .
 
+      - name: Install MSYS2 and packages
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: >
+            mingw-w64-x86_64-gcc
+            make
+
+      - name: Check compiler and make versions
+        shell: msys2 {0}
+        run: |
+          g++ --version
+          make --version
+
       - name: Print system info
         run: |
           echo '::group::NumPy'

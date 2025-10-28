@@ -27,6 +27,10 @@ import warnings
 
 if sys.platform == "linux" or sys.platform == "linux2":
     os.environ["NPY_DISABLE_CPU_FEATURES"] = "AVX512F AVX512CD AVX512_SKX"
+elif sys.platform == "win32":
+    os.environ.setdefault("PYTHONIOENCODING", "utf-8")
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 elif sys.platform == "darwin":
     os.environ["NPY_DISABLE_CPU_FEATURES"] = "ASIMDHP"
 
