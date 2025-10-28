@@ -1,8 +1,8 @@
 """Classes and methods to interface with files storing rate data."""
 
 import math
-from pathlib import Path
 import platform
+from pathlib import Path
 
 import numpy as np
 
