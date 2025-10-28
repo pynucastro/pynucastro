@@ -1,7 +1,6 @@
 """Classes and methods to interface with files storing rate data."""
 
 import math
-import platform
 from pathlib import Path
 
 import numpy as np
@@ -343,10 +342,7 @@ class Rate:
                 self.string += " + e⁻"
                 self.pretty_string += r" + \mathrm{e}^-"
 
-        if not platform.system() == "Windows":
-            self.string += " ⟶ "
-        else:
-            self.string += " → "
+        self.string += " ⟶ "
         self.rid += " --> "
         self.pretty_string += r" \rightarrow "
 
