@@ -589,7 +589,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             decl = f"extern AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
             of.write(f"{self.indent*n_indent}{decl} {n}_pf_array;\n")
-            thresh_temp = n.get_part_func_threshold_temp();
+            thresh_temp = n.get_part_func_threshold_temp()
             # convert to T9 if it is physical
             if thresh_temp > 0:
                 thresh_temp /= 1.e9
