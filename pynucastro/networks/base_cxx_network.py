@@ -79,6 +79,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<part_fun_data>'] = self._fill_partition_function_data
         self.ftags['<part_fun_declare>'] = self._fill_partition_function_declare
         self.ftags['<part_fun_cases>'] = self._fill_partition_function_cases
+        self.ftags['<declare_pf_cache_temp_index>'] = self._declare_pf_cache_temp_index
         self.ftags['<spin_state_cases>'] = self._fill_spin_state_cases
         self.ftags['<pynucastro_version>'] = self._fill_pynucastro_version
         self.indent = '    '
@@ -531,6 +532,10 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _fill_reaclib_rates(self, n_indent, of):
         if self.derived_rates:
             of.write(f"{self.indent*n_indent}part_fun::pf_cache_t pf_cache{{}};\n\n")
+            temp_arrays, temp_indices = self.dedupe_partition_function_temperatures()
+            for i in range(len(temp_arrays)):
+                of.write(f"{self.indent*n_indent}pf_cache.index_temp_array_{i+1} = part_fun::index_pf(tfactors.T9, part_fun::temp_array_{i+1});\n")
+            of.write("\n")
 
         # note: modified_rates needs to be on the end here, since they
         # likely will call the underlying reaclib rate for the actual
@@ -642,9 +647,18 @@ class BaseCxxNetwork(ABC, RateCollection):
         for n, i in temp_indices.items():
             of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
             of.write(f"{self.indent*(n_indent+1)}if (tfactors.T9 > part_fun::{n}_pf_threshold_T9) {{\n")
-            of.write(f"{self.indent*(n_indent+2)}part_fun::interpolate_pf(tfactors.T9, part_fun::temp_array_{i+1}, part_fun::{n}_pf_array, pf, dpf_dT);\n")
+            of.write(f"{self.indent*(n_indent+2)}part_fun::interpolate_pf(tfactors.T9, pf_cache.index_temp_array_{i+1}, part_fun::temp_array_{i+1}, part_fun::{n}_pf_array, pf, dpf_dT);\n")
             of.write(f"{self.indent*(n_indent+1)}}}\n")
             of.write(f"{self.indent*(n_indent+1)}break;\n\n")
+
+    def _declare_pf_cache_temp_index(self, n_indent, of):
+
+        temp_arrays, temp_indices = self.dedupe_partition_function_temperatures()
+
+        for i, _ in enumerate(temp_arrays):
+
+            # number of points
+            of.write(f"{self.indent*n_indent}int index_temp_array_{i+1};\n\n")
 
     def _fill_spin_state_cases(self, n_indent, of):
 
