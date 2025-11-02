@@ -15,19 +15,22 @@ namespace part_fun {
 
 
 
-    // interpolation routine
+    // index locator
 
     template <typename T>
     AMREX_GPU_HOST_DEVICE AMREX_INLINE
-    void interpolate_pf(const amrex::Real t9, const T& temp_array, const T& pf_array,
-                        amrex::Real& pf, amrex::Real& dpf_dT) {
+    int
+    index_pf(const amrex::Real t9, const T& temp_array) {
 
         int left = temp_array.lo();
         int right = temp_array.hi();
 
+        int idx = -1;
+
         if (t9 >= temp_array(left) && t9 < temp_array(right)) {
 
-            // find the largest temperature element <= t9 using a binary search
+            // find the largest temperature element <= t9 using a
+            // binary search
 
             while (left < right) {
                 int mid = (left + right) / 2;
@@ -38,11 +41,27 @@ namespace part_fun {
                 }
             }
 
-            const int idx = right - 1;
+            idx = right - 1;
+        }
 
-            // now we have temp_array[idx] <= t9 < temp_array[idx+1]
+        return idx;
+    }
 
-            // construct the slope -- this is (log10(pf_{i+1}) - log10(pf_i)) / (T_{i+1} - T_i)
+    // interpolation routine
+
+    template <typename T>
+    AMREX_GPU_HOST_DEVICE AMREX_INLINE
+    void interpolate_pf(const amrex::Real t9, const int idx,
+                        const T& temp_array, const T& pf_array,
+                        amrex::Real& pf, amrex::Real& dpf_dT) {
+
+        if (idx != -1) {
+
+            // we have idx such that:
+            // temp_array[idx] <= t9 < temp_array[idx+1]
+
+            // construct the slope -- this is
+            // (log10(pf_{i+1}) - log10(pf_i)) / (T_{i+1} - T_i)
 
             amrex::Real slope = (pf_array(idx+1) - pf_array(idx)) /
                                 (temp_array(idx+1) - temp_array(idx));
@@ -80,8 +99,13 @@ namespace part_fun {
 // main interface
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void get_partition_function(const int inuc, [[maybe_unused]] const tf_t& tfactors,
+void get_partition_function(const int inuc,
+                            [[maybe_unused]] const tf_t& tfactors,
+                            part_fun::pf_cache_t& pf_cache,
                             amrex::Real& pf, amrex::Real& dpf_dT) {
+
+    pf = 1.0_rt;
+    dpf_dT = 0.0_rt;
 
     // inuc is the 1-based index for the species
 
@@ -107,7 +131,7 @@ void get_partition_function_cached(const int inuc, const tf_t& tfactors,
         pf = pf_cache.data(inuc, 1);
         dpf_dT = pf_cache.data(inuc, 2);
     } else {
-        get_partition_function(inuc, tfactors, pf, dpf_dT);
+        get_partition_function(inuc, tfactors, pf_cache, pf, dpf_dT);
         pf_cache.data(inuc, 1) = pf;
         pf_cache.data(inuc, 2) = dpf_dT;
     }
