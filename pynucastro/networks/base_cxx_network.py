@@ -589,7 +589,11 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             decl = f"extern AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
             of.write(f"{self.indent*n_indent}{decl} {n}_pf_array;\n")
-            of.write(f"{self.indent*n_indent}constexpr {self.dtype} {n}_pf_threshold_T9 = {n.get_part_func_threshold_temp()/1.e9};\n\n")
+            thresh_temp = n.get_part_func_threshold_temp();
+            # convert to T9 if it is physical
+            if thresh_temp > 0:
+                thresh_temp /= 1.e9
+            of.write(f"{self.indent*n_indent}constexpr {self.dtype} {n}_pf_threshold_T9 = {thresh_temp};\n\n")
 
     def _fill_partition_function_data(self, n_indent, of):
         # itertools recipe

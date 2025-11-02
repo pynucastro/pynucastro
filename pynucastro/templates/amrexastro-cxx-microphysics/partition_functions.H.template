@@ -60,6 +60,7 @@ namespace part_fun {
 
             // we have idx such that:
             // temp_array[idx] <= t9 < temp_array[idx+1]
+            AMREX_ASSERT(t9 >= temp_array(idx) && t9 < temp_array(idx+1));
 
             // construct the slope -- this is
             // (log10(pf_{i+1}) - log10(pf_i)) / (T_{i+1} - T_i)
