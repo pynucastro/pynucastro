@@ -532,7 +532,7 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _fill_reaclib_rates(self, n_indent, of):
         if self.derived_rates:
             of.write(f"{self.indent*n_indent}part_fun::pf_cache_t pf_cache{{}};\n\n")
-            temp_arrays, temp_indices = self.dedupe_partition_function_temperatures()
+            temp_arrays, _ = self.dedupe_partition_function_temperatures()
             for i in range(len(temp_arrays)):
                 of.write(f"{self.indent*n_indent}pf_cache.index_temp_array_{i+1} = part_fun::index_pf(tfactors.T9, part_fun::temp_array_{i+1});\n")
             of.write("\n")
@@ -657,7 +657,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _declare_pf_cache_temp_index(self, n_indent, of):
 
-        temp_arrays, temp_indices = self.dedupe_partition_function_temperatures()
+        temp_arrays, _ = self.dedupe_partition_function_temperatures()
 
         for i, _ in enumerate(temp_arrays):
 
