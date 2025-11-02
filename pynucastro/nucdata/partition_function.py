@@ -102,17 +102,6 @@ class PartitionFunction:
         return (np.all(self.partition_function == other.partition_function) and
                 np.all(self.temperature == other.temperature))
 
-    def construct_spline_interpolant(self, order=3):
-        """Construct an interpolating univariate spline of order >= 1 and
-        order <= 5 using the scipy InterpolatedUnivariateSpline
-        implementation.
-
-        Interpolate in log space for the partition function and in GK
-        for temperature.
-        """
-        self._interpolant = None
-        self.interpolant_order = order
-
     def eval(self, T):
         """Return the interpolated partition function value for the
         temperature T.
