@@ -353,6 +353,28 @@ class Nucleus:
         dummy = self.dummy and other.dummy
         return Nucleus.from_Z_A(Z, A, dummy)
 
+    def get_part_func_threshold_temp(self):
+        """Return the temperature corresponding to the last value where
+        the partition function is equal to 1.  For temperatures higher
+        than this, the partition function is not equal to 1.
+
+        Returns
+        -------
+        float
+
+        """
+
+        threshold_T = -1.0
+        for T, pf in zip(self.partition_function.temperature,
+                         self.partition_function.partition_function):
+
+            if pf == 1.0:
+                threshold_T = T
+            else:
+                break
+
+        return threshold_T
+
     @classmethod
     def cast(cls, obj):
         """Create a Nucleus from a string

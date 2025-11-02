@@ -84,6 +84,9 @@ AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void get_partition_function(const int inuc, [[maybe_unused]] const tf_t& tfactors,
                             amrex::Real& pf, amrex::Real& dpf_dT) {
 
+    pf = 1.0_rt;
+    dpf_dT = 0.0_rt;
+
     // inuc is the 1-based index for the species
 
     switch (inuc) {
