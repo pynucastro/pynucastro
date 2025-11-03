@@ -662,7 +662,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         for i, _ in enumerate(temp_arrays):
 
             # number of points
-            of.write(f"{self.indent*n_indent}int index_temp_array_{i+1};\n\n")
+            of.write(f"{self.indent*n_indent}int index_temp_array_{i+1}{{-1}};\n\n")
 
     def _fill_spin_state_cases(self, n_indent, of):
 
