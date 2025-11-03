@@ -72,9 +72,18 @@ namespace part_fun {
 
     template <typename T>
     AMREX_GPU_HOST_DEVICE AMREX_INLINE
-    void interpolate_pf(const amrex::Real t9, const int idx,
+    void interpolate_pf(const amrex::Real t9, int idx,
                         const T& temp_array, const T& pf_array,
                         amrex::Real& pf, amrex::Real& dpf_dT) {
+
+        // if the index is -1, we are either outside of the bounds or
+        // we never computed it.  try recomputing here
+        if (idx == -1) {
+            idx = index_pf(t9, temp_array);
+        }
+
+        // if the index is still -1, then we are out-of-bounds, so
+        // just skip the interpolation
 
         if (idx != -1) {
 
@@ -108,19 +117,22 @@ namespace part_fun {
 
     }
 
+
+
     struct pf_cache_t {
         // Store the coefficient and derivative adjacent in memory, as they're
         // always accessed at the same time.
         // The entries will be default-initialized to zero, which is fine since
         // log10(x) is never zero.
         amrex::Array2D<amrex::Real, 1, NumSpecTotal, 1, 2, amrex::Order::C> data{};
-        int index_temp_array_1;
+        int index_temp_array_1{-1};
 
     };
 
 }
 
-// main interface
+// get the partition function for nucleus inuc.  Here pf_cache
+// should already contain the index into the temp / pf arrays
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void get_partition_function(const int inuc,
@@ -162,6 +174,25 @@ void get_partition_function(const int inuc,
     }
 
 }
+
+
+// a version of get_parition_function where we have not cached the
+// index into the arrays
+
+AMREX_GPU_HOST_DEVICE AMREX_INLINE
+void get_partition_function(const int inuc,
+                            [[maybe_unused]] const tf_t& tfactors,
+                            amrex::Real& pf, amrex::Real& dpf_dT) {
+
+    // create a dummy cache.  This will initialize the indices
+    // to -1 and we will force a search for the correct index
+    // when we do the interpolation.
+
+    part_fun::pf_cache_t pf_cache;
+
+    get_partition_function(inuc, tfactors, pf_cache, pf, dpf_dT);
+}
+
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void get_partition_function_cached(const int inuc, const tf_t& tfactors,
