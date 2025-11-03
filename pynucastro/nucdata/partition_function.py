@@ -164,6 +164,9 @@ class PartitionFunction:
         ax.set_xlim(T_min, T_max)
         ax.set_ylim(min(0.5, self.partition_function[mask].min()),
                     max(2, self.partition_function[mask].max()))
+        ax.set_xlabel("T (K)")
+        ax.set_ylabel("G(T)")
+
         return fig
 
 class PartitionFunctionTable:
