@@ -63,7 +63,7 @@ namespace part_fun {
         }
 
         // if the index is still -1, then we are out-of-bounds, so
-        // just skip the intepolation
+        // just skip the interpolation
 
         if (idx != -1) {
 
