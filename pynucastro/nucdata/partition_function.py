@@ -169,6 +169,7 @@ class PartitionFunction:
 
         return fig
 
+
 class PartitionFunctionTable:
     """Manage a partition function table file. A
     :class:`PartitionFunction` object is constructed for each nucleus
