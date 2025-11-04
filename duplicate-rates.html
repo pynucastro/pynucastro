@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Dealing with Duplicate Rates &#8212; pynucastro 2.8.0 documentation</title>
+    <title>Dealing with Duplicate Rates &#8212; pynucastro 2.8.0.post1+gc02d89fb3 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=452cf2f0"></script>
+    <script src="_static/documentation_options.js?v=7b90af70"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -630,7 +630,7 @@ warning: Mg24 was not able to be linked in TabularLibrary
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[n ⟶ p + e⁻ + 𝜈, n ⟶ p + e⁻ + 𝜈], [Mg23 ⟶ Na23 + e⁺ + 𝜈, Mg23 + e⁻ ⟶ Na23 + 𝜈]]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:751: UserWarning: ReacLib neutron decay rate (&lt;n_to_p_weak_wc12&gt;) does not account for degeneracy at high densities. Consider using tabular rate from Langanke.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.14/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:751: UserWarning: ReacLib neutron decay rate (&lt;n_to_p_weak_wc12&gt;) does not account for degeneracy at high densities. Consider using tabular rate from Langanke.
   warnings.warn(msg)
 </pre></div>
 </div>
@@ -639,12 +639,12 @@ warning: Mg24 was not able to be linked in TabularLibrary
 <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
 <span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">])</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:617,</span> in <span class="ni">RateCollection.__init__</span><span class="nt">(self, rate_files, libraries, rates, inert_nuclei, do_screening, verbose)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.14/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:617,</span> in <span class="ni">RateCollection.__init__</span><span class="nt">(self, rate_files, libraries, rates, inert_nuclei, do_screening, verbose)</span>
 <span class="g g-Whitespace">    </span><span class="mi">613</span>         <span class="n">combined_library</span> <span class="o">+=</span> <span class="n">lib</span>
 <span class="g g-Whitespace">    </span><span class="mi">615</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">+</span> <span class="n">combined_library</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
 <span class="ne">--&gt; </span><span class="mi">617</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:763,</span> in <span class="ni">RateCollection._build_collection</span><span class="nt">(self)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.14/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:763,</span> in <span class="ni">RateCollection._build_collection</span><span class="nt">(self)</span>
 <span class="g g-Whitespace">    </span><span class="mi">761</span> <span class="k">if</span> <span class="n">dupes</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">():</span>
 <span class="g g-Whitespace">    </span><span class="mi">762</span>     <span class="nb">print</span><span class="p">(</span><span class="n">dupes</span><span class="p">)</span>
 <span class="ne">--&gt; </span><span class="mi">763</span>     <span class="k">raise</span> <span class="n">RateDuplicationError</span><span class="p">(</span><span class="s2">&quot;Duplicate rates found&quot;</span><span class="p">)</span>
