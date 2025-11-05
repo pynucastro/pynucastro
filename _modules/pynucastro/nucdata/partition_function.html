@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.nucdata.partition_function &#8212; pynucastro 2.8.0.post1+gc02d89fb3 documentation</title>
+    <title>pynucastro.nucdata.partition_function &#8212; pynucastro 2.8.0.post2+gbe3e9d2f8 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=7b90af70"></script>
+    <script src="../../../_static/documentation_options.js?v=60b04910"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -493,6 +493,7 @@ document.write(`
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">InterpolatedUnivariateSpline</span>
 
@@ -548,31 +549,30 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">interpolant_order</span> <span class="o">=</span> <span class="n">interpolant_order</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_interpolant</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="PartitionFunction.lower_partition">
-<a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction.lower_partition">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">lower_partition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the partition function value for :meth:`lower_temperature`.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
-
-
-<div class="viewcode-block" id="PartitionFunction.upper_partition">
-<a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction.upper_partition">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">upper_partition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the partition function value for :meth:`upper_temperature`.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
-
-
 <div class="viewcode-block" id="PartitionFunction.lower_temperature">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction.lower_temperature">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">lower_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the lowest temperature this object supports.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the lowest temperature this object supports.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="PartitionFunction.upper_temperature">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction.upper_temperature">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">upper_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the highest temperature this object supports.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the highest temperature this object supports.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
 
 
@@ -606,25 +606,20 @@ document.write(`
         <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">partition_function</span><span class="p">)</span> <span class="ow">and</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">temperature</span><span class="p">))</span>
 
-<div class="viewcode-block" id="PartitionFunction.construct_spline_interpolant">
-<a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction.construct_spline_interpolant">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">construct_spline_interpolant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct an interpolating univariate spline of order &gt;= 1 and</span>
-<span class="sd">        order &lt;= 5 using the scipy InterpolatedUnivariateSpline</span>
-<span class="sd">        implementation.</span>
-
-<span class="sd">        Interpolate in log space for the partition function and in GK</span>
-<span class="sd">        for temperature.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_interpolant</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">interpolant_order</span> <span class="o">=</span> <span class="n">order</span></div>
-
-
 <div class="viewcode-block" id="PartitionFunction.eval">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction.eval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the interpolated partition function value for the</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the interpolated partition function value for the</span>
 <span class="sd">        temperature T.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature in K</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -642,6 +637,40 @@ document.write(`
             <span class="k">raise</span>
         <span class="c1"># extrapolates keeping the boundaries fixed.</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_interpolant</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s1">&#39;const&#39;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="PartitionFunction.plot">
+<a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction.plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T_min</span><span class="o">=</span><span class="mf">1.e7</span><span class="p">,</span> <span class="n">T_max</span><span class="o">=</span><span class="mf">1.e11</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the partition function as a function of T</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        T_min : float</span>
+<span class="sd">            minimum temperature to plot</span>
+<span class="sd">        T_max : float</span>
+<span class="sd">            maximum temperature to plot</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matplotlib.figure.Figure</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">&gt;=</span> <span class="n">T_min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">&lt;=</span> <span class="n">T_max</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">T_min</span><span class="p">,</span> <span class="n">T_max</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span>
+                    <span class="nb">max</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;T (K)&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;G(T)&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">fig</span></div>
 </div>
 
 

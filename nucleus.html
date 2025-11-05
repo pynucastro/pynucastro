@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Nuclear Properties &#8212; pynucastro 2.8.0.post1+gc02d89fb3 documentation</title>
+    <title>Nuclear Properties &#8212; pynucastro 2.8.0.post2+gbe3e9d2f8 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=7b90af70"></script>
+    <script src="_static/documentation_options.js?v=60b04910"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -573,6 +573,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nucleus"><code class="docutils literal notranslate"><span class="pre">Nucleus</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nucleus-math"><code class="docutils literal notranslate"><span class="pre">Nucleus</span></code> math</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-properties">Exploring properties</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#partition-functions">Partition functions</a></li>
 </ul>
             </nav>
         </div>
@@ -653,16 +654,9 @@ All of these are equivalent:</p>
 </div>
 </div>
 </div>
-<p>We can also get the partition functions of the nucleus, if it exists.  The data we use mostly provides these for the heavy nuclei.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ni56</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ni56&quot;</span><span class="p">)</span>
-<span class="n">ni56</span><span class="o">.</span><span class="n">partition_function</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="mf">4.e9</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.002103
 </pre></div>
 </div>
 </div>
@@ -849,6 +843,35 @@ Fe56         -60.60716  52103.06257552      8.79035626
 </div>
 </div>
 </section>
+<section id="partition-functions">
+<h2>Partition functions<a class="headerlink" href="#partition-functions" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Nucleus</span></code> objects also have their partition function data (managed by <a class="reference internal" href="pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction" title="pynucastro.nucdata.partition_function.PartitionFunction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PartitionFunction</span></code></a>.  These come from the work of <span id="id1">Rauscher <em>et al.</em> [<a class="reference internal" href="zreferences.html#id21" title="Thomas Rauscher, Friedrich-Karl Thielemann, and Karl-Ludwig Kratz. Nuclear level density and the determination of thermonuclear rates for astrophysics. Phys. Rev. C, 56:1613–1625, September 1997. URL: https://link.aps.org/doi/10.1103/PhysRevC.56.1613, doi:10.1103/PhysRevC.56.1613.">1997</a>]</span> for low temperatures (<span class="math notranslate nohighlight">\(T \le 10^{10}~\mathrm{K}\)</span>) and <span id="id2">Rauscher [<a class="reference internal" href="zreferences.html#id23" title="T. Rauscher. Nuclear partition functions at temperatures exceeding 10^10 K. The Astrophysical Journal Supplement Series, 147(2):403, August 2003. doi:10.1086/375733.">2003</a>]</span> for high temperatures.  The data from these two sources is concatenated and a spline fit is used to evaluate it.</p>
+<p>We can use <a class="reference internal" href="pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction.eval" title="pynucastro.nucdata.partition_function.PartitionFunction.eval"><code class="xref py py-meth docutils literal notranslate"><span class="pre">eval</span></code></a> to evaluate the partition function at any temperature.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ne20</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ne20&quot;</span><span class="p">)</span>
+<span class="n">ne20</span><span class="o">.</span><span class="n">partition_function</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="mf">4.e9</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.043747
+</pre></div>
+</div>
+</div>
+</div>
+<p>And we can also plot it vs. temperature</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">ne20</span><span class="o">.</span><span class="n">partition_function</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/cb34481a071001040014abf4c71fcd1c6de53b6bc9e3dab019b8e606b4854544.png" src="_images/cb34481a071001040014abf4c71fcd1c6de53b6bc9e3dab019b8e606b4854544.png" />
+</div>
+</div>
+</section>
 </section>
 
 
@@ -899,6 +922,7 @@ Fe56         -60.60716  52103.06257552      8.79035626
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nucleus"><code class="docutils literal notranslate"><span class="pre">Nucleus</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nucleus-math"><code class="docutils literal notranslate"><span class="pre">Nucleus</span></code> math</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-properties">Exploring properties</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#partition-functions">Partition functions</a></li>
 </ul>
   </nav></div>
 

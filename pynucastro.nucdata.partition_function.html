@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.nucdata.partition_function module &#8212; pynucastro 2.8.0.post1+gc02d89fb3 documentation</title>
+    <title>pynucastro.nucdata.partition_function module &#8212; pynucastro 2.8.0.post2+gbe3e9d2f8 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=7b90af70"></script>
+    <script src="_static/documentation_options.js?v=60b04910"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -569,11 +569,9 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.partition_function.PartitionFunction"><code class="docutils literal notranslate"><span class="pre">PartitionFunction</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.partition_function.PartitionFunction.construct_spline_interpolant"><code class="docutils literal notranslate"><span class="pre">PartitionFunction.construct_spline_interpolant()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.partition_function.PartitionFunction.eval"><code class="docutils literal notranslate"><span class="pre">PartitionFunction.eval()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.partition_function.PartitionFunction.lower_partition"><code class="docutils literal notranslate"><span class="pre">PartitionFunction.lower_partition()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.partition_function.PartitionFunction.lower_temperature"><code class="docutils literal notranslate"><span class="pre">PartitionFunction.lower_temperature()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.partition_function.PartitionFunction.upper_partition"><code class="docutils literal notranslate"><span class="pre">PartitionFunction.upper_partition()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.partition_function.PartitionFunction.plot"><code class="docutils literal notranslate"><span class="pre">PartitionFunction.plot()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.partition_function.PartitionFunction.upper_temperature"><code class="docutils literal notranslate"><span class="pre">PartitionFunction.upper_temperature()</span></code></a></li>
 </ul>
 </li>
@@ -630,44 +628,57 @@ same order as <code class="docutils literal notranslate"><span class="pre">tempe
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunction.construct_spline_interpolant">
-<span class="sig-name descname"><span class="pre">construct_spline_interpolant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunction.construct_spline_interpolant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunction.construct_spline_interpolant" title="Link to this definition">#</a></dt>
-<dd><p>Construct an interpolating univariate spline of order &gt;= 1 and
-order &lt;= 5 using the scipy InterpolatedUnivariateSpline
-implementation.</p>
-<p>Interpolate in log space for the partition function and in GK
-for temperature.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunction.eval">
 <span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunction.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunction.eval" title="Link to this definition">#</a></dt>
-<dd><p>Return the interpolated partition function value for the
+<dd><p>Compute the interpolated partition function value for the
 temperature T.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunction.lower_partition">
-<span class="sig-name descname"><span class="pre">lower_partition</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunction.lower_partition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunction.lower_partition" title="Link to this definition">#</a></dt>
-<dd><p>Return the partition function value for <a class="reference internal" href="#pynucastro.nucdata.partition_function.PartitionFunction.lower_temperature" title="pynucastro.nucdata.partition_function.PartitionFunction.lower_temperature"><code class="xref py py-meth docutils literal notranslate"><span class="pre">lower_temperature()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – temperature in K</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunction.lower_temperature">
 <span class="sig-name descname"><span class="pre">lower_temperature</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunction.lower_temperature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunction.lower_temperature" title="Link to this definition">#</a></dt>
 <dd><p>Return the lowest temperature this object supports.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunction.upper_partition">
-<span class="sig-name descname"><span class="pre">upper_partition</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunction.upper_partition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunction.upper_partition" title="Link to this definition">#</a></dt>
-<dd><p>Return the partition function value for <a class="reference internal" href="#pynucastro.nucdata.partition_function.PartitionFunction.upper_temperature" title="pynucastro.nucdata.partition_function.PartitionFunction.upper_temperature"><code class="xref py py-meth docutils literal notranslate"><span class="pre">upper_temperature()</span></code></a>.</p>
+<dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunction.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunction.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunction.plot" title="Link to this definition">#</a></dt>
+<dd><p>Plot the partition function as a function of T</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – minimum temperature to plot</p></li>
+<li><p><strong>T_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – maximum temperature to plot</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.10.7)">matplotlib.figure.Figure</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunction.upper_temperature">
 <span class="sig-name descname"><span class="pre">upper_temperature</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunction.upper_temperature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunction.upper_temperature" title="Link to this definition">#</a></dt>
 <dd><p>Return the highest temperature this object supports.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -782,11 +793,9 @@ the form e.g.  “ni56”. The table files are stored in the
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.partition_function.PartitionFunction"><code class="docutils literal notranslate"><span class="pre">PartitionFunction</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.partition_function.PartitionFunction.construct_spline_interpolant"><code class="docutils literal notranslate"><span class="pre">PartitionFunction.construct_spline_interpolant()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.partition_function.PartitionFunction.eval"><code class="docutils literal notranslate"><span class="pre">PartitionFunction.eval()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.partition_function.PartitionFunction.lower_partition"><code class="docutils literal notranslate"><span class="pre">PartitionFunction.lower_partition()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.partition_function.PartitionFunction.lower_temperature"><code class="docutils literal notranslate"><span class="pre">PartitionFunction.lower_temperature()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.partition_function.PartitionFunction.upper_partition"><code class="docutils literal notranslate"><span class="pre">PartitionFunction.upper_partition()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.partition_function.PartitionFunction.plot"><code class="docutils literal notranslate"><span class="pre">PartitionFunction.plot()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.partition_function.PartitionFunction.upper_temperature"><code class="docutils literal notranslate"><span class="pre">PartitionFunction.upper_temperature()</span></code></a></li>
 </ul>
 </li>
