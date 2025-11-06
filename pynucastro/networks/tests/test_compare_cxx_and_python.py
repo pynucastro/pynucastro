@@ -2,10 +2,10 @@
 # and have them both compute dY/dt and compares to make sure that they
 # agree.  Note: screening is not considered.
 
+import os
 import re
 import subprocess
 from pathlib import Path
-from shutil import which
 
 import numpy as np
 import pytest
@@ -37,7 +37,9 @@ class TestNetworkCompare:
                        shell=True, check=True, cwd=test_path)
 
         # cross-platform resolve of the executable
-        exe = which("main", path=str(test_path))
+        exe = "main"
+        if os.name != "nt":
+            exe = "./" + exe
 
         cp = subprocess.run([exe], capture_output=True,
                             check=True, text=True, cwd=test_path)
