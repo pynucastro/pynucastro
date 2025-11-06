@@ -35,8 +35,8 @@ class TestNetworkCompare:
         subprocess.run("make DISABLE_SCREENING=TRUE", capture_output=False,
                        shell=True, check=True, cwd=test_path)
 
-        cp = subprocess.run("main", capture_output=True,
-                            shell=True, check=True, text=True, cwd=test_path)
+        cp = subprocess.run(["main"], capture_output=True,
+                            check=True, text=True, cwd=test_path)
         stdout = cp.stdout
 
         ydot_re = re.compile(r"(Ydot)\((\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
