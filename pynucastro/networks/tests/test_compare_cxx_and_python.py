@@ -4,6 +4,7 @@
 
 import re
 import subprocess
+from shutil import which
 from pathlib import Path
 
 import numpy as np
@@ -35,7 +36,10 @@ class TestNetworkCompare:
         subprocess.run("make DISABLE_SCREENING=TRUE", capture_output=False,
                        shell=True, check=True, cwd=test_path)
 
-        cp = subprocess.run(["main"], capture_output=True,
+        # cross-platform resolve of the executable
+        exe = which("main", path=str(test_path))
+
+        cp = subprocess.run([exe], capture_output=True,
                             check=True, text=True, cwd=test_path)
         stdout = cp.stdout
 
