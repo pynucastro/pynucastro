@@ -4,8 +4,8 @@
 
 import re
 import subprocess
-from shutil import which
 from pathlib import Path
+from shutil import which
 
 import numpy as np
 import pytest
