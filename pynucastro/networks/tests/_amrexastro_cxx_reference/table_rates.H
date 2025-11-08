@@ -194,7 +194,7 @@ evaluate_linear_2d(const amrex::Real fip1jp1, const amrex::Real fip1j, const amr
 template<typename R, typename T, typename D>
 AMREX_INLINE AMREX_GPU_HOST_DEVICE
 amrex::Real
-evaluate_vars(const amrex::Real irhoy_lo, const amrex::Real jtemp_lo,
+evaluate_vars(const int irhoy_lo, const int jtemp_lo,
               const table_t& table_meta, const R& log_rhoy_table, const T& log_temp_table, const D& data,
               const amrex::Real log_rhoy, const amrex::Real log_temp, const int component)
 {
@@ -224,7 +224,7 @@ evaluate_vars(const amrex::Real irhoy_lo, const amrex::Real jtemp_lo,
 template<typename R, typename T, typename D>
 AMREX_INLINE AMREX_GPU_HOST_DEVICE
 amrex::Real
-evaluate_dr_dtemp(const amrex::Real irhoy_lo, const amrex::Real jtemp_lo,
+evaluate_dr_dtemp(const int irhoy_lo, const int jtemp_lo,
                   const table_t& table_meta, const R& log_rhoy_table, const T& log_temp_table, const D& data,
                   const amrex::Real log_rhoy, const amrex::Real log_temp)
 {
@@ -367,7 +367,7 @@ evaluate_dr_dtemp(const amrex::Real irhoy_lo, const amrex::Real jtemp_lo,
 template <typename R, typename T, typename D>
 AMREX_INLINE AMREX_GPU_HOST_DEVICE
 void
-get_entries(const amrex::Real irhoy_lo, const amrex::Real jtemp_lo,
+get_entries(const int irhoy_lo, const int jtemp_lo,
             const table_t& table_meta, const R& log_rhoy_table, const T& log_temp_table, const D& data,
             const amrex::Real log_rhoy, const amrex::Real log_temp, amrex::Array1D<amrex::Real, 1, num_vars+add_vars>& entries)
 {
