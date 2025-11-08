@@ -379,7 +379,7 @@ get_entries(const int irhoy_lo, const int jtemp_lo,
 
     entries(k_index_dlogr_dlogt) =
         evaluate_dr_dtemp(irhoy_lo, jtemp_lo,
-                          log_rhoy_table, log_temp_table, data,
+                          table_meta, log_rhoy_table, log_temp_table, data,
                           log_rhoy, log_temp);
 }
 
