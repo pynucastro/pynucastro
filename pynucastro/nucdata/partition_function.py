@@ -3,6 +3,7 @@
 
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import numpy as np
 from scipy.interpolate import InterpolatedUnivariateSpline
 
@@ -56,20 +57,25 @@ class PartitionFunction:
         self.interpolant_order = interpolant_order
         self._interpolant = None
 
-    def lower_partition(self):
-        """Return the partition function value for :meth:`lower_temperature`."""
-        return self.partition_function[0]
-
-    def upper_partition(self):
-        """Return the partition function value for :meth:`upper_temperature`."""
-        return self.partition_function[-1]
-
     def lower_temperature(self):
-        """Return the lowest temperature this object supports."""
+        """Return the lowest temperature this object supports.
+
+        Returns
+        -------
+        float
+
+        """
+
         return self.temperature[0]
 
     def upper_temperature(self):
-        """Return the highest temperature this object supports."""
+        """Return the highest temperature this object supports.
+
+        Returns
+        -------
+        float
+        """
+
         return self.temperature[-1]
 
     def __add__(self, other):
@@ -102,20 +108,18 @@ class PartitionFunction:
         return (np.all(self.partition_function == other.partition_function) and
                 np.all(self.temperature == other.temperature))
 
-    def construct_spline_interpolant(self, order=3):
-        """Construct an interpolating univariate spline of order >= 1 and
-        order <= 5 using the scipy InterpolatedUnivariateSpline
-        implementation.
-
-        Interpolate in log space for the partition function and in GK
-        for temperature.
-        """
-        self._interpolant = None
-        self.interpolant_order = order
-
     def eval(self, T):
-        """Return the interpolated partition function value for the
+        """Compute the interpolated partition function value for the
         temperature T.
+
+        Parameters
+        ----------
+        T : float
+            temperature in K
+
+        Returns
+        -------
+        float
 
         """
 
@@ -133,6 +137,37 @@ class PartitionFunction:
             raise
         # extrapolates keeping the boundaries fixed.
         return float(10**self._interpolant(T, ext='const'))
+
+    def plot(self, T_min=1.e7, T_max=1.e11):
+        """Plot the partition function as a function of T
+
+        Parameters
+        ----------
+        T_min : float
+            minimum temperature to plot
+        T_max : float
+            maximum temperature to plot
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+
+        """
+
+        fig, ax = plt.subplots()
+
+        ax.plot(self.temperature, self.partition_function)
+        mask = (self.temperature >= T_min) & (self.temperature <= T_max)
+        ax.grid(ls=":")
+        ax.set_xscale("log")
+        ax.set_yscale("log")
+        ax.set_xlim(T_min, T_max)
+        ax.set_ylim(min(0.5, self.partition_function[mask].min()),
+                    max(2, self.partition_function[mask].max()))
+        ax.set_xlabel("T (K)")
+        ax.set_ylabel("G(T)")
+
+        return fig
 
 
 class PartitionFunctionTable:
