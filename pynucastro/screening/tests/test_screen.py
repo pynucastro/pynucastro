@@ -19,10 +19,18 @@ class TestScreen:
 
     @pytest.fixture(scope="class")
     def plasma_state(self, nuclei):
-        temp = 1e6
-        dens = 1e5
+        temp = 1.e6
+        dens = 1.e5
         comp = pyna.Composition(nuclei)
         comp.set_solar_like()
+        return make_plasma_state(temp, dens, comp.get_molar())
+
+    @pytest.fixture(scope="class")
+    def plasma_state2(self, nuclei):
+        temp = 2.e8
+        dens = 1.e9
+        comp = pyna.Composition(nuclei)
+        comp.set_equal()
         return make_plasma_state(temp, dens, comp.get_molar())
 
     @pytest.fixture(scope="class")
@@ -59,21 +67,41 @@ class TestScreen:
         scor = chugunov_2007(plasma_state, scn_fac)
         assert scor == approx(7.785569477042635e+33)
 
+    def test_chugunov_2007_ps2(self, plasma_state2, scn_fac):
+        scor = chugunov_2007(plasma_state2, scn_fac)
+        assert scor == approx(2761.2218597965607)
+
     def test_chugunov_2009(self, plasma_state, scn_fac):
         scor = chugunov_2009(plasma_state, scn_fac)
         assert scor == approx(2.87983449091315e+33)
+
+    def test_chugunov_2009_ps2(self, plasma_state2, scn_fac):
+        scor = chugunov_2009(plasma_state2, scn_fac)
+        assert scor == approx(2370.630076875232)
 
     def test_debye_huckel(self, plasma_state, scn_fac):
         scor = debye_huckel(plasma_state, scn_fac)
         assert scor == approx(1.9424263952412558e+130)
 
+    def test_debye_huckel_ps2(self, plasma_state2, scn_fac):
+        scor = debye_huckel(plasma_state2, scn_fac)
+        assert scor == approx(1.5936621594708264e+21)
+
     def test_potekhin_1998(self, plasma_state, scn_fac):
         scor = potekhin_1998(plasma_state, scn_fac)
         assert scor == approx(1.0508243810383098e+36)
 
+    def test_potekhin_1998_ps2(self, plasma_state2, scn_fac):
+        scor = potekhin_1998(plasma_state2, scn_fac)
+        assert scor == approx(2918.3445667367027)
+
     def test_screen5(self, plasma_state, scn_fac):
         scor = screen5(plasma_state, scn_fac)
         assert scor == approx(4.049488384394272e+33)
+
+    def test_screen5_ps2(self, plasma_state2, scn_fac):
+        scor = screen5(plasma_state2, scn_fac)
+        assert scor == approx(2431.870830574753)
 
     @pytest.mark.parametrize("screen_func", [chugunov_2007, chugunov_2009, potekhin_1998, screen5])
     def test_screening_check(self, plasma_state, scn_fac, screen_func):
