@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <numbers>
 #include <string>
 
 #include <amrex_bridge.H>
@@ -48,7 +49,7 @@ fill_plasma_state(plasma_state_t& state, const Real& temp,
 
     // precomputed part of Gamma_e, from Chugunov 2009 eq. 6
     Real gamma_e_constants =
-        C::q_e*C::q_e/C::k_B * std::pow(4.0_rt/3.0_rt*M_PI, 1.0_rt/3.0_rt);
+        C::q_e*C::q_e/C::k_B * std::pow(4.0_rt/3.0_rt*std::numbers::pi, 1.0_rt/3.0_rt);
     state.gamma_e_fac = gamma_e_constants * std::cbrt(state.n_e);
 }
 
@@ -93,7 +94,7 @@ Real chugunov2007 (const plasma_state_t& state,
     Real n_i = state.n_e / scn_fac.ztilde3;
     Real m_i = 2.0_rt * mu12 / C::n_A;
 
-    const Real T_p_factor = C::hbar/C::k_B*C::q_e * std::sqrt(4.0_rt*M_PI);
+    const Real T_p_factor = C::hbar/C::k_B*C::q_e * std::sqrt(4.0_rt*std::numbers::pi);
     Real T_p = T_p_factor * std::sqrt(z_factor * n_i / m_i);
 
     // Normalized temperature
@@ -112,7 +113,7 @@ Real chugunov2007 (const plasma_state_t& state,
     } else if (T_norm <= T_norm_fade) {
         // blend using a cosine, after MESA
         constexpr Real delta_T = T_norm_fade - T_norm_min;
-        Real tmp = M_PI * (T_norm - T_norm_min) / delta_T;
+        Real tmp = std::numbers::pi * (T_norm - T_norm_min) / delta_T;
         Real f = 0.5_rt * (1.0_rt - std::cos(tmp));
         T_norm = (1.0_rt - f) * T_norm_min + f * T_norm;
     }
@@ -131,13 +132,13 @@ Real chugunov2007 (const plasma_state_t& state,
     } else if (Gamma >= Gamma_fade) {
         // blend using a cosine, after MESA
         constexpr Real delta_gamma = Gamma_max - Gamma_fade;
-        Real tmp = M_PI * (Gamma - Gamma_fade) / delta_gamma;
+        Real tmp = std::numbers::pi * (Gamma - Gamma_fade) / delta_gamma;
         Real f = 0.5_rt * (1.0_rt - std::cos(tmp));
         Gamma = (1.0_rt - f) * Gamma + f * Gamma_max;
     }
 
     // Chugunov 2007 eq. 3
-    constexpr Real zeta_factor = 4.0_rt / (3.0_rt * M_PI*M_PI);
+    constexpr Real zeta_factor = 4.0_rt / (3.0_rt * std::numbers::pi * std::numbers::pi);
     Real zeta = std::cbrt(zeta_factor * (inv_T_norm*inv_T_norm));
 
     // Gamma tilde from Chugunov 2007 eq. 21

@@ -2,6 +2,7 @@
 # and have them both compute dY/dt and compares to make sure that they
 # agree.  Note: screening is not considered.
 
+import os
 import re
 import subprocess
 from pathlib import Path
@@ -35,8 +36,13 @@ class TestNetworkCompare:
         subprocess.run("make DISABLE_SCREENING=TRUE", capture_output=False,
                        shell=True, check=True, cwd=test_path)
 
-        cp = subprocess.run("./main", capture_output=True,
-                            shell=True, check=True, text=True, cwd=test_path)
+        # cross-platform resolve of the executable
+        exe = "main"
+        if os.name != "nt":
+            exe = "./" + exe
+
+        cp = subprocess.run([exe], capture_output=True,
+                            check=True, text=True, cwd=test_path)
         stdout = cp.stdout
 
         ydot_re = re.compile(r"(Ydot)\((\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
