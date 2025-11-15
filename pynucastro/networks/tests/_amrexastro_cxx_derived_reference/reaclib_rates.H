@@ -308,6 +308,8 @@ fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
 
     part_fun::pf_cache_t pf_cache{};
 
+    pf_cache.index_temp_array_1 = part_fun::index_pf(tfactors.T9, part_fun::temp_array_1);
+
     rate_He4_Fe52_to_Ni56<do_T_derivatives>(tfactors, rate, drate_dT);
     rate_eval.screened_rates(k_He4_Fe52_to_Ni56) = rate;
     if constexpr (std::is_same_v<T, rate_derivs_t>) {
