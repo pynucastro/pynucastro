@@ -13,6 +13,7 @@ def network_helper(nuclei, *,
                    use_detailed_balance=True,
                    use_tabular_rates=True,
                    tabular_ordering=None,
+                   with_reverse=True,
                    verbose=False):
     """Generate a basic network connecting all of the input nuclei
     using all of the rates known to pynucastro.
@@ -36,6 +37,8 @@ def network_helper(nuclei, *,
         If we are including tabular rates, a list of sources
         can be provided to specify which rate sources are used,
         and the priority that each source should have.
+    with_reverse : bool
+        Do we include the reverse rates from ReacLib?
     verbose : bool
         Output more information
 
@@ -46,7 +49,7 @@ def network_helper(nuclei, *,
     """
 
     rl = ReacLibLibrary()
-    lib = rl.linking_nuclei(nuclei)
+    lib = rl.linking_nuclei(nuclei, with_reverse=with_reverse)
 
     if use_tabular_rates:
         if tabular_ordering:
