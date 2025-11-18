@@ -2,9 +2,12 @@
 
 
 import json
+import os
+import re
 import subprocess
 from importlib.metadata import Distribution
 from urllib.parse import urlparse
+
 
 from ._version import version
 
@@ -36,6 +39,11 @@ def pynucastro_version():
         git_dir = json.loads(direct_url).get("url", None)
         if git_dir:
             git_dir = urlparse(git_dir).path
+
+            # Handle drive letter convention on windows
+            if os.name == "nt":
+                if re.search("^/[A-Z]:", git_dir):
+                    git_dir = git_dir[1:]
 
             try:
                 sp = subprocess.run("git describe", capture_output=True,
