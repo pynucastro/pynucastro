@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.utils &#8212; pynucastro 2.8.0.post7+g87dadf4f7 documentation</title>
+    <title>pynucastro.utils &#8212; pynucastro 2.8.0.post8+g930bc7982 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../_static/documentation_options.js?v=e5d5c693"></script>
+    <script src="../../_static/documentation_options.js?v=58c857ca"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -492,6 +492,8 @@ document.write(`
 
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">importlib.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Distribution</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">urlparse</span>
@@ -528,6 +530,11 @@ document.write(`
         <span class="n">git_dir</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">direct_url</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">git_dir</span><span class="p">:</span>
             <span class="n">git_dir</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">git_dir</span><span class="p">)</span><span class="o">.</span><span class="n">path</span>
+
+            <span class="c1"># Handle drive letter convention on windows</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;nt&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;^/[A-Z]:&quot;</span><span class="p">,</span> <span class="n">git_dir</span><span class="p">):</span>
+                    <span class="n">git_dir</span> <span class="o">=</span> <span class="n">git_dir</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">sp</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;git describe&quot;</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
