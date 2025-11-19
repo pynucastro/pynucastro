@@ -8,7 +8,6 @@ import subprocess
 from importlib.metadata import Distribution
 from urllib.parse import urlparse
 
-
 from ._version import version
 
 
