@@ -75,7 +75,6 @@ class TableInterpolator:
         if T9_0 < self.temp_points.min() or T9_0 > self.temp_points.max():
             raise ValueError("temperature out of table bounds")
 
-
         idx_t = self._get_T_idx(T0)
 
         # note: T is stored as T9
