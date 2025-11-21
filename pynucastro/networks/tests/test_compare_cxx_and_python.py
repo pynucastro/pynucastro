@@ -5,6 +5,7 @@
 import os
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -22,6 +23,7 @@ class TestNetworkCompare:
         lib = reaclib_library.linking_nuclei(nuc)
         return lib
 
+    @pytest.mark.skipif(sys.platform.startswith("win"), reason="Does not run on Windows")
     def test_compare(self, lib):
 
         test_path = Path("_test_compare/")
@@ -36,13 +38,8 @@ class TestNetworkCompare:
         subprocess.run("make DISABLE_SCREENING=TRUE", capture_output=False,
                        shell=True, check=True, cwd=test_path)
 
-        # cross-platform resolve of the executable
-        exe = "main"
-        if os.name != "nt":
-            exe = "./" + exe
-
-        cp = subprocess.run([exe], capture_output=True,
-                            check=True, text=True, cwd=test_path)
+        cp = subprocess.run("./main", capture_output=True,
+                            shell=True, check=True, text=True, cwd=test_path)
         stdout = cp.stdout
 
         ydot_re = re.compile(r"(Ydot)\((\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
