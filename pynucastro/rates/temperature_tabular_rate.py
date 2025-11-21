@@ -13,7 +13,7 @@ from pynucastro.rates.rate import Rate
 
 @jitclass([
     ('temp_points', numba.float64[:]),
-    ('rate_data', numba.float64[:])
+    ('log_rate_data', numba.float64[:])
 ])
 class TableInterpolator:
     """A class that holds a pointer to the rate data and
@@ -24,15 +24,15 @@ class TableInterpolator:
     temp_points : numpy.ndarray
         an array giving the temperature at the points where we
         tabulate the rate --- this is assumed to be T9
-    rate_data : numpy.ndarray
-        an array giving the tabulated rate data
+    log_rate_data : numpy.ndarray
+        an array giving the tabulated log10(rate) data
 
     """
 
-    def __init__(self, temp_points, rate_data):
+    def __init__(self, temp_points, log_rate_data):
 
         self.temp_points = temp_points
-        self.rate_data = rate_data
+        self.log_rate_data = log_rate_data
 
     def _get_T_idx(self, T0):
         """Find the index into the temperatures such that T[i-1] < T0 <= T[i].
@@ -83,11 +83,11 @@ class TableInterpolator:
 
         dT9 = self.temp_points[idx_t+1] - self.temp_points[idx_t]
 
-        rate_i = self.rate_data[idx_t]
-        rate_ip1 = self.rate_data[idx_t+1]
+        rate_i = self.log_rate_data[idx_t]
+        rate_ip1 = self.log_rate_data[idx_t+1]
 
         r = rate_i + (rate_ip1 - rate_i) / dT9 * (T9_0 - self.temp_points[idx_t])
-        return r
+        return 10.0**r
 
 
 class TemperatureTabularRate(Rate):
@@ -99,12 +99,12 @@ class TemperatureTabularRate(Rate):
     ----------
     t9_data : numpy.ndarray
         The temperature (in 1.e9 K) where we tabulate the rate
-    rate_data : numpy.ndarray
-        The tabulated rate data, N_A <σv>
+    log_rate_data : numpy.ndarray
+        The tabulated log10(rate) data, N_A <σv>
 
     """
 
-    def __init__(self, t9_data, rate_data):
+    def __init__(self, t9_data, log_rate_data):
         super().__init__()
 
         # make sure there are no weak interactions -- we don't
@@ -113,7 +113,7 @@ class TemperatureTabularRate(Rate):
         assert sum(n.A for n in self.reactants) == sum(n.A for n in self.products)
 
         self.t9_data = t9_data
-        self.rate_data = rate_data
+        self.log_rate_data = log_rate_data
 
         self.fname = None
 
@@ -133,7 +133,7 @@ class TemperatureTabularRate(Rate):
         self.table_Tmin = 1.e9 * self.t9_data.min()
         self.table_Tmax = 1.e9 * self.t9_data.max()
 
-        self.interpolator = TableInterpolator(self.t9_data, self.rate_data)
+        self.interpolator = TableInterpolator(self.t9_data, self.log_rate_data)
 
     def __eq__(self, other):
         """Determine whether two Rate objects are equal.  They are
