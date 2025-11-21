@@ -243,6 +243,7 @@ class TemperatureTabularRate(Rate):
         if Tmax is None:
             Tmax = self.table_Tmax
 
+        # pylint: disable=duplicate-code
         temps = np.logspace(np.log10(Tmin), np.log10(Tmax), 100)
         r = np.zeros_like(temps)
 
@@ -260,5 +261,7 @@ class TemperatureTabularRate(Rate):
             ax.set_ylabel(r"$N_A^2 <n_a n_b n_c v>$")
 
         ax.set_title(fr"{self.pretty_string}")
+        #pylint: enable=duplicate-code
+        ax.grid(ls=":")
 
         return fig
