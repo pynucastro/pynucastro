@@ -9,7 +9,7 @@ ifeq ($(DISABLE_SCREENING),TRUE)
 endif
 
 %.o: %.cpp $(HEADERS)
-	g++ -std=c++17 -I. $(DEFINES) -c $<
+	g++ -std=c++20 -I. $(DEFINES) -c $<
 
 main: $(OBJECTS) $(HEADERS)
-	g++ -std=c++17 -I. -o $@ $(OBJECTS)
+	g++ -std=c++20 -I. -o $@ $(OBJECTS)

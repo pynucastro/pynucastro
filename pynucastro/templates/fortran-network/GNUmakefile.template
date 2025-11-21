@@ -7,7 +7,7 @@ FOBJECTS := $(FSOURCES:.f90=.o)
 HEADERS := $(wildcard *.H)
 
 %.o: %.cpp $(HEADERS)
-	g++ -I. -c $<
+	g++ -I. -std=c++20 -c $<
 
 %.o: %.f90
 	gfortran -c $<
