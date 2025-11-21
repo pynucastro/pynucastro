@@ -4,6 +4,7 @@
 
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -21,6 +22,7 @@ class TestNetworkCompare:
         lib = reaclib_library.linking_nuclei(nuc)
         return lib
 
+    @pytest.mark.skipif(sys.platform.startswith("win"), reason="Does not run on Windows")
     def test_compare(self, lib):
 
         test_path = Path("_test_compare/")
