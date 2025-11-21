@@ -128,8 +128,8 @@ class TemperatureTabularRate(Rate):
         self._set_print_representation()
 
         # store the extrema of the thermodynamics
-        self.table_Tmin = 10.0**(self.t9_data.min())
-        self.table_Tmax = 10.0**(self.t9_data.max())
+        self.table_Tmin = 1.e9 * self.t9_data.min()
+        self.table_Tmax = 1.e9 * self.t9_data.max()
 
         self.interpolator = TableInterpolator(self.t9_data, self.rate_data)
 
@@ -196,6 +196,7 @@ class TemperatureTabularRate(Rate):
 
         """
 
+        print(f"evaluating at T = {T}")
         r = self.interpolator.interpolate(T)
 
         scor = 1.0
