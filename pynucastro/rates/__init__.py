@@ -15,6 +15,7 @@ from .reaclib_rate import ReacLibRate, SingleSet
 from .tabular_rate import TableIndex, TableInterpolator, TabularRate
 from .temperature_tabular_rate import TemperatureTabularRate
 
+
 def load_rate(rfile=None):
     """Try to load a rate of any type.
 
