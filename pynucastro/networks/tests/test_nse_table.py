@@ -8,7 +8,8 @@ import pynucastro as pyna
 from pynucastro import Nucleus
 
 
-@pytest.mark.skipif(sys.platform == "darwin", reason="we get roundoff diffs on Macs")
+@pytest.mark.skipif(sys.platform == "darwin" or sys.platform.startswith("win"),
+                    reason="we get roundoff diffs on Macs and Windows")
 class TestNSETable:
     @pytest.fixture(scope="class")
     def nse_net(self, reaclib_library, tabular_library):
