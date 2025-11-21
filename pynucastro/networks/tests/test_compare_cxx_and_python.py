@@ -2,7 +2,6 @@
 # and have them both compute dY/dt and compares to make sure that they
 # agree.  Note: screening is not considered.
 
-import os
 import re
 import subprocess
 import sys
