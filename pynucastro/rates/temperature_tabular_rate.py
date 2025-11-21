@@ -3,20 +3,12 @@ tabulated in terms of electron density and temperature.
 
 """
 
-import math
-import re
-from enum import Enum
-from pathlib import Path
-
 import matplotlib.pyplot as plt
 import numpy as np
 
 import pynucastro.numba_util as numba
-from pynucastro.nucdata import Nucleus, UnsupportedNucleus
 from pynucastro.numba_util import jitclass
-from pynucastro.rates.files import RateFileError, _find_rate_file
-from pynucastro.rates.rate import Rate, RateSource
-
+from pynucastro.rates import Rate
 
 
 @jitclass([
@@ -60,7 +52,7 @@ class TableInterpolator:
         T9_0 = T0 / 1.e9
 
         max_idx = len(self.temp_points) - 1
-        return max(0, min(max_idx, np.searchsorted(self.temp, T9_0)) - 1)
+        return max(0, min(max_idx, np.searchsorted(self.temp_points, T9_0)) - 1)
 
     def interpolate(self, T0):
         """Given T0, the temperature where we want the rate, do
@@ -131,7 +123,6 @@ class TemperatureTabularRate(Rate):
 
         # we should initialize this somehow
         self.weak_type = ""
-
 
         self._set_rhs_properties()
         self._set_screening()
@@ -206,14 +197,21 @@ class TemperatureTabularRate(Rate):
 
         """
 
-        r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
-                                          TableIndex.RATE.value)
-        return 10.0**r
+        r = self.interpolator.interpolate(T)
 
-    def plot(self, *, Tmin=None, Tmax=None, rhoYmin=None, rhoYmax=None,
-             color_field='rate', figsize=(10, 10)):
-        """Plot the rate or neutrino loss in the log10(ρ Y_e) and
-        log10(T) plane.
+        scor = 1.0
+        if screen_func is not None:
+            if rho is None or comp is None:
+                raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
+            scor = self.evaluate_screening(rho, T, comp, screen_func)
+
+        r *= scor
+
+        return r
+
+    def plot(self, *, Tmin=None, Tmax=None, figsize=(6, 6),
+             rho=None, comp=None, screen_func=None):
+        """Plot the rate as a function of temperature.
 
         Parameters
         ----------
@@ -221,14 +219,17 @@ class TemperatureTabularRate(Rate):
             minimum temperature for the plot
         Tmax : float
             maximum temperature for the plot
-        rhoYmin : float
-            minimum (ρ Y_e) for the plto
-        rhoYmax : float
-            maximum (ρ Y_e) for the plto
-        color_field : str
-            the field to plot.  Possible values are "rate" or "nu_loss"
         figsize : tuple
             the horizontal, vertical size (in inches) for the plot
+        rho : float
+            the density to evaluate the screening effect.
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            to evaluate the screening effect.
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the rate will include the screening correction.
 
         Returns
         -------
@@ -242,47 +243,23 @@ class TemperatureTabularRate(Rate):
             Tmin = self.table_Tmin
         if Tmax is None:
             Tmax = self.table_Tmax
-        if rhoYmin is None:
-            rhoYmin = self.table_rhoYmin
-        if rhoYmax is None:
-            rhoYmax = self.table_rhoYmax
 
-        data = self.tabular_data_table
+        temps = np.logspace(np.log10(Tmin), np.log10(Tmax), 100)
+        r = np.zeros_like(temps)
 
-        inde1 = data[:, TableIndex.T.value] <= np.log10(Tmax)
-        inde2 = data[:, TableIndex.T.value] >= np.log10(Tmin)
-        inde3 = data[:, TableIndex.RHOY.value] <= np.log10(rhoYmax)
-        inde4 = data[:, TableIndex.RHOY.value] >= np.log10(rhoYmin)
-        data_heatmap = data[inde1 & inde2 & inde3 & inde4].copy()
+        for n, T in enumerate(temps):
+            r[n] = self.eval(T, rho=rho, comp=comp, screen_func=screen_func)
 
-        rows, row_pos = np.unique(data_heatmap[:, 0], return_inverse=True)
-        cols, col_pos = np.unique(data_heatmap[:, 1], return_inverse=True)
-        pivot_table = np.zeros((len(rows), len(cols)), dtype=data_heatmap.dtype)
+        ax.loglog(temps, r)
+        ax.set_xlabel(r"$T$")
 
-        if color_field == 'rate':
-            icol = TableIndex.RATE.value
-            title = f"{self.weak_type} rate in log10(1/s)"
-            cmap = 'magma'
+        if self.dens_exp == 0:
+            ax.set_ylabel(r"$\tau$")
+        elif self.dens_exp == 1:
+            ax.set_ylabel(r"$N_A <\sigma v>$")
+        elif self.dens_exp == 2:
+            ax.set_ylabel(r"$N_A^2 <n_a n_b n_c v>$")
 
-        elif color_field == 'nu_loss':
-            icol = TableIndex.NU.value
-            title = "neutrino energy loss rate in log10(erg/s)"
-            cmap = 'viridis'
-
-        else:
-            raise ValueError("color_field must be either 'rate' or 'nu_loss'.")
-
-        try:
-            pivot_table[row_pos, col_pos] = data_heatmap[:, icol]
-        except ValueError:
-            print("Divide by zero encountered in log10\nChange the scale of T or rhoY")
-
-        im = ax.imshow(pivot_table, cmap=cmap, origin="lower",
-                       extent=[np.log10(Tmin), np.log10(Tmax), np.log10(rhoYmin), np.log10(rhoYmax)])
-        fig.colorbar(im, ax=ax)
-
-        ax.set_xlabel(r"$\log(T)$ [K]")
-        ax.set_ylabel(r"$\log(\rho Y_e)$ [g/cm$^3$]")
-        ax.set_title(fr"{self.pretty_string}" + "\n" + title)
+        ax.set_title(fr"{self.pretty_string}")
 
         return fig
