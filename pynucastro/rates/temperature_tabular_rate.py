@@ -12,36 +12,37 @@ from pynucastro.rates.rate import Rate
 
 
 @jitclass([
-    ('temp_points', numba.float64[:]),
+    ('log_temp_points', numba.float64[:]),
     ('log_rate_data', numba.float64[:])
 ])
-class TableInterpolator:
+class TempTableInterpolator:
     """A class that holds a pointer to the rate data and
     methods that allow us to interpolate the rate
 
     Parameters
     ----------
-    temp_points : numpy.ndarray
+    log_temp_points : numpy.ndarray
         an array giving the temperature at the points where we
-        tabulate the rate --- this is assumed to be T9
+        tabulate the rate --- this is log10(T9)
     log_rate_data : numpy.ndarray
         an array giving the tabulated log10(rate) data
 
     """
 
-    def __init__(self, temp_points, log_rate_data):
+    def __init__(self, log_temp_points, log_rate_data):
 
-        self.temp_points = temp_points
+        self.log_temp_points = log_temp_points
         self.log_rate_data = log_rate_data
 
-    def _get_T_idx(self, T0):
-        """Find the index into the temperatures such that T[i-1] < T0 <= T[i].
-        We return i-1 here, corresponding to the lower value.
+    def _get_logT9_idx(self, log_T9_0):
+        """Find the index into the temperatures such that T[i-1] < T0
+        <= T[i].  We return i-1 here, corresponding to the lower
+        value.  We also make sure that i-2 and i+1 are in bounds.
 
         Parameters
         ----------
-        T0 : float
-            temperature to interpolate at
+        log_T9_0 : float
+            temperature (log10(T/1.e9 K)) to interpolate at
 
         Returns
         -------
@@ -49,14 +50,12 @@ class TableInterpolator:
 
         """
 
-        T9_0 = T0 / 1.e9
-
-        max_idx = len(self.temp_points) - 1
-        return max(0, min(max_idx, np.searchsorted(self.temp_points, T9_0)) - 1)
+        max_idx = len(self.log_temp_points) - 2
+        return max(1, min(max_idx, np.searchsorted(self.log_temp_points, log_T9_0)) - 1)
 
     def interpolate(self, T0):
         """Given T0, the temperature where we want the rate, do
-        linear interpolation to find the value of the rate in the
+        cubic interpolation to find the value of the rate in the
         table
 
         Parameters
@@ -71,22 +70,40 @@ class TableInterpolator:
         """
 
         T9_0 = T0 / 1.e9
+        log_T9_0 = np.log10(T9_0)
 
         # we'll give a little epsilon buffer here to allow for roundoff
-        eps = 1.e-8
-        if T9_0 < self.temp_points.min() - eps or T9_0 > self.temp_points.max() + eps:
+        eps = 0.005
+        if log_T9_0 < self.log_temp_points.min() - eps or log_T9_0 > self.log_temp_points.max() + eps:
             raise ValueError("temperature out of table bounds")
 
-        idx_t = self._get_T_idx(T0)
+        idx_t = self._get_logT9_idx(log_T9_0)
 
-        # note: T is stored as T9
+        # get the 4 points surrounding T0
 
-        dT9 = self.temp_points[idx_t+1] - self.temp_points[idx_t]
+        xp = np.array([self.log_temp_points[idx_t-1],
+                       self.log_temp_points[idx_t],
+                       self.log_temp_points[idx_t+1],
+                       self.log_temp_points[idx_t+2]])
 
-        rate_i = self.log_rate_data[idx_t]
-        rate_ip1 = self.log_rate_data[idx_t+1]
+        fp = np.array([self.log_rate_data[idx_t-1],
+                       self.log_rate_data[idx_t],
+                       self.log_rate_data[idx_t+1],
+                       self.log_rate_data[idx_t+2]])
 
-        r = rate_i + (rate_ip1 - rate_i) / dT9 * (T9_0 - self.temp_points[idx_t])
+        r = 0
+        for m in range(4):
+
+            # create the Lagrange basis function for point m
+            l = 1
+            for n in range(4):
+                if n == m:
+                    continue
+
+                l *= (log_T9_0 - xp[n]) / (xp[m] - xp[n])
+
+            r += fp[m] * l
+
         return 10.0**r
 
 
@@ -97,14 +114,14 @@ class TemperatureTabularRate(Rate):
 
     Parameters
     ----------
-    t9_data : numpy.ndarray
-        The temperature (in 1.e9 K) where we tabulate the rate
+    log_t9_data : numpy.ndarray
+        The temperature (in log10(T / 1.e9 K)) where we tabulate the rate
     log_rate_data : numpy.ndarray
         The tabulated log10(rate) data, N_A <σv>
 
     """
 
-    def __init__(self, t9_data, log_rate_data, *args, **kwargs):
+    def __init__(self, log_t9_data, log_rate_data, *args, **kwargs):
         super().__init__(**kwargs)
 
         # make sure there are no weak interactions -- we don't
@@ -112,7 +129,7 @@ class TemperatureTabularRate(Rate):
         assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products)
         assert sum(n.A for n in self.reactants) == sum(n.A for n in self.products)
 
-        self.t9_data = t9_data
+        self.log_t9_data = log_t9_data
         self.log_rate_data = log_rate_data
 
         self.fname = None
@@ -130,10 +147,10 @@ class TemperatureTabularRate(Rate):
         self._set_print_representation()
 
         # store the extrema of the thermodynamics
-        self.table_Tmin = 1.e9 * self.t9_data.min()
-        self.table_Tmax = 1.e9 * self.t9_data.max()
+        self.table_Tmin = 1.e9 * 10.0**self.log_t9_data.min()
+        self.table_Tmax = 1.e9 * 10.0**self.log_t9_data.max()
 
-        self.interpolator = TableInterpolator(self.t9_data, self.log_rate_data)
+        self.interpolator = TempTableInterpolator(self.log_t9_data, self.log_rate_data)
 
     def __eq__(self, other):
         """Determine whether two Rate objects are equal.  They are
@@ -198,7 +215,6 @@ class TemperatureTabularRate(Rate):
 
         """
 
-        print(f"evaluating at T = {T}")
         r = self.interpolator.interpolate(T)
 
         scor = 1.0
