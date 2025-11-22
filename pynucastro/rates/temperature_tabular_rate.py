@@ -104,8 +104,8 @@ class TemperatureTabularRate(Rate):
 
     """
 
-    def __init__(self, t9_data, log_rate_data):
-        super().__init__()
+    def __init__(self, t9_data, log_rate_data, *args, **kwargs):
+        super().__init__(**kwargs)
 
         # make sure there are no weak interactions -- we don't
         # support those yet
