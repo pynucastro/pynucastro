@@ -1386,7 +1386,7 @@ class RateCollection:
         print("")
 
         print(f"  reaclib rates: {len(self.reaclib_rates)}")
-        print(f"  tabular rates: {len(self.tabular_rates)}")
+        print(f"  weak tabular rates: {len(self.tabular_rates)}")
         print(f"  temperature tabular rates: {len(self.temperature_tabular_rates)}")
         print(f"  approximate rates: {len(self.approx_rates)}")
         print(f"  derived rates: {len(self.derived_rates)}")
