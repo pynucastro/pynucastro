@@ -27,7 +27,7 @@ from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library,
                               ModifiedRate, Rate, RateFileError, RatePair,
-                              TabularRate, find_duplicate_rates,
+                              TabularRate, TemperatureTabularRate, find_duplicate_rates,
                               is_allowed_dupe, load_rate)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_rid
 
@@ -664,6 +664,7 @@ class RateCollection:
                             key=lambda r: r.chapter == 't')
 
         self.tabular_rates = []
+        self.temperature_tabular_rates = []
         self.reaclib_rates = []
         self.custom_rates = []
         self.approx_rates = []
@@ -736,8 +737,10 @@ class RateCollection:
                     if cr not in self.reaclib_rates:
                         self.reaclib_rates.append(cr)
 
-            elif r.chapter == 't':
+            elif isinstance(r, TabularRate):
                 self.tabular_rates.append(r)
+            elif isinstance(r, TemperatureTabularRate):
+                self.temperature_tabular_rates.append(r)
             elif r.chapter == "custom":
                 self.custom_rates.append(r)
             elif isinstance(r, DerivedRate):
@@ -753,8 +756,9 @@ class RateCollection:
                 raise NotImplementedError(f"Chapter type unknown for rate chapter {r.chapter}")
 
         self.all_rates = (self.reaclib_rates + self.custom_rates +
-                          self.tabular_rates + self.approx_rates +
-                          self.modified_rates + self.derived_rates)
+                          self.tabular_rates + self.temperature_tabular_rates +
+                          self.approx_rates + self.modified_rates +
+                          self.derived_rates)
 
         # finally check for duplicate rates -- these are not
         # allowed
@@ -1383,6 +1387,7 @@ class RateCollection:
 
         print(f"  reaclib rates: {len(self.reaclib_rates)}")
         print(f"  tabular rates: {len(self.tabular_rates)}")
+        print(f"  temperature tabular rates: {len(self.temperature_tabular_rates)}")
         print(f"  approximate rates: {len(self.approx_rates)}")
         print(f"  derived rates: {len(self.derived_rates)}")
         print(f"  modified rates: {len(self.modified_rates)}")
