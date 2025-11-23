@@ -193,7 +193,16 @@ class TemperatureTabularRate(Rate):
 
         """
 
-        raise NotImplementedError()
+        fstring = ""
+        fstring += "@numba.njit()\n"
+        fstring += f"def {self.fname}(rate_eval, T):\n"
+        fstring += f"    # {self.rid}\n"
+        fstring += f"    {self.fname}_interpolator = TempTableInterpolator(*{self.fname}_info)\n"
+
+        fstring += f"    r = {self.fname}_interpolator.interpolate(T)\n"
+        fstring += f"    rate_eval.{self.fname} = 10.0**r\n\n"
+
+        return fstring
 
     def eval(self, T, *, rho=None, comp=None,
              screen_func=None):
