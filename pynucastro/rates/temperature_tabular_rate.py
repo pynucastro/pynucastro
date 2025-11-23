@@ -132,15 +132,20 @@ class TemperatureTabularRate(Rate):
         self.log_t9_data = log_t9_data
         self.log_rate_data = log_rate_data
 
-        self.fname = None
+        reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
+        products_str = '_'.join([repr(nuc) for nuc in self.products])
+        self.fname = f'{reactants_str}__{products_str}__temptab'
 
-        self.label = "temp_tabular"
+        self.label = "temptab"
 
         # tabular here really means weak rate tabular
         self.tabular = False
 
         # we should initialize this somehow
         self.weak_type = ""
+
+        # this should not really be needed
+        self.chapter = "temp_tabular"
 
         self._set_rhs_properties()
         self._set_screening()
