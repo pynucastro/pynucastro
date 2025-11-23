@@ -187,8 +187,8 @@ Similarly,  :func:`jacobian_string_py <pynucastro.rates.rate.Rate.jacobian_strin
 outputs the contribution to the Jacobian for this rate.
 
 
-Tabulated Rates
----------------
+Tabulated Weak Rates
+--------------------
 
 For electron captures and beta-decays (which are of the form
 :math:`\rm{A \rightarrow B}`), we use tabulated rates.  These are
