@@ -412,7 +412,7 @@ class PythonNetwork(RateCollection):
             of.write(f"                  {r.fname}_rate.tabular_data_table)\n\n")
 
         # temperature tabular rate data
-        if self.tabular_rates:
+        if self.temperature_tabular_rates:
             of.write("# note: we cannot make the TempTableInterpolator global, since numba doesn't like global jitclass\n")
 
         for r in self.temperature_tabular_rates:
