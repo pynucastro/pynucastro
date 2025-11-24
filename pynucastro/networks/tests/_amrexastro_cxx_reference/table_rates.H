@@ -397,7 +397,7 @@ AMREX_INLINE AMREX_GPU_HOST_DEVICE
 void
 tabular_evaluate(const table_t& table_meta,
                  const R& log_rhoy_table, const T& log_temp_table, const D& data,
-                 const amrex::Real log_rhoy, const amrex::Real log_temp,
+                 const amrex::Real log_rhoy, const amrex::Real log_temp, const amrex::Real temp,
                  amrex::Real& rate, amrex::Real& drate_dt, amrex::Real& edot_nu, amrex::Real& edot_gamma)
 {
     amrex::Array1D<amrex::Real, 1, num_vars+add_vars> entries;
