@@ -1,5 +1,4 @@
 import numpy as np
-
 import pytest
 from pytest import approx
 
@@ -43,4 +42,3 @@ class TestTemperatureTabular:
     def test_ydot_string(self, myrate):
         ydot_str = "rho*Y[jp]*Y[jc12]*rate_eval.C12_p__N13__temptab"
         assert myrate.ydot_string_py() == ydot_str
-
