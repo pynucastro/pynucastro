@@ -3,8 +3,7 @@
 from pytest import approx
 
 from pynucastro import Nucleus
-from pynucastro.rates.alternate_rates import (DeBoerC12agO16,
-                                              IliadisO16pgF17)
+from pynucastro.rates.alternate_rates import DeBoerC12agO16, IliadisO16pgF17
 
 
 class TestAlternateRates:
@@ -17,6 +16,7 @@ class TestAlternateRates:
         assert r.products[0] == Nucleus("o16")
 
         assert r.eval(3.e8) == approx(3.667497144762534e-12)
+
 
 class TestIliadisO16:
     def test_o16pg(self, reaclib_library):
