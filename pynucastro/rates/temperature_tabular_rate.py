@@ -174,6 +174,9 @@ class TemperatureTabularRate(Rate):
 
         return self.reactants == other.reactants and self.products == other.products
 
+    def __hash__(self):
+        return hash(self.__repr__())
+
     def get_rate_id(self):
         """Get an identifying string for this rate.
 
@@ -203,7 +206,7 @@ class TemperatureTabularRate(Rate):
         fstring += f"    {self.fname}_interpolator = TempTableInterpolator(*{self.fname}_info)\n"
 
         fstring += f"    r = {self.fname}_interpolator.interpolate(T)\n"
-        fstring += f"    rate_eval.{self.fname} = 10.0**r\n\n"
+        fstring += f"    rate_eval.{self.fname} = r\n\n"
 
         return fstring
 
