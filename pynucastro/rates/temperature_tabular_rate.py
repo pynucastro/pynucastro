@@ -132,6 +132,12 @@ class TemperatureTabularRate(Rate):
         self.log_t9_data = log_t9_data
         self.log_rate_data = log_rate_data
 
+        # T9 should be monotonically increasing
+        assert np.all(log_t9_data[1:] > log_t9_data[:-1])
+
+        # same number of data points in T and rate
+        assert len(self.log_t9_data) == len(self.log_rate_data)
+
         reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
         products_str = '_'.join([repr(nuc) for nuc in self.products])
         self.fname = f'{reactants_str}__{products_str}__temptab'
