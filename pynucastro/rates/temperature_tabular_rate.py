@@ -168,9 +168,6 @@ class TemperatureTabularRate(Rate):
 
         return self.reactants == other.reactants and self.products == other.products
 
-    def __add__(self, other):
-        raise NotImplementedError("addition not defined for tabular rates")
-
     def get_rate_id(self):
         """Get an identifying string for this rate.
 
