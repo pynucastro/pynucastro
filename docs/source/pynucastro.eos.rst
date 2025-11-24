@@ -12,6 +12,7 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   pynucastro.eos.degeneracy_parameter_bounds
    pynucastro.eos.difference_utils
    pynucastro.eos.electron_eos
    pynucastro.eos.fermi_integrals
