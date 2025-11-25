@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 2.8.0.post15+ga36319d75 documentation</title>
+    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 2.8.0.post16+gd5723cf2f documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=e7846a0c"></script>
+    <script src="../../../_static/documentation_options.js?v=7006c937"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -871,10 +871,13 @@ document.write(`
 
             <span class="n">idnt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span>
 
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">amrex::Real log_temp = std::log10(state.T);</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">amrex::Real log_rhoy = std::log10(rhoy);</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">:</span>
 
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">tabular_evaluate(</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s1">_meta, </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s1">_rhoy, </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s1">_temp, </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s1">_data,</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">                 rhoy, state.T, rate, drate_dt, edot_nu, edot_gamma);</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">                 log_rhoy, log_temp, state.T, rate, drate_dt, edot_nu, edot_gamma);</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">rate_eval.screened_rates(k_</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s1">) = rate;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
@@ -949,10 +952,14 @@ document.write(`
         <span class="n">idnt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">amrex::Real log_temp = std::log10(state.T);</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">amrex::Real log_rhoy = std::log10(rhoy);</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">:</span>
 
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">tabular_evaluate(</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s1">_meta, </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s1">_rhoy, </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s1">_temp, </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s1">_data,</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">                 rhoy, state.T, rate, drate_dt, edot_nu, edot_gamma);</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">                 log_rhoy, log_temp, state.T, rate, drate_dt, edot_nu, edot_gamma);</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idnt</span><span class="si">}</span><span class="s1">rate_eval.screened_rates(k_</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">cname</span><span class="p">()</span><span class="si">}</span><span class="s1">) = rate;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
