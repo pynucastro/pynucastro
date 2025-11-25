@@ -24,10 +24,6 @@ namespace Rates
         <nrxn>(2)
     };
 
-    // number of reaclib rates
-
-    <nrat_reaclib>(1)
-
     // rate names -- note: the rates are 1-based, not zero-based, so we pad
     // this vector with rate_names[0] = "" so the indices line up with the
     // NetworkRates enum
