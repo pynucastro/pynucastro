@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.helper &#8212; pynucastro 2.8.0.post14+g1710c5b7d documentation</title>
+    <title>pynucastro.networks.helper &#8212; pynucastro 2.8.0.post15+ga36319d75 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=afa9d28a"></script>
+    <script src="../../../_static/documentation_options.js?v=e7846a0c"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -502,6 +502,7 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.networks.helper.html#pynucastro.networks.helper.network_helper">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">network_helper</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                    <span class="n">network_type</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span>
+                   <span class="n">inert_nuclei</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                    <span class="n">use_detailed_balance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                    <span class="n">use_tabular_rates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                    <span class="n">tabular_ordering</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -521,6 +522,9 @@ document.write(`
 <span class="sd">        * &quot;cxx&quot; : create a :py:obj:`SimpleCxxNetwork &lt;pynucastro.networks.simple_cxx_network.SimpleCxxNetwork&gt;`</span>
 <span class="sd">        * &quot;fortran&quot; : create a :py:obj:`FortranNetwork &lt;pynucastro.networks.fortran_network.FortranNetwork&gt;`</span>
 <span class="sd">        * &quot;amrex&quot; : create a :py:obj:`AmrexAstroCxxNetwork &lt;pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork&gt;`</span>
+<span class="sd">    inert_nuclei : list, tuple</span>
+<span class="sd">        an iterable of Nuclei that should be part of the collection but</span>
+<span class="sd">        are not linked via reactions to the other Nuclei in the network.</span>
 <span class="sd">    use_detailed_balanace : bool</span>
 <span class="sd">        Do we rederive inverse rates using detailed balance?</span>
 <span class="sd">    use_tabular_rates : bool</span>
@@ -570,16 +574,20 @@ document.write(`
                 <span class="n">lib</span><span class="o">.</span><span class="n">add_rate</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">network_type</span> <span class="o">==</span> <span class="s2">&quot;python&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">],</span>
+                             <span class="n">inert_nuclei</span><span class="o">=</span><span class="n">inert_nuclei</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">network_type</span> <span class="o">==</span> <span class="s2">&quot;cxx&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">SimpleCxxNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">SimpleCxxNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">],</span>
+                                <span class="n">inert_nuclei</span><span class="o">=</span><span class="n">inert_nuclei</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">network_type</span> <span class="o">==</span> <span class="s2">&quot;fortran&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">FortranNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">FortranNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">],</span>
+                              <span class="n">inert_nuclei</span><span class="o">=</span><span class="n">inert_nuclei</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">network_type</span> <span class="o">==</span> <span class="s2">&quot;amrex&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">AmrexAstroCxxNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">AmrexAstroCxxNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">],</span>
+                                    <span class="n">inert_nuclei</span><span class="o">=</span><span class="n">inert_nuclei</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid network_type&quot;</span><span class="p">)</span></div>
 
