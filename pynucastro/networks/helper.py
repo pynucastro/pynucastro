@@ -10,6 +10,7 @@ from .simple_cxx_network import SimpleCxxNetwork
 
 def network_helper(nuclei, *,
                    network_type="python",
+                   inert_nuclei=None,
                    use_detailed_balance=True,
                    use_tabular_rates=True,
                    tabular_ordering=None,
@@ -29,6 +30,9 @@ def network_helper(nuclei, *,
         * "cxx" : create a :py:obj:`SimpleCxxNetwork <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`
         * "fortran" : create a :py:obj:`FortranNetwork <pynucastro.networks.fortran_network.FortranNetwork>`
         * "amrex" : create a :py:obj:`AmrexAstroCxxNetwork <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`
+    inert_nuclei : list, tuple
+        an iterable of Nuclei that should be part of the collection but
+        are not linked via reactions to the other Nuclei in the network.
     use_detailed_balanace : bool
         Do we rederive inverse rates using detailed balance?
     use_tabular_rates : bool
@@ -78,15 +82,19 @@ def network_helper(nuclei, *,
                 lib.add_rate(d)
 
     if network_type == "python":
-        return PythonNetwork(libraries=[lib], verbose=verbose)
+        return PythonNetwork(libraries=[lib],
+                             inert_nuclei=inert_nuclei, verbose=verbose)
 
     if network_type == "cxx":
-        return SimpleCxxNetwork(libraries=[lib], verbose=verbose)
+        return SimpleCxxNetwork(libraries=[lib],
+                                inert_nuclei=inert_nuclei, verbose=verbose)
 
     if network_type == "fortran":
-        return FortranNetwork(libraries=[lib], verbose=verbose)
+        return FortranNetwork(libraries=[lib],
+                              inert_nuclei=inert_nuclei, verbose=verbose)
 
     if network_type == "amrex":
-        return AmrexAstroCxxNetwork(libraries=[lib], verbose=verbose)
+        return AmrexAstroCxxNetwork(libraries=[lib],
+                                    inert_nuclei=inert_nuclei, verbose=verbose)
 
     raise ValueError("invalid network_type")
