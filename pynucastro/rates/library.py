@@ -147,7 +147,7 @@ class Library:
 
     """
 
-    def __init__(self, libfile=None, rates=None):
+    def __init__(self, rates=None):
         self._rates = {}
 
         if rates:
@@ -879,15 +879,15 @@ class ReacLibLibrary(Library):
             chapter = None
             if line in ('t', 'T'):
                 raise ValueError("tabular chapter not supported")
+
+            try:
+                chapter = int(line)
+            except (TypeError, ValueError):
+                # we can't interpret line as a chapter so use current_chapter
+                assert current_chapter, f'malformed library file {library_file}, cannot identify chapter.'
+                chapter = current_chapter
             else:
-                try:
-                    chapter = int(line)
-                except (TypeError, ValueError):
-                    # we can't interpret line as a chapter so use current_chapter
-                    assert current_chapter, f'malformed library file {library_file}, cannot identify chapter.'
-                    chapter = current_chapter
-                else:
-                    library_source_lines.popleft()
+                library_source_lines.popleft()
             current_chapter = chapter
 
             rlines = None
@@ -909,7 +909,6 @@ class ReacLibLibrary(Library):
                         self._rates[rid] = self._rates[rid] + r
                     else:
                         self._rates[rid] = r
-
 
     def write_to_file(self, filename, *, prepend_rates_dir=False):
         """Write the library out to a file of the given name in
