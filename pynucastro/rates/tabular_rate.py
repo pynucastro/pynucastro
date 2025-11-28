@@ -290,9 +290,6 @@ class TabularRate(Rate):
         elif "betadecay" in str(table_file):
             self.weak_type = "beta_decay"
 
-        # for backwards compatibility, we'll set a chapter to "t"
-        self.chapter = "t"
-
         # read in the table data
         # there are a few header lines that start with "!", which we skip,
         # expect for the very first, which defines the nuclei in the form

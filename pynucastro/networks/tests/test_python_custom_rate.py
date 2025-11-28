@@ -15,9 +15,6 @@ class MyRate(pyna.Rate):
     def __init__(self, reactants=None, products=None,
                  r0=1.0, T0=1.0, nu=0):
 
-        # we set the chapter to custom so the network knows how to deal with it
-        self.chapter = "custom"
-
         # call the Rate init to do the remaining initialization
         super().__init__(reactants=reactants, products=products)
 
