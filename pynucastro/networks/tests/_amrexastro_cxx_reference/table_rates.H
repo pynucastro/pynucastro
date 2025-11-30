@@ -215,7 +215,7 @@ evaluate_vars(const int irhoy_lo, const int jtemp_lo,
     amrex::Real fip1jp1 = data(jtemp_hi, irhoy_hi, component);
 
     amrex::Real r = evaluate_linear_2d(fip1jp1, fip1j, fijp1, fij,
-                                rhoy_hi, rhoy_lo, t_hi, t_lo, log_rhoy, log_temp);
+                                       rhoy_hi, rhoy_lo, t_hi, t_lo, log_rhoy, log_temp);
 
     return r;
 }
@@ -397,15 +397,12 @@ AMREX_INLINE AMREX_GPU_HOST_DEVICE
 void
 tabular_evaluate(const table_t& table_meta,
                  const R& log_rhoy_table, const T& log_temp_table, const D& data,
-                 const amrex::Real rhoy, const amrex::Real temp,
+                 const amrex::Real log_rhoy, const amrex::Real log_temp, const amrex::Real temp,
                  amrex::Real& rate, amrex::Real& drate_dt, amrex::Real& edot_nu, amrex::Real& edot_gamma)
 {
     amrex::Array1D<amrex::Real, 1, num_vars+add_vars> entries;
 
     // Get the table entries at this rhoy, temp
-
-    const amrex::Real log_rhoy = std::log10(rhoy);
-    const amrex::Real log_temp = std::log10(temp);
 
     // get the index into the table -- all components are
     // stored with the same indices
