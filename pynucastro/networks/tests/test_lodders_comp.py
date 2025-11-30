@@ -1,9 +1,7 @@
 import pytest
 from pytest import approx
 
-import pynucastro as pyna
 from pynucastro import networks
-from pynucastro.nucdata import Nucleus
 
 class TestLoddersComposition:
 
@@ -60,8 +58,3 @@ class TestLoddersComposition:
         assert scaled_H == approx( 0.7271232554513777)
         assert scaled_He == approx(0.23276984006179305)
         assert scaled_z == approx(0.0401069044868292)
-
-
-
-
-
