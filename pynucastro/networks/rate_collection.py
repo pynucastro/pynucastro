@@ -70,7 +70,7 @@ LOD_SYMBOL = np.array(['h', 'h', 'he', 'he', 'li', 'li', 'be', 'b', 'b', 'c', 'c
        'os', 'os', 'os', 'ir', 'ir', 'pt', 'pt', 'pt', 'pt', 'pt', 'pt',
        'au', 'hg', 'hg', 'hg', 'hg', 'hg', 'hg', 'hg', 'tl', 'tl', 'pb',
        'pb', 'pb', 'pb', 'bi', 'th', 'u', 'u', 'u'], dtype='<U3')
-LOD_Z = np.array([ 1,  1,  2,  2,  3,  3,  4,  5,  5,  6,  6,  7,  7,  8,  8,  8,  9,
+LOD_Z = np.array([1,  1,  2,  2,  3,  3,  4,  5,  5,  6,  6,  7,  7,  8,  8,  8,  9,
        10, 10, 10, 11, 12, 12, 12, 13, 14, 14, 14, 15, 16, 16, 16, 16, 17,
        17, 18, 18, 18, 19, 19, 19, 20, 20, 20, 20, 20, 20, 21, 22, 22, 22,
        22, 22, 23, 23, 24, 24, 24, 24, 25, 26, 26, 26, 26, 27, 28, 28, 28,
@@ -87,7 +87,7 @@ LOD_Z = np.array([ 1,  1,  2,  2,  3,  3,  4,  5,  5,  6,  6,  7,  7,  8,  8,  8
        72, 72, 72, 72, 72, 72, 73, 73, 74, 74, 74, 74, 74, 75, 75, 76, 76,
        76, 76, 76, 76, 76, 77, 77, 78, 78, 78, 78, 78, 78, 79, 80, 80, 80,
        80, 80, 80, 80, 81, 81, 82, 82, 82, 82, 83, 90, 92, 92, 92])
-LOD_A = np.array([  1,   2,   3,   4,   6,   7,   9,  10,  11,  12,  13,  14,  15,
+LOD_A = np.array([1,   2,   3,   4,   6,   7,   9,  10,  11,  12,  13,  14,  15,
         16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,  27,  28,
         29,  30,  31,  32,  33,  34,  36,  35,  37,  36,  38,  40,  39,
         40,  41,  40,  42,  43,  44,  46,  48,  45,  46,  47,  48,  49,
@@ -158,7 +158,6 @@ LOD_X = np.array([7.462e-01, 0.000e+00, 7.677e-05, 2.388e-01, 6.197e-10, 8.842e-
        1.802e-10, 3.051e-10, 4.168e-10, 2.359e-10, 5.420e-10, 1.271e-10,
        2.578e-10, 6.188e-10, 3.226e-10, 3.079e-09, 3.401e-09, 9.743e-09,
        7.080e-10, 2.341e-10, 2.725e-15, 3.638e-13, 5.076e-11])
-
 
 class RateDuplicationError(Exception):
     """An error of multiple rates linking the same nuclei occurred"""
@@ -662,7 +661,9 @@ class Composition(collections.UserDict):
         plt.show()
         return fig
 
+
 class Lodders(Composition):
+    """A class to use present day solar abundances from Lodders et al. 2020"""
 
     def __init__(self, z=None, half_life_thresh=None):
         nuclei = []
@@ -680,7 +681,7 @@ class Lodders(Composition):
 
         # now give lodders abundances with scaling if needed
 
-        self.get_from_lodders(z, half_life_thresh=None)
+        self.get_from_lodders(z, half_life_thresh=half_life_thresh)
 
     def get_from_lodders(self, z=None, half_life_thresh=None):
 
@@ -715,7 +716,7 @@ class Lodders(Composition):
 
             nuc = Nucleus(name)
 
-            if Z_i == 1 or Z_i == 2:
+            if Z_i in (1,2):
                 X_scaled = X_i * xy_scale
             else:
                 X_scaled = X_i * z_scale

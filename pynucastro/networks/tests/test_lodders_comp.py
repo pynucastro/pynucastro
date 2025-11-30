@@ -1,7 +1,7 @@
 import pytest
 from pytest import approx
-
 from pynucastro import networks
+
 
 class TestLoddersComposition:
 
@@ -31,11 +31,11 @@ class TestLoddersComposition:
         metals = 0.0
 
         for nuc, X in solar.items():
-            if nuc.Z==1:
+            if nuc.Z == 1:
                 H += X
-            elif nuc.Z==2:
+            elif nuc.Z == 2:
                 He += X
-            elif nuc.Z>=3:
+            elif nuc.Z >= 3:
                 metals += X
 
         assert metals == approx(0.014964158698946859)
@@ -55,6 +55,6 @@ class TestLoddersComposition:
             elif nuc.Z >= 3:
                 scaled_z += X
 
-        assert scaled_H == approx( 0.7271232554513777)
+        assert scaled_H == approx(0.7271232554513777)
         assert scaled_He == approx(0.23276984006179305)
         assert scaled_z == approx(0.0401069044868292)
