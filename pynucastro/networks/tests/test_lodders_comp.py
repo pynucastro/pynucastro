@@ -1,5 +1,6 @@
 import pytest
 from pytest import approx
+
 from pynucastro import networks
 
 

@@ -159,6 +159,7 @@ LOD_X = np.array([7.462e-01, 0.000e+00, 7.677e-05, 2.388e-01, 6.197e-10, 8.842e-
        2.578e-10, 6.188e-10, 3.226e-10, 3.079e-09, 3.401e-09, 9.743e-09,
        7.080e-10, 2.341e-10, 2.725e-15, 3.638e-13, 5.076e-11])
 
+
 class RateDuplicationError(Exception):
     """An error of multiple rates linking the same nuclei occurred"""
 
@@ -716,7 +717,7 @@ class Lodders(Composition):
 
             nuc = Nucleus(name)
 
-            if Z_i in (1,2):
+            if Z_i in (1, 2):
                 X_scaled = X_i * xy_scale
             else:
                 X_scaled = X_i * z_scale
