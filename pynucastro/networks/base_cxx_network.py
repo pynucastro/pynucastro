@@ -47,7 +47,7 @@ def _signed_rate_dtype(nrxn):
 
     dtype = "int"
     if nrxn < 127:
-        dtype = "std::uint8_t"
+        dtype = "std::int8_t"
     elif nrxn < 32767:
         dtype = "short"
     return dtype
