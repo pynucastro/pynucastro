@@ -603,11 +603,11 @@ class LoddersComposition(Composition):
 
     Parameters
     ----------
-    z : float (optional)
+    z : float
         Target metallicity :math:`Z` to scale the Lodders solar
         mixture to. If ``None`` (the default), the unscaled Lodders
         abundances are used.
-    half_life_thresh : float (optional)
+    half_life_thresh : float
         The half life value below which to zero the mass fraction
         of a nucleus.  This prevents us from making a composition
         that is not really stable.
