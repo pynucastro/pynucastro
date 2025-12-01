@@ -620,7 +620,7 @@ class LoddersComposition(Composition):
 
     def __init__(self, z=None, half_life_thresh=None):
         nuclei = []
-        for key in LODDERS_DATA():
+        for key in LODDERS_DATA:
             if key == "h1":
                 name = "p"
             else:
