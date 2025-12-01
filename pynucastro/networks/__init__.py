@@ -42,7 +42,7 @@ from .fortran_network import FortranNetwork
 from .helper import network_helper
 from .nse_network import NSENetwork
 from .python_network import PythonNetwork
-from .rate_collection import (Composition, Explorer, Lodders, RateCollection,
+from .rate_collection import (Composition, Explorer, LoddersComposition, RateCollection,
                               RateDuplicationError)
 from .simple_cxx_network import SimpleCxxNetwork
 from .sympy_network_support import SympyRates
