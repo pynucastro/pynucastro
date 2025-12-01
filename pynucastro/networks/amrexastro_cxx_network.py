@@ -9,7 +9,7 @@ import re
 from pathlib import Path
 
 from pynucastro.constants import constants
-from pynucastro.networks.base_cxx_network import BaseCxxNetwork, _rate_dtype
+from pynucastro.networks.base_cxx_network import BaseCxxNetwork, _signed_rate_dtype
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import ReacLibRate
 
@@ -30,6 +30,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
         self.ftags['<rate_param_tests>'] = self._rate_param_tests
         self.ftags['<rate_indices>'] = self._fill_rate_indices
+        self.ftags['<rate_indices_extern>'] = self._fill_rate_indices_extern
         self.ftags['<npa_index>'] = self._fill_npa_index
 
         self.disable_rate_params = disable_rate_params
@@ -143,7 +144,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
              indicating its not directly in the network.
         """
 
-        dtype = _rate_dtype(len(self.all_rates))
+        dtype = _signed_rate_dtype(len(self.all_rates))
 
         # Fill in the rate indices
         of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED amrex::Array2D<{dtype}, 1, Rates::NumRates, 1, 7, amrex::Order::C> rate_indices {{\n")
@@ -182,3 +183,10 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             of.write(f"{self.indent*n_indent}    {reactant_ind[0]}, {reactant_ind[1]}, {reactant_ind[2]}, {product_ind[0]}, {product_ind[1]}, {product_ind[2]}, {rr_ind}{tmp}  // {rate.fname}\n")
 
         of.write(f"{self.indent*n_indent}}};\n")
+
+    def _fill_rate_indices_extern(self, n_indent, of):
+
+        dtype = _signed_rate_dtype(len(self.all_rates))
+
+        # Fill in the rate indices
+        of.write(f"{self.indent*n_indent}extern AMREX_GPU_MANAGED amrex::Array2D<{dtype}, 1, Rates::NumRates, 1, 7, amrex::Order::C> rate_indices;\n")
