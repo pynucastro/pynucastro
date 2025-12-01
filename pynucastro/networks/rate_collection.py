@@ -634,7 +634,7 @@ class LoddersComposition(Composition):
 
         self.get_from_lodders(z, half_life_thresh=half_life_thresh)
 
-    def get_from_lodders(self, z=None, half_life_thresh=None):
+    def _get_from_lodders(self, z=None, half_life_thresh=None):
 
         x_solar = 0.0
         y_solar = 0.0
