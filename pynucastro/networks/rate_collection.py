@@ -632,7 +632,7 @@ class LoddersComposition(Composition):
 
         # now give lodders abundances with scaling if needed
 
-        self.get_from_lodders(z, half_life_thresh=half_life_thresh)
+        self._get_from_lodders(z, half_life_thresh=half_life_thresh)
 
     def _get_from_lodders(self, z=None, half_life_thresh=None):
 
