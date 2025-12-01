@@ -25,8 +25,10 @@ from pynucastro.utils import pynucastro_version
 
 
 def _rate_dtype(nrxn):
-    """given the number of reactions (nrxn), return the smallest C++
-    unsigned integer type that can hold them"""
+    """Given the number of reactions (nrxn), return the smallest C++
+    unsigned integer type that can hold them
+
+    """
 
     dtype = "std::uint32_t"
     # give 1 extra padding in case we use a final value in an enum
@@ -38,8 +40,10 @@ def _rate_dtype(nrxn):
 
 
 def _signed_rate_dtype(nrxn):
-    """given the number of reactions (nrxn), return the smallest C++
-    signed integer type that can hold them"""
+    """Given the number of reactions (nrxn), return the smallest C++
+    signed integer type that can hold them
+
+    """
 
     dtype = "int"
     if nrxn < 127:

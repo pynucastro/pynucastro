@@ -9,7 +9,8 @@ import re
 from pathlib import Path
 
 from pynucastro.constants import constants
-from pynucastro.networks.base_cxx_network import BaseCxxNetwork, _signed_rate_dtype
+from pynucastro.networks.base_cxx_network import (BaseCxxNetwork,
+                                                  _signed_rate_dtype)
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import ReacLibRate
 
