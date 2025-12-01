@@ -9,7 +9,7 @@ import re
 from pathlib import Path
 
 from pynucastro.constants import constants
-from pynucastro.networks.base_cxx_network import BaseCxxNetwork
+from pynucastro.networks.base_cxx_network import BaseCxxNetwork, _rate_dtype
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import ReacLibRate
 
@@ -143,8 +143,10 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
              indicating its not directly in the network.
         """
 
+        dtype = _rate_dtype(len(self.all_rates))
+
         # Fill in the rate indices
-        of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED amrex::Array2D<int, 1, Rates::NumRates, 1, 7, amrex::Order::C> rate_indices {{\n")
+        of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED amrex::Array2D<{dtype}, 1, Rates::NumRates, 1, 7, amrex::Order::C> rate_indices {{\n")
 
         for n, rate in enumerate(self.all_rates):
             tmp = ','
@@ -153,7 +155,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
             # meaning it is removed.
             if isinstance(rate, ReacLibRate) and rate.removed is not None:
-                of.write(f"{self.indent*n_indent}    -1, -1, -1, -1, -1, -1, -1{tmp}\n")
+                of.write(f"{self.indent*n_indent}    -1, -1, -1, -1, -1, -1, -1{tmp}  // {rate.fname}\n")
                 continue
 
             # Find the reactants and products indices
@@ -177,6 +179,6 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             if rr is not None:
                 rr_ind = self.all_rates.index(rr) + 1
 
-            of.write(f"{self.indent*n_indent}    {reactant_ind[0]}, {reactant_ind[1]}, {reactant_ind[2]}, {product_ind[0]}, {product_ind[1]}, {product_ind[2]}, {rr_ind}{tmp}\n")
+            of.write(f"{self.indent*n_indent}    {reactant_ind[0]}, {reactant_ind[1]}, {reactant_ind[2]}, {product_ind[0]}, {product_ind[1]}, {product_ind[2]}, {rr_ind}{tmp}  // {rate.fname}\n")
 
         of.write(f"{self.indent*n_indent}}};\n")
