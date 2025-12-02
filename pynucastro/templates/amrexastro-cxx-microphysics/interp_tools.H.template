@@ -3,6 +3,8 @@
 
 #include <AMReX_REAL.H>
 
+using namespace amrex::literals;
+
 namespace interp_net {
 
     // index locator
@@ -60,6 +62,56 @@ namespace interp_net {
         }
 
         return idx;
+    }
+
+    // fit a function f(x) = a (x - x0)**3 + b (x - x0)**2 + c (x - x0) + d
+    // to 4 points (x0, f0), ..., (x3, f3)
+    // this version works for unevenly spaced data points
+
+    template <typename T>
+    AMREX_GPU_HOST_DEVICE AMREX_INLINE
+    amrex::Real
+    cubic_interp_uneven(const amrex::Real xv, const T& x_array, const T& f_array) {
+
+        // find the index such that x_array[idx] <= x0 <= x_array[idx+1]
+        int idx = interp_net::find_index_extrap(xv, x_array);
+
+        // we need 4 points, so if idx is on the boundary, shift it
+        idx = amrex::Clamp(idx, x_array.lo()+1, x_array.hi()-2);
+
+        const auto x0 = x_array(idx-1);
+        const auto x1 = x_array(idx);
+        const auto x2 = x_array(idx+1);
+        const auto x3 = x_array(idx+2);
+
+        const auto f0 = f_array(idx-1);
+        const auto f1 = f_array(idx);
+        const auto f2 = f_array(idx+1);
+        const auto f3 = f_array(idx+2);
+
+        const amrex::Real D1 = x1 - x0;
+        const amrex::Real D2 = x2 - x0;
+        const amrex::Real D3 = x3 - x0;
+
+        amrex::Real a{};
+        amrex::Real b{};
+        amrex::Real c{};
+        amrex::Real d{f0};
+
+        amrex::Real denom_inv = 1.0_rt / (D1 * D2 * D3 * (D1 - D2) * (D1 - D3));
+
+        a = -denom_inv * (D1 * (D1 - D2 - D3) * (f0 - f2) + D2 * D3 * (f0 - f1));
+        b = denom_inv * (D1 * (D1 * D1 - D2 * D2 - D2 * D3 - D3 * D3) * (f0 - f2) +
+                         D2 * D3 * (D2 + D3) * (f0 - f1));
+        c = denom_inv * (D1 * D1 * (-D1 * D2 - D1 * D3 + D2 * D2 + D2 * D3 + D3 * D3) * (f0 - f2) -
+                         D2 * D2 * D3 * D3 * (f0 - f1));
+
+        amrex::Real fv = a * amrex::Math::powi<3>(xv - x0) +
+                         b * amrex::Math::powi<2>(xv - x0) +
+                         c * (xv - x0) +
+                         d;
+
+        return fv;
     }
 
 }

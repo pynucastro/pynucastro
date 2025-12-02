@@ -13,6 +13,7 @@ using namespace amrex::literals;
 
 <temp_table_data>(0)
 
+namespace temp_tabular {
 
-
+}
 #endif
