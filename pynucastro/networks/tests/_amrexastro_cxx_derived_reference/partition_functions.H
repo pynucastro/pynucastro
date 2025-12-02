@@ -85,8 +85,6 @@ namespace part_fun {
 
     }
 
-
-
     struct pf_cache_t {
         // Store the coefficient and derivative adjacent in memory, as they're
         // always accessed at the same time.
