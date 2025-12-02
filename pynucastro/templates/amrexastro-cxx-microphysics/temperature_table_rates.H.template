@@ -15,5 +15,7 @@ using namespace amrex::literals;
 
 namespace temp_tabular {
 
+    <temp_tabular_rate_functions>(1)
+
 }
 #endif

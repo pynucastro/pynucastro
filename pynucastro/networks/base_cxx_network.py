@@ -69,6 +69,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<table_init_meta>'] = self._table_init_meta
         self.ftags['<compute_tabular_rates>'] = self._compute_tabular_rates
         self.ftags['<temp_table_data>'] = self._temp_table_data
+        self.ftags['<temp_tabular_rate_functions>'] = self._temp_tabular_rate_functions
         self.ftags['<ydot>'] = self._ydot
         self.ftags['<ydot_weak>'] = self._ydot_weak
         self.ftags['<jacnuc>'] = self._jacnuc
@@ -412,6 +413,13 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write("    };\n")
 
             of.write("}\n\n")
+
+    def _temp_tabular_rate_functions(self, n_indent, of):
+        for r in self.temperature_tabular_rates:
+            fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
+            for line in fstr.split("\n"):
+                of.write(f"{self.indent*n_indent}{line}\n")
+            of.write("\n")
 
     def _cxxify(self, s):
         # This is a helper function that converts sympy cxxcode to the actual c++ code we use.
