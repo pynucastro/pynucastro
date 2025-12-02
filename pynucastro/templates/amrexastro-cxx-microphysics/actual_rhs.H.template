@@ -17,6 +17,7 @@
 #endif
 #include <reaclib_rates.H>
 #include <table_rates.H>
+#include <temperature_table_rates.H>
 
 using namespace amrex::literals;
 using namespace ArrayUtil;

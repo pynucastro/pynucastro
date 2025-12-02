@@ -4,6 +4,7 @@ ifeq ($(USE_REACT),TRUE)
   CEXE_sources += actual_network_data.cpp
   CEXE_headers += actual_network.H
   CEXE_headers += tfactors.H
+  CEXE_headers += interp_tools.H
   CEXE_headers += partition_functions.H
   CEXE_sources += partition_functions_data.cpp
   CEXE_headers += actual_rhs.H

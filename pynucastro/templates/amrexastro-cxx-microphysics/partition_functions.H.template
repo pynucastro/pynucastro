@@ -7,6 +7,7 @@
 #include <tfactors.H>
 #include <fundamental_constants.H>
 #include <network_properties.H>
+#include <interp_tools.H>
 
 using namespace amrex::literals;
 using namespace Species;
@@ -14,39 +15,6 @@ using namespace Species;
 namespace part_fun {
 
     <part_fun_declare>(1)
-
-
-    // index locator
-
-    template <typename T>
-    AMREX_GPU_HOST_DEVICE AMREX_INLINE
-    int
-    index_pf(const amrex::Real t9, const T& temp_array) {
-
-        int left = temp_array.lo();
-        int right = temp_array.hi();
-
-        int idx = -1;
-
-        if (t9 >= temp_array(left) && t9 < temp_array(right)) {
-
-            // find the largest temperature element <= t9 using a
-            // binary search
-
-            while (left < right) {
-                int mid = (left + right) / 2;
-                if (temp_array(mid) > t9) {
-                    right = mid;
-                } else {
-                    left = mid + 1;
-                }
-            }
-
-            idx = right - 1;
-        }
-
-        return idx;
-    }
 
     // interpolation routine
 
@@ -59,7 +27,7 @@ namespace part_fun {
         // if the index is -1, we are either outside of the bounds or
         // we never computed it.  try recomputing here
         if (idx == -1) {
-            idx = index_pf(t9, temp_array);
+            idx = interp_net::find_index(t9, temp_array);
         }
 
         // if the index is still -1, then we are out-of-bounds, so
@@ -96,8 +64,6 @@ namespace part_fun {
         }
 
     }
-
-
 
     struct pf_cache_t {
         // Store the coefficient and derivative adjacent in memory, as they're
