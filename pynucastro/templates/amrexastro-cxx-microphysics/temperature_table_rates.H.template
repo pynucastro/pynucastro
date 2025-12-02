@@ -1,0 +1,18 @@
+#ifndef TEMPERATURE_TABLE_RATES_H
+#define TEMPERATURE_TABLE_RATES_H
+
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <string>
+
+#include <AMReX_Array.H>
+
+using namespace amrex::literals;
+
+
+<temp_table_data>(0)
+
+
+
+#endif
