@@ -398,7 +398,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         for r in self.temperature_tabular_rates:
 
             of.write(f"// temperature / rate tabulation for {r.rid}\n\n")
-            of.write(f"namespace {r.fname}_data {{\n")
+            of.write(f"namespace {r.cname()}_data {{\n")
             log_temp_str = np.array2string(r.log_t9_data,
                                            max_line_width=70, precision=17, separator=", ")
             of.write(f'{idnt}    inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_t9 = {{\n')

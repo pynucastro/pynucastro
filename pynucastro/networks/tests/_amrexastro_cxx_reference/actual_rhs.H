@@ -75,6 +75,8 @@ void evaluate_rates(const burn_t& state,
 
     fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
+    temp_tabular::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
+
 
 #ifdef SCREENING
     // Evaluate screening factors

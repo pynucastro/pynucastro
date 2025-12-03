@@ -12,9 +12,7 @@ import numpy as np
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.modified_rate import ModifiedRate
-from pynucastro.rates.rate import Rate
 from pynucastro.rates.reaclib_rate import ReacLibRate, SingleSet
-from pynucastro.rates.tabular_rate import TabularRate
 
 
 class DerivedRate(ReacLibRate):
@@ -41,11 +39,10 @@ class DerivedRate(ReacLibRate):
         self.compute_Q = compute_Q
         self.use_unreliable_spins = use_unreliable_spins
 
-        if not isinstance(rate, Rate):
-            raise TypeError('rate must be a Rate subclass')
+        if not isinstance(rate, ReacLibRate):
+            raise TypeError('rate must be a ReacLibRate subclass')
 
-        if (isinstance(rate, TabularRate) or self.rate.weak or
-            self.rate.derived_from_inverse):
+        if (self.rate.weak or self.rate.derived_from_inverse):
             raise ValueError('The rate is a ReacLib derived from inverse rate or weak or tabular')
 
         if not all(nuc.spin_states for nuc in self.rate.reactants):

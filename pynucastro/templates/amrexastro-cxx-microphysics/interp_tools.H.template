@@ -122,8 +122,6 @@ namespace interp_net {
                           D2cb * (D3sq * (f0 - f1) - D1sq * (f0 - f3)) +
                           D3cb * (D1sq * (f0 - f2) - D2sq * (f0 - f1)));
 
-        std::cout << "a = " << a << " b = " << b << " c = " << c << std::endl;
-
         amrex::Real fv = a * amrex::Math::powi<3>(xv - x0) +
                          b * amrex::Math::powi<2>(xv - x0) +
                          c * (xv - x0) +

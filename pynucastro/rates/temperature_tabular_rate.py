@@ -246,8 +246,13 @@ class TemperatureTabularRate(Rate):
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.cname()}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
-        fstring += "    rate = 0.0;\n"
-        fstring += "    drate_dT = 0.0;\n\n"
+        fstring += "    amrex::Real log_t9 = tfactors.lnT9 * ln10_inv;\n"
+        fstring += "    auto [_rate, _drate_dT] = interp_net::cubic_interp_uneven<do_T_derivatives>(\n"
+        fstring += "                                               log_t9,\n"
+        fstring += f"                                               {self.cname()}_data::log_t9,\n"
+        fstring += f"                                               {self.cname()}_data::log_rate);\n"
+        fstring += "    rate = _rate;\n"
+        fstring += "    drate_dT = _drate_dT;\n"
 
         if not leave_open:
             fstring += "}\n\n"
