@@ -251,8 +251,11 @@ class TemperatureTabularRate(Rate):
         fstring += "                                               log_t9,\n"
         fstring += f"                                               {self.cname()}_data::log_t9,\n"
         fstring += f"                                               {self.cname()}_data::log_rate);\n"
-        fstring += "    rate = _rate;\n"
-        fstring += "    drate_dT = _drate_dT;\n"
+        fstring += "    rate = std::pow(10.0_rt, _rate);\n"
+        fstring += "    // we found dlog10(rate)/dlog10(T9)\n"
+        fstring += "    if constexpr (do_T_derivatives) {\n"
+        fstring += "        drate_dT = (rate / tfactors.T9) * _drate_dT * 1.e-9;\n"
+        fstring += "    }\n"
 
         if not leave_open:
             fstring += "}\n\n"
