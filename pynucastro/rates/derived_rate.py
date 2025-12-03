@@ -39,8 +39,8 @@ class DerivedRate(ReacLibRate):
         self.compute_Q = compute_Q
         self.use_unreliable_spins = use_unreliable_spins
 
-        if not isinstance(rate, ReacLibRate):
-            raise TypeError('rate must be a ReacLibRate subclass')
+        if not isinstance(rate, (ReacLibRate, ModifiedRate)):
+            raise TypeError('rate must be a ReacLibRate or ModifiedRate class')
 
         if (self.rate.weak or self.rate.derived_from_inverse):
             raise ValueError('The rate is a ReacLib derived from inverse rate or weak or tabular')
