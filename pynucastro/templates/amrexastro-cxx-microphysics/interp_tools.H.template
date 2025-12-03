@@ -67,10 +67,11 @@ namespace interp_net {
     // fit a function f(x) = a (x - x0)**3 + b (x - x0)**2 + c (x - x0) + d
     // to 4 points (x0, f0), ..., (x3, f3)
     // this version works for unevenly spaced data points
+    // it will return f and f' at x = xv
 
-    template <typename T>
+    template <int do_derivative, typename T>
     AMREX_GPU_HOST_DEVICE AMREX_INLINE
-    amrex::Real
+    std::pair<amrex::Real, amrex::Real>
     cubic_interp_uneven(const amrex::Real xv, const T& x_array, const T& f_array) {
 
         // find the index such that x_array[idx] <= x0 <= x_array[idx+1]
@@ -93,25 +94,50 @@ namespace interp_net {
         const amrex::Real D2 = x2 - x0;
         const amrex::Real D3 = x3 - x0;
 
+        const amrex::Real D1sq = D1 * D1;
+        const amrex::Real D1cb = D1sq * D1;
+
+        const amrex::Real D2sq = D2 * D2;
+        const amrex::Real D2cb = D2sq * D2;
+
+        const amrex::Real D3sq = D3 * D3;
+        const amrex::Real D3cb = D3sq * D3;
+
         amrex::Real a{};
         amrex::Real b{};
         amrex::Real c{};
         amrex::Real d{f0};
 
-        amrex::Real denom_inv = 1.0_rt / (D1 * D2 * D3 * (D1 - D2) * (D1 - D3));
+        amrex::Real denom_inv = 1.0_rt / (D1 * D2 * D3 * (D1 - D2) * (D1 - D3) * (D2 - D3));
 
-        a = -denom_inv * (D1 * (D1 - D2 - D3) * (f0 - f2) + D2 * D3 * (f0 - f1));
-        b = denom_inv * (D1 * (D1 * D1 - D2 * D2 - D2 * D3 - D3 * D3) * (f0 - f2) +
-                         D2 * D3 * (D2 + D3) * (f0 - f1));
-        c = denom_inv * (D1 * D1 * (-D1 * D2 - D1 * D3 + D2 * D2 + D2 * D3 + D3 * D3) * (f0 - f2) -
-                         D2 * D2 * D3 * D3 * (f0 - f1));
+        a = -denom_inv * (D1sq * (D2 * (f0 - f3) - D3 * (f0 - f2)) +
+                          D2sq * (D3 * (f0 - f1) - D1 * (f0 - f3)) +
+                          D3sq * (D1 * (f0 - f2) - D2 * (f0 - f1)));
+
+        b = denom_inv * (D1cb * (D2 * (f0 - f3) - D3 * (f0 - f2)) +
+                         D2cb * (D3 * (f0 - f1) - D1 * (f0 - f3)) +
+                         D3cb * (D1 * (f0 - f2) - D2 * (f0 - f1)));
+
+        c = -denom_inv * (D1cb * (D2sq * (f0 - f3) - D3sq * (f0 - f2)) +
+                          D2cb * (D3sq * (f0 - f1) - D1sq * (f0 - f3)) +
+                          D3cb * (D1sq * (f0 - f2) - D2sq * (f0 - f1)));
+
+        std::cout << "a = " << a << " b = " << b << " c = " << c << std::endl;
 
         amrex::Real fv = a * amrex::Math::powi<3>(xv - x0) +
                          b * amrex::Math::powi<2>(xv - x0) +
                          c * (xv - x0) +
                          d;
 
-        return fv;
+        amrex::Real dfdx{};
+
+        if constexpr (do_derivative) {
+            dfdx = 3.0_rt * a * amrex::Math::powi<2>(xv - x0) +
+                   2.0_rt * b * (xv - x0) +
+                   c;
+        }
+
+        return {fv, dfdx};
     }
 
 }
