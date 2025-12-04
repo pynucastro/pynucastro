@@ -17,6 +17,7 @@ from pynucastro.rates.known_duplicates import (find_duplicate_rates,
 from pynucastro.rates.rate import Rate
 from pynucastro.rates.reaclib_rate import ReacLibRate
 from pynucastro.rates.tabular_rate import TabularRate
+from pynucastro.rates.alternate_rates import DeBoerC12agO16
 
 
 def _rate_name_to_nuc(name):
@@ -1018,3 +1019,27 @@ class OdaLibrary(TabularLibrary):
 
     def __init__(self):
         super().__init__(ordering=["oda"])
+
+
+def full_library():
+    """Return a Library with every rate known to pynucastro.
+    This will include a lot of duplicate rates (same process
+    but from different sources).
+
+    Returns
+    -------
+    Library
+
+    """
+
+    lib = Library()
+    lib += ReacLibLibrary()
+    lib += SuzukiLibrary()
+    lib += LangankeLibrary()
+    lib += PruetFullerLibrary()
+    lib += FFNLibrary()
+    lib += OdaLibrary()
+    _r = DeBoerC12agO16()
+    lib.add_rate(_r)
+
+    return lib
