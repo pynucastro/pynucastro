@@ -50,6 +50,7 @@ and interactively exploring nuclear reaction networks.
 
    library-examples.ipynb
    tabulated-weak-rates.ipynb
+   finding-rates.ipynb
 
 .. toctree::
    :maxdepth: 1
