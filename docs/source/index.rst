@@ -25,7 +25,7 @@ and interactively exploring nuclear reaction networks.
    contributing
 
 .. toctree::
-   :maxdepth:
+   :maxdepth: 1
    :caption: Nuclear Properties
    :hidden:
 
