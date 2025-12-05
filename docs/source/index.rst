@@ -25,12 +25,13 @@ and interactively exploring nuclear reaction networks.
    contributing
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth:
    :caption: Nuclear Properties
    :hidden:
 
    sources
    nucleus
+   lodders_composition.ipynb
 
 .. toctree::
    :maxdepth: 1
