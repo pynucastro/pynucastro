@@ -10,6 +10,7 @@ from os import walk
 from pathlib import Path
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
+from pynucastro.rates.alternate_rates import DeBoerC12agO16
 from pynucastro.rates.derived_rate import DerivedRate
 from pynucastro.rates.files import _find_rate_file, get_rates_dir
 from pynucastro.rates.known_duplicates import (find_duplicate_rates,
@@ -17,7 +18,6 @@ from pynucastro.rates.known_duplicates import (find_duplicate_rates,
 from pynucastro.rates.rate import Rate
 from pynucastro.rates.reaclib_rate import ReacLibRate
 from pynucastro.rates.tabular_rate import TabularRate
-from pynucastro.rates.alternate_rates import DeBoerC12agO16
 
 
 def _rate_name_to_nuc(name):
