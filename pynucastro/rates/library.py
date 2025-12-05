@@ -433,7 +433,12 @@ class Library:
 
     def __add__(self, other):
         """Add two libraries to get a library containing rates from
-        both.
+        both.  Note: if a rate in the other library shares the same
+        id as a rate in this library, then it is not added.
+
+        Returns
+        -------
+        Library
 
         """
         new_rates = self._rates.copy()
