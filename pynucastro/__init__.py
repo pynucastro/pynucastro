@@ -121,7 +121,7 @@ reaction rates.  The main core rate classes are:
 * :py:obj:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>` :
   a rate computed via detailed balance from a forward rate.
 
-* :py:obj:`ApproximateRate <pynucastro.rates.approxcimate_rates.ApproximateRate>` :
+* :py:obj:`ApproximateRate <pynucastro.rates.approximate_rates.ApproximateRate>` :
   an approximation to a rate that uses multiple "hidden rates" to
   compute an effective rate.
 
