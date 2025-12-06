@@ -8,6 +8,7 @@ import pytest
 import pynucastro as pyna
 from pynucastro.rates.alternate_rates import DeBoerC12agO16
 
+
 class TestRateIds:
     @pytest.fixture(scope="class")
     def approx_rate(self, reaclib_library):
@@ -74,4 +75,3 @@ class TestRateIds:
         assert ra.id == "Mg24 + He4 --> Si28 <approx>"
         assert ra.fname == "Mg24_He4__Si28__approx"
         assert ra.cname() == "Mg24_He4_to_Si28_approx"
-
