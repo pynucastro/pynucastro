@@ -28,7 +28,7 @@ class TestRateIds:
         assert r.fname == "He4_C12__O16"
         assert r.cname() == "He4_C12_to_O16"
 
-    def test_alternate_rate(self, reaclib_library):
+    def test_alternate_rate(self):
         r = DeBoerC12agO16()
 
         assert r.rid == "C12 + He4 --> O16"
