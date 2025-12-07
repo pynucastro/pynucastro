@@ -60,7 +60,7 @@ class TestElectronEOS:
         T = 1.e5
 
         for rho in [1.e4, 1.e5, 1.e7, 1.e9]:
-            es, pe = e.pe_state(rho, T, comp)
+            es, _ = e.pe_state(rho, T, comp)
             p_zt, e_zt = zero_temperature_eos(rho, comp)
 
             assert es.p == approx(p_zt, rel=1.e-4)
