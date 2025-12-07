@@ -31,4 +31,3 @@ class EOSState:
 
         self.de_drho = de_drho
         self.de_dT = de_dT
-
