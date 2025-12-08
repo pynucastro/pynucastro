@@ -43,6 +43,10 @@ class ElectronEOS:
             Temperature (K)
         comp : Composition
             Composition (abundances of each nucleus)
+        eta_guess_min : float
+            The minimum degeneracy parameter guess for the root-finding
+        eta_guess_max : float
+            The maximum degeneracy parameter guess for the root-finding
 
         Returns
         -------
