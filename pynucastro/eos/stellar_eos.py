@@ -20,6 +20,7 @@ class EOSState:
                  p=0.0, e=0.0,
                  dp_drho=0.0, dp_dT=0.0,
                  de_drho=0.0, de_dT=0.0,
+                 c_v=0.0, c_p=0.0,
                  gamma1=0.0):
 
         self.eta = eta
@@ -36,7 +37,22 @@ class EOSState:
         self.de_drho = de_drho
         self.de_dT = de_dT
 
+        self.c_v = c_v
+        self.c_p = c_p
+
         self.gamma1 = gamma1
+
+    def __str__(self):
+
+        fstr = ""
+        fstr += f"η     = {self.eta:12.6g}\n"
+        fstr += f"n_ele = {self.n_ele:12.6g} ; n_pos = {self.n_pos:12.6g}\n\n"
+        fstr += f"p     = {self.p:12.6g} ; e     = {self.e:12.6g}\n\n"
+        fstr += f"∂p/∂ρ = {self.dp_drho:12.6g} ; ∂p/∂T = {self.dp_dT:12.6g}\n"
+        fstr += f"∂e/∂ρ = {self.de_drho:12.6g} ; ∂e/∂T = {self.de_dT:12.6g}\n\n"
+        fstr += f"cᵥ    = {self.c_v:12.6g} ; cₚ    = {self.c_p:12.6g}\n"
+        fstr += f"Γ₁    = {self.gamma1:7.4f}\n"
+        return fstr
 
 
 class StellarEOS:
@@ -107,9 +123,13 @@ class StellarEOS:
         dT_drho_s = (p / rho**2 - de_drho) / (de_dT)
         gamma1 = rho / p * (dp_drho + dp_dT * dT_drho_s)
 
+        c_v = de_dT
+        c_p = c_v + (p / rho**2 - de_drho) * dp_dT / dp_drho
+
         return EOSState(eta=ele_state.eta,
                         n_ele=ele_state.n, n_pos=pos_state.n,
                         p=p, e=e,
                         dp_drho=dp_drho, dp_dT=dp_dT,
                         de_drho=de_drho, de_dT=de_dT,
+                        c_v=c_v, c_p=c_p,
                         gamma1=gamma1)

@@ -130,18 +130,20 @@ class RadiationEOS:
         # composition is not used
         _ = comp
 
-        n = 2 * np.pi * zeta(3) * (2.0 * constants.k * T / (constants.h * constants.c_light))**3
+        n_const = 2 * np.pi * zeta(3) * (2.0 * constants.k / (constants.h * constants.c_light))**3
+        n = n_const * T**3
+
         p = constants.a * T**4 / 3.0
         e = 3.0 * p / rho
 
-        dn_drho = n / rho
-        dn_dT = 0.0
+        dn_drho = 0.0
+        dn_dT = 3.0 * n_const * T**2
 
-        dp_drho = p / rho
-        dp_dT = p / T
+        dp_drho = 0.0
+        dp_dT = 4.0 * p / T
 
-        de_drho = 0.0
-        de_dT = e / T
+        de_drho = -e / rho
+        de_dT = 4.0 * e / T
 
         return EOSComponentState(eta=0.0,
                                  n=n, p=p, e=e,
