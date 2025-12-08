@@ -44,14 +44,14 @@ class TestRateIds:
         r1 = langanke_library.get_rate_by_name("ni56(,)co56")
 
         assert r1.rid == "Ni56 --> Co56"
-        assert r1.id == "Ni56 --> Co56 <tabular_tabular>"
+        assert r1.id == "Ni56 --> Co56 <tabular_langanke>"
         assert r1.fname == "Ni56__Co56"
         assert r1.cname() == "Ni56_to_Co56"
 
         r2 = ffn_library.get_rate_by_name("ni56(,)co56")
 
         assert r2.rid == "Ni56 --> Co56"
-        assert r2.id == "Ni56 --> Co56 <tabular_tabular>"
+        assert r2.id == "Ni56 --> Co56 <tabular_ffn>"
         assert r2.fname == "Ni56__Co56"
         assert r2.cname() == "Ni56_to_Co56"
 
