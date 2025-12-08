@@ -120,6 +120,9 @@ class Library:
 
     Parameters
     ----------
+    libfile : str
+        a file containing a sequence of rates in a format that we
+        understand (for example a ReacLib database)
     rates : list, dict, Rate
         a single :py:class:`Rate <pynucastro.rates.rate.Rate>` or an
         iterable of `Rate` objects.  If it is a dictionary, then it
@@ -127,7 +130,7 @@ class Library:
 
     """
 
-    def __init__(self, rates=None):
+    def __init__(self, libfile=None, rates=None):
         self._rates = {}
 
         if rates:
@@ -139,6 +142,10 @@ class Library:
                 self.add_rates(rates)
             else:
                 raise TypeError("rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.id")
+
+        if libfile:
+            library_file = _find_rate_file(libfile)
+            self._read_library_file(library_file)
 
     def get_rates(self):
         """Return a list of the rates in this library.
@@ -323,6 +330,69 @@ class Library:
             else:
                 nuc = rnuc
         return nuc
+
+    def _read_library_file(self, library_file):
+        # loop through library file, read lines
+
+        library_source_lines = collections.deque()
+
+        with library_file.open("r") as flib:
+            for line in flib:
+                ls = line.rstrip('\n')
+                if ls.strip():
+                    library_source_lines.append(ls)
+
+        # identify distinct rates from library lines
+        current_chapter = None
+        while True:
+            if len(library_source_lines) == 0:
+                break
+
+            # Check to see if there is a chapter ID, if not then use current_chapter
+            # (for Reaclib v1 formatted library files)
+            line = library_source_lines[0].strip()
+            chapter = None
+            if line in ('t', 'T'):
+                chapter = 't'
+                library_source_lines.popleft()
+            else:
+                try:
+                    chapter = int(line)
+                except (TypeError, ValueError):
+                    # we can't interpret line as a chapter so use current_chapter
+                    assert current_chapter, f'malformed library file {library_file}, cannot identify chapter.'
+                    chapter = current_chapter
+                else:
+                    library_source_lines.popleft()
+            current_chapter = chapter
+
+            rlines = None
+            rate_type = None
+            if chapter == 't':
+                rlines = [library_source_lines.popleft() for i in range(5)]
+                rate_type = "tabular"
+            elif isinstance(chapter, int):
+                rlines = [library_source_lines.popleft() for i in range(3)]
+                rate_type = "reaclib"
+            if rlines:
+                sio = io.StringIO('\n'.join([f'{chapter}'] +
+                                            rlines))
+                #print(sio.getvalue())
+                try:
+                    if rate_type == "reaclib":
+                        r = ReacLibRate(rfile=sio)
+                    elif rate_type == "tabular":
+                        r = TabularRate(rfile=sio)
+                    else:
+                        raise NotImplementedError("rate not implemented")
+                except UnsupportedNucleus:
+                    pass
+                else:
+                    rid = r.id
+                    if rid in self._rates:
+                        self._rates[rid] = self._rates[rid] + r
+                    else:
+                        self._rates[rid] = r
 
     def __repr__(self):
         """Return a string containing the rates IDs in this library."""
@@ -828,65 +898,9 @@ class ReacLibLibrary(Library):
 
     """
 
-    def __init__(self, *, libfile='reaclib_default2_20250330'):
-
-        super().__init__()
-        library_file = _find_rate_file(libfile)
-        self._read_library_file(library_file)
-
-    def _read_library_file(self, library_file):
-        # loop through library file, read lines
-
-        library_source_lines = collections.deque()
-
-        with library_file.open("r") as flib:
-            for line in flib:
-                ls = line.rstrip('\n')
-                if ls.strip():
-                    library_source_lines.append(ls)
-
-        # identify distinct rates from library lines
-        current_chapter = None
-        while True:
-            if len(library_source_lines) == 0:
-                break
-
-            # Check to see if there is a chapter ID, if not then use current_chapter
-            # (for Reaclib v1 formatted library files)
-            line = library_source_lines[0].strip()
-            chapter = None
-            if line in ('t', 'T'):
-                raise ValueError("tabular chapter not supported")
-
-            try:
-                chapter = int(line)
-            except (TypeError, ValueError):
-                # we can't interpret line as a chapter so use current_chapter
-                assert current_chapter, f'malformed library file {library_file}, cannot identify chapter.'
-                chapter = current_chapter
-            else:
-                library_source_lines.popleft()
-            current_chapter = chapter
-
-            rlines = None
-            rate_type = None
-            rlines = [library_source_lines.popleft() for i in range(3)]
-            rate_type = "reaclib"
-            if rlines:
-                sio = io.StringIO('\n'.join([f'{chapter}'] + rlines))
-                try:
-                    if rate_type == "reaclib":
-                        r = ReacLibRate(rfile=sio)
-                    else:
-                        raise NotImplementedError("rate not implemented")
-                except UnsupportedNucleus:
-                    pass
-                else:
-                    rid = r.id
-                    if rid in self._rates:
-                        self._rates[rid] = self._rates[rid] + r
-                    else:
-                        self._rates[rid] = r
+    def __init__(self):
+        libfile = 'reaclib_default2_20250330'
+        Library.__init__(self, libfile=libfile)
 
     def write_to_file(self, filename, *, prepend_rates_dir=False):
         """Write the library out to a file of the given name in
