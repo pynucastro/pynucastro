@@ -1,0 +1,855 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Solar Composition &#8212; pynucastro 2.8.0.post27+g86e65665f documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="_static/myfile.css?v=15ab05d9" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=9ff2f8ef"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=eaa7b67c"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script type="application/vnd.jupyter.widget-state+json">{"state": {"2eb2b31606964389a0b0a6c8c0c1b867": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "f570e97bba464c5ea3e4b35aabb22f11": {"model_name": "SliderStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "SliderStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "description_width": "", "handle_color": null}}, "d65e328e539e4f0fbac22427bddf3dba": {"model_name": "FloatSliderModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatSliderModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "FloatSliderView", "behavior": "drag-tap", "continuous_update": true, "description": "Z", "description_allow_html": false, "disabled": false, "layout": "IPY_MODEL_2eb2b31606964389a0b0a6c8c0c1b867", "max": 0.04, "min": 0.01, "orientation": "horizontal", "readout": true, "readout_format": ".3f", "step": 0.001, "style": "IPY_MODEL_f570e97bba464c5ea3e4b35aabb22f11", "tabbable": null, "tooltip": null, "value": 0.014964158698946859}}, "09fbdb19761947cd80644237a170dcbb": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "a97f7c89b01c4ebfa16f1bf6df3cce31": {"model_name": "VBoxModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": ["widget-interact"], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "VBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "VBoxView", "box_style": "", "children": ["IPY_MODEL_d65e328e539e4f0fbac22427bddf3dba", "IPY_MODEL_7fcec0b8ae42441f9f8be75b60bbaf05"], "layout": "IPY_MODEL_09fbdb19761947cd80644237a170dcbb", "tabbable": null, "tooltip": null}}, "13a69f54175c4b9d8f2146bf45d63937": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "7fcec0b8ae42441f9f8be75b60bbaf05": {"model_name": "OutputModel", "model_module": "@jupyter-widgets/output", "model_module_version": "1.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/output", "_model_module_version": "1.0.0", "_model_name": "OutputModel", "_view_count": null, "_view_module": "@jupyter-widgets/output", "_view_module_version": "1.0.0", "_view_name": "OutputView", "layout": "IPY_MODEL_13a69f54175c4b9d8f2146bf45d63937", "msg_id": "", "outputs": [{"output_type": "display_data", "metadata": {}, "data": {"text/plain": "<Figure size 400x400 with 0 Axes>"}}, {"output_type": "display_data", "metadata": {}, "data": {"text/plain": "<Figure size 640x480 with 1 Axes>", "image/png": "iVBORw0KGgoAAAANSUhEUgAAAjcAAAGzCAYAAADT4Tb9AAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjEwLjcsIGh0dHBzOi8vbWF0cGxvdGxpYi5vcmcvTLEjVAAAAAlwSFlzAAAPYQAAD2EBqD+naQAAOKpJREFUeJzt3Xl8TXf+x/H3TSQ3iTSxhMQSCVW1REmljDWMSBCMVkWVIlraopZUS7SNraS0NdqxlVpmOpShO6pVbRhqqF0F1VoSKkGRWJNKzu+P/nJnrgS5hBvH6/l43Me43/P9nvM5N7eTd875nnMshmEYAgAAMAkXZxcAAABQlAg3AADAVAg3AADAVAg3AADAVAg3AADAVAg3AADAVAg3AADAVAg3AADAVAg3AADAVAg3uOctWLBAFotFhw8fvmHf4OBg9enT57bXBMc58rNp2bKlWrZseVvrAeA8hBsUa3nBY8uWLc4updjKzMzU2LFjVa9ePXl7e8vT01MhISEaMWKEfv31V2eX5zTJyckaM2ZMoUJrcfPrr79qzJgx2rFjR6H6WyyWG77GjBlzW2u+2rFjxxQTE6NSpUrJx8dHf/nLX3Tw4MFCj//+++/VrFkzeXl5KSAgQIMHD9b58+ft+pw/f16jR49W27ZtVaZMGVksFi1YsKDA9fXp06fAz6VmzZq3spsopko4uwAAN+/gwYOKiIhQSkqKunbtqv79+8vd3V27du3S3Llz9cknn+inn35ydpl3xP79++Xi8t+/15KTkzV27Fi1bNlSwcHBdn2//vrrO1ydY3799VeNHTtWwcHBql+//g37f/DBB9dcNmbMGP3yyy9q1KhREVZ4fefPn1erVq2UkZGhUaNGyc3NTX/9618VHh6uHTt2qGzZstcdv2PHDrVu3Vq1atXSlClTdPToUb311ls6cOCAvvzyS1u/U6dOady4capSpYrq1aunpKSk667XarXq/ffft2vz9fW96f1E8UW4AZzkypUrys3Nlbu7+02Pf+yxx5Senq6kpCQ1a9bMbvmECRM0adKkoij1rmC1Wgvd92Y/8+KqZ8+eBba///77+uWXX/TCCy+oXbt2d6yeGTNm6MCBA9q8ebMeeeQRSVK7du0UEhKit99+WxMnTrzu+FGjRql06dJKSkqSj4+PpD9OO/br109ff/21IiMjJUkVKlTQ8ePHFRAQoC1btti2dS0lSpS45mcFc+G0FExh+/btateunXx8fOTt7a3WrVvrP//5T75+e/bs0Z///Gd5enqqcuXKev3115Wbm5uvn2EYev3111W5cmV5eXmpVatW2rNnT4HbPnv2rIYOHarAwEBZrVZVr15dkyZNslvv4cOHZbFY9NZbb2nq1Km6//77ZbValZycLEn629/+pjp16sjLy0ulS5dWWFiYFi1adN19/uijj7Rz50698sor+YKNJPn4+GjChAl2bUuXLlWDBg3k6ekpPz8/9ezZU8eOHbPr06dPH3l7eyslJUUdOnSQt7e3KlWqpOnTp0uSdu/erT//+c8qWbKkgoKC8tWZdypx3bp1evbZZ1W2bFn5+PioV69eOnPmTL46Z8yYoTp16shqtapixYoaOHCgzp49a9fnwIED6tKliwICAuTh4aHKlSvriSeeUEZGhq3P/865WbBggbp27SpJatWqle0URN5f9gXNuTlx4oSefvpp+fv7y8PDQ/Xq1dPf//53uz7/+3OcPXu27ef4yCOP6Icffsi3b1c7ffq0hg8frrp168rb21s+Pj5q166ddu7caeuTlJRk+yUdGxtrq/1ap1uuZc+ePRo8eLBCQ0P15ptvOjT2Vi1btkyPPPKIXdioWbOmWrdurX/961/XHZuZmanVq1erZ8+etmAjSb169ZK3t7fdeKvVqoCAAIdqy8nJUWZmpkNjcPfhyA3uenv27FHz5s3l4+Ojl19+WW5ubnrvvffUsmVLrV271nY4Pi0tTa1atdKVK1c0cuRIlSxZUrNnz5anp2e+dSYkJOj1119X+/bt1b59e23btk2RkZHKzs6263fx4kWFh4fr2LFjevbZZ1WlShV9//33io+P1/HjxzV16lS7/vPnz9fly5fVv39/Wa1WlSlTRnPmzNHgwYP1+OOPa8iQIbp8+bJ27dqlTZs26cknn7zmfn/++eeSpKeeeqpQn9OCBQsUGxurRx55RImJiUpPT9c777yjDRs2aPv27SpVqpStb05Ojtq1a6cWLVpo8uTJWrhwoQYNGqSSJUvqlVdeUY8ePfTYY49p1qxZ6tWrlxo3bqyqVavabW/QoEEqVaqUxowZo/3792vmzJk6cuSIkpKSZLFYJP1xymTs2LGKiIjQ888/b+v3ww8/aMOGDXJzc1N2draioqKUlZWlF154QQEBATp27JiW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X+b333+/zp8/r4iIiAJfV/+Ffy0lS5ZUt27dNH/+fKWkpCg6OloTJky47gTPjh07SpL++c9/3nD9eftU0Oe0f/9+2/KidPXnd/78eR0/ftx2z5lr1ZSdna1Dhw7lq6lu3bp69dVXtW7dOv373//WsWPHNGvWrGtu/+ojTNeT9924OmDs27fPrtZbtWzZMrVq1Upz587VE088ocjISEVEROS7OsyR2vMMHz5c27dv1+TJkxUaGurw+CFDhqhChQo3fD322GPXXY+Li4vq1q1b4I03N23apGrVql33dGpISIhKlCiRb3x2drZ27NhRqPv+FNa5c+d06tSpax55xd2LcIO7mqurqyIjI/XZZ5/Z3Yk2PT1dixYtUrNmzWyXk7Zv317/+c9/tHnzZlu/kydPauHChXbrjIiIkJubm/72t7/Z/SV+9ZVPkhQTE6ONGzfqq6++yrfs7NmzunLlyg334bfffrN77+7urtq1a8swDP3+++/XHPf444+rbt26mjBhgjZu3Jhv+blz5/TKK69IksLCwlS+fHnNmjXL7nD/l19+qb179yo6OvqGdTpq9uzZdvXPnDlTV65csd1vJSIiQu7u7nr33XftPue5c+cqIyPDVlNmZma+z7Fu3bpycXEp8NRFnpIlS0pSvuBQkPbt2ystLU1LliyxtV25ckV/+9vf5O3trfDw8BvvcCG4urrmO7qzdOnSfJfjO1K7JH3yySeaNm2aOnXqpMGDB99UbUU150b647v5ww8/2AWU/fv369tvv7Vdop9n3759SklJsb339fVVRESE/vnPf+rcuXO29g8++EDnz5/PN74wLl++bLeuPOPHj5dhGGrbtq3D60Txxmkp3BXmzZunVatW5WsfMmSIXn/9da1evVrNmjXTgAEDVKJECb333nvKysrS5MmTbX1ffvllffDBB2rbtq2GDBliuxQ8KChIu3btsvUrV66chg8frsTERHXo0EHt27fX9u3b9eWXX8rPz89u+y+99JI+//xzdejQQX369FGDBg104cIF7d69W8uWLdPhw4fzjblaZGSkAgIC1LRpU/n7+2vv3r2aNm2aoqOjr/sXrpubmz7++GNFRESoRYsWiomJUdOmTeXm5qY9e/Zo0aJFKl26tCZMmCA3NzdNmjRJsbGxCg8PV/fu3W2XggcHB2vYsGGF/VEUWnZ2tlq3bq2YmBjt379fM2bMULNmzdSpUydJf3zO8fHxGjt2rNq2batOnTrZ+j3yyCO2m619++23GjRokLp27aoaNWroypUr+uCDD+Tq6qouXbpcc/v169eXq6urJk2apIyMDFmtVv35z39W+fLl8/Xt37+/3nvvPfXp00dbt25VcHCwli1bpg0bNmjq1KmFnrh9Ix06dNC4ceMUGxurJk2aaPfu3Vq4cKHdZHjpjyOCpUqV0qxZs3TfffepZMmSatSoUYFzto4fP66nn35arq6uat269TWP5N1///1q3LjxNWsrqjk3kjRgwADNmTNH0dHRGj58uNzc3DRlyhT5+/vrxRdftOtbq1YthYeH291deMKECWrSpInCw8PVv39/HT16VG+//bYiIyPzBZFp06bp7NmztkeNfPHFFzp69Kgk6YUXXpCvr6/S0tIUGhqq7t272x638NVXX2nlypVq27at/vKXvxTJfqMYceKVWsAN5V1WfK1XamqqYRiGsW3bNiMqKsrw9vY2vLy8jFatWhnff/99vvXt2rXLCA8PNzw8PIxKlSoZ48ePN+bOnWt3KbhhGEZOTo4xduxYo0KFCoanp6fRsmVL48cff8x3ubFhGMa5c+eM+Ph4o3r16oa7u7vh5+dnNGnSxHjrrbdsl0LnXUL85ptv5qvpvffeM1q0aGGULVvWsFqtxv3332+89NJLRkZGRqE+ozNnzhgJCQlG3bp1DS8vL8PDw8MICQkx4uPjjePHj9v1XbJkiREaGmpYrVajTJkyRo8ePYyjR4/a9endu7dRsmTJfNsJDw8v8JL1oKAgIzo62vY+72e2du1ao3///kbp0qUNb29vo0ePHsZvv/2Wb/y0adOMmjVrGm5uboa/v7/x/PPPG2fOnLEtP3jwoNG3b1/j/vvvNzw8PIwyZcoYrVq1Mr755pt8dVz9s5kzZ45RrVo1w9XV1e6y8KsvBTcMw0hPTzdiY2MNPz8/w93d3ahbt26+y4qv93PUVZfEF+Ty5cvGiy++aPteNW3a1Ni4cWOB9Xz22WdG7dq1jRIlSlz3EufvvvuuUJdwX/3Z3G6pqanG448/bvj4+Bje3t5Ghw4djAMHDuTrp2tcXv7vf//baNKkieHh4WGUK1fOGDhwoO2S/P8VFBR0zX3O+2/6zJkzRs+ePY3q1asbXl5ehtVqNerUqWNMnDjR7nYFMA+LYdzmmYAA7il5Nwv84Ycf8t2IDQDuBObcAAAAUyHcAAAAUyHcAAAAU3FquFm3bp06duyoihUrymKx6NNPP73hmKSkJD388MO2py87+qRcALdXnz59ZBgG820AOI1Tw82FCxdUr149TZ8+vVD9Dx06pOjoaLVq1Uo7duzQ0KFD9cwzzxR4jxEAAHBvKjZXS1ksFn3yySfq3LnzNfuMGDFCK1as0I8//mhre+KJJ3T27NkC74ECAADuPXfVTfw2btyoiIgIu7aoqKgCn9acJysry+4uprm5uTp9+rTKli17U7c4BwAAd55hGDp37pwqVqyY7yG3V7urwk1aWpr8/f3t2vz9/ZWZmalLly4V+FDCxMTE6z58EAAA3D1SU1Nv+MDcuyrc3Iz4+HjFxcXZ3mdkZKhKlSpKTU21PXMIAAAUb5mZmQoMDCzU41DuqnATEBCg9PR0u7b09HT5+PgUeNRGkqxWq6xWa752Hx8fwg0AAHeZwkwpuavuc9O4cWOtWbPGrm316tXXfRgcAAC4tzg13Jw/f147duzQjh07JP1xqfeOHTuUkpIi6Y9TSr169bL1f+6553Tw4EG9/PLL2rdvn2bMmKF//etft+WJxgAA4O7k1HCzZcsWhYaGKjQ0VJIUFxen0NBQJSQkSJKOHz9uCzqSVLVqVa1YsUKrV69WvXr19Pbbb+v9999XVFSUU+oHAADFT7G5z82dkpmZKV9fX2VkZDDnBgCAu4Qjv7/vqjk3AAAAN0K4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApkK4AQAApuL0cDN9+nQFBwfLw8NDjRo10ubNm6/bf+rUqXrwwQfl6empwMBADRs2TJcvX75D1QIAgOLOqeFmyZIliouL0+jRo7Vt2zbVq1dPUVFROnHiRIH9Fy1apJEjR2r06NHau3ev5s6dqyVLlmjUqFF3uHIAAFBcOTXcTJkyRf369VNsbKxq166tWbNmycvLS/PmzSuw//fff6+mTZvqySefVHBwsCIjI9W9e/cbHu0BAAD3DqeFm+zsbG3dulURERH/LcbFRREREdq4cWOBY5o0aaKtW7fawszBgwe1cuVKtW/f/prbycrKUmZmpt0LAACYVwlnbfjUqVPKycmRv7+/Xbu/v7/27dtX4Jgnn3xSp06dUrNmzWQYhq5cuaLnnnvuuqelEhMTNXbs2CKtHQAAFF9On1DsiKSkJE2cOFEzZszQtm3b9PHHH2vFihUaP378NcfEx8crIyPD9kpNTb2DFQMAgDvNaUdu/Pz85OrqqvT0dLv29PR0BQQEFDjmtdde01NPPaVnnnlGklS3bl1duHBB/fv31yuvvCIXl/xZzWq1ymq1Fv0OAACAYslpR27c3d3VoEEDrVmzxtaWm5urNWvWqHHjxgWOuXjxYr4A4+rqKkkyDOP2FQsAAO4aTjtyI0lxcXHq3bu3wsLC1LBhQ02dOlUXLlxQbGysJKlXr16qVKmSEhMTJUkdO3bUlClTFBoaqkaNGunnn3/Wa6+9po4dO9pCDgAAuLc5Ndx069ZNJ0+eVEJCgtLS0lS/fn2tWrXKNsk4JSXF7kjNq6++KovFoldffVXHjh1TuXLl1LFjR02YMMFZuwAAAIoZi3GPnc/JzMyUr6+vMjIy5OPj4+xyAABAITjy+/uuuloKAADgRgg3AADAVAg3AADAVAg3AADAVAg3AADAVAg3AADAVAg3AADAVAg3AADAVAg3AADAVAg3AADAVAg3AADAVAg3AADAVJz6VHAzCh65wtklwMkOvxHt7BIA4J7GkRsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqhBsAAGAqtxxuMjMz9emnn2rv3r1FUQ8AAMAtcTjcxMTEaNq0aZKkS5cuKSwsTDExMXrooYf00UcfFXmBAAAAjnA43Kxbt07NmzeXJH3yyScyDENnz57Vu+++q9dff73ICwQAAHCEw+EmIyNDZcqUkSStWrVKXbp0kZeXl6Kjo3XgwIEiLxAAAMARDoebwMBAbdy4URcuXNCqVasUGRkpSTpz5ow8PDyKvEAAAABHlHB0wNChQ9WjRw95e3srKChILVu2lPTH6aq6desWdX0AAAAOcTjcDBgwQA0bNlRqaqratGkjF5c/Dv5Uq1aNOTcAAMDpHA43khQWFqawsDC7tujo6CIpCAAA4FY4HG5ycnK0YMECrVmzRidOnFBubq7d8m+//bbIigMAAHCUwxOKhwwZoiFDhignJ0chISGqV6+e3ctR06dPV3BwsDw8PNSoUSNt3rz5uv3Pnj2rgQMHqkKFCrJarapRo4ZWrlzp8HYBAIA5OXzkZvHixfrXv/6l9u3b3/LGlyxZori4OM2aNUuNGjXS1KlTFRUVpf3796t8+fL5+mdnZ6tNmzYqX768li1bpkqVKunIkSMqVarULdcCAADMweFw4+7ururVqxfJxqdMmaJ+/fopNjZWkjRr1iytWLFC8+bN08iRI/P1nzdvnk6fPq3vv/9ebm5ukqTg4OAiqQUAAJiDw6elXnzxRb3zzjsyDOOWNpydna2tW7cqIiLiv8W4uCgiIkIbN24scMznn3+uxo0ba+DAgfL391dISIgmTpyonJyca24nKytLmZmZdi8AAGBeDh+5Wb9+vb777jt9+eWXqlOnju0ISp6PP/64UOs5deqUcnJy5O/vb9fu7++vffv2FTjm4MGD+vbbb9WjRw+tXLlSP//8swYMGKDff/9do0ePLnBMYmKixo4dW6iaAADA3c/hcFOqVCk9+uijt6OWG8rNzVX58uU1e/Zsubq6qkGDBjp27JjefPPNa4ab+Ph4xcXF2d5nZmYqMDDwTpUMAADuMIfDzfz584tkw35+fnJ1dVV6erpde3p6ugICAgocU6FCBbm5ucnV1dXWVqtWLaWlpSk7O1vu7u75xlitVlmt1iKpGQAAFH8Oz7nJc/LkSa1fv17r16/XyZMnHR7v7u6uBg0aaM2aNba23NxcrVmzRo0bNy5wTNOmTfXzzz/b3Vvnp59+UoUKFQoMNgAA4N7jcLi5cOGC+vbtqwoVKqhFixZq0aKFKlasqKeffloXL150aF1xcXGaM2eO/v73v2vv3r16/vnndeHCBdvVU7169VJ8fLyt//PPP6/Tp09ryJAh+umnn7RixQpNnDhRAwcOdHQ3AACASTl8WiouLk5r167VF198oaZNm0r6Y5Lx4MGD9eKLL2rmzJmFXle3bt108uRJJSQkKC0tTfXr19eqVatsk4xTUlJsz66S/ngi+VdffaVhw4bpoYceUqVKlTRkyBCNGDHC0d0AAAAmZTEcvKbbz89Py5Ytsz0NPM93332nmJiYmzpFdSdlZmbK19dXGRkZ8vHxKfL1B49cUeTrxN3l8Bs8Zw0Aipojv78dPi118eLFfJdvS1L58uUdPi0FAABQ1BwON40bN9bo0aN1+fJlW9ulS5c0duzYa04EBgAAuFMcnnPzzjvvKCoqSpUrV7Y9KHPnzp3y8PDQV199VeQFAgAAOMLhcBMSEqIDBw5o4cKFtjsJd+/eXT169JCnp2eRFwgAAOAIh8ONJHl5ealfv35FXQsAAMAtK1S4+fzzz9WuXTu5ubnp888/v27fTp06FUlhAAAAN6NQ4aZz585KS0tT+fLl1blz52v2s1gs131CNwAAwO1WqHDzv487+N9/AwAAFDcOXwr+j3/8Q1lZWfnas7Oz9Y9//KNIigIAALhZDoeb2NhYZWRk5Gs/d+6c7ZlQAAAAzuJwuDEMQxaLJV/70aNH5evrWyRFAQAA3KxCXwoeGhoqi8Uii8Wi1q1bq0SJ/w7NycnRoUOH1LZt29tSJAAAQGEVOtzkXSW1Y8cORUVFydvb27bM3d1dwcHB6tKlS5EXCAAA4IhCh5vRo0dLkoKDg/XEE0/IarXetqIAAABulsNzbmrXrq0dO3bka9+0aZO2bNlSFDUBAADcNIfDzcCBA5Wampqv/dixYxo4cGCRFAUAAHCzHA43ycnJevjhh/O1h4aGKjk5uUiKAgAAuFkOhxur1ar09PR87cePH7e7ggoAAMAZHA43kZGRio+Pt7uR39mzZzVq1Ci1adOmSIsDAABwlMOHWt566y21aNFCQUFBCg0NlfTH5eH+/v764IMPirxAAAAARzgcbipVqqRdu3Zp4cKF2rlzpzw9PRUbG6vu3bvLzc3tdtQIAABQaDc1SaZkyZLq379/UdcCAABwy256BnBycrJSUlKUnZ1t196pU6dbLgoAAOBmORxuDh48qEcffVS7d++WxWKRYRiSZHuYZk5OTtFWCAAA4ACHr5YaMmSIqlatqhMnTsjLy0t79uzRunXrFBYWpqSkpNtQIgAAQOE5fORm48aN+vbbb+Xn5ycXFxe5uLioWbNmSkxM1ODBg7V9+/bbUScAAEChOHzkJicnR/fdd58kyc/PT7/++qskKSgoSPv37y/a6gAAABzk8JGbkJAQ7dy5U1WrVlWjRo00efJkubu7a/bs2apWrdrtqBEAAKDQHA43r776qi5cuCBJGjdunDp06KDmzZurbNmyWrJkSZEXCAAA4AiHw01UVJTt39WrV9e+fft0+vRplS5d2nbFFAAAgLM4NOfm999/V4kSJfTjjz/atZcpU4ZgAwAAigWHwo2bm5uqVKnCvWwAAECx5fDVUq+88opGjRql06dP3456AAAAbonDc26mTZumn3/+WRUrVlRQUJBKlixpt3zbtm1FVhwAAICjHA43nTt3vg1lAAAAFI1Ch5t58+apR48eGj169O2sBwAA4JYUes5Nv379lJGRYXtfsWJFHT58+HbUBAAAcNMKHW7ynv6d59y5c8rNzS3yggAAAG6Fw1dLAQAAFGeFDjcWi8XuRn1XvwcAACgOCj2h2DAM1ahRwxZozp8/r9DQULm42Ocj7n8DAACcqdDhZv78+bezDgAAgCJR6HDTu3fv21kHAABAkWBCMQAAMBXCDQAAMBXCDQAAMBXCDQAAMJVbDjc5OTnasWOHzpw5UxT1AAAA3BKHw83QoUM1d+5cSX8Em/DwcD388MMKDAxUUlJSUdcHAADgEIfDzbJly1SvXj1J0hdffKFDhw5p3759GjZsmF555ZUiLxAAAMARDoebU6dOKSAgQJK0cuVKde3aVTVq1FDfvn21e/fuIi8QAADAEQ6HG39/fyUnJysnJ0erVq1SmzZtJEkXL16Uq6trkRcIAADgiELfoThPbGysYmJiVKFCBVksFkVEREiSNm3apJo1axZ5gQAAAI5wONyMGTNGISEhSk1NVdeuXWW1WiVJrq6uGjlyZJEXCAAA4AiHw40kPf7443bvz549y7OnAABAseDwnJtJkyZpyZIltvcxMTEqW7asKleurF27dhVpcQAAAI5yONzMmjVLgYGBkqTVq1dr9erV+vLLL9W2bVsNHz68yAsEAABwhMOnpdLS0mzhZvny5YqJiVFkZKSCg4PVqFGjIi8QAADAEQ4fuSldurRSU1MlSatWrbJdLWUYhnJycoq2OgAAAAc5fOTmscce05NPPqkHHnhAv/32m9q1aydJ2r59u6pXr17kBQIAADjC4XDz17/+VcHBwUpNTdXkyZPl7e0tSTp+/LgGDBhQ5AUCAAA4wuFw4+bmVuDE4WHDhhVJQQAAALfipu5zI0nJyclKSUlRdna2XXunTp1uuSgAAICb5fCE4oMHD6pevXoKCQlRdHS0OnfurM6dO+vRRx/Vo48+elNFTJ8+XcHBwfLw8FCjRo20efPmQo1bvHixLBaLOnfufFPbBQAA5uNwuBkyZIiqVq2qEydOyMvLS3v27NG6desUFhampKQkhwtYsmSJ4uLiNHr0aG3btk316tVTVFSUTpw4cd1xhw8f1vDhw9W8eXOHtwkAAMzL4XCzceNGjRs3Tn5+fnJxcZGLi4uaNWumxMREDR482OECpkyZon79+ik2Nla1a9fWrFmz5OXlpXnz5l1zTE5Ojnr06KGxY8eqWrVq111/VlaWMjMz7V4AAMC8HA43OTk5uu+++yRJfn5++vXXXyVJQUFB2r9/v0Prys7O1tatW233ypEkFxcXRUREaOPGjdccN27cOJUvX15PP/30DbeRmJgoX19f2yvvBoQAAMCcHA43ISEh2rlzpySpUaNGmjx5sjZs2KBx48bd8CjK1U6dOqWcnBz5+/vbtfv7+ystLa3AMevXr9fcuXM1Z86cQm0jPj5eGRkZtlfeDQgBAIA5OXy11KuvvqoLFy5I+uMISocOHdS8eXOVLVvW7oGat8O5c+f01FNPac6cOfLz8yvUGKvVKqvVelvrAgAAxYfD4SYqKsr27+rVq2vfvn06ffq0SpcuLYvF4tC6/Pz85OrqqvT0dLv29PR0BQQE5Ov/yy+/6PDhw+rYsaOtLTc3V5JUokQJ7d+/X/fff79DNQAAAHNx+LRUQcqUKeNwsJEkd3d3NWjQQGvWrLG15ebmas2aNWrcuHG+/jVr1tTu3bu1Y8cO26tTp05q1aqVduzYwXwaAABQ+CM3ffv2LVS/613lVJC4uDj17t1bYWFhatiwoaZOnaoLFy4oNjZWktSrVy9VqlRJiYmJ8vDwUEhIiN34UqVKSVK+dgAAcG8qdLhZsGCBgoKCFBoaKsMwiqyAbt266eTJk0pISFBaWprq16+vVatW2SYZp6SkyMWlSA4wAQCAe4DFKGRSGThwoD788EMFBQUpNjZWPXv2VJkyZW53fUUuMzNTvr6+ysjIkI+PT5GvP3jkiiJfJ+4uh9+IdnYJAGA6jvz+LvQhkenTp+v48eN6+eWX9cUXXygwMFAxMTH66quvivRIDgAAwK1w6HyP1WpV9+7dtXr1aiUnJ6tOnToaMGCAgoODdf78+dtVIwAAQKHd9GQWFxcXWSwWGYahnJycoqwJAADgpjkUbrKysvThhx+qTZs2qlGjhnbv3q1p06YpJSVF3t7et6tGAACAQiv01VIDBgzQ4sWLFRgYqL59++rDDz8s9F2CAQAA7pRCh5tZs2apSpUqqlatmtauXau1a9cW2O/jjz8usuIAAAAcVehw06tXr5u6CzEAAMCd5NBN/AAAAIo7bv0LAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMhXADAABMpYSzCwBQtIJHrnB2CXCyw29EO7sEwKk4cgMAAEyFcAMAAEyFcAMAAEyFcAMAAEyFcAMAAEyFcAMAAEyFcAMAAEyFcAMAAEyFcAMAAEyFcAMAAEylWISb6dOnKzg4WB4eHmrUqJE2b958zb5z5sxR8+bNVbp0aZUuXVoRERHX7Q8AAO4tTg83S5YsUVxcnEaPHq1t27apXr16ioqK0okTJwrsn5SUpO7du+u7777Txo0bFRgY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"}}], "tabbable": null, "tooltip": null}}}, "version_major": 2, "version_minor": 0}</script>
+    <script crossorigin="anonymous" data-jupyter-widgets-cdn="https://cdn.jsdelivr.net/npm/" src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@1.0.6/dist/embed-amd.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'lodders_composition';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pynucastro Usage Examples" href="pynucastro-examples.html" />
+    <link rel="prev" title="Nuclear Properties" href="nucleus.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt=""/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt=""/>`);</script>
+  
+  
+    <p class="title logo__title">pynucastro 2.8</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rate_types.html">Reaction Rate Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Properties</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nucleus.html">Nuclear Properties</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Solar Composition</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">pynucastro Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro Usage Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plot-types.html">Plotting Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic_network.html">Basic Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Integrating a Network</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Working with Libraries</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tabulated-weak-rates.html">Tabulated Weak Rate Sources</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="duplicate-rates.html">Dealing with Duplicate Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking Your Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="electron-capture-example.html">Tabulated Weak Rate Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alternate-rates.html"><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="inert-nuclei.html">Inert Nuclei</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Rate Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="screening-examples.html">Screening Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modify-example.html">Modifying Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom-rates.html">Creating a Custom Rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="partition-function.html">Reverse Rates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="approximate-rates.html">Approximate and Modified Rates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="alpha-gamma-approx.html">Approximating alpha-capture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="double-n-capture.html">Approximating double n-capture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modified-rates.html">Modified Rates</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unimportant-rates.html">Removing Unimportant Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="network-cycles.html">Finding Cycles (with NetworkX)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stiffness.html">Assessing the Stiffness of a Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reduction.html">Network Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sens_analysis_example.html">Sensitivity Analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">NSE Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NSE-direct-integration.html">NSE vs. Direct Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nse_table.html">Creating an NSE table</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Thermodynamics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="fermi-integrals.html">Fermi-Dirac Integrals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="electron-eos.html">The Electron-Positron EOS</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="neutrino-cooling.html">Neutrino Cooling</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Exporting Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="networks.html">Exporting Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-network.html">Python network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simple-cxx-network.html">Simple C++ network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fortran-network.html">Fortran Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="amrex-astro-cxx-networks.html">AMReX Astro Microphysics Networks</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="julia.html">Integrating using DifferentialEquations.jl</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="installing-diffeqpy-julia.html">Installing <code class="docutils literal notranslate"><span class="pre">diffeqpy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="Example-Integrating-Network-diffeqpy.html">Example of Integrating a Network</a></li>
+
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="he-burning-example.html">A He-burning Network</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/binding-energy.html">Binding Energy per Nucleon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/pp-cno.html">p-p chain vs. CNO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/hot-CNO-breakout-example.html">hot-CNO and breakout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/triple_alpha_eval.html">Computing the Screened Triple-alpha rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/he-burning.html">Ratio of C/O from He burning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/supernova-lightcurve.html">A Supernova Lightcurve</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.constants.html">pynucastro.constants package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.constants.constants.html">pynucastro.constants.constants module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.eos.html">pynucastro.eos package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.difference_utils.html">pynucastro.eos.difference_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.electron_eos.html">pynucastro.eos.electron_eos module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.fermi_integrals.html">pynucastro.eos.fermi_integrals module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.quadrature_weights.html">pynucastro.eos.quadrature_weights module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html">pynucastro.networks.amrexastro_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.base_cxx_network.html">pynucastro.networks.base_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.fortran_network.html">pynucastro.networks.fortran_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.helper.html">pynucastro.networks.helper module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.nse_network.html">pynucastro.networks.nse_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.python_network.html">pynucastro.networks.python_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.rate_collection.html">pynucastro.networks.rate_collection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.simple_cxx_network.html">pynucastro.networks.simple_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.sympy_network_support.html">pynucastro.networks.sympy_network_support module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.neutrino_cooling.html">pynucastro.neutrino_cooling package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.neutrino_cooling.neutrino_cooling.html">pynucastro.neutrino_cooling.neutrino_cooling module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.neutrino_cooling.sneut5_mod.html">pynucastro.neutrino_cooling.sneut5_mod module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.elements.html">pynucastro.nucdata.elements module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.halflife_table.html">pynucastro.nucdata.halflife_table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.mass_table.html">pynucastro.nucdata.mass_table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.nucleus.html">pynucastro.nucdata.nucleus module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.partition_function.html">pynucastro.nucdata.partition_function module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.spin_table.html">pynucastro.nucdata.spin_table module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.library.html">pynucastro.rates.library module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.modified_rate.html">pynucastro.rates.modified_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.rate.html">pynucastro.rates.rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.reaclib_rate.html">pynucastro.rates.reaclib_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.tabular_rate.html">pynucastro.rates.tabular_rate module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep_module.html">pynucastro.reduction.drgep_module module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.sensitivity_analysis.html">pynucastro.reduction.sensitivity_analysis module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.screening.html">pynucastro.screening package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.screen.html">pynucastro.screening.screen module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.screening_util.html">pynucastro.screening.screening_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.mpi_utils.html">pynucastro.mpi_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.numba_util.html">pynucastro.numba_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.utils.html">pynucastro.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.yt_utils.html">pynucastro.yt_utils module</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="zreferences.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Index</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="py-modindex.html">Module Index</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/lodders_composition.ipynb?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/lodders_composition.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Flodders_composition.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/lodders_composition.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Solar Composition</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-solar-composition-and-finding-the-top-10-most-abundant-isotopes">Setting solar composition and finding the top 10 most abundant isotopes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#binning-lodders-composition-to-a-desired-network">Binning Lodders composition to a desired network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scaling-h-and-he-with-desired-metallicty-z">Scaling H and He with desired metallicty Z</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="solar-composition">
+<h1>Solar Composition<a class="headerlink" href="#solar-composition" title="Link to this heading">#</a></h1>
+<p>Here we show how to work with the <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.LoddersComposition" title="pynucastro.networks.rate_collection.LoddersComposition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LoddersComposition</span></code></a> class, which initializes a composition from the present day solar abundances of <span id="id1">Lodders [<a class="reference internal" href="zreferences.html#id35" title="Katharina Lodders. Solar elemental abundances. 12 2020. URL: https://oxfordre.com/planetaryscience/view/10.1093/acrefore/9780190647926.001.0001/acrefore-9780190647926-e-145, doi:10.1093/acrefore/9780190647926.013.145.">2020</a>]</span>. To access the data tables, follow this <a class="reference external" href="https://sites.wustl.edu/planetarychemistrylaboratory/data-tables/">link</a>. This class gives the option to set a desired metallicity <code class="docutils literal notranslate"><span class="pre">Z=0.0</span></code> and scales the Lodders abundances accordingly. If no metallicity is provided, it will be calculated from the Lodders data as <code class="docutils literal notranslate"><span class="pre">(1</span> <span class="pre">-</span> <span class="pre">H</span> <span class="pre">-</span> <span class="pre">He)</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">interact</span><span class="p">,</span> <span class="n">FloatSlider</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="kn">import</span> <span class="n">networks</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="setting-solar-composition-and-finding-the-top-10-most-abundant-isotopes">
+<h2>Setting solar composition and finding the top 10 most abundant isotopes<a class="headerlink" href="#setting-solar-composition-and-finding-the-top-10-most-abundant-isotopes" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">top_10_isotopes</span><span class="p">(</span><span class="n">comp</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="n">fracs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">frac</span><span class="p">:</span> <span class="n">frac</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fracs</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>
+
+<span class="n">solar</span> <span class="o">=</span> <span class="n">networks</span><span class="o">.</span><span class="n">LoddersComposition</span><span class="p">()</span> <span class="c1">## Default metallicity</span>
+<span class="n">top</span> <span class="o">=</span> <span class="n">top_10_isotopes</span><span class="p">(</span><span class="n">solar</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">nuc</span><span class="p">,</span> <span class="n">X</span> <span class="ow">in</span> <span class="n">top</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">short_spec_name</span><span class="si">:</span><span class="s2">&gt;6</span><span class="si">}</span><span class="s2"> X= </span><span class="si">{</span><span class="n">X</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    h1 X= 0.7462
+   he4 X= 0.2388
+   o16 X= 0.0064
+   c12 X= 0.0026
+  ne20 X= 0.0019
+  fe56 X= 0.0011
+   n14 X= 0.0007
+  si28 X= 0.0006
+  mg24 X= 0.0005
+   s32 X= 0.0003
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="binning-lodders-composition-to-a-desired-network">
+<h2>Binning Lodders composition to a desired network<a class="headerlink" href="#binning-lodders-composition-to-a-desired-network" title="Link to this heading">#</a></h2>
+<p>If we wish to use a network that does not contain all isotopes that are in the Lodders composition, then we use <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition.bin_as" title="pynucastro.networks.rate_collection.Composition.bin_as"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Composition.bin_as</span></code></a> which will bin the Lodders data to the desired network:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">solar</span> <span class="o">=</span> <span class="n">networks</span><span class="o">.</span><span class="n">LoddersComposition</span><span class="p">()</span>
+
+<span class="n">new_comp</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">),</span>
+           <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">),</span>
+           <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">),</span>
+           <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">),</span>
+           <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ne20&quot;</span><span class="p">),</span>
+           <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe56&quot;</span><span class="p">),</span>
+           <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n14&quot;</span><span class="p">),</span>
+           <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;si28&quot;</span><span class="p">),</span>
+           <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;mg24&quot;</span><span class="p">),</span>
+           <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;s32&quot;</span><span class="p">)]</span> <span class="c1">## Desired network</span>
+
+<span class="n">binned_comp</span> <span class="o">=</span> <span class="n">solar</span><span class="o">.</span><span class="n">bin_as</span><span class="p">(</span><span class="n">new_comp</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sum of binned comp:&quot;</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">binned_comp</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">binned_comp</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sum of binned comp: 1.000000000000001
+</pre></div>
+</div>
+<img alt="_images/2533a710b011841e18b6c8a4d3a387401132efd41d9ef22e8e0201ee4541ee11.png" src="_images/2533a710b011841e18b6c8a4d3a387401132efd41d9ef22e8e0201ee4541ee11.png" />
+</div>
+</div>
+</section>
+<section id="scaling-h-and-he-with-desired-metallicty-z">
+<h2>Scaling H and He with desired metallicty Z<a class="headerlink" href="#scaling-h-and-he-with-desired-metallicty-z" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">xyz_from_comp</span><span class="p">(</span><span class="n">comp</span><span class="p">):</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">for</span> <span class="n">nuc</span><span class="p">,</span> <span class="n">X_i</span> <span class="ow">in</span> <span class="n">comp</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># Total H</span>
+            <span class="n">X</span> <span class="o">+=</span> <span class="n">X_i</span>
+        <span class="k">elif</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="c1"># Total He</span>
+            <span class="n">Y</span> <span class="o">+=</span> <span class="n">X_i</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Z</span> <span class="o">+=</span> <span class="n">X_i</span> <span class="c1"># Total metals</span>
+
+    <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span>
+
+<span class="n">solar</span> <span class="o">=</span> <span class="n">networks</span><span class="o">.</span><span class="n">LoddersComposition</span><span class="p">()</span>
+<span class="n">X_solar</span><span class="p">,</span> <span class="n">Y_solar</span><span class="p">,</span> <span class="n">Z_solar</span> <span class="o">=</span> <span class="n">xyz_from_comp</span><span class="p">(</span><span class="n">solar</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Default solar metalicity is Z = &quot;</span><span class="p">,</span> <span class="n">Z_solar</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_lodders</span><span class="p">(</span><span class="n">Z</span><span class="p">):</span>
+
+    <span class="n">comp</span> <span class="o">=</span> <span class="n">networks</span><span class="o">.</span><span class="n">LoddersComposition</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="n">Z</span><span class="p">)</span>
+
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="p">,</span> <span class="n">Z</span> <span class="o">=</span> <span class="n">xyz_from_comp</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="s2">&quot;He&quot;</span><span class="p">,</span> <span class="s2">&quot;Metals&quot;</span><span class="p">]</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Z</span><span class="p">]</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Mass Fractions&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Lodders Composition at Z = </span><span class="si">{</span><span class="n">Z</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">interact</span><span class="p">(</span>
+    <span class="n">plot_lodders</span><span class="p">,</span>
+    <span class="n">Z</span><span class="o">=</span><span class="n">FloatSlider</span><span class="p">(</span>
+        <span class="n">value</span><span class="o">=</span><span class="n">Z_solar</span><span class="p">,</span>
+        <span class="nb">min</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+        <span class="nb">max</span><span class="o">=</span><span class="mf">0.04</span><span class="p">,</span>
+        <span class="n">step</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span>
+        <span class="n">readout_format</span><span class="o">=</span><span class="s2">&quot;.3f&quot;</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Default solar metalicity is Z =  0.014964158698946859
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "a97f7c89b01c4ebfa16f1bf6df3cce31"}</script><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;function __main__.plot_lodders(Z)&gt;
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="nucleus.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Nuclear Properties</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="pynucastro-examples.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">pynucastro Usage Examples</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-solar-composition-and-finding-the-top-10-most-abundant-isotopes">Setting solar composition and finding the top 10 most abundant isotopes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#binning-lodders-composition-to-a-desired-network">Binning Lodders composition to a desired network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scaling-h-and-he-with-desired-metallicty-z">Scaling H and He with desired metallicty Z</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By pynucastro development team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024-2025, pynucastro development team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
