@@ -58,4 +58,4 @@ class TestLoddersComposition:
 
         assert scaled_H == approx(0.7272042360718749)
         assert scaled_He == approx(0.23279576392812512)
-        assert scaled_z == approx(0.040000000000000056)
+        assert scaled_Z == approx(0.040000000000000056)
