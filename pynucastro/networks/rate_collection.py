@@ -645,7 +645,7 @@ class LoddersComposition(Composition):
             elif nuc.Z == 2:
                 Y_solar += X_i
 
-        # defult metallicity Z is what Lodders has 1 - X -Y
+        # default metallicity Z is what Lodders has 1 - X -Y
         Z_solar = 1.0 - X_solar - Y_solar
 
         # if no Z is given, we don't need to do anything else
@@ -653,10 +653,10 @@ class LoddersComposition(Composition):
 
         if Z is not None:
             Z_target = float(Z)
-            Z_scale = Z_target / Z_solar # scaling factor for metals
+            Z_scale = Z_target / Z_solar   # scaling factor for metals
 
             sum_XY = X_solar + Y_solar
-            XY_scale = (1.0 - Z_target) / sum_XY # scaling factor for H and He
+            XY_scale = (1.0 - Z_target) / sum_XY   # scaling factor for H and He
 
             for nuc in self:
                 if nuc.Z in (1, 2):
