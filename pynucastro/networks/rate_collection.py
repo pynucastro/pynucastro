@@ -620,7 +620,7 @@ class LoddersComposition(Composition):
 
     def __init__(self, Z=None, half_life_thresh=None):
 
-        nuclei = [Nucleus(name) for name in LODDERS_DATA.keys()]
+        nuclei = [Nucleus(name) for name in LODDERS_DATA]
 
         # base composition initialize in Composition
         super().__init__(nuclei)
