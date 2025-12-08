@@ -102,6 +102,7 @@ and interactively exploring nuclear reaction networks.
 
    fermi-integrals
    electron-eos
+   stellar-eos
 
 .. toctree::
    :maxdepth: 1
