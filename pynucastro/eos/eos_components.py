@@ -42,9 +42,11 @@ class EOSState:
         self.gamma1 = gamma1
 
 
-class IdealGas:
+class IdealGasEOS:
     """An idea gas equation of state for ions (and optionally
-    electrons)."""
+    electrons).
+
+    """
 
     def __init__(self, include_electrons=False):
         self.include_electrons = include_electrons
@@ -99,7 +101,7 @@ class IdealGas:
                         gamma1=gamma1)
 
 
-class RadiationGas:
+class RadiationEOS:
     """A blackbody radiation equation of state"""
 
     def __init__(self):
