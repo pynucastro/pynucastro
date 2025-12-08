@@ -619,58 +619,50 @@ class LoddersComposition(Composition):
     """
 
     def __init__(self, Z=None, half_life_thresh=None):
-        nuclei = []
-        for key in LODDERS_DATA:
-            name = key
-            nuclei.append(Nucleus(name))
+
+        nuclei = [Nucleus(name) for name in LODDERS_DATA.keys()]
 
         # base composition initialize in Composition
         super().__init__(nuclei)
 
-        # now give lodders abundances with scaling if needed
-
+        # now give Lodders abundances with scaling if needed (raw data)
         self._get_from_lodders(Z, half_life_thresh=half_life_thresh)
 
     def _get_from_lodders(self, Z=None, half_life_thresh=None):
 
+        for name, X_raw in LODDERS_DATA.items():
+            self[Nucleus(name)] = X_raw
+
+        # normalize Lodders raw data to sum upto 1
+        self.normalize(half_life_thresh=None)
+
         X_solar = 0.0
         Y_solar = 0.0
 
-        for key, X_i in LODDERS_DATA.items():
-            name = key
-
-            nuc = Nucleus(name)
-
+        for nuc, X_i in self.items():
             if nuc.Z == 1:
                 X_solar += X_i
             elif nuc.Z == 2:
                 Y_solar += X_i
 
-        # Default Z should be what lodders has so we do 1 - X - Y
-
+        # defult metallicity Z is what Lodders has 1 - X -Y
         Z_solar = 1.0 - X_solar - Y_solar
 
-        if Z is None:
-            XY_scale = 1.0
-            Z_scale = 1.0
-        else:
+        # if no Z is given, we don't need to do anything else
+        # if desired Z is given then we scale as following
+
+        if Z is not None:
             Z_target = float(Z)
-            Z_scale = Z_target/Z_solar
+            Z_scale = Z_target / Z_solar # scaling factor for metals
 
             sum_XY = X_solar + Y_solar
-            XY_scale = (1.0 - Z_target)/sum_XY
+            XY_scale = (1.0 - Z_target) / sum_XY # scaling factor for H and He
 
-        for key, X_i in LODDERS_DATA.items():
-            name = key
-
-            nuc = Nucleus(name)
-
-            if nuc.Z in (1, 2):
-                X_scaled = X_i * XY_scale
-            else:
-                X_scaled = X_i * Z_scale
-
-            self[nuc] = X_scaled
+            for nuc in list(self.keys()):
+                if nuc.Z in (1, 2):
+                    self[nuc] *= XY_scale
+                elif nuc.Z >= 3:
+                    self[nuc] *= Z_scale
 
         self.normalize(half_life_thresh=half_life_thresh)
 

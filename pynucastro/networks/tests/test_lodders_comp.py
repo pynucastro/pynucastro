@@ -21,9 +21,6 @@ class TestLoddersComposition:
         xsum_solar = sum(solar.values())
         xsum_scaled = sum(scaled.values())
 
-        print("solar sum = ", xsum_solar)
-        print("solar_scaled", xsum_scaled)
-
         assert xsum_solar == approx(1.0)
         assert xsum_scaled == approx(1.0)
 
@@ -49,16 +46,16 @@ class TestLoddersComposition:
 
         scaled_H = 0.0
         scaled_He = 0.0
-        scaled_z = 0.0
+        scaled_Z = 0.0
 
         for nuc, X in scaled.items():
             if nuc.Z == 1:
                 scaled_H += X
             elif nuc.Z == 2:
                 scaled_He += X
-            elif nuc.Z >= 3:
-                scaled_z += X
+            else:
+                scaled_Z += X
 
-        assert scaled_H == approx(0.7271232554513777)
-        assert scaled_He == approx(0.23276984006179305)
-        assert scaled_z == approx(0.0401069044868292)
+        assert scaled_H == approx(0.7272042360718749)
+        assert scaled_He == approx(0.23279576392812512)
+        assert scaled_z == approx(0.040000000000000056)
