@@ -21,7 +21,8 @@ class EOSState:
                  n=0.0, p=0.0, e=0.0,
                  dn_drho=0.0, dn_dT=0.0,
                  dp_drho=0.0, dp_dT=0.0,
-                 de_drho=0.0, de_dT=0.0):
+                 de_drho=0.0, de_dT=0.0,
+                 gamma1=0.0):
 
         self.eta = eta
 
@@ -37,6 +38,8 @@ class EOSState:
 
         self.de_drho = de_drho
         self.de_dT = de_dT
+
+        self.gamma1 = gamma1
 
 
 class IdealGas:
@@ -86,11 +89,14 @@ class IdealGas:
         de_drho = 0.0
         de_dT = e / T
 
+        gamma1 = 5./3.
+
         return EOSState(eta=0.0,
                         n=n, p=p, e=e,
                         dn_drho=dn_drho, dn_dT=dn_dT,
                         dp_drho=dp_drho, dp_dT=dp_dT,
-                        de_drho=de_drho, de_dT=de_dT)
+                        de_drho=de_drho, de_dT=de_dT,
+                        gamma1=gamma1)
 
 
 class RadiationGas:
@@ -131,8 +137,11 @@ class RadiationGas:
         de_drho = 0.0
         de_dT = e / T
 
+        gamma1 = 4.0 / 3.0
+
         return EOSState(eta=0.0,
                         n=n, p=p, e=e,
                         dn_drho=dn_drho, dn_dT=dn_dT,
                         dp_drho=dp_drho, dp_dT=dp_dT,
-                        de_drho=de_drho, de_dT=de_dT)
+                        de_drho=de_drho, de_dT=de_dT,
+                        gamma1=gamma1)

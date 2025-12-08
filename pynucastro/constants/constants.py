@@ -38,6 +38,15 @@ N_A = physical_constants.value("Avogadro constant")
 #: Boltzmann constant in erg/K
 k = physical_constants.value("Boltzmann constant") / physical_constants.erg
 
+#: speed of light in cm / s
+c_light = physical_constants.value("speed of light in vacuum") / physical_constants.centi
+
+#: Stefan-Boltzmann constant in erg/cm^2/K^4/s
+sigma = physical_constants.value("Stefan-Boltzmann constant") / physical_constants.erg * physical_constants.centi**2
+
+#: radiation constant in erg/cm^3/K^4
+a = 4.0 * sigma / c_light
+
 # SciPy 1.15.0 fixed how exact values are calculated, which makes them slightly
 # more accurate compared to 1.14.1 and earlier. Calculate this one manually for
 # consistency between versions (should match 1.15.0).
@@ -57,9 +66,6 @@ hbar = h / (2*math.pi)
 
 #: elementary charge in stat-Coulomb
 q_e = physical_constants.value("elementary charge") * (physical_constants.c * 100) / 10  # C to statC (esu)
-
-#: speed of light in cm / s
-c_light = physical_constants.value("speed of light in vacuum") / physical_constants.centi
 
 # conversions
 
