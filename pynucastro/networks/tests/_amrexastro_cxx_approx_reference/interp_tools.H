@@ -1,0 +1,66 @@
+#ifndef INTERP_TOOLS_H
+#define INTERP_TOOLS_H
+
+#include <AMReX_REAL.H>
+
+namespace interp_net {
+
+    // index locator
+    // return the index i such that x_array[i] <= x0 <= x_array[i+1]
+
+    template <typename T>
+    AMREX_GPU_HOST_DEVICE AMREX_INLINE
+    int
+    find_index(const amrex::Real x0, const T& x_array) {
+
+        int left = x_array.lo();
+        int right = x_array.hi();
+
+        int idx = -1;
+
+        if (x0 >= x_array(left) && x0 < x_array(right)) {
+
+            // find the largest x element <= x0 using a
+            // binary search
+
+            while (left < right) {
+                int mid = (left + right) / 2;
+                if (x_array(mid) > x0) {
+                    right = mid;
+                } else {
+                    left = mid + 1;
+                }
+            }
+
+            idx = right - 1;
+        }
+
+        return idx;
+    }
+
+    // an index locator that extrapolates at the boundaries instead
+    // of returning -1
+
+    template <typename T>
+    AMREX_GPU_HOST_DEVICE AMREX_INLINE
+    int
+    find_index_extrap(const amrex::Real x0, const T& x_array) {
+
+        int left = x_array.lo();
+        int right = x_array.hi();
+
+        int idx;
+
+        if (x0 < x_array(left)) {
+            idx = left;
+        } else if (x0 > x_array(right)) {
+            idx = right - 1;
+        } else {
+            idx = find_index(x0, x_array);
+        }
+
+        return idx;
+    }
+
+}
+#endif

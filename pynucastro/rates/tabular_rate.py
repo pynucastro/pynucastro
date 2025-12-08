@@ -226,6 +226,7 @@ class TabularRate(Rate):
             self.rfile_path = _find_rate_file(rfile)
             self.source = RateSource.source(self.rfile_path.parent.name)
             self.rfile = rfile.name
+            self.ssrc = self.rfile_path.parent.name
 
         self.fname = None
 
@@ -289,9 +290,6 @@ class TabularRate(Rate):
 
         elif "betadecay" in str(table_file):
             self.weak_type = "beta_decay"
-
-        # for backwards compatibility, we'll set a chapter to "t"
-        self.chapter = "t"
 
         # read in the table data
         # there are a few header lines that start with "!", which we skip,
@@ -393,9 +391,7 @@ class TabularRate(Rate):
 
         """
 
-        ssrc = 'tabular'
-
-        return f'{self.rid} <{self.label.strip()}_{ssrc}>'
+        return f'{self.rid} <{self.label.strip()}_{self.ssrc}>'
 
     def function_string_py(self):
         """Construct the python function that computes the rate.
