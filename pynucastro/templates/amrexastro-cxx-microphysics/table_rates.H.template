@@ -8,6 +8,8 @@
 
 #include <AMReX_Array.H>
 
+#include <interp_tools.H>
+
 using namespace amrex::literals;
 
 void init_tabular();
@@ -99,42 +101,6 @@ void init_tab_info(const table_t& tf, const std::string& file, R& log_rhoy_table
         }
     }
     table.close();
-}
-
-
-template <typename V>
-AMREX_INLINE AMREX_GPU_HOST_DEVICE
-int vector_index_lu(const int vlen, const V& vector, const amrex::Real fvar)
-{
-
-    // Returns the greatest index of vector for which vector(index) < fvar.
-    // Return 1 if fvar < vector(1)
-    // Return size(vector)-1 if fvar > vector(size(vector))
-    // The interval [index, index+1] brackets fvar for fvar within the range of vector.
-
-    int index;
-
-    if (fvar < vector(1)) {
-        index = 1;
-    } else if (fvar > vector(vlen)) {
-        index = vlen - 1;
-    } else {
-        int nup = vlen;
-        int ndn = 1;
-        for (int i = 1; i <= vlen; ++i) {
-            int j = ndn + (nup - ndn)/2;
-            if (fvar < vector(j)) {
-                nup = j;
-            } else {
-                ndn = j;
-            }
-            if ((nup - ndn) == 1) {
-                break;
-            }
-        }
-        index = ndn;
-    }
-    return index;
 }
 
 
@@ -398,8 +364,8 @@ tabular_evaluate(const table_t& table_meta,
     // get the index into the table -- all components are
     // stored with the same indices
 
-    int irhoy_lo = vector_index_lu(table_meta.nrhoy, log_rhoy_table, log_rhoy);
-    int jtemp_lo = vector_index_lu(table_meta.ntemp, log_temp_table, log_temp);
+    const int irhoy_lo = interp_net::find_index_extrap(log_rhoy, log_rhoy_table);
+    const int jtemp_lo = interp_net::find_index_extrap(log_temp, log_temp_table);
 
     get_entries(irhoy_lo, jtemp_lo,
                 table_meta, log_rhoy_table, log_temp_table, data,
