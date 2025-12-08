@@ -1,4 +1,4 @@
-name: pytest-all
+name: pytest-win
 
 on:
   # Trigger the workflow on push or pull request,
@@ -13,11 +13,11 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     strategy:
       matrix:
-        python-version: ["3.11", "3.12", "3.13", "3.14"]
+        python-version: ["3.13"]
 
     steps:
       - uses: actions/checkout@v6
@@ -36,21 +36,31 @@ jobs:
       - name: Install pynucastro
         run: pip install --editable .
 
+      - name: Install MSYS2 and packages
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: >
+            mingw-w64-x86_64-gcc
+            make
+
+      - name: Check compiler and make versions
+        shell: msys2 {0}
+        run: |
+          g++ --version
+          make --version
+
       - name: Print system info
         run: |
           echo '::group::NumPy'
-          pip install threadpoolctl &>/dev/null
           python -c "import sys, numpy; print(numpy.__version__); print(sys.version); print(numpy.show_runtime())"
-          echo '::endgroup::'
-          echo '::group::CPU info'
-          lscpu
           echo '::endgroup::'
           echo '::group::Package versions'
           pip list --format=freeze
           echo '::endgroup::'
 
       - name: Run tests with pytest
-        run: pytest -v -s --nbval --cov=pynucastro --color=yes
+        run: pytest -v -s --color=yes
 
       - name: Upload output from failed write_network tests
         uses: actions/upload-artifact@v5

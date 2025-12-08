@@ -5,7 +5,7 @@ jobs:
   compilation:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -51,7 +51,7 @@ jobs:
       - name: Regenerate he-burn-19am network
         run: |
           cd external/Microphysics/networks/he-burn/he-burn-19am
-          python he_burn_19am.py
+          NPY_DISABLE_CPU_FEATURES="AVX512F AVX512CD AVX512_SKX" python he_burn_19am.py
 
       - name: Compile burn_cell (he-burn-19am)
         run: |
