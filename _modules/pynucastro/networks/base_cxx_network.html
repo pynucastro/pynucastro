@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 2.8.0.post17+gd647fb7ad documentation</title>
+    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 2.8.0.post18+gf71dd1a60 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=9bf34c20"></script>
+    <script src="../../../_static/documentation_options.js?v=887be7fc"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -514,6 +514,35 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">pynucastro_version</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_rate_dtype</span><span class="p">(</span><span class="n">nrxn</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Given the number of reactions (nrxn), return the smallest C++</span>
+<span class="sd">    unsigned integer type that can hold them</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;std::uint32_t&quot;</span>
+    <span class="c1"># give 1 extra padding in case we use a final value in an enum</span>
+    <span class="k">if</span> <span class="n">nrxn</span> <span class="o">&lt;</span> <span class="mi">255</span><span class="p">:</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;std::uint8_t&quot;</span>
+    <span class="k">elif</span> <span class="n">nrxn</span> <span class="o">&lt;</span> <span class="mi">65535</span><span class="p">:</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;std::uint16_t&quot;</span>
+    <span class="k">return</span> <span class="n">dtype</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_signed_rate_dtype</span><span class="p">(</span><span class="n">nrxn</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Given the number of reactions (nrxn), return the smallest C++</span>
+<span class="sd">    signed integer type that can hold them</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;int&quot;</span>
+    <span class="k">if</span> <span class="n">nrxn</span> <span class="o">&lt;</span> <span class="mi">127</span><span class="p">:</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;std::int8_t&quot;</span>
+    <span class="k">elif</span> <span class="n">nrxn</span> <span class="o">&lt;</span> <span class="mi">32767</span><span class="p">:</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;short&quot;</span>
+    <span class="k">return</span> <span class="n">dtype</span>
+
+
 <div class="viewcode-block" id="BaseCxxNetwork">
 <a class="viewcode-back" href="../../../pynucastro.networks.base_cxx_network.html#pynucastro.networks.base_cxx_network.BaseCxxNetwork">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BaseCxxNetwork</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">RateCollection</span><span class="p">):</span>
@@ -806,12 +835,7 @@ document.write(`
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_nrxn_enum_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="n">nrxn</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">)</span>
-        <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;std::uint32_t&quot;</span>
-        <span class="c1"># we need 1 additional int for NumRates</span>
-        <span class="k">if</span> <span class="n">nrxn</span> <span class="o">&lt;</span> <span class="mi">255</span><span class="p">:</span>
-            <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;std::uint8_t&quot;</span>
-        <span class="k">elif</span> <span class="n">nrxn</span> <span class="o">&lt;</span> <span class="mi">65535</span><span class="p">:</span>
-            <span class="n">dtype</span> <span class="o">=</span> <span class="s2">&quot;std::uint16_t&quot;</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">_rate_dtype</span><span class="p">(</span><span class="n">nrxn</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}{</span><span class="n">dtype</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_rate_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
