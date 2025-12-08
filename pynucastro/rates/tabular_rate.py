@@ -226,6 +226,7 @@ class TabularRate(Rate):
             self.rfile_path = _find_rate_file(rfile)
             self.source = RateSource.source(self.rfile_path.parent.name)
             self.rfile = rfile.name
+            self.ssrc = self.rfile_path.parent.name
 
         self.fname = None
 
@@ -393,9 +394,7 @@ class TabularRate(Rate):
 
         """
 
-        ssrc = 'tabular'
-
-        return f'{self.rid} <{self.label.strip()}_{ssrc}>'
+        return f'{self.rid} <{self.label.strip()}_{self.ssrc}>'
 
     def function_string_py(self):
         """Construct the python function that computes the rate.
