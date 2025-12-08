@@ -10,7 +10,7 @@ from scipy.optimize import brentq
 from pynucastro.constants import constants
 
 from .degeneracy_parameter_bounds import get_eta_bounds
-from .eos_components import EOSState
+from .eos_components import EOSComponentState
 from .fermi_integrals import FermiIntegral
 
 
@@ -52,9 +52,9 @@ class ElectronEOS:
 
         Returns
         -------
-        electron_state : EOSState
+        electron_state : EOSComponentState
             The thermodynamics of the electrons
-        positron_state : EOSState
+        positron_state : EOSComponentState
             The thermodynamics of the positrons
 
         """
@@ -246,31 +246,22 @@ class ElectronEOS:
         dep_drho = 0.0
         dep_dT = 0.0
 
-        dT_drho_s = (p_e / rho**2 - dee_drho) / (dee_dT)
-        gamma1_e = rho / p_e * (dpe_drho + dpe_dT * dT_drho_s)
 
         if self.include_positrons:
             e_pos = E_pos / rho
             dep_drho = (dEp_drho - E_pos / rho) / rho
             dep_dT = dEp_dT / rho
 
-        ele_state = EOSState(eta=eta,
-                             n=n_e, p=p_e, e=e_e,
-                             dn_drho=dne_drho, dn_dT=dne_dT,
-                             dp_drho=dpe_drho, dp_dT=dpe_dT,
-                             de_drho=dee_drho, de_dT=dee_dT,
-                             gamma1=gamma1_e)
+        ele_state = EOSComponentState(eta=eta,
+                                      n=n_e, p=p_e, e=e_e,
+                                      dn_drho=dne_drho, dn_dT=dne_dT,
+                                      dp_drho=dpe_drho, dp_dT=dpe_dT,
+                                      de_drho=dee_drho, de_dT=dee_dT)
 
-        gamma1_pos = 0.0
-        if dep_dT != 0.0:
-            dT_drho_s = (p_pos / rho**2 - dep_drho) / (dep_dT)
-            gamma1_pos = rho / p_pos * (dpp_drho + dpp_dT * dT_drho_s)
-
-        pos_state = EOSState(eta=-eta,
+        pos_state = EOSComponentState(eta=-eta,
                              n=n_pos, p=p_pos, e=e_pos,
                              dn_drho=dnp_drho, dn_dT=dnp_dT,
                              dp_drho=dpp_drho, dp_dT=dpp_dT,
-                             de_drho=dep_drho, de_dT=dep_dT,
-                             gamma1=gamma1_pos)
+                             de_drho=dep_drho, de_dT=dep_dT)
 
         return ele_state, pos_state

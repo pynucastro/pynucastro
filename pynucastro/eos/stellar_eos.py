@@ -4,13 +4,37 @@ electrons + radiation)
 """
 
 
-import numpy as np
-from scipy.special import zeta
-
-from pynucastro.constants import constants
-
 from .electron_eos import ElectronEOS
-from .eos_components import EOSState, IdealGasEOS, RadiationEOS
+from .eos_components import EOSComponentState, IdealGasEOS, RadiationEOS
+
+
+class EOSState:
+    """The full thermodynamic state of a multi-component plasma (ions,
+    electrons, and radiation)"""
+
+    def __init__(self,
+                 eta=0.0,
+                 n_ele=0.0, n_pos=0.0,
+                 p=0.0, e=0.0,
+                 dp_drho=0.0, dp_dT=0.0,
+                 de_drho=0.0, de_dT=0.0,
+                 gamma1=0.0):
+
+        self.eta = eta
+
+        self.n_ele = n_ele
+        self.n_pos = n_pos
+
+        self.p = p
+        self.e = e
+
+        self.dp_drho = dp_drho
+        self.dp_dT = dp_dT
+
+        self.de_drho = de_drho
+        self.de_dT = de_dT
+
+        self.gamma1 = gamma1
 
 
 class StellarEOS:
@@ -69,4 +93,6 @@ class StellarEOS:
         rad_state = rad_eos.pe_state(rho, T, comp)
         ele_state, pos_state = ele_eos.pe_state(rho, T, comp)
 
-_
+        #dT_drho_s = (p_e / rho**2 - dee_drho) / (dee_dT)
+        #gamma1_e = rho / p_e * (dpe_drho + dpe_dT * dT_drho_s)
+        _
