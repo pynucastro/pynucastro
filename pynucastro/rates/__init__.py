@@ -8,7 +8,7 @@ from .files import RateFileError, _find_rate_file
 from .known_duplicates import find_duplicate_rates, is_allowed_dupe
 from .library import (FFNLibrary, LangankeLibrary, Library, OdaLibrary,
                       PruetFullerLibrary, RateFilter, ReacLibLibrary,
-                      SuzukiLibrary, TabularLibrary, list_known_rates)
+                      SuzukiLibrary, TabularLibrary)
 from .modified_rate import ModifiedRate
 from .rate import BaryonConservationError, Rate, RatePair, Tfactors
 from .reaclib_rate import ReacLibRate, SingleSet
