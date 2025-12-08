@@ -11,9 +11,9 @@ from pynucastro.constants import constants
 
 
 class EOSComponentState:
-    """A container to hold a thermodynamic state for a single compoent
-    of a full stellar plasma (i.e., ions, electrons, or radiation)
-    that depends on density, temperature, and composition
+    """A container to hold a thermodynamic state for a single
+    component of a full stellar plasma (i.e., ions, electrons, or
+    radiation) that depends on density, temperature, and composition
 
     """
 
