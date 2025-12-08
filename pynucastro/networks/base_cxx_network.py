@@ -24,6 +24,35 @@ from pynucastro.screening import get_screening_map
 from pynucastro.utils import pynucastro_version
 
 
+def _rate_dtype(nrxn):
+    """Given the number of reactions (nrxn), return the smallest C++
+    unsigned integer type that can hold them
+
+    """
+
+    dtype = "std::uint32_t"
+    # give 1 extra padding in case we use a final value in an enum
+    if nrxn < 255:
+        dtype = "std::uint8_t"
+    elif nrxn < 65535:
+        dtype = "std::uint16_t"
+    return dtype
+
+
+def _signed_rate_dtype(nrxn):
+    """Given the number of reactions (nrxn), return the smallest C++
+    signed integer type that can hold them
+
+    """
+
+    dtype = "int"
+    if nrxn < 127:
+        dtype = "std::int8_t"
+    elif nrxn < 32767:
+        dtype = "short"
+    return dtype
+
+
 class BaseCxxNetwork(ABC, RateCollection):
     """Base class for a C++ network.  This takes the same arguments as
     :py:class:`RateCollection
@@ -308,12 +337,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _nrxn_enum_type(self, n_indent, of):
         nrxn = len(self.all_rates)
-        dtype = "std::uint32_t"
-        # we need 1 additional int for NumRates
-        if nrxn < 255:
-            dtype = "std::uint8_t"
-        elif nrxn < 65535:
-            dtype = "std::uint16_t"
+        dtype = _rate_dtype(nrxn)
         of.write(f'{self.indent*n_indent}{dtype}\n')
 
     def _rate_names(self, n_indent, of):
