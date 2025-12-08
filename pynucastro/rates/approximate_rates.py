@@ -204,6 +204,8 @@ class ApproximateRate(Rate):
                                  label="approx",
                                  use_identical_particle_factor=use_identical_particle_factor)
 
+            self.chapter = "a"
+
             self.hidden_rates = [self.rates["A(a,p)X"],
                                  self.rates["X(p,g)B"],
                                  self.rates["B(g,p)X"],
@@ -278,6 +280,8 @@ class ApproximateRate(Rate):
                                  products=[self.primary_reactant, Nucleus("n"), Nucleus("n")],
                                  label="approx",
                                  use_identical_particle_factor=use_identical_particle_factor)
+
+            self.chapter = "a"
 
             # none of these rates directly appear as links in the network
             self.hidden_rates = list(self.rates.values())
