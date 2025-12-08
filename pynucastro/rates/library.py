@@ -11,32 +11,12 @@ from pathlib import Path
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
 from pynucastro.rates.derived_rate import DerivedRate
-from pynucastro.rates.files import (RateFileError, _find_rate_file,
-                                    get_rates_dir)
+from pynucastro.rates.files import _find_rate_file, get_rates_dir
 from pynucastro.rates.known_duplicates import (find_duplicate_rates,
                                                is_allowed_dupe)
 from pynucastro.rates.rate import Rate
 from pynucastro.rates.reaclib_rate import ReacLibRate
 from pynucastro.rates.tabular_rate import TabularRate
-
-
-def list_known_rates():
-    """Print a list of all of the rates found in the library."""
-
-    lib_path = Path(__file__).parents[1]/"library"
-
-    for _, _, filenames in walk(lib_path):
-        for f in filenames:
-            # skip over files that are not rate files
-            if Path(f).suffix in (".md", ".dat", ".py", "ipynb"):
-                continue
-            try:
-                lib = Library(f)
-            except (RateFileError, UnsupportedNucleus):
-                continue
-            print(f"{f:32} : ")
-            for r in lib.get_rates():
-                print(f"                                 : {r}")
 
 
 def _rate_name_to_nuc(name):
