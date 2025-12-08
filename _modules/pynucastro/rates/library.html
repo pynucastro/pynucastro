@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.library &#8212; pynucastro 2.8.0.post23+g141562680 documentation</title>
+    <title>pynucastro.rates.library &#8212; pynucastro 2.8.0.post24+g75bcf4394 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=5252e94b"></script>
+    <script src="../../../_static/documentation_options.js?v=c997b40d"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -615,9 +615,6 @@ document.write(`
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    libfile : str</span>
-<span class="sd">        a file containing a sequence of rates in a format that we</span>
-<span class="sd">        understand (for example a ReacLib database)</span>
 <span class="sd">    rates : list, dict, Rate</span>
 <span class="sd">        a single :py:class:`Rate &lt;pynucastro.rates.rate.Rate&gt;` or an</span>
 <span class="sd">        iterable of `Rate` objects.  If it is a dictionary, then it</span>
@@ -625,7 +622,7 @@ document.write(`
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">if</span> <span class="n">rates</span><span class="p">:</span>
@@ -637,10 +634,6 @@ document.write(`
                 <span class="bp">self</span><span class="o">.</span><span class="n">add_rates</span><span class="p">(</span><span class="n">rates</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.id&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">libfile</span><span class="p">:</span>
-            <span class="n">library_file</span> <span class="o">=</span> <span class="n">_find_rate_file</span><span class="p">(</span><span class="n">libfile</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_read_library_file</span><span class="p">(</span><span class="n">library_file</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Library.get_rates">
 <a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.Library.get_rates">[docs]</a>
@@ -852,69 +845,6 @@ document.write(`
                 <span class="n">nuc</span> <span class="o">=</span> <span class="n">rnuc</span>
         <span class="k">return</span> <span class="n">nuc</span></div>
 
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_read_library_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">library_file</span><span class="p">):</span>
-        <span class="c1"># loop through library file, read lines</span>
-
-        <span class="n">library_source_lines</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">()</span>
-
-        <span class="k">with</span> <span class="n">library_file</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">flib</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">flib</span><span class="p">:</span>
-                <span class="n">ls</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">ls</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
-                    <span class="n">library_source_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span>
-
-        <span class="c1"># identify distinct rates from library lines</span>
-        <span class="n">current_chapter</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">library_source_lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">break</span>
-
-            <span class="c1"># Check to see if there is a chapter ID, if not then use current_chapter</span>
-            <span class="c1"># (for Reaclib v1 formatted library files)</span>
-            <span class="n">line</span> <span class="o">=</span> <span class="n">library_source_lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="n">chapter</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">if</span> <span class="n">line</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">):</span>
-                <span class="n">chapter</span> <span class="o">=</span> <span class="s1">&#39;t&#39;</span>
-                <span class="n">library_source_lines</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">chapter</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-                <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
-                    <span class="c1"># we can&#39;t interpret line as a chapter so use current_chapter</span>
-                    <span class="k">assert</span> <span class="n">current_chapter</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;malformed library file </span><span class="si">{</span><span class="n">library_file</span><span class="si">}</span><span class="s1">, cannot identify chapter.&#39;</span>
-                    <span class="n">chapter</span> <span class="o">=</span> <span class="n">current_chapter</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">library_source_lines</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
-            <span class="n">current_chapter</span> <span class="o">=</span> <span class="n">chapter</span>
-
-            <span class="n">rlines</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="n">rate_type</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">if</span> <span class="n">chapter</span> <span class="o">==</span> <span class="s1">&#39;t&#39;</span><span class="p">:</span>
-                <span class="n">rlines</span> <span class="o">=</span> <span class="p">[</span><span class="n">library_source_lines</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
-                <span class="n">rate_type</span> <span class="o">=</span> <span class="s2">&quot;tabular&quot;</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chapter</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-                <span class="n">rlines</span> <span class="o">=</span> <span class="p">[</span><span class="n">library_source_lines</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
-                <span class="n">rate_type</span> <span class="o">=</span> <span class="s2">&quot;reaclib&quot;</span>
-            <span class="k">if</span> <span class="n">rlines</span><span class="p">:</span>
-                <span class="n">sio</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">chapter</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">+</span>
-                                            <span class="n">rlines</span><span class="p">))</span>
-                <span class="c1">#print(sio.getvalue())</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">rate_type</span> <span class="o">==</span> <span class="s2">&quot;reaclib&quot;</span><span class="p">:</span>
-                        <span class="n">r</span> <span class="o">=</span> <span class="n">ReacLibRate</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="n">sio</span><span class="p">)</span>
-                    <span class="k">elif</span> <span class="n">rate_type</span> <span class="o">==</span> <span class="s2">&quot;tabular&quot;</span><span class="p">:</span>
-                        <span class="n">r</span> <span class="o">=</span> <span class="n">TabularRate</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="n">sio</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;rate not implemented&quot;</span><span class="p">)</span>
-                <span class="k">except</span> <span class="n">UnsupportedNucleus</span><span class="p">:</span>
-                    <span class="k">pass</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">rid</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">id</span>
-                    <span class="k">if</span> <span class="n">rid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">[</span><span class="n">rid</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">[</span><span class="n">rid</span><span class="p">]</span> <span class="o">+</span> <span class="n">r</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">[</span><span class="n">rid</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string containing the rates IDs in this library.&quot;&quot;&quot;</span>
@@ -1457,11 +1387,72 @@ document.write(`
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a :py:class:`Library` containing all of the rates in the</span>
 <span class="sd">    latest stored version of the ReacLib library.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    libfile : str</span>
+<span class="sd">        The name of the ReacLib database file</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">libfile</span> <span class="o">=</span> <span class="s1">&#39;reaclib_default2_20250330&#39;</span>
-        <span class="n">Library</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libfile</span><span class="o">=</span><span class="n">libfile</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">libfile</span><span class="o">=</span><span class="s1">&#39;reaclib_default2_20250330&#39;</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="n">library_file</span> <span class="o">=</span> <span class="n">_find_rate_file</span><span class="p">(</span><span class="n">libfile</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_read_library_file</span><span class="p">(</span><span class="n">library_file</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_library_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">library_file</span><span class="p">):</span>
+        <span class="c1"># loop through library file, read lines</span>
+
+        <span class="n">library_source_lines</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="n">library_file</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">flib</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">flib</span><span class="p">:</span>
+                <span class="n">ls</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ls</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                    <span class="n">library_source_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span>
+
+        <span class="c1"># identify distinct rates from library lines</span>
+        <span class="n">current_chapter</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">library_source_lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="c1"># Check to see if there is a chapter ID, if not then use current_chapter</span>
+            <span class="c1"># (for Reaclib v1 formatted library files)</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">library_source_lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">chapter</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">line</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;tabular chapter not supported&quot;</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">chapter</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                <span class="c1"># we can&#39;t interpret line as a chapter so use current_chapter</span>
+                <span class="k">assert</span> <span class="n">current_chapter</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;malformed library file </span><span class="si">{</span><span class="n">library_file</span><span class="si">}</span><span class="s1">, cannot identify chapter.&#39;</span>
+                <span class="n">chapter</span> <span class="o">=</span> <span class="n">current_chapter</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">library_source_lines</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
+            <span class="n">current_chapter</span> <span class="o">=</span> <span class="n">chapter</span>
+
+            <span class="n">rlines</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">rate_type</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">rlines</span> <span class="o">=</span> <span class="p">[</span><span class="n">library_source_lines</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+            <span class="n">rate_type</span> <span class="o">=</span> <span class="s2">&quot;reaclib&quot;</span>
+            <span class="k">if</span> <span class="n">rlines</span><span class="p">:</span>
+                <span class="n">sio</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">chapter</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">rlines</span><span class="p">))</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">rate_type</span> <span class="o">==</span> <span class="s2">&quot;reaclib&quot;</span><span class="p">:</span>
+                        <span class="n">r</span> <span class="o">=</span> <span class="n">ReacLibRate</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="n">sio</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;rate not implemented&quot;</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">UnsupportedNucleus</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">rid</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">id</span>
+                    <span class="k">if</span> <span class="n">rid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">[</span><span class="n">rid</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">[</span><span class="n">rid</span><span class="p">]</span> <span class="o">+</span> <span class="n">r</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_rates</span><span class="p">[</span><span class="n">rid</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span>
 
 <div class="viewcode-block" id="ReacLibLibrary.write_to_file">
 <a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.ReacLibLibrary.write_to_file">[docs]</a>
