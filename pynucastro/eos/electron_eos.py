@@ -10,8 +10,8 @@ from scipy.optimize import brentq
 from pynucastro.constants import constants
 
 from .degeneracy_parameter_bounds import get_eta_bounds
-from .fermi_integrals import FermiIntegral
 from .eos_components import EOSState
+from .fermi_integrals import FermiIntegral
 
 
 class ElectronEOS:
