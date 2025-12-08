@@ -658,7 +658,7 @@ class LoddersComposition(Composition):
             sum_XY = X_solar + Y_solar
             XY_scale = (1.0 - Z_target) / sum_XY # scaling factor for H and He
 
-            for nuc in list(self.keys()):
+            for nuc in self:
                 if nuc.Z in (1, 2):
                     self[nuc] *= XY_scale
                 elif nuc.Z >= 3:
