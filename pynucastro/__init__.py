@@ -118,6 +118,16 @@ reaction rates.  The main core rate classes are:
   a tabulated (temperature and electron density) weak reaction rate),
   with methods to visualize and evaluate it.
 
+* :py:obj:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>` :
+  a rate computed via detailed balance from a forward rate.
+
+* :py:obj:`ApproximateRate <pynucastro.rates.approximate_rates.ApproximateRate>` :
+  an approximation to a rate that uses multiple "hidden rates" to
+  compute an effective rate.
+
+For some temperature-dependent rates, we have a class to hold
+temperature factors:
+
 * :py:obj:`Tfactors <pynucastro.rates.rate.Tfactors>` : a container
   class that holds common temperature factors.
 
