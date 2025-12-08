@@ -826,6 +826,11 @@ class ReacLibLibrary(Library):
     """Create a :py:class:`Library` containing all of the rates in the
     latest stored version of the ReacLib library.
 
+    Parameters
+    ----------
+    libfile : str
+        The name of the ReacLib database file
+
     """
 
     def __init__(self, *, libfile='reaclib_default2_20250330'):
