@@ -46,6 +46,12 @@ class IdealGasEOS:
     """An idea gas equation of state for ions (and optionally
     electrons).
 
+    Parameters
+    ----------
+    include_electrons : bool
+        do we include electrons together with the ions, assuming
+        full ionization?
+
     """
 
     def __init__(self, include_electrons=False):
@@ -125,6 +131,9 @@ class RadiationEOS:
         EOSState
 
         """
+
+        # composition is not used
+        _ = comp
 
         n = 2 * np.pi * zeta(3) * (2.0 * constants.k * T / (constants.h * constants.c_light))**3
         p = constants.a * T**4 / 3.0

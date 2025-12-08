@@ -261,8 +261,10 @@ class ElectronEOS:
                              de_drho=dee_drho, de_dT=dee_dT,
                              gamma1=gamma1_e)
 
-        dT_drho_s = (p_pos / rho**2 - dep_drho) / (dep_dT)
-        gamma1_pos = rho / p_pos * (dpp_drho + dpp_dT * dT_drho_s)
+        gamma1_pos = 0.0
+        if dep_dT != 0.0:
+            dT_drho_s = (p_pos / rho**2 - dep_drho) / (dep_dT)
+            gamma1_pos = rho / p_pos * (dpp_drho + dpp_dT * dT_drho_s)
 
         pos_state = EOSState(eta=-eta,
                              n=n_pos, p=p_pos, e=e_pos,
