@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 2.8.0.post18+gf71dd1a60 documentation</title>
+    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 2.8.0.post19+g727ff964e documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=887be7fc"></script>
+    <script src="../../../_static/documentation_options.js?v=85b73e85"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1066,7 +1066,7 @@ document.write(`
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">part_fun::pf_cache_t pf_cache</span><span class="se">{{}}</span><span class="s2">;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">temp_arrays</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dedupe_partition_function_temperatures</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">temp_arrays</span><span class="p">)):</span>
-                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">pf_cache.index_temp_array_</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> = part_fun::index_pf(tfactors.T9, part_fun::temp_array_</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">pf_cache.index_temp_array_</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> = interp_net::find_index(tfactors.T9, part_fun::temp_array_</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># note: modified_rates needs to be on the end here, since they</span>
