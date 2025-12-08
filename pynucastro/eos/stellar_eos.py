@@ -5,12 +5,14 @@ electrons + radiation)
 
 
 from .electron_eos import ElectronEOS
-from .eos_components import EOSComponentState, IdealGasEOS, RadiationEOS
+from .eos_components import IdealGasEOS, RadiationEOS
 
 
 class EOSState:
     """The full thermodynamic state of a multi-component plasma (ions,
-    electrons, and radiation)"""
+    electrons, and radiation)
+
+    """
 
     def __init__(self,
                  eta=0.0,
@@ -93,6 +95,21 @@ class StellarEOS:
         rad_state = rad_eos.pe_state(rho, T, comp)
         ele_state, pos_state = ele_eos.pe_state(rho, T, comp)
 
-        #dT_drho_s = (p_e / rho**2 - dee_drho) / (dee_dT)
-        #gamma1_e = rho / p_e * (dpe_drho + dpe_dT * dT_drho_s)
-        _
+        p = ion_state.p + rad_state.p + ele_state.p + pos_state.p
+        e = ion_state.e + rad_state.e + ele_state.e + pos_state.e
+
+        dp_drho = ion_state.dp_drho + rad_state.dp_drho + ele_state.dp_drho + pos_state.dp_drho
+        dp_dT = ion_state.dp_dT + rad_state.dp_dT + ele_state.dp_dT + pos_state.dp_dT
+
+        de_drho = ion_state.de_drho + rad_state.de_drho + ele_state.de_drho + pos_state.de_drho
+        de_dT = ion_state.de_dT + rad_state.de_dT + ele_state.de_dT + pos_state.de_dT
+
+        dT_drho_s = (p / rho**2 - de_drho) / (de_dT)
+        gamma1 = rho / p * (dp_drho + dp_dT * dT_drho_s)
+
+        return EOSState(eta=ele_state.eta,
+                        n_ele=ele_state.n, n_pos=pos_state.n,
+                        p=p, e=e,
+                        dp_drho=dp_drho, dp_dT=dp_dT,
+                        de_drho=de_drho, de_dT=de_dT,
+                        gamma1=gamma1)

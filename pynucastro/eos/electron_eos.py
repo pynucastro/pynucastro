@@ -246,7 +246,6 @@ class ElectronEOS:
         dep_drho = 0.0
         dep_dT = 0.0
 
-
         if self.include_positrons:
             e_pos = E_pos / rho
             dep_drho = (dEp_drho - E_pos / rho) / rho
