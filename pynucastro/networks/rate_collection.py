@@ -603,7 +603,7 @@ class LoddersComposition(Composition):
 
     Parameters
     ----------
-    z : float
+    Z : float
         Target metallicity :math:`Z` to scale the Lodders solar
         mixture to. If ``None`` (the default), the unscaled Lodders
         abundances are used.
@@ -618,13 +618,10 @@ class LoddersComposition(Composition):
     fractions for individual isotopes.
     """
 
-    def __init__(self, z=None, half_life_thresh=None):
+    def __init__(self, Z=None, half_life_thresh=None):
         nuclei = []
         for key in LODDERS_DATA:
-            if key == "h1":
-                name = "p"
-            else:
-                name = key
+            name = key
             nuclei.append(Nucleus(name))
 
         # base composition initialize in Composition
@@ -632,52 +629,46 @@ class LoddersComposition(Composition):
 
         # now give lodders abundances with scaling if needed
 
-        self._get_from_lodders(z, half_life_thresh=half_life_thresh)
+        self._get_from_lodders(Z, half_life_thresh=half_life_thresh)
 
-    def _get_from_lodders(self, z=None, half_life_thresh=None):
+    def _get_from_lodders(self, Z=None, half_life_thresh=None):
 
-        x_solar = 0.0
-        y_solar = 0.0
+        X_solar = 0.0
+        Y_solar = 0.0
 
         for key, X_i in LODDERS_DATA.items():
-            if key == "h1":
-                name = "p"
-            else:
-                name = key
+            name = key
 
             nuc = Nucleus(name)
 
             if nuc.Z == 1:
-                x_solar += X_i
+                X_solar += X_i
             elif nuc.Z == 2:
-                y_solar += X_i
+                Y_solar += X_i
 
         # Default Z should be what lodders has so we do 1 - X - Y
 
-        z_solar = 1.0 - x_solar - y_solar
+        Z_solar = 1.0 - X_solar - Y_solar
 
-        if z is None:
-            xy_scale = 1.0
-            z_scale = 1.0
+        if Z is None:
+            XY_scale = 1.0
+            Z_scale = 1.0
         else:
-            z_target = float(z)
-            z_scale = z_target/z_solar
+            Z_target = float(Z)
+            Z_scale = Z_target/Z_solar
 
-            sum_xy = x_solar + y_solar
-            xy_scale = (1.0 - z_target)/sum_xy
+            sum_XY = X_solar + Y_solar
+            XY_scale = (1.0 - Z_target)/sum_XY
 
         for key, X_i in LODDERS_DATA.items():
-            if key == "h1":
-                name = "p"
-            else:
-                name = key
+            name = key
 
             nuc = Nucleus(name)
 
             if nuc.Z in (1, 2):
-                X_scaled = X_i * xy_scale
+                X_scaled = X_i * XY_scale
             else:
-                X_scaled = X_i * z_scale
+                X_scaled = X_i * Z_scale
 
             self[nuc] = X_scaled
 

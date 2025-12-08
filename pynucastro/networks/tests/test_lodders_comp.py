@@ -14,12 +14,15 @@ class TestLoddersComposition:
     @pytest.fixture(scope="class")
     def scaled(self):
         """Scale Lodders to desired metallicity"""
-        return networks.LoddersComposition(z=0.04)
+        return networks.LoddersComposition(Z=0.04)
 
     def test_sum_to_one(self, solar, scaled):
         """All mass fractions should add up to 1"""
         xsum_solar = sum(solar.values())
         xsum_scaled = sum(scaled.values())
+
+        print("solar sum = ", xsum_solar)
+        print("solar_scaled", xsum_scaled)
 
         assert xsum_solar == approx(1.0)
         assert xsum_scaled == approx(1.0)
