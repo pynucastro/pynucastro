@@ -34,6 +34,12 @@ def langanke_library():
 
 
 @pytest.fixture(scope="package")
+def ffn_library():
+    """Return the FFNLibrary"""
+    return pyna.FFNLibrary()
+
+
+@pytest.fixture(scope="package")
 def oda_library():
     """Return the OdaLibrary"""
     return pyna.OdaLibrary()

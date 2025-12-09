@@ -68,10 +68,13 @@ The main classes are:
   There are two important subclasses:
 
   * :func:`ReacLibLibrary <pynucastro.rates.library.ReacLibLibrary>`: The
-    entire ReacLib rate library (> 80,000 rates)
+    entire ReacLib rate library (> 80,000 rates).
 
   * :func:`TabularLibrary <pynucastro.rates.library.TabularLibrary>`: A
-    `Library` containing all known tabular weak rates.
+    `Library` providing tabulated weak rate coverage of nuclei.
+
+  additionally, the helper function, :func:`full_library <pynucastro.rates.library.full_library>`
+  will return a ``Library`` with every rate known to pynucastro.
 
 * :func:`Composition
   <pynucastro.networks.rate_collection.Composition>`: This is a

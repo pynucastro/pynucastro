@@ -66,7 +66,6 @@ class ModifiedRate(Rate):
                          label="modified",
                          stoichiometry=stoichiometry)
 
-        self.chapter = "m"
         self.modified = True
 
         try:
