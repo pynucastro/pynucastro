@@ -1,4 +1,4 @@
-Label|Author|Title|Publisher|Year|
+Label|Author|Title|Publisher|Year
 6an9CYBT|Cyburt, R.H.|evaluation of He6(a,n)Be9 data|-|2010
 ac12|Arnold, C.W.|Cross Section Measurement of 9Be(&gamma;,n)8Be and Implications for &alpha;+&alpha;+n -> 9Be in the r-Process|PRC 85,4|2012
 an06|S. Ando|Radiative neutron capture on a proton at big-bang nucleosynthesis energies|PRC 74, 025809|2006
@@ -101,7 +101,7 @@ li10|LeBlanc, P.J.|Constraining the S factor of 15 N( p,&gamma; ) 16 O at astrop
 li12|Longland, R.|Reaction rates for the s-process neutron source 22Ne + &alpha;|Phys. Rev. C 85, 065809|2012
 li20|P. F. Liang et al.|Simultaneous measurement of ?-delayed proton and ? emission of 26P for the 25Al(p,?)26Si reaction rate|Phys Rev. C 101 (2020) 024305|2020
 lo18|R. Longland, J. Dermigny, C. Marshall,|Reaction rates for the 39K(p,?)40Ca reaction|Phys. Rev. C 98, 025802 (2018)|2018
-ls09|He)<sup>13</sup>N reaction</sup6<>|Science in China G: Physics an|2010
+ls09|He)<sup>13</sup>N reaction</sup6<>|Science in China G: Physics an|2010|
 ly18|S. Lyons et al.|Determination of 20Ne(p,?)21Na cross sections from Ep=500?2000keV|PHYSICAL REVIEW C 97, 065802 (2018)|2018
 ma10|Matic et al.|High-precision ( p,t) reaction to determine 25Al( p,&gamma;)26Si reaction rates|PRC 82, 025807|2010
 ma11|Matic, A. et al|High-precision 28Si(p,t)26Si reaction to determine 22Mg(a,p)25Al|PRC 84, 025801|2011
@@ -185,3 +185,4 @@ suzuki|T. Suzuki, H. Toki, K. Nomoto|Electron Capture and &beta;-Decay Rates for
 ffn|G. M. Fuller, W. A. Fowler, M. J. Newman|Stellar weak interaction rates for intermediate mass nuclei. III - Rate tables for the free nucleons and nuclei with A = 21 to A = 60|Astrophysical Journal Supplement, 48, 279|1982
 oda|T. Oda, M. Hino, K. Muto, M.Takahara, K. Sato|Rate Tables for the Weak Processes of sd-Shell Nuclei in Stellar Matter|Atomic Data and Nuclear Data Tables, Volume 56, Issue 2|1994
 pruet_fuller|J. Pruet, G. M. Fuller|Estimates of Stellar Weak Interaction Rates for Nuclei in the Mass Range A=65-80|Astrophysical Journal Supplement, 149, 189|2003
+iliadis2022|C. Iliadis, V. Palanivelrajan, R. S. de Souza|Bayesian estimation of the ?factor and thermonuclear reaction rate for 16O(?,?)17F|Phys Rev C 106, 055802|2022

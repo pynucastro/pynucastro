@@ -81,6 +81,7 @@ class IliadisO16pgF17(TemperatureTabularRate):
         products = [Nucleus("f17")]
 
         super().__init__(np.log10(T9), np.log10(rate),
-                         reactants=reactants, products=products, Q=Q)
+                         rate_source="iliadis2022",
+                         reactants=reactants, products=products)
 
         assert self.Q != 0.0
