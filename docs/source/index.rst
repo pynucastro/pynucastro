@@ -49,7 +49,6 @@ and interactively exploring nuclear reaction networks.
    :caption: Working with Libraries
    :hidden:
 
-   library-examples.ipynb
    tabulated-weak-rates.ipynb
    finding-rates.ipynb
 
