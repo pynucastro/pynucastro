@@ -31,6 +31,7 @@ and interactively exploring nuclear reaction networks.
 
    sources
    nucleus
+   lodders_composition.ipynb
 
 .. toctree::
    :maxdepth: 1
@@ -48,7 +49,7 @@ and interactively exploring nuclear reaction networks.
    :caption: Working with Libraries
    :hidden:
 
-   library-examples.ipynb
+   finding-rates.ipynb
    tabulated-weak-rates.ipynb
 
 .. toctree::
