@@ -83,4 +83,4 @@ class IliadisO16pgF17(TemperatureTabularRate):
         super().__init__(np.log10(T9), np.log10(rate),
                          reactants=reactants, products=products, Q=Q)
 
-        assert Q != 0.0
+        assert self.Q != 0.0
