@@ -27,7 +27,7 @@ from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library,
                               ModifiedRate, Rate, RateFileError, RatePair,
-                              TabularRate, find_duplicate_rates,
+                              ReacLibRate, TabularRate, find_duplicate_rates,
                               is_allowed_dupe, load_rate)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_rid
 
@@ -42,6 +42,57 @@ RATE_LINES = {r"$(\alpha, p)$": (1, 2),
               r"$(n, \gamma)$": (0, 1),
               r"$\beta^-$": (1, -1),
               r"$\beta^+$": (-1, 1)}
+
+# Current present day isotope mass fractions as obatained by Lodders et al. 2020 & 2021
+# The dataset is avialble at https://sites.wustl.edu/planetarychemistrylaboratory/data-tables/
+LODDERS_DATA = {'h1': 0.7462, 'h2': 0.0, 'he3': 7.677e-05, 'he4': 0.2388, 'li6': 6.197e-10, 'li7': 8.842e-09,
+            'be9': 1.375e-10, 'b10': 8.637e-10, 'b11': 3.798e-09, 'c12': 0.002596, 'c13': 2.941e-05, 'n14': 0.0007314,
+            'n15': 1.775e-06, 'o16': 0.006362, 'o17': 2.362e-06, 'o18': 1.35e-05, 'f19': 5.767e-07, 'ne20': 0.00195,
+            'ne21': 4.909e-06, 'ne22': 0.0001528, 'na23': 3.184e-05, 'mg24': 0.0004655, 'mg25': 6.166e-05, 'mg26': 7.035e-05,
+            'al27': 5.288e-05, 'si28': 0.000618, 'si29': 3.249e-05, 'si30': 2.219e-05, 'p31': 6.13e-06, 's32': 0.0003184,
+            's33': 2.583e-06, 's34': 1.489e-05, 's36': 5.515e-08, 'cl35': 3.36e-06, 'cl37': 1.134e-06, 'ar36': 7.124e-05,
+            'ar38': 1.367e-05, 'ar40': 2.295e-08, 'k39': 3.14e-06, 'k40': 4.022e-10, 'k41': 2.382e-07, 'ca40': 5.313e-05,
+            'ca42': 3.72e-07, 'ca43': 7.926e-08, 'ca44': 1.257e-06, 'ca46': 2.202e-09, 'ca48': 1.229e-07, 'sc45': 3.63e-08,
+            'ti46': 2.235e-07, 'ti47': 2.059e-07, 'ti48': 2.079e-06, 'ti49': 1.56e-07, 'ti50': 1.532e-07, 'v50': 8.377e-10,
+            'v51': 3.351e-07, 'cr50': 6.833e-07, 'cr52': 1.369e-05, 'cr53': 1.586e-06, 'cr54': 4.006e-07, 'mn55': 1.197e-05,
+            'fe54': 6.591e-05, 'fe56': 0.001074, 'fe57': 2.524e-05, 'fe58': 3.415e-06, 'co59': 3.191e-06, 'ni58': 4.595e-05,
+            'ni60': 1.838e-05, 'ni61': 8.103e-07, 'ni62': 2.626e-06, 'ni64': 6.893e-07, 'cu63': 5.579e-07, 'cu65': 2.567e-07,
+            'zn64': 9.497e-07, 'zn66': 5.513e-07, 'zn67': 8.178e-08, 'zn68': 3.792e-07, 'zn70': 1.34e-08, 'ga69': 3.584e-08,
+            'ga71': 2.447e-08, 'ge70': 4.138e-08, 'ge72': 5.687e-08, 'ge73': 1.625e-08, 'ge74': 7.775e-08, 'ge76': 1.692e-08,
+            'as75': 1.09e-08, 'se74': 1.027e-09, 'se76': 1.133e-08, 'se77': 9.455e-09, 'se78': 2.987e-08, 'se80': 6.445e-08,
+            'se82': 1.17e-08, 'br79': 1.184e-08, 'br81': 1.181e-08, 'kr78': 3.547e-10, 'kr80': 2.298e-09, 'kr82': 1.176e-08,
+            'kr83': 1.18e-08, 'kr84': 5.867e-08, 'kr86': 1.809e-08, 'rb85': 1.034e-08, 'rb87': 4.081e-09, 'sr84': 2.614e-10,
+            'sr86': 4.734e-09, 'sr87': 3.353e-09, 'sr88': 4.052e-08, 'y89': 9.266e-09, 'zr90': 1.211e-08, 'zr91': 2.67e-09,
+            'zr92': 4.124e-09, 'zr94': 4.273e-09, 'zr96': 7.032e-10, 'nb93': 1.736e-09, 'mo92': 8.368e-10, 'mo94': 5.355e-10,
+            'mo95': 9.369e-10, 'mo96': 9.95e-10, 'mo97': 5.781e-10, 'mo98': 1.478e-09, 'mo100': 6.056e-10, 'ru96': 2.298e-10,
+            'ru98': 7.976e-11, 'ru99': 5.451e-10, 'ru100': 5.458e-10, 'ru101': 7.447e-10, 'ru102': 1.392e-09, 'ru104': 8.365e-10,
+            'rh103': 8.334e-10, 'pd102': 3.443e-11, 'pd104': 3.824e-10, 'pd105': 7.739e-10, 'pd106': 9.566e-10, 'pd108': 9.437e-10,
+            'pd110': 4.266e-10, 'ag107': 6.609e-10, 'ag109': 6.236e-10, 'cd106': 5.075e-11, 'cd108': 3.62e-11, 'cd110': 5.188e-10,
+            'cd111': 5.368e-10, 'cd112': 1.022e-09, 'cd113': 5.221e-10, 'cd114': 1.239e-09, 'cd116': 3.305e-10, 'in113': 2.164e-11,
+            'in115': 4.708e-10, 'sn112': 9.384e-11, 'sn114': 6.55e-11, 'sn115': 3.304e-11, 'sn116': 1.45e-09, 'sn117': 7.731e-10,
+            'sn118': 2.458e-09, 'sn119': 8.775e-10, 'sn120': 3.364e-09, 'sn122': 4.849e-10, 'sn124': 6.175e-10, 'sb121': 5.939e-10,
+            'sb123': 4.535e-10, 'te120': 1.436e-11, 'te122': 3.593e-10, 'te123': 1.266e-10, 'te124': 6.739e-10, 'te125': 1.009e-09,
+            'te126': 2.697e-09, 'te128': 4.579e-09, 'te130': 4.961e-09, 'i127': 4.835e-09, 'xe124': 2.078e-11, 'xe126': 1.81e-11,
+            'xe128': 3.739e-10, 'xe129': 4.654e-09, 'xe130': 7.439e-10, 'xe131': 3.751e-09, 'xe132': 4.579e-09, 'xe134': 1.716e-09,
+            'xe136': 1.417e-09, 'cs133': 1.172e-09, 'ba130': 1.556e-11, 'ba132': 1.58e-11, 'ba134': 3.529e-10, 'ba135': 9.697e-10,
+            'ba136': 1.162e-09, 'ba137': 1.676e-09, 'ba138': 1.078e-08, 'la138': 1.322e-12, 'la139': 1.528e-09, 'ce136': 6.513e-12,
+            'ce138': 9.913e-12, 'ce140': 3.453e-09, 'ce142': 4.386e-10, 'pr141': 5.908e-10, 'nd142': 7.956e-10, 'nd143': 3.595e-09,
+            'nd144': 7.069e-10, 'nd145': 2.639e-10, 'nd146': 5.174e-10, 'nd148': 1.737e-10, 'nd150': 1.724e-10, 'sm144': 2.896e-11,
+            'sm147': 1.433e-10, 'sm148': 1.081e-10, 'sm149': 1.338e-10, 'sm150': 7.184e-11, 'sm152': 2.643e-10, 'sm154': 2.275e-10,
+            'eu151': 1.732e-10, 'eu153': 1.916e-10, 'gd152': 4.619e-13, 'gd154': 2.783e-11, 'gd155': 1.901e-10, 'gd156': 2.645e-10,
+            'gd157': 2.036e-10, 'gd158': 3.251e-10, 'gd160': 2.899e-10, 'tb159': 2.38e-10, 'dy156': 1.868e-13, 'dy158': 1.514e-12,
+            'dy160': 3.64e-11, 'dy161': 2.965e-10, 'dy162': 4.027e-10, 'dy163': 3.958e-10, 'dy164': 4.521e-10, 'ho165': 3.521e-10,
+            'er162': 1.383e-12, 'er164': 1.613e-11, 'er166': 3.416e-10, 'er167': 2.346e-10, 'er168': 2.784e-10, 'er170': 1.557e-10,
+            'tm169': 1.631e-10, 'yb168': 1.207e-12, 'yb170': 3.054e-11, 'yb171': 1.458e-10, 'yb172': 2.253e-10, 'yb173': 1.682e-10,
+            'yb174': 3.367e-10, 'yb176': 1.383e-10, 'lu175': 1.551e-10, 'lu176': 4.216e-12, 'hf174': 1.042e-12, 'hf176': 3.457e-11,
+            'hf177': 1.225e-10, 'hf178': 1.808e-10, 'hf179': 9.09e-11, 'hf180': 2.35e-10, 'ta180': 1.121e-14, 'ta181': 9.321e-11,
+            'w180': 8.623e-13, 'w182': 1.661e-10, 'w183': 9.03e-11, 'w184': 1.939e-10, 'w186': 1.818e-10, 're185': 8.641e-11,
+            're187': 1.46e-10, 'os184': 5.73e-13, 'os186': 4.638e-11, 'os187': 4.927e-11, 'os188': 3.912e-09, 'os189': 4.797e-10,
+            'os190': 7.843e-10, 'os192': 1.232e-09, 'ir191': 1.08e-09, 'ir193': 1.835e-09, 'pt190': 7.282e-13, 'pt192': 4.507e-11,
+            'pt194': 1.891e-09, 'pt195': 1.958e-09, 'pt196': 1.473e-09, 'pt198': 4.297e-10, 'au197': 9.203e-10, 'hg196': 4.695e-12,
+            'hg198': 1.802e-10, 'hg199': 3.051e-10, 'hg200': 4.168e-10, 'hg201': 2.359e-10, 'hg202': 5.42e-10, 'hg204': 1.271e-10,
+            'tl203': 2.578e-10, 'tl205': 6.188e-10, 'pb204': 3.226e-10, 'pb206': 3.079e-09, 'pb207': 3.401e-09, 'pb208': 9.743e-09,
+            'bi209': 7.08e-10, 'th232': 2.341e-10, 'u234': 2.725e-15, 'u235': 3.638e-13, 'u238': 5.076e-11}
 
 
 class RateDuplicationError(Exception):
@@ -547,6 +598,75 @@ class Composition(collections.UserDict):
         return fig
 
 
+class LoddersComposition(Composition):
+    """A class to use present day solar abundances from Lodders et al. 2020 & 2021.
+
+    Parameters
+    ----------
+    Z : float
+        Target metallicity :math:`Z` to scale the Lodders solar
+        mixture to. If ``None`` (the default), the unscaled Lodders
+        abundances are used.
+    half_life_thresh : float
+        The half life value below which to zero the mass fraction
+        of a nucleus.  This prevents us from making a composition
+        that is not really stable.
+
+    Notes
+    -----
+    The Lodders abundances are stored in ``LODDERS_DATA`` as mass
+    fractions for individual isotopes.
+    """
+
+    def __init__(self, Z=None, half_life_thresh=None):
+
+        nuclei = [Nucleus(name) for name in LODDERS_DATA]
+
+        # base composition initialize in Composition
+        super().__init__(nuclei)
+
+        # now give Lodders abundances with scaling if needed (raw data)
+        self._get_from_lodders(Z, half_life_thresh=half_life_thresh)
+
+    def _get_from_lodders(self, Z=None, half_life_thresh=None):
+
+        for name, X_raw in LODDERS_DATA.items():
+            self[Nucleus(name)] = X_raw
+
+        # normalize Lodders raw data to sum upto 1
+        self.normalize(half_life_thresh=None)
+
+        X_solar = 0.0
+        Y_solar = 0.0
+
+        for nuc, X_i in self.items():
+            if nuc.Z == 1:
+                X_solar += X_i
+            elif nuc.Z == 2:
+                Y_solar += X_i
+
+        # default metallicity Z is what Lodders has 1 - X -Y
+        Z_solar = 1.0 - X_solar - Y_solar
+
+        # if no Z is given, we don't need to do anything else
+        # if desired Z is given then we scale as following
+
+        if Z is not None:
+            Z_target = float(Z)
+            Z_scale = Z_target / Z_solar   # scaling factor for metals
+
+            sum_XY = X_solar + Y_solar
+            XY_scale = (1.0 - Z_target) / sum_XY   # scaling factor for H and He
+
+            for nuc in self:
+                if nuc.Z in (1, 2):
+                    self[nuc] *= XY_scale
+                elif nuc.Z >= 3:
+                    self[nuc] *= Z_scale
+
+        self.normalize(half_life_thresh=half_life_thresh)
+
+
 class RateCollection:
     """A collection of rates that together define a network.
     There are several arguments to the constructor -- any combination
@@ -616,6 +736,37 @@ class RateCollection:
 
         self._build_collection()
 
+    def _classify_hidden_rate(self, cr):
+
+        # Check whether this child rate is removed or not.
+        # "removed" means that this rate is never used on
+        # its own to connect two nuclei in the network it
+        # is only used in one or more ApproximateRate or
+        # ModifiedRate
+        if cr not in self.rates:
+            cr.removed = True
+        else:
+            cr.removed = False
+
+        # reset fname -- set_print_representatoin will add
+        # "_removed" to the name
+        cr.fname = None
+        # pylint: disable-next=protected-access
+        cr._set_print_representation()
+
+        # child rates may be ReacLibRates, ModifiedRates,
+        # or DerivedRates.  Make sure we don't double
+        # count
+        if isinstance(cr, DerivedRate):
+            if cr not in self.derived_rates:
+                self.derived_rates.append(cr)
+        elif isinstance(cr, ModifiedRate):
+            if cr not in self.modified_rates:
+                self.modified_rates.append(cr)
+        else:
+            if cr not in self.reaclib_rates:
+                self.reaclib_rates.append(cr)
+
     def _build_collection(self):
 
         # get the unique nuclei
@@ -655,13 +806,12 @@ class RateCollection:
                 [rp for rp in _rp if rp.forward is not None and n in rp.forward.reactants + rp.forward.products or
                                      rp.reverse is not None and n in rp.reverse.reactants + rp.reverse.products]
 
-        # Re-order self.rates so Reaclib rates come first,
-        # followed by Tabular rates. This is needed if
-        # reaclib coefficients are targets of a pointer array.
-        # It is desired to avoid wasting array size
-        # storing meaningless Tabular coefficient pointers.
+        # Re-order self.rates so Reaclib rates come first, followed by
+        # Tabular rates. This is needed if reaclib coefficients are
+        # targets of a pointer array.  It is desired to avoid wasting
+        # array size storing meaningless Tabular coefficient pointers.
         self.rates = sorted(self.rates,
-                            key=lambda r: r.chapter == 't')
+                            key=lambda r: isinstance(r, TabularRate))
 
         self.tabular_rates = []
         self.reaclib_rates = []
@@ -674,83 +824,36 @@ class RateCollection:
             if isinstance(r, ApproximateRate):
                 self.approx_rates.append(r)
                 for cr in r.get_child_rates():
-                    assert cr.chapter != "t"
-
-                    # Check whether this child rate is removed or not.
-                    # "removed" means that this rate is never used on
-                    # its own to connect two nuclei in the network it
-                    # is only used in one or more ApproximateRate or
-                    # ModifiedRate
-                    if cr not in self.rates:
-                        cr.removed = True
-                    else:
-                        cr.removed = False
-
-                    cr.fname = None
-                    # pylint: disable-next=protected-access
-                    cr._set_print_representation()
-
-                    # child rates may be ReacLibRates, ModifiedRates,
-                    # or DerivedRates.  Make sure we don't double
-                    # count
-                    if isinstance(cr, DerivedRate):
-                        if cr not in self.derived_rates:
-                            self.derived_rates.append(cr)
-                    elif isinstance(cr, ModifiedRate):
-                        if cr not in self.modified_rates:
-                            self.modified_rates.append(cr)
-                    else:
-                        if cr not in self.reaclib_rates:
-                            self.reaclib_rates.append(cr)
+                    assert not isinstance(cr, TabularRate)
+                    self._classify_hidden_rate(cr)
 
             elif isinstance(r, ModifiedRate):
                 if r not in self.modified_rates:
                     self.modified_rates.append(r)
 
                 cr = r.original_rate
+                self._classify_hidden_rate(cr)
 
-                # Check whether this child rate is removed or not.
-                # "removed" means that this rate is never used on
-                # its own to connect two nuclei in the network it
-                # is only used in one or more ApproximateRate or
-                # ModifiedRate
-                if cr not in self.rates:
-                    cr.removed = True
-                else:
-                    cr.removed = False
-
-                cr.fname = None
-                # pylint: disable-next=protected-access
-                cr._set_print_representation()
-
-                # child rates may be ReacLibRates, ModifiedRates,
-                # or DerivedRates.  Make sure we don't double
-                # count
-                if isinstance(cr, DerivedRate):
-                    if cr not in self.derived_rates:
-                        self.derived_rates.append(cr)
-                elif isinstance(cr, ModifiedRate):
-                    if cr not in self.modified_rates:
-                        self.modified_rates.append(cr)
-                else:
-                    if cr not in self.reaclib_rates:
-                        self.reaclib_rates.append(cr)
-
-            elif r.chapter == 't':
+            elif isinstance(r, TabularRate):
                 self.tabular_rates.append(r)
-            elif r.chapter == "custom":
-                self.custom_rates.append(r)
             elif isinstance(r, DerivedRate):
                 if r not in self.derived_rates:
                     self.derived_rates.append(r)
-            elif isinstance(r.chapter, int):
+            elif isinstance(r, ReacLibRate):
                 if r not in self.reaclib_rates:
                     self.reaclib_rates.append(r)
                     if r.id == "n --> p <wc12_reaclib_weak_>":
                         msg = "ReacLib neutron decay rate (<n_to_p_weak_wc12>) does not account for degeneracy at high densities. Consider using tabular rate from Langanke."
                         warnings.warn(msg)
+            elif isinstance(r, Rate):
+                # if we are not any of the other types, then we assume
+                # it is a custom rate based off of Rate
+                self.custom_rates.append(r)
             else:
-                raise NotImplementedError(f"Chapter type unknown for rate chapter {r.chapter}")
+                raise NotImplementedError(f"unknown type of rate {r}")
+
+        # unlike rates, all_rates explicitly includes the hidden rates
+        # (from approximations)
 
         self.all_rates = (self.reaclib_rates + self.custom_rates +
                           self.tabular_rates + self.approx_rates +
@@ -1981,7 +2084,6 @@ class RateCollection:
             if k > 1:
                 print(f'Found rate {r} named {n} with {k} entries in the RateCollection.')
                 print(f'Rate {r} has the original source:\n{r.original_source}')
-                print(f'Rate {r} is in chapter {r.chapter}')
         return len(set(names)) == len(self.rates)
 
     def _write_network(self, *args, **kwargs):

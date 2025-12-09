@@ -31,6 +31,7 @@ and interactively exploring nuclear reaction networks.
 
    sources
    nucleus
+   lodders_composition.ipynb
 
 .. toctree::
    :maxdepth: 1
