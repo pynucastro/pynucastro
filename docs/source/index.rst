@@ -49,8 +49,8 @@ and interactively exploring nuclear reaction networks.
    :caption: Working with Libraries
    :hidden:
 
-   tabulated-weak-rates.ipynb
    finding-rates.ipynb
+   tabulated-weak-rates.ipynb
 
 .. toctree::
    :maxdepth: 1
