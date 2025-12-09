@@ -239,11 +239,6 @@ class PythonNetwork(RateCollection):
         for r in self.reaclib_rates:
             ostr += format_rate_call(r)
 
-        if self.derived_rates:
-            ostr += f"\n{indent}# derived rates\n"
-        for r in self.derived_rates:
-            ostr += format_rate_call(r)
-
         if self.tabular_rates:
             ostr += f"\n{indent}# tabular rates\n"
         for r in self.tabular_rates:
@@ -263,6 +258,13 @@ class PythonNetwork(RateCollection):
             ostr += f"\n{indent}# modified rates\n"
         for r in self.modified_rates:
             ostr += format_rate_call(r)
+
+        # Derived rate should go last (before approx rates)
+        # since the inverse rate should be evaluated first.
+        if self.derived_rates:
+            ostr += f"\n{indent}# derived rates\n"
+        for r in self.derived_rates:
+            ostr += format_rate_call(r, use_tf=False)
 
         ostr += "\n"
 

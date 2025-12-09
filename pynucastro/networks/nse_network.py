@@ -211,8 +211,9 @@ class NSENetwork(RateCollection):
             nse_exponent = (nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.nucbind * nuc.A) / (constants.k_MeV * state.temp)
             nse_exponent = min(500.0, nse_exponent)
 
-            Xs[nuc] = (nuc.A_nuc * constants.m_u_C18)**2.5 * pf * nuc.spin_states / state.dens * \
-                (constants.k * state.temp / (2.0 * np.pi * constants.hbar**2))**1.5 * np.exp(nse_exponent)
+            Xs[nuc] = nuc.A_nuc**2.5 * pf * nuc.spin_states / state.dens * \
+                (constants.m_u_C18 * constants.m_u_C18 * constants.k * state.temp / \
+                 (2.0 * np.pi * constants.hbar**2))**1.5 * np.exp(nse_exponent)
 
         return Xs
 

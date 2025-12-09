@@ -17,7 +17,7 @@ from pynucastro.rates.reaclib_rate import ReacLibRate, SingleSet
 from pynucastro.rates.tabular_rate import TabularRate
 
 
-class DerivedRate(ReacLibRate):
+class DerivedRate(Rate):
     """A reverse rate computed from a forward rate via detailed
     balance.
 
@@ -25,8 +25,6 @@ class DerivedRate(ReacLibRate):
     ----------
     rate : Rate
         The forward rate that will be used to derive the reverse
-    compute_Q : bool
-        Do we recompute the Q-value of the rate from the masses?
     use_pf : bool
         Do we apply the partition function?
     use_unreliable_spins : bool
@@ -34,11 +32,10 @@ class DerivedRate(ReacLibRate):
 
     """
 
-    def __init__(self, rate, compute_Q=False, use_pf=False, use_unreliable_spins=True):
+    def __init__(self, rate, use_pf=False, use_unreliable_spins=True):
 
         self.use_pf = use_pf
         self.rate = rate
-        self.compute_Q = compute_Q
         self.use_unreliable_spins = use_unreliable_spins
 
         if not isinstance(rate, Rate):
@@ -47,6 +44,9 @@ class DerivedRate(ReacLibRate):
         if (isinstance(rate, TabularRate) or self.rate.weak or
             self.rate.derived_from_inverse):
             raise ValueError('The rate is a ReacLib derived from inverse rate or weak or tabular')
+
+        if self.rate.stoichiometry is not None:
+            raise ValueError('Stoichiometry is currently not supported for DerivedRate')
 
         if not all(nuc.spin_states for nuc in self.rate.reactants):
             raise ValueError(f'One of the reactants spin ground state ({self.rate.reactants}), is not defined')
@@ -60,73 +60,29 @@ class DerivedRate(ReacLibRate):
             if not all(nuc.spin_reliable for nuc in self.rate.products):
                 raise ValueError(f'One of the products spin ground state ({self.rate.products}), is considered unreliable')
 
-        derived_sets = []
+        # Compute temperature-independent prefactor of the equilibrium ratio
+        self.net_stoich = len(self.rate.reactants) - len(self.rate.products)
 
-        # The original rate of the modified rate is assumed to be ReacLibRate
-        # Note: if dealing with ModifiedRate, the actual number of counts for
-        # reactants and products come from rates.reactants and rates.product.
-        # In the case of stoichiometry, this only affects the full ydot.
-        # So it doesn't affect detailed balance calculation.
-        if isinstance(rate, ModifiedRate):
-            r = self.rate.original_rate
-        else:
-            r = self.rate
-
-        Q = self.rate.Q
-        if self.compute_Q:
-            Q = 0.0
-            for n in set(self.rate.reactants):
-                c = self.rate.reactant_count(n)
-                Q += c * n.A_nuc
-            for n in set(self.rate.products):
-                c = self.rate.product_count(n)
-                Q += -c * n.A_nuc
-            Q *= constants.m_u_MeV_C18
-
-        prefactor = np.log(constants.m_u_C18) * (len(self.rate.reactants) -
-                                                 len(self.rate.products))
+        F = constants.m_u_C18**self.net_stoich
 
         for nucr in self.rate.reactants:
-            prefactor += 2.5*np.log(nucr.A_nuc) - np.log(nucr.A) + np.log(nucr.spin_states)
+            F *= nucr.A_nuc**2.5 * nucr.spin_states / nucr.A
         for nucp in self.rate.products:
-            prefactor += -2.5*np.log(nucp.A_nuc) + np.log(nucp.A) - np.log(nucp.spin_states)
+            F /= nucp.A_nuc**2.5 * nucp.spin_states / nucp.A
 
-        prefactor += np.log(self.counter_factors()[1]) - np.log(self.counter_factors()[0])
+        F = (constants.m_u_C18 * constants.k /
+             (2.0 * np.pi * constants.hbar**2))**(1.5 * self.net_stoich)
 
-        if len(self.rate.reactants) != len(self.rate.products):
-            F = (constants.m_u_C18 * constants.k * 1.0e9 /
-                 (2.0*np.pi*constants.hbar**2))**(1.5*(len(self.rate.reactants) -
-                                                       len(self.rate.products)))
-            prefactor += np.log(F)
+        F *= self.counter_factors()[1] / self.counter_factors()[0]
+        self.prefactor = F
 
-        for ssets in r.sets:
-            a = ssets.a
-
-            a_rev = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-            a_rev[0] = prefactor + a[0]
-            a_rev[1] = a[1] - Q / (1.0e9 * constants.k_MeV)
-            a_rev[2] = a[2]
-            a_rev[3] = a[3]
-            a_rev[4] = a[4]
-            a_rev[5] = a[5]
-            a_rev[6] = a[6] + 1.5*(len(self.rate.reactants) -
-                                   len(self.rate.products))
-            sset_d = SingleSet(a=a_rev, labelprops=r.labelprops)
-            derived_sets.append(sset_d)
-
-        super().__init__(rfile=r.rfile, chapter=r.chapter,
-                         original_source=r.original_source,
-                         reactants=self.rate.products,
+        super().__init__(reactants=self.rate.products,
                          products=self.rate.reactants,
-                         sets=derived_sets, labelprops="derived", Q=-Q)
-
+                         label="derived",
+                         stoichiometry=self.rate.stoichiometry)
+        print(self.fname)
         # explicitly mark it as reverse
         self.derived_from_inverse = True
-
-        # Update stoichiometry so that we are consistent in full ydot eqns
-        self.stoichiometry = self.rate.stoichiometry
-
-        self._set_print_representation()
 
     def _warn_about_missing_pf_tables(self):
         skip_nuclei = {Nucleus("h1"), Nucleus("n"), Nucleus("he4")}
@@ -158,27 +114,40 @@ class DerivedRate(ReacLibRate):
 
         """
 
-        # Note screening effect is already included when we do eval
+        # evaluate the forward rate without screening
+        r = self.rate.eval(T=T, rho=rho, comp=comp, screen_func=None)
 
-        r = super().eval(T=T, rho=rho, comp=comp, screen_func=screen_func)
+        # compute the equilibrium ratio
+        ratio = self.prefactor * T**(1.5 * self.net_stoich)
+
+        # Note Q-value here is for the derived rate.
+        ratio *= np.exp(self.Q / (constants.k_MeV * T))
+
         z_r = 1.0
         z_p = 1.0
         if self.use_pf:
-            self._warn_about_missing_pf_tables()
-
             for nucr in self.rate.reactants:
-                if not nucr.partition_function:
-                    continue
-                    #nucr.partition_function = lambda T: 1.0
-                z_r *= nucr.partition_function.eval(T)
+                if nucr.partition_function is not None:
+                    z_r *= nucr.partition_function.eval(T)
 
             for nucp in self.rate.products:
-                if not nucp.partition_function:
-                    continue
-                    #nucp.partition_function = lambda T: 1.0
-                z_p *= nucp.partition_function.eval(T)
+                if nucp.partition_function is not None:
+                    z_p *= nucp.partition_function.eval(T)
 
-            return r*z_r/z_p
+        ratio *= z_r / z_p
+
+        # Apply equilibrium ratio
+        r *= ratio
+
+        # Apply screening correction
+        scor = 1.0
+        if screen_func is not None:
+            if rho is None or comp is None:
+                raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
+            scor = self.evaluate_screening(rho, T, comp, screen_func)
+
+        r *= scor
+
         return r
 
     def function_string_py(self):
@@ -191,15 +160,22 @@ class DerivedRate(ReacLibRate):
 
         """
 
-        self._warn_about_missing_pf_tables()
+        fstring = ""
+        fstring += "@numba.njit()\n"
+        fstring += f"def {self.fname}(rate_eval, T):\n"
+        fstring += f"    # {self.rid}\n"
 
-        fstring = super().function_string_py()
+        fstring += f"    # Evaluate the equilibrium ratio\n"
+        fstring += f"    ratio = {self.prefactor} * T**(1.5 * {self.net_stoich})\n"
+        fstring += f"    ratio *= np.exp({self.Q} / (constants.k_MeV * T))\n"
+        fstring += f"    rate_eval.{self.fname} = rate_eval.{self.rate.fname} * ratio"
 
         if self.use_pf:
+            self._warn_about_missing_pf_tables()
 
             fstring += "\n"
             for nuc in set(self.rate.reactants + self.rate.products):
-                if nuc.partition_function:
+                if nuc.partition_function is not None:
                     fstring += f"    # interpolating {nuc} partition function\n"
                     fstring += f"    {nuc}_pf_exponent = np.interp(tf.T9, xp={nuc}_temp_array, fp=np.log10({nuc}_pf_array))\n"
                     fstring += f"    {nuc}_pf = 10.0**{nuc}_pf_exponent\n"
@@ -218,7 +194,7 @@ class DerivedRate(ReacLibRate):
             fstring += "*".join([f"{nucp}_pf" for nucp in self.rate.products])
 
             fstring += "\n"
-            fstring += f"    rate_eval.{self.fname} *= z_r/z_p\n"
+            fstring += f"    rate_eval.{self.fname} *= z_r / z_p\n"
 
         return fstring
 
@@ -252,8 +228,6 @@ class DerivedRate(ReacLibRate):
         if extra_args is None:
             extra_args = ()
 
-        self._warn_about_missing_pf_tables()
-
         extra_args = ["[[maybe_unused]] part_fun::pf_cache_t& pf_cache", *extra_args]
         fstring = super().function_string_cxx(dtype=dtype,
                                               specifiers=specifiers,
@@ -264,6 +238,7 @@ class DerivedRate(ReacLibRate):
         # function now the partition function corrections
 
         if self.use_pf:
+            self._warn_about_missing_pf_tables()
 
             fstring += "\n"
             for nuc in set(self.rate.reactants + self.rate.products):
