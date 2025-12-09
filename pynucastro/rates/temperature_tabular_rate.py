@@ -122,7 +122,7 @@ class TemperatureTabularRate(Rate):
     """
 
     def __init__(self, log_t9_data, log_rate_data, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(label="temptab", **kwargs)
 
         # make sure there are no weak interactions -- we don't
         # support those yet
@@ -142,16 +142,11 @@ class TemperatureTabularRate(Rate):
         products_str = '_'.join([repr(nuc) for nuc in self.products])
         self.fname = f'{reactants_str}__{products_str}__temptab'
 
-        self.label = "temptab"
-
         # tabular here really means weak rate tabular
         self.tabular = False
 
         # we should initialize this somehow
         self.weak_type = ""
-
-        # this should not really be needed
-        self.chapter = "temp_tabular"
 
         self._set_rhs_properties()
         self._set_screening()

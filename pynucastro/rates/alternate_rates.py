@@ -80,11 +80,7 @@ class IliadisO16pgF17(TemperatureTabularRate):
         reactants = [Nucleus("o16"), Nucleus("p")]
         products = [Nucleus("f17")]
 
-        Q = 0
-        for n in reactants:
-            Q += -n.A * n.nucbind
-        for n in products:
-            Q += n.A * n.nucbind
-
         super().__init__(np.log10(T9), np.log10(rate),
                          reactants=reactants, products=products, Q=Q)
+
+        assert Q != 0.0
