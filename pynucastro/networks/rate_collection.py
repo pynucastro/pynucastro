@@ -27,8 +27,8 @@ from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library,
                               ModifiedRate, Rate, RateFileError, RatePair,
-                              ReacLibRate, TabularRate, TemperatureTabularRate, find_duplicate_rates,
-                              is_allowed_dupe, load_rate)
+                              ReacLibRate, TabularRate, TemperatureTabularRate,
+                              find_duplicate_rates, is_allowed_dupe, load_rate)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_rid
 
 mpl.rcParams['figure.dpi'] = 100
