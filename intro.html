@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Overview of pynucastro &#8212; pynucastro 2.8.0.post29+g61d6c512a documentation</title>
+    <title>Overview of pynucastro &#8212; pynucastro 2.8.0.post30+gb56eb0705 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=c7914d44"></script>
+    <script src="_static/documentation_options.js?v=ea7e4e13"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -186,7 +186,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Working with Libraries</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="finding-rates.html">Finding Available Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tabulated-weak-rates.html">Tabulated Weak Rate Sources</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
@@ -638,10 +638,12 @@ for filtering out rates based on different sets of rules.</p>
 <p>There are two important subclasses:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.ReacLibLibrary" title="pynucastro.rates.library.ReacLibLibrary"><code class="xref py py-func docutils literal notranslate"><span class="pre">ReacLibLibrary</span></code></a>: The
-entire ReacLib rate library (&gt; 80,000 rates)</p></li>
+entire ReacLib rate library (&gt; 80,000 rates).</p></li>
 <li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.TabularLibrary" title="pynucastro.rates.library.TabularLibrary"><code class="xref py py-func docutils literal notranslate"><span class="pre">TabularLibrary</span></code></a>: A
-<cite>Library</cite> containing all known tabular weak rates.</p></li>
+<cite>Library</cite> providing tabulated weak rate coverage of nuclei.</p></li>
 </ul>
+<p>additionally, the helper function, <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.full_library" title="pynucastro.rates.library.full_library"><code class="xref py py-func docutils literal notranslate"><span class="pre">full_library</span></code></a>
+will return a <code class="docutils literal notranslate"><span class="pre">Library</span></code> with every rate known to pynucastro.</p>
 </li>
 <li><p><a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><code class="xref py py-func docutils literal notranslate"><span class="pre">Composition</span></code></a>: This is a
 collection of nuclei and their mass fractions.  A <code class="docutils literal notranslate"><span class="pre">Composition</span></code> is

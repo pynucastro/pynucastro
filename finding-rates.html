@@ -1,0 +1,1089 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Finding Available Rates &#8212; pynucastro 2.8.0.post30+gb56eb0705 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="_static/myfile.css?v=15ab05d9" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=ea7e4e13"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=eaa7b67c"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'finding-rates';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tabulated Weak Rate Sources" href="tabulated-weak-rates.html" />
+    <link rel="prev" title="Integrating a Network" href="pynucastro-integration.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt=""/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt=""/>`);</script>
+  
+  
+    <p class="title logo__title">pynucastro 2.8</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rate_types.html">Reaction Rate Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Properties</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nucleus.html">Nuclear Properties</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lodders_composition.html">Solar Composition</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">pynucastro Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro Usage Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plot-types.html">Plotting Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic_network.html">Basic Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Integrating a Network</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Working with Libraries</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Finding Available Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tabulated-weak-rates.html">Tabulated Weak Rate Sources</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="duplicate-rates.html">Dealing with Duplicate Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking Your Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="electron-capture-example.html">Tabulated Weak Rate Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alternate-rates.html"><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="inert-nuclei.html">Inert Nuclei</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Rate Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="screening-examples.html">Screening Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modify-example.html">Modifying Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom-rates.html">Creating a Custom Rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="partition-function.html">Reverse Rates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="approximate-rates.html">Approximate and Modified Rates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="alpha-gamma-approx.html">Approximating alpha-capture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="double-n-capture.html">Approximating double n-capture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modified-rates.html">Modified Rates</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unimportant-rates.html">Removing Unimportant Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="network-cycles.html">Finding Cycles (with NetworkX)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stiffness.html">Assessing the Stiffness of a Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reduction.html">Network Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sens_analysis_example.html">Sensitivity Analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">NSE Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NSE-direct-integration.html">NSE vs. Direct Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nse_table.html">Creating an NSE table</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Thermodynamics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="fermi-integrals.html">Fermi-Dirac Integrals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="electron-eos.html">The Electron-Positron EOS</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="neutrino-cooling.html">Neutrino Cooling</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Exporting Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="networks.html">Exporting Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-network.html">Python network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simple-cxx-network.html">Simple C++ network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fortran-network.html">Fortran Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="amrex-astro-cxx-networks.html">AMReX Astro Microphysics Networks</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="julia.html">Integrating using DifferentialEquations.jl</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="installing-diffeqpy-julia.html">Installing <code class="docutils literal notranslate"><span class="pre">diffeqpy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="Example-Integrating-Network-diffeqpy.html">Example of Integrating a Network</a></li>
+
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="he-burning-example.html">A He-burning Network</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/binding-energy.html">Binding Energy per Nucleon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/pp-cno.html">p-p chain vs. CNO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/hot-CNO-breakout-example.html">hot-CNO and breakout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/triple_alpha_eval.html">Computing the Screened Triple-alpha rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/he-burning.html">Ratio of C/O from He burning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/supernova-lightcurve.html">A Supernova Lightcurve</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.constants.html">pynucastro.constants package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.constants.constants.html">pynucastro.constants.constants module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.eos.html">pynucastro.eos package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.difference_utils.html">pynucastro.eos.difference_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.electron_eos.html">pynucastro.eos.electron_eos module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.fermi_integrals.html">pynucastro.eos.fermi_integrals module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.quadrature_weights.html">pynucastro.eos.quadrature_weights module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html">pynucastro.networks.amrexastro_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.base_cxx_network.html">pynucastro.networks.base_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.fortran_network.html">pynucastro.networks.fortran_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.helper.html">pynucastro.networks.helper module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.nse_network.html">pynucastro.networks.nse_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.python_network.html">pynucastro.networks.python_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.rate_collection.html">pynucastro.networks.rate_collection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.simple_cxx_network.html">pynucastro.networks.simple_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.sympy_network_support.html">pynucastro.networks.sympy_network_support module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.neutrino_cooling.html">pynucastro.neutrino_cooling package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.neutrino_cooling.neutrino_cooling.html">pynucastro.neutrino_cooling.neutrino_cooling module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.neutrino_cooling.sneut5_mod.html">pynucastro.neutrino_cooling.sneut5_mod module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.elements.html">pynucastro.nucdata.elements module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.halflife_table.html">pynucastro.nucdata.halflife_table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.mass_table.html">pynucastro.nucdata.mass_table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.nucleus.html">pynucastro.nucdata.nucleus module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.partition_function.html">pynucastro.nucdata.partition_function module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.spin_table.html">pynucastro.nucdata.spin_table module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.library.html">pynucastro.rates.library module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.modified_rate.html">pynucastro.rates.modified_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.rate.html">pynucastro.rates.rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.reaclib_rate.html">pynucastro.rates.reaclib_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.tabular_rate.html">pynucastro.rates.tabular_rate module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep_module.html">pynucastro.reduction.drgep_module module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.sensitivity_analysis.html">pynucastro.reduction.sensitivity_analysis module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.screening.html">pynucastro.screening package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.screen.html">pynucastro.screening.screen module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.screening_util.html">pynucastro.screening.screening_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.mpi_utils.html">pynucastro.mpi_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.numba_util.html">pynucastro.numba_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.utils.html">pynucastro.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.yt_utils.html">pynucastro.yt_utils module</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="zreferences.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Index</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="py-modindex.html">Module Index</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/finding-rates.ipynb?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/finding-rates.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Ffinding-rates.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/finding-rates.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Finding Available Rates</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#searching-all-rates">Searching all rates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-a-rate-by-name">Getting a rate by name</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-filters">Using filters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#specifying-desired-nuclei">Specifying desired nuclei</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exact-filtering">Exact filtering</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-building-an-alpha-capture-network">Example: building an <span class="math notranslate nohighlight">\(\alpha\)</span>-capture network</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="finding-available-rates">
+<h1>Finding Available Rates<a class="headerlink" href="#finding-available-rates" title="Link to this heading">#</a></h1>
+<p>The <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library</span></code></a> class provides a high level interface for reading files containing one or more Reaclib rates and then filtering these rates based on user-specified criteria for the nuclei involved in the reactions. We can then use the resulting rates to build a network.</p>
+<section id="searching-all-rates">
+<h2>Searching all rates<a class="headerlink" href="#searching-all-rates" title="Link to this heading">#</a></h2>
+<p>We can get a single library with all the rates known to pynucastro—this is a combination of <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.ReacLibLibrary" title="pynucastro.rates.library.ReacLibLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReacLibLibrary</span></code></a>, all of the different collections that can be part of <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.TabularLibrary" title="pynucastro.rates.library.TabularLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularLibrary</span></code></a>, and the rates contained in <a class="reference internal" href="pynucastro.rates.alternate_rates.html#module-pynucastro.rates.alternate_rates" title="pynucastro.rates.alternate_rates"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alternate_rates</span></code></a>.  This is done via <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.full_library" title="pynucastro.rates.library.full_library"><code class="xref py py-meth docutils literal notranslate"><span class="pre">full_library</span></code></a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lib</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">full_library</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library</span></code></a> returned by <code class="docutils literal notranslate"><span class="pre">full_library</span></code> will have duplicates for some links, since multiple sources can provide a rate.</p>
+</div>
+<p>We can see the total number of rates</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lib</span><span class="o">.</span><span class="n">num_rates</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>82491
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="getting-a-rate-by-name">
+<h2>Getting a rate by name<a class="headerlink" href="#getting-a-rate-by-name" title="Link to this heading">#</a></h2>
+<p>The <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library.get_rate_by_name" title="pynucastro.rates.library.Library.get_rate_by_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_rate_by_name</span></code></a> function
+can be used on any <code class="docutils literal notranslate"><span class="pre">Library</span></code> object.</p>
+<p>Here we get <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c12ag</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;c12(a,g)o16&quot;</span><span class="p">)</span>
+<span class="n">c12ag</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[C12 + He4 ⟶ O16 + 𝛾, C12 + He4 ⟶ O16 + 𝛾]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here we see that we pick up two rates—these are from different sources:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">c12ag</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="si">:</span><span class="s2">24</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;Label&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">6</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C12 + He4 ⟶ O16 + 𝛾      nac2    ReacLibRate
+C12 + He4 ⟶ O16 + 𝛾      debo    DeBoerC12agO16
+</pre></div>
+</div>
+</div>
+</div>
+<p>The first is from ReacLib and the second is a more recent rate from <span id="id1">deBoer <em>et al.</em> [<a class="reference internal" href="zreferences.html#id36" title="R. J. deBoer, J. Görres, M. Wiescher, R. E. Azuma, A. Best, C. R. Brune, C. E. Fields, S. Jones, M. Pignatari, D. Sayre, K. Smith, F. X. Timmes, and E. Uberseder. The $^12$C(\ensuremath \alpha  ,\ensuremath \gamma  )$^16$O reaction and its implications for stellar helium burning. Reviews of Modern Physics, 89(3):035007, July 2017. arXiv:1709.03144, doi:10.1103/RevModPhys.89.035007.">2017</a>]</span>.</p>
+</section>
+<section id="using-filters">
+<h2>Using filters<a class="headerlink" href="#using-filters" title="Link to this heading">#</a></h2>
+<p>We can then use a <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.RateFilter" title="pynucastro.rates.library.RateFilter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateFilter</span></code></a> to find rates.</p>
+<p>For example, to find all the rates that involve <span class="math notranslate nohighlight">\({}^{56}\mathrm{Ni}\)</span> as a reactant, we can do:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rf</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ni56&quot;</span><span class="p">],</span> <span class="n">exact</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">new_lib</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">rf</span><span class="p">)</span>
+<span class="n">rates</span> <span class="o">=</span> <span class="n">new_lib</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rates</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="si">:</span><span class="s2">24</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;Label&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">10</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ni56 + e⁻ ⟶ Co56 + 𝜈     ffn         TabularRate
+Ni56 + e⁻ ⟶ Co56 + 𝜈     langanke    TabularRate
+Ni56 + n ⟶ He4 + Fe53    ths8        ReacLibRate
+Ni56 + n ⟶ p + Co56      ths8        ReacLibRate
+Ni56 + n ⟶ Ni57 + 𝛾      ths8        ReacLibRate
+Ni56 + p ⟶ He4 + Co53    ths8        ReacLibRate
+Ni56 + p ⟶ n + Cu56      ths8        ReacLibRate
+Ni56 + p ⟶ Cu57 + 𝛾      wien        ReacLibRate
+Ni56 + He4 ⟶ p + Cu59    ths8        ReacLibRate
+Ni56 + He4 ⟶ n + Zn59    ths8        ReacLibRate
+Ni56 + He4 ⟶ Zn60 + 𝛾    ths8        ReacLibRate
+Ni56 ⟶ He4 + Fe52        ths8        ReacLibRate
+Ni56 ⟶ p + Co55          ths8        ReacLibRate
+Ni56 ⟶ Co56 + e⁺ + 𝜈     wc12        ReacLibRate
+Ni56 ⟶ n + Ni55          ths8        ReacLibRate
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we see that there are three electron capture / <span class="math notranslate nohighlight">\(\beta^+\)</span> rates:</p>
+<ul class="simple">
+<li><p>a tabular version from <span id="id2">Fuller <em>et al.</em> [<a class="reference internal" href="zreferences.html#id31" title="G. M. Fuller, W. A. Fowler, and M. J. Newman. Stellar weak interaction rates for intermediate mass nuclei. III - Rate tables for the free nucleons and nuclei with A = 21 to A = 60. Astrophysical Journal Supplement, 48:279-319, March 1982. doi:10.1086/190779.">1982</a>]</span></p></li>
+<li><p>a tabular version from <span id="id3">Langanke and Martínez-Pinedo [<a class="reference internal" href="zreferences.html#id9" title="K. Langanke and G. Martínez-Pinedo. Rate tables for the weak processes of pf-shell nuclei in stellar environments. Atomic Data and Nuclear Data Tables, 79(1):1-46, 2001. doi:10.1006/adnd.2001.0865.">2001</a>]</span></p></li>
+<li><p>a simple decay constant from ReacLib</p></li>
+</ul>
+<p>For a network, we would only use one on these.  In fact, we will raise an exception if we try to use them all:</p>
+<div class="cell tag_nbval-ignore-output tag_nbval-raises-exception docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">new_lib</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[Ni56 ⟶ Co56 + e⁺ + 𝜈, Ni56 + e⁻ ⟶ Co56 + 𝜈, Ni56 + e⁻ ⟶ Co56 + 𝜈]]
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">RateDuplicationError</span><span class="g g-Whitespace">                      </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">new_lib</span><span class="p">])</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.14/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:737,</span> in <span class="ni">RateCollection.__init__</span><span class="nt">(self, rate_files, libraries, rates, inert_nuclei, do_screening, verbose)</span>
+<span class="g g-Whitespace">    </span><span class="mi">733</span>         <span class="n">combined_library</span> <span class="o">+=</span> <span class="n">lib</span>
+<span class="g g-Whitespace">    </span><span class="mi">735</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">+</span> <span class="n">combined_library</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
+<span class="ne">--&gt; </span><span class="mi">737</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.14/x64/lib/python3.11/site-packages/pynucastro/networks/rate_collection.py:866,</span> in <span class="ni">RateCollection._build_collection</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">    </span><span class="mi">864</span> <span class="k">if</span> <span class="n">dupes</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">():</span>
+<span class="g g-Whitespace">    </span><span class="mi">865</span>     <span class="nb">print</span><span class="p">(</span><span class="n">dupes</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">866</span>     <span class="k">raise</span> <span class="n">RateDuplicationError</span><span class="p">(</span><span class="s2">&quot;Duplicate rates found&quot;</span><span class="p">)</span>
+
+<span class="ne">RateDuplicationError</span>: Duplicate rates found
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>This is one key difference between a <code class="docutils literal notranslate"><span class="pre">Library</span></code> and a network in pynucastro—a <code class="docutils literal notranslate"><span class="pre">Library</span></code> can have duplicate rates, and can be thought of as a container used in the process of selecting the rates that will finally be part of your network.</p>
+</div>
+</section>
+<section id="specifying-desired-nuclei">
+<h2>Specifying desired nuclei<a class="headerlink" href="#specifying-desired-nuclei" title="Link to this heading">#</a></h2>
+<p>This example constructs a CNO network like the one constructed from a set of Reaclib rate files in the <em>pynucastro usage examples</em> section of this documentation.</p>
+<p>This time, however, we will specify the nuclei we want in the network and allow the <code class="docutils literal notranslate"><span class="pre">Library</span></code> class to find all the rates linking only nuclei in the set we specified.</p>
+<p>We can specify these nuclei by their abbreviations in the form, e.g. “he4”:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;n13&quot;</span><span class="p">,</span> <span class="s2">&quot;c13&quot;</span><span class="p">,</span> <span class="s2">&quot;o14&quot;</span><span class="p">,</span> <span class="s2">&quot;n14&quot;</span><span class="p">,</span> <span class="s2">&quot;o15&quot;</span><span class="p">,</span> <span class="s2">&quot;n15&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we use the <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library.linking_nuclei" title="pynucastro.rates.library.Library.linking_nuclei"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.linking_nuclei</span></code></a> function to return a smaller <code class="docutils literal notranslate"><span class="pre">Library</span></code> object containing only the rates that link these nuclei.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>We can pass <code class="docutils literal notranslate"><span class="pre">with_reverse=False</span></code> to restrict <code class="docutils literal notranslate"><span class="pre">linking_nuclei</span></code> to only include forward rates from the Reaclib library.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cno_library</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">all_nuclei</span><span class="p">,</span> <span class="n">with_reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we can create a network (here we’ll do a <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a>) as:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cno_network</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">cno_library</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the above, we construct a network by passing our <code class="docutils literal notranslate"><span class="pre">Library</span></code> object to the network constructor via the <code class="docutils literal notranslate"><span class="pre">libraries</span></code> keyword argument. To construct a network from multiple libraries, the <code class="docutils literal notranslate"><span class="pre">libraries</span></code> argument can also take a list of <code class="docutils literal notranslate"><span class="pre">Library</span></code> objects.</p>
+</div>
+<p>We can show the structure of the network by plotting a network diagram.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">cno_network</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/0c0c8b46545388260e28e218ab82a10dd400eedacda777c54544e8c1a71a1f4c.png" src="_images/0c0c8b46545388260e28e218ab82a10dd400eedacda777c54544e8c1a71a1f4c.png" />
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This network includes the 3-<span class="math notranslate nohighlight">\(\alpha\)</span> rate from ReacLib—this probably isn’t needed for CNO burning, so we could have removed it from the library before making the network.</p>
+</div>
+</section>
+<section id="exact-filtering">
+<h2>Exact filtering<a class="headerlink" href="#exact-filtering" title="Link to this heading">#</a></h2>
+<p>Exact filtering is useful when you have a specific rate in mind or a specific combination of reactants or products. In the following example, we look for all rates of the form <span class="math notranslate nohighlight">\(\mathrm{^{12}C + ^{12}C \rightarrow \ldots}\)</span></p>
+<p>To use exact filtering, omit the <code class="docutils literal notranslate"><span class="pre">exact</span></code> keyword to the <code class="docutils literal notranslate"><span class="pre">RateFilter</span></code> constructor, as it is turned on by default.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Exact filtering does not mean all the nuclei involved in the rate must be specified, it means that all filtering options passed to the <code class="docutils literal notranslate"><span class="pre">RateFilter</span></code> constructor are strictly applied. In this case, the filter will return rates with exactly two reactants, both of which are <span class="math notranslate nohighlight">\(\mathrm{^{12}C}\)</span>. However, the filter places no constraint on the products or number of products in the rate.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c12_exact_filter</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;c12&#39;</span><span class="p">,</span> <span class="s1">&#39;c12&#39;</span><span class="p">])</span>
+<span class="n">c12_exact_library</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">c12_exact_filter</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">c12_exact_library</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C12 + C12 ⟶ He4 + Ne20         [Q =   4.62 MeV] (C12 + C12 --&gt; He4 + Ne20 &lt;cf88_reaclib__&gt;)
+C12 + C12 ⟶ p + Na23           [Q =   2.24 MeV] (C12 + C12 --&gt; p + Na23 &lt;cf88_reaclib__&gt;)
+C12 + C12 ⟶ n + Mg23           [Q =  -2.60 MeV] (C12 + C12 --&gt; n + Mg23 &lt;cf88_reaclib__derived_from_inverse&gt;)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-building-an-alpha-capture-network">
+<h2>Example: building an <span class="math notranslate nohighlight">\(\alpha\)</span>-capture network<a class="headerlink" href="#example-building-an-alpha-capture-network" title="Link to this heading">#</a></h2>
+<p>In the next example, we use rate filtering to iteratively construct a <code class="docutils literal notranslate"><span class="pre">Library</span></code> containing the alpha capture rates linking <span class="math notranslate nohighlight">\(\mathrm{^{12}C}\)</span> to <span class="math notranslate nohighlight">\(\mathrm{^{56}Ni}\)</span>.</p>
+<p>We use the following procedure:</p>
+<ul class="simple">
+<li><p>Start with a seed nucleus, <span class="math notranslate nohighlight">\(\mathrm{^{12}C}\)</span></p></li>
+<li><p>Loop</p>
+<ul>
+<li><p>Find the rates that are <span class="math notranslate nohighlight">\(\alpha\)</span>-capture on the current nucleus</p></li>
+<li><p>Use <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library.heaviest" title="pynucastro.rates.library.Library.heaviest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library.heaviest</span></code></a> to find the heaviest nucleus in the filtered rates. This corresponds to the nucleus with the largest mass number, and in case of a tie between isobars, this returns the isobar with the smallest atomic number.</p></li>
+<li><p>Find the reverse rate using the heaviest nucleus</p></li>
+<li><p>If the mass number of the heaviest nucleus is less that 56, set the seed to the current heaviest nuclei</p></li>
+</ul>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the example below, we add each filtered library to our alpha capture library <code class="docutils literal notranslate"><span class="pre">alpha_library</span></code>, initialized as an empty <code class="docutils literal notranslate"><span class="pre">Library</span></code>. The <code class="docutils literal notranslate"><span class="pre">Library</span></code> class supports the addition operator by returning a new library containing the rates in the two libraries we added together.</p>
+</div>
+<p>This example also introduces the <code class="docutils literal notranslate"><span class="pre">max_products</span></code> keyword, which specifies we are looking for reactions producing at most <code class="docutils literal notranslate"><span class="pre">max_products</span></code> product nuclei.</p>
+<p>Similarly, the <code class="docutils literal notranslate"><span class="pre">RateFilter</span></code> constructor supports the following keywords constraining the number of reactants and products:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">min_reactants</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_reactants</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">min_products</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_products</span></code></p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Because we have omitted the argument <code class="docutils literal notranslate"><span class="pre">exact=False</span></code>, the filter constraints we apply are exact.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">alpha_library</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Library</span><span class="p">()</span>
+
+<span class="n">capture</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s1">&#39;he4&#39;</span><span class="p">)</span>
+<span class="n">seed</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s1">&#39;c12&#39;</span><span class="p">)</span>
+
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">ac_filter</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="n">capture</span><span class="p">,</span> <span class="n">seed</span><span class="p">],</span> <span class="n">max_products</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ac_library</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">ac_filter</span><span class="p">)</span>
+    <span class="n">alpha_library</span> <span class="o">=</span> <span class="n">alpha_library</span> <span class="o">+</span> <span class="n">ac_library</span>
+
+    <span class="n">heavy</span> <span class="o">=</span> <span class="n">ac_library</span><span class="o">.</span><span class="n">heaviest</span><span class="p">()</span>
+    <span class="n">ac_filter_inv</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="n">heavy</span><span class="p">],</span> <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="n">capture</span><span class="p">,</span> <span class="n">seed</span><span class="p">])</span>
+    <span class="n">ac_inv_library</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">ac_filter_inv</span><span class="p">)</span>
+    <span class="n">alpha_library</span> <span class="o">=</span> <span class="n">alpha_library</span> <span class="o">+</span> <span class="n">ac_inv_library</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">heavy</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">heavy</span><span class="o">.</span><span class="n">A</span> <span class="o">==</span> <span class="mi">56</span><span class="p">:</span>
+        <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">seed</span> <span class="o">=</span> <span class="n">heavy</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>O16
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ne20
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mg24
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Si28
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>S32
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ar36
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ca40
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ti44
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Cr48
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Fe52
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ni56
+</pre></div>
+</div>
+</div>
+</div>
+<p>We will next print out the library we constructed, seeing that we have both forward and reverse rates for the alpha chain.</p>
+<p>Note that in this example, we are just using the reverse rates provided by ReacLib and not rederiving
+them via detailed balance together with the nuclear partition function.  This can be done using the <a class="reference internal" href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate" title="pynucastro.rates.derived_rate.DerivedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DerivedRate</span></code></a> class.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">alpha_library</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C12 + He4 ⟶ O16 + 𝛾            [Q =   7.16 MeV] (C12 + He4 --&gt; O16 &lt;nac2_reaclib__&gt;)
+O16 + He4 ⟶ Ne20 + 𝛾           [Q =   4.73 MeV] (O16 + He4 --&gt; Ne20 &lt;co10_reaclib__&gt;)
+Ne20 + He4 ⟶ Mg24 + 𝛾          [Q =   9.32 MeV] (Ne20 + He4 --&gt; Mg24 &lt;il10_reaclib__&gt;)
+Mg24 + He4 ⟶ Si28 + 𝛾          [Q =   9.98 MeV] (Mg24 + He4 --&gt; Si28 &lt;st08_reaclib__&gt;)
+Si28 + He4 ⟶ S32 + 𝛾           [Q =   6.95 MeV] (Si28 + He4 --&gt; S32 &lt;ths8_reaclib__&gt;)
+S32 + He4 ⟶ Ar36 + 𝛾           [Q =   6.64 MeV] (S32 + He4 --&gt; Ar36 &lt;ths8_reaclib__&gt;)
+Ar36 + He4 ⟶ Ca40 + 𝛾          [Q =   7.04 MeV] (Ar36 + He4 --&gt; Ca40 &lt;ths8_reaclib__&gt;)
+Ca40 + He4 ⟶ Ti44 + 𝛾          [Q =   5.13 MeV] (Ca40 + He4 --&gt; Ti44 &lt;chw0_reaclib__&gt;)
+Ti44 + He4 ⟶ Cr48 + 𝛾          [Q =   7.70 MeV] (Ti44 + He4 --&gt; Cr48 &lt;ths8_reaclib__&gt;)
+Cr48 + He4 ⟶ Fe52 + 𝛾          [Q =   7.94 MeV] (Cr48 + He4 --&gt; Fe52 &lt;ths8_reaclib__&gt;)
+Fe52 + He4 ⟶ Ni56 + 𝛾          [Q =   8.00 MeV] (Fe52 + He4 --&gt; Ni56 &lt;ths8_reaclib__&gt;)
+O16 ⟶ He4 + C12                [Q =  -7.16 MeV] (O16 --&gt; He4 + C12 &lt;nac2_reaclib__derived_from_inverse&gt;)
+Ne20 ⟶ He4 + O16               [Q =  -4.73 MeV] (Ne20 --&gt; He4 + O16 &lt;co10_reaclib__derived_from_inverse&gt;)
+Mg24 ⟶ He4 + Ne20              [Q =  -9.32 MeV] (Mg24 --&gt; He4 + Ne20 &lt;il10_reaclib__derived_from_inverse&gt;)
+Si28 ⟶ He4 + Mg24              [Q =  -9.98 MeV] (Si28 --&gt; He4 + Mg24 &lt;st08_reaclib__derived_from_inverse&gt;)
+S32 ⟶ He4 + Si28               [Q =  -6.95 MeV] (S32 --&gt; He4 + Si28 &lt;ths8_reaclib__derived_from_inverse&gt;)
+Ar36 ⟶ He4 + S32               [Q =  -6.64 MeV] (Ar36 --&gt; He4 + S32 &lt;ths8_reaclib__derived_from_inverse&gt;)
+Ca40 ⟶ He4 + Ar36              [Q =  -7.04 MeV] (Ca40 --&gt; He4 + Ar36 &lt;ths8_reaclib__derived_from_inverse&gt;)
+Ti44 ⟶ He4 + Ca40              [Q =  -5.13 MeV] (Ti44 --&gt; He4 + Ca40 &lt;chw0_reaclib__derived_from_inverse&gt;)
+Cr48 ⟶ He4 + Ti44              [Q =  -7.70 MeV] (Cr48 --&gt; He4 + Ti44 &lt;ths8_reaclib__derived_from_inverse&gt;)
+Fe52 ⟶ He4 + Cr48              [Q =  -7.94 MeV] (Fe52 --&gt; He4 + Cr48 &lt;ths8_reaclib__derived_from_inverse&gt;)
+Ni56 ⟶ He4 + Fe52              [Q =  -8.00 MeV] (Ni56 --&gt; He4 + Fe52 &lt;ths8_reaclib__derived_from_inverse&gt;)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next we can create a reaction network from our filtered alpha capture library by passing our library to a network constructor using the <code class="docutils literal notranslate"><span class="pre">libraries</span></code> keyword.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">alpha_network</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">alpha_library</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">alpha_network</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/190b4d2adcfcbfd7f045572370294e862b1a9d2503aab21edc1a99346417631e.png" src="_images/190b4d2adcfcbfd7f045572370294e862b1a9d2503aab21edc1a99346417631e.png" />
+</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This is not a realistic network for science applications, because the <span class="math notranslate nohighlight">\((\alpha, p)(p, \gamma)\)</span> links between the
+nuclei are also important.  We’ll discuss adding them (and approximating them) later.</p>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="pynucastro-integration.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Integrating a Network</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="tabulated-weak-rates.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Tabulated Weak Rate Sources</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#searching-all-rates">Searching all rates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-a-rate-by-name">Getting a rate by name</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-filters">Using filters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#specifying-desired-nuclei">Specifying desired nuclei</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exact-filtering">Exact filtering</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-building-an-alpha-capture-network">Example: building an <span class="math notranslate nohighlight">\(\alpha\)</span>-capture network</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By pynucastro development team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024-2025, pynucastro development team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

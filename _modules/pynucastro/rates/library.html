@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.library &#8212; pynucastro 2.8.0.post29+g61d6c512a documentation</title>
+    <title>pynucastro.rates.library &#8212; pynucastro 2.8.0.post30+gb56eb0705 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=c7914d44"></script>
+    <script src="../../../_static/documentation_options.js?v=ea7e4e13"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -183,7 +183,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Working with Libraries</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../library-examples.html">Selecting Rates from a Library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../finding-rates.html">Finding Available Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tabulated-weak-rates.html">Tabulated Weak Rate Sources</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
@@ -501,6 +501,7 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span><span class="p">,</span> <span class="n">UnsupportedNucleus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.alternate_rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeBoerC12agO16</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.derived_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">DerivedRate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.files</span><span class="w"> </span><span class="kn">import</span> <span class="n">_find_rate_file</span><span class="p">,</span> <span class="n">get_rates_dir</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.known_duplicates</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">find_duplicate_rates</span><span class="p">,</span>
@@ -1597,6 +1598,33 @@ document.write(`
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ordering</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;oda&quot;</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="full_library">
+<a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.full_library">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">full_library</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a Library with every rate known to pynucastro.</span>
+<span class="sd">    This will include a lot of duplicate rates (same process</span>
+<span class="sd">    but from different sources).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Library</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">lib</span> <span class="o">=</span> <span class="n">Library</span><span class="p">()</span>
+    <span class="n">lib</span> <span class="o">+=</span> <span class="n">ReacLibLibrary</span><span class="p">()</span>
+    <span class="n">lib</span> <span class="o">+=</span> <span class="n">SuzukiLibrary</span><span class="p">()</span>
+    <span class="n">lib</span> <span class="o">+=</span> <span class="n">LangankeLibrary</span><span class="p">()</span>
+    <span class="n">lib</span> <span class="o">+=</span> <span class="n">PruetFullerLibrary</span><span class="p">()</span>
+    <span class="n">lib</span> <span class="o">+=</span> <span class="n">FFNLibrary</span><span class="p">()</span>
+    <span class="n">lib</span> <span class="o">+=</span> <span class="n">OdaLibrary</span><span class="p">()</span>
+    <span class="n">_r</span> <span class="o">=</span> <span class="n">DeBoerC12agO16</span><span class="p">()</span>
+    <span class="n">lib</span><span class="o">.</span><span class="n">add_rate</span><span class="p">(</span><span class="n">_r</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">lib</span></div>
 
 </pre></div>
 
