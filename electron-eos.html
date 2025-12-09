@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>The Electron-Positron EOS &#8212; pynucastro 2.8.0.post31+gcd28b2448 documentation</title>
+    <title>The Electron-Positron EOS &#8212; pynucastro 2.8.0.post32+ga2c3936e1 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=054b0c76"></script>
+    <script src="_static/documentation_options.js?v=ba871915"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -273,10 +273,12 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.eos.html">pynucastro.eos package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.degeneracy_parameter_bounds.html">pynucastro.eos.degeneracy_parameter_bounds module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.difference_utils.html">pynucastro.eos.difference_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.electron_eos.html">pynucastro.eos.electron_eos module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.fermi_integrals.html">pynucastro.eos.fermi_integrals module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.quadrature_weights.html">pynucastro.eos.quadrature_weights module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.stellar_eos.html">pynucastro.eos.stellar_eos module</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -612,7 +614,7 @@ document.write(`
 <a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.ElectronEOS.pe_state" title="pynucastro.eos.electron_eos.ElectronEOS.pe_state"><code class="xref py py-func docutils literal notranslate"><span class="pre">pe_state</span></code></a> function.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">es</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">eos</span><span class="o">.</span><span class="n">ElectronEOS</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eos</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">eos</span><span class="o">.</span><span class="n">ElectronEOS</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -645,14 +647,15 @@ of electrons (assuming full ionization) via <span class="math notranslate nohigh
 </div>
 </div>
 </div>
+<p>The <code class="docutils literal notranslate"><span class="pre">pe_state()</span></code> function returns two <a class="reference internal" href="pynucastro.eos.stellar_eos.html#pynucastro.eos.stellar_eos.EOSState" title="pynucastro.eos.stellar_eos.EOSState"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EOSState</span></code></a> objects—one for electrons and the other for positrons.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">ir</span><span class="p">,</span> <span class="n">rho</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rhos</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">it</span><span class="p">,</span> <span class="n">T</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Ts</span><span class="p">):</span>
-        <span class="n">state</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">pe_state</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">compute_derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">eta</span><span class="p">[</span><span class="n">ir</span><span class="p">,</span> <span class="n">it</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">eta</span>
-        <span class="n">n_e</span><span class="p">[</span><span class="n">ir</span><span class="p">,</span> <span class="n">it</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">n_e</span>
-        <span class="n">n_pos</span><span class="p">[</span><span class="n">ir</span><span class="p">,</span> <span class="n">it</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">n_pos</span>        
+        <span class="n">es</span><span class="p">,</span> <span class="n">ps</span> <span class="o">=</span> <span class="n">eos</span><span class="o">.</span><span class="n">pe_state</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">compute_derivs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">eta</span><span class="p">[</span><span class="n">ir</span><span class="p">,</span> <span class="n">it</span><span class="p">]</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">eta</span>
+        <span class="n">n_e</span><span class="p">[</span><span class="n">ir</span><span class="p">,</span> <span class="n">it</span><span class="p">]</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">n</span>
+        <span class="n">n_pos</span><span class="p">[</span><span class="n">ir</span><span class="p">,</span> <span class="n">it</span><span class="p">]</span> <span class="o">=</span> <span class="n">ps</span><span class="o">.</span><span class="n">n</span>
 </pre></div>
 </div>
 </div>
@@ -688,7 +691,7 @@ some interpolation to smooth it.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7f0dda17af50&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7efbd3677190&gt;
 </pre></div>
 </div>
 <img alt="_images/a7b9c85459254dda9083552ac0a1a0473104511809a2c4f52baabe298729b500.png" src="_images/a7b9c85459254dda9083552ac0a1a0473104511809a2c4f52baabe298729b500.png" />
@@ -730,7 +733,7 @@ while at high densities and low temperatures, we are very degenerate (<span clas
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7f0dd9e4af50&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7efbd327eed0&gt;
 </pre></div>
 </div>
 <img alt="_images/74cb2d742082c4adee510510ba6e18d7a5e0c80af19eb98fcc7e77bf5505f628.png" src="_images/74cb2d742082c4adee510510ba6e18d7a5e0c80af19eb98fcc7e77bf5505f628.png" />

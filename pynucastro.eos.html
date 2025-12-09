@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.eos package &#8212; pynucastro 2.8.0.post31+gcd28b2448 documentation</title>
+    <title>pynucastro.eos package &#8212; pynucastro 2.8.0.post32+ga2c3936e1 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=054b0c76"></script>
+    <script src="_static/documentation_options.js?v=ba871915"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -49,7 +49,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'pynucastro.eos';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pynucastro.eos.difference_utils module" href="pynucastro.eos.difference_utils.html" />
+    <link rel="next" title="pynucastro.eos.degeneracy_parameter_bounds module" href="pynucastro.eos.degeneracy_parameter_bounds.html" />
     <link rel="prev" title="pynucastro.constants.constants module" href="pynucastro.constants.constants.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -271,10 +271,12 @@
 </ul>
 </details></li>
 <li class="toctree-l3 current active has-children"><a class="current reference internal" href="#">pynucastro.eos package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.degeneracy_parameter_bounds.html">pynucastro.eos.degeneracy_parameter_bounds module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.difference_utils.html">pynucastro.eos.difference_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.electron_eos.html">pynucastro.eos.electron_eos module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.fermi_integrals.html">pynucastro.eos.fermi_integrals module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.quadrature_weights.html">pynucastro.eos.quadrature_weights module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.stellar_eos.html">pynucastro.eos.stellar_eos module</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -589,6 +591,10 @@ stellar material.</p>
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro.eos.degeneracy_parameter_bounds.html">pynucastro.eos.degeneracy_parameter_bounds module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.eos.degeneracy_parameter_bounds.html#pynucastro.eos.degeneracy_parameter_bounds.get_eta_bounds"><code class="docutils literal notranslate"><span class="pre">get_eta_bounds()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro.eos.difference_utils.html">pynucastro.eos.difference_utils module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.eos.difference_utils.html#pynucastro.eos.difference_utils.adaptive_diff"><code class="docutils literal notranslate"><span class="pre">adaptive_diff()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.eos.difference_utils.html#pynucastro.eos.difference_utils.eighth_order_diff"><code class="docutils literal notranslate"><span class="pre">eighth_order_diff()</span></code></a></li>
@@ -597,28 +603,6 @@ stellar material.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro.eos.electron_eos.html">pynucastro.eos.electron_eos module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState"><code class="docutils literal notranslate"><span class="pre">EOSState</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dee_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dee_dT</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dee_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dee_drho</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dep_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dep_dT</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dep_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dep_drho</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dne_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dne_dT</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dne_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dne_drho</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dnp_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dnp_dT</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dnp_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dnp_drho</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dpe_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dpe_dT</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dpe_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dpe_drho</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dpp_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dpp_dT</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.dpp_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dpp_drho</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.e_e"><code class="docutils literal notranslate"><span class="pre">EOSState.e_e</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.e_pos"><code class="docutils literal notranslate"><span class="pre">EOSState.e_pos</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.eta"><code class="docutils literal notranslate"><span class="pre">EOSState.eta</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.n_e"><code class="docutils literal notranslate"><span class="pre">EOSState.n_e</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.n_pos"><code class="docutils literal notranslate"><span class="pre">EOSState.n_pos</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.p_e"><code class="docutils literal notranslate"><span class="pre">EOSState.p_e</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.EOSState.p_pos"><code class="docutils literal notranslate"><span class="pre">EOSState.p_pos</span></code></a></li>
-</ul>
-</li>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.ElectronEOS"><code class="docutils literal notranslate"><span class="pre">ElectronEOS</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.ElectronEOS.pe_state"><code class="docutils literal notranslate"><span class="pre">ElectronEOS.pe_state()</span></code></a></li>
 </ul>
@@ -641,6 +625,10 @@ stellar material.</p>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.eos.quadrature_weights.html#pynucastro.eos.quadrature_weights.w_leg"><code class="docutils literal notranslate"><span class="pre">w_leg</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.eos.quadrature_weights.html#pynucastro.eos.quadrature_weights.x_lag"><code class="docutils literal notranslate"><span class="pre">x_lag</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.eos.quadrature_weights.html#pynucastro.eos.quadrature_weights.w_lag"><code class="docutils literal notranslate"><span class="pre">w_lag</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro.eos.stellar_eos.html">pynucastro.eos.stellar_eos module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.eos.stellar_eos.html#pynucastro.eos.stellar_eos.EOSState"><code class="docutils literal notranslate"><span class="pre">EOSState</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -669,11 +657,11 @@ stellar material.</p>
       </div>
     </a>
     <a class="right-next"
-       href="pynucastro.eos.difference_utils.html"
+       href="pynucastro.eos.degeneracy_parameter_bounds.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pynucastro.eos.difference_utils module</p>
+        <p class="prev-next-title">pynucastro.eos.degeneracy_parameter_bounds module</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

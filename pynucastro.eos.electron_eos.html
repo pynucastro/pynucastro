@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.eos.electron_eos module &#8212; pynucastro 2.8.0.post31+gcd28b2448 documentation</title>
+    <title>pynucastro.eos.electron_eos module &#8212; pynucastro 2.8.0.post32+ga2c3936e1 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=054b0c76"></script>
+    <script src="_static/documentation_options.js?v=ba871915"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -271,10 +271,12 @@
 </ul>
 </details></li>
 <li class="toctree-l3 current active has-children"><a class="reference internal" href="pynucastro.eos.html">pynucastro.eos package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.degeneracy_parameter_bounds.html">pynucastro.eos.degeneracy_parameter_bounds module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.difference_utils.html">pynucastro.eos.difference_utils module</a></li>
 <li class="toctree-l4 current active"><a class="current reference internal" href="#">pynucastro.eos.electron_eos module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.fermi_integrals.html">pynucastro.eos.fermi_integrals module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.quadrature_weights.html">pynucastro.eos.quadrature_weights module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.stellar_eos.html">pynucastro.eos.stellar_eos module</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -569,28 +571,6 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState"><code class="docutils literal notranslate"><span class="pre">EOSState</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dee_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dee_dT</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dee_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dee_drho</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dep_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dep_dT</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dep_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dep_drho</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dne_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dne_dT</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dne_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dne_drho</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dnp_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dnp_dT</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dnp_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dnp_drho</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dpe_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dpe_dT</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dpe_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dpe_drho</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dpp_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dpp_dT</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dpp_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dpp_drho</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.e_e"><code class="docutils literal notranslate"><span class="pre">EOSState.e_e</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.e_pos"><code class="docutils literal notranslate"><span class="pre">EOSState.e_pos</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.eta"><code class="docutils literal notranslate"><span class="pre">EOSState.eta</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.n_e"><code class="docutils literal notranslate"><span class="pre">EOSState.n_e</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.n_pos"><code class="docutils literal notranslate"><span class="pre">EOSState.n_pos</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.p_e"><code class="docutils literal notranslate"><span class="pre">EOSState.p_e</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.p_pos"><code class="docutils literal notranslate"><span class="pre">EOSState.p_pos</span></code></a></li>
-</ul>
-</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.ElectronEOS"><code class="docutils literal notranslate"><span class="pre">ElectronEOS</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.ElectronEOS.pe_state"><code class="docutils literal notranslate"><span class="pre">ElectronEOS.pe_state()</span></code></a></li>
 </ul>
@@ -610,126 +590,6 @@ document.write(`
 <span id="pynucastro-eos-electron-eos-module"></span><h1>pynucastro.eos.electron_eos module<a class="headerlink" href="#module-pynucastro.eos.electron_eos" title="Link to this heading">#</a></h1>
 <p>Classes and methods for managing an electron / positron equation of
 state.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="pynucastro.eos.electron_eos.EOSState">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.eos.electron_eos.</span></span><span class="sig-name descname"><span class="pre">EOSState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e_e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dne_drho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dne_dT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dnp_drho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dnp_dT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpe_drho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpe_dT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpp_drho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpp_dT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dee_drho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dee_dT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_drho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dep_dT</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pynucastro.eos.electron_eos.EOSState" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.eos.electron_eos.EOSState.dee_dT">
-<span class="sig-name descname"><span class="pre">dee_dT</span></span><a class="headerlink" href="#pynucastro.eos.electron_eos.EOSState.dee_dT" title="Link to this definition">#</a></dt>
-<dd><p>Alias for field number 16</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.eos.electron_eos.EOSState.dee_drho">
-<span class="sig-name descname"><span class="pre">dee_drho</span></span><a class="headerlink" href="#pynucastro.eos.electron_eos.EOSState.dee_drho" title="Link to this definition">#</a></dt>
-<dd><p>Alias for field number 15</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.eos.electron_eos.EOSState.dep_dT">
-<span class="sig-name descname"><span class="pre">dep_dT</span></span><a class="headerlink" href="#pynucastro.eos.electron_eos.EOSState.dep_dT" title="Link to this definition">#</a></dt>
-<dd><p>Alias for field number 18</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.eos.electron_eos.EOSState.dep_drho">
-<span class="sig-name descname"><span class="pre">dep_drho</span></span><a class="headerlink" href="#pynucastro.eos.electron_eos.EOSState.dep_drho" title="Link to this definition">#</a></dt>
-<dd><p>Alias for field number 17</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.eos.electron_eos.EOSState.dne_dT">
-<span class="sig-name descname"><span class="pre">dne_dT</span></span><a class="headerlink" href="#pynucastro.eos.electron_eos.EOSState.dne_dT" title="Link to this definition">#</a></dt>
-<dd><p>Alias for field number 8</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.eos.electron_eos.EOSState.dne_drho">
-<span class="sig-name descname"><span class="pre">dne_drho</span></span><a class="headerlink" href="#pynucastro.eos.electron_eos.EOSState.dne_drho" title="Link to this definition">#</a></dt>
-<dd><p>Alias for field number 7</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.eos.electron_eos.EOSState.dnp_dT">
-<span class="sig-name descname"><span class="pre">dnp_dT</span></span><a class="headerlink" href="#pynucastro.eos.electron_eos.EOSState.dnp_dT" title="Link to this definition">#</a></dt>
-<dd><p>Alias for field number 10</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.eos.electron_eos.EOSState.dnp_drho">
-<span class="sig-name descname"><span class="pre">dnp_drho</span></span><a class="headerlink" href="#pynucastro.eos.electron_eos.EOSState.dnp_drho" title="Link to this definition">#</a></dt>
-<dd><p>Alias for field number 9</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.eos.electron_eos.EOSState.dpe_dT">
-<span class="sig-name descname"><span class="pre">dpe_dT</span></span><a class="headerlink" href="#pynucastro.eos.electron_eos.EOSState.dpe_dT" title="Link to this definition">#</a></dt>
-<dd><p>Alias for field number 12</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.eos.electron_eos.EOSState.dpe_drho">
-<span class="sig-name descname"><span class="pre">dpe_drho</span></span><a class="headerlink" href="#pynucastro.eos.electron_eos.EOSState.dpe_drho" title="Link to this definition">#</a></dt>
-<dd><p>Alias for field number 11</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.eos.electron_eos.EOSState.dpp_dT">
-<span class="sig-name descname"><span class="pre">dpp_dT</span></span><a class="headerlink" href="#pynucastro.eos.electron_eos.EOSState.dpp_dT" title="Link to this definition">#</a></dt>
-<dd><p>Alias for field number 14</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.eos.electron_eos.EOSState.dpp_drho">
-<span class="sig-name descname"><span class="pre">dpp_drho</span></span><a class="headerlink" href="#pynucastro.eos.electron_eos.EOSState.dpp_drho" title="Link to this definition">#</a></dt>
-<dd><p>Alias for field number 13</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.eos.electron_eos.EOSState.e_e">
-<span class="sig-name descname"><span class="pre">e_e</span></span><a class="headerlink" href="#pynucastro.eos.electron_eos.EOSState.e_e" title="Link to this definition">#</a></dt>
-<dd><p>Alias for field number 4</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.eos.electron_eos.EOSState.e_pos">
-<span class="sig-name descname"><span class="pre">e_pos</span></span><a class="headerlink" href="#pynucastro.eos.electron_eos.EOSState.e_pos" title="Link to this definition">#</a></dt>
-<dd><p>Alias for field number 5</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.eos.electron_eos.EOSState.eta">
-<span class="sig-name descname"><span class="pre">eta</span></span><a class="headerlink" href="#pynucastro.eos.electron_eos.EOSState.eta" title="Link to this definition">#</a></dt>
-<dd><p>Alias for field number 6</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.eos.electron_eos.EOSState.n_e">
-<span class="sig-name descname"><span class="pre">n_e</span></span><a class="headerlink" href="#pynucastro.eos.electron_eos.EOSState.n_e" title="Link to this definition">#</a></dt>
-<dd><p>Alias for field number 0</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.eos.electron_eos.EOSState.n_pos">
-<span class="sig-name descname"><span class="pre">n_pos</span></span><a class="headerlink" href="#pynucastro.eos.electron_eos.EOSState.n_pos" title="Link to this definition">#</a></dt>
-<dd><p>Alias for field number 1</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.eos.electron_eos.EOSState.p_e">
-<span class="sig-name descname"><span class="pre">p_e</span></span><a class="headerlink" href="#pynucastro.eos.electron_eos.EOSState.p_e" title="Link to this definition">#</a></dt>
-<dd><p>Alias for field number 2</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.eos.electron_eos.EOSState.p_pos">
-<span class="sig-name descname"><span class="pre">p_pos</span></span><a class="headerlink" href="#pynucastro.eos.electron_eos.EOSState.p_pos" title="Link to this definition">#</a></dt>
-<dd><p>Alias for field number 3</p>
-</dd></dl>
-
-</dd></dl>
-
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.eos.electron_eos.ElectronEOS">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.eos.electron_eos.</span></span><span class="sig-name descname"><span class="pre">ElectronEOS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_positrons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/eos/electron_eos.html#ElectronEOS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.eos.electron_eos.ElectronEOS" title="Link to this definition">#</a></dt>
@@ -755,8 +615,12 @@ and composition</p>
 <li><p><strong>comp</strong> (<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><em>Composition</em></a>) – Composition (abundances of each nucleus)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#pynucastro.eos.electron_eos.EOSState" title="pynucastro.eos.electron_eos.EOSState">EOSState</a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>electron_state</strong> (<em>EOSState</em>) – The thermodynamics of the electrons</p></li>
+<li><p><strong>positron_state</strong> (<em>EOSState</em>) – The thermodynamics of the positrons</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -810,28 +674,6 @@ and composition</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState"><code class="docutils literal notranslate"><span class="pre">EOSState</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dee_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dee_dT</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dee_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dee_drho</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dep_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dep_dT</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dep_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dep_drho</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dne_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dne_dT</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dne_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dne_drho</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dnp_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dnp_dT</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dnp_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dnp_drho</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dpe_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dpe_dT</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dpe_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dpe_drho</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dpp_dT"><code class="docutils literal notranslate"><span class="pre">EOSState.dpp_dT</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.dpp_drho"><code class="docutils literal notranslate"><span class="pre">EOSState.dpp_drho</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.e_e"><code class="docutils literal notranslate"><span class="pre">EOSState.e_e</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.e_pos"><code class="docutils literal notranslate"><span class="pre">EOSState.e_pos</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.eta"><code class="docutils literal notranslate"><span class="pre">EOSState.eta</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.n_e"><code class="docutils literal notranslate"><span class="pre">EOSState.n_e</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.n_pos"><code class="docutils literal notranslate"><span class="pre">EOSState.n_pos</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.p_e"><code class="docutils literal notranslate"><span class="pre">EOSState.p_e</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.EOSState.p_pos"><code class="docutils literal notranslate"><span class="pre">EOSState.p_pos</span></code></a></li>
-</ul>
-</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.ElectronEOS"><code class="docutils literal notranslate"><span class="pre">ElectronEOS</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.eos.electron_eos.ElectronEOS.pe_state"><code class="docutils literal notranslate"><span class="pre">ElectronEOS.pe_state()</span></code></a></li>
 </ul>
