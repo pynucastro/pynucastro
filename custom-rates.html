@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Creating a Custom Rate &#8212; pynucastro 2.8.0.post34+g3c5a077e1 documentation</title>
+    <title>Creating a Custom Rate &#8212; pynucastro 2.8.0.post35+g41e4a615b documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=b2d9cde1"></script>
+    <script src="_static/documentation_options.js?v=0ef19afa"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -702,7 +702,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;N14_p__O15__generic&#39;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;N14_p_to_O15_generic&#39;
 </pre></div>
 </div>
 </div>
@@ -716,8 +716,8 @@ document.write(`
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@numba.njit()
-def N14_p__O15__generic(rate_eval, tf):
-    rate_eval.N14_p__O15__generic = 1.416655077954945e-13 * (tf.T9 * 1.e9 / 30000000.0 )**(15.601859314950396)
+def N14_p_to_O15_generic(rate_eval, tf):
+    rate_eval.N14_p_to_O15_generic = 1.416655077954945e-13 * (tf.T9 * 1.e9 / 30000000.0 )**(15.601859314950396)
 </pre></div>
 </div>
 </div>
@@ -819,11 +819,11 @@ is included.  For example, for the protons:</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dYdt[jp] = (
-      -rho*Y[jp]*Y[jc12]*rate_eval.p_C12__N13  +
-      -rho*Y[jp]*Y[jc13]*rate_eval.p_C13__N14  +
-      -rho*Y[jp]*Y[jn13]*rate_eval.p_N13__O14  +
-      -rho*Y[jp]*Y[jn15]*rate_eval.p_N15__He4_C12  +
-      -rho*Y[jp]*Y[jn14]*rate_eval.N14_p__O15__generic
+      -rho*Y[jp]*Y[jc12]*rate_eval.p_C12_to_N13  +
+      -rho*Y[jp]*Y[jc13]*rate_eval.p_C13_to_N14  +
+      -rho*Y[jp]*Y[jn13]*rate_eval.p_N13_to_O14  +
+      -rho*Y[jp]*Y[jn15]*rate_eval.p_N15_to_He4_C12  +
+      -rho*Y[jp]*Y[jn14]*rate_eval.N14_p_to_O15_generic
    )
 </pre></div>
 </div>
