@@ -17,3 +17,4 @@ Submodules
    pynucastro.eos.electron_eos
    pynucastro.eos.fermi_integrals
    pynucastro.eos.quadrature_weights
+   pynucastro.eos.stellar_eos

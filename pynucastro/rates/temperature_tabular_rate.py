@@ -8,7 +8,7 @@ import numpy as np
 
 import pynucastro.numba_util as numba
 from pynucastro.numba_util import jitclass
-from pynucastro.rates.rate import Rate
+from pynucastro.rates.rate import Rate, RateSource
 
 
 @jitclass([
@@ -121,8 +121,11 @@ class TemperatureTabularRate(Rate):
 
     """
 
-    def __init__(self, log_t9_data, log_rate_data, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, log_t9_data, log_rate_data, rate_source=None, **kwargs):
+        super().__init__(label="temptab", **kwargs)
+
+        if rate_source:
+            self.source = RateSource.source(rate_source)
 
         # make sure there are no weak interactions -- we don't
         # support those yet
@@ -142,16 +145,11 @@ class TemperatureTabularRate(Rate):
         products_str = '_'.join([repr(nuc) for nuc in self.products])
         self.fname = f'{reactants_str}__{products_str}__temptab'
 
-        self.label = "temptab"
-
         # tabular here really means weak rate tabular
         self.tabular = False
 
         # we should initialize this somehow
         self.weak_type = ""
-
-        # this should not really be needed
-        self.chapter = "temp_tabular"
 
         self._set_rhs_properties()
         self._set_screening()
@@ -186,9 +184,7 @@ class TemperatureTabularRate(Rate):
 
         """
 
-        ssrc = 'temp_tabular'
-
-        return f'{self.rid} <{self.label.strip()}_{ssrc}>'
+        return f'{self.rid} <{self.label.strip()}>'
 
     def function_string_py(self):
         """Construct the python function that computes the rate.
