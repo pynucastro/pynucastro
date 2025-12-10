@@ -4,6 +4,7 @@ properties have been modified from the original source.
 """
 
 from pynucastro.rates.rate import Rate
+from pynucastro.rates.reaclib_rate import ReacLibRate
 
 
 class ModifiedRate(Rate):
@@ -43,6 +44,13 @@ class ModifiedRate(Rate):
 
         self.original_rate = original_rate
         self.update_screening = update_screening
+
+        # at the moment, this is only tested with ReacLibRate
+        # a potential issue is in the C++ code generation where
+        # we output modified rates only after ReacLib rates,
+        # so we need to make sure other rate types are computed
+        # first, before any modified rates
+        assert isinstance(original_rate, ReacLibRate)
 
         if new_reactants is not None:
             reactants = new_reactants
