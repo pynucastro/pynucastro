@@ -10,6 +10,7 @@ from os import walk
 from pathlib import Path
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
+from pynucastro.rates.alternate_rates import DeBoerC12agO16
 from pynucastro.rates.derived_rate import DerivedRate
 from pynucastro.rates.files import _find_rate_file, get_rates_dir
 from pynucastro.rates.known_duplicates import (find_duplicate_rates,
@@ -1014,3 +1015,27 @@ class OdaLibrary(TabularLibrary):
 
     def __init__(self):
         super().__init__(ordering=["oda"])
+
+
+def full_library():
+    """Return a Library with every rate known to pynucastro.
+    This will include a lot of duplicate rates (same process
+    but from different sources).
+
+    Returns
+    -------
+    Library
+
+    """
+
+    lib = Library()
+    lib += ReacLibLibrary()
+    lib += SuzukiLibrary()
+    lib += LangankeLibrary()
+    lib += PruetFullerLibrary()
+    lib += FFNLibrary()
+    lib += OdaLibrary()
+    _r = DeBoerC12agO16()
+    lib.add_rate(_r)
+
+    return lib

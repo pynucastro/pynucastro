@@ -33,8 +33,12 @@ The main classes are:
 
   * :func:`TabularRate <pynucastro.rates.tabular_rate.TabularRate>`: This is a
     rate that is tabulated in terms of :math:`(T, \rho Y_e)`.  This is
-    how the weak rate (electron captures and beta-decays) are stored.
+    how the weak rates (electron captures and beta-decays) are stored.
     Interpolation is used to find the rate at any thermodynamic state.
+
+  * :func:`TemperatureTabularRate <pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate>`: This supports
+    a strong rate where the temperature dependent part ($N_A <\sigma v>$)
+    is given as a tabulation in terms of temperature.
 
   * :func:`ApproximateRate <pynucastro.rates.approximate_rates.ApproximateRate>`:
     An approximate rate assumes equilibration of intermediate nuclei to create
@@ -64,10 +68,13 @@ The main classes are:
   There are two important subclasses:
 
   * :func:`ReacLibLibrary <pynucastro.rates.library.ReacLibLibrary>`: The
-    entire ReacLib rate library (> 80,000 rates)
+    entire ReacLib rate library (> 80,000 rates).
 
   * :func:`TabularLibrary <pynucastro.rates.library.TabularLibrary>`: A
-    `Library` containing all known tabular weak rates.
+    `Library` providing tabulated weak rate coverage of nuclei.
+
+  additionally, the helper function, :func:`full_library <pynucastro.rates.library.full_library>`
+  will return a ``Library`` with every rate known to pynucastro.
 
 * :func:`Composition
   <pynucastro.networks.rate_collection.Composition>`: This is a

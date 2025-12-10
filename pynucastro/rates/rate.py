@@ -832,7 +832,8 @@ class RateSource:
         "suzuki": "https://doi.org/10.3847/0004-637X/817/2/163",
         "ffn": "https://doi.org/10.1086/190779",
         "pruet_fuller": "https://doi.org/10.1086/376753",
-        "reaclib": "https://reaclib.jinaweb.org/labels.php?action=viewLabel&label="
+        "reaclib": "https://reaclib.jinaweb.org/labels.php?action=viewLabel&label=",
+        "iliadis2022": "https://journals.aps.org/prc/abstract/10.1103/PhysRevC.106.055802"
     }
 
     @staticmethod
