@@ -15,16 +15,16 @@ class TestAlphaGammaTfactors:
 
     @pytest.fixture(scope="class")
     def rp(self, rc):
-        return rc.get_rate("he4_mg24__si28")
+        return rc.get_rate("he4_mg24_to_si28")
 
     @pytest.fixture(scope="class")
     def rs(self, rc):
-        return [rc.get_rate("he4_mg24__p_al27"), rc.get_rate("p_al27__si28")]
+        return [rc.get_rate("he4_mg24_to_p_al27"), rc.get_rate("p_al27_to_si28")]
 
     @pytest.fixture(scope="class")
     def ar(self, rc, rp, rs):
-        rp_reverse = rc.get_rate("si28__he4_mg24")
-        rs_reverse = [rc.get_rate("si28__p_al27"), rc.get_rate("p_al27__he4_mg24")]
+        rp_reverse = rc.get_rate("si28_to_he4_mg24")
+        rs_reverse = [rc.get_rate("si28_to_p_al27"), rc.get_rate("p_al27_to_he4_mg24")]
 
         # approximate Mg24(a,g)Si28 together with Mg24(a,p)Al27(p,g)Si28
 
@@ -32,7 +32,7 @@ class TestAlphaGammaTfactors:
                                     primary_reverse=rp_reverse, secondary_reverse=rs_reverse)
 
     def test_label(self, ar):
-        assert ar.fname == "Mg24_He4__Si28__approx"
+        assert ar.fname == "Mg24_He4_to_Si28_approx"
 
     def test_low_temp(self, ar, rp, rs):
         # at low temperatures, the approximate (a,g) should be ~ (a,g) + (a,p)
@@ -46,12 +46,12 @@ class TestAlphaGammaTfactors:
     def test_child_rates(self, ar):
 
         cr = ar.get_child_rates()
-        assert cr[0].fname == "He4_Mg24__Si28"
-        assert cr[1].fname == "He4_Mg24__p_Al27"
-        assert cr[2].fname == "p_Al27__Si28"
-        assert cr[3].fname == "Si28__He4_Mg24"
-        assert cr[4].fname == "Si28__p_Al27"
-        assert cr[5].fname == "p_Al27__He4_Mg24"
+        assert cr[0].fname == "He4_Mg24_to_Si28"
+        assert cr[1].fname == "He4_Mg24_to_p_Al27"
+        assert cr[2].fname == "p_Al27_to_Si28"
+        assert cr[3].fname == "Si28_to_He4_Mg24"
+        assert cr[4].fname == "Si28_to_p_Al27"
+        assert cr[5].fname == "p_Al27_to_He4_Mg24"
 
         assert len(cr) == 6
 
@@ -67,8 +67,8 @@ class TestDoubleN:
 
         rf, rr = nn
 
-        assert rf.fname == "Fe52_n_n__Fe54__approx"
-        assert rr.fname == "Fe54__Fe52_n_n__approx"
+        assert rf.fname == "Fe52_n_n_to_Fe54_approx"
+        assert rr.fname == "Fe54_to_Fe52_n_n_approx"
 
     def test_Q(self, nn):
 
@@ -82,13 +82,13 @@ class TestDoubleN:
 
         assert rf.function_string_py() == \
 """@numba.njit()
-def Fe52_n_n__Fe54__approx(rate_eval, tf, rho=None, Y=None):
+def Fe52_n_n_to_Fe54_approx(rate_eval, tf, rho=None, Y=None):
     Yn = Y[jn]
-    r1_ng = rate_eval.n_Fe52__Fe53
-    r2_ng = rate_eval.n_Fe53__Fe54
-    r1_gn = rate_eval.Fe53__n_Fe52
+    r1_ng = rate_eval.n_Fe52_to_Fe53
+    r2_ng = rate_eval.n_Fe53_to_Fe54
+    r1_gn = rate_eval.Fe53_to_n_Fe52
     rate = r1_ng * r2_ng / (rho * Yn * r2_ng + r1_gn)
-    rate_eval.Fe52_n_n__Fe54__approx = rate
+    rate_eval.Fe52_n_n_to_Fe54_approx = rate
 
 """
 
