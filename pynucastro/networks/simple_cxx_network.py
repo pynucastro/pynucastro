@@ -64,7 +64,7 @@ class SimpleCxxNetwork(BaseCxxNetwork):
                 # we can have both a(aa,g)c12 and a(aa,p)b11
                 of.write('\n')
                 for rr in scr.rates:
-                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.cname()}) *= scor * scor2;\n')
+                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.fname}) *= scor * scor2;\n')
 
             else:
                 # there might be several rates that have the same
@@ -73,7 +73,7 @@ class SimpleCxxNetwork(BaseCxxNetwork):
 
                 of.write('\n')
                 for rr in scr.rates:
-                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.cname()}) *= scor;\n')
+                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.fname}) *= scor;\n')
 
             of.write('\n')
 

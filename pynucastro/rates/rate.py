@@ -126,7 +126,7 @@ class Rate:
         # the fname is used when writing the code to evaluate the rate
         reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
         products_str = '_'.join([repr(nuc) for nuc in self.products])
-        self.fname = f'{reactants_str}__{products_str}__{label}'
+        self.fname = f'{reactants_str}_to_{products_str}_{label}'
 
         self.weak_type = weak_type
 
@@ -420,18 +420,6 @@ class Rate:
             self.ion_screen.append(nucz[1])
             if len(nucz) == 3:
                 self.ion_screen.append(nucz[2])
-
-    def cname(self):
-        """Get a C++-safe version of the rate name
-
-        Returns
-        -------
-        str
-
-        """
-        # replace the "__" separating reactants and products with "_to_"
-        # and convert all other "__" to single "_"
-        return self.fname.replace("__", "_to_", 1).replace("__", "_")
 
     def get_rate_id(self):
         """Get an identifying string for this rate.
@@ -847,7 +835,8 @@ class RateSource:
         "suzuki": "https://doi.org/10.3847/0004-637X/817/2/163",
         "ffn": "https://doi.org/10.1086/190779",
         "pruet_fuller": "https://doi.org/10.1086/376753",
-        "reaclib": "https://reaclib.jinaweb.org/labels.php?action=viewLabel&label="
+        "reaclib": "https://reaclib.jinaweb.org/labels.php?action=viewLabel&label=",
+        "iliadis2022": "https://journals.aps.org/prc/abstract/10.1103/PhysRevC.106.055802"
     }
 
     @staticmethod

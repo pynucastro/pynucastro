@@ -5,6 +5,8 @@ import sys
 import warnings
 from pathlib import Path
 
+import numpy as np
+
 from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.rates import ApproximateRate, ModifiedRate
@@ -244,6 +246,11 @@ class PythonNetwork(RateCollection):
         for r in self.tabular_rates:
             ostr += format_rate_call(r, use_tf=False)
 
+        if self.temperature_tabular_rates:
+            ostr += f"\n{indent}# temperature tabular rates\n"
+        for r in self.temperature_tabular_rates:
+            ostr += format_rate_call(r, use_tf=False)
+
         if self.custom_rates:
             ostr += f"\n{indent}# custom rates\n"
         for r in self.custom_rates:
@@ -307,7 +314,10 @@ class PythonNetwork(RateCollection):
         of.write("import numpy as np\n")
         of.write("from pynucastro.constants import constants\n")
         of.write("from numba.experimental import jitclass\n\n")
-        of.write("from pynucastro.rates import TableIndex, TableInterpolator, TabularRate, Tfactors\n")
+
+        of.write("from pynucastro.rates import (TableIndex, TableInterpolator, TabularRate,\n")
+        of.write("                              TempTableInterpolator, TemperatureTabularRate,\n")
+        of.write("                              Tfactors)\n")
         of.write("from pynucastro.screening import PlasmaState, ScreenFactors\n\n")
 
         # integer keys
@@ -403,8 +413,32 @@ class PythonNetwork(RateCollection):
             of.write(f"                  {r.fname}_rate.table_temp_lines,\n")
             of.write(f"                  {r.fname}_rate.tabular_data_table)\n\n")
 
-        of.write("@numba.njit()\n")
+        # temperature tabular rate data
+        if self.temperature_tabular_rates:
+            of.write("# note: we cannot make the TempTableInterpolator global, since numba doesn't like global jitclass\n")
 
+        for r in self.temperature_tabular_rates:
+
+            of.write(f"# temperature / rate tabulation for {r.rid}\n")
+
+            log_temp_str = np.array2string(r.log_t9_data,
+                                           max_line_width=70, precision=17, separator=", ")
+            of.write(f"{r.fname}_log_t9_data = np.array(\n")
+            for line in log_temp_str.split("\n"):
+                of.write(f"     {line}\n")
+            of.write("   )\n")
+
+            log_rate_str = np.array2string(r.log_rate_data,
+                                           max_line_width=70, precision=17, separator=", ")
+            of.write(f"{r.fname}_log_rate_data = np.array(\n")
+            for line in log_rate_str.split("\n"):
+                of.write(f"     {line}\n")
+            of.write("   )\n")
+
+            of.write(f"{r.fname}_info = ({r.fname}_log_t9_data, {r.fname}_log_rate_data)\n\n")
+
+        # Ye helper function
+        of.write("@numba.njit()\n")
         of.write("def ye(Y):\n")
         of.write(f"{indent}return np.sum(Z * Y)/np.sum(A * Y)\n\n")
 

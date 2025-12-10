@@ -187,8 +187,8 @@ Similarly,  :func:`jacobian_string_py <pynucastro.rates.rate.Rate.jacobian_strin
 outputs the contribution to the Jacobian for this rate.
 
 
-Tabulated Rates
----------------
+Tabulated Weak Rates
+--------------------
 
 For electron captures and beta-decays (which are of the form
 :math:`\rm{A \rightarrow B}`), we use tabulated rates.  These are
@@ -281,3 +281,17 @@ evaluate the rate and output the python code.  The function
 <pynucastro.rates.tabular_rate.TabularRate.function_string_py>`
 outputs the python code for managing the interpolation of the data.
 For C++ networks, this interpolation is handled directly by the network class.
+
+
+Temperature-tabulated Rates
+---------------------------
+
+For charged-particle capture rates, an alternative to the ReacLib parameterization
+is to provide a table of $T$ vs. $N_A \langle \sigma v \rangle$.  This tabulation
+is provided by the :py:obj:`TemperatureTabularRate <pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate>`.
+
+A ``TemperatureTabularRate`` stores the 1D table of $N_A \langle \sigma v\rangle$ and
+the ``eval()`` method performs an interpolation on this given a
+temperature.  This rate can then be used in the same way as a
+``ReacLibRate``, and it provides compatible functions to write out the
+function string needed to evaluate the rate.
