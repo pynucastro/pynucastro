@@ -104,7 +104,7 @@ class Rate:
 
     def __init__(self, reactants=None, products=None,
                  Q=None, weak_type="", label="generic",
-                 stoichiometry=None,
+                 stoichiometry=None, rate_source=None,
                  use_identical_particle_factor=True):
 
         if reactants:
@@ -119,15 +119,18 @@ class Rate:
 
         self.label = label
 
-        self.source = None
-        self.modified = False
+        if rate_source is not None:
+            self.source = RateSource.source(rate_source)
 
-        # the fname is used when writing the code to evaluate the rate
-        reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
-        products_str = '_'.join([repr(nuc) for nuc in self.products])
-        self.fname = f'{reactants_str}_to_{products_str}_{label}'
-
+        # Rate Attributes
+        self.weak = False
         self.weak_type = weak_type
+        self.modified = False
+        self.approx = False
+        self.tabular = False
+        self.resonant = False
+        self.derived_from_inverse = False
+        self.removed = False
 
         # the identical particle factor scales the rate to prevent
         # double counting for a rate that has the same nucleus
@@ -158,10 +161,6 @@ class Rate:
 
         if not test:
             raise BaryonConservationError(f"baryon number not conserved in rate {self}")
-
-        self.tabular = False
-
-        self.derived_from_inverse = None
 
         self.rate_eval_needs_rho = False
         self.rate_eval_needs_comp = False
@@ -224,9 +223,10 @@ class Rate:
             self.Q += -c * n.mass
 
     def _set_print_representation(self):
-
-        # string is output to the terminal, rid is used as a dict key,
-        # and pretty_string is latex
+        """Sets string, pretty_string, rid, and fname
+        string is output to the terminal, rid is used as a dict key,
+        pretty_string is latex, and fname is used when writing the code
+        to evaluate the rates."""
 
         # some rates will have no nuclei particles (e.g. gamma) on the left or
         # right -- we'll try to infer those here
@@ -385,6 +385,11 @@ class Rate:
 
         self.pretty_string += r"$"
 
+        # Set the fname
+        reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
+        products_str = '_'.join([repr(nuc) for nuc in self.products])
+        self.fname = f'{reactants_str}_to_{products_str}_{self.label}'
+
     def _set_rhs_properties(self):
         """Compute statistical prefactor and density exponent from the
         reactants.
@@ -493,7 +498,6 @@ class Rate:
 
         self._set_q()
         self._set_screening()
-        self.fname = None    # reset so it will be updated
         self._set_print_representation()
 
     def reactant_count(self, n):

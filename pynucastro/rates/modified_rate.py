@@ -59,11 +59,7 @@ class ModifiedRate(Rate):
                          stoichiometry=stoichiometry)
 
         self.modified = True
-
-        try:
-            self.weak = original_rate.weak
-        except ValueError:
-            self.weak = False
+        self.weak = original_rate.weak
 
         self._set_print_representation()
 

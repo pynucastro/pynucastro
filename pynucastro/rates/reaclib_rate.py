@@ -354,29 +354,6 @@ class ReacLibRate(Rate):
         self._set_screening()
         self._set_print_representation()
 
-    def _set_print_representation(self):
-        """Compose the string representations of this Rate."""
-
-        super()._set_print_representation()
-
-        # This is used to determine which rates to detect as the same reaction
-        # from multiple sources in a Library file, so it should not be unique
-        # to a given source, e.g. wc12, but only unique to the reaction.
-        reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
-        products_str = '_'.join([repr(nuc) for nuc in self.products])
-        self.fname = f'{reactants_str}_to_{products_str}'
-
-        if self.weak:
-            self.fname += f'_weak_{self.weak_type}'
-        if self.modified:
-            self.fname += "_modified"
-        if self.approx:
-            self.fname += "_approx"
-        if self.derived:
-            self.fname += "_derived"
-        if self.removed:
-            self.fname += "_removed"
-
     def __hash__(self):
         return hash(self.__repr__())
 

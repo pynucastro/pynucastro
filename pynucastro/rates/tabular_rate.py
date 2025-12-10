@@ -228,8 +228,6 @@ class TabularRate(Rate):
             self.rfile = rfile.name
             self.ssrc = self.rfile_path.parent.name
 
-        self.fname = None
-
         self.label = "tabular"
         self.tabular = True
 
@@ -373,14 +371,6 @@ class TabularRate(Rate):
 
         """
         self.ion_screen = []
-
-        if not self.fname:
-            # This is used to determine which rates to detect as the same reaction
-            # from multiple sources in a Library file, so it should not be unique
-            # to a given source, e.g. wc12, but only unique to the reaction.
-            reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
-            products_str = '_'.join([repr(nuc) for nuc in self.products])
-            self.fname = f'{reactants_str}_to_{products_str}'
 
     def get_rate_id(self):
         """Get an identifying string for this rate.

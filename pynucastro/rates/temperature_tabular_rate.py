@@ -141,20 +141,6 @@ class TemperatureTabularRate(Rate):
         # same number of data points in T and rate
         assert len(self.log_t9_data) == len(self.log_rate_data)
 
-        reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
-        products_str = '_'.join([repr(nuc) for nuc in self.products])
-        self.fname = f'{reactants_str}__{products_str}__temptab'
-
-        # tabular here really means weak rate tabular
-        self.tabular = False
-
-        # we should initialize this somehow
-        self.weak_type = ""
-
-        self._set_rhs_properties()
-        self._set_screening()
-        self._set_print_representation()
-
         # store the extrema of the thermodynamics
         self.table_Tmin = 1.e9 * 10.0**self.log_t9_data.min()
         self.table_Tmax = 1.e9 * 10.0**self.log_t9_data.max()
