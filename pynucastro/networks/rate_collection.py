@@ -1040,13 +1040,13 @@ class RateCollection:
                     hidden_rates.append(r.original_rate)
         return set(hidden_rates)
 
-    def get_rate(self, rid):
-        """Return a rate matching the id provided.
+    def get_rate(self, fname):
+        """Return a rate matching the fname provided.
 
         Parameters
         ----------
-        rid : str
-            The id of the rate, as returned by Rate.fname
+        fname : str
+            The fname of the rate, as returned by Rate.fname
 
         Returns
         -------
@@ -1054,10 +1054,10 @@ class RateCollection:
 
         """
         try:
-            rid_mod = capitalize_rid(rid, "_")
-            return [r for r in self.rates if r.fname == rid_mod][0]
+            fname_mod = capitalize_rid(fname, "_")
+            return [r for r in self.rates if r.fname == fname_mod][0]
         except IndexError:
-            raise LookupError(f"rate identifier {rid!r} does not match a rate in this network.") from None
+            raise LookupError(f"rate fname {fname!r} does not match a rate in this network.") from None
 
     def get_rate_by_nuclei(self, reactants, products):
         """Given a list of reactants and products, return any matching rates

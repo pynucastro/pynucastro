@@ -364,18 +364,18 @@ class ReacLibRate(Rate):
         # to a given source, e.g. wc12, but only unique to the reaction.
         reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
         products_str = '_'.join([repr(nuc) for nuc in self.products])
-        self.fname = f'{reactants_str}__{products_str}'
+        self.fname = f'{reactants_str}_to_{products_str}'
 
         if self.weak:
-            self.fname += f'__weak__{self.weak_type}'
+            self.fname += f'_weak_{self.weak_type}'
         if self.modified:
-            self.fname += "__modified"
+            self.fname += "_modified"
         if self.approx:
-            self.fname += "__approx"
+            self.fname += "_approx"
         if self.derived:
-            self.fname += "__derived"
+            self.fname += "_derived"
         if self.removed:
-            self.fname += "__removed"
+            self.fname += "_removed"
 
     def __hash__(self):
         return hash(self.__repr__())
@@ -715,7 +715,7 @@ class ReacLibRate(Rate):
         fstring = ""
         fstring += "template <int do_T_derivatives>\n"
         fstring += f"{specifiers}\n"
-        fstring += f"void rate_{self.cname()}({', '.join(args)}) {{\n\n"
+        fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
         fstring += "    rate = 0.0;\n"
         fstring += "    drate_dT = 0.0;\n\n"

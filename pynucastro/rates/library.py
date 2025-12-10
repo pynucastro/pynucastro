@@ -97,9 +97,9 @@ def capitalize_rid(rid, delimiter):
 
     rid_nucs = rid.split(delimiter)
     rid_mod = []
-    do_capitalization = True
     for n in rid_nucs:
-        if n in ("weak", "approx", "derived"):
+        do_capitalization = True
+        if n in ("to", "weak", "approx", "derived"):
             do_capitalization = False
         if do_capitalization:
             if n not in ("n", "p"):
