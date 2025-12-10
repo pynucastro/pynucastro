@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Approximating alpha-capture &#8212; pynucastro 2.8.0.post33+g0376db145 documentation</title>
+    <title>Approximating alpha-capture &#8212; pynucastro 2.8.0.post34+g3c5a077e1 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=18852b50"></script>
+    <script src="_static/documentation_options.js?v=b2d9cde1"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -318,6 +318,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.rate.html">pynucastro.rates.rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.reaclib_rate.html">pynucastro.rates.reaclib_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.tabular_rate.html">pynucastro.rates.tabular_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.temperature_tabular_rate.html">pynucastro.rates.temperature_tabular_rate module</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -681,7 +682,7 @@ combining them into a single effective rate by assuming that the protons and nuc
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/dde0364ef43a29313557de86c571f84cfd6cb389c4733244e03a457d4c2930c4.png" src="_images/dde0364ef43a29313557de86c571f84cfd6cb389c4733244e03a457d4c2930c4.png" />
+<img alt="_images/8424de3a1896acdbc34ff735844db3fb393aaf29acff51e133d04cd246c9266d.png" src="_images/8424de3a1896acdbc34ff735844db3fb393aaf29acff51e133d04cd246c9266d.png" />
 </div>
 </div>
 </section>
@@ -932,7 +933,7 @@ def Mg24_He4__Si28__approx(rate_eval, tf):
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/142afb4a0119982149ec46b3efdd88e522fdbcf929306b45ac27bb435f42a341.png" src="_images/142afb4a0119982149ec46b3efdd88e522fdbcf929306b45ac27bb435f42a341.png" />
+<img alt="_images/310e826e6632a4199993774ab14a6f26bce219466047d74076b2838aaee1acbb.png" src="_images/310e826e6632a4199993774ab14a6f26bce219466047d74076b2838aaee1acbb.png" />
 </div>
 </div>
 <p>Here the dotted line is the approximate network.  We see that the results agree well.</p>
@@ -1023,7 +1024,7 @@ def Mg24_He4__Si28__approx(rate_eval, tf):
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/29118976b7bf99c191c950a504c4fc87746165ed23e6e00fe55ead0b72f9107a.png" src="_images/29118976b7bf99c191c950a504c4fc87746165ed23e6e00fe55ead0b72f9107a.png" />
+<img alt="_images/8430203747d4215e46174c171a9f26c36a1444815f7b9a63127c38550e5cf631.png" src="_images/8430203747d4215e46174c171a9f26c36a1444815f7b9a63127c38550e5cf631.png" />
 </div>
 </div>
 <p>Here we see all 3 networks.  The full network (7 nuclei) is the solid lines.  The approximate version of that is the dotted line.  We see that they track reasonably well, especially when the abundance is high.  The dashed line is the version of the network that has the same 4 nuclei as the approximate network, but with out approximating the <span class="math notranslate nohighlight">\((\alpha, p)(p,\gamma)\)</span> links, so we see that the <span class="math notranslate nohighlight">\({}^{24}\mathrm{Mg}\)</span> takes longer to burn.</p>

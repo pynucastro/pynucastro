@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>References &#8212; pynucastro 2.8.0.post33+g0376db145 documentation</title>
+    <title>References &#8212; pynucastro 2.8.0.post34+g3c5a077e1 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=18852b50"></script>
+    <script src="_static/documentation_options.js?v=b2d9cde1"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -315,6 +315,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.rate.html">pynucastro.rates.rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.reaclib_rate.html">pynucastro.rates.reaclib_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.tabular_rate.html">pynucastro.rates.tabular_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.temperature_tabular_rate.html">pynucastro.rates.temperature_tabular_rate module</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -604,7 +605,7 @@ document.write(`
 <span class="label"><span class="fn-bracket">[</span>7<span class="fn-bracket">]</span></span>
 <p>K. Langanke and G. Martínez-Pinedo. Rate tables for the weak processes of pf-shell nuclei in stellar environments. <em>Atomic Data and Nuclear Data Tables</em>, 79(1):1–46, 2001. <a class="reference external" href="https://doi.org/10.1006/adnd.2001.0865">doi:10.1006/adnd.2001.0865</a>.</p>
 </div>
-<div class="citation" id="id35" role="doc-biblioentry">
+<div class="citation" id="id37" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></span>
 <p>Katharina Lodders. Solar elemental abundances. 12 2020. URL: <a class="reference external" href="https://oxfordre.com/planetaryscience/view/10.1093/acrefore/9780190647926.001.0001/acrefore-9780190647926-e-145">https://oxfordre.com/planetaryscience/view/10.1093/acrefore/9780190647926.001.0001/acrefore-9780190647926-e-145</a>, <a class="reference external" href="https://doi.org/10.1093/acrefore/9780190647926.013.145">doi:10.1093/acrefore/9780190647926.013.145</a>.</p>
 </div>
@@ -656,7 +657,7 @@ document.write(`
 <span class="label"><span class="fn-bracket">[</span>20<span class="fn-bracket">]</span></span>
 <p>A. I. Chugunov, H. E. DeWitt, and D. G. Yakovlev. Coulomb tunneling for fusion reactions in dense matter: Path integral Monte Carlo versus mean field. <em>Physical Review D</em>, 76(2):025028, July 2007. <a class="reference external" href="https://arxiv.org/abs/0707.3500">arXiv:0707.3500</a>, <a class="reference external" href="https://doi.org/10.1103/PhysRevD.76.025028">doi:10.1103/PhysRevD.76.025028</a>.</p>
 </div>
-<div class="citation" id="id36" role="doc-biblioentry">
+<div class="citation" id="id35" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span>21<span class="fn-bracket">]</span></span>
 <p>R. J. deBoer, J. Görres, M. Wiescher, R. E. Azuma, A. Best, C. R. Brune, C. E. Fields, S. Jones, M. Pignatari, D. Sayre, K. Smith, F. X. Timmes, and E. Uberseder. The $^12$C(\ensuremath \alpha  ,\ensuremath \gamma  )$^16$O reaction and its implications for stellar helium burning. <em>Reviews of Modern Physics</em>, 89(3):035007, July 2017. <a class="reference external" href="https://arxiv.org/abs/1709.03144">arXiv:1709.03144</a>, <a class="reference external" href="https://doi.org/10.1103/RevModPhys.89.035007">doi:10.1103/RevModPhys.89.035007</a>.</p>
 </div>
@@ -668,28 +669,32 @@ document.write(`
 <span class="label"><span class="fn-bracket">[</span>23<span class="fn-bracket">]</span></span>
 <p>H. C. Graboske, H. E. Dewitt, A. S. Grossman, and M. S. Cooper. Screening Factors for Nuclear Reactions. II. Intermediate Screen-Ing and Astrophysical Applications. <em>\apj </em>, 181:457–474, April 1973. <a class="reference external" href="https://doi.org/10.1086/152062">doi:10.1086/152062</a>.</p>
 </div>
-<div class="citation" id="id28" role="doc-biblioentry">
+<div class="citation" id="id36" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span>24<span class="fn-bracket">]</span></span>
+<p>Christian Iliadis, Vimal Palanivelrajan, and Rafael S. de Souza. Bayesian estimation of the S factor and thermonuclear reaction rate for $^16$O(p ,\ensuremath \gamma  )$^17$F. <em>\prc </em>, 106(5):055802, November 2022. <a class="reference external" href="https://arxiv.org/abs/2210.14354">arXiv:2210.14354</a>, <a class="reference external" href="https://doi.org/10.1103/PhysRevC.106.055802">doi:10.1103/PhysRevC.106.055802</a>.</p>
+</div>
+<div class="citation" id="id28" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>25<span class="fn-bracket">]</span></span>
 <p>N. Itoh, H. Totsuji, S. Ichimaru, and H. E. Dewitt. Enhancement of thermonuclear reaction rate due to strong screening. II - Ionic mixtures. <em>\apj </em>, 234:1079–1084, December 1979. <a class="reference external" href="https://doi.org/10.1086/157590">doi:10.1086/157590</a>.</p>
 </div>
 <div class="citation" id="id12" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span>25<span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span>26<span class="fn-bracket">]</span></span>
 <p>Naoki Itoh, Hiroshi Hayashi, Akinori Nishikawa, and Yasuharu Kohyama. Neutrino Energy Loss in Stellar Interiors. VII. Pair, Photo-, Plasma, Bremsstrahlung, and Recombination Neutrino Processes. <em>The Astrophysical Journal Supplement Series</em>, 102:411, February 1996. <a class="reference external" href="https://doi.org/10.1086/192264">doi:10.1086/192264</a>.</p>
 </div>
 <div class="citation" id="id22" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span>26<span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span>27<span class="fn-bracket">]</span></span>
 <p>Thomas Rauscher and Friedrich-Karl Thielemann. Astrophysical Reaction Rates From Statistical Model Calculations. <em>Atomic Data and Nuclear Data Tables</em>, 75(1-2):1–351, May 2000. <a class="reference external" href="https://arxiv.org/abs/astro-ph/0004059">arXiv:astro-ph/0004059</a>, <a class="reference external" href="https://doi.org/10.1006/adnd.2000.0834">doi:10.1006/adnd.2000.0834</a>.</p>
 </div>
 <div class="citation" id="id2" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span>27<span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span>28<span class="fn-bracket">]</span></span>
 <p>F. X. Timmes. Integration of Nuclear Reaction Networks for Stellar Hydrodynamics. <em>The Astrophysical Journal Supplement Series</em>, 124(1):241–263, September 1999. <a class="reference external" href="https://doi.org/10.1086/313257">doi:10.1086/313257</a>.</p>
 </div>
 <div class="citation" id="id29" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span>28<span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span>29<span class="fn-bracket">]</span></span>
 <p>R. K. Wallace, S. E. Woosley, and T. A. Weaver. The thermonuclear model for X-ray transients. <em>\apj </em>, 258:696–715, July 1982. <a class="reference external" href="https://doi.org/10.1086/160119">doi:10.1086/160119</a>.</p>
 </div>
 <div class="citation" id="id5" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span>29<span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span>30<span class="fn-bracket">]</span></span>
 <p>D. G. Yakovlev, L. R. Gasques, A. V. Afanasjev, M. Beard, and M. Wiescher. Fusion reactions in multicomponent dense matter. <em>Physical Review C</em>, 74(3):035803, September 2006. <a class="reference external" href="https://arxiv.org/abs/astro-ph/0608488">arXiv:astro-ph/0608488</a>, <a class="reference external" href="https://doi.org/10.1103/PhysRevC.74.035803">doi:10.1103/PhysRevC.74.035803</a>.</p>
 </div>
 </div>

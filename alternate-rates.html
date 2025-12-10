@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>alternate_rates &#8212; pynucastro 2.8.0.post33+g0376db145 documentation</title>
+    <title>alternate_rates &#8212; pynucastro 2.8.0.post34+g3c5a077e1 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=18852b50"></script>
+    <script src="_static/documentation_options.js?v=b2d9cde1"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -318,6 +318,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.rate.html">pynucastro.rates.rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.reaclib_rate.html">pynucastro.rates.reaclib_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.tabular_rate.html">pynucastro.rates.tabular_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.temperature_tabular_rate.html">pynucastro.rates.temperature_tabular_rate module</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -573,10 +574,17 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-of-12-mathrm-c-alpha-gamma-16-mathrm-o">Comparison of <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-alternate-rates-in-a-network">Using alternate rates in a network</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pure-reaclib">Pure ReacLib</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#swapping-in-deboer-rate">Swapping in DeBoer rate</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-of-de-boer-et-al-12-mathrm-c-alpha-gamma-16-mathrm-o">Comparison of de Boer et al. <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-with-reaclib">Comparison with ReacLib</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-alternate-rates-in-a-network">Using alternate rates in a network</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pure-reaclib">Pure ReacLib</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#swapping-in-deboer-rate">Swapping in DeBoer rate</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-of-iliadis-et-al-2022-16-mathrm-o-p-gamma-17-mathrm-f">Comparison of Iliadis et al. 2022 <span class="math notranslate nohighlight">\({}^{16}\mathrm{O}(p,\gamma){}^{17}\mathrm{F}\)</span></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Comparison with ReacLib</a></li>
 </ul>
 </li>
 </ul>
@@ -592,9 +600,17 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="alternate-rates">
 <h1><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code><a class="headerlink" href="#alternate-rates" title="Link to this heading">#</a></h1>
-<p>Sometimes papers provide new measurements of rates that may be better than the current ReacLib library.  An example of this is the
-<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2017RvMP...89c5007D/abstract">DeBoer et al. 2012</a> <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span> rate.</p>
-<p>These rates can be added individually to the <a class="reference internal" href="pynucastro.rates.alternate_rates.html#module-pynucastro.rates.alternate_rates" title="pynucastro.rates.alternate_rates"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alternate_rates</span></code></a> module.</p>
+<p>Sometimes papers provide new measurements of rates that may be better than the current ReacLib library.  These rates are typically provided
+in one of two forms:</p>
+<ul class="simple">
+<li><p>As a new set of fit parameters in the ReacLib format.  An example of this is the
+<span id="id1">deBoer <em>et al.</em> [<a class="reference internal" href="zreferences.html#id35" title="R. J. deBoer, J. Görres, M. Wiescher, R. E. Azuma, A. Best, C. R. Brune, C. E. Fields, S. Jones, M. Pignatari, D. Sayre, K. Smith, F. X. Timmes, and E. Uberseder. The $^12$C(\ensuremath \alpha  ,\ensuremath \gamma  )$^16$O reaction and its implications for stellar helium burning. Reviews of Modern Physics, 89(3):035007, July 2017. arXiv:1709.03144, doi:10.1103/RevModPhys.89.035007.">2017</a>]</span> <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span> rate.
+This type of rate can be added by subclassing the <a class="reference internal" href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate" title="pynucastro.rates.reaclib_rate.ReacLibRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a> class.</p></li>
+<li><p>A tabulation of <span class="math notranslate nohighlight">\(N_A \langle \sigma v\rangle\)</span> in terms of temperature.  An example of this is the <span id="id2">Iliadis <em>et al.</em> [<a class="reference internal" href="zreferences.html#id36" title="Christian Iliadis, Vimal Palanivelrajan, and Rafael S. de Souza. Bayesian estimation of the S factor and thermonuclear reaction rate for $^16$O(p ,\ensuremath \gamma  )$^17$F. \prc , 106(5):055802, November 2022. arXiv:2210.14354, doi:10.1103/PhysRevC.106.055802.">2022</a>]</span>
+<span class="math notranslate nohighlight">\({}^{16}\mathrm{O}(p, \gamma){}^{17}\mathrm{F}\)</span> rate.  This type of rate can be added by
+subclassing the <a class="reference internal" href="pynucastro.rates.temperature_tabular_rate.html#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate" title="pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code></a> class.</p></li>
+</ul>
+<p>We use the <a class="reference internal" href="pynucastro.rates.alternate_rates.html#module-pynucastro.rates.alternate_rates" title="pynucastro.rates.alternate_rates"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alternate_rates</span></code></a> module to hold these rates.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
@@ -602,9 +618,9 @@ document.write(`
 </div>
 </div>
 </div>
-<section id="comparison-of-12-mathrm-c-alpha-gamma-16-mathrm-o">
-<h2>Comparison of <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span><a class="headerlink" href="#comparison-of-12-mathrm-c-alpha-gamma-16-mathrm-o" title="Link to this heading">#</a></h2>
-<p>Here we compare the ReacLib and deBoer versions of <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span>.</p>
+<section id="comparison-of-de-boer-et-al-12-mathrm-c-alpha-gamma-16-mathrm-o">
+<h2>Comparison of de Boer et al. <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span><a class="headerlink" href="#comparison-of-de-boer-et-al-12-mathrm-c-alpha-gamma-16-mathrm-o" title="Link to this heading">#</a></h2>
+<p>Here we compare the ReacLib and deBoer et al. versions of <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span>.</p>
 <p>First get the ReacLib version</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -614,6 +630,25 @@ document.write(`
 </div>
 </div>
 </div>
+<p>We can see the source of this rate</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c12_rl</span><span class="o">.</span><span class="n">source</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;Label&#39;: &#39;nac2&#39;,
+ &#39;Author&#39;: &#39;Xu, Y. et al.&#39;,
+ &#39;Title&#39;: &#39;NACRE2&#39;,
+ &#39;Publisher&#39;: &#39;Nucl. Phys. A 918, P. 61&#39;,
+ &#39;Year&#39;: &#39;2013&#39;,
+ &#39;URL&#39;: &#39;https://reaclib.jinaweb.org/labels.php?action=viewLabel&amp;label=nac2&#39;}
+</pre></div>
+</div>
+</div>
+</div>
+<p>This comes from the NACRE II compilation of rates.</p>
 <p>Now the DeBoer version.  This is available as <a class="reference internal" href="pynucastro.rates.alternate_rates.html#pynucastro.rates.alternate_rates.DeBoerC12agO16" title="pynucastro.rates.alternate_rates.DeBoerC12agO16"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DeBoerC12agO16</span></code></a>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -637,6 +672,8 @@ document.write(`
 </div>
 </div>
 </div>
+<section id="comparison-with-reaclib">
+<h3>Comparison with ReacLib<a class="headerlink" href="#comparison-with-reaclib" title="Link to this heading">#</a></h3>
 <p>Let’s plot a comparison of the rates</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -668,7 +705,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f8e82686270&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fe91420e7b0&gt;
 </pre></div>
 </div>
 <img alt="_images/200ca627ab93b145b420757df130f4593c33823064eb624f2c90e8307d805b50.png" src="_images/200ca627ab93b145b420757df130f4593c33823064eb624f2c90e8307d805b50.png" />
@@ -691,7 +728,7 @@ document.write(`
 </div>
 </section>
 <section id="using-alternate-rates-in-a-network">
-<h2>Using alternate rates in a network<a class="headerlink" href="#using-alternate-rates-in-a-network" title="Link to this heading">#</a></h2>
+<h3>Using alternate rates in a network<a class="headerlink" href="#using-alternate-rates-in-a-network" title="Link to this heading">#</a></h3>
 <p>To create a network with this rate, we can swap it in for the ReacLib version when we create a library.
 Here’s a simple He-burning network.</p>
 <div class="cell docutils container">
@@ -713,7 +750,7 @@ Here’s a simple He-burning network.</p>
 </div>
 </div>
 <section id="pure-reaclib">
-<h3>Pure ReacLib<a class="headerlink" href="#pure-reaclib" title="Link to this heading">#</a></h3>
+<h4>Pure ReacLib<a class="headerlink" href="#pure-reaclib" title="Link to this heading">#</a></h4>
 <p>First we’ll create a <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateCollection</span></code></a> with just the ReacLib rates</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -741,7 +778,7 @@ Na23 + p ⟶ He4 + Ne20     : 8.9374939e+06
 </div>
 </section>
 <section id="swapping-in-deboer-rate">
-<h3>Swapping in DeBoer rate<a class="headerlink" href="#swapping-in-deboer-rate" title="Link to this heading">#</a></h3>
+<h4>Swapping in DeBoer rate<a class="headerlink" href="#swapping-in-deboer-rate" title="Link to this heading">#</a></h4>
 <p>Now we’ll swap in the deBoer rate, first using <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library.remove_rate" title="pynucastro.rates.library.Library.remove_rate"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_rate</span></code></a> to remove the old rate and then using <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library.add_rate" title="pynucastro.rates.library.Library.add_rate"><code class="xref py py-func docutils literal notranslate"><span class="pre">add_rate</span></code></a> to add the new rate to the library.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -777,6 +814,158 @@ C12 + He4 ⟶ O16 + 𝛾       : 2.2040004e-03
 </div>
 <p>Comparing to the pure ReacLib version, we see the only difference in the evaluation
 of the rates is in <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span></p>
+</section>
+</section>
+</section>
+<section id="comparison-of-iliadis-et-al-2022-16-mathrm-o-p-gamma-17-mathrm-f">
+<h2>Comparison of Iliadis et al. 2022 <span class="math notranslate nohighlight">\({}^{16}\mathrm{O}(p,\gamma){}^{17}\mathrm{F}\)</span><a class="headerlink" href="#comparison-of-iliadis-et-al-2022-16-mathrm-o-p-gamma-17-mathrm-f" title="Link to this heading">#</a></h2>
+<p>The Iliadis et al. 2022 paper provides a tabulation of the <span class="math notranslate nohighlight">\({}^{16}\mathrm{O}(p,\gamma){}^{17}\mathrm{F}\)</span> rate in terms of <span class="math notranslate nohighlight">\(T_9\)</span>.  We
+use the median value of the rate.</p>
+<p>First we’ll get the ReacLib version</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">o16_rl</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;o16(p,g)f17&quot;</span><span class="p">)</span>
+<span class="n">o16_rl</span><span class="o">.</span><span class="n">source</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;Label&#39;: &#39;ia08&#39;,
+ &#39;Author&#39;: &#39;Iliadis, C.&#39;,
+ &#39;Title&#39;: &#39;New reaction rate for 16O( p,&amp;gamma;)17F and its influence on the oxygen isotopic ratios in massive AGB stars&#39;,
+ &#39;Publisher&#39;: &#39;PRC77, 045802&#39;,
+ &#39;Year&#39;: &#39;2008&#39;,
+ &#39;URL&#39;: &#39;https://reaclib.jinaweb.org/labels.php?action=viewLabel&amp;label=ia08&#39;}
+</pre></div>
+</div>
+</div>
+</div>
+<p>We see that the ReacLib version of the rate is from an earlier work, Iliadis et al. 2008.</p>
+<p>Now we’ll get the new version of the rate</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.alternate_rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">IliadisO16pgF17</span>
+<span class="n">o16_iliadis</span> <span class="o">=</span> <span class="n">IliadisO16pgF17</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>and we can see the base now is a temperature tabulation:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">IliadisO16pgF17</span><span class="o">.</span><span class="n">__base__</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate
+</pre></div>
+</div>
+</div>
+</div>
+<p>The rate data is stored in the form <span class="math notranslate nohighlight">\((\log_{10}(T_9), \log_{10}(\lambda))\)</span></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">lT9</span><span class="p">,</span> <span class="n">lr</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">o16_iliadis</span><span class="o">.</span><span class="n">log_t9_data</span><span class="p">,</span> <span class="n">o16_iliadis</span><span class="o">.</span><span class="n">log_rate_data</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">lT9</span><span class="si">:</span><span class="s2">11.8f</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">lr</span><span class="si">:</span><span class="s2">11.8f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>-2.52287875 : -40.36271045
+-2.39794001 : -35.85418229
+-2.30103000 : -32.64897715
+-2.22184875 : -30.20551195
+-2.15490196 : -28.25531594
+-2.09691001 : -26.64723881
+-2.04575749 : -25.28886793
+-2.00000000 : -24.11947222
+-1.95860731 : -23.09756194
+-1.92081875 : -22.19348087
+-1.88605665 : -21.38541913
+-1.85387196 : -20.65698550
+-1.82390874 : -19.99567863
+-1.79588002 : -19.39072583
+-1.74472749 : -18.32148162
+-1.69897000 : -17.40142834
+-1.60205999 : -15.56082526
+-1.52287875 : -14.15995667
+-1.39794001 : -12.12418661
+-1.30103000 : -10.68151927
+-1.22184875 : -9.58485965
+-1.15490196 : -8.71152720
+-1.09691001 : -7.99310629
+-1.04575749 : -7.38742805
+-1.00000000 : -6.86678054
+-0.95860731 : -6.41285050
+-0.92081875 : -6.01184253
+-0.88605665 : -5.65384270
+-0.85387196 : -5.33170729
+-0.82390874 : -5.03948166
+-0.79588002 : -4.77262756
+-0.74472749 : -4.30181243
+-0.69897000 : -3.89756629
+-0.60205999 : -3.09119340
+-0.52287875 : -2.48030323
+-0.45593196 : -1.99524884
+-0.39794001 : -1.59722293
+-0.34678749 : -1.26248931
+-0.30103000 : -0.97551433
+-0.22184875 : -0.50501103
+-0.15490196 : -0.13188479
+-0.09691001 :  0.17405981
+-0.04575749 :  0.43120288
+ 0.00000000 :  0.65147185
+ 0.09691001 :  1.08955188
+ 0.17609126 :  1.42028588
+ 0.24303805 :  1.68178377
+ 0.30103000 :  1.89558828
+ 0.39794001 :  2.22685757
+ 0.47712125 :  2.47290265
+ 0.54406804 :  2.66190729
+</pre></div>
+</div>
+</div>
+</div>
+<p>and we can plot the temperature dependence</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">o16_iliadis</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/9c72ab87cd27894c0bacdc9d898e7f431b09495c6952e9d5278dff3d89360c12.png" src="_images/9c72ab87cd27894c0bacdc9d898e7f431b09495c6952e9d5278dff3d89360c12.png" />
+</div>
+</div>
+<section id="id3">
+<h3>Comparison with ReacLib<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">o16_iliadis</span><span class="o">.</span><span class="n">table_Tmin</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">o16_iliadis</span><span class="o">.</span><span class="n">table_Tmax</span><span class="p">),</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">r_rl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">o16_rl</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="k">for</span> <span class="n">T</span> <span class="ow">in</span> <span class="n">Ts</span><span class="p">])</span>
+<span class="n">r_iliadis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">o16_iliadis</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="k">for</span> <span class="n">T</span> <span class="ow">in</span> <span class="n">Ts</span><span class="p">])</span>
+
+<span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">r_rl</span> <span class="o">-</span> <span class="n">r_iliadis</span><span class="p">)</span> <span class="o">/</span> <span class="n">r_rl</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;relative difference&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/2ab484f9ce4a3db336b4f4788a5b8f94de0828ad46e10ea4488beb2e549696c8.png" src="_images/2ab484f9ce4a3db336b4f4788a5b8f94de0828ad46e10ea4488beb2e549696c8.png" />
+</div>
+</div>
+<p>We see that the maximum difference is about 5%</p>
 </section>
 </section>
 </section>
@@ -826,10 +1015,17 @@ of the rates is in <span class="math notranslate nohighlight">\({}^{12}\mathrm{C
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-of-12-mathrm-c-alpha-gamma-16-mathrm-o">Comparison of <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-alternate-rates-in-a-network">Using alternate rates in a network</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pure-reaclib">Pure ReacLib</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#swapping-in-deboer-rate">Swapping in DeBoer rate</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-of-de-boer-et-al-12-mathrm-c-alpha-gamma-16-mathrm-o">Comparison of de Boer et al. <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-with-reaclib">Comparison with ReacLib</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-alternate-rates-in-a-network">Using alternate rates in a network</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pure-reaclib">Pure ReacLib</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#swapping-in-deboer-rate">Swapping in DeBoer rate</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-of-iliadis-et-al-2022-16-mathrm-o-p-gamma-17-mathrm-f">Comparison of Iliadis et al. 2022 <span class="math notranslate nohighlight">\({}^{16}\mathrm{O}(p,\gamma){}^{17}\mathrm{F}\)</span></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Comparison with ReacLib</a></li>
 </ul>
 </li>
 </ul>

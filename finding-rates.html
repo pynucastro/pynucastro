@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Finding Available Rates &#8212; pynucastro 2.8.0.post33+g0376db145 documentation</title>
+    <title>Finding Available Rates &#8212; pynucastro 2.8.0.post34+g3c5a077e1 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=18852b50"></script>
+    <script src="_static/documentation_options.js?v=b2d9cde1"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -318,6 +318,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.rate.html">pynucastro.rates.rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.reaclib_rate.html">pynucastro.rates.reaclib_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.tabular_rate.html">pynucastro.rates.tabular_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.temperature_tabular_rate.html">pynucastro.rates.temperature_tabular_rate module</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -661,7 +662,7 @@ C12 + He4 ⟶ O16 + 𝛾      debo    DeBoerC12agO16
 </div>
 </div>
 </div>
-<p>The first is from ReacLib and the second is a more recent rate from <span id="id1">deBoer <em>et al.</em> [<a class="reference internal" href="zreferences.html#id36" title="R. J. deBoer, J. Görres, M. Wiescher, R. E. Azuma, A. Best, C. R. Brune, C. E. Fields, S. Jones, M. Pignatari, D. Sayre, K. Smith, F. X. Timmes, and E. Uberseder. The $^12$C(\ensuremath \alpha  ,\ensuremath \gamma  )$^16$O reaction and its implications for stellar helium burning. Reviews of Modern Physics, 89(3):035007, July 2017. arXiv:1709.03144, doi:10.1103/RevModPhys.89.035007.">2017</a>]</span>.</p>
+<p>The first is from ReacLib and the second is a more recent rate from <span id="id1">deBoer <em>et al.</em> [<a class="reference internal" href="zreferences.html#id35" title="R. J. deBoer, J. Görres, M. Wiescher, R. E. Azuma, A. Best, C. R. Brune, C. E. Fields, S. Jones, M. Pignatari, D. Sayre, K. Smith, F. X. Timmes, and E. Uberseder. The $^12$C(\ensuremath \alpha  ,\ensuremath \gamma  )$^16$O reaction and its implications for stellar helium burning. Reviews of Modern Physics, 89(3):035007, July 2017. arXiv:1709.03144, doi:10.1103/RevModPhys.89.035007.">2017</a>]</span>.</p>
 </section>
 <section id="using-filters">
 <h2>Using filters<a class="headerlink" href="#using-filters" title="Link to this heading">#</a></h2>
@@ -730,10 +731,10 @@ Ni56 ⟶ n + Ni55          ths8        ReacLibRate
 <span class="g g-Whitespace">    </span><span class="mi">735</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">+</span> <span class="n">combined_library</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
 <span class="ne">--&gt; </span><span class="mi">737</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.14.0/x64/lib/python3.14/site-packages/pynucastro/networks/rate_collection.py:866,</span> in <span class="ni">RateCollection._build_collection</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">864</span> <span class="k">if</span> <span class="n">dupes</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">():</span>
-<span class="g g-Whitespace">    </span><span class="mi">865</span>     <span class="nb">print</span><span class="p">(</span><span class="n">dupes</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">866</span>     <span class="k">raise</span> <span class="n">RateDuplicationError</span><span class="p">(</span><span class="s2">&quot;Duplicate rates found&quot;</span><span class="p">)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.14.0/x64/lib/python3.14/site-packages/pynucastro/networks/rate_collection.py:870,</span> in <span class="ni">RateCollection._build_collection</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">    </span><span class="mi">868</span> <span class="k">if</span> <span class="n">dupes</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">():</span>
+<span class="g g-Whitespace">    </span><span class="mi">869</span>     <span class="nb">print</span><span class="p">(</span><span class="n">dupes</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">870</span>     <span class="k">raise</span> <span class="n">RateDuplicationError</span><span class="p">(</span><span class="s2">&quot;Duplicate rates found&quot;</span><span class="p">)</span>
 
 <span class="ne">RateDuplicationError</span>: Duplicate rates found
 </pre></div>

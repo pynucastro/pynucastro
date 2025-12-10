@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.alternate_rates &#8212; pynucastro 2.8.0.post33+g0376db145 documentation</title>
+    <title>pynucastro.rates.alternate_rates &#8212; pynucastro 2.8.0.post34+g3c5a077e1 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=18852b50"></script>
+    <script src="../../../_static/documentation_options.js?v=b2d9cde1"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -315,6 +315,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.rate.html">pynucastro.rates.rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.reaclib_rate.html">pynucastro.rates.reaclib_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.tabular_rate.html">pynucastro.rates.tabular_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.temperature_tabular_rate.html">pynucastro.rates.temperature_tabular_rate module</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -496,8 +497,11 @@ document.write(`
 
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.reaclib_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">SingleSet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.temperature_tabular_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemperatureTabularRate</span>
 
 
 <div class="viewcode-block" id="DeBoerC12agO16">
@@ -539,6 +543,47 @@ document.write(`
         <span class="c1"># resonance</span>
         <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mf">7.4</span><span class="p">,</span> <span class="o">-</span><span class="mf">30.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="n">labelprops</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="IliadisO16pgF17">
+<a class="viewcode-back" href="../../../pynucastro.rates.alternate_rates.html#pynucastro.rates.alternate_rates.IliadisO16pgF17">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">IliadisO16pgF17</span><span class="p">(</span><span class="n">TemperatureTabularRate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The O16(p,g)F17 rate from Iliadis et al. 2022.  This uses</span>
+<span class="sd">    the median value for the rate from the table at the end of the</span>
+<span class="sd">    paper.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">T9</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">3.00e-03</span><span class="p">,</span> <span class="mf">4.00e-03</span><span class="p">,</span> <span class="mf">5.00e-03</span><span class="p">,</span> <span class="mf">6.00e-03</span><span class="p">,</span> <span class="mf">7.00e-03</span><span class="p">,</span> <span class="mf">8.00e-03</span><span class="p">,</span>
+                       <span class="mf">9.00e-03</span><span class="p">,</span> <span class="mf">1.00e-02</span><span class="p">,</span> <span class="mf">1.10e-02</span><span class="p">,</span> <span class="mf">1.20e-02</span><span class="p">,</span> <span class="mf">1.30e-02</span><span class="p">,</span> <span class="mf">1.40e-02</span><span class="p">,</span>
+                       <span class="mf">1.50e-02</span><span class="p">,</span> <span class="mf">1.60e-02</span><span class="p">,</span> <span class="mf">1.80e-02</span><span class="p">,</span> <span class="mf">2.00e-02</span><span class="p">,</span> <span class="mf">2.50e-02</span><span class="p">,</span> <span class="mf">3.00e-02</span><span class="p">,</span>
+                       <span class="mf">4.00e-02</span><span class="p">,</span> <span class="mf">5.00e-02</span><span class="p">,</span> <span class="mf">6.00e-02</span><span class="p">,</span> <span class="mf">7.00e-02</span><span class="p">,</span> <span class="mf">8.00e-02</span><span class="p">,</span> <span class="mf">9.00e-02</span><span class="p">,</span>
+                       <span class="mf">1.00e-01</span><span class="p">,</span> <span class="mf">1.10e-01</span><span class="p">,</span> <span class="mf">1.20e-01</span><span class="p">,</span> <span class="mf">1.30e-01</span><span class="p">,</span> <span class="mf">1.40e-01</span><span class="p">,</span> <span class="mf">1.50e-01</span><span class="p">,</span>
+                       <span class="mf">1.60e-01</span><span class="p">,</span> <span class="mf">1.80e-01</span><span class="p">,</span> <span class="mf">2.00e-01</span><span class="p">,</span> <span class="mf">2.50e-01</span><span class="p">,</span> <span class="mf">3.00e-01</span><span class="p">,</span> <span class="mf">3.50e-01</span><span class="p">,</span>
+                       <span class="mf">4.00e-01</span><span class="p">,</span> <span class="mf">4.50e-01</span><span class="p">,</span> <span class="mf">5.00e-01</span><span class="p">,</span> <span class="mf">6.00e-01</span><span class="p">,</span> <span class="mf">7.00e-01</span><span class="p">,</span> <span class="mf">8.00e-01</span><span class="p">,</span>
+                       <span class="mf">9.00e-01</span><span class="p">,</span> <span class="mf">1.00e+00</span><span class="p">,</span> <span class="mf">1.25e+00</span><span class="p">,</span> <span class="mf">1.50e+00</span><span class="p">,</span> <span class="mf">1.75e+00</span><span class="p">,</span> <span class="mf">2.00e+00</span><span class="p">,</span>
+                       <span class="mf">2.50e+00</span><span class="p">,</span> <span class="mf">3.00e+00</span><span class="p">,</span> <span class="mf">3.50e+00</span><span class="p">])</span>
+
+        <span class="n">rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">4.338e-41</span><span class="p">,</span> <span class="mf">1.399e-36</span><span class="p">,</span> <span class="mf">2.244e-33</span><span class="p">,</span> <span class="mf">6.230e-31</span><span class="p">,</span> <span class="mf">5.555e-29</span><span class="p">,</span> <span class="mf">2.253e-27</span><span class="p">,</span>
+                         <span class="mf">5.142e-26</span><span class="p">,</span> <span class="mf">7.595e-25</span><span class="p">,</span> <span class="mf">7.988e-24</span><span class="p">,</span> <span class="mf">6.405e-23</span><span class="p">,</span> <span class="mf">4.117e-22</span><span class="p">,</span> <span class="mf">2.203e-21</span><span class="p">,</span>
+                         <span class="mf">1.010e-20</span><span class="p">,</span> <span class="mf">4.067e-20</span><span class="p">,</span> <span class="mf">4.770e-19</span><span class="p">,</span> <span class="mf">3.968e-18</span><span class="p">,</span> <span class="mf">2.749e-16</span><span class="p">,</span> <span class="mf">6.919e-15</span><span class="p">,</span>
+                         <span class="mf">7.513e-13</span><span class="p">,</span> <span class="mf">2.082e-11</span><span class="p">,</span> <span class="mf">2.601e-10</span><span class="p">,</span> <span class="mf">1.943e-09</span><span class="p">,</span> <span class="mf">1.016e-08</span><span class="p">,</span> <span class="mf">4.098e-08</span><span class="p">,</span>
+                         <span class="mf">1.359e-07</span><span class="p">,</span> <span class="mf">3.865e-07</span><span class="p">,</span> <span class="mf">9.731e-07</span><span class="p">,</span> <span class="mf">2.219e-06</span><span class="p">,</span> <span class="mf">4.659e-06</span><span class="p">,</span> <span class="mf">9.131e-06</span><span class="p">,</span>
+                         <span class="mf">1.688e-05</span><span class="p">,</span> <span class="mf">4.991e-05</span><span class="p">,</span> <span class="mf">1.266e-04</span><span class="p">,</span> <span class="mf">8.106e-04</span><span class="p">,</span> <span class="mf">3.309e-03</span><span class="p">,</span> <span class="mf">1.011e-02</span><span class="p">,</span>
+                         <span class="mf">2.528e-02</span><span class="p">,</span> <span class="mf">5.464e-02</span><span class="p">,</span> <span class="mf">1.058e-01</span><span class="p">,</span> <span class="mf">3.126e-01</span><span class="p">,</span> <span class="mf">7.381e-01</span><span class="p">,</span> <span class="mf">1.493e+00</span><span class="p">,</span>
+                         <span class="mf">2.699e+00</span><span class="p">,</span> <span class="mf">4.482e+00</span><span class="p">,</span> <span class="mf">1.229e+01</span><span class="p">,</span> <span class="mf">2.632e+01</span><span class="p">,</span> <span class="mf">4.806e+01</span><span class="p">,</span> <span class="mf">7.863e+01</span><span class="p">,</span>
+                         <span class="mf">1.686e+02</span><span class="p">,</span> <span class="mf">2.971e+02</span><span class="p">,</span> <span class="mf">4.591e+02</span><span class="p">])</span>
+
+        <span class="n">reactants</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)]</span>
+        <span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;f17&quot;</span><span class="p">)]</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">T9</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rate</span><span class="p">),</span>
+                         <span class="n">rate_source</span><span class="o">=</span><span class="s2">&quot;iliadis2022&quot;</span><span class="p">,</span>
+                         <span class="n">reactants</span><span class="o">=</span><span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="n">products</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">!=</span> <span class="mf">0.0</span></div>
 
 </pre></div>
 
