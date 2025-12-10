@@ -223,7 +223,6 @@ class TemperatureTabularRate(Rate):
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the rate will include screening correction.
-            Unused for Tabular weak rates since screening does not affect weak reactions.
 
         Returns
         -------
