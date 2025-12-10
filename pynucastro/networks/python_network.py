@@ -264,7 +264,7 @@ class PythonNetwork(RateCollection):
         if self.derived_rates:
             ostr += f"\n{indent}# derived rates\n"
         for r in self.derived_rates:
-            ostr += format_rate_call(r, use_tf=False)
+            ostr += format_rate_call(r)
 
         ostr += "\n"
 
@@ -305,7 +305,7 @@ class PythonNetwork(RateCollection):
 
         of.write("import numba\n")
         of.write("import numpy as np\n")
-        of.write("from scipy import constants\n")
+        of.write("from pynucastro.constants import constants\n")
         of.write("from numba.experimental import jitclass\n\n")
         of.write("from pynucastro.rates import TableIndex, TableInterpolator, TabularRate, Tfactors\n")
         of.write("from pynucastro.screening import PlasmaState, ScreenFactors\n\n")

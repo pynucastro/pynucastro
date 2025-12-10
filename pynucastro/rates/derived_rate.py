@@ -61,26 +61,30 @@ class DerivedRate(Rate):
                 raise ValueError(f'One of the products spin ground state ({self.rate.products}), is considered unreliable')
 
         # Compute temperature-independent prefactor of the equilibrium ratio
-        self.net_stoich = len(self.rate.reactants) - len(self.rate.products)
+        F = 1.0
 
-        F = constants.m_u_C18**self.net_stoich
+        F *= math.prod(nucr.spin_states for nucr in self.rate.reactants)
+        F /= math.prod(nucr.A for nucr in self.rate.reactants)
+        F *= math.prod(nucr.A_nuc for nucr in self.rate.reactants)**2.5
 
-        for nucr in self.rate.reactants:
-            F *= nucr.A_nuc**2.5 * nucr.spin_states / nucr.A
-        for nucp in self.rate.products:
-            F /= nucp.A_nuc**2.5 * nucp.spin_states / nucp.A
-
-        F = (constants.m_u_C18 * constants.k /
-             (2.0 * np.pi * constants.hbar**2))**(1.5 * self.net_stoich)
+        F /= math.prod(nucp.spin_states for nucp in self.rate.products)
+        F *= math.prod(nucp.A for nucp in self.rate.products)
+        F /= math.prod(nucp.A_nuc for nucp in self.rate.products)**2.5
 
         F *= self.counter_factors()[1] / self.counter_factors()[0]
-        self.prefactor = F
+
+        self.net_stoich = len(self.rate.reactants) - len(self.rate.products)
+        if self.net_stoich != 0:
+            F *= constants.m_u_C18**(2.5 * self.net_stoich)
+            F *= (constants.k / (2.0 * np.pi * constants.hbar**2))**(1.5 * self.net_stoich)
+
+        self.ratio_factor = F
 
         super().__init__(reactants=self.rate.products,
                          products=self.rate.reactants,
                          label="derived",
                          stoichiometry=self.rate.stoichiometry)
-        print(self.fname)
+
         # explicitly mark it as reverse
         self.derived_from_inverse = True
 
@@ -118,7 +122,7 @@ class DerivedRate(Rate):
         r = self.rate.eval(T=T, rho=rho, comp=comp, screen_func=None)
 
         # compute the equilibrium ratio
-        ratio = self.prefactor * T**(1.5 * self.net_stoich)
+        ratio = self.ratio_factor * T**(1.5 * self.net_stoich)
 
         # Note Q-value here is for the derived rate.
         ratio *= np.exp(self.Q / (constants.k_MeV * T))
@@ -162,12 +166,12 @@ class DerivedRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, T):\n"
+        fstring += f"def {self.fname}(rate_eval, tf):\n"
         fstring += f"    # {self.rid}\n"
 
         fstring += f"    # Evaluate the equilibrium ratio\n"
-        fstring += f"    ratio = {self.prefactor} * T**(1.5 * {self.net_stoich})\n"
-        fstring += f"    ratio *= np.exp({self.Q} / (constants.k_MeV * T))\n"
+        fstring += f"    ratio = {self.ratio_factor:.60g} * (tf.T9 * 1.0e9)**(1.5 * {self.net_stoich})\n"
+        fstring += f"    ratio *= np.exp({self.Q:.60g} / (constants.k_MeV * tf.T9 * 1.0e9))\n"
         fstring += f"    rate_eval.{self.fname} = rate_eval.{self.rate.fname} * ratio"
 
         if self.use_pf:
