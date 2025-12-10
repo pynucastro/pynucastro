@@ -13,6 +13,8 @@ from .modified_rate import ModifiedRate
 from .rate import BaryonConservationError, Rate, RatePair, Tfactors
 from .reaclib_rate import ReacLibRate, SingleSet
 from .tabular_rate import TableIndex, TableInterpolator, TabularRate
+from .temperature_tabular_rate import (TemperatureTabularRate,
+                                       TempTableInterpolator)
 
 
 def load_rate(rfile=None):
