@@ -164,14 +164,10 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             reactant_ind = [-1 for n in range(3 - len(rate.reactants))]
             product_ind = [-1 for n in range(3 - len(rate.products))]
 
-            print(rate.fname)
-            print(rate.reactants)
-
             for nuc in rate.reactants:
                 reactant_ind.append(self.unique_nuclei.index(nuc))
 
             for nuc in rate.products:
-                print(nuc)
                 product_ind.append(self.unique_nuclei.index(nuc))
 
             reactant_ind.sort()
