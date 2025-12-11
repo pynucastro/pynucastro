@@ -156,7 +156,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
                 tmp = ''
 
             # meaning it is removed.
-            if isinstance(rate, ReacLibRate) and rate.removed is not None:
+            if rate.weak_type or rate.removed is not None:
                 of.write(f"{self.indent*n_indent}    -1, -1, -1, -1, -1, -1, -1{tmp}  // {rate.fname}\n")
                 continue
 
@@ -164,10 +164,14 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             reactant_ind = [-1 for n in range(3 - len(rate.reactants))]
             product_ind = [-1 for n in range(3 - len(rate.products))]
 
+            print(rate.fname)
+            print(rate.reactants)
+
             for nuc in rate.reactants:
                 reactant_ind.append(self.unique_nuclei.index(nuc))
 
             for nuc in rate.products:
+                print(nuc)
                 product_ind.append(self.unique_nuclei.index(nuc))
 
             reactant_ind.sort()

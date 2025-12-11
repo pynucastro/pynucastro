@@ -103,6 +103,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
         self.ftags['<rate_struct>'] = self._rate_struct
         self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
+        self.ftags['<derived_rate_functions>'] = self._derived_rate_functions
+        self.ftags['<fill_derived_rates>'] = self._fill_derived_rates
         self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
         self.ftags['<fill_approx_rates>'] = self._fill_approx_rates
         self.ftags['<part_fun_data>'] = self._fill_partition_function_data
@@ -542,6 +544,11 @@ class BaseCxxNetwork(ABC, RateCollection):
         for r in self.reaclib_rates + self.derived_rates + self.modified_rates:
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
 
+    def _derived_rate_functions(self, n_indent, of):
+        assert n_indent == 0, "function definitions must be at top level"
+        for r in self.derived_rates:
+            of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
+
     def _rate_struct(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"
 
@@ -561,21 +568,25 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
 
     def _fill_reaclib_rates(self, n_indent, of):
-        if self.derived_rates:
-            of.write(f"{self.indent*n_indent}part_fun::pf_cache_t pf_cache{{}};\n\n")
-            temp_arrays, _ = self.dedupe_partition_function_temperatures()
-            for i in range(len(temp_arrays)):
-                of.write(f"{self.indent*n_indent}pf_cache.index_temp_array_{i+1} = interp_net::find_index(tfactors.T9, part_fun::temp_array_{i+1});\n")
-            of.write("\n")
-
         # note: modified_rates needs to be on the end here, since they
         # likely will call the underlying reaclib rate for the actual
         # rate evaluation
-        for r in self.reaclib_rates + self.derived_rates + self.modified_rates:
-            if isinstance(r, DerivedRate):
-                of.write(f"{self.indent*n_indent}rate_{r.fname}<do_T_derivatives>(tfactors, rate, drate_dT, pf_cache);\n")
-            else:
-                of.write(f"{self.indent*n_indent}rate_{r.fname}<do_T_derivatives>(tfactors, rate, drate_dT);\n")
+        for r in self.reaclib_rates + self.modified_rates:
+            of.write(f"{self.indent*n_indent}rate_{r.fname}<do_T_derivatives>(tfactors, rate, drate_dT);\n")
+            of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
+            of.write(f"{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
+            of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
+            of.write(f"{self.indent*n_indent}}}\n")
+
+    def _fill_derived_rates(self, n_indent, of):
+        of.write(f"{self.indent*n_indent}part_fun::pf_cache_t pf_cache{{}};\n\n")
+        temp_arrays, _ = self.dedupe_partition_function_temperatures()
+        for i in range(len(temp_arrays)):
+            of.write(f"{self.indent*n_indent}pf_cache.index_temp_array_{i+1} = interp_net::find_index(tfactors.T9, part_fun::temp_array_{i+1});\n")
+        of.write("\n")
+
+        for r in self.derived_rates:
+            of.write(f"{self.indent*n_indent}rate_{r.fname}<do_T_derivatives>(tfactors, rate, drate_dT, pf_cache);\n")
             of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
             of.write(f"{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
             of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")

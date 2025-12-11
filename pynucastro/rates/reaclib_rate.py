@@ -319,7 +319,7 @@ class ReacLibRate(Rate):
         self.weak_type = None
         self.derived_from_inverse = None
 
-        self.removed = None
+        self.removed = False
 
         self.Q = Q
 

@@ -85,7 +85,7 @@ class DerivedRate(Rate):
                          label="derived",
                          stoichiometry=self.rate.stoichiometry)
 
-        # explicitly mark it as reverse
+        # explicitly mark it as a rate derived from inverse
         self.derived_from_inverse = True
 
     def _warn_about_missing_pf_tables(self):
@@ -167,12 +167,12 @@ class DerivedRate(Rate):
         fstring = ""
         fstring += "@numba.njit()\n"
         fstring += f"def {self.fname}(rate_eval, tf):\n"
-        fstring += f"    # {self.rid}\n"
+        fstring += f"    # {self.rid}\n\n"
 
         fstring += f"    # Evaluate the equilibrium ratio\n"
-        fstring += f"    ratio = {self.ratio_factor:.60g} * (tf.T9 * 1.0e9)**(1.5 * {self.net_stoich})\n"
-        fstring += f"    ratio *= np.exp({self.Q:.60g} / (constants.k_MeV * tf.T9 * 1.0e9))\n"
-        fstring += f"    rate_eval.{self.fname} = rate_eval.{self.rate.fname} * ratio"
+        fstring += f"    ratio = {self.ratio_factor} * (tf.T9 * 1.0e9)**(1.5 * {self.net_stoich})\n"
+        fstring += f"    ratio *= np.exp({self.Q} / (constants.k_MeV * tf.T9 * 1.0e9))\n"
+        fstring += f"    rate_eval.{self.fname} = rate_eval.{self.rate.fname} * ratio\n"
 
         if self.use_pf:
             self._warn_about_missing_pf_tables()
@@ -198,7 +198,7 @@ class DerivedRate(Rate):
             fstring += "*".join([f"{nucp}_pf" for nucp in self.rate.products])
 
             fstring += "\n"
-            fstring += f"    rate_eval.{self.fname} *= z_r / z_p\n"
+            fstring += f"    rate_eval.{self.fname} *= z_r / z_p\n\n"
 
         return fstring
 
@@ -233,10 +233,32 @@ class DerivedRate(Rate):
             extra_args = ()
 
         extra_args = ["[[maybe_unused]] part_fun::pf_cache_t& pf_cache", *extra_args]
-        fstring = super().function_string_cxx(dtype=dtype,
-                                              specifiers=specifiers,
-                                              leave_open=True,
-                                              extra_args=extra_args)
+
+        args = ["const T& rate_eval", "const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+        fstring = ""
+        fstring += "template <int do_T_derivatives>\n"
+        fstring += f"{specifiers}\n"
+        fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
+        fstring += f"    // {self.rid}\n\n"
+
+        # fstring += f"    // Evaluate the inverse rate\n"
+        # fstring += f"    rate_{self.rate.fname}<do_T_derivatives>(tfactors, rate, drate_dT);\n\n"
+
+        fstring += f"    // Evaluate the equilibrium ratio without partition function\n"
+        fstring += f"    amrex::Real ratio = {self.ratio_factor};\n"
+        fstring += f"    amrex::Real Q_kBT = {self.Q} * C::MeV2erg / (C::k_B * tfactors.T9 * 1.0e9_rt);\n"
+        fstring += f"    ratio *= std::exp(Q_kBT)\n"
+        if self.net_stoich != 0:
+            fstring += f"        ratio *= std::sqrt(amrex::Math::powi<{2 * self.net_stoich}>(tfactors.T9 * 1.0e9_rt));\n\n"
+
+        fstring += f"    // Apply the ratio without partition function\n"
+        fstring += f"    // Note that screening is not yet applied to the inverse rate\n"
+        fstring += f"    rate = rate_eval.screened_rates(k_{self.rate.fname}) * ratio;"
+
+        fstring +=  "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += f"        amrex::Real dratio_dT = ratio * tfactors.T9i * ({1.5 * self.net_stoich} - Q_kBT);\n"
+        fstring += f"        drate_dT = dratedT * ratio + rate * dratio_dT;\n"
+        fstring +=  "    }\n\n"
 
         # right now we have rate and drate_dT without the partition
         # function now the partition function corrections
@@ -244,7 +266,7 @@ class DerivedRate(Rate):
         if self.use_pf:
             self._warn_about_missing_pf_tables()
 
-            fstring += "\n"
+            fstring += "Now apply partition function effects\n"
             for nuc in set(self.rate.reactants + self.rate.products):
                 fstring += f"    {dtype} {nuc}_pf, d{nuc}_pf_dT;\n"
 
@@ -287,7 +309,7 @@ class DerivedRate(Rate):
             # final terms
 
             fstring += "    drate_dT = dzterm_dT * rate + drate_dT * (z_r / z_p);\n"
-            fstring += "    rate *= z_r/z_p;\n\n"
+            fstring += "    rate *= z_r / z_p;\n\n"
 
         if not leave_open:
             fstring += "}\n\n"
