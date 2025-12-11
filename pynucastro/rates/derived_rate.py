@@ -236,37 +236,36 @@ class DerivedRate(Rate):
 
         args = ["const T& rate_eval", "const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
-        fstring += "template <int do_T_derivatives>\n"
+        fstring += "template <typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
 
-        # fstring += f"    // Evaluate the inverse rate\n"
-        # fstring += f"    rate_{self.rate.fname}<do_T_derivatives>(tfactors, rate, drate_dT);\n\n"
-
         fstring += f"    // Evaluate the equilibrium ratio without partition function\n"
-        fstring += f"    amrex::Real ratio = {self.ratio_factor};\n"
-        fstring += f"    amrex::Real Q_kBT = {self.Q} * C::MeV2erg / (C::k_B * tfactors.T9 * 1.0e9_rt);\n"
-        fstring += f"    ratio *= std::exp(Q_kBT)\n"
+        fstring += f"    {dtype} ratio = {self.ratio_factor};\n"
+        fstring += f"    {dtype} Q_kBT = {self.Q} / (C::k_MeV * tfactors.T9 * 1.0e9_rt);\n"
+        fstring += f"    ratio *= std::exp(Q_kBT);\n"
         if self.net_stoich != 0:
-            fstring += f"        ratio *= std::sqrt(amrex::Math::powi<{2 * self.net_stoich}>(tfactors.T9 * 1.0e9_rt));\n\n"
+            fstring += f"    ratio *= std::sqrt(amrex::Math::powi<{3 * self.net_stoich}>(tfactors.T9 * 1.0e9_rt));\n\n"
 
         fstring += f"    // Apply the ratio without partition function\n"
         fstring += f"    // Note that screening is not yet applied to the inverse rate\n"
-        fstring += f"    rate = rate_eval.screened_rates(k_{self.rate.fname}) * ratio;"
+        fstring += f"    rate = rate_eval.screened_rates(k_{self.rate.fname});\n"
 
         fstring +=  "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
-        fstring += f"        amrex::Real dratio_dT = ratio * tfactors.T9i * ({1.5 * self.net_stoich} - Q_kBT);\n"
-        fstring += f"        drate_dT = dratedT * ratio + rate * dratio_dT;\n"
-        fstring +=  "    }\n\n"
+        fstring += f"        {dtype} dratio_dT = ratio * tfactors.T9i * 1.0e-9_rt * ({1.5 * self.net_stoich} - Q_kBT);\n"
+        fstring += f"        drate_dT = rate_eval.dscreened_rates_dT(k_{self.rate.fname});\n"
+        fstring += f"        drate_dT = drate_dT * ratio + rate * dratio_dT;\n"
+        fstring +=  "    }\n"
+        fstring += f"    rate *= ratio;\n\n"
 
-        # right now we have rate and drate_dT without the partition
+        # Right now we have rate and drate_dT without the partition
         # function now the partition function corrections
 
         if self.use_pf:
             self._warn_about_missing_pf_tables()
 
-            fstring += "Now apply partition function effects\n"
+            fstring += "    // Now apply partition function effects\n"
             for nuc in set(self.rate.reactants + self.rate.products):
                 fstring += f"    {dtype} {nuc}_pf, d{nuc}_pf_dT;\n"
 
@@ -288,11 +287,13 @@ class DerivedRate(Rate):
             fstring += ";\n\n"
 
             # now the derivatives, via chain rule
+
+            fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+
             chain_terms = []
             for n in self.rate.reactants:
                 chain_terms.append(" * ".join([f"{nucr}_pf" for nucr in self.rate.reactants if nucr != n] + [f"d{n}_pf_dT"]))
-
-            fstring += f"    {dtype} dz_r_dT = "
+            fstring += f"        {dtype} dz_r_dT = "
             fstring += " + ".join(chain_terms)
             fstring += ";\n"
 
@@ -300,15 +301,16 @@ class DerivedRate(Rate):
             for n in self.rate.products:
                 chain_terms.append(" * ".join([f"{nucp}_pf" for nucp in self.rate.products if nucp != n] + [f"d{n}_pf_dT"]))
 
-            fstring += f"    {dtype} dz_p_dT = "
+            fstring += f"        {dtype} dz_p_dT = "
             fstring += " + ".join(chain_terms)
             fstring += ";\n\n"
 
-            fstring += f"    {dtype} dzterm_dT = (z_p * dz_r_dT - z_r * dz_p_dT) / (z_p * z_p);\n\n"
+            fstring += f"        {dtype} dzterm_dT = (z_p * dz_r_dT - z_r * dz_p_dT) / (z_p * z_p);\n\n"
 
             # final terms
 
-            fstring += "    drate_dT = dzterm_dT * rate + drate_dT * (z_r / z_p);\n"
+            fstring += "        drate_dT = dzterm_dT * rate + drate_dT * (z_r / z_p);\n"
+            fstring += "    }\n"
             fstring += "    rate *= z_r / z_p;\n\n"
 
         if not leave_open:

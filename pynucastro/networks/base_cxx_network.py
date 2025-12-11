@@ -541,7 +541,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _reaclib_rate_functions(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"
-        for r in self.reaclib_rates + self.derived_rates + self.modified_rates:
+        for r in self.reaclib_rates + self.modified_rates:
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
 
     def _derived_rate_functions(self, n_indent, of):
@@ -586,7 +586,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write("\n")
 
         for r in self.derived_rates:
-            of.write(f"{self.indent*n_indent}rate_{r.fname}<do_T_derivatives>(tfactors, rate, drate_dT, pf_cache);\n")
+            of.write(f"{self.indent*n_indent}rate_{r.fname}<T>(rate_eval, tfactors, rate, drate_dT, pf_cache);\n")
             of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
             of.write(f"{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
             of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
