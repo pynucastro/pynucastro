@@ -7,6 +7,7 @@ import pytest
 
 import pynucastro as pyna
 from pynucastro.rates.alternate_rates import DeBoerC12agO16
+from pynucastro.rates.alternate_rates import IliadisO16pgF17
 
 
 class TestRateIds:
@@ -33,6 +34,12 @@ class TestRateIds:
         assert r.rid == "C12 + He4 --> O16"
         assert r.id == "C12 + He4 --> O16 <debo_reaclib__>"
         assert r.fname == "C12_He4_to_O16"
+
+        r = IliadisO16pgF17()
+
+        assert r.rid == "C12 + He4 --> O16"
+        assert r.id == "C12 + He4 --> O16 <iliadis>"
+        assert r.fname == "p_O16_to_F17"
 
     def test_tabular_rate(self, langanke_library, ffn_library):
 
