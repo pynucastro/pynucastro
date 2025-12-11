@@ -388,7 +388,7 @@ class Rate:
 
         reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
         products_str = '_'.join([repr(nuc) for nuc in self.products])
-        self.fname = f'{reactants_str}__{products_str}__{self.label}'
+        self.fname = f'{reactants_str}_to_{products_str}_{self.label}'
 
     def _set_rhs_properties(self):
         """Compute statistical prefactor and density exponent from the
