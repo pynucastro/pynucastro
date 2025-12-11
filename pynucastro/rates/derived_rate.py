@@ -118,7 +118,7 @@ class DerivedRate(ReacLibRate):
                          original_source=r.original_source,
                          reactants=self.rate.products,
                          products=self.rate.reactants,
-                         sets=derived_sets, label="derived", Q=-Q)
+                         sets=derived_sets, labelprops="derived", Q=-Q)
 
         # explicitly mark it as reverse
         self.derived_from_inverse = True
