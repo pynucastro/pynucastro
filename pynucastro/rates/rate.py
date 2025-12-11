@@ -223,10 +223,11 @@ class Rate:
             self.Q += -c * n.mass
 
     def _set_print_representation(self):
-        """Sets string, pretty_string, rid, and fname
-        string is output to the terminal, rid is used as a dict key,
-        pretty_string is latex, and fname is used when writing the code
-        to evaluate the rates."""
+       """Compose the string representations of this Rate.
+        This includes string,rid, pretty_string, and fname.
+        String is output to the terminal, rid is used as a dict key,
+        and pretty_string is latex, and fname is used when writing the
+        code to evaluate the rate."""
 
         # some rates will have no nuclei particles (e.g. gamma) on the left or
         # right -- we'll try to infer those here
@@ -385,7 +386,6 @@ class Rate:
 
         self.pretty_string += r"$"
 
-        # Set the fname
         reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
         products_str = '_'.join([repr(nuc) for nuc in self.products])
         self.fname = f'{reactants_str}_to_{products_str}_{self.label}'
@@ -560,7 +560,6 @@ class Rate:
 
         self._set_q()
         self._set_screening()
-        self.fname = None    # reset so it will be updated
         self._set_print_representation()
 
     def evaluate_screening(self, rho, T, composition, screen_func):

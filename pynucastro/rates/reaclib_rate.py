@@ -285,7 +285,6 @@ class ReacLibRate(Rate):
 
         self.chapter = chapter    # the Reaclib chapter for this reaction
         self.original_source = original_source   # the contents of the original rate file
-        self.fname = None
 
         if reactants:
             self.reactants = Nucleus.cast_list(reactants)
@@ -460,7 +459,8 @@ class ReacLibRate(Rate):
             self.derived_from_inverse = False
         else:
             assert len(self.labelprops) == 6
-            self.label = self.labelprops[0:4]
+            self.label = "reaclib"
+            self.source = RateSource.source(self.labelprops[0:4])
             self.resonant = self.labelprops[4] == 'r'
             self.weak = self.labelprops[4] == 'w'
             if self.weak:
@@ -471,7 +471,6 @@ class ReacLibRate(Rate):
             else:
                 self.weak_type = None
             self.derived_from_inverse = self.labelprops[5] == 'v'
-            self.source = RateSource.source(self.label)
 
     def _read_from_file(self, f):
         """Given a file object, read rate data from the file.

@@ -213,7 +213,7 @@ class TabularRate(Rate):
     """
 
     def __init__(self, rfile=None):
-        super().__init__()
+        super().__init__(label="weaktab")
         self.rate_eval_needs_rho = True
         self.rate_eval_needs_comp = True
 
@@ -228,7 +228,6 @@ class TabularRate(Rate):
             self.rfile = rfile.name
             self.ssrc = self.rfile_path.parent.name
 
-        self.label = "tabular"
         self.tabular = True
 
         # we should initialize this somehow
@@ -238,7 +237,6 @@ class TabularRate(Rate):
 
         self._set_rhs_properties()
         self._set_screening()
-        self._set_print_representation()
 
         # store the extrema of the thermodynamics
         _rhoy = self.tabular_data_table[::self.table_temp_lines, TableIndex.RHOY.value]

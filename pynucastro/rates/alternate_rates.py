@@ -23,12 +23,6 @@ class DeBoerC12agO16(ReacLibRate):
         reactants = [Nucleus("c12"), Nucleus("he4")]
         products = [Nucleus("o16")]
 
-        Q = 0
-        for n in reactants:
-            Q += -n.A * n.nucbind
-        for n in products:
-            Q += n.A * n.nucbind
-
         # we'll use the same chapter notation as ReacLib
         chapter = 4
 
@@ -82,6 +76,7 @@ class IliadisO16pgF17(TemperatureTabularRate):
 
         super().__init__(np.log10(T9), np.log10(rate),
                          rate_source="iliadis2022",
-                         reactants=reactants, products=products)
+                         reactants=reactants, products=products,
+                         label="iliadis")
 
         assert self.Q != 0.0
