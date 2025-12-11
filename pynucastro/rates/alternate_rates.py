@@ -27,7 +27,7 @@ class DeBoerC12agO16(ReacLibRate):
         chapter = 4
 
         super().__init__(reactants=reactants, products=products,
-                         chapter=chapter, Q=Q,
+                         chapter=chapter,
                          labelprops=labelprops)
 
         # from DeBoer et al. 2017

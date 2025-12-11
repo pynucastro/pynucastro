@@ -221,7 +221,7 @@ class Rate:
             self.Q += -c * n.mass
 
     def _set_print_representation(self):
-       """Compose the string representations of this Rate.
+        """Compose the string representations of this Rate.
         This includes string,rid, pretty_string, and fname.
         String is output to the terminal, rid is used as a dict key,
         and pretty_string is latex, and fname is used when writing the
