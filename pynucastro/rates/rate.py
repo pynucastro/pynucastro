@@ -6,6 +6,7 @@ from pathlib import Path
 import numpy as np
 
 import pynucastro.numba_util as numba
+from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
 from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import _find_rate_file
@@ -121,12 +122,7 @@ class Rate:
 
         self.source = None
         self.modified = False
-
-        # the fname is used when writing the code to evaluate the rate
-        reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
-        products_str = '_'.join([repr(nuc) for nuc in self.products])
-        self.fname = f'{reactants_str}_to_{products_str}_{label}'
-
+        self.removed = False
         self.weak_type = weak_type
 
         # the identical particle factor scales the rate to prevent
@@ -218,15 +214,20 @@ class Rate:
         self.Q = 0
         for n in set(self.reactants):
             c = self.reactant_count(n)
-            self.Q += c * n.mass
+            self.Q += c * n.A_nuc
         for n in set(self.products):
             c = self.product_count(n)
-            self.Q += -c * n.mass
+            self.Q += -c * n.A_nuc
+
+        self.Q *= constants.m_u_MeV_C18
 
     def _set_print_representation(self):
-
-        # string is output to the terminal, rid is used as a dict key,
-        # and pretty_string is latex
+        """Compose the string representations of this Rate.
+        This includes string,rid, pretty_string, and fname.
+        String is output to the terminal, rid is used as a dict key,
+        and pretty_string is latex, and fname is used when writing the
+        code to evaluate the rate
+        """
 
         # some rates will have no nuclei particles (e.g. gamma) on the left or
         # right -- we'll try to infer those here
@@ -384,6 +385,10 @@ class Rate:
                 self.pretty_string += r" + \mathrm{e}^+"
 
         self.pretty_string += r"$"
+
+        reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
+        products_str = '_'.join([repr(nuc) for nuc in self.products])
+        self.fname = f'{reactants_str}_to_{products_str}_{self.label}'
 
     def _set_rhs_properties(self):
         """Compute statistical prefactor and density exponent from the

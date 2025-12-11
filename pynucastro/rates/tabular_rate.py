@@ -235,6 +235,7 @@ class TabularRate(Rate):
 
         # we should initialize this somehow
         self.weak_type = ""
+        self.weak = True
 
         self._read_from_file(self.rfile_path)
 
