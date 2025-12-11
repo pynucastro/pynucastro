@@ -127,6 +127,7 @@ class Rate:
         if self.weak_type:
             self.weak = True
 
+        self.removed = False
         self.tabular = False
         self.derived_from_inverse = False
 
@@ -385,6 +386,11 @@ class Rate:
                 self.pretty_string += r" + \mathrm{e}^+"
 
         self.pretty_string += r"$"
+
+        # If rate is removed, i.e. a child rate for an ApproximateRate,
+        # change label to removed
+        if self.removed:
+            self.label = "removed"
 
         reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
         products_str = '_'.join([repr(nuc) for nuc in self.products])
