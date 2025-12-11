@@ -225,7 +225,9 @@ class Rate:
         This includes string,rid, pretty_string, and fname.
         String is output to the terminal, rid is used as a dict key,
         and pretty_string is latex, and fname is used when writing the
-        code to evaluate the rate."""
+        code to evaluate the rate.
+
+        """
 
         # some rates will have no nuclei particles (e.g. gamma) on the left or
         # right -- we'll try to infer those here
