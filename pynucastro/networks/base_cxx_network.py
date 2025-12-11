@@ -19,7 +19,6 @@ import sympy
 from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
-from pynucastro.rates import DerivedRate
 from pynucastro.screening import get_screening_map
 from pynucastro.utils import pynucastro_version
 

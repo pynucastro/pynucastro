@@ -11,9 +11,7 @@ import numpy as np
 
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates.modified_rate import ModifiedRate
 from pynucastro.rates.rate import Rate
-from pynucastro.rates.reaclib_rate import ReacLibRate, SingleSet
 from pynucastro.rates.tabular_rate import TabularRate
 
 
@@ -169,7 +167,7 @@ class DerivedRate(Rate):
         fstring += f"def {self.fname}(rate_eval, tf):\n"
         fstring += f"    # {self.rid}\n\n"
 
-        fstring += f"    # Evaluate the equilibrium ratio\n"
+        fstring += "    # Evaluate the equilibrium ratio\n"
         fstring += f"    ratio = {self.ratio_factor} * (tf.T9 * 1.0e9)**(1.5 * {self.net_stoich})\n"
         fstring += f"    ratio *= np.exp({self.Q} / (constants.k_MeV * tf.T9 * 1.0e9))\n"
         fstring += f"    rate_eval.{self.fname} = rate_eval.{self.rate.fname} * ratio\n"
@@ -241,23 +239,23 @@ class DerivedRate(Rate):
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
 
-        fstring += f"    // Evaluate the equilibrium ratio without partition function\n"
+        fstring += "    // Evaluate the equilibrium ratio without partition function\n"
         fstring += f"    {dtype} ratio = {self.ratio_factor};\n"
         fstring += f"    {dtype} Q_kBT = {self.Q} / (C::k_MeV * tfactors.T9 * 1.0e9_rt);\n"
-        fstring += f"    ratio *= std::exp(Q_kBT);\n"
+        fstring += "    ratio *= std::exp(Q_kBT);\n"
         if self.net_stoich != 0:
             fstring += f"    ratio *= std::sqrt(amrex::Math::powi<{3 * self.net_stoich}>(tfactors.T9 * 1.0e9_rt));\n\n"
 
-        fstring += f"    // Apply the ratio without partition function\n"
-        fstring += f"    // Note that screening is not yet applied to the inverse rate\n"
+        fstring += "    // Apply the ratio without partition function\n"
+        fstring += "    // Note that screening is not yet applied to the inverse rate\n"
         fstring += f"    rate = rate_eval.screened_rates(k_{self.rate.fname});\n"
 
-        fstring +=  "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
         fstring += f"        {dtype} dratio_dT = ratio * tfactors.T9i * 1.0e-9_rt * ({1.5 * self.net_stoich} - Q_kBT);\n"
         fstring += f"        drate_dT = rate_eval.dscreened_rates_dT(k_{self.rate.fname});\n"
-        fstring += f"        drate_dT = drate_dT * ratio + rate * dratio_dT;\n"
-        fstring +=  "    }\n"
-        fstring += f"    rate *= ratio;\n\n"
+        fstring += "        drate_dT = drate_dT * ratio + rate * dratio_dT;\n"
+        fstring += "    }\n"
+        fstring += "    rate *= ratio;\n\n"
 
         # Right now we have rate and drate_dT without the partition
         # function now the partition function corrections

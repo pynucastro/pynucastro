@@ -12,7 +12,6 @@ from pynucastro.constants import constants
 from pynucastro.networks.base_cxx_network import (BaseCxxNetwork,
                                                   _signed_rate_dtype)
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates import ReacLibRate
 
 
 class AmrexAstroCxxNetwork(BaseCxxNetwork):
