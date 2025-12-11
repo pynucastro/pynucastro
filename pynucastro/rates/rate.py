@@ -128,6 +128,7 @@ class Rate:
             self.weak = True
 
         self.removed = False
+        self.modified = False
         self.tabular = False
         self.derived_from_inverse = False
 
