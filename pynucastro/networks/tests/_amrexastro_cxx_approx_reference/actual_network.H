@@ -91,20 +91,6 @@ namespace network
         return b;
     }
 
-    AMREX_GPU_HOST_DEVICE AMREX_INLINE
-    amrex::Real mion (int spec) {
-        using namespace Species;
-
-        amrex::Real m = 0.0_rt;
-
-        amrex::constexpr_for<1, NumSpec+1>([&] (auto n) {
-            if (n == spec) {
-                m = mion<n>();
-            }
-        });
-
-        return m;
-    }
 }
 
 namespace Rates
