@@ -447,12 +447,14 @@ class ReacLibRate(Rate):
         assert isinstance(self.labelprops, str)
         if self.labelprops == "approx":
             self.label = "approx"
+            self.ssrc = ""
             self.resonant = False
             self.weak = False
             self.weak_type = None
             self.derived_from_inverse = False
         elif self.labelprops == "derived":
             self.label = "derived"
+            self.ssrc = ""
             self.resonant = False  # Derived may be resonant in some cases
             self.weak = False
             self.weak_type = None
@@ -460,7 +462,8 @@ class ReacLibRate(Rate):
         else:
             assert len(self.labelprops) == 6
             self.label = "reaclib"
-            self.source = RateSource.source(self.labelprops[0:4])
+            self.ssrc = self.labelprops[0:4]
+            self.source = RateSource.source(self.ssrc)
             self.resonant = self.labelprops[4] == 'r'
             self.weak = self.labelprops[4] == 'w'
             if self.weak:
@@ -627,9 +630,7 @@ class ReacLibRate(Rate):
         if self.weak:
             sweak = 'weak'
 
-        ssrc = 'reaclib'
-
-        return f'{self.rid} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
+        return f'{self.rid} <{self.label.strip()}_{self.ssrc}_{sweak}_{srev}>'
 
     def function_string_py(self):
         """Return a string containing the python function that

@@ -119,7 +119,8 @@ class Rate:
 
         self.label = label
 
-        if rate_source is not None:
+        self.ssrc = rate_source
+        if self.ssrc is not None:
             self.source = RateSource.source(rate_source)
 
         self.weak = False
@@ -131,6 +132,7 @@ class Rate:
         self.modified = False
         self.tabular = False
         self.derived_from_inverse = False
+        self.approx = False
 
         # the identical particle factor scales the rate to prevent
         # double counting for a rate that has the same nucleus
