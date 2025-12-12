@@ -6,8 +6,7 @@ serves as a comparison so we can remember what the different IDs mean.
 import pytest
 
 import pynucastro as pyna
-from pynucastro.rates.alternate_rates import DeBoerC12agO16
-from pynucastro.rates.alternate_rates import IliadisO16pgF17
+from pynucastro.rates.alternate_rates import DeBoerC12agO16, IliadisO16pgF17
 
 
 class TestRateIds:
