@@ -1,5 +1,66 @@
 # Changelog
 
+## 2.9.0
+
+  * remove `Rate.cname` and change `Rate.fname` to be more descriptive
+    (#1206)
+
+  * add a `TemperatureTabularRate` that works with (T, N_A<σv>) pairs
+    (#1175)
+
+  * update CI to python 3.14 (#1089, #1205)
+
+  * clean up the `EOSState` classes (#1200)
+
+  * update Zenodo authors (#1204)
+
+  * add a `full_library` that contains all the rates in pynucastro
+    (#1193)
+
+  * add a unit test on rate IDs (#1199)
+
+  * add a solar composition from Lodders et al. 2020 (#1187)
+
+  * remove `Rate.chapter` outside of `ReacLibRate` (#1203)
+
+  * make tabular rates distinguishable (#1196)
+
+  * remove `libfile` from the `Library` class -- it only makes sense
+    for `ReacLibLibrary` (#1185)
+
+  * docstring updates (#1198)
+
+  * remove `list_known_rates` -- it only works for single rate files
+    (#1192)
+
+  * centralize the AMReX C++ interpolation routines (#1190)
+
+  * AMReX C++ networks optimizations: use the smallest int type for
+    `rate_indices (#1189), eliminate multiple logs in the table rate
+    eval (#1180), remove unneeded parameters (#1183), cache partition
+    function indices and only compute partition function if it is > 1
+    (#1165, #1167), optimize table lookup for weak rates (#1164)
+
+  * Add `SECURITY.md` (#1188)
+
+  * `network_helper` updates: add `with_reverse` (#1168), add
+    `inert_nuclei` support (#1184)
+
+  * update CI actions (#1181)
+
+  * update CI benchmarks to reflect AMReX-Astro Microphysics changes
+    (#1179)
+
+  * add more screening test coverage (#1172)
+
+  * docs / API link updates (#1170, #1174)
+
+  * add Windows CI test (#1163, #1177)
+
+  * disable CPU features when regenerating nets in CI comparisons (#1173)
+
+  * add the ability to plot partition functions (#1166)
+
 ## 2.8.0
 
   * update CI artifact action version (#1160)
