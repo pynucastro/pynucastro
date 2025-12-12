@@ -285,7 +285,6 @@ class ReacLibRate(Rate):
 
         self.chapter = chapter    # the Reaclib chapter for this reaction
         self.original_source = original_source   # the contents of the original rate file
-        self.fname = None
 
         if reactants:
             self.reactants = Nucleus.cast_list(reactants)
@@ -353,29 +352,6 @@ class ReacLibRate(Rate):
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
-
-    def _set_print_representation(self):
-        """Compose the string representations of this Rate."""
-
-        super()._set_print_representation()
-
-        # This is used to determine which rates to detect as the same reaction
-        # from multiple sources in a Library file, so it should not be unique
-        # to a given source, e.g. wc12, but only unique to the reaction.
-        reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
-        products_str = '_'.join([repr(nuc) for nuc in self.products])
-        self.fname = f'{reactants_str}_to_{products_str}'
-
-        if self.weak:
-            self.fname += f'_weak_{self.weak_type}'
-        if self.modified:
-            self.fname += "_modified"
-        if self.approx:
-            self.fname += "_approx"
-        if self.derived:
-            self.fname += "_derived"
-        if self.removed:
-            self.fname += "_removed"
 
     def __hash__(self):
         return hash(self.__repr__())
@@ -471,19 +447,23 @@ class ReacLibRate(Rate):
         assert isinstance(self.labelprops, str)
         if self.labelprops == "approx":
             self.label = "approx"
+            self.ssrc = ""
             self.resonant = False
             self.weak = False
             self.weak_type = None
             self.derived_from_inverse = False
         elif self.labelprops == "derived":
             self.label = "derived"
+            self.ssrc = ""
             self.resonant = False  # Derived may be resonant in some cases
             self.weak = False
             self.weak_type = None
             self.derived_from_inverse = False
         else:
             assert len(self.labelprops) == 6
-            self.label = self.labelprops[0:4]
+            self.label = "reaclib"
+            self.ssrc = self.labelprops[0:4]
+            self.source = RateSource.source(self.ssrc)
             self.resonant = self.labelprops[4] == 'r'
             self.weak = self.labelprops[4] == 'w'
             if self.weak:
@@ -494,7 +474,6 @@ class ReacLibRate(Rate):
             else:
                 self.weak_type = None
             self.derived_from_inverse = self.labelprops[5] == 'v'
-            self.source = RateSource.source(self.label)
 
     def _read_from_file(self, f):
         """Given a file object, read rate data from the file.
@@ -651,9 +630,7 @@ class ReacLibRate(Rate):
         if self.weak:
             sweak = 'weak'
 
-        ssrc = 'reaclib'
-
-        return f'{self.rid} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
+        return f'{self.rid} <{self.label.strip()}_{self.ssrc}_{sweak}_{srev}>'
 
     def function_string_py(self):
         """Return a string containing the python function that

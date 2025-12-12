@@ -279,6 +279,8 @@ class ApproximateRate(Rate):
                                  label="approx",
                                  use_identical_particle_factor=use_identical_particle_factor)
 
+            self.approx = True
+
             # none of these rates directly appear as links in the network
             self.hidden_rates = list(self.rates.values())
 
