@@ -126,6 +126,8 @@ class DerivedRate(ReacLibRate):
         # Update stoichiometry so that we are consistent in full ydot eqns
         self.stoichiometry = self.rate.stoichiometry
 
+        self._set_print_representation()
+
     def _warn_about_missing_pf_tables(self):
         skip_nuclei = {Nucleus("h1"), Nucleus("n"), Nucleus("he4")}
         for nuc in set(self.rate.reactants + self.rate.products) - skip_nuclei:
