@@ -368,17 +368,6 @@ class TabularRate(Rate):
         """
         self.ion_screen = []
 
-    def get_rate_id(self):
-        """Get an identifying string for this rate.
-
-        Returns
-        -------
-        str
-
-        """
-
-        return f'{self.rid} <{self.label.strip()}_{self.ssrc}>'
-
     def function_string_py(self):
         """Construct the python function that computes the rate.
 

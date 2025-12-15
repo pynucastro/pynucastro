@@ -42,8 +42,8 @@ class DeBoerC12agO16(ReacLibRate):
         a = [7.4, -30.0, 0.0, 0.0, 0.0, 0.0, -1.5]
         self.sets.append(SingleSet(a, labelprops=labelprops))
 
-        # Change label to deboer
-        self.label=deboer
+        # Change label to deboer and update fname
+        self.label="deboer"
         self._set_print_representation()
 
 class IliadisO16pgF17(TemperatureTabularRate):

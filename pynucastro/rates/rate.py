@@ -119,8 +119,8 @@ class Rate:
 
         self.label = label
 
-        self.ssrc = rate_source
-        if self.ssrc is not None:
+        self.src = rate_source
+        if self.src is not None:
             self.source = RateSource.source(rate_source)
 
         self.weak = False
@@ -440,7 +440,20 @@ class Rate:
         str
 
         """
-        return f'{self.rid} <{self.label.strip()}>'
+
+        srev = ''
+        if self.derived_from_inverse:
+            srev = '_derived_from_inverse'
+
+        sweak = ''
+        if self.weak:
+            sweak = f'_weak_{self.weak_type}'
+
+        ssrc = ''
+        if self.src is not None:
+            ssrc = f'_{self.src}'
+
+        return f'{self.rid} <{self.label.strip()}{ssrc}{sweak}{srev}>'
 
     @property
     def id(self):
