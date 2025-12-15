@@ -443,7 +443,7 @@ class Rate:
 
         ssrc = ''
         if self.src is not None:
-            ssrc = f'_{self.src}'
+            ssrc = f'_{self.src.strip()}'
 
         return f'{self.rid} <{self.label.strip()}{ssrc}>'
 
