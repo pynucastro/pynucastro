@@ -320,8 +320,6 @@ class ReacLibRate(Rate):
 
         self.removed = None
 
-        self.Q = Q
-
         self.tabular = False
 
         self.use_identical_particle_factor = True
@@ -332,6 +330,11 @@ class ReacLibRate(Rate):
         # some subclasses might define a stoichmetry as a dict{Nucleus}
         # that gives the numbers for the dY/dt equations
         self.stoichiometry = None
+
+        if Q is None:
+            self._set_q()
+        else:
+            self.Q = Q
 
         if isinstance(rfile, Path):
             # read in the file, parse the different sets and store them as
