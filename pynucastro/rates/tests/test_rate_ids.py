@@ -24,20 +24,20 @@ class TestRateIds:
         r = reaclib_library.get_rate_by_name("c12(a,g)o16")
 
         assert r.rid == "C12 + He4 --> O16"
-        assert r.id == "C12 + He4 --> O16 <nac2_reaclib__>"
+        assert r.id == "C12 + He4 --> O16 <reaclib_nac2>"
         assert r.fname == "He4_C12_to_O16"
 
     def test_alternate_rate(self):
         r = DeBoerC12agO16()
 
         assert r.rid == "C12 + He4 --> O16"
-        assert r.id == "C12 + He4 --> O16 <debo_reaclib__>"
+        assert r.id == "C12 + He4 --> O16 <deboer>"
         assert r.fname == "C12_He4_to_O16"
 
         r = IliadisO16pgF17()
 
-        assert r.rid == "C12 + He4 --> O16"
-        assert r.id == "C12 + He4 --> O16 <iliadis>"
+        assert r.rid == "p + O16 --> F17"
+        assert r.id == "p + O16 --> F17 <iliadis>"
         assert r.fname == "p_O16_to_F17"
 
     def test_tabular_rate(self, langanke_library, ffn_library):

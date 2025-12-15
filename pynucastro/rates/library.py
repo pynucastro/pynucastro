@@ -152,8 +152,13 @@ class Library:
         return list(self._rates.values())
 
     def get_rate(self, rid):
-        """Return a rate matching the id provided.
+        """Return a rate matching the id or fname provided.
 
+        Parameters
+        ----------
+        rid : str
+            rid of the Rate or the fname, as returned by Rate.fname.
+            The base fname without the label is also accepted.
         Returns
         -------
         Rate

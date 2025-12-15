@@ -624,13 +624,15 @@ class ReacLibRate(Rate):
 
         srev = ''
         if self.derived_from_inverse:
-            srev = 'derived_from_inverse'
+            srev = '_derived_from_inverse'
 
         sweak = ''
         if self.weak:
-            sweak = 'weak'
+            sweak = '_weak'
 
-        return f'{self.rid} <{self.label.strip()}_{self.ssrc}_{sweak}_{srev}>'
+        if self.ssrc:
+            sssrc = "_" + self.ssrc
+        return f'{self.rid} <{self.label.strip()}{sssrc}{sweak}{srev}>'
 
     def function_string_py(self):
         """Return a string containing the python function that

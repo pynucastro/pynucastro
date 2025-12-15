@@ -42,6 +42,9 @@ class DeBoerC12agO16(ReacLibRate):
         a = [7.4, -30.0, 0.0, 0.0, 0.0, 0.0, -1.5]
         self.sets.append(SingleSet(a, labelprops=labelprops))
 
+        # Change label to deboer
+        self.label=deboer
+        self._set_print_representation()
 
 class IliadisO16pgF17(TemperatureTabularRate):
     """The O16(p,g)F17 rate from Iliadis et al. 2022.  This uses

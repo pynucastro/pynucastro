@@ -121,8 +121,9 @@ class TemperatureTabularRate(Rate):
 
     """
 
-    def __init__(self, log_t9_data, log_rate_data, rate_source=None, **kwargs):
-        super().__init__(label="temptab", **kwargs)
+    def __init__(self, log_t9_data, log_rate_data, rate_source=None,
+                 label="temptab", **kwargs):
+        super().__init__(label=label, **kwargs)
 
         if rate_source:
             self.source = RateSource.source(rate_source)

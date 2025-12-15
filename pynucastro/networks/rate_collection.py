@@ -1046,13 +1046,15 @@ class RateCollection:
         Parameters
         ----------
         fname : str
-            The fname of the rate, as returned by Rate.fname
+            The fname of the rate, as returned by Rate.fname,
+            or the base fname without the label.
 
         Returns
         -------
         Rate
 
         """
+
         try:
             fname_mod = capitalize_rid(fname, "_")
             return [r for r in self.rates if r.fname == fname_mod][0]
