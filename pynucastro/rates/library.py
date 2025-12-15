@@ -159,6 +159,7 @@ class Library:
         rid : str
             rid of the Rate or the fname, as returned by Rate.fname.
             The base fname without the label is also accepted.
+
         Returns
         -------
         Rate

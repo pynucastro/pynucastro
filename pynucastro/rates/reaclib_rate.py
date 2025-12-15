@@ -611,29 +611,6 @@ class ReacLibRate(Rate):
 
         print(self.original_source, file=f)
 
-    def get_rate_id(self):
-        """Get an identifying string for this rate.  Don't include
-        resonance state since we combine resonant and non-resonant
-        versions of reactions.
-
-        Returns
-        -------
-        str
-
-        """
-
-        srev = ''
-        if self.derived_from_inverse:
-            srev = '_derived_from_inverse'
-
-        sweak = ''
-        if self.weak:
-            sweak = '_weak'
-
-        if self.src is not None:
-            ssrc = "_" + self.src
-        return f'{self.rid} <{self.label.strip()}{ssrc}{sweak}{srev}>'
-
     def function_string_py(self):
         """Return a string containing the python function that
         computes the rate.
