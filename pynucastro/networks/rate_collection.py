@@ -1061,7 +1061,7 @@ class RateCollection:
 
         matched_rates = []
         for q in self.get_rates():
-            q_base_fname = fname.rsplit('_', 1)[0]
+            q_base_fname = q.fname.rsplit('_', 1)[0]
             if fname_mod in (q.fname, q_base_fname):
                 matched_rates.append(q)
 

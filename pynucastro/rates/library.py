@@ -162,7 +162,7 @@ class Library:
         ----------
         rate_id : str
             rid of the Rate or the fname, as returned by Rate.fname.
-            The base name of the fname, i.e. without label is also accepted.
+            The base name of the fname, i.e. without label, is also accepted.
 
         Returns
         -------
