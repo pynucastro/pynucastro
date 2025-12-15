@@ -117,6 +117,7 @@ class Rate:
         else:
             self.products = []
 
+        assert '_' not in label, "Rate label should not contain underscore"
         self.label = label
 
         self.src = rate_source
