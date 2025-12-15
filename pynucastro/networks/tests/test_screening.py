@@ -34,11 +34,11 @@ class TestScreening:
         c = networks.Composition(rc.unique_nuclei)
         c.set_solar_like()
 
-        rates = {"C12 + He4 --> O16 <nac2_reaclib__>": 5.794539791829924,
-                 "C12 + C12 --> He4 + Ne20 <cf88_reaclib__>": 103.21274049093526,
-                 "C12 + C12 --> n + Mg23 <cf88_reaclib__derived_from_inverse>": 103.21274049093526,
-                 "C12 + C12 --> p + Na23 <cf88_reaclib__>": 103.21274049093526,
-                 "3 He4 --> C12 <fy05_reaclib__>": 6.502599619793744}
+        rates = {"C12 + He4 --> O16 <reaclib_nac2>": 5.794539791829924,
+                 "C12 + C12 --> He4 + Ne20 <reaclib_cf88>": 103.21274049093526,
+                 "C12 + C12 --> n + Mg23 <reaclib_cf88>": 103.21274049093526,
+                 "C12 + C12 --> p + Na23 <reaclib_cf88>": 103.21274049093526,
+                 "3 He4 --> C12 <reaclib_fy05>": 6.502599619793744}
 
         factors = {}
         for r in rc.get_rates():
@@ -51,11 +51,11 @@ class TestScreening:
         c = networks.Composition(rc.unique_nuclei)
         c.set_solar_like()
 
-        rates = {"C12 + He4 --> O16 <nac2_reaclib__>": 4.405674333522246,
-                 "C12 + C12 --> He4 + Ne20 <cf88_reaclib__>": 89.6640543016441,
-                 "C12 + C12 --> n + Mg23 <cf88_reaclib__derived_from_inverse>": 89.6640543016441,
-                 "C12 + C12 --> p + Na23 <cf88_reaclib__>": 89.6640543016441,
-                 "3 He4 --> C12 <fy05_reaclib__>": 4.380701422122169}
+        rates = {"C12 + He4 --> O16 <reaclib_nac2>": 4.405674333522246,
+                 "C12 + C12 --> He4 + Ne20 <reaclib_cf88>": 89.6640543016441,
+                 "C12 + C12 --> n + Mg23 <reaclib_cf88>": 89.6640543016441,
+                 "C12 + C12 --> p + Na23 <reaclib_cf88>": 89.6640543016441,
+                 "3 He4 --> C12 <reaclib_fy05>": 4.380701422122169}
 
         factors = {}
         for r in rc.get_rates():

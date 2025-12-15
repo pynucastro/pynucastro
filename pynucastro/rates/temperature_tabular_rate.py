@@ -123,10 +123,7 @@ class TemperatureTabularRate(Rate):
 
     def __init__(self, log_t9_data, log_rate_data, rate_source=None,
                  label="temptab", **kwargs):
-        super().__init__(label=label, **kwargs)
-
-        if rate_source:
-            self.source = RateSource.source(rate_source)
+        super().__init__(label=label, rate_source=rate_source, **kwargs)
 
         # make sure there are no weak interactions -- we don't
         # support those yet
@@ -161,17 +158,6 @@ class TemperatureTabularRate(Rate):
 
     def __hash__(self):
         return hash(self.__repr__())
-
-    def get_rate_id(self):
-        """Get an identifying string for this rate.
-
-        Returns
-        -------
-        str
-
-        """
-
-        return f'{self.rid} <{self.label.strip()}>'
 
     def function_string_py(self):
         """Construct the python function that computes the rate.

@@ -748,9 +748,9 @@ class RateCollection:
         else:
             cr.removed = False
 
-        # reset fname -- set_print_representatoin will add
+        # update fname -- _set_print_representation will add
         # "_removed" to the name
-        cr.fname = None
+
         # pylint: disable-next=protected-access
         cr._set_print_representation()
 
