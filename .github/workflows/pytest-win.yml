@@ -63,7 +63,7 @@ jobs:
         run: pytest -v -s --color=yes
 
       - name: Upload output from failed write_network tests
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: failed_networks_${{ matrix.python-version }}
