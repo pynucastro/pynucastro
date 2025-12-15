@@ -8,7 +8,7 @@ import numpy as np
 
 import pynucastro.numba_util as numba
 from pynucastro.numba_util import jitclass
-from pynucastro.rates.rate import Rate, RateSource
+from pynucastro.rates.rate import Rate
 
 
 @jitclass([

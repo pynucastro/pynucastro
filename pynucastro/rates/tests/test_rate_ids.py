@@ -76,7 +76,7 @@ class TestRateIds:
         assert ra.id == "Mg24 + He4 --> Si28 <approx>"
         assert ra.fname == "Mg24_He4_to_Si28_approx"
 
-        cr= ra.get_child_rates()[1]
+        cr = ra.get_child_rates()[1]
 
         assert cr.rid == "Mg24 + He4 --> p + Al27"
         assert cr.id == "Mg24 + He4 --> p + Al27 <removed_il10>"
