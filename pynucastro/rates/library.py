@@ -184,9 +184,8 @@ class Library:
 
         matched_rates = []
         for q in self.get_rates():
-            fname = q.fname
-            base_fname = fname.rsplit('_', 1)[0]
-            if fname_mod == fname or fname_mod == base_fname:
+            q_base_fname = fname.rsplit('_', 1)[0]
+            if fname_mod == q.fname or fname_mod == q_base_fname:
                 matched_rates.append(q)
 
         if not matched_rates:

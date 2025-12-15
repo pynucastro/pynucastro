@@ -1055,11 +1055,23 @@ class RateCollection:
 
         """
 
-        try:
-            fname_mod = capitalize_rid(fname, "_")
-            return [r for r in self.rates if r.fname == fname_mod][0]
-        except IndexError:
-            raise LookupError(f"rate fname {fname!r} does not match a rate in this network.") from None
+        # Get the base fname. Assume that fname follows reactants_to_products_label
+        # And label does not contain any underscore _.
+        fname_mod = capitalize_id(fname, "_")
+
+        matched_rates = []
+        for q in self.get_rates():
+            q_base_fname = fname.rsplit('_', 1)[0]
+            if fname_mod == q.fname or fname_mod == q_base_fname:
+                matched_rates.append(q)
+
+        if not matched_rates:
+            raise LookupError(f"rate identifier {rate_id!r} does not match a rate in this network.")
+
+        if len(matched_rates) > 1:
+            raise LookupError(f"rate identifier {rate_id!r} is ambiguous. It matched {[q.fname for q in matched_rates]}.")
+
+        return matched_rates[0]
 
     def get_rate_by_nuclei(self, reactants, products):
         """Given a list of reactants and products, return any matching rates
