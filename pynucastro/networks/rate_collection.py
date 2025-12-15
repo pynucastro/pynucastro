@@ -1062,7 +1062,7 @@ class RateCollection:
         matched_rates = []
         for q in self.get_rates():
             q_base_fname = fname.rsplit('_', 1)[0]
-            if fname_mod == q.fname or fname_mod == q_base_fname:
+            if fname_mod in (q.fname, q_base_fname):
                 matched_rates.append(q)
 
         if not matched_rates:
