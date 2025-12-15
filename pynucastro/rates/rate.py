@@ -441,15 +441,11 @@ class Rate:
 
         """
 
-        sweak = ''
-        if self.weak:
-            sweak = f'_weak_{self.weak_type}'
-3
         ssrc = ''
         if self.src is not None:
             ssrc = f'_{self.src}'
 
-        return f'{self.rid} <{self.label.strip()}{ssrc}{sweak}>'
+        return f'{self.rid} <{self.label.strip()}{ssrc}>'
 
     @property
     def id(self):
