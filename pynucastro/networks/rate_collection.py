@@ -29,7 +29,7 @@ from pynucastro.rates import (ApproximateRate, DerivedRate, Library,
                               ModifiedRate, Rate, RateFileError, RatePair,
                               ReacLibRate, TabularRate, TemperatureTabularRate,
                               find_duplicate_rates, is_allowed_dupe, load_rate)
-from pynucastro.rates.library import _rate_name_to_nuc, capitalize_rid
+from pynucastro.rates.library import _rate_name_to_nuc, capitalize_id
 
 mpl.rcParams['figure.dpi'] = 100
 
@@ -1066,10 +1066,10 @@ class RateCollection:
                 matched_rates.append(q)
 
         if not matched_rates:
-            raise LookupError(f"rate identifier {rate_id!r} does not match a rate in this network.")
+            raise LookupError(f"rate identifier {fname!r} does not match a rate in this network.")
 
         if len(matched_rates) > 1:
-            raise LookupError(f"rate identifier {rate_id!r} is ambiguous. It matched {[q.fname for q in matched_rates]}.")
+            raise LookupError(f"rate identifier {fname!r} is ambiguous. It matched {[q.fname for q in matched_rates]}.")
 
         return matched_rates[0]
 

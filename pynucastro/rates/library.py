@@ -163,6 +163,7 @@ class Library:
         rate_id : str
             rid of the Rate or the fname, as returned by Rate.fname.
             The base name of the fname, i.e. without label is also accepted.
+
         Returns
         -------
         Rate
@@ -184,7 +185,7 @@ class Library:
 
         matched_rates = []
         for q in self.get_rates():
-            q_base_fname = fname.rsplit('_', 1)[0]
+            q_base_fname = q.fname.rsplit('_', 1)[0]
             if fname_mod == q.fname or fname_mod == q_base_fname:
                 matched_rates.append(q)
 
