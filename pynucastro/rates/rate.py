@@ -441,19 +441,15 @@ class Rate:
 
         """
 
-        srev = ''
-        if self.derived_from_inverse:
-            srev = '_derived_from_inverse'
-
         sweak = ''
         if self.weak:
             sweak = f'_weak_{self.weak_type}'
-
+3
         ssrc = ''
         if self.src is not None:
             ssrc = f'_{self.src}'
 
-        return f'{self.rid} <{self.label.strip()}{ssrc}{sweak}{srev}>'
+        return f'{self.rid} <{self.label.strip()}{ssrc}{sweak}>'
 
     @property
     def id(self):

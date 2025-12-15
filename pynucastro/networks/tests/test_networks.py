@@ -36,14 +36,14 @@ class TestRateCollection:
         c = networks.Composition(rc.unique_nuclei)
         c.set_solar_like()
 
-        rates = {"C12 + p --> N13 <ls09_reaclib__>": 4.3825344233265815e-05,
-                 "C13 + p --> N14 <nacr_reaclib__>": 0.00012943869407433355,
-                 "N13 --> C13 <wc12_reaclib_weak_>": 2.5475016632596765e-07,
-                 "N13 + p --> O14 <lg06_reaclib__>": 4.8517620910445875e-06,
-                 "N14 + p --> O15 <im05_reaclib__>": 9.8137074572314962e-07,
-                 "N15 + p --> He4 + C12 <nacr_reaclib__>": 0.087518552257659241,
-                 "O14 --> N14 <wc12_reaclib_weak_>": 2.0036691481625654e-06,
-                 "O15 --> N15 <wc12_reaclib_weak_>": 1.0822012944765837e-06}
+        rates = {"C12 + p --> N13 <reaclib_ls09>": 4.3825344233265815e-05,
+                 "C13 + p --> N14 <reaclib_nacr>": 0.00012943869407433355,
+                 "N13 --> C13 <reaclib_wc12_weak_beta_decay>": 2.5475016632596765e-07,
+                 "N13 + p --> O14 <reaclib_lg06>": 4.8517620910445875e-06,
+                 "N14 + p --> O15 <reaclib_im05>": 9.8137074572314962e-07,
+                 "N15 + p --> He4 + C12 <reaclib_nacr>": 0.087518552257659241,
+                 "O14 --> N14 <reaclib_wc12_weak_electron_capture>": 2.0036691481625654e-06,
+                 "O15 --> N15 <reaclib_wc12_weak_electron_capture>": 1.0822012944765837e-06}
 
         rv = rc.evaluate_rates(1.e4, 1.e8, c)
 

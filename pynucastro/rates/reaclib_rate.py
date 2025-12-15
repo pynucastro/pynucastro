@@ -395,6 +395,7 @@ class ReacLibRate(Rate):
         assert self.chapter == other.chapter
         assert isinstance(self.chapter, int)
         assert self.label == other.label
+        assert self.src == other.src
         assert self.weak == other.weak
         assert self.weak_type == other.weak_type
         assert self.derived_from_inverse == other.derived_from_inverse
@@ -467,10 +468,10 @@ class ReacLibRate(Rate):
             self.resonant = self.labelprops[4] == 'r'
             self.weak = self.labelprops[4] == 'w'
             if self.weak:
-                if self.label.strip() == 'ec' or self.label.strip() == 'bec':
+                if self.src.strip() == 'ec' or self.src.strip() == 'bec':
                     self.weak_type = 'electron_capture'
                 else:
-                    self.weak_type = self.label.strip().replace('+', '_pos_').replace('-', '_neg_')
+                    self.weak_type = self.src.strip().replace('+', '_pos_').replace('-', '_neg_')
             else:
                 self.weak_type = None
             self.derived_from_inverse = self.labelprops[5] == 'v'
