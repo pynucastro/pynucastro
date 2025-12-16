@@ -578,11 +578,12 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}}}\n")
 
     def _fill_derived_rates(self, n_indent, of):
-        of.write(f"{self.indent*n_indent}part_fun::pf_cache_t pf_cache{{}};\n\n")
-        temp_arrays, _ = self.dedupe_partition_function_temperatures()
-        for i in range(len(temp_arrays)):
-            of.write(f"{self.indent*n_indent}pf_cache.index_temp_array_{i+1} = interp_net::find_index(tfactors.T9, part_fun::temp_array_{i+1});\n")
-        of.write("\n")
+        if self.derived_rates:
+            of.write(f"{self.indent*n_indent}part_fun::pf_cache_t pf_cache{{}};\n\n")
+            temp_arrays, _ = self.dedupe_partition_function_temperatures()
+            for i in range(len(temp_arrays)):
+                of.write(f"{self.indent*n_indent}pf_cache.index_temp_array_{i+1} = interp_net::find_index(tfactors.T9, part_fun::temp_array_{i+1});\n")
+                of.write("\n")
 
         for r in self.derived_rates:
             of.write(f"{self.indent*n_indent}rate_{r.fname}<T>(rate_eval, tfactors, rate, drate_dT, pf_cache);\n")
