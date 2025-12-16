@@ -1,6 +1,6 @@
 import numba
 import numpy as np
-from scipy import constants
+from pynucastro.constants import constants
 from numba.experimental import jitclass
 
 from pynucastro.rates import (TableIndex, TableInterpolator, TabularRate,
@@ -82,7 +82,7 @@ def energy_release(dY):
     enuc = 0.0
     for i, y in enumerate(dY):
         enuc += y * mass[i]
-    enuc *= -1*constants.Avogadro
+    enuc *= -1*constants.N_A
     return enuc
 
 @jitclass([
