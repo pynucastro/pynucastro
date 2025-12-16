@@ -376,7 +376,7 @@ class PythonNetwork(RateCollection):
         of.write(f'{indent}'"enuc = 0.0\n")
         of.write(f'{indent}'"for i, y in enumerate(dY):\n")
         of.write(f'{indent*2}'"enuc += y * mass[i]\n")
-        of.write(f'{indent}'"enuc *= -1*constants.Avogadro\n")
+        of.write(f'{indent}'"enuc *= -1*constants.N_A\n")
         of.write(f'{indent}'"return enuc\n\n")
 
         # partition function data (if needed)
