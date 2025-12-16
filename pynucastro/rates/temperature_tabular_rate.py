@@ -125,6 +125,8 @@ class TemperatureTabularRate(Rate):
                  label="temptab", **kwargs):
         super().__init__(label=label, rate_source=rate_source, **kwargs)
 
+        self.tabular = True
+
         # make sure there are no weak interactions -- we don't
         # support those yet
         assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products)
