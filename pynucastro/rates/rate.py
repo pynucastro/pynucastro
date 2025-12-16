@@ -105,7 +105,7 @@ class Rate:
 
     def __init__(self, reactants=None, products=None,
                  Q=None, weak_type="", label="generic",
-                 stoichiometry=None,
+                 stoichiometry=None, rate_source=None,
                  use_identical_particle_factor=True):
 
         if reactants:
@@ -118,12 +118,23 @@ class Rate:
         else:
             self.products = []
 
+        assert '_' not in label, "Rate label should not contain underscore"
         self.label = label
 
-        self.source = None
-        self.modified = False
-        self.removed = False
+        self.src = rate_source
+        if self.src is not None:
+            self.source = RateSource.source(rate_source)
+
+        self.weak = False
         self.weak_type = weak_type
+        if self.weak_type:
+            self.weak = True
+
+        self.removed = False
+        self.modified = False
+        self.tabular = False
+        self.derived_from_inverse = False
+        self.approx = False
 
         # the identical particle factor scales the rate to prevent
         # double counting for a rate that has the same nucleus
@@ -154,10 +165,6 @@ class Rate:
 
         if not test:
             raise BaryonConservationError(f"baryon number not conserved in rate {self}")
-
-        self.tabular = False
-
-        self.derived_from_inverse = None
 
         self.rate_eval_needs_rho = False
         self.rate_eval_needs_comp = False
@@ -226,7 +233,8 @@ class Rate:
         This includes string,rid, pretty_string, and fname.
         String is output to the terminal, rid is used as a dict key,
         and pretty_string is latex, and fname is used when writing the
-        code to evaluate the rate
+        code to evaluate the rate.
+
         """
 
         # some rates will have no nuclei particles (e.g. gamma) on the left or
@@ -386,6 +394,11 @@ class Rate:
 
         self.pretty_string += r"$"
 
+        # If rate is removed, i.e. a child rate for an ApproximateRate,
+        # change label to removed
+        if self.removed:
+            self.label = "removed"
+
         reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
         products_str = '_'.join([repr(nuc) for nuc in self.products])
         self.fname = f'{reactants_str}_to_{products_str}_{self.label}'
@@ -431,7 +444,12 @@ class Rate:
         str
 
         """
-        return f'{self.rid} <{self.label.strip()}>'
+
+        ssrc = ''
+        if self.src is not None:
+            ssrc = f'_{self.src.strip()}'
+
+        return f'{self.rid} <{self.label.strip()}{ssrc}>'
 
     @property
     def id(self):
@@ -498,7 +516,6 @@ class Rate:
 
         self._set_q()
         self._set_screening()
-        self.fname = None    # reset so it will be updated
         self._set_print_representation()
 
     def reactant_count(self, n):
@@ -561,7 +578,6 @@ class Rate:
 
         self._set_q()
         self._set_screening()
-        self.fname = None    # reset so it will be updated
         self._set_print_representation()
 
     def evaluate_screening(self, rho, T, composition, screen_func):

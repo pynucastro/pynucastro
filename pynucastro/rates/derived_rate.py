@@ -80,7 +80,7 @@ class DerivedRate(Rate):
 
         super().__init__(reactants=self.rate.products,
                          products=self.rate.reactants,
-                         label="derived",
+                         label="derived", rate_source=self.rate.src,
                          stoichiometry=self.rate.stoichiometry)
 
         # explicitly mark it as a rate derived from inverse

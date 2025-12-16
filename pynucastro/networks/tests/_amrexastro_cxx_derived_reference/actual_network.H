@@ -119,9 +119,9 @@ namespace Rates
     enum NetworkRates :
     std::uint8_t
     {
-        k_He4_Fe52_to_Ni56 = 1,
-        k_p_Co55_to_Ni56 = 2,
-        k_He4_Fe52_to_p_Co55 = 3,
+        k_He4_Fe52_to_Ni56_reaclib = 1,
+        k_p_Co55_to_Ni56_reaclib = 2,
+        k_He4_Fe52_to_p_Co55_reaclib = 3,
         k_Ni56_to_He4_Fe52_derived = 4,
         k_Ni56_to_p_Co55_derived = 5,
         k_p_Co55_to_He4_Fe52_derived = 6,
@@ -134,9 +134,9 @@ namespace Rates
 
     static const std::vector<std::string> rate_names = {
         "",   // 0
-        "He4_Fe52_to_Ni56",  // 1,
-        "p_Co55_to_Ni56",  // 2,
-        "He4_Fe52_to_p_Co55",  // 3,
+        "He4_Fe52_to_Ni56_reaclib",  // 1,
+        "p_Co55_to_Ni56_reaclib",  // 2,
+        "He4_Fe52_to_p_Co55_reaclib",  // 3,
         "Ni56_to_He4_Fe52_derived",  // 4,
         "Ni56_to_p_Co55_derived",  // 5,
         "p_Co55_to_He4_Fe52_derived"  // 6,

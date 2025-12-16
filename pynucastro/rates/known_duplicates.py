@@ -3,10 +3,10 @@
 import collections
 
 # there are some exceptions to the no-duplicate rates restriction.  We
-# list them here by class name and then fname
+# list them here by class name and then rate id
 ALLOWED_DUPLICATES = [
-    {"ReacLibRate: p_p_to_d_weak_bet_pos_",
-     "ReacLibRate: p_p_to_d_weak_electron_capture"}
+    {"ReacLibRate: p + p --> d <reaclib_bet+>",
+     "ReacLibRate: p + p --> d <reaclib_ec>"}
 ]
 
 
@@ -58,5 +58,5 @@ def is_allowed_dupe(rate_list):
 
     # make rate_list into a set of strings in the same format as
     # ALLOWED_DUPLICATES, then check if it matches any of the allowed sets
-    key_set = {f"{r.__class__.__name__}: {r.fname}" for r in rate_list}
+    key_set = {f"{r.__class__.__name__}: {r.id}" for r in rate_list}
     return key_set in ALLOWED_DUPLICATES

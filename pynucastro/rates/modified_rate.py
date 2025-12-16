@@ -55,15 +55,11 @@ class ModifiedRate(Rate):
             products = original_rate.products
 
         super().__init__(reactants=reactants, products=products,
+                         weak_type=original_rate.weak_type,
                          label="modified",
                          stoichiometry=stoichiometry)
 
         self.modified = True
-
-        try:
-            self.weak = original_rate.weak
-        except ValueError:
-            self.weak = False
 
         self._set_print_representation()
 
