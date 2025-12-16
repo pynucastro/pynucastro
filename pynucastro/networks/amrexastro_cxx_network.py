@@ -155,7 +155,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
                 tmp = ''
 
             # meaning it is removed.
-            if rate.weak_type or not rate.removed:
+            if rate.weak_type or rate.removed:
                 of.write(f"{self.indent*n_indent}    -1, -1, -1, -1, -1, -1, -1{tmp}  // {rate.fname}\n")
                 continue
 
