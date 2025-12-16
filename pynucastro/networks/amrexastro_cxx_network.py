@@ -12,7 +12,6 @@ from pynucastro.constants import constants
 from pynucastro.networks.base_cxx_network import (BaseCxxNetwork,
                                                   _signed_rate_dtype)
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates import ReacLibRate
 
 
 class AmrexAstroCxxNetwork(BaseCxxNetwork):
@@ -156,7 +155,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
                 tmp = ''
 
             # meaning it is removed.
-            if isinstance(rate, ReacLibRate) and rate.removed is not None:
+            if rate.weak_type or rate.removed is not None:
                 of.write(f"{self.indent*n_indent}    -1, -1, -1, -1, -1, -1, -1{tmp}  // {rate.fname}\n")
                 continue
 
