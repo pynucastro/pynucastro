@@ -9,6 +9,7 @@ from pynucastro.nucdata import Nucleus
 from pynucastro.rates import BaryonConservationError
 from pynucastro.rates.alternate_rates import IliadisO16pgF17
 
+
 class TestTfactors:
     @pytest.fixture(scope="class")
     def tf(self):
