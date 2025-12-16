@@ -128,6 +128,8 @@ class DerivedRate(Rate):
         z_r = 1.0
         z_p = 1.0
         if self.use_pf:
+            self._warn_about_missing_pf_tables()
+
             for nucr in self.source_rate.reactants:
                 if nucr.partition_function is not None:
                     z_r *= nucr.partition_function.eval(T)
