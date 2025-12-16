@@ -7,7 +7,7 @@ from pytest import approx
 from pynucastro import Composition, Rate, rates
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import BaryonConservationError
-
+from pynucastro.rates.alternate_rates import IliadisO16pgF17
 
 class TestTfactors:
     @pytest.fixture(scope="class")
@@ -358,6 +358,14 @@ class TestDerivedRate:
         with pytest.warns(UserWarning, match="C12 partition function is not supported by tables"):
             rval = c12_ga_a_a_derived.eval(T=2.0e9)
         assert rval == approx(2.9138256017033057e-07)
+
+    def test_iliadis_o16_pg_f17_derived(self):
+        o16pgf17 = IliadisO16pgF17()
+        f17gpo16_derived = rates.DerivedRate(source_rate=o16pgf17, use_pf=True,
+                                             use_unreliable_spins=False)
+
+        rval = f17gpo16_derived.eval(T=2.0e9)
+        assert rval == approx(20489931419.399235)
 
 
 class TestWeakRates:
