@@ -20,7 +20,7 @@ class TestPythonPartitionNetwork:
 
         derived = []
         for r in fwd_rates_lib.get_rates():
-            d = pyna.DerivedRate(rate=r, compute_Q=False, use_pf=True, use_unreliable_spins=False)
+            d = pyna.DerivedRate(source_rate=r, use_pf=True, use_unreliable_spins=False)
             derived.append(d)
 
         der_rates_lib = pyna.Library(rates=derived)

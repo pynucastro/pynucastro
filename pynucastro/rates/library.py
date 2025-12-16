@@ -611,7 +611,7 @@ class Library:
         for r in onlyfwd.get_rates():
 
             try:
-                DerivedRate(rate=r, compute_Q=False, use_pf=False, use_unreliable_spins=use_unreliable_spins)
+                DerivedRate(source_rate=r, use_pf=False, use_unreliable_spins=use_unreliable_spins)
             except ValueError:
                 continue
             else:
@@ -620,7 +620,7 @@ class Library:
         list1 = Library(rates=collect_rates)
         return list1
 
-    def derived_backward(self, compute_Q=False, use_pf=False, use_unreliable_spins=True):
+    def derived_backward(self, use_pf=False, use_unreliable_spins=True):
         """Loop over all of the forward rates that can be used to
         derive inverse rates (as returned by
         :py:meth:`.forward_for_detailed_balance`) and derive the
@@ -629,8 +629,6 @@ class Library:
 
         Parameters
         ----------
-        compute_Q : bool
-            do we recompute the Q value based on the masses?
         use_pf : bool
             do we use the temperature-dependent partition function?
 
@@ -645,7 +643,7 @@ class Library:
 
         for r in onlyfwd.get_rates():
             try:
-                i = DerivedRate(rate=r, compute_Q=compute_Q, use_pf=use_pf, use_unreliable_spins=use_unreliable_spins)
+                i = DerivedRate(source_rate=r, use_pf=use_pf, use_unreliable_spins=use_unreliable_spins)
             except ValueError:
                 continue
             else:
