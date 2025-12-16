@@ -44,7 +44,7 @@ class DerivedRate(Rate):
             raise ValueError('The source rate is a ReacLib derived from inverse rate or weak or tabular')
 
         if self.source_rate.stoichiometry is not None:
-            raise ValueError('Stoichiometry is currently not supported for DerivedRate')
+            warnings.warn(UserWarning(f'Using rates with stoichiometry will not be compatible with NSE.'))
 
         if not all(nuc.spin_states for nuc in self.source_rate.reactants):
             raise ValueError(f'One of the reactants spin ground state ({self.source_rate.reactants}), is not defined')
