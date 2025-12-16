@@ -230,9 +230,8 @@ class DerivedRate(Rate):
         if extra_args is None:
             extra_args = ()
 
-        extra_args = ["[[maybe_unused]] part_fun::pf_cache_t& pf_cache", *extra_args]
-
-        args = ["const T& rate_eval", "const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+        args = ["const T& rate_eval", "const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT",
+                "[[maybe_unused]] part_fun::pf_cache_t& pf_cache", *extra_args]
         fstring = ""
         fstring += "template <typename T>\n"
         fstring += f"{specifiers}\n"
