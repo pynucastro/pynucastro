@@ -380,7 +380,7 @@ class TabularRate(Rate):
             # to a given source, e.g. wc12, but only unique to the reaction.
             reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
             products_str = '_'.join([repr(nuc) for nuc in self.products])
-            self.fname = f'{reactants_str}__{products_str}'
+            self.fname = f'{reactants_str}_to_{products_str}'
 
     def get_rate_id(self):
         """Get an identifying string for this rate.

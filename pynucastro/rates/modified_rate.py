@@ -177,11 +177,11 @@ class ModifiedRate(Rate):
         fstring = ""
         fstring = "template <int do_T_derivatives>\n"
         fstring += f"{specifiers}\n"
-        fstring += f"void rate_{self.cname()}({', '.join(args)}) {{\n\n"
+        fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
         # first we need to get all of the rates that make this up
         fstring += f"    // {self.rid} (calls the underlying rate)\n\n"
-        fstring += f"    rate_{self.original_rate.cname()}<do_T_derivatives>(tfactors, rate, drate_dT);\n"
+        fstring += f"    rate_{self.original_rate.fname}<do_T_derivatives>(tfactors, rate, drate_dT);\n"
 
         if not leave_open:
             fstring += "}\n\n"

@@ -5,8 +5,8 @@ import collections
 # there are some exceptions to the no-duplicate rates restriction.  We
 # list them here by class name and then fname
 ALLOWED_DUPLICATES = [
-    {"ReacLibRate: p_p__d__weak__bet_pos_",
-     "ReacLibRate: p_p__d__weak__electron_capture"}
+    {"ReacLibRate: p_p_to_d_weak_bet_pos_",
+     "ReacLibRate: p_p_to_d_weak_electron_capture"}
 ]
 
 

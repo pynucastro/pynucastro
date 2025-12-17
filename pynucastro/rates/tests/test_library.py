@@ -55,10 +55,10 @@ class TestLibrary:
         assert self.library.get_rate("c12 + p --> n13 <ls09_reaclib__>") == pyna.load_rate("c12-pg-n13-ls09")
 
         # get by fname
-        assert self.library.get_rate("p_N14__O15") == pyna.load_rate("n14-pg-o15-im05")
+        assert self.library.get_rate("p_N14_to_O15") == pyna.load_rate("n14-pg-o15-im05")
 
         # get by fname, lowercase
-        assert self.library.get_rate("p_n15__he4_c12") == pyna.load_rate("n15-pa-c12-nacr")
+        assert self.library.get_rate("p_n15_to_he4_c12") == pyna.load_rate("n15-pa-c12-nacr")
 
     def test_get_rate_failure(self):
         # missing rate id
@@ -67,7 +67,7 @@ class TestLibrary:
 
         # missing fname
         with pytest.raises(LookupError):
-            self.library.get_rate("F18__He4_N14")
+            self.library.get_rate("F18_to_He4_N14")
 
         # invalid rate
         with pytest.raises(LookupError):

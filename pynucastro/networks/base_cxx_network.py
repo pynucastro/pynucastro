@@ -300,11 +300,11 @@ class BaseCxxNetwork(ABC, RateCollection):
                 # we can have both a(aa,g)c12 and a(aa,p)b11
                 for rr in scr.rates:
                     of.write('\n')
-                    of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.cname()});\n')
-                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.cname()}) *= scor * scor2;\n')
+                    of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.fname});\n')
+                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.fname}) *= scor * scor2;\n')
                     of.write(f'{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
-                    of.write(f'{self.indent*n_indent}    dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.cname()});\n')
-                    of.write(f'{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{rr.cname()}) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor * scor2;\n')
+                    of.write(f'{self.indent*n_indent}    dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.fname});\n')
+                    of.write(f'{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{rr.fname}) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor * scor2;\n')
                     of.write(f'{self.indent*n_indent}}}\n')
             else:
                 # there might be several rates that have the same
@@ -313,11 +313,11 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                 for rr in scr.rates:
                     of.write('\n')
-                    of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.cname()});\n')
-                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.cname()}) *= scor;\n')
+                    of.write(f'{self.indent*n_indent}ratraw = rate_eval.screened_rates(k_{rr.fname});\n')
+                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.fname}) *= scor;\n')
                     of.write(f'{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
-                    of.write(f'{self.indent*n_indent}    dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.cname()});\n')
-                    of.write(f'{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{rr.cname()}) = ratraw * dscor_dt + dratraw_dT * scor;\n')
+                    of.write(f'{self.indent*n_indent}    dratraw_dT = rate_eval.dscreened_rates_dT(k_{rr.fname});\n')
+                    of.write(f'{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{rr.fname}) = ratraw * dscor_dt + dratraw_dT * scor;\n')
                     of.write(f'{self.indent*n_indent}}}\n')
 
             of.write('\n')
@@ -332,8 +332,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _nrxn(self, n_indent, of):
         for i, r in enumerate(self.all_rates):
-            of.write(f'{self.indent*n_indent}k_{r.cname()} = {i+1},\n')
-        of.write(f'{self.indent*n_indent}NumRates = k_{self.all_rates[-1].cname()}\n')
+            of.write(f'{self.indent*n_indent}k_{r.fname} = {i+1},\n')
+        of.write(f'{self.indent*n_indent}NumRates = k_{self.all_rates[-1].fname}\n')
 
     def _nrxn_enum_type(self, n_indent, of):
         nrxn = len(self.all_rates)
@@ -346,7 +346,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 cont = ","
             else:
                 cont = ""
-            of.write(f'{self.indent*n_indent}"{r.cname()}"{cont}  // {i+1},\n')
+            of.write(f'{self.indent*n_indent}"{r.fname}"{cont}  // {i+1},\n')
 
     def _ebind(self, n_indent, of):
         for nuc in self.unique_nuclei:
@@ -405,10 +405,10 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{idnt}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
                 of.write(f'{idnt}                 log_rhoy, log_temp, state.T, rate, drate_dt, edot_nu, edot_gamma);\n')
 
-                of.write(f'{idnt}rate_eval.screened_rates(k_{r.cname()}) = rate;\n')
+                of.write(f'{idnt}rate_eval.screened_rates(k_{r.fname}) = rate;\n')
 
                 of.write(f'{idnt}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
-                of.write(f'{idnt}    rate_eval.dscreened_rates_dT(k_{r.cname()}) = drate_dt;\n')
+                of.write(f'{idnt}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dt;\n')
                 of.write(f'{idnt}}}\n')
 
                 of.write(f'{idnt}rate_eval.enuc_weak += C::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
@@ -518,7 +518,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{idnt}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
                 of.write(f'{idnt}                 log_rhoy, log_temp, state.T, rate, drate_dt, edot_nu, edot_gamma);\n')
 
-                of.write(f'{idnt}rate_eval.screened_rates(k_{r.cname()}) = rate;\n')
+                of.write(f'{idnt}rate_eval.screened_rates(k_{r.fname}) = rate;\n')
 
                 of.write(f'{idnt}rate_eval.enuc_weak += C::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
 
@@ -615,12 +615,12 @@ class BaseCxxNetwork(ABC, RateCollection):
         # rate evaluation
         for r in self.reaclib_rates + self.derived_rates + self.modified_rates:
             if isinstance(r, DerivedRate):
-                of.write(f"{self.indent*n_indent}rate_{r.cname()}<do_T_derivatives>(tfactors, rate, drate_dT, pf_cache);\n")
+                of.write(f"{self.indent*n_indent}rate_{r.fname}<do_T_derivatives>(tfactors, rate, drate_dT, pf_cache);\n")
             else:
-                of.write(f"{self.indent*n_indent}rate_{r.cname()}<do_T_derivatives>(tfactors, rate, drate_dT);\n")
-            of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.cname()}) = rate;\n")
+                of.write(f"{self.indent*n_indent}rate_{r.fname}<do_T_derivatives>(tfactors, rate, drate_dT);\n")
+            of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
             of.write(f"{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
-            of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.cname()}) = drate_dT;\n\n")
+            of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
             of.write(f"{self.indent*n_indent}}}\n")
 
     def _fill_approx_rates(self, n_indent, of):
@@ -632,10 +632,10 @@ class BaseCxxNetwork(ABC, RateCollection):
                 args.append("Y")
             args += ["rate", "drate_dT"]
 
-            of.write(f"{self.indent*n_indent}rate_{r.cname()}<T>({', '.join(args)});\n")
-            of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.cname()}) = rate;\n")
+            of.write(f"{self.indent*n_indent}rate_{r.fname}<T>({', '.join(args)});\n")
+            of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
             of.write(f"{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
-            of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.cname()}) = drate_dT;\n\n")
+            of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
             of.write(f"{self.indent*n_indent}}}\n")
 
     def _fill_partition_function_declare(self, n_indent, of):

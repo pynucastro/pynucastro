@@ -24,15 +24,15 @@ class Test3alphaScreening:
 
 scn_fac = ScreenFactors(1, 1, 5, 11)
 scor = screen_func(plasma_state, scn_fac)
-rate_eval.p_B11__C12 *= scor
-rate_eval.p_B11__He4_He4_He4 *= scor
+rate_eval.p_B11_to_C12 *= scor
+rate_eval.p_B11_to_He4_He4_He4 *= scor
 
 scn_fac = ScreenFactors(2, 4, 2, 4)
 scor = screen_func(plasma_state, scn_fac)
 scn_fac2 = ScreenFactors(2, 4, 4, 8)
 scor2 = screen_func(plasma_state, scn_fac2)
-rate_eval.He4_He4_He4__C12 *= scor * scor2
-rate_eval.He4_He4_He4__p_B11__derived *= scor * scor2
+rate_eval.He4_He4_He4_to_C12 *= scor * scor2
+rate_eval.He4_He4_He4_to_p_B11_derived *= scor * scor2
 """
 
         assert scr_str == good
