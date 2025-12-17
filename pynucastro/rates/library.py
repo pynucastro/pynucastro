@@ -179,13 +179,11 @@ class Library:
 
         # fname case
 
-        # Get the base fname. Assume that fname follows reactants_to_products_label
-        # And label does not contain any underscore _.
         fname_mod = capitalize_id(rate_id, "_")
-
         matched_rates = []
         for q in self.get_rates():
-            q_base_fname = q.fname.rsplit('_', 1)[0]
+            # Get the base fname. Assume that fname follows reactants_to_products_label
+            q_base_fname = q.fname.split(f'_{q.label}')[0]
             if fname_mod in (q.fname, q_base_fname):
                 matched_rates.append(q)
 

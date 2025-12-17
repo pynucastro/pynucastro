@@ -9,6 +9,7 @@ import pynucastro.numba_util as numba
 from pynucastro.nucdata import Nucleus
 from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import _find_rate_file
+from pynucastro.rates.known_duplicates import ALLOWED_DUPLICATES
 from pynucastro.screening import (get_screening_map, make_plasma_state,
                                   make_screen_factors)
 
@@ -396,9 +397,18 @@ class Rate:
         if self.removed:
             self.label = "removed"
 
+        # Set fname last
         reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
         products_str = '_'.join([repr(nuc) for nuc in self.products])
         self.fname = f'{reactants_str}_to_{products_str}_{self.label}'
+
+        # Treat special duplicate rate cases
+        # These are likely weak rates with beta plus decay and electron captures
+        # So add weak_type to them.
+        is_dupe = any(f"{self.__class__.__name__}: {self.id}" in dupe_set
+                      for dupe_set in ALLOWED_DUPLICATES)
+        if is_dupe:
+            self.fname += '_' + self.weak_type
 
     def _set_rhs_properties(self):
         """Compute statistical prefactor and density exponent from the
