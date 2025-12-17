@@ -9,6 +9,7 @@ import pynucastro as pyna
 from pynucastro.rates.alternate_rates import DeBoerC12agO16, IliadisO16pgF17
 from pynucastro.rates.known_duplicates import ALLOWED_DUPLICATES
 
+
 class TestRateIds:
     @pytest.fixture(scope="class")
     def approx_rate(self, reaclib_library):
