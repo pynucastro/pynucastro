@@ -123,6 +123,9 @@ class DerivedRate(ReacLibRate):
         # Update stoichiometry so that we are consistent in full ydot eqns
         self.stoichiometry = self.rate.stoichiometry
 
+        # Mark src to be the src of the inverse rate
+        self.src = self.rate.src
+
         self._set_print_representation()
 
     def _warn_about_missing_pf_tables(self):
