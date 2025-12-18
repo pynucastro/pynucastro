@@ -23,17 +23,11 @@ class DeBoerC12agO16(ReacLibRate):
         reactants = [Nucleus("c12"), Nucleus("he4")]
         products = [Nucleus("o16")]
 
-        Q = 0
-        for n in reactants:
-            Q += -n.A * n.nucbind
-        for n in products:
-            Q += n.A * n.nucbind
-
         # we'll use the same chapter notation as ReacLib
         chapter = 4
 
         super().__init__(reactants=reactants, products=products,
-                         chapter=chapter, Q=Q,
+                         chapter=chapter,
                          labelprops=labelprops)
 
         # from DeBoer et al. 2017
@@ -47,6 +41,10 @@ class DeBoerC12agO16(ReacLibRate):
         # resonance
         a = [7.4, -30.0, 0.0, 0.0, 0.0, 0.0, -1.5]
         self.sets.append(SingleSet(a, labelprops=labelprops))
+
+        # Change label to deboer and update fname
+        self.label = "deboer"
+        self._set_print_representation()
 
 
 class IliadisO16pgF17(TemperatureTabularRate):
@@ -82,6 +80,7 @@ class IliadisO16pgF17(TemperatureTabularRate):
 
         super().__init__(np.log10(T9), np.log10(rate),
                          rate_source="iliadis2022",
-                         reactants=reactants, products=products)
+                         reactants=reactants, products=products,
+                         label="iliadis")
 
         assert self.Q != 0.0

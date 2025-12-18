@@ -95,10 +95,10 @@ class TestPythonCustomNetwork:
 
         dpdt = \
 """dYdt[jp] = (
-      -rho*Y[jp]*Y[jc12]*rate_eval.p_C12_to_N13  +
-      -rho*Y[jp]*Y[jc13]*rate_eval.p_C13_to_N14  +
-      -rho*Y[jp]*Y[jn13]*rate_eval.p_N13_to_O14  +
-      -rho*Y[jp]*Y[jn15]*rate_eval.p_N15_to_He4_C12  +
+      -rho*Y[jp]*Y[jc12]*rate_eval.p_C12_to_N13_reaclib  +
+      -rho*Y[jp]*Y[jc13]*rate_eval.p_C13_to_N14_reaclib  +
+      -rho*Y[jp]*Y[jn13]*rate_eval.p_N13_to_O14_reaclib  +
+      -rho*Y[jp]*Y[jn15]*rate_eval.p_N15_to_He4_C12_reaclib  +
       -rho*Y[jp]*Y[jn14]*rate_eval.N14_p_to_O15_custom
    )
 
