@@ -24,15 +24,15 @@ class Test3alphaScreening:
 
 scn_fac = ScreenFactors(1, 1, 5, 11)
 scor = screen_func(plasma_state, scn_fac)
-rate_eval.p_B11__C12 *= scor
-rate_eval.p_B11__He4_He4_He4 *= scor
+rate_eval.p_B11_to_C12_reaclib *= scor
+rate_eval.p_B11_to_He4_He4_He4_reaclib *= scor
 
 scn_fac = ScreenFactors(2, 4, 2, 4)
 scor = screen_func(plasma_state, scn_fac)
 scn_fac2 = ScreenFactors(2, 4, 4, 8)
 scor2 = screen_func(plasma_state, scn_fac2)
-rate_eval.He4_He4_He4__C12 *= scor * scor2
-rate_eval.He4_He4_He4__p_B11__derived *= scor * scor2
+rate_eval.He4_He4_He4_to_C12_reaclib *= scor * scor2
+rate_eval.He4_He4_He4_to_p_B11_derived *= scor * scor2
 """
 
         assert scr_str == good
@@ -53,18 +53,18 @@ rate_eval.He4_He4_He4__p_B11__derived *= scor * scor2
     actual_screen(pstate, scn_fac, scor, dscor_dt);
 }
 
-ratraw = rate_eval.screened_rates(k_p_B11_to_C12);
-rate_eval.screened_rates(k_p_B11_to_C12) *= scor;
+ratraw = rate_eval.screened_rates(k_p_B11_to_C12_reaclib);
+rate_eval.screened_rates(k_p_B11_to_C12_reaclib) *= scor;
 if constexpr (std::is_same_v<T, rate_derivs_t>) {
-    dratraw_dT = rate_eval.dscreened_rates_dT(k_p_B11_to_C12);
-    rate_eval.dscreened_rates_dT(k_p_B11_to_C12) = ratraw * dscor_dt + dratraw_dT * scor;
+    dratraw_dT = rate_eval.dscreened_rates_dT(k_p_B11_to_C12_reaclib);
+    rate_eval.dscreened_rates_dT(k_p_B11_to_C12_reaclib) = ratraw * dscor_dt + dratraw_dT * scor;
 }
 
-ratraw = rate_eval.screened_rates(k_p_B11_to_He4_He4_He4);
-rate_eval.screened_rates(k_p_B11_to_He4_He4_He4) *= scor;
+ratraw = rate_eval.screened_rates(k_p_B11_to_He4_He4_He4_reaclib);
+rate_eval.screened_rates(k_p_B11_to_He4_He4_He4_reaclib) *= scor;
 if constexpr (std::is_same_v<T, rate_derivs_t>) {
-    dratraw_dT = rate_eval.dscreened_rates_dT(k_p_B11_to_He4_He4_He4);
-    rate_eval.dscreened_rates_dT(k_p_B11_to_He4_He4_He4) = ratraw * dscor_dt + dratraw_dT * scor;
+    dratraw_dT = rate_eval.dscreened_rates_dT(k_p_B11_to_He4_He4_He4_reaclib);
+    rate_eval.dscreened_rates_dT(k_p_B11_to_He4_He4_He4_reaclib) = ratraw * dscor_dt + dratraw_dT * scor;
 }
 
 
@@ -81,11 +81,11 @@ if constexpr (std::is_same_v<T, rate_derivs_t>) {
     actual_screen(pstate, scn_fac2, scor2, dscor2_dt);
 }
 
-ratraw = rate_eval.screened_rates(k_He4_He4_He4_to_C12);
-rate_eval.screened_rates(k_He4_He4_He4_to_C12) *= scor * scor2;
+ratraw = rate_eval.screened_rates(k_He4_He4_He4_to_C12_reaclib);
+rate_eval.screened_rates(k_He4_He4_He4_to_C12_reaclib) *= scor * scor2;
 if constexpr (std::is_same_v<T, rate_derivs_t>) {
-    dratraw_dT = rate_eval.dscreened_rates_dT(k_He4_He4_He4_to_C12);
-    rate_eval.dscreened_rates_dT(k_He4_He4_He4_to_C12) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor * scor2;
+    dratraw_dT = rate_eval.dscreened_rates_dT(k_He4_He4_He4_to_C12_reaclib);
+    rate_eval.dscreened_rates_dT(k_He4_He4_He4_to_C12_reaclib) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor * scor2;
 }
 
 ratraw = rate_eval.screened_rates(k_He4_He4_He4_to_p_B11_derived);
@@ -114,8 +114,8 @@ if constexpr (std::is_same_v<T, rate_derivs_t>) {
     actual_screen(pstate, scn_fac, scor);
 }
 
-rate_eval.screened_rates(k_p_B11_to_C12) *= scor;
-rate_eval.screened_rates(k_p_B11_to_He4_He4_He4) *= scor;
+rate_eval.screened_rates(k_p_B11_to_C12_reaclib) *= scor;
+rate_eval.screened_rates(k_p_B11_to_He4_He4_He4_reaclib) *= scor;
 
 
 {
@@ -129,7 +129,7 @@ rate_eval.screened_rates(k_p_B11_to_He4_He4_He4) *= scor;
     actual_screen(pstate, scn_fac2, scor2);
 }
 
-rate_eval.screened_rates(k_He4_He4_He4_to_C12) *= scor * scor2;
+rate_eval.screened_rates(k_He4_He4_He4_to_C12_reaclib) *= scor * scor2;
 rate_eval.screened_rates(k_He4_He4_He4_to_p_B11_derived) *= scor * scor2;
 
 """

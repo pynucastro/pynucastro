@@ -49,17 +49,17 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
         for _, r in enumerate(self.rates):
             if r in self.disable_rate_params:
-                of.write(f"{self.indent*n_indent}if (disable_{r.cname()}) {{\n")
-                of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{r.cname()}) = 0.0;\n")
+                of.write(f"{self.indent*n_indent}if (disable_{r.fname}) {{\n")
+                of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{r.fname}) = 0.0;\n")
                 of.write(f"{self.indent*n_indent}    if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
-                of.write(f"{self.indent*n_indent}        rate_eval.dscreened_rates_dT(k_{r.cname()}) = 0.0;\n")
+                of.write(f"{self.indent*n_indent}        rate_eval.dscreened_rates_dT(k_{r.fname}) = 0.0;\n")
                 of.write(f"{self.indent*n_indent}    }}\n")
                 # check for the reverse too -- we disable it with the same parameter
                 rr = self.find_reverse(r)
                 if rr is not None:
-                    of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{rr.cname()}) = 0.0;\n")
+                    of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{rr.fname}) = 0.0;\n")
                     of.write(f"{self.indent*n_indent}    if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
-                    of.write(f"{self.indent*n_indent}        rate_eval.dscreened_rates_dT(k_{rr.cname()}) = 0.0;\n")
+                    of.write(f"{self.indent*n_indent}        rate_eval.dscreened_rates_dT(k_{rr.fname}) = 0.0;\n")
                     of.write(f"{self.indent*n_indent}    }}\n")
                 of.write(f"{self.indent*n_indent}}}\n\n")
 
@@ -118,7 +118,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             of.write("@namespace: network\n\n")
             if self.disable_rate_params:
                 for r in self.disable_rate_params:
-                    of.write(f"disable_{r.cname()}    int     0\n")
+                    of.write(f"disable_{r.fname}    int     0\n")
 
     def _fill_npa_index(self, n_indent, of):
         #Get the index of h1, neutron, and helium-4 if they're present in the network.
