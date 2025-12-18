@@ -319,7 +319,6 @@ class ReacLibRate(Rate):
         self.derived_from_inverse = None
 
         self.removed = False
-
         self.tabular = False
 
         self.use_identical_particle_factor = True
@@ -474,7 +473,7 @@ class ReacLibRate(Rate):
                 if self.src.strip() == 'ec' or self.src.strip() == 'bec':
                     self.weak_type = 'electron_capture'
                 else:
-                    self.weak_type = self.src.strip().replace('+', '_pos_').replace('-', '_neg_')
+                    self.weak_type = self.src.strip().replace('+', '_pos').replace('-', '_neg')
             else:
                 self.weak_type = None
             self.derived_from_inverse = self.labelprops[5] == 'v'

@@ -7,6 +7,7 @@ import pytest
 
 import pynucastro as pyna
 from pynucastro.rates.alternate_rates import DeBoerC12agO16, IliadisO16pgF17
+from pynucastro.rates.known_duplicates import ALLOWED_DUPLICATES
 
 
 class TestRateIds:
@@ -81,3 +82,19 @@ class TestRateIds:
         assert cr.rid == "Mg24 + He4 --> p + Al27"
         assert cr.id == "Mg24 + He4 --> p + Al27 <removed_il10>"
         assert cr.fname == "He4_Mg24_to_p_Al27_removed"
+
+    def test_duplicate_rates(self, full_library):
+        # Make sure duplicate sets in ALLOWED_DUPLICATES have different fname and id
+
+        for dupe_set in ALLOWED_DUPLICATES:
+            dupe_rates = []
+            for dupe_entry in dupe_set:
+                rate_id = dupe_entry.split(":", 1)[1].strip()
+                dupe_rates.append(full_library.get_rate(rate_id))
+
+            fnames = [r.fname for r in dupe_rates]
+            rate_ids = [r.id for r in dupe_rates]
+
+            # Make sure fnames and rate ids are unique.
+            assert len(fnames) == len(set(fnames))
+            assert len(rate_ids) == len(set(rate_ids))
