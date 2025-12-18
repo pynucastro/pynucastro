@@ -74,7 +74,7 @@ namespace interp_net {
     std::pair<amrex::Real, amrex::Real>
     cubic_interp_uneven(const amrex::Real xv, const T& x_array, const T& f_array) {
 
-        // find the index such that x_array[idx] <= x0 <= x_array[idx+1]
+        // find the index such that x_array[idx] <= xv <= x_array[idx+1]
         int idx = interp_net::find_index_extrap(xv, x_array);
 
         // we need 4 points, so if idx is on the boundary, shift it
