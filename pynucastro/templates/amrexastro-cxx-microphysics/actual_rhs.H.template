@@ -38,9 +38,10 @@ void ener_gener_rate(T const& dydt, amrex::Real& enuc)
 
     enuc = 0.0_rt;
 
-    for (int n = 1; n <= NumSpec; ++n) {
-        enuc += dydt(n) * network::mion(n);
-    }
+    amrex::constexpr_for<1, NumSpec+1>([&] (auto n)
+    {
+        enuc += dydt(n) * network::mion<n>();
+    });
 
     enuc *= C::enuc_conv2;
 }
