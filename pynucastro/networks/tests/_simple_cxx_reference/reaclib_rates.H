@@ -199,6 +199,7 @@ void rate_n_to_p_reaclib(const tf_t& tfactors, Real& rate, Real& drate_dT) {
 
 
 
+
 template <int do_T_derivatives, typename T>
 inline
 void
@@ -238,6 +239,18 @@ fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
         rate_eval.dscreened_rates_dT(k_n_to_p_reaclib) = drate_dT;
 
     }
+
+}
+
+template <int do_T_derivatives, typename T>
+inline
+void
+fill_derived_rates(const tf_t& tfactors, T& rate_eval)
+{
+
+    Real rate;
+    Real drate_dT;
+
 
 }
 

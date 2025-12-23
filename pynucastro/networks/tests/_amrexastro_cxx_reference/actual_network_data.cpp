@@ -9,9 +9,9 @@ namespace NSE_INDEX
         -1, 3, 3, -1, 0, 8, -1,  // C12_C12_to_n_Mg23_reaclib
         -1, 3, 3, -1, 1, 7, -1,  // C12_C12_to_p_Na23_reaclib
         -1, 2, 3, -1, -1, 4, -1,  // He4_C12_to_O16_reaclib
-        -1, -1, 0, -1, -1, 1, -1,  // n_to_p_reaclib
-        -1, -1, 7, -1, -1, 6, -1,  // Na23_to_Ne23_weaktab
-        -1, -1, 6, -1, -1, 7, 6  // Ne23_to_Na23_weaktab
+        -1, -1, -1, -1, -1, -1, -1,  // n_to_p_reaclib
+        -1, -1, -1, -1, -1, -1, -1,  // Na23_to_Ne23_weaktab
+        -1, -1, -1, -1, -1, -1, -1  // Ne23_to_Na23_weaktab
     };
 }
 #endif
