@@ -7,6 +7,7 @@
 #include <tfactors.H>
 #include <actual_network.H>
 #include <partition_functions.H>
+#include <interp_tools.H>
 
 using namespace Rates;
 using namespace Species;
