@@ -7,7 +7,7 @@
 #include <string>
 
 #include <AMReX_Array.H>
-
+#include <AMReX_Math.H>
 #include <interp_tools.H>
 
 using namespace amrex::literals;
@@ -373,10 +373,10 @@ tabular_evaluate(const table_t& table_meta,
     // Fill outputs: rate, d(rate)/d(temperature), and
     // (negative) neutrino loss contribution to energy generation
 
-    rate       = std::pow(10.0_rt, entries(jtab_rate));
+    rate       = amrex::Math::exp10(entries(jtab_rate));
     drate_dt   = rate * entries(k_index_dlogr_dlogt) / temp;
-    edot_nu    = -std::pow(10.0_rt, entries(jtab_nuloss));
-    edot_gamma = std::pow(10.0_rt, entries(jtab_gamma));
+    edot_nu    = -amrex::Math::exp10(entries(jtab_nuloss));
+    edot_gamma = amrex::Math::exp10(entries(jtab_gamma));
 }
 
 #endif
