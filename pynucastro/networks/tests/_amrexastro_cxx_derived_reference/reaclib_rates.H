@@ -134,7 +134,7 @@ void rate_Ni56_to_He4_Fe52_derived(const tf_t& tfactors, amrex::Real& rate, amre
     amrex::Real set_rate{0.0};
 
     // ths8r
-    ln_set_rate =  60.53940609531816 + -92.8409709432639 * tfactors.T9i + -91.6819 * tfactors.T913i + -9.51885 * tfactors.T913
+    ln_set_rate =  91.62430485073777 + -92.8409709432639 * tfactors.T9i + -91.6819 * tfactors.T913i + -9.51885 * tfactors.T913
                          + -0.533014 * tfactors.T9 + 0.0892607 * tfactors.T953 + 0.833333 * tfactors.lnT9;
 
     if constexpr (std::is_same_v<T, rate_derivs_t>) {
@@ -193,7 +193,7 @@ void rate_Ni56_to_p_Co55_derived(const tf_t& tfactors, amrex::Real& rate, amrex:
     amrex::Real set_rate{0.0};
 
     // ths8r
-    ln_set_rate =  32.066305286505994 + -83.16460378149377 * tfactors.T9i + -38.1053 * tfactors.T913i + -0.210947 * tfactors.T913
+    ln_set_rate =  63.15120404192561 + -83.16460378149377 * tfactors.T9i + -38.1053 * tfactors.T913i + -0.210947 * tfactors.T913
                          + -2.68377 * tfactors.T9 + 0.355814 * tfactors.T953 + 0.833333 * tfactors.lnT9;
 
     if constexpr (std::is_same_v<T, rate_derivs_t>) {

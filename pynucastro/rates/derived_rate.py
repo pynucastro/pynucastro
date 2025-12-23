@@ -11,6 +11,7 @@ import numpy as np
 
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
+from pynucastro.rates.modified_rate import ModifiedRate
 from pynucastro.rates.rate import Rate, Tfactors
 from pynucastro.rates.reaclib_rate import ReacLibRate, SingleSet
 from pynucastro.rates.tabular_rate import TabularRate
@@ -88,9 +89,18 @@ class DerivedRate(Rate):
         # on the source rate by absorbing the equilibrium ratio within the
         # reaclib log terms for better numerical stability at lower temp
         self.derived_sets = None
+
+        # Determine if the source rate has reaclib sets
+        source_sets = []
         if isinstance(self.source_rate, ReacLibRate):
+            source_sets = self.source_rate.sets
+        elif (isinstance(self.source_rate, ModifiedRate) and
+              isinstance(self.source_rate.original_rate, ReacLibRate)):
+            source_sets = self.source_rate.original_rate.sets
+
+        if source_sets:
             self.derived_sets = []
-            for source_set in self.source_rate.sets:
+            for source_set in source_sets:
                 a_derived = source_set.a.copy()
                 a_derived[0] += np.log(self.ratio_factor) + 13.5 * self.net_stoich * np.log(10)
                 a_derived[1] += self.Q / (constants.k_MeV * 1.0e9)
@@ -193,7 +203,7 @@ class DerivedRate(Rate):
         fstring += f"    # {self.rid}\n\n"
 
         if self.derived_sets is not None:
-            fstring += "    rate = 0.0 \n\n"
+            fstring += "    rate = 0.0\n\n"
             for s in self.derived_sets:
                 fstring += f"    # {s.labelprops[0:5]}\n"
                 set_string = s.set_string_py(prefix="rate", plus_equal=True)
