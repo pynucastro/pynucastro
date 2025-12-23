@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>NSE vs. Direct Integration &#8212; pynucastro 2.8.0.post40+g3aa693db2 documentation</title>
+    <title>NSE vs. Direct Integration &#8212; pynucastro 2.8.0.post41+g15fea7ebf documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=1a9605b7"></script>
+    <script src="_static/documentation_options.js?v=2da728e1"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -203,7 +203,7 @@
 <li class="toctree-l1"><a class="reference internal" href="screening-examples.html">Screening Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modify-example.html">Modifying Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom-rates.html">Creating a Custom Rate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="partition-function.html">Reverse Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="partition-function.html">Derived Rates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
 <ul class="nav bd-sidenav">
@@ -635,7 +635,7 @@ In pynucastro, this is the <a class="reference internal" href="pynucastro.rates.
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">DerivedRate</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">DerivedRate</span><span class="p">(</span><span class="n">source_rate</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">lib</span><span class="o">.</span><span class="n">add_rate</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -654,7 +654,7 @@ In pynucastro, this is the <a class="reference internal" href="pynucastro.rates.
 <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">mp</span> <span class="ow">in</span> <span class="n">other_rates</span><span class="p">:</span>
     <span class="n">_r</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
     <span class="n">forward_rate</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ModifiedRate</span><span class="p">(</span><span class="n">_r</span><span class="p">,</span> <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">mp</span><span class="p">])</span>
-    <span class="n">derived_rate</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">DerivedRate</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="n">forward_rate</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">derived_rate</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">DerivedRate</span><span class="p">(</span><span class="n">source_rate</span><span class="o">=</span><span class="n">forward_rate</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">lib</span><span class="o">.</span><span class="n">add_rates</span><span class="p">([</span><span class="n">forward_rate</span><span class="p">,</span> <span class="n">derived_rate</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -685,9 +685,9 @@ In pynucastro, this is the <a class="reference internal" href="pynucastro.rates.
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:138: UserWarning: C12 partition function is not supported by tables: set pf = 1.0 by default
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:93: UserWarning: C12 partition function is not supported by tables: set pf = 1.0 by default
   warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
-/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:138: UserWarning: N13 partition function is not supported by tables: set pf = 1.0 by default
+/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:93: UserWarning: N13 partition function is not supported by tables: set pf = 1.0 by default
   warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
 </pre></div>
 </div>
@@ -768,7 +768,7 @@ In pynucastro, this is the <a class="reference internal" href="pynucastro.rates.
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/992b5088a3b4250b43e08c2a2d386f4d940c1fe7a41df7d336d6b57aac36ac28.png" src="_images/992b5088a3b4250b43e08c2a2d386f4d940c1fe7a41df7d336d6b57aac36ac28.png" />
+<img alt="_images/55f9ef19009f515112e7d05bf0bfb6736c1cf8a5da0d78e14edafc3da39c716d.png" src="_images/55f9ef19009f515112e7d05bf0bfb6736c1cf8a5da0d78e14edafc3da39c716d.png" />
 </div>
 </div>
 </section>
@@ -861,7 +861,7 @@ network</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/f49f33de28782441c2d9853c946ae25f6a2abf7be936bf82f595bad4213e2177.png" src="_images/f49f33de28782441c2d9853c946ae25f6a2abf7be936bf82f595bad4213e2177.png" />
+<img alt="_images/d8b89697a942a06b5b4805e8105d266c492fc3bf8de3e1b2af020c47ef57df16.png" src="_images/d8b89697a942a06b5b4805e8105d266c492fc3bf8de3e1b2af020c47ef57df16.png" />
 </div>
 </div>
 </section>
@@ -893,13 +893,13 @@ by the total activity of the rate (forward + reverse) by doing <code class="docu
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:138: UserWarning: C12 partition function is not supported by tables: set pf = 1.0 by default
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:93: UserWarning: C12 partition function is not supported by tables: set pf = 1.0 by default
   warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
-/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:138: UserWarning: N13 partition function is not supported by tables: set pf = 1.0 by default
+/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:93: UserWarning: N13 partition function is not supported by tables: set pf = 1.0 by default
   warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
 </pre></div>
 </div>
-<img alt="_images/1eddbe5634cf980af4f9a2d108beb97e25967c3f6ce37af7ed46601a07dcade1.png" src="_images/1eddbe5634cf980af4f9a2d108beb97e25967c3f6ce37af7ed46601a07dcade1.png" />
+<img alt="_images/df63c4afc2639de225d0104fc42d317a5e4463d8755c6e613a000544dd6a8885.png" src="_images/df63c4afc2639de225d0104fc42d317a5e4463d8755c6e613a000544dd6a8885.png" />
 </div>
 </div>
 <p>Here we see that the normalized net rates are all &lt; <span class="math notranslate nohighlight">\(10^{-12}\)</span>, so we are effectively seeing the integration tolerance, and are very close to machine precision.</p>

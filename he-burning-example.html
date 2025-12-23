@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>A He-burning Network &#8212; pynucastro 2.8.0.post40+g3aa693db2 documentation</title>
+    <title>A He-burning Network &#8212; pynucastro 2.8.0.post41+g15fea7ebf documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=1a9605b7"></script>
+    <script src="_static/documentation_options.js?v=2da728e1"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -203,7 +203,7 @@
 <li class="toctree-l1"><a class="reference internal" href="screening-examples.html">Screening Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modify-example.html">Modifying Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom-rates.html">Creating a Custom Rate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="partition-function.html">Reverse Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="partition-function.html">Derived Rates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
 <ul class="nav bd-sidenav">
@@ -717,7 +717,7 @@ warning: Fe54 was not able to be linked in TabularLibrary
     <span class="n">fr</span> <span class="o">=</span> <span class="n">all_lib</span><span class="o">.</span><span class="n">get_rate_by_nuclei</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">fr</span><span class="p">:</span>
         <span class="n">all_lib</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">DerivedRate</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="n">fr</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">DerivedRate</span><span class="p">(</span><span class="n">source_rate</span><span class="o">=</span><span class="n">fr</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">all_lib</span><span class="o">.</span><span class="n">add_rate</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -840,13 +840,13 @@ warning: Fe54 was not able to be linked in TabularLibrary
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:138: UserWarning: C12 partition function is not supported by tables: set pf = 1.0 by default
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:93: UserWarning: C12 partition function is not supported by tables: set pf = 1.0 by default
   warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
-/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:138: UserWarning: N13 partition function is not supported by tables: set pf = 1.0 by default
+/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:93: UserWarning: N13 partition function is not supported by tables: set pf = 1.0 by default
   warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
-/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:138: UserWarning: N14 partition function is not supported by tables: set pf = 1.0 by default
+/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:93: UserWarning: N14 partition function is not supported by tables: set pf = 1.0 by default
   warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
-/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:138: UserWarning: p_nse partition function is not supported by tables: set pf = 1.0 by default
+/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:93: UserWarning: p_nse partition function is not supported by tables: set pf = 1.0 by default
   warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
 </pre></div>
 </div>
@@ -986,17 +986,17 @@ warning: Fe54 was not able to be linked in TabularLibrary
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:138: UserWarning: C12 partition function is not supported by tables: set pf = 1.0 by default
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:93: UserWarning: C12 partition function is not supported by tables: set pf = 1.0 by default
   warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
-/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:138: UserWarning: N13 partition function is not supported by tables: set pf = 1.0 by default
+/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:93: UserWarning: N13 partition function is not supported by tables: set pf = 1.0 by default
   warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
-/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:138: UserWarning: N14 partition function is not supported by tables: set pf = 1.0 by default
+/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:93: UserWarning: N14 partition function is not supported by tables: set pf = 1.0 by default
   warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
-/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:138: UserWarning: p_nse partition function is not supported by tables: set pf = 1.0 by default
+/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:93: UserWarning: p_nse partition function is not supported by tables: set pf = 1.0 by default
   warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
 </pre></div>
 </div>
-<img alt="_images/d470a8406c38871fee4f4684590b4d50987bb656ae7c14daef30c51c7d5d23c8.png" src="_images/d470a8406c38871fee4f4684590b4d50987bb656ae7c14daef30c51c7d5d23c8.png" />
+<img alt="_images/edca560ab8eee161725888d5e5e00be7a7b4dee5b581c58d5110733139b13d14.png" src="_images/edca560ab8eee161725888d5e5e00be7a7b4dee5b581c58d5110733139b13d14.png" />
 </div>
 </div>
 <p>At this point we see that we are really in the iron-group, with some lingering He.</p>

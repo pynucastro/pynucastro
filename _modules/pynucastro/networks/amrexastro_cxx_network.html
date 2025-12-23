@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.amrexastro_cxx_network &#8212; pynucastro 2.8.0.post40+g3aa693db2 documentation</title>
+    <title>pynucastro.networks.amrexastro_cxx_network &#8212; pynucastro 2.8.0.post41+g15fea7ebf documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=1a9605b7"></script>
+    <script src="../../../_static/documentation_options.js?v=2da728e1"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -200,7 +200,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../screening-examples.html">Screening Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modify-example.html">Modifying Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../custom-rates.html">Creating a Custom Rate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../partition-function.html">Reverse Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../partition-function.html">Derived Rates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
 <ul class="nav bd-sidenav">
@@ -506,7 +506,6 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.base_cxx_network</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">BaseCxxNetwork</span><span class="p">,</span>
                                                   <span class="n">_signed_rate_dtype</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReacLibRate</span>
 
 
 <div class="viewcode-block" id="AmrexAstroCxxNetwork">
@@ -652,7 +651,7 @@ document.write(`
                 <span class="n">tmp</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
             <span class="c1"># meaning it is removed.</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rate</span><span class="p">,</span> <span class="n">ReacLibRate</span><span class="p">)</span> <span class="ow">and</span> <span class="n">rate</span><span class="o">.</span><span class="n">removed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rate</span><span class="o">.</span><span class="n">weak_type</span> <span class="ow">or</span> <span class="n">rate</span><span class="o">.</span><span class="n">removed</span><span class="p">:</span>
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">    -1, -1, -1, -1, -1, -1, -1</span><span class="si">{</span><span class="n">tmp</span><span class="si">}</span><span class="s2">  // </span><span class="si">{</span><span class="n">rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">continue</span>
 

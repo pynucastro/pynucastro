@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.8.0.post40+g3aa693db2 documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.8.0.post41+g15fea7ebf documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=1a9605b7"></script>
+    <script src="../../../_static/documentation_options.js?v=2da728e1"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -200,7 +200,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../screening-examples.html">Screening Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modify-example.html">Modifying Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../custom-rates.html">Creating a Custom Rate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../partition-function.html">Reverse Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../partition-function.html">Derived Rates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
 <ul class="nav bd-sidenav">
@@ -500,6 +500,7 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro.numba_util</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">numba</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.numba_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">jitclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.files</span><span class="w"> </span><span class="kn">import</span> <span class="n">_find_rate_file</span>
@@ -723,10 +724,12 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">):</span>
             <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactant_count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">+=</span> <span class="n">c</span> <span class="o">*</span> <span class="n">n</span><span class="o">.</span><span class="n">mass</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">+=</span> <span class="n">c</span> <span class="o">*</span> <span class="n">n</span><span class="o">.</span><span class="n">A_nuc</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">):</span>
             <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">product_count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">+=</span> <span class="o">-</span><span class="n">c</span> <span class="o">*</span> <span class="n">n</span><span class="o">.</span><span class="n">mass</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">+=</span> <span class="o">-</span><span class="n">c</span> <span class="o">*</span> <span class="n">n</span><span class="o">.</span><span class="n">A_nuc</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">*=</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_MeV_C18</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_print_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compose the string representations of this Rate.</span>

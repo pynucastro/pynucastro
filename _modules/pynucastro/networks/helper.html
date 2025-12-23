@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.helper &#8212; pynucastro 2.8.0.post40+g3aa693db2 documentation</title>
+    <title>pynucastro.networks.helper &#8212; pynucastro 2.8.0.post41+g15fea7ebf documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=1a9605b7"></script>
+    <script src="../../../_static/documentation_options.js?v=2da728e1"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -200,7 +200,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../screening-examples.html">Screening Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modify-example.html">Modifying Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../custom-rates.html">Creating a Custom Rate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../partition-function.html">Reverse Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../partition-function.html">Derived Rates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
 <ul class="nav bd-sidenav">
@@ -574,7 +574,7 @@ document.write(`
                 <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;modifying </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2"> from </span><span class="si">{</span><span class="n">fr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="n">lib</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-                <span class="n">d</span> <span class="o">=</span> <span class="n">DerivedRate</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="n">fr</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">d</span> <span class="o">=</span> <span class="n">DerivedRate</span><span class="p">(</span><span class="n">source_rate</span><span class="o">=</span><span class="n">fr</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="n">lib</span><span class="o">.</span><span class="n">add_rate</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">network_type</span> <span class="o">==</span> <span class="s2">&quot;python&quot;</span><span class="p">:</span>

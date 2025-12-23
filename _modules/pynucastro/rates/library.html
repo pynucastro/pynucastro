@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.library &#8212; pynucastro 2.8.0.post40+g3aa693db2 documentation</title>
+    <title>pynucastro.rates.library &#8212; pynucastro 2.8.0.post41+g15fea7ebf documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=1a9605b7"></script>
+    <script src="../../../_static/documentation_options.js?v=2da728e1"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -200,7 +200,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../screening-examples.html">Screening Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modify-example.html">Modifying Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../custom-rates.html">Creating a Custom Rate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../partition-function.html">Reverse Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../partition-function.html">Derived Rates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
 <ul class="nav bd-sidenav">
@@ -682,7 +682,6 @@ document.write(`
             <span class="k">pass</span>
 
         <span class="c1"># fname case</span>
-
         <span class="n">fname_mod</span> <span class="o">=</span> <span class="n">capitalize_id</span><span class="p">(</span><span class="n">rate_id</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
         <span class="n">matched_rates</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
@@ -1158,7 +1157,7 @@ document.write(`
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">onlyfwd</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
 
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">DerivedRate</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="n">use_unreliable_spins</span><span class="p">)</span>
+                <span class="n">DerivedRate</span><span class="p">(</span><span class="n">source_rate</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="n">use_unreliable_spins</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1170,7 +1169,7 @@ document.write(`
 
 <div class="viewcode-block" id="Library.derived_backward">
 <a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.Library.derived_backward">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">derived_backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">derived_backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Loop over all of the forward rates that can be used to</span>
 <span class="sd">        derive inverse rates (as returned by</span>
 <span class="sd">        :py:meth:`.forward_for_detailed_balance`) and derive the</span>
@@ -1179,8 +1178,6 @@ document.write(`
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        compute_Q : bool</span>
-<span class="sd">            do we recompute the Q value based on the masses?</span>
 <span class="sd">        use_pf : bool</span>
 <span class="sd">            do we use the temperature-dependent partition function?</span>
 
@@ -1195,7 +1192,7 @@ document.write(`
 
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">onlyfwd</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">i</span> <span class="o">=</span> <span class="n">DerivedRate</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">compute_Q</span><span class="o">=</span><span class="n">compute_Q</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="n">use_pf</span><span class="p">,</span> <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="n">use_unreliable_spins</span><span class="p">)</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">DerivedRate</span><span class="p">(</span><span class="n">source_rate</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="n">use_pf</span><span class="p">,</span> <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="n">use_unreliable_spins</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">else</span><span class="p">:</span>

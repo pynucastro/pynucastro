@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.library module &#8212; pynucastro 2.8.0.post40+g3aa693db2 documentation</title>
+    <title>pynucastro.rates.library module &#8212; pynucastro 2.8.0.post41+g15fea7ebf documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=1a9605b7"></script>
+    <script src="_static/documentation_options.js?v=2da728e1"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -201,7 +201,7 @@
 <li class="toctree-l1"><a class="reference internal" href="screening-examples.html">Screening Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modify-example.html">Modifying Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom-rates.html">Creating a Custom Rate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="partition-function.html">Reverse Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="partition-function.html">Derived Rates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
 <ul class="nav bd-sidenav">
@@ -699,7 +699,7 @@ by detailed balance, and not that Q &lt; 0.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.derived_backward">
-<span class="sig-name descname"><span class="pre">derived_backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compute_Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_pf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_unreliable_spins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.derived_backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.derived_backward" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">derived_backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_pf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_unreliable_spins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.derived_backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.derived_backward" title="Link to this definition">#</a></dt>
 <dd><p>Loop over all of the forward rates that can be used to
 derive inverse rates (as returned by
 <a class="reference internal" href="#pynucastro.rates.library.Library.forward_for_detailed_balance" title="pynucastro.rates.library.Library.forward_for_detailed_balance"><code class="xref py py-meth docutils literal notranslate"><span class="pre">forward_for_detailed_balance()</span></code></a>) and derive the
@@ -707,10 +707,7 @@ inverses, potentially taking into account the partition
 function and recomputing Q.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>compute_Q</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – do we recompute the Q value based on the masses?</p></li>
-<li><p><strong>use_pf</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – do we use the temperature-dependent partition function?</p></li>
-</ul>
+<dd class="field-odd"><p><strong>use_pf</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – do we use the temperature-dependent partition function?</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library">Library</a></p>
