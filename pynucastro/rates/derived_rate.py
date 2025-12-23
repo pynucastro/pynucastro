@@ -12,8 +12,8 @@ import numpy as np
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.rate import Rate, Tfactors
-from pynucastro.rates.tabular_rate import TabularRate
 from pynucastro.rates.reaclib_rate import ReacLibRate, SingleSet
+from pynucastro.rates.tabular_rate import TabularRate
 
 
 class DerivedRate(Rate):
