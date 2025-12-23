@@ -92,7 +92,7 @@ class DerivedRate(Rate):
             self.derived_sets = []
             for source_set in self.source_rate.sets:
                 a_derived = source_set.a.copy()
-                a_derived[0] += np.log(self.ratio_factor)
+                a_derived[0] += np.log(self.ratio_factor) + 13.5 * self.net_stoich * np.log(10)
                 a_derived[1] += self.Q / (constants.k_MeV * 1.0e9)
                 a_derived[6] += 1.5 * self.net_stoich
                 self.derived_sets.append(SingleSet(a_derived, source_set.labelprops))
