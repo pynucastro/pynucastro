@@ -3,6 +3,7 @@
 
 #include <AMReX_REAL.H>
 #include <AMReX_Array.H>
+#include <AMReX_Math.H>
 
 #include <tfactors.H>
 #include <fundamental_constants.H>
@@ -68,7 +69,7 @@ namespace part_fun {
             // find the PF
 
             amrex::Real log10_pf = pf_array(idx) + slope * (t9 - temp_array(idx));
-            pf = std::pow(10.0_rt, log10_pf);
+            pf = amrex::Math::exp10(log10_pf);
 
             // find the derivative (with respect to T, not T9)
 
