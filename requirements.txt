@@ -28,3 +28,4 @@ sphinxcontrib-bibtex
 sphinx-book-theme
 myst-nb
 jupyterlab-myst
+nbclient<0.10.3
