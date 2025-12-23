@@ -22,12 +22,12 @@ class TestNseProtons:
 
         captured = capsys.readouterr()
 
-        output = """modifying p_Mn51_to_Fe52 to use NSE protons
-modifying Fe52_to_p_Mn51 to use NSE protons
-modifying p_Co55_to_Ni56 to use NSE protons
-modifying Ni56_to_p_Co55 to use NSE protons
-modifying He4_Fe52_to_p_Co55 to use NSE protons
-modifying p_Co55_to_He4_Fe52 to use NSE protons
+        output = """modifying p_Mn51_to_Fe52_reaclib to use NSE protons
+modifying Fe52_to_p_Mn51_reaclib to use NSE protons
+modifying p_Co55_to_Ni56_reaclib to use NSE protons
+modifying Ni56_to_p_Co55_reaclib to use NSE protons
+modifying He4_Fe52_to_p_Co55_reaclib to use NSE protons
+modifying p_Co55_to_He4_Fe52_reaclib to use NSE protons
 """
 
         assert captured.out == output

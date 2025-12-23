@@ -6,9 +6,11 @@ from pathlib import Path
 import numpy as np
 
 import pynucastro.numba_util as numba
+from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
 from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import _find_rate_file
+from pynucastro.rates.known_duplicates import ALLOWED_DUPLICATES
 from pynucastro.screening import (get_screening_map, make_plasma_state,
                                   make_screen_factors)
 
@@ -104,7 +106,7 @@ class Rate:
 
     def __init__(self, reactants=None, products=None,
                  Q=None, weak_type="", label="generic",
-                 stoichiometry=None,
+                 stoichiometry=None, rate_source=None,
                  use_identical_particle_factor=True):
 
         if reactants:
@@ -117,17 +119,23 @@ class Rate:
         else:
             self.products = []
 
+        assert '_' not in label, "Rate label should not contain underscore"
         self.label = label
 
-        self.source = None
-        self.modified = False
+        self.src = rate_source
+        if self.src is not None:
+            self.source = RateSource.source(rate_source)
 
-        # the fname is used when writing the code to evaluate the rate
-        reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
-        products_str = '_'.join([repr(nuc) for nuc in self.products])
-        self.fname = f'{reactants_str}_to_{products_str}_{label}'
-
+        self.weak = False
         self.weak_type = weak_type
+        if self.weak_type:
+            self.weak = True
+
+        self.removed = False
+        self.modified = False
+        self.tabular = False
+        self.derived_from_inverse = False
+        self.approx = False
 
         # the identical particle factor scales the rate to prevent
         # double counting for a rate that has the same nucleus
@@ -158,10 +166,6 @@ class Rate:
 
         if not test:
             raise BaryonConservationError(f"baryon number not conserved in rate {self}")
-
-        self.tabular = False
-
-        self.derived_from_inverse = None
 
         self.rate_eval_needs_rho = False
         self.rate_eval_needs_comp = False
@@ -218,15 +222,21 @@ class Rate:
         self.Q = 0
         for n in set(self.reactants):
             c = self.reactant_count(n)
-            self.Q += c * n.mass
+            self.Q += c * n.A_nuc
         for n in set(self.products):
             c = self.product_count(n)
-            self.Q += -c * n.mass
+            self.Q += -c * n.A_nuc
+
+        self.Q *= constants.m_u_MeV_C18
 
     def _set_print_representation(self):
+        """Compose the string representations of this Rate.
+        This includes string,rid, pretty_string, and fname.
+        String is output to the terminal, rid is used as a dict key,
+        and pretty_string is latex, and fname is used when writing the
+        code to evaluate the rate.
 
-        # string is output to the terminal, rid is used as a dict key,
-        # and pretty_string is latex
+        """
 
         # some rates will have no nuclei particles (e.g. gamma) on the left or
         # right -- we'll try to infer those here
@@ -385,6 +395,24 @@ class Rate:
 
         self.pretty_string += r"$"
 
+        # If rate is removed, i.e. a child rate for an ApproximateRate,
+        # change label to removed
+        if self.removed:
+            self.label = "removed"
+
+        # Set fname last
+        reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
+        products_str = '_'.join([repr(nuc) for nuc in self.products])
+        self.fname = f'{reactants_str}_to_{products_str}_{self.label}'
+
+        # Treat special duplicate rate cases
+        # These are likely weak rates with beta plus decay and electron captures
+        # So add weak_type to them.
+        is_dupe = any(f"{self.__class__.__name__}: {self.id}" in dupe_set
+                      for dupe_set in ALLOWED_DUPLICATES)
+        if is_dupe:
+            self.fname += '_' + self.weak_type
+
     def _set_rhs_properties(self):
         """Compute statistical prefactor and density exponent from the
         reactants.
@@ -426,7 +454,12 @@ class Rate:
         str
 
         """
-        return f'{self.rid} <{self.label.strip()}>'
+
+        ssrc = ''
+        if self.src is not None:
+            ssrc = f'_{self.src.strip()}'
+
+        return f'{self.rid} <{self.label.strip()}{ssrc}>'
 
     @property
     def id(self):
@@ -493,7 +526,6 @@ class Rate:
 
         self._set_q()
         self._set_screening()
-        self.fname = None    # reset so it will be updated
         self._set_print_representation()
 
     def reactant_count(self, n):
@@ -556,7 +588,6 @@ class Rate:
 
         self._set_q()
         self._set_screening()
-        self.fname = None    # reset so it will be updated
         self._set_print_representation()
 
     def evaluate_screening(self, rho, T, composition, screen_func):

@@ -21,7 +21,7 @@ class TestPythonDerivedNetwork:
 
         derived = []
         for r in fwd_rates_lib.get_rates():
-            d = pyna.rates.DerivedRate(rate=r, compute_Q=False, use_pf=True, use_unreliable_spins=False)
+            d = pyna.rates.DerivedRate(source_rate=r, use_pf=True, use_unreliable_spins=False)
             derived.append(d)
 
         der_rates_lib = pyna.Library(rates=derived)
@@ -37,7 +37,11 @@ class TestPythonDerivedNetwork:
         n14agf18 = reaclib_library.get_rate_by_name("n14(a,g)f18")
         n14_new = pyna.ModifiedRate(n14agf18, new_products=["ne20"],
                                     stoichiometry={pyna.Nucleus("he4"): 1.5})
-        new_n14_reverse = pyna.DerivedRate(rate=n14_new, compute_Q=True, use_pf=True, use_unreliable_spins=False)
+
+        # To ignore stoichiometry warning.
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=UserWarning)
+            new_n14_reverse = pyna.DerivedRate(source_rate=n14_new, use_pf=True, use_unreliable_spins=False)
 
         my_net = pyna.Library(rates=[n14_new, new_n14_reverse])
         pynet = pyna.PythonNetwork(libraries=my_net)
@@ -56,8 +60,8 @@ class TestPythonDerivedNetwork:
 
         ostr = \
 """dYdt[jcr48] = (
-      ( -rho*Y[jhe4]*Y[jcr48]*rate_eval.He4_Cr48_to_Fe52 +Y[jfe52]*rate_eval.Fe52_to_He4_Cr48_derived ) +
-      ( -rho*Y[jhe4]*Y[jcr48]*rate_eval.He4_Cr48_to_p_Mn51 +rho*Y[jp]*Y[jmn51]*rate_eval.p_Mn51_to_He4_Cr48_derived )
+      ( -rho*Y[jhe4]*Y[jcr48]*rate_eval.He4_Cr48_to_Fe52_reaclib +Y[jfe52]*rate_eval.Fe52_to_He4_Cr48_derived ) +
+      ( -rho*Y[jhe4]*Y[jcr48]*rate_eval.He4_Cr48_to_p_Mn51_reaclib +rho*Y[jp]*Y[jmn51]*rate_eval.p_Mn51_to_He4_Cr48_derived )
    )
 
 """
@@ -70,14 +74,11 @@ class TestPythonDerivedNetwork:
 """@numba.njit()
 def Fe52_to_p_Mn51_derived(rate_eval, tf):
     # Fe52 --> p + Mn51
-    rate = 0.0
 
-    # ths8r
-    rate += np.exp(  61.74743132228039 + -85.63264034844842*tf.T9i + -36.1825*tf.T913i + 0.873042*tf.T913
-                  + -2.89731*tf.T9 + 0.364394*tf.T953 + 0.833333*tf.lnT9)
-
-    rate_eval.Fe52_to_p_Mn51_derived = rate
-
+    # Evaluate the equilibrium ratio
+    ratio = 0.0037087238653468386 * (tf.T9 * 1.0e9)**(1.5 * 1)
+    ratio *= np.exp(-7.377871064004735 / (constants.k_MeV * tf.T9 * 1.0e9))
+    rate_eval.Fe52_to_p_Mn51_derived = rate_eval.p_Mn51_to_Fe52_reaclib * ratio
 
     # interpolating Mn51 partition function
     Mn51_pf_exponent = np.interp(tf.T9, xp=Mn51_temp_array, fp=np.log10(Mn51_pf_array))
@@ -92,7 +93,8 @@ def Fe52_to_p_Mn51_derived(rate_eval, tf):
 
     z_r = p_pf*Mn51_pf
     z_p = Fe52_pf
-    rate_eval.Fe52_to_p_Mn51_derived *= z_r/z_p
+    rate_eval.Fe52_to_p_Mn51_derived *= z_r / z_p
+
 """
 
         r = pynet.get_rate("fe52_to_p_mn51_derived")
@@ -127,18 +129,11 @@ def Fe52_to_p_Mn51_derived(rate_eval, tf):
 """@numba.njit()
 def Ne20_to_He4_N14_derived(rate_eval, tf):
     # Ne20 --> 1.5 He4 + N14
-    rate = 0.0
 
-    # il10c
-    rate += np.exp(  39.55827158733315 + -168.12237220574448*tf.T9i + -5.6227*tf.T913i)
-    # il10c
-    rate += np.exp(  25.85560958733315 + -162.31711220574448*tf.T9i)
-    # il10c
-    rate += np.exp(  47.19267158733315 + -157.1567722057445*tf.T9i + -36.2504*tf.T913i
-                  + -5.0*tf.T953 + 0.833333*tf.lnT9)
-
-    rate_eval.Ne20_to_He4_N14_derived = rate
-
+    # Evaluate the equilibrium ratio
+    ratio = 0.0044001037090965886 * (tf.T9 * 1.0e9)**(1.5 * 1)
+    ratio *= np.exp(-13.54272280499935 / (constants.k_MeV * tf.T9 * 1.0e9))
+    rate_eval.Ne20_to_He4_N14_derived = rate_eval.He4_N14_to_Ne20_modified * ratio
 
     # setting He4 partition function to 1.0 by default, independent of T
     He4_pf = 1.0
@@ -152,7 +147,8 @@ def Ne20_to_He4_N14_derived(rate_eval, tf):
 
     z_r = He4_pf*N14_pf
     z_p = Ne20_pf
-    rate_eval.Ne20_to_He4_N14_derived *= z_r/z_p
+    rate_eval.Ne20_to_He4_N14_derived *= z_r / z_p
+
 """
 
         # To ignore partition function warning.

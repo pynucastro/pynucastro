@@ -29,7 +29,7 @@ from pynucastro.rates import (ApproximateRate, DerivedRate, Library,
                               ModifiedRate, Rate, RateFileError, RatePair,
                               ReacLibRate, TabularRate, TemperatureTabularRate,
                               find_duplicate_rates, is_allowed_dupe, load_rate)
-from pynucastro.rates.library import _rate_name_to_nuc, capitalize_rid
+from pynucastro.rates.library import _rate_name_to_nuc, capitalize_id
 
 mpl.rcParams['figure.dpi'] = 100
 
@@ -748,9 +748,9 @@ class RateCollection:
         else:
             cr.removed = False
 
-        # reset fname -- set_print_representatoin will add
+        # update fname -- _set_print_representation will add
         # "_removed" to the name
-        cr.fname = None
+
         # pylint: disable-next=protected-access
         cr._set_print_representation()
 
@@ -1046,18 +1046,32 @@ class RateCollection:
         Parameters
         ----------
         fname : str
-            The fname of the rate, as returned by Rate.fname
+            The fname of the rate, as returned by Rate.fname,
+            or the base fname without the label.
 
         Returns
         -------
         Rate
 
         """
-        try:
-            fname_mod = capitalize_rid(fname, "_")
-            return [r for r in self.rates if r.fname == fname_mod][0]
-        except IndexError:
-            raise LookupError(f"rate fname {fname!r} does not match a rate in this network.") from None
+
+        # Get the base fname. Assume that fname follows reactants_to_products_label
+        # And label does not contain any underscore _.
+        fname_mod = capitalize_id(fname, "_")
+
+        matched_rates = []
+        for q in self.get_rates():
+            q_base_fname = q.fname.rsplit('_', 1)[0]
+            if fname_mod in (q.fname, q_base_fname):
+                matched_rates.append(q)
+
+        if not matched_rates:
+            raise LookupError(f"rate identifier {fname!r} does not match a rate in this network.")
+
+        if len(matched_rates) > 1:
+            raise LookupError(f"rate identifier {fname!r} is ambiguous. It matched {[q.fname for q in matched_rates]}.")
+
+        return matched_rates[0]
 
     def get_rate_by_nuclei(self, reactants, products):
         """Given a list of reactants and products, return any matching rates

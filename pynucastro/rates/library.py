@@ -78,14 +78,14 @@ def _rate_name_to_nuc(name):
     return reactants, products
 
 
-def capitalize_rid(rid, delimiter):
+def capitalize_id(rate_id, delimiter):
     """Capitalize a ``Rate`` ``rid`` or ``fname`` given the delimiter.
     The delimiter is usually either "_" or " "
 
     Parameters
     ----------
-    rid : str
-        the rate's id
+    rate_id : str
+        the rate's id or rate's fname
     delimiter : str
         the delimiter used to split the rid into substrings
 
@@ -95,19 +95,23 @@ def capitalize_rid(rid, delimiter):
 
     """
 
-    rid_nucs = rid.split(delimiter)
-    rid_mod = []
-    for n in rid_nucs:
-        do_capitalization = True
-        if n in ("to", "weak", "approx", "derived"):
-            do_capitalization = False
-        if do_capitalization:
-            if n not in ("n", "p"):
-                n = n.capitalize()
-        rid_mod.append(n)
+    # assume that Nucleus name will be letter+numbers, i.e. He4
+    # This ignores neutron and proton, n and p, as intended.
+    NUC_RE = re.compile(r"^([a-zA-Z]+)(\d+)$")
 
-    rid_mod = delimiter.join(rid_mod)
-    return rid_mod
+    id_parts = rate_id.split(delimiter)
+    id_mod = []
+
+    for part in id_parts:
+        m = NUC_RE.match(part)
+        if m:
+            nuc, A = m.groups()
+            id_mod.append(nuc.capitalize() + A)
+        else:
+            id_mod.append(part)
+
+    id_mod = delimiter.join(id_mod)
+    return id_mod
 
 
 class Library:
@@ -151,8 +155,14 @@ class Library:
         """
         return list(self._rates.values())
 
-    def get_rate(self, rid):
-        """Return a rate matching the id provided.
+    def get_rate(self, rate_id):
+        """Return a rate matching the id or fname provided.
+
+        Parameters
+        ----------
+        rate_id : str
+            rid of the Rate or the fname, as returned by Rate.fname.
+            The base name of the fname, i.e. without label, is also accepted.
 
         Returns
         -------
@@ -160,18 +170,29 @@ class Library:
 
         """
 
+        # rid case
         try:
-            rid_mod = capitalize_rid(rid, " ")
+            rid_mod = capitalize_id(rate_id, " ")
             return self._rates[rid_mod]
         except KeyError:
             pass
 
-        # fallback to the rate fname
-        try:
-            rid_mod = capitalize_rid(rid, "_")
-            return [q for q in self.get_rates() if q.fname == rid_mod][0]
-        except IndexError:
-            raise LookupError(f"rate identifier {rid!r} does not match a rate in this library.") from None
+        # fname case
+        fname_mod = capitalize_id(rate_id, "_")
+        matched_rates = []
+        for q in self.get_rates():
+            # Get the base fname. Assume that fname follows reactants_to_products_label
+            q_base_fname = q.fname.split(f'_{q.label}')[0]
+            if fname_mod in (q.fname, q_base_fname):
+                matched_rates.append(q)
+
+        if not matched_rates:
+            raise LookupError(f"rate identifier {rate_id!r} does not match a rate in this library.")
+
+        if len(matched_rates) > 1:
+            raise LookupError(f"rate identifier {rate_id!r} is ambiguous. It matched {[q.fname for q in matched_rates]}.")
+
+        return matched_rates[0]
 
     @property
     def num_rates(self):
@@ -587,7 +608,7 @@ class Library:
         for r in onlyfwd.get_rates():
 
             try:
-                DerivedRate(rate=r, compute_Q=False, use_pf=False, use_unreliable_spins=use_unreliable_spins)
+                DerivedRate(source_rate=r, use_pf=False, use_unreliable_spins=use_unreliable_spins)
             except ValueError:
                 continue
             else:
@@ -596,7 +617,7 @@ class Library:
         list1 = Library(rates=collect_rates)
         return list1
 
-    def derived_backward(self, compute_Q=False, use_pf=False, use_unreliable_spins=True):
+    def derived_backward(self, use_pf=False, use_unreliable_spins=True):
         """Loop over all of the forward rates that can be used to
         derive inverse rates (as returned by
         :py:meth:`.forward_for_detailed_balance`) and derive the
@@ -605,8 +626,6 @@ class Library:
 
         Parameters
         ----------
-        compute_Q : bool
-            do we recompute the Q value based on the masses?
         use_pf : bool
             do we use the temperature-dependent partition function?
 
@@ -621,7 +640,7 @@ class Library:
 
         for r in onlyfwd.get_rates():
             try:
-                i = DerivedRate(rate=r, compute_Q=compute_Q, use_pf=use_pf, use_unreliable_spins=use_unreliable_spins)
+                i = DerivedRate(source_rate=r, use_pf=use_pf, use_unreliable_spins=use_unreliable_spins)
             except ValueError:
                 continue
             else:

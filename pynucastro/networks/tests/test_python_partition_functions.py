@@ -20,7 +20,7 @@ class TestPythonPartitionNetwork:
 
         derived = []
         for r in fwd_rates_lib.get_rates():
-            d = pyna.DerivedRate(rate=r, compute_Q=False, use_pf=True, use_unreliable_spins=False)
+            d = pyna.DerivedRate(source_rate=r, use_pf=True, use_unreliable_spins=False)
             derived.append(d)
 
         der_rates_lib = pyna.Library(rates=derived)
@@ -39,23 +39,33 @@ class TestPythonPartitionNetwork:
 
         rate_eval = der_net.RateEval()
 
+        # Need to first evaluate the corresponding source rate.
+        der_net.He4_Fe52_to_p_Co55_reaclib(rate_eval, tf)
+        der_net.p_Co55_to_Ni56_reaclib(rate_eval, tf)
+
+        # Now evaluate the derived rate.
         der_net.p_Co55_to_He4_Fe52_derived(rate_eval, tf)
         der_net.Ni56_to_p_Co55_derived(rate_eval, tf)
 
-        assert rate_eval.p_Co55_to_He4_Fe52_derived == pytest.approx(4.490724385677499, rel=1.e-10)
+        assert rate_eval.p_Co55_to_He4_Fe52_derived == pytest.approx(4.470365366766347, rel=1.e-10)
 
-        assert rate_eval.Ni56_to_p_Co55_derived == pytest.approx(24257731.147845287, rel=1.e-10)
+        assert rate_eval.Ni56_to_p_Co55_derived == pytest.approx(24174490.605820727, rel=1.e-10)
 
         T = 9.e9
         tf = pyna.Tfactors(T)
 
         rate_eval = der_net.RateEval()
 
+        # Need to first evaluate the corresponding source rate.
+        der_net.He4_Fe52_to_p_Co55_reaclib(rate_eval, tf)
+        der_net.p_Co55_to_Ni56_reaclib(rate_eval, tf)
+
+        # Now evaluate the derived rate.
         der_net.p_Co55_to_He4_Fe52_derived(rate_eval, tf)
         der_net.Ni56_to_p_Co55_derived(rate_eval, tf)
 
-        assert rate_eval.p_Co55_to_He4_Fe52_derived == pytest.approx(15213.796298836147, rel=1.e-10)
-        assert rate_eval.Ni56_to_p_Co55_derived == pytest.approx(437391295764.6698, rel=1.e-10)
+        assert rate_eval.p_Co55_to_He4_Fe52_derived == pytest.approx(15175.43937172369, rel=1.e-10)
+        assert rate_eval.Ni56_to_p_Co55_derived == pytest.approx(436556819577.45264, rel=1.e-10)
 
         # clean up generated files if the test passed
         Path("der_net.py").unlink()

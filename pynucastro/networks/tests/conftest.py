@@ -10,6 +10,12 @@ import pynucastro as pyna
 
 
 @pytest.fixture(scope="package")
+def full_library():
+    """Return the full library"""
+    return pyna.full_library()
+
+
+@pytest.fixture(scope="package")
 def reaclib_library():
     """Return the ReacLibLibrary"""
     return pyna.ReacLibLibrary()

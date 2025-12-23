@@ -8,7 +8,7 @@ import numpy as np
 
 import pynucastro.numba_util as numba
 from pynucastro.numba_util import jitclass
-from pynucastro.rates.rate import Rate, RateSource
+from pynucastro.rates.rate import Rate
 
 
 @jitclass([
@@ -121,11 +121,11 @@ class TemperatureTabularRate(Rate):
 
     """
 
-    def __init__(self, log_t9_data, log_rate_data, rate_source=None, **kwargs):
-        super().__init__(label="temptab", **kwargs)
+    def __init__(self, log_t9_data, log_rate_data, rate_source=None,
+                 label="temptab", **kwargs):
+        super().__init__(label=label, rate_source=rate_source, **kwargs)
 
-        if rate_source:
-            self.source = RateSource.source(rate_source)
+        self.tabular = True
 
         # make sure there are no weak interactions -- we don't
         # support those yet
@@ -140,20 +140,6 @@ class TemperatureTabularRate(Rate):
 
         # same number of data points in T and rate
         assert len(self.log_t9_data) == len(self.log_rate_data)
-
-        reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
-        products_str = '_'.join([repr(nuc) for nuc in self.products])
-        self.fname = f'{reactants_str}__{products_str}__temptab'
-
-        # tabular here really means weak rate tabular
-        self.tabular = False
-
-        # we should initialize this somehow
-        self.weak_type = ""
-
-        self._set_rhs_properties()
-        self._set_screening()
-        self._set_print_representation()
 
         # store the extrema of the thermodynamics
         self.table_Tmin = 1.e9 * 10.0**self.log_t9_data.min()
@@ -174,17 +160,6 @@ class TemperatureTabularRate(Rate):
 
     def __hash__(self):
         return hash(self.__repr__())
-
-    def get_rate_id(self):
-        """Get an identifying string for this rate.
-
-        Returns
-        -------
-        str
-
-        """
-
-        return f'{self.rid} <{self.label.strip()}>'
 
     def function_string_py(self):
         """Construct the python function that computes the rate.

@@ -46,12 +46,12 @@ class TestAlphaGammaTfactors:
     def test_child_rates(self, ar):
 
         cr = ar.get_child_rates()
-        assert cr[0].fname == "He4_Mg24_to_Si28"
-        assert cr[1].fname == "He4_Mg24_to_p_Al27"
-        assert cr[2].fname == "p_Al27_to_Si28"
-        assert cr[3].fname == "Si28_to_He4_Mg24"
-        assert cr[4].fname == "Si28_to_p_Al27"
-        assert cr[5].fname == "p_Al27_to_He4_Mg24"
+        assert cr[0].fname == "He4_Mg24_to_Si28_reaclib"
+        assert cr[1].fname == "He4_Mg24_to_p_Al27_reaclib"
+        assert cr[2].fname == "p_Al27_to_Si28_reaclib"
+        assert cr[3].fname == "Si28_to_He4_Mg24_reaclib"
+        assert cr[4].fname == "Si28_to_p_Al27_reaclib"
+        assert cr[5].fname == "p_Al27_to_He4_Mg24_reaclib"
 
         assert len(cr) == 6
 
@@ -84,9 +84,9 @@ class TestDoubleN:
 """@numba.njit()
 def Fe52_n_n_to_Fe54_approx(rate_eval, tf, rho=None, Y=None):
     Yn = Y[jn]
-    r1_ng = rate_eval.n_Fe52_to_Fe53
-    r2_ng = rate_eval.n_Fe53_to_Fe54
-    r1_gn = rate_eval.Fe53_to_n_Fe52
+    r1_ng = rate_eval.n_Fe52_to_Fe53_reaclib
+    r2_ng = rate_eval.n_Fe53_to_Fe54_reaclib
+    r1_gn = rate_eval.Fe53_to_n_Fe52_reaclib
     rate = r1_ng * r2_ng / (rho * Yn * r2_ng + r1_gn)
     rate_eval.Fe52_n_n_to_Fe54_approx = rate
 

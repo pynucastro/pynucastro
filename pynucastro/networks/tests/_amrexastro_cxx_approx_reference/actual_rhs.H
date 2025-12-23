@@ -38,9 +38,10 @@ void ener_gener_rate(T const& dydt, amrex::Real& enuc)
 
     enuc = 0.0_rt;
 
-    for (int n = 1; n <= NumSpec; ++n) {
-        enuc += dydt(n) * network::mion(n);
-    }
+    amrex::constexpr_for<1, NumSpec+1>([&] (auto n)
+    {
+        enuc += dydt(n) * network::mion<n>();
+    });
 
     enuc *= C::enuc_conv2;
 }
@@ -73,6 +74,9 @@ void evaluate_rates(const burn_t& state,
     const tf_t tfactors = evaluate_tfactors(state.T);
 
     fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
+
+    // Calculate Derived Rates. This should go last but before approx rates.
+    fill_derived_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
 
 #ifdef SCREENING
