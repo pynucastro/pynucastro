@@ -2,6 +2,15 @@
 
 ## 2.9.0
 
+  * change how `DerivedRate` works so it can apply to any strong rate
+    (#1207)
+
+  * pin nbclient to fix doc build issues (#1214)
+
+  * standardize `Rate.fname` and `Rate.id` (#1209)
+
+  * optimize `AmrexAstroCxxNetwork` (#1210)
+
   * remove `Rate.cname` and change `Rate.fname` to be more descriptive
     (#1206)
 
@@ -28,7 +37,7 @@
   * remove `libfile` from the `Library` class -- it only makes sense
     for `ReacLibLibrary` (#1185)
 
-  * docstring updates (#1198)
+  * docstring updates (#1198, #1208)
 
   * remove `list_known_rates` -- it only works for single rate files
     (#1192)
@@ -46,7 +55,7 @@
   * `network_helper` updates: add `with_reverse` (#1168), add
     `inert_nuclei` support (#1184)
 
-  * update CI actions (#1181)
+  * update CI actions (#1181, #1212)
 
   * update CI benchmarks to reflect AMReX-Astro Microphysics changes
     (#1179)
