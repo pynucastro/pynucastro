@@ -6,6 +6,7 @@ from pathlib import Path
 import numpy as np
 
 import pynucastro.numba_util as numba
+from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
 from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import _find_rate_file
@@ -221,10 +222,12 @@ class Rate:
         self.Q = 0
         for n in set(self.reactants):
             c = self.reactant_count(n)
-            self.Q += c * n.mass
+            self.Q += c * n.A_nuc
         for n in set(self.products):
             c = self.product_count(n)
-            self.Q += -c * n.mass
+            self.Q += -c * n.A_nuc
+
+        self.Q *= constants.m_u_MeV_C18
 
     def _set_print_representation(self):
         """Compose the string representations of this Rate.

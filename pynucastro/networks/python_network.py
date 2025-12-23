@@ -241,11 +241,6 @@ class PythonNetwork(RateCollection):
         for r in self.reaclib_rates:
             ostr += format_rate_call(r)
 
-        if self.derived_rates:
-            ostr += f"\n{indent}# derived rates\n"
-        for r in self.derived_rates:
-            ostr += format_rate_call(r)
-
         if self.tabular_rates:
             ostr += f"\n{indent}# tabular rates\n"
         for r in self.tabular_rates:
@@ -269,6 +264,13 @@ class PythonNetwork(RateCollection):
         if self.modified_rates:
             ostr += f"\n{indent}# modified rates\n"
         for r in self.modified_rates:
+            ostr += format_rate_call(r)
+
+        # Derived rate should go last (before approx rates)
+        # since the inverse rate should be evaluated first.
+        if self.derived_rates:
+            ostr += f"\n{indent}# derived rates\n"
+        for r in self.derived_rates:
             ostr += format_rate_call(r)
 
         ostr += "\n"
@@ -310,7 +312,7 @@ class PythonNetwork(RateCollection):
 
         of.write("import numba\n")
         of.write("import numpy as np\n")
-        of.write("from scipy import constants\n")
+        of.write("from pynucastro.constants import constants\n")
         of.write("from numba.experimental import jitclass\n\n")
 
         of.write("from pynucastro.rates import (TableIndex, TableInterpolator, TabularRate,\n")
@@ -374,7 +376,7 @@ class PythonNetwork(RateCollection):
         of.write(f'{indent}'"enuc = 0.0\n")
         of.write(f'{indent}'"for i, y in enumerate(dY):\n")
         of.write(f'{indent*2}'"enuc += y * mass[i]\n")
-        of.write(f'{indent}'"enuc *= -1*constants.Avogadro\n")
+        of.write(f'{indent}'"enuc *= -1*constants.N_A\n")
         of.write(f'{indent}'"return enuc\n\n")
 
         # partition function data (if needed)

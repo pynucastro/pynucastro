@@ -7,6 +7,7 @@ from pytest import approx
 from pynucastro import Composition, Rate, rates
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import BaryonConservationError
+from pynucastro.rates.alternate_rates import IliadisO16pgF17
 
 
 class TestTfactors:
@@ -342,9 +343,9 @@ class TestDerivedRate:
 
         a_a_ag_c12 = reaclib_library.get_rate_by_name("he4(aa,g)c12")
         c12_ga_a_a_reaclib = reaclib_library.get_rate_by_name("c12(g,aa)he4")
-        c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=False, use_pf=False, use_unreliable_spins=False)
+        c12_ga_a_a_derived = rates.DerivedRate(source_rate=a_a_ag_c12, use_pf=False, use_unreliable_spins=False)
 
-        assert c12_ga_a_a_reaclib.eval(T=2.0e9) == approx(c12_ga_a_a_derived.eval(T=2.0e9), rel=5.e-3)
+        assert c12_ga_a_a_reaclib.eval(T=2.0e9) == approx(c12_ga_a_a_derived.eval(T=2.0e9), rel=7.e-3)
 
     def test_a_a_ag_c12_with_pf(self, reaclib_library):
         """
@@ -353,23 +354,19 @@ class TestDerivedRate:
         """
 
         a_a_ag_c12 = reaclib_library.get_rate_by_name("he4(aa,g)c12")
-        c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=False, use_pf=True, use_unreliable_spins=False)
+        c12_ga_a_a_derived = rates.DerivedRate(source_rate=a_a_ag_c12, use_pf=True, use_unreliable_spins=False)
 
         with pytest.warns(UserWarning, match="C12 partition function is not supported by tables"):
             rval = c12_ga_a_a_derived.eval(T=2.0e9)
-        assert rval == approx(2.909561626679576e-7)
+        assert rval == approx(2.9138256017033057e-07)
 
-    def test_a_a_ag_c12_with_Q(self, reaclib_library):
-        """
-        This function test the correct rate value if we take in consideration the
-        exact values of atomic nuclear weight in order to compute the Q capture value
-        of the reaction rate.
-        """
+    def test_iliadis_o16_pg_f17_derived(self):
+        o16pgf17 = IliadisO16pgF17()
+        f17gpo16_derived = rates.DerivedRate(source_rate=o16pgf17, use_pf=True,
+                                             use_unreliable_spins=False)
 
-        a_a_ag_c12 = reaclib_library.get_rate_by_name("he4(aa,g)c12")
-        c12_ga_a_a_derived = rates.DerivedRate(rate=a_a_ag_c12, compute_Q=True, use_pf=False, use_unreliable_spins=False)
-
-        assert c12_ga_a_a_derived.eval(T=2.0e9) == approx(2.913825603717208e-07)
+        rval = f17gpo16_derived.eval(T=2.0e9)
+        assert rval == approx(20489931419.399235)
 
 
 class TestWeakRates:

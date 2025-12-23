@@ -63,7 +63,7 @@ class TestRateIds:
     def test_derived_rate(self, reaclib_library):
         r = reaclib_library.get_rate_by_name("c12(a,g)o16")
 
-        rr = pyna.DerivedRate(r, compute_Q=True, use_pf=True)
+        rr = pyna.DerivedRate(r, use_pf=True)
 
         assert rr.rid == "O16 --> He4 + C12"
         assert rr.id == "O16 --> He4 + C12 <derived_nac2>"
