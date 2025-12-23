@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.reaclib_rate module &#8212; pynucastro 2.8.0.post38+gc4bc1319b documentation</title>
+    <title>pynucastro.rates.reaclib_rate module &#8212; pynucastro 2.8.0.post40+g3aa693db2 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=234d5133"></script>
+    <script src="_static/documentation_options.js?v=1a9605b7"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -578,7 +578,6 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.function_string_cxx"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.function_string_cxx()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.function_string_py"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.function_string_py()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.get_rate_exponent"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.get_rate_exponent()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.get_rate_id"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.get_rate_id()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.plot"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.plot()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.write_to_file"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.write_to_file()</span></code></a></li>
 </ul>
@@ -744,19 +743,6 @@ but needed for evaluating screening effects.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.rates.reaclib_rate.ReacLibRate.get_rate_id">
-<span class="sig-name descname"><span class="pre">get_rate_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/reaclib_rate.html#ReacLibRate.get_rate_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.reaclib_rate.ReacLibRate.get_rate_id" title="Link to this definition">#</a></dt>
-<dd><p>Get an identifying string for this rate.  Don’t include
-resonance state since we combine resonant and non-resonant
-versions of reactions.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.reaclib_rate.ReacLibRate.plot">
 <span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Tmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1600000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoYmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">390000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoYmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">10)</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/reaclib_rate.html#ReacLibRate.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.reaclib_rate.ReacLibRate.plot" title="Link to this definition">#</a></dt>
 <dd><p>Plot the rate’s temperature sensitivity vs temperature</p>
@@ -805,7 +791,7 @@ to evaluate the screening effect.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – the coefficients of the exponential fit</p></li>
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – the coefficients of the exponential fit</p></li>
 <li><p><strong>labelprops</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – a collection of flags that classify a ReacLib rate</p></li>
 </ul>
 </dd>
@@ -941,7 +927,6 @@ variable and initialize it to this set?</p></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.function_string_cxx"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.function_string_cxx()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.function_string_py"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.function_string_py()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.get_rate_exponent"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.get_rate_exponent()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.get_rate_id"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.get_rate_id()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.plot"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.plot()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.write_to_file"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.write_to_file()</span></code></a></li>
 </ul>

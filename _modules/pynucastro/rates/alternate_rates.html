@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.alternate_rates &#8212; pynucastro 2.8.0.post38+gc4bc1319b documentation</title>
+    <title>pynucastro.rates.alternate_rates &#8212; pynucastro 2.8.0.post40+g3aa693db2 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=234d5133"></script>
+    <script src="../../../_static/documentation_options.js?v=1a9605b7"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -519,17 +519,11 @@ document.write(`
         <span class="n">reactants</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)]</span>
         <span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">)]</span>
 
-        <span class="n">Q</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">reactants</span><span class="p">:</span>
-            <span class="n">Q</span> <span class="o">+=</span> <span class="o">-</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">n</span><span class="o">.</span><span class="n">nucbind</span>
-        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">products</span><span class="p">:</span>
-            <span class="n">Q</span> <span class="o">+=</span> <span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="n">n</span><span class="o">.</span><span class="n">nucbind</span>
-
         <span class="c1"># we&#39;ll use the same chapter notation as ReacLib</span>
         <span class="n">chapter</span> <span class="o">=</span> <span class="mi">4</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="n">products</span><span class="p">,</span>
-                         <span class="n">chapter</span><span class="o">=</span><span class="n">chapter</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span>
+                         <span class="n">chapter</span><span class="o">=</span><span class="n">chapter</span><span class="p">,</span>
                          <span class="n">labelprops</span><span class="o">=</span><span class="n">labelprops</span><span class="p">)</span>
 
         <span class="c1"># from DeBoer et al. 2017</span>
@@ -542,7 +536,11 @@ document.write(`
 
         <span class="c1"># resonance</span>
         <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mf">7.4</span><span class="p">,</span> <span class="o">-</span><span class="mf">30.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="n">labelprops</span><span class="p">))</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="n">labelprops</span><span class="p">))</span>
+
+        <span class="c1"># Change label to deboer and update fname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;deboer&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span></div>
 
 
 
@@ -581,7 +579,8 @@ document.write(`
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">T9</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rate</span><span class="p">),</span>
                          <span class="n">rate_source</span><span class="o">=</span><span class="s2">&quot;iliadis2022&quot;</span><span class="p">,</span>
-                         <span class="n">reactants</span><span class="o">=</span><span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="n">products</span><span class="p">)</span>
+                         <span class="n">reactants</span><span class="o">=</span><span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="n">products</span><span class="p">,</span>
+                         <span class="n">label</span><span class="o">=</span><span class="s2">&quot;iliadis&quot;</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">!=</span> <span class="mf">0.0</span></div>
 

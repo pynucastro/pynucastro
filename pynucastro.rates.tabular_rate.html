@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.tabular_rate module &#8212; pynucastro 2.8.0.post38+gc4bc1319b documentation</title>
+    <title>pynucastro.rates.tabular_rate module &#8212; pynucastro 2.8.0.post40+g3aa693db2 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=234d5133"></script>
+    <script src="_static/documentation_options.js?v=1a9605b7"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -591,7 +591,6 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate.eval"><code class="docutils literal notranslate"><span class="pre">TabularRate.eval()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate.function_string_py"><code class="docutils literal notranslate"><span class="pre">TabularRate.function_string_py()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate.get_nu_loss"><code class="docutils literal notranslate"><span class="pre">TabularRate.get_nu_loss()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate.get_rate_id"><code class="docutils literal notranslate"><span class="pre">TabularRate.get_rate_id()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate.plot"><code class="docutils literal notranslate"><span class="pre">TabularRate.plot()</span></code></a></li>
 </ul>
 </li>
@@ -669,7 +668,7 @@ methods that allow us to interpolate a variable</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>table_rhoy_lines</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – the number of the (ρ Y_e) values where the rate is tabulated</p></li>
 <li><p><strong>table_temp_lines</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – the number of T values where the rate is tabulated</p></li>
-<li><p><strong>table_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – a 2D array giving the tabulated rate data of the form (index,
+<li><p><strong>table_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – a 2D array giving the tabulated rate data of the form (index,
 component) where index is a 1D flattened representation of
 (rhoY, T).</p></li>
 </ul>
@@ -677,7 +676,7 @@ component) where index is a 1D flattened representation of
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TableInterpolator.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.TableInterpolator#7f547683a8b0&lt;data:array(float64,</span> <span class="pre">2d,</span> <span class="pre">A),table_rhoy_lines:int32,table_temp_lines:int32,rhoy:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),temp:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A)&gt;</span></em><a class="headerlink" href="#pynucastro.rates.tabular_rate.TableInterpolator.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.TableInterpolator#7f5f2a74ad70&lt;data:array(float64,</span> <span class="pre">2d,</span> <span class="pre">A),table_rhoy_lines:int32,table_temp_lines:int32,rhoy:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),temp:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A)&gt;</span></em><a class="headerlink" href="#pynucastro.rates.tabular_rate.TableInterpolator.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -742,17 +741,6 @@ to evaluate the rate with.</p></li>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TabularRate.get_rate_id">
-<span class="sig-name descname"><span class="pre">get_rate_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/tabular_rate.html#TabularRate.get_rate_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.tabular_rate.TabularRate.get_rate_id" title="Link to this definition">#</a></dt>
-<dd><p>Get an identifying string for this rate.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -847,7 +835,6 @@ log10(T) plane.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate.eval"><code class="docutils literal notranslate"><span class="pre">TabularRate.eval()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate.function_string_py"><code class="docutils literal notranslate"><span class="pre">TabularRate.function_string_py()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate.get_nu_loss"><code class="docutils literal notranslate"><span class="pre">TabularRate.get_nu_loss()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate.get_rate_id"><code class="docutils literal notranslate"><span class="pre">TabularRate.get_rate_id()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate.plot"><code class="docutils literal notranslate"><span class="pre">TabularRate.plot()</span></code></a></li>
 </ul>
 </li>

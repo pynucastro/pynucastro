@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.temperature_tabular_rate module &#8212; pynucastro 2.8.0.post38+gc4bc1319b documentation</title>
+    <title>pynucastro.rates.temperature_tabular_rate module &#8212; pynucastro 2.8.0.post40+g3aa693db2 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=234d5133"></script>
+    <script src="_static/documentation_options.js?v=1a9605b7"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -579,7 +579,6 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate"><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.eval"><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate.eval()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.function_string_py"><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate.function_string_py()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.get_rate_id"><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate.get_rate_id()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.plot"><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate.plot()</span></code></a></li>
 </ul>
 </li>
@@ -607,30 +606,30 @@ methods that allow us to interpolate the rate</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>log_temp_points</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – an array giving the temperature at the points where we
+<li><p><strong>log_temp_points</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – an array giving the temperature at the points where we
 tabulate the rate — this is log10(T9)</p></li>
-<li><p><strong>log_rate_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – an array giving the tabulated log10(rate) data</p></li>
+<li><p><strong>log_rate_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – an array giving the tabulated log10(rate) data</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.temperature_tabular_rate.TempTableInterpolator.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.TempTableInterpolator#7f5476899b50&lt;log_temp_points:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),log_rate_data:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A)&gt;</span></em><a class="headerlink" href="#pynucastro.rates.temperature_tabular_rate.TempTableInterpolator.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.TempTableInterpolator#7f5f2a799fd0&lt;log_temp_points:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),log_rate_data:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A)&gt;</span></em><a class="headerlink" href="#pynucastro.rates.temperature_tabular_rate.TempTableInterpolator.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.temperature_tabular_rate.</span></span><span class="sig-name descname"><span class="pre">TemperatureTabularRate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_t9_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_rate_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/temperature_tabular_rate.html#TemperatureTabularRate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.temperature_tabular_rate.</span></span><span class="sig-name descname"><span class="pre">TemperatureTabularRate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_t9_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_rate_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'temptab'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/temperature_tabular_rate.html#TemperatureTabularRate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rate</span></code></a></p>
 <p>A rate whose temperature dependence is tabulated.</p>
 <p>Note: presently this only supports strong-mediated rates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>log_t9_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – The temperature (in log10(T / 1.e9 K)) where we tabulate the rate</p></li>
-<li><p><strong>log_rate_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – The tabulated log10(rate) data, N_A &lt;σv&gt;</p></li>
+<li><p><strong>log_t9_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – The temperature (in log10(T / 1.e9 K)) where we tabulate the rate</p></li>
+<li><p><strong>log_rate_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – The tabulated log10(rate) data, N_A &lt;σv&gt;</p></li>
 </ul>
 </dd>
 </dl>
@@ -660,17 +659,6 @@ to evaluate the rate with.</p></li>
 <dt class="sig sig-object py" id="pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.function_string_py">
 <span class="sig-name descname"><span class="pre">function_string_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/temperature_tabular_rate.html#TemperatureTabularRate.function_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.function_string_py" title="Link to this definition">#</a></dt>
 <dd><p>Construct the python function that computes the rate.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.get_rate_id">
-<span class="sig-name descname"><span class="pre">get_rate_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/temperature_tabular_rate.html#TemperatureTabularRate.get_rate_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.get_rate_id" title="Link to this definition">#</a></dt>
-<dd><p>Get an identifying string for this rate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
@@ -758,7 +746,6 @@ to evaluate the screening effect.</p></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate"><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.eval"><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate.eval()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.function_string_py"><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate.function_string_py()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.get_rate_id"><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate.get_rate_id()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.plot"><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate.plot()</span></code></a></li>
 </ul>
 </li>

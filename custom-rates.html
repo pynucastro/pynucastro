@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Creating a Custom Rate &#8212; pynucastro 2.8.0.post38+gc4bc1319b documentation</title>
+    <title>Creating a Custom Rate &#8212; pynucastro 2.8.0.post40+g3aa693db2 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=234d5133"></script>
+    <script src="_static/documentation_options.js?v=1a9605b7"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -819,10 +819,10 @@ is included.  For example, for the protons:</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dYdt[jp] = (
-      -rho*Y[jp]*Y[jc12]*rate_eval.p_C12_to_N13  +
-      -rho*Y[jp]*Y[jc13]*rate_eval.p_C13_to_N14  +
-      -rho*Y[jp]*Y[jn13]*rate_eval.p_N13_to_O14  +
-      -rho*Y[jp]*Y[jn15]*rate_eval.p_N15_to_He4_C12  +
+      -rho*Y[jp]*Y[jc12]*rate_eval.p_C12_to_N13_reaclib  +
+      -rho*Y[jp]*Y[jc13]*rate_eval.p_C13_to_N14_reaclib  +
+      -rho*Y[jp]*Y[jn13]*rate_eval.p_N13_to_O14_reaclib  +
+      -rho*Y[jp]*Y[jn15]*rate_eval.p_N15_to_He4_C12_reaclib  +
       -rho*Y[jp]*Y[jn14]*rate_eval.N14_p_to_O15_generic
    )
 </pre></div>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Integrating a Network &#8212; pynucastro 2.8.0.post38+gc4bc1319b documentation</title>
+    <title>Integrating a Network &#8212; pynucastro 2.8.0.post40+g3aa693db2 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=234d5133"></script>
+    <script src="_static/documentation_options.js?v=1a9605b7"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -680,7 +680,7 @@ and pass in the names of the rates in the form of a string <code class="docutils
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>rho*Y[jp]*Y[jc13]*rate_eval.p_C13_to_N14
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>rho*Y[jp]*Y[jc13]*rate_eval.p_C13_to_N14_reaclib
 </pre></div>
 </div>
 </div>
@@ -694,7 +694,7 @@ and pass in the names of the rates in the form of a string <code class="docutils
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@numba.njit()
-def p_C13_to_N14(rate_eval, tf):
+def p_C13_to_N14_reaclib(rate_eval, tf):
     # C13 + p --&gt; N14
     rate = 0.0
 
@@ -708,7 +708,7 @@ def p_C13_to_N14(rate_eval, tf):
     rate += np.exp(  15.1825 + -13.5543*tf.T9i
                   + -1.5*tf.lnT9)
 
-    rate_eval.p_C13_to_N14 = rate
+    rate_eval.p_C13_to_N14_reaclib = rate
 </pre></div>
 </div>
 </div>
@@ -829,32 +829,32 @@ def energy_release(dY):
     return enuc
 
 @jitclass([
-    (&quot;p_C12_to_N13&quot;, numba.float64),
-    (&quot;p_C13_to_N14&quot;, numba.float64),
-    (&quot;N13_to_C13_weak_wc12&quot;, numba.float64),
-    (&quot;p_N13_to_O14&quot;, numba.float64),
-    (&quot;p_N14_to_O15&quot;, numba.float64),
-    (&quot;p_N15_to_He4_C12&quot;, numba.float64),
-    (&quot;O14_to_N14_weak_wc12&quot;, numba.float64),
-    (&quot;O15_to_N15_weak_wc12&quot;, numba.float64),
+    (&quot;p_C12_to_N13_reaclib&quot;, numba.float64),
+    (&quot;p_C13_to_N14_reaclib&quot;, numba.float64),
+    (&quot;N13_to_C13_reaclib&quot;, numba.float64),
+    (&quot;p_N13_to_O14_reaclib&quot;, numba.float64),
+    (&quot;p_N14_to_O15_reaclib&quot;, numba.float64),
+    (&quot;p_N15_to_He4_C12_reaclib&quot;, numba.float64),
+    (&quot;O14_to_N14_reaclib&quot;, numba.float64),
+    (&quot;O15_to_N15_reaclib&quot;, numba.float64),
 ])
 class RateEval:
     def __init__(self):
-        self.p_C12_to_N13 = np.nan
-        self.p_C13_to_N14 = np.nan
-        self.N13_to_C13_weak_wc12 = np.nan
-        self.p_N13_to_O14 = np.nan
-        self.p_N14_to_O15 = np.nan
-        self.p_N15_to_He4_C12 = np.nan
-        self.O14_to_N14_weak_wc12 = np.nan
-        self.O15_to_N15_weak_wc12 = np.nan
+        self.p_C12_to_N13_reaclib = np.nan
+        self.p_C13_to_N14_reaclib = np.nan
+        self.N13_to_C13_reaclib = np.nan
+        self.p_N13_to_O14_reaclib = np.nan
+        self.p_N14_to_O15_reaclib = np.nan
+        self.p_N15_to_He4_C12_reaclib = np.nan
+        self.O14_to_N14_reaclib = np.nan
+        self.O15_to_N15_reaclib = np.nan
 
 @numba.njit()
 def ye(Y):
     return np.sum(Z * Y)/np.sum(A * Y)
 
 @numba.njit()
-def p_C12_to_N13(rate_eval, tf):
+def p_C12_to_N13_reaclib(rate_eval, tf):
     # C12 + p --&gt; N13
     rate = 0.0
 
@@ -865,10 +865,10 @@ def p_C12_to_N13(rate_eval, tf):
     rate += np.exp(  17.5428 + -3.77849*tf.T9i + -5.10735*tf.T913i + -2.24111*tf.T913
                   + 0.148883*tf.T9 + -1.5*tf.lnT9)
 
-    rate_eval.p_C12_to_N13 = rate
+    rate_eval.p_C12_to_N13_reaclib = rate
 
 @numba.njit()
-def p_C13_to_N14(rate_eval, tf):
+def p_C13_to_N14_reaclib(rate_eval, tf):
     # C13 + p --&gt; N14
     rate = 0.0
 
@@ -882,20 +882,20 @@ def p_C13_to_N14(rate_eval, tf):
     rate += np.exp(  15.1825 + -13.5543*tf.T9i
                   + -1.5*tf.lnT9)
 
-    rate_eval.p_C13_to_N14 = rate
+    rate_eval.p_C13_to_N14_reaclib = rate
 
 @numba.njit()
-def N13_to_C13_weak_wc12(rate_eval, tf):
+def N13_to_C13_reaclib(rate_eval, tf):
     # N13 --&gt; C13
     rate = 0.0
 
     # wc12w
     rate += np.exp(  -6.7601)
 
-    rate_eval.N13_to_C13_weak_wc12 = rate
+    rate_eval.N13_to_C13_reaclib = rate
 
 @numba.njit()
-def p_N13_to_O14(rate_eval, tf):
+def p_N13_to_O14_reaclib(rate_eval, tf):
     # N13 + p --&gt; O14
     rate = 0.0
 
@@ -906,10 +906,10 @@ def p_N13_to_O14(rate_eval, tf):
     rate += np.exp(  18.1356 + -15.1676*tf.T913i + 0.0955166*tf.T913
                   + 3.0659*tf.T9 + -0.507339*tf.T953 + -0.666667*tf.lnT9)
 
-    rate_eval.p_N13_to_O14 = rate
+    rate_eval.p_N13_to_O14_reaclib = rate
 
 @numba.njit()
-def p_N14_to_O15(rate_eval, tf):
+def p_N14_to_O15_reaclib(rate_eval, tf):
     # N14 + p --&gt; O15
     rate = 0.0
 
@@ -926,10 +926,10 @@ def p_N14_to_O15(rate_eval, tf):
     rate += np.exp(  17.01 + -15.193*tf.T913i + -0.161954*tf.T913
                   + -7.52123*tf.T9 + -0.987565*tf.T953 + -0.666667*tf.lnT9)
 
-    rate_eval.p_N14_to_O15 = rate
+    rate_eval.p_N14_to_O15_reaclib = rate
 
 @numba.njit()
-def p_N15_to_He4_C12(rate_eval, tf):
+def p_N15_to_He4_C12_reaclib(rate_eval, tf):
     # N15 + p --&gt; He4 + C12
     rate = 0.0
 
@@ -946,27 +946,27 @@ def p_N15_to_He4_C12(rate_eval, tf):
     rate += np.exp(  -4.87347 + -2.02117*tf.T9i + 30.8497*tf.T913
                   + -8.50433*tf.T9 + -1.54426*tf.T953 + -1.5*tf.lnT9)
 
-    rate_eval.p_N15_to_He4_C12 = rate
+    rate_eval.p_N15_to_He4_C12_reaclib = rate
 
 @numba.njit()
-def O14_to_N14_weak_wc12(rate_eval, tf):
+def O14_to_N14_reaclib(rate_eval, tf):
     # O14 --&gt; N14
     rate = 0.0
 
     # wc12w
     rate += np.exp(  -4.62354)
 
-    rate_eval.O14_to_N14_weak_wc12 = rate
+    rate_eval.O14_to_N14_reaclib = rate
 
 @numba.njit()
-def O15_to_N15_weak_wc12(rate_eval, tf):
+def O15_to_N15_reaclib(rate_eval, tf):
     # O15 --&gt; N15
     rate = 0.0
 
     # wc12w
     rate += np.exp(  -5.17053)
 
-    rate_eval.O15_to_N15_weak_wc12 = rate
+    rate_eval.O15_to_N15_reaclib = rate
 
 def rhs(t, Y, rho, T, screen_func=None):
     return rhs_eq(t, Y, rho, T, screen_func)
@@ -978,87 +978,87 @@ def rhs_eq(t, Y, rho, T, screen_func):
     rate_eval = RateEval()
 
     # reaclib rates
-    p_C12_to_N13(rate_eval, tf)
-    p_C13_to_N14(rate_eval, tf)
-    N13_to_C13_weak_wc12(rate_eval, tf)
-    p_N13_to_O14(rate_eval, tf)
-    p_N14_to_O15(rate_eval, tf)
-    p_N15_to_He4_C12(rate_eval, tf)
-    O14_to_N14_weak_wc12(rate_eval, tf)
-    O15_to_N15_weak_wc12(rate_eval, tf)
+    p_C12_to_N13_reaclib(rate_eval, tf)
+    p_C13_to_N14_reaclib(rate_eval, tf)
+    N13_to_C13_reaclib(rate_eval, tf)
+    p_N13_to_O14_reaclib(rate_eval, tf)
+    p_N14_to_O15_reaclib(rate_eval, tf)
+    p_N15_to_He4_C12_reaclib(rate_eval, tf)
+    O14_to_N14_reaclib(rate_eval, tf)
+    O15_to_N15_reaclib(rate_eval, tf)
 
     if screen_func is not None:
         plasma_state = PlasmaState(T, rho, Y, Z)
 
         scn_fac = ScreenFactors(1, 1, 6, 12)
         scor = screen_func(plasma_state, scn_fac)
-        rate_eval.p_C12_to_N13 *= scor
+        rate_eval.p_C12_to_N13_reaclib *= scor
 
         scn_fac = ScreenFactors(1, 1, 6, 13)
         scor = screen_func(plasma_state, scn_fac)
-        rate_eval.p_C13_to_N14 *= scor
+        rate_eval.p_C13_to_N14_reaclib *= scor
 
         scn_fac = ScreenFactors(1, 1, 7, 13)
         scor = screen_func(plasma_state, scn_fac)
-        rate_eval.p_N13_to_O14 *= scor
+        rate_eval.p_N13_to_O14_reaclib *= scor
 
         scn_fac = ScreenFactors(1, 1, 7, 14)
         scor = screen_func(plasma_state, scn_fac)
-        rate_eval.p_N14_to_O15 *= scor
+        rate_eval.p_N14_to_O15_reaclib *= scor
 
         scn_fac = ScreenFactors(1, 1, 7, 15)
         scor = screen_func(plasma_state, scn_fac)
-        rate_eval.p_N15_to_He4_C12 *= scor
+        rate_eval.p_N15_to_He4_C12_reaclib *= scor
 
     dYdt = np.zeros((nnuc), dtype=np.float64)
 
     dYdt[jp] = (
-          -rho*Y[jp]*Y[jc12]*rate_eval.p_C12_to_N13  +
-          -rho*Y[jp]*Y[jc13]*rate_eval.p_C13_to_N14  +
-          -rho*Y[jp]*Y[jn13]*rate_eval.p_N13_to_O14  +
-          -rho*Y[jp]*Y[jn14]*rate_eval.p_N14_to_O15  +
-          -rho*Y[jp]*Y[jn15]*rate_eval.p_N15_to_He4_C12
+          -rho*Y[jp]*Y[jc12]*rate_eval.p_C12_to_N13_reaclib  +
+          -rho*Y[jp]*Y[jc13]*rate_eval.p_C13_to_N14_reaclib  +
+          -rho*Y[jp]*Y[jn13]*rate_eval.p_N13_to_O14_reaclib  +
+          -rho*Y[jp]*Y[jn14]*rate_eval.p_N14_to_O15_reaclib  +
+          -rho*Y[jp]*Y[jn15]*rate_eval.p_N15_to_He4_C12_reaclib
        )
 
     dYdt[jhe4] = (
-          +rho*Y[jp]*Y[jn15]*rate_eval.p_N15_to_He4_C12
+          +rho*Y[jp]*Y[jn15]*rate_eval.p_N15_to_He4_C12_reaclib
        )
 
     dYdt[jc12] = (
-          -rho*Y[jp]*Y[jc12]*rate_eval.p_C12_to_N13  +
-          +rho*Y[jp]*Y[jn15]*rate_eval.p_N15_to_He4_C12
+          -rho*Y[jp]*Y[jc12]*rate_eval.p_C12_to_N13_reaclib  +
+          +rho*Y[jp]*Y[jn15]*rate_eval.p_N15_to_He4_C12_reaclib
        )
 
     dYdt[jc13] = (
-          -rho*Y[jp]*Y[jc13]*rate_eval.p_C13_to_N14  +
-          +Y[jn13]*rate_eval.N13_to_C13_weak_wc12
+          -rho*Y[jp]*Y[jc13]*rate_eval.p_C13_to_N14_reaclib  +
+          +Y[jn13]*rate_eval.N13_to_C13_reaclib
        )
 
     dYdt[jn13] = (
-          +rho*Y[jp]*Y[jc12]*rate_eval.p_C12_to_N13  +
-          -Y[jn13]*rate_eval.N13_to_C13_weak_wc12  +
-          -rho*Y[jp]*Y[jn13]*rate_eval.p_N13_to_O14
+          +rho*Y[jp]*Y[jc12]*rate_eval.p_C12_to_N13_reaclib  +
+          -Y[jn13]*rate_eval.N13_to_C13_reaclib  +
+          -rho*Y[jp]*Y[jn13]*rate_eval.p_N13_to_O14_reaclib
        )
 
     dYdt[jn14] = (
-          +rho*Y[jp]*Y[jc13]*rate_eval.p_C13_to_N14  +
-          -rho*Y[jp]*Y[jn14]*rate_eval.p_N14_to_O15  +
-          +Y[jo14]*rate_eval.O14_to_N14_weak_wc12
+          +rho*Y[jp]*Y[jc13]*rate_eval.p_C13_to_N14_reaclib  +
+          -rho*Y[jp]*Y[jn14]*rate_eval.p_N14_to_O15_reaclib  +
+          +Y[jo14]*rate_eval.O14_to_N14_reaclib
        )
 
     dYdt[jn15] = (
-          -rho*Y[jp]*Y[jn15]*rate_eval.p_N15_to_He4_C12  +
-          +Y[jo15]*rate_eval.O15_to_N15_weak_wc12
+          -rho*Y[jp]*Y[jn15]*rate_eval.p_N15_to_He4_C12_reaclib  +
+          +Y[jo15]*rate_eval.O15_to_N15_reaclib
        )
 
     dYdt[jo14] = (
-          +rho*Y[jp]*Y[jn13]*rate_eval.p_N13_to_O14  +
-          -Y[jo14]*rate_eval.O14_to_N14_weak_wc12
+          +rho*Y[jp]*Y[jn13]*rate_eval.p_N13_to_O14_reaclib  +
+          -Y[jo14]*rate_eval.O14_to_N14_reaclib
        )
 
     dYdt[jo15] = (
-          +rho*Y[jp]*Y[jn14]*rate_eval.p_N14_to_O15  +
-          -Y[jo15]*rate_eval.O15_to_N15_weak_wc12
+          +rho*Y[jp]*Y[jn14]*rate_eval.p_N14_to_O15_reaclib  +
+          -Y[jo15]*rate_eval.O15_to_N15_reaclib
        )
 
     return dYdt
@@ -1073,166 +1073,166 @@ def jacobian_eq(t, Y, rho, T, screen_func):
     rate_eval = RateEval()
 
     # reaclib rates
-    p_C12_to_N13(rate_eval, tf)
-    p_C13_to_N14(rate_eval, tf)
-    N13_to_C13_weak_wc12(rate_eval, tf)
-    p_N13_to_O14(rate_eval, tf)
-    p_N14_to_O15(rate_eval, tf)
-    p_N15_to_He4_C12(rate_eval, tf)
-    O14_to_N14_weak_wc12(rate_eval, tf)
-    O15_to_N15_weak_wc12(rate_eval, tf)
+    p_C12_to_N13_reaclib(rate_eval, tf)
+    p_C13_to_N14_reaclib(rate_eval, tf)
+    N13_to_C13_reaclib(rate_eval, tf)
+    p_N13_to_O14_reaclib(rate_eval, tf)
+    p_N14_to_O15_reaclib(rate_eval, tf)
+    p_N15_to_He4_C12_reaclib(rate_eval, tf)
+    O14_to_N14_reaclib(rate_eval, tf)
+    O15_to_N15_reaclib(rate_eval, tf)
 
     if screen_func is not None:
         plasma_state = PlasmaState(T, rho, Y, Z)
 
         scn_fac = ScreenFactors(1, 1, 6, 12)
         scor = screen_func(plasma_state, scn_fac)
-        rate_eval.p_C12_to_N13 *= scor
+        rate_eval.p_C12_to_N13_reaclib *= scor
 
         scn_fac = ScreenFactors(1, 1, 6, 13)
         scor = screen_func(plasma_state, scn_fac)
-        rate_eval.p_C13_to_N14 *= scor
+        rate_eval.p_C13_to_N14_reaclib *= scor
 
         scn_fac = ScreenFactors(1, 1, 7, 13)
         scor = screen_func(plasma_state, scn_fac)
-        rate_eval.p_N13_to_O14 *= scor
+        rate_eval.p_N13_to_O14_reaclib *= scor
 
         scn_fac = ScreenFactors(1, 1, 7, 14)
         scor = screen_func(plasma_state, scn_fac)
-        rate_eval.p_N14_to_O15 *= scor
+        rate_eval.p_N14_to_O15_reaclib *= scor
 
         scn_fac = ScreenFactors(1, 1, 7, 15)
         scor = screen_func(plasma_state, scn_fac)
-        rate_eval.p_N15_to_He4_C12 *= scor
+        rate_eval.p_N15_to_He4_C12_reaclib *= scor
 
     jac = np.zeros((nnuc, nnuc), dtype=np.float64)
 
     jac[jp, jp] = (
-       -rho*Y[jc12]*rate_eval.p_C12_to_N13
-       -rho*Y[jc13]*rate_eval.p_C13_to_N14
-       -rho*Y[jn13]*rate_eval.p_N13_to_O14
-       -rho*Y[jn14]*rate_eval.p_N14_to_O15
-       -rho*Y[jn15]*rate_eval.p_N15_to_He4_C12
+       -rho*Y[jc12]*rate_eval.p_C12_to_N13_reaclib
+       -rho*Y[jc13]*rate_eval.p_C13_to_N14_reaclib
+       -rho*Y[jn13]*rate_eval.p_N13_to_O14_reaclib
+       -rho*Y[jn14]*rate_eval.p_N14_to_O15_reaclib
+       -rho*Y[jn15]*rate_eval.p_N15_to_He4_C12_reaclib
        )
 
     jac[jp, jc12] = (
-       -rho*Y[jp]*rate_eval.p_C12_to_N13
+       -rho*Y[jp]*rate_eval.p_C12_to_N13_reaclib
        )
 
     jac[jp, jc13] = (
-       -rho*Y[jp]*rate_eval.p_C13_to_N14
+       -rho*Y[jp]*rate_eval.p_C13_to_N14_reaclib
        )
 
     jac[jp, jn13] = (
-       -rho*Y[jp]*rate_eval.p_N13_to_O14
+       -rho*Y[jp]*rate_eval.p_N13_to_O14_reaclib
        )
 
     jac[jp, jn14] = (
-       -rho*Y[jp]*rate_eval.p_N14_to_O15
+       -rho*Y[jp]*rate_eval.p_N14_to_O15_reaclib
        )
 
     jac[jp, jn15] = (
-       -rho*Y[jp]*rate_eval.p_N15_to_He4_C12
+       -rho*Y[jp]*rate_eval.p_N15_to_He4_C12_reaclib
        )
 
     jac[jhe4, jp] = (
-       +rho*Y[jn15]*rate_eval.p_N15_to_He4_C12
+       +rho*Y[jn15]*rate_eval.p_N15_to_He4_C12_reaclib
        )
 
     jac[jhe4, jn15] = (
-       +rho*Y[jp]*rate_eval.p_N15_to_He4_C12
+       +rho*Y[jp]*rate_eval.p_N15_to_He4_C12_reaclib
        )
 
     jac[jc12, jp] = (
-       -rho*Y[jc12]*rate_eval.p_C12_to_N13
-       +rho*Y[jn15]*rate_eval.p_N15_to_He4_C12
+       -rho*Y[jc12]*rate_eval.p_C12_to_N13_reaclib
+       +rho*Y[jn15]*rate_eval.p_N15_to_He4_C12_reaclib
        )
 
     jac[jc12, jc12] = (
-       -rho*Y[jp]*rate_eval.p_C12_to_N13
+       -rho*Y[jp]*rate_eval.p_C12_to_N13_reaclib
        )
 
     jac[jc12, jn15] = (
-       +rho*Y[jp]*rate_eval.p_N15_to_He4_C12
+       +rho*Y[jp]*rate_eval.p_N15_to_He4_C12_reaclib
        )
 
     jac[jc13, jp] = (
-       -rho*Y[jc13]*rate_eval.p_C13_to_N14
+       -rho*Y[jc13]*rate_eval.p_C13_to_N14_reaclib
        )
 
     jac[jc13, jc13] = (
-       -rho*Y[jp]*rate_eval.p_C13_to_N14
+       -rho*Y[jp]*rate_eval.p_C13_to_N14_reaclib
        )
 
     jac[jc13, jn13] = (
-       +rate_eval.N13_to_C13_weak_wc12
+       +rate_eval.N13_to_C13_reaclib
        )
 
     jac[jn13, jp] = (
-       -rho*Y[jn13]*rate_eval.p_N13_to_O14
-       +rho*Y[jc12]*rate_eval.p_C12_to_N13
+       -rho*Y[jn13]*rate_eval.p_N13_to_O14_reaclib
+       +rho*Y[jc12]*rate_eval.p_C12_to_N13_reaclib
        )
 
     jac[jn13, jc12] = (
-       +rho*Y[jp]*rate_eval.p_C12_to_N13
+       +rho*Y[jp]*rate_eval.p_C12_to_N13_reaclib
        )
 
     jac[jn13, jn13] = (
-       -rate_eval.N13_to_C13_weak_wc12
-       -rho*Y[jp]*rate_eval.p_N13_to_O14
+       -rate_eval.N13_to_C13_reaclib
+       -rho*Y[jp]*rate_eval.p_N13_to_O14_reaclib
        )
 
     jac[jn14, jp] = (
-       -rho*Y[jn14]*rate_eval.p_N14_to_O15
-       +rho*Y[jc13]*rate_eval.p_C13_to_N14
+       -rho*Y[jn14]*rate_eval.p_N14_to_O15_reaclib
+       +rho*Y[jc13]*rate_eval.p_C13_to_N14_reaclib
        )
 
     jac[jn14, jc13] = (
-       +rho*Y[jp]*rate_eval.p_C13_to_N14
+       +rho*Y[jp]*rate_eval.p_C13_to_N14_reaclib
        )
 
     jac[jn14, jn14] = (
-       -rho*Y[jp]*rate_eval.p_N14_to_O15
+       -rho*Y[jp]*rate_eval.p_N14_to_O15_reaclib
        )
 
     jac[jn14, jo14] = (
-       +rate_eval.O14_to_N14_weak_wc12
+       +rate_eval.O14_to_N14_reaclib
        )
 
     jac[jn15, jp] = (
-       -rho*Y[jn15]*rate_eval.p_N15_to_He4_C12
+       -rho*Y[jn15]*rate_eval.p_N15_to_He4_C12_reaclib
        )
 
     jac[jn15, jn15] = (
-       -rho*Y[jp]*rate_eval.p_N15_to_He4_C12
+       -rho*Y[jp]*rate_eval.p_N15_to_He4_C12_reaclib
        )
 
     jac[jn15, jo15] = (
-       +rate_eval.O15_to_N15_weak_wc12
+       +rate_eval.O15_to_N15_reaclib
        )
 
     jac[jo14, jp] = (
-       +rho*Y[jn13]*rate_eval.p_N13_to_O14
+       +rho*Y[jn13]*rate_eval.p_N13_to_O14_reaclib
        )
 
     jac[jo14, jn13] = (
-       +rho*Y[jp]*rate_eval.p_N13_to_O14
+       +rho*Y[jp]*rate_eval.p_N13_to_O14_reaclib
        )
 
     jac[jo14, jo14] = (
-       -rate_eval.O14_to_N14_weak_wc12
+       -rate_eval.O14_to_N14_reaclib
        )
 
     jac[jo15, jp] = (
-       +rho*Y[jn14]*rate_eval.p_N14_to_O15
+       +rho*Y[jn14]*rate_eval.p_N14_to_O15_reaclib
        )
 
     jac[jo15, jn14] = (
-       +rho*Y[jp]*rate_eval.p_N14_to_O15
+       +rho*Y[jp]*rate_eval.p_N14_to_O15_reaclib
        )
 
     jac[jo15, jo15] = (
-       -rate_eval.O15_to_N15_weak_wc12
+       -rate_eval.O15_to_N15_reaclib
        )
 
     return jac

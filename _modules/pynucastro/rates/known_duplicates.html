@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.known_duplicates &#8212; pynucastro 2.8.0.post38+gc4bc1319b documentation</title>
+    <title>pynucastro.rates.known_duplicates &#8212; pynucastro 2.8.0.post40+g3aa693db2 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=234d5133"></script>
+    <script src="../../../_static/documentation_options.js?v=1a9605b7"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -497,10 +497,10 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
 
 <span class="c1"># there are some exceptions to the no-duplicate rates restriction.  We</span>
-<span class="c1"># list them here by class name and then fname</span>
+<span class="c1"># list them here by class name and then rate id</span>
 <span class="n">ALLOWED_DUPLICATES</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s2">&quot;ReacLibRate: p_p_to_d_weak_bet_pos_&quot;</span><span class="p">,</span>
-     <span class="s2">&quot;ReacLibRate: p_p_to_d_weak_electron_capture&quot;</span><span class="p">}</span>
+    <span class="p">{</span><span class="s2">&quot;ReacLibRate: p + p --&gt; d &lt;reaclib_bet+&gt;&quot;</span><span class="p">,</span>
+     <span class="s2">&quot;ReacLibRate: p + p --&gt; d &lt;reaclib_ec&gt;&quot;</span><span class="p">}</span>
 <span class="p">]</span>
 
 
@@ -557,7 +557,7 @@ document.write(`
 
     <span class="c1"># make rate_list into a set of strings in the same format as</span>
     <span class="c1"># ALLOWED_DUPLICATES, then check if it matches any of the allowed sets</span>
-    <span class="n">key_set</span> <span class="o">=</span> <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rate_list</span><span class="p">}</span>
+    <span class="n">key_set</span> <span class="o">=</span> <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rate_list</span><span class="p">}</span>
     <span class="k">return</span> <span class="n">key_set</span> <span class="ow">in</span> <span class="n">ALLOWED_DUPLICATES</span></div>
 
 </pre></div>

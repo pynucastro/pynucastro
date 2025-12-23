@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.8.0.post38+gc4bc1319b documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.8.0.post40+g3aa693db2 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=234d5133"></script>
+    <script src="../../../_static/documentation_options.js?v=1a9605b7"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -503,6 +503,7 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.numba_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">jitclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.files</span><span class="w"> </span><span class="kn">import</span> <span class="n">_find_rate_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.known_duplicates</span><span class="w"> </span><span class="kn">import</span> <span class="n">ALLOWED_DUPLICATES</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">get_screening_map</span><span class="p">,</span> <span class="n">make_plasma_state</span><span class="p">,</span>
                                   <span class="n">make_screen_factors</span><span class="p">)</span>
 
@@ -606,7 +607,7 @@ document.write(`
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weak_type</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;generic&quot;</span><span class="p">,</span>
-                 <span class="n">stoichiometry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">stoichiometry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rate_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="n">reactants</span><span class="p">:</span>
@@ -619,17 +620,23 @@ document.write(`
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">=</span> <span class="p">[]</span>
 
+        <span class="k">assert</span> <span class="s1">&#39;_&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">label</span><span class="p">,</span> <span class="s2">&quot;Rate label should not contain underscore&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">modified</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">src</span> <span class="o">=</span> <span class="n">rate_source</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">src</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">RateSource</span><span class="o">.</span><span class="n">source</span><span class="p">(</span><span class="n">rate_source</span><span class="p">)</span>
 
-        <span class="c1"># the fname is used when writing the code to evaluate the rate</span>
-        <span class="n">reactants_str</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">repr</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">])</span>
-        <span class="n">products_str</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">repr</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">reactants_str</span><span class="si">}</span><span class="s1">_to_</span><span class="si">{</span><span class="n">products_str</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s1">&#39;</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="n">weak_type</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">removed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modified</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">approx</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># the identical particle factor scales the rate to prevent</span>
         <span class="c1"># double counting for a rate that has the same nucleus</span>
@@ -660,10 +667,6 @@ document.write(`
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">test</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">BaryonConservationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;baryon number not conserved in rate </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_rho</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span> <span class="o">=</span> <span class="kc">False</span>
@@ -726,9 +729,13 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">+=</span> <span class="o">-</span><span class="n">c</span> <span class="o">*</span> <span class="n">n</span><span class="o">.</span><span class="n">mass</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_print_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compose the string representations of this Rate.</span>
+<span class="sd">        This includes string,rid, pretty_string, and fname.</span>
+<span class="sd">        String is output to the terminal, rid is used as a dict key,</span>
+<span class="sd">        and pretty_string is latex, and fname is used when writing the</span>
+<span class="sd">        code to evaluate the rate.</span>
 
-        <span class="c1"># string is output to the terminal, rid is used as a dict key,</span>
-        <span class="c1"># and pretty_string is latex</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># some rates will have no nuclei particles (e.g. gamma) on the left or</span>
         <span class="c1"># right -- we&#39;ll try to infer those here</span>
@@ -887,6 +894,24 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span> <span class="o">+=</span> <span class="sa">r</span><span class="s2">&quot;$&quot;</span>
 
+        <span class="c1"># If rate is removed, i.e. a child rate for an ApproximateRate,</span>
+        <span class="c1"># change label to removed</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">removed</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;removed&quot;</span>
+
+        <span class="c1"># Set fname last</span>
+        <span class="n">reactants_str</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">repr</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">])</span>
+        <span class="n">products_str</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">repr</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">reactants_str</span><span class="si">}</span><span class="s1">_to_</span><span class="si">{</span><span class="n">products_str</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="c1"># Treat special duplicate rate cases</span>
+        <span class="c1"># These are likely weak rates with beta plus decay and electron captures</span>
+        <span class="c1"># So add weak_type to them.</span>
+        <span class="n">is_dupe</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">dupe_set</span>
+                      <span class="k">for</span> <span class="n">dupe_set</span> <span class="ow">in</span> <span class="n">ALLOWED_DUPLICATES</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_dupe</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">+=</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_rhs_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute statistical prefactor and density exponent from the</span>
 <span class="sd">        reactants.</span>
@@ -930,7 +955,12 @@ document.write(`
 <span class="sd">        str</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="s1"> &lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s1">&gt;&#39;</span></div>
+
+        <span class="n">ssrc</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">src</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ssrc</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">src</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="s1"> &lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}{</span><span class="n">ssrc</span><span class="si">}</span><span class="s1">&gt;&#39;</span></div>
 
 
     <span class="nd">@property</span>
@@ -1006,7 +1036,6 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_q</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_screening</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="kc">None</span>    <span class="c1"># reset so it will be updated</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span></div>
 
 
@@ -1078,7 +1107,6 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_q</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_screening</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="kc">None</span>    <span class="c1"># reset so it will be updated</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span></div>
 
 
