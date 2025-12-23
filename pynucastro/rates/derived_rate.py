@@ -13,6 +13,7 @@ from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.rate import Rate
 from pynucastro.rates.tabular_rate import TabularRate
+from pynucastro.rates.reaclib_rate import ReacLibRate, SingleSet
 
 
 class DerivedRate(Rate):
@@ -83,6 +84,19 @@ class DerivedRate(Rate):
                          label="derived", rate_source=self.source_rate.src,
                          stoichiometry=self.source_rate.stoichiometry)
 
+        # If source rate is a reaclib rate, then create a derived reaclib set based
+        # on the source rate by absorbing the equilibrium ratio within the
+        # reaclib log terms for better numerical stability at lower temp
+        self.derived_sets = None
+        if isinstance(self.source_rate, ReacLibRate):
+            self.derived_sets = []
+            for source_set in self.source_rate.sets:
+                a_derived = source_set.a.copy()
+                a_derived[0] += np.log(self.ratio_factor)
+                a_derived[1] += self.Q / (constants.k_MeV * 1.0e9)
+                a_derived[6] += 1.5 * self.net_stoich
+                self.derived_sets.append(SingleSet(a_derived, source_set.labelprops))
+
         # explicitly mark it as a rate derived from inverse
         self.derived_from_inverse = True
 
@@ -116,14 +130,25 @@ class DerivedRate(Rate):
 
         """
 
-        # evaluate the forward rate without screening
-        r = self.source_rate.eval(T=T, rho=rho, comp=comp, screen_func=None)
+        # evaluate the source rate without screening
 
-        # compute the equilibrium ratio
-        ratio = self.ratio_factor * T**(1.5 * self.net_stoich)
+        if self.derived_sets is not None:
+            r = 0.0
+            tf = Tfactors(T)
+            for s in derived_sets:
+                f = s.f()
+                r += f(tf)
+        else:
+            r = self.source_rate.eval(T=T, rho=rho, comp=comp, screen_func=None)
 
-        # Note Q-value here is for the derived rate.
-        ratio *= np.exp(self.Q / (constants.k_MeV * T))
+            # compute the equilibrium ratio
+            ratio = self.ratio_factor * T**(1.5 * self.net_stoich)
+
+            # Note Q-value here is for the derived rate.
+            ratio *= np.exp(self.Q / (constants.k_MeV * T))
+
+            # apply ratio
+            r *= ratio
 
         z_r = 1.0
         z_p = 1.0
@@ -138,10 +163,8 @@ class DerivedRate(Rate):
                 if nucp.partition_function is not None:
                     z_p *= nucp.partition_function.eval(T)
 
-        ratio *= z_r / z_p
-
         # Apply equilibrium ratio
-        r *= ratio
+        r *= z_r / z_p
 
         # Apply screening correction
         scor = 1.0
@@ -169,10 +192,20 @@ class DerivedRate(Rate):
         fstring += f"def {self.fname}(rate_eval, tf):\n"
         fstring += f"    # {self.rid}\n\n"
 
-        fstring += "    # Evaluate the equilibrium ratio\n"
-        fstring += f"    ratio = {self.ratio_factor} * (tf.T9 * 1.0e9)**(1.5 * {self.net_stoich})\n"
-        fstring += f"    ratio *= np.exp({self.Q} / (constants.k_MeV * tf.T9 * 1.0e9))\n"
-        fstring += f"    rate_eval.{self.fname} = rate_eval.{self.source_rate.fname} * ratio\n"
+        if self.derived_sets is not None:
+            fstring += "    rate = 0.0 \n\n"
+            for s in self.derived_sets:
+                fstring += f"    # {s.labelprops[0:5]}\n"
+                set_string = s.set_string_py(prefix="rate", plus_equal=True)
+                for t in set_string.split("\n"):
+                    fstring += "    " + t + "\n"
+            fstring += "\n"
+            fstring += f"    rate_eval.{self.fname} = rate\n"
+        else:
+            fstring += "    # Evaluate the equilibrium ratio\n"
+            fstring += f"    ratio = {self.ratio_factor} * (tf.T9 * 1.0e9)**(1.5 * {self.net_stoich})\n"
+            fstring += f"    ratio *= np.exp({self.Q} / (constants.k_MeV * tf.T9 * 1.0e9))\n"
+            fstring += f"    rate_eval.{self.fname} = rate_eval.{self.source_rate.fname} * ratio\n"
 
         if self.use_pf:
             self._warn_about_missing_pf_tables()
@@ -232,31 +265,64 @@ class DerivedRate(Rate):
         if extra_args is None:
             extra_args = ()
 
-        args = ["const T& rate_eval", "const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT",
+        args = ["const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT",
+                "[[maybe_unused]] const T& rate_eval",
                 "[[maybe_unused]] part_fun::pf_cache_t& pf_cache", *extra_args]
+
         fstring = ""
         fstring += "template <typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
+        fstring += "    rate = 0.0;\n"
+        fstring += "    drate_dT = 0.0;\n\n"
 
-        fstring += "    // Evaluate the equilibrium ratio without partition function\n"
-        fstring += f"    {dtype} ratio = {self.ratio_factor};\n"
-        fstring += f"    {dtype} Q_kBT = {self.Q} / (C::k_MeV * tfactors.T9 * 1.0e9_rt);\n"
-        fstring += "    ratio *= std::exp(Q_kBT);\n"
-        if self.net_stoich != 0:
-            fstring += f"    ratio *= std::sqrt(amrex::Math::powi<{3 * self.net_stoich}>(tfactors.T9 * 1.0e9_rt));\n\n"
+        if self.derived_sets is not None:
+            fstring += f"    {dtype} ln_set_rate{{0.0}};\n"
+            fstring += f"    {dtype} dln_set_rate_dT9{{0.0}};\n"
+            fstring += f"    {dtype} set_rate{{0.0}};\n\n"
 
-        fstring += "    // Apply the ratio without partition function\n"
-        fstring += "    // Note that screening is not yet applied to the inverse rate\n"
-        fstring += f"    rate = rate_eval.screened_rates(k_{self.source_rate.fname});\n"
+            for s in self.derived_sets:
+                fstring += f"    // {s.labelprops[0:5]}\n"
+                set_string = s.set_string_cxx(prefix="ln_set_rate", plus_equal=False, with_exp=False)
+                for t in set_string.split("\n"):
+                    fstring += "    " + t + "\n"
+                fstring += "\n"
 
-        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
-        fstring += f"        {dtype} dratio_dT = ratio * tfactors.T9i * 1.0e-9_rt * ({1.5 * self.net_stoich} - Q_kBT);\n"
-        fstring += f"        drate_dT = rate_eval.dscreened_rates_dT(k_{self.source_rate.fname});\n"
-        fstring += "        drate_dT = drate_dT * ratio + rate * dratio_dT;\n"
-        fstring += "    }\n"
-        fstring += "    rate *= ratio;\n\n"
+                fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+                dln_set_string_dT9 = s.dln_set_string_dT9_cxx(prefix="dln_set_rate_dT9", plus_equal=False)
+                for t in dln_set_string_dT9.split("\n"):
+                    fstring += "        " + t + "\n"
+                fstring += "    }\n"
+                fstring += "\n"
+
+                fstring += "    // avoid underflows by zeroing rates in [0.0, 1.e-100]\n"
+                fstring += "    ln_set_rate = std::max(ln_set_rate, -230.0);\n"
+                fstring += "    set_rate = std::exp(ln_set_rate);\n"
+
+                fstring += "    rate += set_rate;\n"
+
+                fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+                fstring += "        drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;\n"
+                fstring += "    }\n\n"
+        else:
+            fstring += "    // Evaluate the equilibrium ratio without partition function\n"
+            fstring += f"    {dtype} ratio = {self.ratio_factor};\n"
+            fstring += f"    {dtype} Q_kBT = {self.Q} / (C::k_MeV * tfactors.T9 * 1.0e9_rt);\n"
+            fstring += "    ratio *= std::exp(Q_kBT);\n"
+            if self.net_stoich != 0:
+                fstring += f"    ratio *= std::sqrt(amrex::Math::powi<{3 * self.net_stoich}>(tfactors.T9 * 1.0e9_rt));\n\n"
+
+            fstring += "    // Apply the ratio without partition function\n"
+            fstring += "    // Note that screening is not yet applied to the inverse rate\n"
+            fstring += f"    rate = rate_eval.screened_rates(k_{self.source_rate.fname});\n"
+
+            fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+            fstring += f"        {dtype} dratio_dT = ratio * tfactors.T9i * 1.0e-9_rt * ({1.5 * self.net_stoich} - Q_kBT);\n"
+            fstring += f"        drate_dT = rate_eval.dscreened_rates_dT(k_{self.source_rate.fname});\n"
+            fstring += "        drate_dT = drate_dT * ratio + rate * dratio_dT;\n"
+            fstring += "    }\n"
+            fstring += "    rate *= ratio;\n\n"
 
         # Right now we have rate and drate_dT without the partition
         # function now the partition function corrections
