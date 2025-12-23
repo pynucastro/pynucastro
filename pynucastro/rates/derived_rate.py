@@ -11,7 +11,7 @@ import numpy as np
 
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates.rate import Rate
+from pynucastro.rates.rate import Rate, Tfactors
 from pynucastro.rates.tabular_rate import TabularRate
 from pynucastro.rates.reaclib_rate import ReacLibRate, SingleSet
 
@@ -135,7 +135,7 @@ class DerivedRate(Rate):
         if self.derived_sets is not None:
             r = 0.0
             tf = Tfactors(T)
-            for s in derived_sets:
+            for s in self.derived_sets:
                 f = s.f()
                 r += f(tf)
         else:
