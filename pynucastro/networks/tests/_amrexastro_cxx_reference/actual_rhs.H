@@ -222,9 +222,11 @@ void get_ydot_weak(const burn_t& state,
 
     auto screened_rates = rate_eval.screened_rates;
 
-    ydot_nuc(N) = 0.0_rt;
+    ydot_nuc(N) =
+        -screened_rates(k_n_to_p_reaclib)*Y(N);
 
-    ydot_nuc(H1) = 0.0_rt;
+    ydot_nuc(H1) =
+        screened_rates(k_n_to_p_reaclib)*Y(N);
 
     ydot_nuc(He4) = 0.0_rt;
 
