@@ -498,8 +498,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         for n in self.unique_nuclei:
 
             has_weak_rates = any(
-                (rp.forward is not None and rp.forward.tabular) or
-                (rp.reverse is not None and rp.reverse.tabular)
+                (rp.forward is not None and rp.forward.weak) or
+                (rp.reverse is not None and rp.reverse.weak)
                 for rp in self.nuclei_rate_pairs[n]
             )
 
