@@ -92,6 +92,7 @@ and interactively exploring nuclear reaction networks.
    :caption: Nuclear Statistical Equilibrium
    :hidden:
 
+   nse
    NSE-example
    NSE-direct-integration
    nse_table
