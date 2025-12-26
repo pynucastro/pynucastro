@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Derived Rates &#8212; pynucastro 2.8.0.post42+g525d61fd1 documentation</title>
+    <title>Derived Rates &#8212; pynucastro 2.8.0.post43+gc1cff8bc6 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=f47932a7"></script>
+    <script src="_static/documentation_options.js?v=fe095851"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -222,6 +222,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="nse-intro.html">NSE Intro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="NSE-example.html">NSE Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="NSE-direct-integration.html">NSE vs. Direct Integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nse_table.html">Creating an NSE table</a></li>
@@ -592,7 +593,7 @@ document.write(`
   <section id="derived-rates">
 <h1>Derived Rates<a class="headerlink" href="#derived-rates" title="Link to this heading">#</a></h1>
 <p>In this section we discuss the implementation of
-<a class="reference internal" href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate" title="pynucastro.rates.derived_rate.DerivedRate"><code class="xref py py-func docutils literal notranslate"><span class="pre">DerivedRate</span></code></a>
+<a class="reference internal" href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate" title="pynucastro.rates.derived_rate.DerivedRate"><code class="xref py py-class docutils literal notranslate"><span class="pre">DerivedRate</span></code></a>
 via detailed balance.
 We will also discuss the partition functions mentioned in
 <span id="id1">Rauscher and Thielemann [<a class="reference internal" href="zreferences.html#id22" title="Thomas Rauscher and Friedrich-Karl Thielemann. Astrophysical Reaction Rates From Statistical Model Calculations. Atomic Data and Nuclear Data Tables, 75(1-2):1-351, May 2000. arXiv:astro-ph/0004059, doi:10.1006/adnd.2000.0834.">2000</a>]</span> and <span id="id2">Rauscher [<a class="reference internal" href="zreferences.html#id23" title="T. Rauscher. Nuclear partition functions at temperatures exceeding 10^10 K. The Astrophysical Journal Supplement Series, 147(2):403, August 2003. doi:10.1086/375733.">2003</a>]</span>
@@ -640,7 +641,7 @@ semi-relativistic ideal gas by:</p>
 <p>Often times we want to work in massfractions, <span class="math notranslate nohighlight">\(X_i = m_i n_i / \rho\)</span>,
 or in molar fractions, <span class="math notranslate nohighlight">\(Y_i = X_i / A_i\)</span>. Hence:</p>
 <div class="math notranslate nohighlight">
-\[Y_i = \dfrac{1}{\rho} \dfrac{(m_i)^{5/2}} {A_i}g_i \left( \dfrac{k_B T}{2\pi \hbar^2} \right)^{3/2} e^{(\mu_i - m_i c^2 - \mu_i^c)/(k_B T)}\]</div>
+\[Y_i = \dfrac{1}{\rho} \dfrac{(m_i)^{5/2}}{A_i} g_i \left( \dfrac{k_B T}{2\pi \hbar^2} \right)^{3/2} e^{(\mu_i - m_i c^2 - \mu_i^c)/(k_B T)}\]</div>
 </section>
 <section id="partition-functions">
 <h2>Partition functions<a class="headerlink" href="#partition-functions" title="Link to this heading">#</a></h2>
@@ -794,7 +795,7 @@ of the electron screening enhancement where:</p>
 <div class="math notranslate nohighlight">
 \[\lambda^\mathrm{scn}_\mathrm{rev} = \underbrace{\lambda^\mathrm{uns}_\mathrm{for} \ R}_{\lambda^\mathrm{uns}_\mathrm{rev}} \ F^\mathrm{scn}_\mathrm{rev}\]</div>
 <p>Therefore, the unscreened
-<a class="reference internal" href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate" title="pynucastro.rates.derived_rate.DerivedRate"><code class="xref py py-func docutils literal notranslate"><span class="pre">DerivedRate</span></code></a>
+<a class="reference internal" href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate" title="pynucastro.rates.derived_rate.DerivedRate"><code class="xref py py-class docutils literal notranslate"><span class="pre">DerivedRate</span></code></a>
 is evaluated by taking the provided source rate and multiplying it by the
 temperature-dependent equilibrium ratio, <span class="math notranslate nohighlight">\(R\)</span>. The appropriate
 screening enhancement factor can then be computed and applied in the usual way,
