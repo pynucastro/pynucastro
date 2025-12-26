@@ -2,7 +2,7 @@ Derived Rates
 =============
 
 In this section we discuss the implementation of
-:func:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>`
+:class:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>`
 via detailed balance.
 We will also discuss the partition functions mentioned in
 :cite:t:`rauscher:2000` and :cite:t:`rauscher:2003`
@@ -67,7 +67,7 @@ as summarized in :cite:`rauscher:2000`.
 Often times we want to work in massfractions, :math:`X_i = m_i n_i / \rho`,
 or in molar fractions, :math:`Y_i = X_i / A_i`. Hence:
 
-.. math:: Y_i = \dfrac{1}{\rho} \dfrac{(m_i)^{5/2}} {A_i}g_i \left( \dfrac{k_B T}{2\pi \hbar^2} \right)^{3/2} e^{(\mu_i - m_i c^2 - \mu_i^c)/(k_B T)}
+.. math:: Y_i = \dfrac{1}{\rho} \dfrac{(m_i)^{5/2}}{A_i} g_i \left( \dfrac{k_B T}{2\pi \hbar^2} \right)^{3/2} e^{(\mu_i - m_i c^2 - \mu_i^c)/(k_B T)}
 
 Partition functions
 -------------------
@@ -271,7 +271,7 @@ of the electron screening enhancement where:
 
 
 Therefore, the unscreened
-:func:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>`
+:class:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>`
 is evaluated by taking the provided source rate and multiplying it by the
 temperature-dependent equilibrium ratio, :math:`R`. The appropriate
 screening enhancement factor can then be computed and applied in the usual way,
