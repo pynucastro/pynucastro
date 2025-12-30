@@ -423,7 +423,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         for r in self.temperature_tabular_rates:
 
             of.write(f"// temperature / rate tabulation for {r.rid}\n\n")
-            of.write(f"namespace {r.cname()}_data {{\n")
+            of.write(f"namespace {r.fname}_data {{\n")
             log_temp_str = np.array2string(r.log_t9_data,
                                            max_line_width=70, precision=17, separator=", ")
             of.write(f'{idnt}    inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_t9 = {{\n')
@@ -602,10 +602,10 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _fill_temp_tabular_rates(self, n_indent, of):
         for r in self.temperature_tabular_rates:
-            of.write(f"{self.indent*n_indent}rate_{r.cname()}<do_T_derivatives>(tfactors, rate, drate_dT);\n")
-            of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.cname()}) = rate;\n")
+            of.write(f"{self.indent*n_indent}rate_{r.fname}<do_T_derivatives>(tfactors, rate, drate_dT);\n")
+            of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
             of.write(f"{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
-            of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.cname()}) = drate_dT;\n\n")
+            of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
             of.write(f"{self.indent*n_indent}}}\n")
 
     def _fill_reaclib_rates(self, n_indent, of):
