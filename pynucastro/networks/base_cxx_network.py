@@ -532,8 +532,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         for n in self.unique_nuclei:
 
             has_weak_rates = any(
-                (rp.forward is not None and rp.forward.tabular) or
-                (rp.reverse is not None and rp.reverse.tabular)
+                (rp.forward is not None and rp.forward.weak) or
+                (rp.reverse is not None and rp.reverse.weak)
                 for rp in self.nuclei_rate_pairs[n]
             )
 
@@ -544,11 +544,11 @@ class BaseCxxNetwork(ABC, RateCollection):
             ydot_sym_terms = []
             for rp in self.nuclei_rate_pairs[n]:
                 fwd = None
-                if rp.forward is not None and rp.forward.tabular:
+                if rp.forward is not None and rp.forward.weak:
                     fwd = self.symbol_rates.ydot_term_symbol(rp.forward, n)
 
                 rvs = None
-                if rp.reverse is not None and rp.reverse.tabular:
+                if rp.reverse is not None and rp.reverse.weak:
                     rvs = self.symbol_rates.ydot_term_symbol(rp.reverse, n)
 
                 if (fwd, rvs).count(None) < 2:
