@@ -98,12 +98,21 @@ class DerivedRate(Rate):
               isinstance(self.source_rate.original_rate, ReacLibRate)):
             source_sets = self.source_rate.original_rate.sets
 
+        Q = 0.0
+        for n in set(self.source_rate.reactants):
+            c = self.source_rate.reactant_count(n)
+            Q += c * n.A_nuc
+        for n in set(self.source_rate.products):
+            c = self.source_rate.product_count(n)
+            Q += -c * n.A_nuc
+        Q *= constants.m_u_MeV_C18
+
         if source_sets:
             self.derived_sets = []
             for source_set in source_sets:
                 a_derived = source_set.a.copy()
                 a_derived[0] += np.log(self.ratio_factor) + 13.5 * self.net_stoich * np.log(10)
-                a_derived[1] += self.Q / (constants.k_MeV * 1.0e9)
+                a_derived[1] += -Q  / (1.0e9 * constants.k_MeV)
                 a_derived[6] += 1.5 * self.net_stoich
                 self.derived_sets.append(SingleSet(a_derived, source_set.labelprops))
 
