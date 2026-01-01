@@ -586,7 +586,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write("\n")
 
         for r in self.derived_rates:
-            of.write(f"{self.indent*n_indent}rate_{r.fname}<T>(rate_eval, tfactors, rate, drate_dT, pf_cache);\n")
+            of.write(f"{self.indent*n_indent}rate_{r.fname}<T>(tfactors, rate, drate_dT, rate_eval, pf_cache);\n")
             of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
             of.write(f"{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
             of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
