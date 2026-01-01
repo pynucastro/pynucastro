@@ -37,7 +37,7 @@ The main classes are:
     Interpolation is used to find the rate at any thermodynamic state.
 
   * :func:`TemperatureTabularRate <pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate>`: This supports
-    a strong rate where the temperature dependent part ($N_A <\sigma v>$)
+    a strong rate where the temperature dependent part ($N_A \langle\sigma v\rangle$)
     is given as a tabulation in terms of temperature.
 
   * :func:`ApproximateRate <pynucastro.rates.approximate_rates.ApproximateRate>`:
