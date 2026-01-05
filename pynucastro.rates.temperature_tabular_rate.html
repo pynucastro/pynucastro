@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.temperature_tabular_rate module &#8212; pynucastro 2.8.0.post46+g6ffae1ddc documentation</title>
+    <title>pynucastro.rates.temperature_tabular_rate module &#8212; pynucastro 2.8.0.post47+g65dc08aaa documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=1764e728"></script>
+    <script src="_static/documentation_options.js?v=f35d708f"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -579,6 +579,7 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate"><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.eval"><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate.eval()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.function_string_cxx"><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate.function_string_cxx()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.function_string_py"><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate.function_string_py()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.plot"><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate.plot()</span></code></a></li>
 </ul>
@@ -615,7 +616,7 @@ tabulate the rate — this is log10(T9)</p></li>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.temperature_tabular_rate.TempTableInterpolator.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.TempTableInterpolator#7f9fe0f11370&lt;log_temp_points:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),log_rate_data:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A)&gt;</span></em><a class="headerlink" href="#pynucastro.rates.temperature_tabular_rate.TempTableInterpolator.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.TempTableInterpolator#7fa7c2f016d0&lt;log_temp_points:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),log_rate_data:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A)&gt;</span></em><a class="headerlink" href="#pynucastro.rates.temperature_tabular_rate.TempTableInterpolator.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -652,6 +653,31 @@ to evaluate the rate with.</p></li>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.function_string_cxx">
+<span class="sig-name descname"><span class="pre">function_string_cxx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'double'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specifiers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'inline'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">leave_open</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/temperature_tabular_rate.html#TemperatureTabularRate.function_string_cxx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.function_string_cxx" title="Link to this definition">#</a></dt>
+<dd><p>Return a string containing the C++ function that computes
+the rate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dtype</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The C++ datatype to use for all declarations</p></li>
+<li><p><strong>specifiers</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – C++ specifiers to add before each function declaration
+(i.e. “inline”)</p></li>
+<li><p><strong>leave_open</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">true</span></code>, then we leave the function unclosed (no “}”
+at the end).  This can allow additional functions to add
+to this output.</p></li>
+<li><p><strong>extra_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A list of strings representing additional arguments that
+should be appended to the argument list when defining the
+function interface.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -746,6 +772,7 @@ to evaluate the screening effect.</p></li>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate"><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.eval"><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate.eval()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.function_string_cxx"><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate.function_string_cxx()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.function_string_py"><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate.function_string_py()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.plot"><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate.plot()</span></code></a></li>
 </ul>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.modified_rate &#8212; pynucastro 2.8.0.post46+g6ffae1ddc documentation</title>
+    <title>pynucastro.rates.modified_rate &#8212; pynucastro 2.8.0.post47+g65dc08aaa documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=1764e728"></script>
+    <script src="../../../_static/documentation_options.js?v=f35d708f"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -499,6 +499,7 @@ document.write(`
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.reaclib_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReacLibRate</span>
 
 
 <div class="viewcode-block" id="ModifiedRate">
@@ -540,6 +541,13 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span> <span class="o">=</span> <span class="n">original_rate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_screening</span> <span class="o">=</span> <span class="n">update_screening</span>
+
+        <span class="c1"># at the moment, this is only tested with ReacLibRate</span>
+        <span class="c1"># a potential issue is in the C++ code generation where</span>
+        <span class="c1"># we output modified rates only after ReacLib rates,</span>
+        <span class="c1"># so we need to make sure other rate types are computed</span>
+        <span class="c1"># first, before any modified rates</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">original_rate</span><span class="p">,</span> <span class="n">ReacLibRate</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">new_reactants</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">reactants</span> <span class="o">=</span> <span class="n">new_reactants</span>
