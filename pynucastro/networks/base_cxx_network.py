@@ -96,12 +96,15 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<table_declare_meta>'] = self._table_declare_meta
         self.ftags['<table_init_meta>'] = self._table_init_meta
         self.ftags['<compute_tabular_rates>'] = self._compute_tabular_rates
+        self.ftags['<temp_table_data>'] = self._temp_table_data
+        self.ftags['<temp_tabular_rate_functions>'] = self._temp_tabular_rate_functions
         self.ftags['<ydot>'] = self._ydot
         self.ftags['<ydot_weak>'] = self._ydot_weak
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
         self.ftags['<rate_struct>'] = self._rate_struct
         self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
+        self.ftags['<fill_temp_tabular_rates>'] = self._fill_temp_tabular_rates
         self.ftags['<derived_rate_functions>'] = self._derived_rate_functions
         self.ftags['<fill_derived_rates>'] = self._fill_derived_rates
         self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
@@ -413,6 +416,37 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                 of.write('\n')
 
+    def _temp_table_data(self, n_indent, of):
+
+        idnt = self.indent * n_indent
+
+        for r in self.temperature_tabular_rates:
+
+            of.write(f"// temperature / rate tabulation for {r.rid}\n\n")
+            of.write(f"namespace {r.fname}_data {{\n")
+            log_temp_str = np.array2string(r.log_t9_data,
+                                           max_line_width=70, precision=17, separator=", ")
+            of.write(f'{idnt}    inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_t9 = {{\n')
+            for line in log_temp_str.split("\n"):
+                of.write(f"     {line.replace('[', ' ').replace(']', ' ')}\n")
+            of.write("    };\n\n")
+
+            log_rate_str = np.array2string(r.log_rate_data,
+                                           max_line_width=70, precision=17, separator=", ")
+            of.write(f'{idnt}    inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_rate = {{\n')
+            for line in log_rate_str.split("\n"):
+                of.write(f"     {line.replace('[', ' ').replace(']', ' ')}\n")
+            of.write("    };\n")
+
+            of.write("}\n\n")
+
+    def _temp_tabular_rate_functions(self, n_indent, of):
+        for r in self.temperature_tabular_rates:
+            fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
+            for line in fstr.split("\n"):
+                of.write(f"{self.indent*n_indent}{line}\n")
+            of.write("\n")
+
     def _cxxify(self, s):
         # This is a helper function that converts sympy cxxcode to the actual c++ code we use.
         return self.symbol_rates.cxxify(s)
@@ -498,8 +532,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         for n in self.unique_nuclei:
 
             has_weak_rates = any(
-                (rp.forward is not None and rp.forward.tabular) or
-                (rp.reverse is not None and rp.reverse.tabular)
+                (rp.forward is not None and rp.forward.weak) or
+                (rp.reverse is not None and rp.reverse.weak)
                 for rp in self.nuclei_rate_pairs[n]
             )
 
@@ -510,11 +544,11 @@ class BaseCxxNetwork(ABC, RateCollection):
             ydot_sym_terms = []
             for rp in self.nuclei_rate_pairs[n]:
                 fwd = None
-                if rp.forward is not None and rp.forward.tabular:
+                if rp.forward is not None and rp.forward.weak:
                     fwd = self.symbol_rates.ydot_term_symbol(rp.forward, n)
 
                 rvs = None
-                if rp.reverse is not None and rp.reverse.tabular:
+                if rp.reverse is not None and rp.reverse.weak:
                     rvs = self.symbol_rates.ydot_term_symbol(rp.reverse, n)
 
                 if (fwd, rvs).count(None) < 2:
@@ -565,6 +599,14 @@ class BaseCxxNetwork(ABC, RateCollection):
         assert n_indent == 0, "function definitions must be at top level"
         for r in self.approx_rates:
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
+
+    def _fill_temp_tabular_rates(self, n_indent, of):
+        for r in self.temperature_tabular_rates:
+            of.write(f"{self.indent*n_indent}rate_{r.fname}<do_T_derivatives>(tfactors, rate, drate_dT);\n")
+            of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
+            of.write(f"{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
+            of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
+            of.write(f"{self.indent*n_indent}}}\n")
 
     def _fill_reaclib_rates(self, n_indent, of):
         # note: modified_rates needs to be on the end here, since they
