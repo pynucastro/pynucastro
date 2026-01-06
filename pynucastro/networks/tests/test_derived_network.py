@@ -75,10 +75,13 @@ class TestPythonDerivedNetwork:
 def Fe52_to_p_Mn51_derived(rate_eval, tf):
     # Fe52 --> p + Mn51
 
-    # Evaluate the equilibrium ratio
-    ratio = 0.0037087238653468386 * (tf.T9 * 1.0e9)**(1.5 * 1)
-    ratio *= np.exp(-7.377871064004735 / (constants.k_MeV * tf.T9 * 1.0e9))
-    rate_eval.Fe52_to_p_Mn51_derived = rate_eval.p_Mn51_to_Fe52_reaclib * ratio
+    rate = 0.0
+
+    # ths8r
+    rate += np.exp(  61.7474313222804 + -85.61663846070292*tf.T9i + -36.1825*tf.T913i + 0.873042*tf.T913
+                  + -2.89731*tf.T9 + 0.364394*tf.T953 + 0.833333*tf.lnT9)
+
+    rate_eval.Fe52_to_p_Mn51_derived = rate
 
     # interpolating Mn51 partition function
     Mn51_pf_exponent = np.interp(tf.T9, xp=Mn51_temp_array, fp=np.log10(Mn51_pf_array))
@@ -130,10 +133,17 @@ def Fe52_to_p_Mn51_derived(rate_eval, tf):
 def Ne20_to_He4_N14_derived(rate_eval, tf):
     # Ne20 --> 1.5 He4 + N14
 
-    # Evaluate the equilibrium ratio
-    ratio = 0.0044001037090965886 * (tf.T9 * 1.0e9)**(1.5 * 1)
-    ratio *= np.exp(-13.54272280499935 / (constants.k_MeV * tf.T9 * 1.0e9))
-    rate_eval.Ne20_to_He4_N14_derived = rate_eval.He4_N14_to_Ne20_modified * ratio
+    rate = 0.0
+
+    # il10r
+    rate += np.exp(  39.55827158733315 + -168.12237220574448*tf.T9i + -5.6227*tf.T913i)
+    # il10r
+    rate += np.exp(  25.85560958733315 + -162.31711220574448*tf.T9i)
+    # il10n
+    rate += np.exp(  47.19267158733315 + -157.1567722057445*tf.T9i + -36.2504*tf.T913i
+                  + -5.0*tf.T953 + 0.833333*tf.lnT9)
+
+    rate_eval.Ne20_to_He4_N14_derived = rate
 
     # setting He4 partition function to 1.0 by default, independent of T
     He4_pf = 1.0
