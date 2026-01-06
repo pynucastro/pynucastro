@@ -48,7 +48,7 @@
   * centralize the AMReX C++ interpolation routines (#1190)
 
   * AMReX C++ networks optimizations: use the smallest int type for
-    `rate_indices (#1189), eliminate multiple logs in the table rate
+    `rate_indices` (#1189), eliminate multiple logs in the table rate
     eval (#1180), remove unneeded parameters (#1183), cache partition
     function indices and only compute partition function if it is > 1
     (#1165, #1167), optimize table lookup for weak rates (#1164)
