@@ -2,20 +2,23 @@
 
 ## 2.9.0
 
+  * `AmrexAstroCxxNetwork`: check weak label in `ydot_weak` (#1216)
+
   * change how `DerivedRate` works so it can apply to any strong rate
     (#1207)
 
-  * pin nbclient to fix doc build issues (#1214)
+  * pin nbclient to fix doc build issues (#1214, #1220)
 
   * standardize `Rate.fname` and `Rate.id` (#1209)
 
-  * optimize `AmrexAstroCxxNetwork` (#1210)
+  * optimize `AmrexAstroCxxNetwork` `ener_gener_rate` (#1210) and use
+    `exp10` for performance (#1215)
 
   * remove `Rate.cname` and change `Rate.fname` to be more descriptive
     (#1206)
 
   * add a `TemperatureTabularRate` that works with (T, N_A<σv>) pairs
-    (#1175)
+    (#1175, #1191)
 
   * update CI to python 3.14 (#1089, #1205)
 
@@ -58,11 +61,11 @@
   * update CI actions (#1181, #1212)
 
   * update CI benchmarks to reflect AMReX-Astro Microphysics changes
-    (#1179)
+    (#1179, #1222)
 
   * add more screening test coverage (#1172)
 
-  * docs / API link updates (#1170, #1174)
+  * docs / API link updates (#1170, #1174, #1218, #1221)
 
   * add Windows CI test (#1163, #1177)
 
