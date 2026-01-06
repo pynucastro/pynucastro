@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.derived_rate &#8212; pynucastro 2.8.0.post48+gc3077e5ba documentation</title>
+    <title>pynucastro.rates.derived_rate &#8212; pynucastro 2.8.0.post49+gae5dec92b documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=9cb76e16"></script>
+    <script src="../../../_static/documentation_options.js?v=0967db9c"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -506,7 +506,9 @@ document.write(`
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.modified_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModifiedRate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">Tfactors</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.reaclib_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">SingleSet</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.tabular_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">TabularRate</span>
 
 
@@ -580,6 +582,28 @@ document.write(`
                          <span class="n">label</span><span class="o">=</span><span class="s2">&quot;derived&quot;</span><span class="p">,</span> <span class="n">rate_source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">src</span><span class="p">,</span>
                          <span class="n">stoichiometry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">stoichiometry</span><span class="p">)</span>
 
+        <span class="c1"># If source rate is a reaclib rate, then create a derived reaclib set based</span>
+        <span class="c1"># on the source rate by absorbing the equilibrium ratio within the</span>
+        <span class="c1"># reaclib log terms for better numerical stability at lower temp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">derived_sets</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Determine if the source rate has reaclib sets</span>
+        <span class="n">source_sets</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="p">,</span> <span class="n">ReacLibRate</span><span class="p">):</span>
+            <span class="n">source_sets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">sets</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="p">,</span> <span class="n">ModifiedRate</span><span class="p">)</span> <span class="ow">and</span>
+              <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">original_rate</span><span class="p">,</span> <span class="n">ReacLibRate</span><span class="p">)):</span>
+            <span class="n">source_sets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">sets</span>
+
+        <span class="k">if</span> <span class="n">source_sets</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">derived_sets</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">source_set</span> <span class="ow">in</span> <span class="n">source_sets</span><span class="p">:</span>
+                <span class="n">a_derived</span> <span class="o">=</span> <span class="n">source_set</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">a_derived</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span><span class="p">)</span> <span class="o">+</span> <span class="mf">13.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+                <span class="n">a_derived</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0e9</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">k_MeV</span><span class="p">)</span>
+                <span class="n">a_derived</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">derived_sets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleSet</span><span class="p">(</span><span class="n">a_derived</span><span class="p">,</span> <span class="n">source_set</span><span class="o">.</span><span class="n">labelprops</span><span class="p">))</span>
+
         <span class="c1"># explicitly mark it as a rate derived from inverse</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -615,14 +639,25 @@ document.write(`
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># evaluate the forward rate without screening</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># evaluate the source rate without screening</span>
 
-        <span class="c1"># compute the equilibrium ratio</span>
-        <span class="n">ratio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span> <span class="o">*</span> <span class="n">T</span><span class="o">**</span><span class="p">(</span><span class="mf">1.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_sets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">tf</span> <span class="o">=</span> <span class="n">Tfactors</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_sets</span><span class="p">:</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">f</span><span class="p">()</span>
+                <span class="n">r</span> <span class="o">+=</span> <span class="n">f</span><span class="p">(</span><span class="n">tf</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
-        <span class="c1"># Note Q-value here is for the derived rate.</span>
-        <span class="n">ratio</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">/</span> <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">k_MeV</span> <span class="o">*</span> <span class="n">T</span><span class="p">))</span>
+            <span class="c1"># compute the equilibrium ratio</span>
+            <span class="n">ratio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span> <span class="o">*</span> <span class="n">T</span><span class="o">**</span><span class="p">(</span><span class="mf">1.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span><span class="p">)</span>
+
+            <span class="c1"># Note Q-value here is for the derived rate.</span>
+            <span class="n">ratio</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">/</span> <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">k_MeV</span> <span class="o">*</span> <span class="n">T</span><span class="p">))</span>
+
+            <span class="c1"># apply ratio</span>
+            <span class="n">r</span> <span class="o">*=</span> <span class="n">ratio</span>
 
         <span class="n">z_r</span> <span class="o">=</span> <span class="mf">1.0</span>
         <span class="n">z_p</span> <span class="o">=</span> <span class="mf">1.0</span>
@@ -637,10 +672,8 @@ document.write(`
                 <span class="k">if</span> <span class="n">nucp</span><span class="o">.</span><span class="n">partition_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">z_p</span> <span class="o">*=</span> <span class="n">nucp</span><span class="o">.</span><span class="n">partition_function</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
 
-        <span class="n">ratio</span> <span class="o">*=</span> <span class="n">z_r</span> <span class="o">/</span> <span class="n">z_p</span>
-
         <span class="c1"># Apply equilibrium ratio</span>
-        <span class="n">r</span> <span class="o">*=</span> <span class="n">ratio</span>
+        <span class="n">r</span> <span class="o">*=</span> <span class="n">z_r</span> <span class="o">/</span> <span class="n">z_p</span>
 
         <span class="c1"># Apply screening correction</span>
         <span class="n">scor</span> <span class="o">=</span> <span class="mf">1.0</span>
@@ -671,10 +704,20 @@ document.write(`
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf):</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    # Evaluate the equilibrium ratio</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    ratio = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span><span class="si">}</span><span class="s2"> * (tf.T9 * 1.0e9)**(1.5 * </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    ratio *= np.exp(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="si">}</span><span class="s2"> / (constants.k_MeV * tf.T9 * 1.0e9))</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> * ratio</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_sets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate = 0.0</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_sets</span><span class="p">:</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    # </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">set_string</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">set_string_py</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;rate&quot;</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">set_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="n">t</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = rate</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    # Evaluate the equilibrium ratio</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    ratio = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span><span class="si">}</span><span class="s2"> * (tf.T9 * 1.0e9)**(1.5 * </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    ratio *= np.exp(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="si">}</span><span class="s2"> / (constants.k_MeV * tf.T9 * 1.0e9))</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> * ratio</span><span class="se">\n</span><span class="s2">&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_pf</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_warn_about_missing_pf_tables</span><span class="p">()</span>
@@ -737,31 +780,64 @@ document.write(`
         <span class="k">if</span> <span class="n">extra_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">extra_args</span> <span class="o">=</span> <span class="p">()</span>
 
-        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;const T&amp; rate_eval&quot;</span><span class="p">,</span> <span class="s2">&quot;const tf_t&amp; tfactors&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; rate&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; drate_dT&quot;</span><span class="p">,</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;const tf_t&amp; tfactors&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; rate&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; drate_dT&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;[[maybe_unused]] const T&amp; rate_eval&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;[[maybe_unused]] part_fun::pf_cache_t&amp; pf_cache&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_args</span><span class="p">]</span>
+
         <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;template &lt;typename T&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specifiers</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;void rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">) </span><span class="se">{{\n\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    // </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate = 0.0;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    drate_dT = 0.0;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    // Evaluate the equilibrium ratio without partition function</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> ratio = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span><span class="si">}</span><span class="s2">;</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> Q_kBT = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="si">}</span><span class="s2"> / (C::k_MeV * tfactors.T9 * 1.0e9_rt);</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    ratio *= std::exp(Q_kBT);</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    ratio *= std::sqrt(amrex::Math::powi&lt;</span><span class="si">{</span><span class="mi">3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span><span class="si">}</span><span class="s2">&gt;(tfactors.T9 * 1.0e9_rt));</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_sets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> ln_set_rate</span><span class="se">{{</span><span class="s2">0.0</span><span class="se">}}</span><span class="s2">;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dln_set_rate_dT9</span><span class="se">{{</span><span class="s2">0.0</span><span class="se">}}</span><span class="s2">;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> set_rate</span><span class="se">{{</span><span class="s2">0.0</span><span class="se">}}</span><span class="s2">;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    // Apply the ratio without partition function</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    // Note that screening is not yet applied to the inverse rate</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_sets</span><span class="p">:</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    // </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">set_string</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">set_string_cxx</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ln_set_rate&quot;</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">with_exp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">set_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="n">t</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
 
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dratio_dT = ratio * tfactors.T9i * 1.0e-9_rt * (</span><span class="si">{</span><span class="mf">1.5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span><span class="si">}</span><span class="s2"> - Q_kBT);</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        drate_dT = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT = drate_dT * ratio + rate * dratio_dT;</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    }</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate *= ratio;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">dln_set_string_dT9</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">dln_set_string_dT9_cxx</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;dln_set_rate_dT9&quot;</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">dln_set_string_dT9</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        &quot;</span> <span class="o">+</span> <span class="n">t</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    }</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    // avoid underflows by zeroing rates in [0.0, 1.e-100]</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    ln_set_rate = std::max(ln_set_rate, -230.0);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    set_rate = std::exp(ln_set_rate);</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate += set_rate;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    }</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    // Evaluate the equilibrium ratio without partition function</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> ratio = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span><span class="si">}</span><span class="s2">;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> Q_kBT = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="si">}</span><span class="s2"> / (C::k_MeV * tfactors.T9 * 1.0e9_rt);</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    ratio *= std::exp(Q_kBT);</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    ratio *= std::sqrt(amrex::Math::powi&lt;</span><span class="si">{</span><span class="mi">3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span><span class="si">}</span><span class="s2">&gt;(tfactors.T9 * 1.0e9_rt));</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    // Apply the ratio without partition function</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    // Note that screening is not yet applied to the inverse rate</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dratio_dT = ratio * tfactors.T9i * 1.0e-9_rt * (</span><span class="si">{</span><span class="mf">1.5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span><span class="si">}</span><span class="s2"> - Q_kBT);</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        drate_dT = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT = drate_dT * ratio + rate * dratio_dT;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    }</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate *= ratio;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
         <span class="c1"># Right now we have rate and drate_dT without the partition</span>
         <span class="c1"># function now the partition function corrections</span>
