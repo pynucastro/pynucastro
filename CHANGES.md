@@ -5,7 +5,7 @@
   * `AmrexAstroCxxNetwork`: check weak label in `ydot_weak` (#1216)
 
   * change how `DerivedRate` works so it can apply to any strong rate
-    (#1207)
+    (#1207, #1217)
 
   * pin nbclient to fix doc build issues (#1214, #1220)
 
