@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.eos.stellar_eos &#8212; pynucastro 2.8.0.post49+gae5dec92b documentation</title>
+    <title>pynucastro.eos.stellar_eos &#8212; pynucastro 2.8.0.post50+g04042ae29 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=0967db9c"></script>
+    <script src="../../../_static/documentation_options.js?v=79d7dcdc"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -228,6 +228,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../fermi-integrals.html">Fermi-Dirac Integrals</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../electron-eos.html">The Electron-Positron EOS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stellar-eos.html">Stellar EOS</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
 <ul class="nav bd-sidenav">
@@ -274,6 +275,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.degeneracy_parameter_bounds.html">pynucastro.eos.degeneracy_parameter_bounds module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.difference_utils.html">pynucastro.eos.difference_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.electron_eos.html">pynucastro.eos.electron_eos module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.eos_components.html">pynucastro.eos.eos_components module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.fermi_integrals.html">pynucastro.eos.fermi_integrals module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.quadrature_weights.html">pynucastro.eos.quadrature_weights module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.stellar_eos.html">pynucastro.eos.stellar_eos module</a></li>
@@ -499,35 +501,143 @@ document.write(`
 <span class="sd">&quot;&quot;&quot;</span>
 
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">.electron_eos</span><span class="w"> </span><span class="kn">import</span> <span class="n">ElectronEOS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.eos_components</span><span class="w"> </span><span class="kn">import</span> <span class="n">IdealGasEOS</span><span class="p">,</span> <span class="n">RadiationEOS</span>
+
+
 <div class="viewcode-block" id="EOSState">
 <a class="viewcode-back" href="../../../pynucastro.eos.stellar_eos.html#pynucastro.eos.stellar_eos.EOSState">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EOSState</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A container to hold a thermodynamic state that depends on</span>
-<span class="sd">    density, temperature, and composition</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The full thermodynamic state of a multi-component plasma (ions,</span>
+<span class="sd">    electrons, and radiation)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">eta</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-                 <span class="n">n</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-                 <span class="n">dn_drho</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">dn_dT</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">n_ele</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">n_pos</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">p</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
                  <span class="n">dp_drho</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">dp_dT</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-                 <span class="n">de_drho</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">de_dT</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+                 <span class="n">de_drho</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">de_dT</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">c_v</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">c_p</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">gamma1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">eta</span> <span class="o">=</span> <span class="n">eta</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_ele</span> <span class="o">=</span> <span class="n">n_ele</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_pos</span> <span class="o">=</span> <span class="n">n_pos</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">p</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">e</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">dn_drho</span> <span class="o">=</span> <span class="n">dn_drho</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dn_dT</span> <span class="o">=</span> <span class="n">dn_dT</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">dp_drho</span> <span class="o">=</span> <span class="n">dp_drho</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dp_dT</span> <span class="o">=</span> <span class="n">dp_dT</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">de_drho</span> <span class="o">=</span> <span class="n">de_drho</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">de_dT</span> <span class="o">=</span> <span class="n">de_dT</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">de_dT</span> <span class="o">=</span> <span class="n">de_dT</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_v</span> <span class="o">=</span> <span class="n">c_v</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_p</span> <span class="o">=</span> <span class="n">c_p</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma1</span> <span class="o">=</span> <span class="n">gamma1</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">fstr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;η     = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">eta</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;n_ele = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_ele</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="s2"> ; n_pos = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_pos</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;p     = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="s2"> ; e     = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;∂p/∂ρ = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dp_drho</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="s2"> ; ∂p/∂T = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dp_dT</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;∂e/∂ρ = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">de_drho</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="s2"> ; ∂e/∂T = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">de_dT</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;cᵥ    = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">c_v</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="s2"> ; cₚ    = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">c_p</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Γ₁    = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma1</span><span class="si">:</span><span class="s2">7.4f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">fstr</span></div>
+
+
+
+<div class="viewcode-block" id="StellarEOS">
+<a class="viewcode-back" href="../../../pynucastro.eos.stellar_eos.html#pynucastro.eos.stellar_eos.StellarEOS">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StellarEOS</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A full stellar equation of state with contributions from ions,</span>
+<span class="sd">    electrons, and radiation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    electrons_are_degenerate : bool</span>
+<span class="sd">        Do we treat electrons as a Fermi gas with arbitrary degeneracy</span>
+<span class="sd">        and relativity? or just treat them as an ideal gas?</span>
+<span class="sd">    include_positrons : bool</span>
+<span class="sd">        If electrons are Fermi gas, do we consider both positrons and</span>
+<span class="sd">        electrons?</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">electrons_are_degenerate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">include_positrons</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">electrons_are_degenerate</span> <span class="o">=</span> <span class="n">electrons_are_degenerate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">include_positrons</span> <span class="o">=</span> <span class="n">include_positrons</span>
+
+<div class="viewcode-block" id="StellarEOS.pe_state">
+<a class="viewcode-back" href="../../../pynucastro.eos.stellar_eos.html#pynucastro.eos.stellar_eos.StellarEOS.pe_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pe_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the pressure and energy given density, temperature,</span>
+<span class="sd">        and composition</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            Density (g/cm**3)</span>
+<span class="sd">        T : float</span>
+<span class="sd">            Temperature (K)</span>
+<span class="sd">        comp : Composition</span>
+<span class="sd">            Composition (abundances of each nucleus)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        EOSState</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">ion_eos</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">electrons_are_degenerate</span><span class="p">:</span>
+            <span class="n">ion_eos</span> <span class="o">=</span> <span class="n">IdealGasEOS</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ion_eos</span> <span class="o">=</span> <span class="n">IdealGasEOS</span><span class="p">(</span><span class="n">include_electrons</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">rad_eos</span> <span class="o">=</span> <span class="n">RadiationEOS</span><span class="p">()</span>
+
+        <span class="n">ele_eos</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">electrons_are_degenerate</span><span class="p">:</span>
+            <span class="n">ele_eos</span> <span class="o">=</span> <span class="n">ElectronEOS</span><span class="p">(</span><span class="n">include_positrons</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">include_positrons</span><span class="p">)</span>
+
+        <span class="c1"># evaluate the full state</span>
+        <span class="n">ion_state</span> <span class="o">=</span> <span class="n">ion_eos</span><span class="o">.</span><span class="n">pe_state</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+        <span class="n">rad_state</span> <span class="o">=</span> <span class="n">rad_eos</span><span class="o">.</span><span class="n">pe_state</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+        <span class="n">ele_state</span><span class="p">,</span> <span class="n">pos_state</span> <span class="o">=</span> <span class="n">ele_eos</span><span class="o">.</span><span class="n">pe_state</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">ion_state</span><span class="o">.</span><span class="n">p</span> <span class="o">+</span> <span class="n">rad_state</span><span class="o">.</span><span class="n">p</span> <span class="o">+</span> <span class="n">ele_state</span><span class="o">.</span><span class="n">p</span> <span class="o">+</span> <span class="n">pos_state</span><span class="o">.</span><span class="n">p</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">ion_state</span><span class="o">.</span><span class="n">e</span> <span class="o">+</span> <span class="n">rad_state</span><span class="o">.</span><span class="n">e</span> <span class="o">+</span> <span class="n">ele_state</span><span class="o">.</span><span class="n">e</span> <span class="o">+</span> <span class="n">pos_state</span><span class="o">.</span><span class="n">e</span>
+
+        <span class="n">dp_drho</span> <span class="o">=</span> <span class="n">ion_state</span><span class="o">.</span><span class="n">dp_drho</span> <span class="o">+</span> <span class="n">rad_state</span><span class="o">.</span><span class="n">dp_drho</span> <span class="o">+</span> <span class="n">ele_state</span><span class="o">.</span><span class="n">dp_drho</span> <span class="o">+</span> <span class="n">pos_state</span><span class="o">.</span><span class="n">dp_drho</span>
+        <span class="n">dp_dT</span> <span class="o">=</span> <span class="n">ion_state</span><span class="o">.</span><span class="n">dp_dT</span> <span class="o">+</span> <span class="n">rad_state</span><span class="o">.</span><span class="n">dp_dT</span> <span class="o">+</span> <span class="n">ele_state</span><span class="o">.</span><span class="n">dp_dT</span> <span class="o">+</span> <span class="n">pos_state</span><span class="o">.</span><span class="n">dp_dT</span>
+
+        <span class="n">de_drho</span> <span class="o">=</span> <span class="n">ion_state</span><span class="o">.</span><span class="n">de_drho</span> <span class="o">+</span> <span class="n">rad_state</span><span class="o">.</span><span class="n">de_drho</span> <span class="o">+</span> <span class="n">ele_state</span><span class="o">.</span><span class="n">de_drho</span> <span class="o">+</span> <span class="n">pos_state</span><span class="o">.</span><span class="n">de_drho</span>
+        <span class="n">de_dT</span> <span class="o">=</span> <span class="n">ion_state</span><span class="o">.</span><span class="n">de_dT</span> <span class="o">+</span> <span class="n">rad_state</span><span class="o">.</span><span class="n">de_dT</span> <span class="o">+</span> <span class="n">ele_state</span><span class="o">.</span><span class="n">de_dT</span> <span class="o">+</span> <span class="n">pos_state</span><span class="o">.</span><span class="n">de_dT</span>
+
+        <span class="n">dT_drho_s</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="n">rho</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">de_drho</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">de_dT</span><span class="p">)</span>
+        <span class="n">gamma1</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">/</span> <span class="n">p</span> <span class="o">*</span> <span class="p">(</span><span class="n">dp_drho</span> <span class="o">+</span> <span class="n">dp_dT</span> <span class="o">*</span> <span class="n">dT_drho_s</span><span class="p">)</span>
+
+        <span class="n">c_v</span> <span class="o">=</span> <span class="n">de_dT</span>
+        <span class="n">c_p</span> <span class="o">=</span> <span class="n">c_v</span> <span class="o">+</span> <span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="n">rho</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">de_drho</span><span class="p">)</span> <span class="o">*</span> <span class="n">dp_dT</span> <span class="o">/</span> <span class="n">dp_drho</span>
+
+        <span class="k">return</span> <span class="n">EOSState</span><span class="p">(</span><span class="n">eta</span><span class="o">=</span><span class="n">ele_state</span><span class="o">.</span><span class="n">eta</span><span class="p">,</span>
+                        <span class="n">n_ele</span><span class="o">=</span><span class="n">ele_state</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">n_pos</span><span class="o">=</span><span class="n">pos_state</span><span class="o">.</span><span class="n">n</span><span class="p">,</span>
+                        <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+                        <span class="n">dp_drho</span><span class="o">=</span><span class="n">dp_drho</span><span class="p">,</span> <span class="n">dp_dT</span><span class="o">=</span><span class="n">dp_dT</span><span class="p">,</span>
+                        <span class="n">de_drho</span><span class="o">=</span><span class="n">de_drho</span><span class="p">,</span> <span class="n">de_dT</span><span class="o">=</span><span class="n">de_dT</span><span class="p">,</span>
+                        <span class="n">c_v</span><span class="o">=</span><span class="n">c_v</span><span class="p">,</span> <span class="n">c_p</span><span class="o">=</span><span class="n">c_p</span><span class="p">,</span>
+                        <span class="n">gamma1</span><span class="o">=</span><span class="n">gamma1</span><span class="p">)</span></div>
+</div>
 
 </pre></div>
 

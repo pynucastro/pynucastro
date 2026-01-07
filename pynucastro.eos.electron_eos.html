@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.eos.electron_eos module &#8212; pynucastro 2.8.0.post49+gae5dec92b documentation</title>
+    <title>pynucastro.eos.electron_eos module &#8212; pynucastro 2.8.0.post50+g04042ae29 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=0967db9c"></script>
+    <script src="_static/documentation_options.js?v=79d7dcdc"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -49,7 +49,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'pynucastro.eos.electron_eos';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pynucastro.eos.fermi_integrals module" href="pynucastro.eos.fermi_integrals.html" />
+    <link rel="next" title="pynucastro.eos.eos_components module" href="pynucastro.eos.eos_components.html" />
     <link rel="prev" title="pynucastro.eos.difference_utils module" href="pynucastro.eos.difference_utils.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -229,6 +229,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="fermi-integrals.html">Fermi-Dirac Integrals</a></li>
 <li class="toctree-l1"><a class="reference internal" href="electron-eos.html">The Electron-Positron EOS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stellar-eos.html">Stellar EOS</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
 <ul class="nav bd-sidenav">
@@ -275,6 +276,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.degeneracy_parameter_bounds.html">pynucastro.eos.degeneracy_parameter_bounds module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.difference_utils.html">pynucastro.eos.difference_utils module</a></li>
 <li class="toctree-l4 current active"><a class="current reference internal" href="#">pynucastro.eos.electron_eos module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.eos_components.html">pynucastro.eos.eos_components module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.fermi_integrals.html">pynucastro.eos.fermi_integrals module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.quadrature_weights.html">pynucastro.eos.quadrature_weights module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.stellar_eos.html">pynucastro.eos.stellar_eos module</a></li>
@@ -615,12 +617,15 @@ and composition</p>
 <li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Density (g/cm**3)</p></li>
 <li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Temperature (K)</p></li>
 <li><p><strong>comp</strong> (<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><em>Composition</em></a>) – Composition (abundances of each nucleus)</p></li>
+<li><p><strong>compute_derivs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Are the derivatives with respect to rho and T computed?</p></li>
+<li><p><strong>eta_guess_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The minimum degeneracy parameter guess for the root-finding</p></li>
+<li><p><strong>eta_guess_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The maximum degeneracy parameter guess for the root-finding</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>electron_state</strong> (<em>EOSState</em>) – The thermodynamics of the electrons</p></li>
-<li><p><strong>positron_state</strong> (<em>EOSState</em>) – The thermodynamics of the positrons</p></li>
+<li><p><strong>electron_state</strong> (<em>EOSComponentState</em>) – The thermodynamics of the electrons</p></li>
+<li><p><strong>positron_state</strong> (<em>EOSComponentState</em>) – The thermodynamics of the positrons</p></li>
 </ul>
 </p>
 </dd>
@@ -652,11 +657,11 @@ and composition</p>
       </div>
     </a>
     <a class="right-next"
-       href="pynucastro.eos.fermi_integrals.html"
+       href="pynucastro.eos.eos_components.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pynucastro.eos.fermi_integrals module</p>
+        <p class="prev-next-title">pynucastro.eos.eos_components module</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

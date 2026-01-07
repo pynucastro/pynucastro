@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Neutrino Cooling &#8212; pynucastro 2.8.0.post50+g04042ae29 documentation</title>
+    <title>Stellar EOS &#8212; pynucastro 2.8.0.post50+g04042ae29 documentation</title>
   
   
   
@@ -48,11 +48,11 @@
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'neutrino-cooling';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'stellar-eos';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Exporting Networks" href="networks.html" />
-    <link rel="prev" title="Stellar EOS" href="stellar-eos.html" />
+    <link rel="next" title="Neutrino Cooling" href="neutrino-cooling.html" />
+    <link rel="prev" title="The Electron-Positron EOS" href="electron-eos.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -228,14 +228,14 @@
 <li class="toctree-l1"><a class="reference internal" href="nse_table.html">Creating an NSE table</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Thermodynamics</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="fermi-integrals.html">Fermi-Dirac Integrals</a></li>
 <li class="toctree-l1"><a class="reference internal" href="electron-eos.html">The Electron-Positron EOS</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stellar-eos.html">Stellar EOS</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Stellar EOS</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
-<ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Neutrino Cooling</a></li>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="neutrino-cooling.html">Neutrino Cooling</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exporting Networks</span></p>
 <ul class="nav bd-sidenav">
@@ -419,7 +419,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/neutrino-cooling.ipynb?plain=1" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/stellar-eos.ipynb?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -436,7 +436,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/neutrino-cooling.ipynb" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/stellar-eos.ipynb" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -453,7 +453,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fneutrino-cooling.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fstellar-eos.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -483,7 +483,7 @@
       
       
       
-      <li><a href="_sources/neutrino-cooling.ipynb" target="_blank"
+      <li><a href="_sources/stellar-eos.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -567,7 +567,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Neutrino Cooling</h1>
+    <h1>Stellar EOS</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -577,8 +577,8 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluating-epsilon-nu-for-a-thermodynamic-state">Evaluating <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> for a thermodynamic state</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-epsilon-nu-in-the-rho-t-plane">Plotting <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> in the <span class="math notranslate nohighlight">\(\rho\)</span>-<span class="math notranslate nohighlight">\(T\)</span> plane</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-a-thermodynamic-state">Computing a thermodynamic state</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-stability">Exploring stability</a></li>
 </ul>
             </nav>
         </div>
@@ -590,74 +590,155 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="neutrino-cooling">
-<h1>Neutrino Cooling<a class="headerlink" href="#neutrino-cooling" title="Link to this heading">#</a></h1>
-<p>At high temperatures, pair, plasma, Bremmstrahlung, and photo neutrinos become important. These are often treated as a source term to an energy equation when integrating the temperature evolution due to reactions.</p>
-<p>pynucastro implements the functions of <span id="id1">Itoh <em>et al.</em> [<a class="reference internal" href="zreferences.html#id12" title="Naoki Itoh, Hiroshi Hayashi, Akinori Nishikawa, and Yasuharu Kohyama. Neutrino Energy Loss in Stellar Interiors. VII. Pair, Photo-, Plasma, Bremsstrahlung, and Recombination Neutrino Processes. The Astrophysical Journal Supplement Series, 102:411, February 1996. doi:10.1086/192264.">1996</a>]</span> to incorporate these effects.  In many codes, a routine called <code class="docutils literal notranslate"><span class="pre">sneut5</span></code> was used for this implementation.  pynucastro contains a port of that routine.</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="stellar-eos">
+<h1>Stellar EOS<a class="headerlink" href="#stellar-eos" title="Link to this heading">#</a></h1>
+<p>A stellar equation of state describing a multi-component plasma (ions, electrons, and radiation) is available
+via the <a class="reference internal" href="pynucastro.eos.stellar_eos.html#pynucastro.eos.stellar_eos.StellarEOS" title="pynucastro.eos.stellar_eos.StellarEOS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StellarEOS</span></code></a> class.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Presently, the equation of state does not include Coulomb corrections.</p>
+</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.neutrino_cooling</span><span class="w"> </span><span class="kn">import</span> <span class="n">sneut5</span><span class="p">,</span> <span class="n">NeutrinoCooling</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="kn">import</span> <span class="n">Composition</span><span class="p">,</span> <span class="n">Nucleus</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
 </pre></div>
 </div>
 </div>
 </div>
-<section id="evaluating-epsilon-nu-for-a-thermodynamic-state">
-<h2>Evaluating <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> for a thermodynamic state<a class="headerlink" href="#evaluating-epsilon-nu-for-a-thermodynamic-state" title="Link to this heading">#</a></h2>
-<p>We can evaluate the cooling term given a density, temperature and composition.  First we setup the thermodynamic state:</p>
+<section id="computing-a-thermodynamic-state">
+<h2>Computing a thermodynamic state<a class="headerlink" href="#computing-a-thermodynamic-state" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e8</span>
-<span class="n">T</span> <span class="o">=</span> <span class="mf">2.e9</span>
-<span class="n">comp</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">([</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe56&quot;</span><span class="p">)])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eos</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">StellarEOS</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">([</span><span class="s2">&quot;he4&quot;</span><span class="p">])</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">set_equal</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>Now we call the <a class="reference internal" href="pynucastro.neutrino_cooling.sneut5_mod.html#pynucastro.neutrino_cooling.sneut5_mod.sneut5" title="pynucastro.neutrino_cooling.sneut5_mod.sneut5"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sneut5</span></code></a> function.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">snu</span> <span class="o">=</span> <span class="n">sneut5</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">snu</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e-2</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mf">1.e9</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">state</span> <span class="o">=</span> <span class="n">eos</span><span class="o">.</span><span class="n">pe_state</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>773682819.5195054
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>η     =     -5.92989
+n_ele =  5.42942e+26 ; n_pos =  5.42939e+26
+
+p     =  2.67189e+21 ; e     =  8.71999e+23
+
+∂p/∂ρ =  2.07863e+16 ; ∂p/∂T =  1.13919e+13
+∂e/∂ρ = -8.71999e+25 ; ∂e/∂T =  3.94432e+15
+
+cᵥ    =  3.94432e+15 ; cₚ    =  6.24331e+22
+Γ₁    =  1.2314
 </pre></div>
 </div>
 </div>
 </div>
-<p>This is the value in CGS units (erg/g/s)</p>
-<p>If we want to see the breakdown of the different contributions, we pass <code class="docutils literal notranslate"><span class="pre">full_output=True</span></code></p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">snu</span><span class="p">,</span> <span class="n">scomps</span> <span class="o">=</span> <span class="n">sneut5</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">full_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">scomps</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>splas: 537968613.1923463; spair: 131726610.15324067; sphot: 92135106.99413596; sbrem: 11852489.17978244; sreco: 0.0
-</pre></div>
-</div>
-</div>
-</div>
+<p>We see at these conditions, there is a lot of positron production.</p>
 </section>
-<section id="plotting-epsilon-nu-in-the-rho-t-plane">
-<h2>Plotting <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> in the <span class="math notranslate nohighlight">\(\rho\)</span>-<span class="math notranslate nohighlight">\(T\)</span> plane<a class="headerlink" href="#plotting-epsilon-nu-in-the-rho-t-plane" title="Link to this heading">#</a></h2>
-<p>We can see the trend with thermodynamics state by using the <a class="reference internal" href="pynucastro.neutrino_cooling.neutrino_cooling.html#pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling" title="pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NeutrinoCooling</span></code></a> class</p>
+<section id="exploring-stability">
+<h2>Exploring stability<a class="headerlink" href="#exploring-stability" title="Link to this heading">#</a></h2>
+<p>A star is unstable if the adiabatic index, <span class="math notranslate nohighlight">\(\Gamma_1\)</span>, drops below 4/3.  We can map out the region in the thermodynamic plane where this happens.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nc</span> <span class="o">=</span> <span class="n">NeutrinoCooling</span><span class="p">()</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">Tmin</span><span class="o">=</span><span class="mf">1.e7</span><span class="p">,</span> <span class="n">Tmax</span><span class="o">=</span><span class="mf">1.e10</span><span class="p">,</span> <span class="n">rhomin</span><span class="o">=</span><span class="mf">1.e3</span><span class="p">,</span> <span class="n">rhomax</span><span class="o">=</span><span class="mf">1.e10</span><span class="p">,</span>
-              <span class="n">abar</span><span class="o">=</span><span class="n">comp</span><span class="o">.</span><span class="n">abar</span><span class="p">,</span> <span class="n">zbar</span><span class="o">=</span><span class="n">comp</span><span class="o">.</span><span class="n">zbar</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">36</span><span class="p">)</span>
+<span class="n">rhos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">67</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ts</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/389d6af64e125a23fe454424eba4ee4ecb7672eb20960024b05fde7cdae62f96.png" src="_images/389d6af64e125a23fe454424eba4ee4ecb7672eb20960024b05fde7cdae62f96.png" />
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([1.00000000e+05, 1.38949549e+05, 1.93069773e+05, 2.68269580e+05,
+       3.72759372e+05, 5.17947468e+05, 7.19685673e+05, 1.00000000e+06,
+       1.38949549e+06, 1.93069773e+06, 2.68269580e+06, 3.72759372e+06,
+       5.17947468e+06, 7.19685673e+06, 1.00000000e+07, 1.38949549e+07,
+       1.93069773e+07, 2.68269580e+07, 3.72759372e+07, 5.17947468e+07,
+       7.19685673e+07, 1.00000000e+08, 1.38949549e+08, 1.93069773e+08,
+       2.68269580e+08, 3.72759372e+08, 5.17947468e+08, 7.19685673e+08,
+       1.00000000e+09, 1.38949549e+09, 1.93069773e+09, 2.68269580e+09,
+       3.72759372e+09, 5.17947468e+09, 7.19685673e+09, 1.00000000e+10])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gamma1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">rhos</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">Ts</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">ir</span><span class="p">,</span> <span class="n">rho</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rhos</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">it</span><span class="p">,</span> <span class="n">T</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Ts</span><span class="p">):</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">eos</span><span class="o">.</span><span class="n">pe_state</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+        <span class="n">gamma1</span><span class="p">[</span><span class="n">ir</span><span class="p">,</span> <span class="n">it</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">gamma1</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">colors</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">gamma1</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span>
+               <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhos</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhos</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
+                       <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Ts</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Ts</span><span class="o">.</span><span class="n">max</span><span class="p">())],</span>
+               <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhos</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Ts</span><span class="p">),</span> <span class="n">gamma1</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="p">[</span><span class="mf">4.</span><span class="o">/</span><span class="mf">3.</span><span class="p">],</span>
+           <span class="n">colors</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(\rho)$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(T)$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\Gamma_1$&quot;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7f89977c8830&gt;
+</pre></div>
+</div>
+<img alt="_images/3e08d37b5ca7b9814311eecedb137809760abd55fb5fdc3e8842ffbafc4913a4.png" src="_images/3e08d37b5ca7b9814311eecedb137809760abd55fb5fdc3e8842ffbafc4913a4.png" />
 </div>
 </div>
 </section>
@@ -675,20 +756,20 @@ document.write(`
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="stellar-eos.html"
+       href="electron-eos.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Stellar EOS</p>
+        <p class="prev-next-title">The Electron-Positron EOS</p>
       </div>
     </a>
     <a class="right-next"
-       href="networks.html"
+       href="neutrino-cooling.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Exporting Networks</p>
+        <p class="prev-next-title">Neutrino Cooling</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -708,8 +789,8 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluating-epsilon-nu-for-a-thermodynamic-state">Evaluating <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> for a thermodynamic state</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-epsilon-nu-in-the-rho-t-plane">Plotting <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> in the <span class="math notranslate nohighlight">\(\rho\)</span>-<span class="math notranslate nohighlight">\(T\)</span> plane</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-a-thermodynamic-state">Computing a thermodynamic state</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-stability">Exploring stability</a></li>
 </ul>
   </nav></div>
 

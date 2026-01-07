@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.eos.electron_eos &#8212; pynucastro 2.8.0.post49+gae5dec92b documentation</title>
+    <title>pynucastro.eos.electron_eos &#8212; pynucastro 2.8.0.post50+g04042ae29 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=0967db9c"></script>
+    <script src="../../../_static/documentation_options.js?v=79d7dcdc"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -228,6 +228,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../fermi-integrals.html">Fermi-Dirac Integrals</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../electron-eos.html">The Electron-Positron EOS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stellar-eos.html">Stellar EOS</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
 <ul class="nav bd-sidenav">
@@ -274,6 +275,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.degeneracy_parameter_bounds.html">pynucastro.eos.degeneracy_parameter_bounds module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.difference_utils.html">pynucastro.eos.difference_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.electron_eos.html">pynucastro.eos.electron_eos module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.eos_components.html">pynucastro.eos.eos_components module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.fermi_integrals.html">pynucastro.eos.fermi_integrals module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.quadrature_weights.html">pynucastro.eos.quadrature_weights module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.stellar_eos.html">pynucastro.eos.stellar_eos module</a></li>
@@ -505,8 +507,8 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.degeneracy_parameter_bounds</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_eta_bounds</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.eos_components</span><span class="w"> </span><span class="kn">import</span> <span class="n">EOSComponentState</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.fermi_integrals</span><span class="w"> </span><span class="kn">import</span> <span class="n">FermiIntegral</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.stellar_eos</span><span class="w"> </span><span class="kn">import</span> <span class="n">EOSState</span>
 
 
 <div class="viewcode-block" id="ElectronEOS">
@@ -542,12 +544,18 @@ document.write(`
 <span class="sd">            Temperature (K)</span>
 <span class="sd">        comp : Composition</span>
 <span class="sd">            Composition (abundances of each nucleus)</span>
+<span class="sd">        compute_derivs : bool</span>
+<span class="sd">            Are the derivatives with respect to rho and T computed?</span>
+<span class="sd">        eta_guess_min : float</span>
+<span class="sd">            The minimum degeneracy parameter guess for the root-finding</span>
+<span class="sd">        eta_guess_max : float</span>
+<span class="sd">            The maximum degeneracy parameter guess for the root-finding</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        electron_state : EOSState</span>
+<span class="sd">        electron_state : EOSComponentState</span>
 <span class="sd">            The thermodynamics of the electrons</span>
-<span class="sd">        positron_state : EOSState</span>
+<span class="sd">        positron_state : EOSComponentState</span>
 <span class="sd">            The thermodynamics of the positrons</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -738,18 +746,19 @@ document.write(`
         <span class="n">e_pos</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="n">dep_drho</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="n">dep_dT</span> <span class="o">=</span> <span class="mf">0.0</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_positrons</span><span class="p">:</span>
             <span class="n">e_pos</span> <span class="o">=</span> <span class="n">E_pos</span> <span class="o">/</span> <span class="n">rho</span>
             <span class="n">dep_drho</span> <span class="o">=</span> <span class="p">(</span><span class="n">dEp_drho</span> <span class="o">-</span> <span class="n">E_pos</span> <span class="o">/</span> <span class="n">rho</span><span class="p">)</span> <span class="o">/</span> <span class="n">rho</span>
             <span class="n">dep_dT</span> <span class="o">=</span> <span class="n">dEp_dT</span> <span class="o">/</span> <span class="n">rho</span>
 
-        <span class="n">ele_state</span> <span class="o">=</span> <span class="n">EOSState</span><span class="p">(</span><span class="n">eta</span><span class="o">=</span><span class="n">eta</span><span class="p">,</span>
-                             <span class="n">n</span><span class="o">=</span><span class="n">n_e</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p_e</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="n">e_e</span><span class="p">,</span>
-                             <span class="n">dn_drho</span><span class="o">=</span><span class="n">dne_drho</span><span class="p">,</span> <span class="n">dn_dT</span><span class="o">=</span><span class="n">dne_dT</span><span class="p">,</span>
-                             <span class="n">dp_drho</span><span class="o">=</span><span class="n">dpe_drho</span><span class="p">,</span> <span class="n">dp_dT</span><span class="o">=</span><span class="n">dpe_dT</span><span class="p">,</span>
-                             <span class="n">de_drho</span><span class="o">=</span><span class="n">dee_drho</span><span class="p">,</span> <span class="n">de_dT</span><span class="o">=</span><span class="n">dee_dT</span><span class="p">)</span>
+        <span class="n">ele_state</span> <span class="o">=</span> <span class="n">EOSComponentState</span><span class="p">(</span><span class="n">eta</span><span class="o">=</span><span class="n">eta</span><span class="p">,</span>
+                                      <span class="n">n</span><span class="o">=</span><span class="n">n_e</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p_e</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="n">e_e</span><span class="p">,</span>
+                                      <span class="n">dn_drho</span><span class="o">=</span><span class="n">dne_drho</span><span class="p">,</span> <span class="n">dn_dT</span><span class="o">=</span><span class="n">dne_dT</span><span class="p">,</span>
+                                      <span class="n">dp_drho</span><span class="o">=</span><span class="n">dpe_drho</span><span class="p">,</span> <span class="n">dp_dT</span><span class="o">=</span><span class="n">dpe_dT</span><span class="p">,</span>
+                                      <span class="n">de_drho</span><span class="o">=</span><span class="n">dee_drho</span><span class="p">,</span> <span class="n">de_dT</span><span class="o">=</span><span class="n">dee_dT</span><span class="p">)</span>
 
-        <span class="n">pos_state</span> <span class="o">=</span> <span class="n">EOSState</span><span class="p">(</span><span class="n">eta</span><span class="o">=-</span><span class="n">eta</span><span class="p">,</span>
+        <span class="n">pos_state</span> <span class="o">=</span> <span class="n">EOSComponentState</span><span class="p">(</span><span class="n">eta</span><span class="o">=-</span><span class="n">eta</span><span class="p">,</span>
                              <span class="n">n</span><span class="o">=</span><span class="n">n_pos</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p_pos</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="n">e_pos</span><span class="p">,</span>
                              <span class="n">dn_drho</span><span class="o">=</span><span class="n">dnp_drho</span><span class="p">,</span> <span class="n">dn_dT</span><span class="o">=</span><span class="n">dnp_dT</span><span class="p">,</span>
                              <span class="n">dp_drho</span><span class="o">=</span><span class="n">dpp_drho</span><span class="p">,</span> <span class="n">dp_dT</span><span class="o">=</span><span class="n">dpp_dT</span><span class="p">,</span>
