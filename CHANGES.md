@@ -2,6 +2,8 @@
 
 ## 2.9.0
 
+  * complete a stellar EOS with ideal gas and radiation (#1201)
+
   * `AmrexAstroCxxNetwork`: check weak label in `ydot_weak` (#1216)
 
   * change how `DerivedRate` works so it can apply to any strong rate
