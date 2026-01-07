@@ -176,7 +176,7 @@ __version__ = version
 
 
 import pynucastro.screening
-from pynucastro.eos import FermiIntegral
+from pynucastro.eos import FermiIntegral, StellarEOS
 from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
                                  Composition, Explorer, FortranNetwork,
                                  NSENetwork, PythonNetwork, RateCollection,

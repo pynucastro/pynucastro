@@ -10,8 +10,8 @@ from scipy.optimize import brentq
 from pynucastro.constants import constants
 
 from .degeneracy_parameter_bounds import get_eta_bounds
+from .eos_components import EOSComponentState
 from .fermi_integrals import FermiIntegral
-from .stellar_eos import EOSState
 
 
 class ElectronEOS:
@@ -43,12 +43,18 @@ class ElectronEOS:
             Temperature (K)
         comp : Composition
             Composition (abundances of each nucleus)
+        compute_derivs : bool
+            Are the derivatives with respect to rho and T computed?
+        eta_guess_min : float
+            The minimum degeneracy parameter guess for the root-finding
+        eta_guess_max : float
+            The maximum degeneracy parameter guess for the root-finding
 
         Returns
         -------
-        electron_state : EOSState
+        electron_state : EOSComponentState
             The thermodynamics of the electrons
-        positron_state : EOSState
+        positron_state : EOSComponentState
             The thermodynamics of the positrons
 
         """
@@ -239,18 +245,19 @@ class ElectronEOS:
         e_pos = 0.0
         dep_drho = 0.0
         dep_dT = 0.0
+
         if self.include_positrons:
             e_pos = E_pos / rho
             dep_drho = (dEp_drho - E_pos / rho) / rho
             dep_dT = dEp_dT / rho
 
-        ele_state = EOSState(eta=eta,
-                             n=n_e, p=p_e, e=e_e,
-                             dn_drho=dne_drho, dn_dT=dne_dT,
-                             dp_drho=dpe_drho, dp_dT=dpe_dT,
-                             de_drho=dee_drho, de_dT=dee_dT)
+        ele_state = EOSComponentState(eta=eta,
+                                      n=n_e, p=p_e, e=e_e,
+                                      dn_drho=dne_drho, dn_dT=dne_dT,
+                                      dp_drho=dpe_drho, dp_dT=dpe_dT,
+                                      de_drho=dee_drho, de_dT=dee_dT)
 
-        pos_state = EOSState(eta=-eta,
+        pos_state = EOSComponentState(eta=-eta,
                              n=n_pos, p=p_pos, e=e_pos,
                              dn_drho=dnp_drho, dn_dT=dnp_dT,
                              dp_drho=dpp_drho, dp_dT=dpp_dT,
