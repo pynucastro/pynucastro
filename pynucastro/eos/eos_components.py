@@ -1,4 +1,4 @@
-"""Classes a methods for a full stellar equation of state (ions +
+"""Classes and methods for a full stellar equation of state (ions +
 electrons + radiation)
 
 """
@@ -41,7 +41,7 @@ class EOSComponentState:
 
 
 class IdealGasEOS:
-    """An idea gas equation of state for ions (and optionally
+    """An ideal gas equation of state for ions (and optionally
     electrons).
 
     Parameters
