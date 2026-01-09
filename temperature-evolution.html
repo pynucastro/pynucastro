@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.simple_cxx_network module &#8212; pynucastro 2.9.0.post1+g6a4257985 documentation</title>
+    <title>Integrating Networks with Temperature Evolution &#8212; pynucastro 2.9.0.post1+g6a4257985 documentation</title>
   
   
   
@@ -46,11 +46,13 @@
     <script src="_static/copybutton.js?v=eaa7b67c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'pynucastro.networks.simple_cxx_network';</script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'temperature-evolution';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pynucastro.networks.sympy_network_support module" href="pynucastro.networks.sympy_network_support.html" />
-    <link rel="prev" title="pynucastro.networks.rate_collection module" href="pynucastro.networks.rate_collection.html" />
+    <link rel="next" title="Neutrino Cooling" href="neutrino-cooling.html" />
+    <link rel="prev" title="Stellar EOS" href="stellar-eos.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -226,11 +228,11 @@
 <li class="toctree-l1"><a class="reference internal" href="nse_table.html">Creating an NSE table</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Thermodynamics</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="fermi-integrals.html">Fermi-Dirac Integrals</a></li>
 <li class="toctree-l1"><a class="reference internal" href="electron-eos.html">The Electron-Positron EOS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stellar-eos.html">Stellar EOS</a></li>
-<li class="toctree-l1"><a class="reference internal" href="temperature-evolution.html">Integrating Networks with Temperature Evolution</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Integrating Networks with Temperature Evolution</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
 <ul class="nav bd-sidenav">
@@ -264,11 +266,11 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/supernova-lightcurve.html">A Supernova Lightcurve</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="modules.html">API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.constants.html">pynucastro.constants package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.constants.constants.html">pynucastro.constants.constants module</a></li>
 </ul>
@@ -283,7 +285,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.stellar_eos.html">pynucastro.eos.stellar_eos module</a></li>
 </ul>
 </details></li>
-<li class="toctree-l3 current active has-children"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html">pynucastro.networks.amrexastro_cxx_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.base_cxx_network.html">pynucastro.networks.base_cxx_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.fortran_network.html">pynucastro.networks.fortran_network module</a></li>
@@ -291,7 +293,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.nse_network.html">pynucastro.networks.nse_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.python_network.html">pynucastro.networks.python_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.rate_collection.html">pynucastro.networks.rate_collection module</a></li>
-<li class="toctree-l4 current active"><a class="current reference internal" href="#">pynucastro.networks.simple_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.simple_cxx_network.html">pynucastro.networks.simple_cxx_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.sympy_network_support.html">pynucastro.networks.sympy_network_support module</a></li>
 </ul>
 </details></li>
@@ -418,7 +420,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/pynucastro.networks.simple_cxx_network.rst?plain=1" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/temperature-evolution.ipynb?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -435,7 +437,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/pynucastro.networks.simple_cxx_network.rst" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/temperature-evolution.ipynb" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -452,7 +454,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fpynucastro.networks.simple_cxx_network.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Ftemperature-evolution.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -482,7 +484,7 @@
       
       
       
-      <li><a href="_sources/pynucastro.networks.simple_cxx_network.rst" target="_blank"
+      <li><a href="_sources/temperature-evolution.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -492,7 +494,7 @@
 <span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="btn__text-container">.rst</span>
+<span class="btn__text-container">.ipynb</span>
 </a>
 </li>
       
@@ -566,7 +568,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>pynucastro.networks.simple_cxx_network module</h1>
+    <h1>Integrating Networks with Temperature Evolution</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -576,7 +578,8 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork"><code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#no-temperature-evolution">No temperature evolution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evolving-temperature">Evolving temperature</a></li>
 </ul>
             </nav>
         </div>
@@ -588,16 +591,235 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-pynucastro.networks.simple_cxx_network">
-<span id="pynucastro-networks-simple-cxx-network-module"></span><h1>pynucastro.networks.simple_cxx_network module<a class="headerlink" href="#module-pynucastro.networks.simple_cxx_network" title="Link to this heading">#</a></h1>
-<p>A simple C++ reaction network for integrating into other C++ codes</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="pynucastro.networks.simple_cxx_network.SimpleCxxNetwork">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pynucastro.networks.simple_cxx_network.</span></span><span class="sig-name descname"><span class="pre">SimpleCxxNetwork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/simple_cxx_network.html#SimpleCxxNetwork"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="pynucastro.networks.base_cxx_network.html#pynucastro.networks.base_cxx_network.BaseCxxNetwork" title="pynucastro.networks.base_cxx_network.BaseCxxNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseCxxNetwork</span></code></a></p>
-<p>A basic C++ network.</p>
-</dd></dl>
+  <section class="tex2jax_ignore mathjax_ignore" id="integrating-networks-with-temperature-evolution">
+<h1>Integrating Networks with Temperature Evolution<a class="headerlink" href="#integrating-networks-with-temperature-evolution" title="Link to this heading">#</a></h1>
+<p>So far, when integrating a reaction network in python, we’ve been solving</p>
+<div class="math notranslate nohighlight">
+\[\frac{d{\bf Y}}{dt} = {\bf f}({\bf Y})\]</div>
+<p>where <span class="math notranslate nohighlight">\({\bf f}({\bf Y})\)</span> is provided by the <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a> <code class="docutils literal notranslate"><span class="pre">rhs()</span></code> function that is generated by <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.write_network" title="pynucastro.networks.rate_collection.RateCollection.write_network"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write_network</span></code></a>.</p>
+<p>Now we want to instead solve the system:</p>
+<div class="math notranslate nohighlight">
+\[\frac{d{\bf Y}}{dt} = {\bf f}(T, {\bf Y})\]</div>
+<div class="math notranslate nohighlight">
+\[\frac{dT}{dt} = \frac{\epsilon(T, {\bf Y})}{c_x}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\epsilon\)</span> is the specific energy generation rate from the network and <span class="math notranslate nohighlight">\(c_x\)</span> is a specific heat (usually volume or pressure, depending on the application).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">rhs</span></code> and <code class="docutils literal notranslate"><span class="pre">jacobian</span></code> functions produced by <code class="docutils literal notranslate"><span class="pre">write_network</span></code> do not include temperature evolution, so we will need to wrap the <code class="docutils literal notranslate"><span class="pre">rhs</span></code> function and have the integrator approximate the Jacobian via differencing.</p>
+</div>
+<p>Let’s start with a simple He-burning network.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">network_helper</span><span class="p">([</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;n13&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>warning: C12 was not able to be linked in TabularLibrary
+warning: He4 was not able to be linked in TabularLibrary
+warning: p was not able to be linked in TabularLibrary
+warning: O16 was not able to be linked in TabularLibrary
+warning: N13 was not able to be linked in TabularLibrary
+warning: Ne20 was not able to be linked in TabularLibrary
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/c93549aa8d58ac0badfd954b39fc4cabad41541f734b03c0eb9e4e398ca02b30.png" src="_images/c93549aa8d58ac0badfd954b39fc4cabad41541f734b03c0eb9e4e398ca02b30.png" />
+</div>
+</div>
+<section id="no-temperature-evolution">
+<h2>No temperature evolution<a class="headerlink" href="#no-temperature-evolution" title="Link to this heading">#</a></h2>
+<p>First we’ll integrate without evolving the temperature.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_ivp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e5</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mf">2.e8</span>
 
+<span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+<span class="n">Y0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e7</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_nbval-ignore-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;henet.py&quot;</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">henet</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:117: UserWarning: C12 partition function is not supported by tables: set pf = 1.0 by default
+  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
+/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:117: UserWarning: N13 partition function is not supported by tables: set pf = 1.0 by default
+  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">henet</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">henet</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span>
+                <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">henet</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">henet</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">henet</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;t (s)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/d1123197b9f381b4da33042577d10b6f6400fd0a3120b90acda2ac00c6782ce4.png" src="_images/d1123197b9f381b4da33042577d10b6f6400fd0a3120b90acda2ac00c6782ce4.png" />
+</div>
+</div>
+<p>We see it takes about <span class="math notranslate nohighlight">\(10^6\)</span> s for the He mass fraction to start to deplete significantly.</p>
+</section>
+<section id="evolving-temperature">
+<h2>Evolving temperature<a class="headerlink" href="#evolving-temperature" title="Link to this heading">#</a></h2>
+<p>We’ll call our vector of unknowns <span class="math notranslate nohighlight">\(\xi = ({\bf Y}, T)\)</span>.</p>
+<p>Now we’ll write our wrapper that computes <span class="math notranslate nohighlight">\(d\xi/dt\)</span>, leveraging the network module we created with {\tt write_network}.  In fact, we’ll pass that module into <code class="docutils literal notranslate"><span class="pre">rhs_new</span></code> as an argument, so we can easily use what’s needed from it.</p>
+<p>Inside this function, we’ll call the EOS each time to get the updated specific heat.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">rhs_new</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">pynet</span><span class="p">,</span> <span class="n">rho</span><span class="p">):</span>
+
+    <span class="c1"># unpack the incoming xi</span>
+    <span class="n">nspec</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">xi</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">nspec</span><span class="p">]</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">xi</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="n">dxidt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+
+    <span class="c1"># first get the dYdt from our network module</span>
+    <span class="n">dxidt</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">nspec</span><span class="p">]</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">rhs</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+
+    <span class="c1"># now get the energy generation rate using this dY/dt</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">energy_release</span><span class="p">(</span><span class="n">dxidt</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">nspec</span><span class="p">])</span>
+
+    <span class="c1"># use the EOS to get the specific heat</span>
+    <span class="n">eos</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">StellarEOS</span><span class="p">()</span>
+    <span class="n">comp</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">to_composition</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">eos</span><span class="o">.</span><span class="n">pe_state</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+
+    <span class="c1"># and finally compute dT/dt</span>
+    <span class="n">dxidt</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">eps</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">c_v</span>
+
+    <span class="k">return</span> <span class="n">dxidt</span>
+    
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we’ll integrate this new system.  We need to pass in both the network module and density are <code class="docutils literal notranslate"><span class="pre">args</span></code>, but
+we no longer pass temperature this way, since it is now one of the dependent variables in the ODE system.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xi0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Y0</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+<span class="n">sol2</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">rhs_new</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">xi0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span>
+                <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">henet</span><span class="p">,</span> <span class="n">rho</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we can visualize.  First the composition.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">henet</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol2</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol2</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">henet</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">henet</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;t (s)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/2306baff76db6389251351599c736f79d90a31fee265f07975b2e571f2a92d9f.png" src="_images/2306baff76db6389251351599c736f79d90a31fee265f07975b2e571f2a92d9f.png" />
+</div>
+</div>
+<p>This looks dramatically different than the fixed-temperature case.  This is not too surprising, since at these temperatures, the 3-<span class="math notranslate nohighlight">\(\alpha\)</span> rate is very temperature sensitive, so as the temperature increases due to the energy release from burning, the He burning rate increases dramatically.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">semilogx</span><span class="p">(</span><span class="n">sol2</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol2</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,:])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;t (s)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;T (K)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/e70210215727ef3b6f85bc9a90eb828a4c5a160aa3c347115cc4905e9a35471b.png" src="_images/e70210215727ef3b6f85bc9a90eb828a4c5a160aa3c347115cc4905e9a35471b.png" />
+</div>
+</div>
+<p>We see that the temperature increased from <span class="math notranslate nohighlight">\(2\times 10^8\)</span> K to over <span class="math notranslate nohighlight">\(1.6\times 10^9\)</span> K.</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>In a real star, this energy release would drive a hydrodynamic flow which,
+depending on the timescale of the energy release vs. sound waves, could
+drive an expansive flow and quench some of this heating.  To really capture this, a full hydrodynamics calculation is needed.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>It is straightforward to include thermal neutrino loses in the temperature evolution equation as well,
+using the <a class="reference internal" href="pynucastro.neutrino_cooling.sneut5_mod.html#pynucastro.neutrino_cooling.sneut5_mod.sneut5" title="pynucastro.neutrino_cooling.sneut5_mod.sneut5"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sneut5</span></code></a> method.</p>
+</div>
+</section>
 </section>
 
 
@@ -612,20 +834,20 @@ document.write(`
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="pynucastro.networks.rate_collection.html"
+       href="stellar-eos.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">pynucastro.networks.rate_collection module</p>
+        <p class="prev-next-title">Stellar EOS</p>
       </div>
     </a>
     <a class="right-next"
-       href="pynucastro.networks.sympy_network_support.html"
+       href="neutrino-cooling.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pynucastro.networks.sympy_network_support module</p>
+        <p class="prev-next-title">Neutrino Cooling</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -645,7 +867,8 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork"><code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#no-temperature-evolution">No temperature evolution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evolving-temperature">Evolving temperature</a></li>
 </ul>
   </nav></div>
 

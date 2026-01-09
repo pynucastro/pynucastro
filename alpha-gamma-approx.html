@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Approximating alpha-capture &#8212; pynucastro 2.9.0 documentation</title>
+    <title>Approximating alpha-capture &#8212; pynucastro 2.9.0.post1+g6a4257985 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=b9f6c71c"></script>
+    <script src="_static/documentation_options.js?v=257eae8a"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -232,6 +232,7 @@
 <li class="toctree-l1"><a class="reference internal" href="fermi-integrals.html">Fermi-Dirac Integrals</a></li>
 <li class="toctree-l1"><a class="reference internal" href="electron-eos.html">The Electron-Positron EOS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stellar-eos.html">Stellar EOS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="temperature-evolution.html">Integrating Networks with Temperature Evolution</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
 <ul class="nav bd-sidenav">
@@ -685,7 +686,7 @@ combining them into a single effective rate by assuming that the protons and nuc
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/4ba7dae5c67005e3842f3c36eaf162f8ab284554f7322f0a228ba0d7e61e708f.png" src="_images/4ba7dae5c67005e3842f3c36eaf162f8ab284554f7322f0a228ba0d7e61e708f.png" />
+<img alt="_images/8b7553d1b751dab49596dc011f238f8be2cf843d53e2d7c3d0baa2906b7db166.png" src="_images/8b7553d1b751dab49596dc011f238f8be2cf843d53e2d7c3d0baa2906b7db166.png" />
 </div>
 </div>
 </section>
@@ -936,7 +937,7 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/70ed3b7c798074ef0b11d7305d29d98678e0b3ada2bdf097f7dca0fd32fef11f.png" src="_images/70ed3b7c798074ef0b11d7305d29d98678e0b3ada2bdf097f7dca0fd32fef11f.png" />
+<img alt="_images/ea1d2a13626e9f153418bdd026e940d6f29b05491ae57d875233a648c5b6beab.png" src="_images/ea1d2a13626e9f153418bdd026e940d6f29b05491ae57d875233a648c5b6beab.png" />
 </div>
 </div>
 <p>Here the dotted line is the approximate network.  We see that the results agree well.</p>
@@ -1027,7 +1028,7 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/0ceb35428507305a9c368eb0eafffb23929c5fa1cdca36ea7c5aa846475b799b.png" src="_images/0ceb35428507305a9c368eb0eafffb23929c5fa1cdca36ea7c5aa846475b799b.png" />
+<img alt="_images/7b257b303f548098e1a524b9e816ec672fe860ffbe7723feab26c2ebd0c7130e.png" src="_images/7b257b303f548098e1a524b9e816ec672fe860ffbe7723feab26c2ebd0c7130e.png" />
 </div>
 </div>
 <p>Here we see all 3 networks.  The full network (7 nuclei) is the solid lines.  The approximate version of that is the dotted line.  We see that they track reasonably well, especially when the abundance is high.  The dashed line is the version of the network that has the same 4 nuclei as the approximate network, but with out approximating the <span class="math notranslate nohighlight">\((\alpha, p)(p,\gamma)\)</span> links, so we see that the <span class="math notranslate nohighlight">\({}^{24}\mathrm{Mg}\)</span> takes longer to burn.</p>
