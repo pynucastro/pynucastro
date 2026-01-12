@@ -56,7 +56,7 @@ class TempTableInterpolator:
     def interpolate(self, T0):
         """Given T0, the temperature where we want the rate, do
         cubic interpolation to find the value of the rate in the
-        table
+        table. Note this returns log10(rate).
 
         Parameters
         ----------
@@ -104,7 +104,7 @@ class TempTableInterpolator:
 
             r += fp[m] * l
 
-        return 10.0**r
+        return r
 
 
 class TemperatureTabularRate(Rate):
@@ -176,7 +176,8 @@ class TemperatureTabularRate(Rate):
         fstring += f"    # {self.rid}\n"
         fstring += f"    {self.fname}_interpolator = TempTableInterpolator(*{self.fname}_info)\n"
 
-        fstring += f"    r = {self.fname}_interpolator.interpolate(T)\n"
+        fstring += f"    log10r = {self.fname}_interpolator.interpolate(T)\n"
+        fstring += f"    r = 10**r\n"
         fstring += f"    rate_eval.{self.fname} = r\n\n"
 
         return fstring
@@ -257,7 +258,8 @@ class TemperatureTabularRate(Rate):
 
         """
 
-        r = self.interpolator.interpolate(T)
+        log10r = self.interpolator.interpolate(T)
+        r = 10**log10r
 
         scor = 1.0
         if screen_func is not None:
