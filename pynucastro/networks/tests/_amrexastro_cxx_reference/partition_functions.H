@@ -81,7 +81,7 @@ namespace part_fun {
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void get_partition_function(const int inuc,
                             [[maybe_unused]] const tf_t& tfactors,
-                            part_fun::pf_cache_t& pf_cache,
+                            const part_fun::pf_cache_t& pf_cache,
                             amrex::Real& pf, amrex::Real& dpf_dT) {
 
     pf = 1.0_rt;
