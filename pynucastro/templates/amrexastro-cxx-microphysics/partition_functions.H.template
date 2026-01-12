@@ -1,6 +1,8 @@
 #ifndef PARTITION_FUNCTIONS_H
 #define PARTITION_FUNCTIONS_H
 
+#include <numbers>
+
 #include <AMReX_REAL.H>
 #include <AMReX_Array.H>
 #include <AMReX_Math.H>
@@ -53,7 +55,7 @@ namespace part_fun {
 
             // find the derivative (with respect to T, not T9)
 
-            amrex::Real dpf_dT9 = pf * M_LN10 * slope;
+            amrex::Real dpf_dT9 = pf * std::numbers::ln10_v<amrex::Real> * slope;
             dpf_dT = dpf_dT9 * 1.e-9_rt;
 
         } else {
