@@ -297,7 +297,7 @@ class DerivedRate(Rate):
                 "[[maybe_unused]] part_fun::pf_cache_t& pf_cache", *extra_args]
 
         fstring = ""
-        fstring += "template <typename T>\n"
+        fstring += "template <int do_T_derivatives, typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
@@ -341,21 +341,21 @@ class DerivedRate(Rate):
             fstring += f"                                               {self.source_rate.fname}_data::log_rate);\n\n"
 
             fstring += "    // Apply Equilibrium Ratio\n"
-            fstring += f"    constexpr {dtype} Q_kBT9 = {self.Q} * 1.0e-9_rt / C::k_MeV;"
+            fstring += f"    constexpr {dtype} Q_kBT9 = {self.Q} * 1.0e-9_rt / C::k_MeV;\n"
             fstring += f"    {dtype} Q_kBT = Q_kBT9 * tfactors.T9i;\n"
             fstring += f"    _rate += {np.log10(self.ratio_factor)} + Q_kBT * std::numbers::ln10_v<amrex::Real>;\n"
             if self.net_stoich != 0:
-                fstring += f"    _rate += {1.5 * self.net_stoich} * (log_t9 + 9.0_rt);\n"
+                fstring += f"    _rate += {1.5 * self.net_stoich} * (log_t9 + 9.0_rt);\n\n"
 
             fstring += "    // avoid underflows by zeroing rates in [0.0, 1.e-100]\n"
             fstring += "    _rate = std::max(_rate, -100.0);\n"
-            fstring += "    rate = amrex::Math::exp10(_rate);\n"
+            fstring += "    rate = amrex::Math::exp10(_rate);\n\n"
 
             fstring += "    // we found dlog10(rate)/dlog10(T9)\n"
             fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
             fstring += f"        _drate_dT += {1.5 * self.net_stoich} - Q_kBT;\n"
             fstring += "        drate_dT = rate * tfactors.T9 * _drate_dT * 1.e-9_rt;\n"
-
+            fstring += "    }\n\n"
         else:
             fstring += "    // Evaluate the equilibrium ratio without partition function\n"
             fstring += f"    {dtype} ratio = {self.ratio_factor};\n"
@@ -382,9 +382,9 @@ class DerivedRate(Rate):
         if self.use_pf:
             self._warn_about_missing_pf_tables()
 
-            fstring += "    // Now apply partition function effects\n"
+            fstring += "    // Now apply partition function effects\n\n"
             for nuc in set(self.source_rate.reactants + self.source_rate.products):
-                fstring += f"    {dtype} {nuc}_pf, d{nuc}_pf_dT;\n"
+                fstring += f"    {dtype} {nuc}_pf, d{nuc}_pf_dT;\n\n"
 
                 if nuc.partition_function:
                     fstring += f"    // interpolating {nuc} partition function\n"
