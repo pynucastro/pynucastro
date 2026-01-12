@@ -177,8 +177,7 @@ class TemperatureTabularRate(Rate):
         fstring += f"    {self.fname}_interpolator = TempTableInterpolator(*{self.fname}_info)\n"
 
         fstring += f"    log10r = {self.fname}_interpolator.interpolate(T)\n"
-        fstring += f"    r = 10**r\n"
-        fstring += f"    rate_eval.{self.fname} = r\n\n"
+        fstring += f"    rate_eval.{self.fname} = 10**log10r\n\n"
 
         return fstring
 
@@ -226,7 +225,7 @@ class TemperatureTabularRate(Rate):
         fstring += "    rate = amrex::Math::exp10(_rate);\n"
         fstring += "    // we found dlog10(rate)/dlog10(T9)\n"
         fstring += "    if constexpr (do_T_derivatives) {\n"
-        fstring += "        drate_dT = (rate / tfactors.T9) * _drate_dT * 1.e-9;\n"
+        fstring += "        drate_dT = rate * tfactors.T9i * _drate_dT * 1.e-9_rt;\n"
         fstring += "    }\n"
 
         if not leave_open:
