@@ -349,11 +349,11 @@ class DerivedRate(Rate):
 
             fstring += "    // avoid underflows by zeroing rates in [0.0, 1.e-100]\n"
             fstring += "    _rate = std::max(_rate, -100.0);\n"
-            fstring += "    rate = std::exp10(_rate);\n"
+            fstring += "    rate = amrex::Math::exp10(_rate);\n"
 
             fstring += "    // we found dlog10(rate)/dlog10(T9)\n"
             fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
-            fstring += f"        _drate_dT += {1.5 * self.net_stoich} - Q_kBT\n"
+            fstring += f"        _drate_dT += {1.5 * self.net_stoich} - Q_kBT;\n"
             fstring += "        drate_dT = rate * tfactors.T9 * _drate_dT * 1.e-9_rt;\n"
 
         else:
