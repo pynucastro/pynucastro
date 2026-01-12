@@ -6,6 +6,8 @@ import pytest
 import pynucastro as pyna
 
 
+@pytest.mark.skipif(sys.platform == "darwin" or sys.platform.startswith("win"),
+                    reason="we get roundoff diffs on Macs and Windows")
 class TestAmrexAstroCxxNetwork:
     @pytest.fixture(scope="class")
     def fn(self, reaclib_library):
