@@ -7,6 +7,8 @@ import pynucastro as pyna
 from pynucastro.rates.alternate_rates import IliadisO16pgF17
 
 
+@pytest.mark.skipif(sys.platform == "darwin" or sys.platform.startswith("win"),
+                    reason="we get roundoff diffs on Macs and Windows")
 class TestAmrexAstroCxxNetwork:
     @pytest.fixture(scope="class")
     def fn(self):
