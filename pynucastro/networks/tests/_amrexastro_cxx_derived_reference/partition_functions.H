@@ -1,6 +1,8 @@
 #ifndef PARTITION_FUNCTIONS_H
 #define PARTITION_FUNCTIONS_H
 
+#include <numbers>
+
 #include <AMReX_REAL.H>
 #include <AMReX_Array.H>
 #include <AMReX_Math.H>
@@ -73,7 +75,7 @@ namespace part_fun {
 
             // find the derivative (with respect to T, not T9)
 
-            amrex::Real dpf_dT9 = pf * M_LN10 * slope;
+            amrex::Real dpf_dT9 = pf * std::numbers::ln10_v<amrex::Real> * slope;
             dpf_dT = dpf_dT9 * 1.e-9_rt;
 
         } else {
@@ -104,7 +106,7 @@ namespace part_fun {
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void get_partition_function(const int inuc,
                             [[maybe_unused]] const tf_t& tfactors,
-                            part_fun::pf_cache_t& pf_cache,
+                            const part_fun::pf_cache_t& pf_cache,
                             amrex::Real& pf, amrex::Real& dpf_dT) {
 
     pf = 1.0_rt;
