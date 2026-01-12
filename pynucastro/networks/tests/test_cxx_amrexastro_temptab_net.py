@@ -9,7 +9,7 @@ from pynucastro.rates.alternate_rates import IliadisO16pgF17
 
 class TestAmrexAstroCxxNetwork:
     @pytest.fixture(scope="class")
-    def fn(self, reaclib_library):
+    def fn(self):
 
         iliadis = IliadisO16pgF17()
         iliadis_derived = pyna.DerivedRate(iliadis, use_pf=True)
