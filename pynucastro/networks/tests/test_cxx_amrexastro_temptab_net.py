@@ -1,5 +1,6 @@
 # unit tests for rates
 import shutil
+import sys
 
 import pytest
 
