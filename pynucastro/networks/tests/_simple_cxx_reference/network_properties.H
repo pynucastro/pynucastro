@@ -4,7 +4,7 @@
 #include <string>
 #include <amrex_bridge.H>
 
-constexpr int NumSpec = 8;
+constexpr int NumSpec = 9;
 
 constexpr Real aion[NumSpec] = {
        1.0, // 0
@@ -15,6 +15,7 @@ constexpr Real aion[NumSpec] = {
       20.0, // 5
       23.0, // 6
       23.0, // 7
+      24.0, // 8
  };
 
 constexpr Real aion_inv[NumSpec] = {
@@ -26,6 +27,7 @@ constexpr Real aion_inv[NumSpec] = {
     1.0/  20.0, // 5
     1.0/  23.0, // 6
     1.0/  23.0, // 7
+    1.0/  24.0, // 8
  };
 
 constexpr Real zion[NumSpec] = {
@@ -37,6 +39,7 @@ constexpr Real zion[NumSpec] = {
       10.0, // 5
       11.0, // 6
       12.0, // 7
+      12.0, // 8
  };
 
 static const std::vector<std::string> spec_names = {
@@ -48,6 +51,7 @@ static const std::vector<std::string> spec_names = {
     "Ne20", // 5
     "Na23", // 6
     "Mg23", // 7
+    "Mg24", // 8
  };
 
 namespace Species {
@@ -60,6 +64,7 @@ namespace Species {
     Ne20,
     Na23,
     Mg23,
+    Mg24,
   };
 }
 

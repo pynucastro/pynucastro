@@ -23,6 +23,7 @@ void actual_network_init()
     ebind_per_nucleon(Ne20) = 8.032241192000038_rt;
     ebind_per_nucleon(Na23) = 8.111493582782714_rt;
     ebind_per_nucleon(Mg23) = 7.90112268991304_rt;
+    ebind_per_nucleon(Mg24) = 8.26071033199984_rt;
 
     // convert to binding energies per nucleus in MeV
     for (int i = 1; i <= NumSpec; ++i) {
@@ -38,5 +39,6 @@ void actual_network_init()
     mion(Ne20) = 3.3198227947612416e-23_rt;
     mion(Na23) = 3.817541002484691e-23_rt;
     mion(Mg23) = 3.8182640828719474e-23_rt;
+    mion(Mg24) = 3.9828098739467446e-23_rt;
 
 }

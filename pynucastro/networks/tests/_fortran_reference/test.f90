@@ -9,10 +9,33 @@ program test
   double precision :: Jac(nspec, nspec)
   double precision :: enuc
 
-  integer :: i, j
+  integer :: i, j, nargs, ios
+  character(len=128) :: arg
 
+  ! we can do
+  !   ./test rho T
+  ! to pass in the density and temperature.
+  ! composition will always be uniform.
+
+  ! defaults
   rho = 2.e8
   T = 1.e9
+
+  nargs = command_argument_count()
+  if (nargs == 2) then
+     call get_command_argument(1, arg)
+     read(arg, *, iostat=ios) rho
+     if (ios /= 0) stop "Error: invalid rho"
+
+     call get_command_argument(2, arg)
+     read(arg, *, iostat=ios) T
+     if (ios /= 0) stop "Error: invalid T"
+  else if (nargs /= 0) then
+     print *, "Usage: ./test <rho> <T>"
+     stop 1
+  end if
+
+  print *, "(rho, T) = ", rho, " ", T
 
   X(:) = 1.0 / nspec
   dYdt(:) = 0.0
