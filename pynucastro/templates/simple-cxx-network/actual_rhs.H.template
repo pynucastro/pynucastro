@@ -7,6 +7,7 @@
 #include <burn_type.H>
 #include <screen.H>
 #include <reaclib_rates.H>
+#include <derived_rates.H>
 
 using namespace Species;
 using namespace Rates;
