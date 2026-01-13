@@ -141,8 +141,6 @@ class DerivedRate(Rate):
 
         """
 
-        # evaluate the source rate without screening
-
         if self.derived_sets is not None:
             r = 0.0
             tf = Tfactors(T)
