@@ -4,20 +4,29 @@ import shutil
 import pytest
 
 from pynucastro import networks
+from pynucastro.rates import DerivedRate
 
 
 class TestFortranNetwork:
     @pytest.fixture(scope="class")
     def fn(self, reaclib_library):
-        rate_names = ["c12(c12,a)ne20",
-                      "c12(c12,n)mg23",
-                      "c12(c12,p)na23",
-                      "c12(a,g)o16",
-                      "ne20(a,g)mg24",
-                      "mg23(n,g)mg24",
-                      "n(,)p"]
-        rates = reaclib_library.get_rate_by_name(rate_names)
+        reaclib_rate_names = ["c12(c12,a)ne20",
+                              "c12(c12,n)mg23",
+                              "c12(c12,p)na23",
+                              "c12(a,g)o16",
+                              "ne20(a,g)mg24",
+                              "mg23(n,g)mg24",
+                              "n(,)p"]
+        reaclib_rates = reaclib_library.get_rate_by_name(reaclib_rate_names)
 
+        rev_rates = []
+        for r in reaclib_rates:
+            if not (r.derived_from_inverse or r.weak):
+                # Don't use partition function as its not supported for now
+                rev_rates.append(DerivedRate(source_rate=r, use_pf=False,
+                                             use_unreliable_spins=False))
+
+        rates = reaclib_rates + rev_rates
         fn = networks.FortranNetwork(rates=rates)
         return fn
 
