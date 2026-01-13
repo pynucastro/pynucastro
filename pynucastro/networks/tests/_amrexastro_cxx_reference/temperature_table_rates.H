@@ -3,8 +3,6 @@
 
 #include <AMReX_Array.H>
 
-#include <numbers>
-
 #include <tfactors.H>
 #include <actual_network.H>
 
@@ -15,8 +13,6 @@ using namespace Rates;
 
 
 namespace temp_tabular {
-
-    constexpr amrex::Real ln10_inv = 1.0_rt / std::numbers::ln10_v<amrex::Real>;
 
 
     template <int do_T_derivatives, typename T>
