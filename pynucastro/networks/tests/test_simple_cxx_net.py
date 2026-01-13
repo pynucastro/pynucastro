@@ -14,8 +14,6 @@ class TestSimpleCxxNetwork:
                               "c12(c12,n)mg23",
                               "c12(c12,p)na23",
                               "c12(a,g)o16",
-                              "ne20(a,g)mg24",
-                              "mg23(n,g)mg24",
                               "n(,)p"]
         reaclib_rates = reaclib_library.get_rate_by_name(reaclib_rate_names)
 
