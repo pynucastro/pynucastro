@@ -77,9 +77,10 @@ class DerivedRate(Rate):
         self.net_stoich = len(self.source_rate.reactants) - len(self.source_rate.products)
         if self.net_stoich != 0:
             F *= constants.m_u_C18**(2.5 * self.net_stoich)
-            F *= (constants.k / (2.0 * np.pi * constants.hbar**2))**(1.5 * self.net_stoich)
+            F *= (constants.k * 1.0e9 / (2.0 * np.pi * constants.hbar**2))**(1.5 * self.net_stoich)
 
         self.ratio_factor = F
+        self.Q_kBGK = self.Q * 1.0e-9 / constants.k_MeV
 
         super().__init__(reactants=self.source_rate.products,
                          products=self.source_rate.reactants,
@@ -103,8 +104,8 @@ class DerivedRate(Rate):
             self.derived_sets = []
             for source_set in source_sets:
                 a_derived = source_set.a.copy()
-                a_derived[0] += np.log(self.ratio_factor) + 13.5 * self.net_stoich * np.log(10)
-                a_derived[1] += self.Q / (1.0e9 * constants.k_MeV)
+                a_derived[0] += np.log(self.ratio_factor)
+                a_derived[1] += self.Q_kBGK
                 a_derived[6] += 1.5 * self.net_stoich
                 self.derived_sets.append(SingleSet(a_derived, source_set.labelprops))
 
@@ -141,27 +142,30 @@ class DerivedRate(Rate):
 
         """
 
+        r = 0.0
+        tf = Tfactors(T)
+
         if self.derived_sets is not None:
-            r = 0.0
-            tf = Tfactors(T)
             for s in self.derived_sets:
                 f = s.f()
                 r += f(tf)
 
         elif isinstance(self.source_rate, TemperatureTabularRate):
-            log10r = self.source_rate.interpolator.interpolate(T)
+            log_r = self.source_rate.interpolator.interpolate(T)
 
             # Apply equilibrium ratio terms
-            log10r += np.log10(self.ratio_factor) + 1.5 * self.net_stoich * np.log10(T)
-            log10r += np.log10(math.e) * self.Q / (constants.k_MeV * T)
-            r = 10**log10r
+            log_r += np.log(self.ratio_factor) + self.Q_kBGK * tf.T9i
+            log_r += 1.5 * self.net_stoich * tf.lnT9
+            r += np.exp(log_r)
 
         else:
-            r = self.source_rate.eval(T=T, rho=rho, comp=comp, screen_func=None)
+            r += self.source_rate.eval(T=T, rho=rho, comp=comp, screen_func=None)
 
             # Apply equilibrium ratio terms
-            r *= self.ratio_factor * T**(1.5 * self.net_stoich)
-            r *= np.exp(self.Q / (constants.k_MeV * T))
+            r *= self.ratio_factor
+            if self.net_stoich != 0:
+                r *= tf.T9**(1.5 * self.net_stoich)
+            r *= np.exp(self.Q_kBGK * tf.T9i)
 
         z_r = 1.0
         z_p = 1.0
@@ -207,6 +211,7 @@ class DerivedRate(Rate):
 
         if self.derived_sets is not None:
             fstring += "    rate = 0.0\n\n"
+
             for s in self.derived_sets:
                 fstring += f"    # {s.labelprops[0:5]}\n"
                 set_string = s.set_string_py(prefix="rate", plus_equal=True)
@@ -217,19 +222,19 @@ class DerivedRate(Rate):
 
         elif isinstance(self.source_rate, TemperatureTabularRate):
             fstring += f"    {self.source_rate.fname}_interpolator = TempTableInterpolator(*{self.source_rate.fname}_info)\n"
-            fstring += f"    log10r = {self.source_rate.fname}_interpolator.interpolate(tf.T9 * 1.0e9)\n\n"
+            fstring += f"    log_r = {self.source_rate.fname}_interpolator.interpolate(tf.T9 * 1.0e9)\n\n"
+
             fstring += "    # Apply equilibrium ratio\n"
-            fstring += f"    log10r += {np.log10(self.ratio_factor)} + {np.log10(math.e) * self.Q / constants.k_MeV} / T\n"
+            fstring += f"    log_r += {np.log(self.ratio_factor)} + {self.Q_kBGK} * tf.T9i\n"
             if self.net_stoich != 0:
-                fstring += f"    log10r += {1.5 * self.net_stoich} * (np.log10(tf.T9) + 9.0)\n"
-            fstring += f"    rate_eval.{self.fname} = 10**log10r\n"
+                fstring += f"    log_r += {1.5 * self.net_stoich} * tf.lnT9\n"
+            fstring += f"    rate_eval.{self.fname} = np.exp(log_r)\n"
 
         else:
             fstring += "    # Evaluate the equilibrium ratio\n"
-            fstring += f"    ratio = {self.ratio_factor}\n"
+            fstring += f"    ratio = {self.ratio_factor} * np.exp({self.Q_kBGK} * tf.T9i)\n"
             if self.net_stoich != 0:
-                fstring += f"    ratio += (tf.T9 * 1.0e9)**(1.5 * {self.net_stoich})\n"
-            fstring += f"    ratio *= np.exp({self.Q * 1.0e9 / constants.k_MeV} / tf.T9)\n"
+                fstring += f"    ratio *= tf.T9**({1.5 * self.net_stoich})\n"
             fstring += f"    rate_eval.{self.fname} = rate_eval.{self.source_rate.fname} * ratio\n"
 
         if self.use_pf:
@@ -332,36 +337,35 @@ class DerivedRate(Rate):
                 fstring += "    }\n\n"
 
         elif isinstance(self.source_rate, TemperatureTabularRate):
-            fstring += f"    {dtype} log_t9 = tfactors.lnT9 * {np.log10(math.e)};\n"
             fstring += "    auto [_rate, _drate_dT] = interp_net::cubic_interp_uneven<do_T_derivatives>(\n"
-            fstring += "                                               log_t9,\n"
+            fstring += "                                               tfactors.lnT9,\n"
             fstring += f"                                               {self.source_rate.fname}_data::log_t9,\n"
             fstring += f"                                               {self.source_rate.fname}_data::log_rate);\n\n"
 
             fstring += "    // Apply Equilibrium Ratio\n"
-            fstring += f"    constexpr {dtype} Q_kBT9 = {self.Q} * 1.0e-9_rt / C::k_MeV;\n"
-            fstring += f"    {dtype} Q_kBT = Q_kBT9 * tfactors.T9i;\n"
-            fstring += f"    _rate += {np.log10(self.ratio_factor)} + Q_kBT * std::numbers::ln10_v<amrex::Real>;\n"
+            fstring += f"    constexpr {dtype} Q_kBGK = {self.Q} * 1.0e-9_rt / C::k_MeV;\n"
+            fstring += f"    {dtype} Q_kBT = Q_kBGK * tfactors.T9i;\n"
+            fstring += f"    _rate += {np.log(self.ratio_factor)} + Q_kBT;\n"
             if self.net_stoich != 0:
-                fstring += f"    _rate += {1.5 * self.net_stoich} * (log_t9 + 9.0_rt);\n\n"
+                fstring += f"    _rate += {1.5 * self.net_stoich} * tfactors.lnT9;\n\n"
 
             fstring += "    // avoid underflows by zeroing rates in [0.0, 1.e-100]\n"
-            fstring += "    _rate = std::max(_rate, -100.0);\n"
-            fstring += "    rate = amrex::Math::exp10(_rate);\n\n"
+            fstring += "    _rate = std::max(_rate, -230.0);\n"
+            fstring += "    rate = std::exp(_rate);\n\n"
 
-            fstring += "    // we found dlog10(rate)/dlog10(T9)\n"
+            fstring += "    // we found dlog(rate)/dlog(T9)\n"
             fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
             fstring += f"        _drate_dT += {1.5 * self.net_stoich} - Q_kBT;\n"
-            fstring += "        drate_dT = rate * tfactors.T9 * _drate_dT * 1.e-9_rt;\n"
+            fstring += "        drate_dT = rate * tfactors.T9i * _drate_dT * 1.0e-9_rt;\n"
             fstring += "    }\n\n"
         else:
             fstring += "    // Evaluate the equilibrium ratio without partition function\n"
             fstring += f"    {dtype} ratio = {self.ratio_factor};\n"
-            fstring += f"    constexpr {dtype} Q_kBT9 = {self.Q} * 1.0e-9_rt / C::k_MeV;"
-            fstring += f"    {dtype} Q_kBT = Q_kBT9 * tfactors.T9i;\n"
+            fstring += f"    constexpr {dtype} Q_kBGK = {self.Q} * 1.0e-9_rt / C::k_MeV;"
+            fstring += f"    {dtype} Q_kBT = Q_kBGK * tfactors.T9i;\n"
             fstring += "    ratio *= std::exp(Q_kBT);\n"
             if self.net_stoich != 0:
-                fstring += f"    ratio *= std::sqrt(amrex::Math::powi<{3 * self.net_stoich}>(tfactors.T9 * 1.0e9_rt));\n\n"
+                fstring += f"    ratio *= std::sqrt(amrex::Math::powi<{3 * self.net_stoich}>(tfactors.T9));\n\n"
 
             fstring += "    // Apply the ratio without partition function\n"
             fstring += "    // Note that screening is not yet applied to the inverse rate\n"
