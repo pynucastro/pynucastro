@@ -28,7 +28,12 @@ namespace Rates
         k_He4_Ne20_to_Mg24_reaclib = 5,
         k_n_Mg23_to_Mg24_reaclib = 6,
         k_n_to_p_reaclib = 7,
-        NumRates = k_n_to_p_reaclib
+        k_He4_Ne20_to_C12_C12_derived = 8,
+        k_p_Na23_to_C12_C12_derived = 9,
+        k_O16_to_He4_C12_derived = 10,
+        k_Mg24_to_He4_Ne20_derived = 11,
+        k_Mg24_to_n_Mg23_derived = 12,
+        NumRates = k_Mg24_to_n_Mg23_derived
     };
 
     // rate names -- note: the rates are 1-based, not zero-based, so we pad
@@ -43,7 +48,12 @@ namespace Rates
         "He4_C12_to_O16_reaclib",  // 4,
         "He4_Ne20_to_Mg24_reaclib",  // 5,
         "n_Mg23_to_Mg24_reaclib",  // 6,
-        "n_to_p_reaclib"  // 7,
+        "n_to_p_reaclib",  // 7,
+        "He4_Ne20_to_C12_C12_derived",  // 8,
+        "p_Na23_to_C12_C12_derived",  // 9,
+        "O16_to_He4_C12_derived",  // 10,
+        "Mg24_to_He4_Ne20_derived",  // 11,
+        "Mg24_to_n_Mg23_derived"  // 12,
     };
 
 }
