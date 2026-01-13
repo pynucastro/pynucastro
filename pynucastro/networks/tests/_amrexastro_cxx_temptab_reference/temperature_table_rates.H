@@ -71,7 +71,7 @@ namespace temp_tabular {
         rate = std::exp(_rate);
         // we found dlog(rate)/dlog(T9)
         if constexpr (do_T_derivatives) {
-            drate_dT = rate * tfactors.T9i * _drate_dT * 1.e-9;
+            drate_dT = rate * tfactors.T9i * _drate_dT * 1.0e-9_rt;
         }
     }
 
