@@ -177,7 +177,7 @@ class TemperatureTabularRate(Rate):
         fstring += f"    {self.fname}_interpolator = TempTableInterpolator(*{self.fname}_info)\n"
 
         fstring += f"    log_r = {self.fname}_interpolator.interpolate(T)\n"
-        fstring += f"    rate_eval.{self.fname} = np.exp(r)\n\n"
+        fstring += f"    rate_eval.{self.fname} = np.exp(log_r)\n\n"
 
         return fstring
 
