@@ -17,7 +17,7 @@ using namespace Rates;
 
 namespace temp_tabular {
 
-    constexpr amrex::Real log10e = std::numbers::log10e_v<amrex::Real>;
+    constexpr amrex::Real ln10_inv = 1.0_rt / std::numbers::ln10_v<amrex::Real>;
 
     <temp_tabular_rate_functions>(1)
 

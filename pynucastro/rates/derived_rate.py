@@ -217,11 +217,11 @@ class DerivedRate(Rate):
 
         elif isinstance(self.source_rate, TemperatureTabularRate):
             fstring += f"    {self.source_rate.fname}_interpolator = TempTableInterpolator(*{self.source_rate.fname}_info)\n"
-            fstring += f"    log10r = {self.source_rate.fname}_interpolator.interpolate(T)\n\n"
+            fstring += f"    log10r = {self.source_rate.fname}_interpolator.interpolate(tf.T9 * 1.0e9)\n\n"
             fstring += "    # Apply equilibrium ratio\n"
             fstring += f"    log10r += {np.log10(self.ratio_factor)} + {np.log10(math.e) * self.Q / constants.k_MeV} / T\n"
             if self.net_stoich != 0:
-                fstring += f"    log10r += {1.5 * self.net_stoich} * np.log10(T)\n"
+                fstring += f"    log10r += {1.5 * self.net_stoich} * (np.log10(tf.T9) + 9.0)\n"
             fstring += f"    rate_eval.{self.fname} = 10**log10r\n"
 
         else:
