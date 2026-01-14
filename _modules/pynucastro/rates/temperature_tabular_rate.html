@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.temperature_tabular_rate &#8212; pynucastro 2.9.0.post5+gc4b6c0fee documentation</title>
+    <title>pynucastro.rates.temperature_tabular_rate &#8212; pynucastro 2.9.0.post6+gaaba73d9b documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=a996dc51"></script>
+    <script src="../../../_static/documentation_options.js?v=49bb2a20"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -523,9 +523,9 @@ document.write(`
 <span class="sd">    ----------</span>
 <span class="sd">    log_temp_points : numpy.ndarray</span>
 <span class="sd">        an array giving the temperature at the points where we</span>
-<span class="sd">        tabulate the rate --- this is log10(T9)</span>
+<span class="sd">        tabulate the rate --- this is log(T9)</span>
 <span class="sd">    log_rate_data : numpy.ndarray</span>
-<span class="sd">        an array giving the tabulated log10(rate) data</span>
+<span class="sd">        an array giving the tabulated log(rate) data</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -542,7 +542,7 @@ document.write(`
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        log_T9_0 : float</span>
-<span class="sd">            temperature (log10(T/1.e9 K)) to interpolate at</span>
+<span class="sd">            temperature (log(T/1.e9 K)) to interpolate at</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -556,7 +556,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Given T0, the temperature where we want the rate, do</span>
 <span class="sd">        cubic interpolation to find the value of the rate in the</span>
-<span class="sd">        table</span>
+<span class="sd">        table. Note this returns log(rate).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -569,8 +569,8 @@ document.write(`
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">T9_0</span> <span class="o">=</span> <span class="n">T0</span> <span class="o">/</span> <span class="mf">1.e9</span>
-        <span class="n">log_T9_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">T9_0</span><span class="p">)</span>
+        <span class="n">T9_0</span> <span class="o">=</span> <span class="n">T0</span> <span class="o">*</span> <span class="mf">1.e-9</span>
+        <span class="n">log_T9_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T9_0</span><span class="p">)</span>
 
         <span class="c1"># we&#39;ll give a little epsilon buffer here to allow for roundoff</span>
         <span class="n">eps</span> <span class="o">=</span> <span class="mf">0.005</span>
@@ -604,7 +604,7 @@ document.write(`
 
             <span class="n">r</span> <span class="o">+=</span> <span class="n">fp</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">*</span> <span class="n">l</span>
 
-        <span class="k">return</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">r</span></div>
+        <span class="k">return</span> <span class="n">r</span></div>
 
 
 
@@ -618,9 +618,9 @@ document.write(`
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    log_t9_data : numpy.ndarray</span>
-<span class="sd">        The temperature (in log10(T / 1.e9 K)) where we tabulate the rate</span>
+<span class="sd">        The temperature (in log(T / 1.e9 K)) where we tabulate the rate</span>
 <span class="sd">    log_rate_data : numpy.ndarray</span>
-<span class="sd">        The tabulated log10(rate) data, N_A &lt;σv&gt;</span>
+<span class="sd">        The tabulated log(rate) data, N_A &lt;σv&gt;</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -645,8 +645,8 @@ document.write(`
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_t9_data</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_rate_data</span><span class="p">)</span>
 
         <span class="c1"># store the extrema of the thermodynamics</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table_Tmin</span> <span class="o">=</span> <span class="mf">1.e9</span> <span class="o">*</span> <span class="mf">10.0</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">log_t9_data</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table_Tmax</span> <span class="o">=</span> <span class="mf">1.e9</span> <span class="o">*</span> <span class="mf">10.0</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">log_t9_data</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table_Tmin</span> <span class="o">=</span> <span class="mf">1.e9</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_t9_data</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table_Tmax</span> <span class="o">=</span> <span class="mf">1.e9</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_t9_data</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">interpolator</span> <span class="o">=</span> <span class="n">TempTableInterpolator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_t9_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_rate_data</span><span class="p">)</span>
 
@@ -681,8 +681,8 @@ document.write(`
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator = TempTableInterpolator(*</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_info)</span><span class="se">\n</span><span class="s2">&quot;</span>
 
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator.interpolate(T)</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = r</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    log_r = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator.interpolate(T)</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = np.exp(log_r)</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
         <span class="k">return</span> <span class="n">fstring</span></div>
 
@@ -725,15 +725,14 @@ document.write(`
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specifiers</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;void rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">) </span><span class="se">{{\n\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    // </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    amrex::Real log_t9 = tfactors.lnT9 * ln10_inv;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    auto [_rate, _drate_dT] = interp_net::cubic_interp_uneven&lt;do_T_derivatives&gt;(</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;                                               log_t9,</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;                                               tfactors.lnT9,</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;                                               </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_data::log_t9,</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;                                               </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_data::log_rate);</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate = amrex::Math::exp10(_rate);</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    // we found dlog10(rate)/dlog10(T9)</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate = std::exp(_rate);</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    // we found dlog(rate)/dlog(T9)</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (do_T_derivatives) {</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT = (rate / tfactors.T9) * _drate_dT * 1.e-9;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT = rate * tfactors.T9i * _drate_dT * 1.0e-9_rt;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    }</span><span class="se">\n</span><span class="s2">&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">leave_open</span><span class="p">:</span>
@@ -768,7 +767,8 @@ document.write(`
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolator</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">log_r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolator</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_r</span><span class="p">)</span>
 
         <span class="n">scor</span> <span class="o">=</span> <span class="mf">1.0</span>
         <span class="k">if</span> <span class="n">screen_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
