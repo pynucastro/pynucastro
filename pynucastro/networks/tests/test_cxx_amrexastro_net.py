@@ -34,20 +34,6 @@ class TestAmrexAstroCxxNetwork:
         output.close()
         return result
 
-    def test_nrat_reaclib(self, fn):
-        """ test the _nrat_reaclib function """
-
-        answer = '    const int NrateReaclib = 5;\n'
-
-        assert self.cromulent_ftag(fn._nrat_reaclib, answer, n_indent=1)
-
-    def test_nrat_tabular(self, fn):
-        """ test the _nrat_tabular function """
-
-        answer = '    const int NrateTabular = 2;\n'
-
-        assert self.cromulent_ftag(fn._nrat_tabular, answer, n_indent=1)
-
     def test_nrxn(self, fn):
         """ test the _nrxn function """
 
