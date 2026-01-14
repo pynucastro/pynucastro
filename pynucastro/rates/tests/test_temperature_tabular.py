@@ -28,8 +28,8 @@ class TestTemperatureTabular:
         reactants = [Nucleus("c12"), Nucleus("p")]
         products = [Nucleus("n13")]
 
-        return TemperatureTabularRate(np.log10(Ts/1.e9),
-                                      np.log10(rate),
+        return TemperatureTabularRate(np.log(Ts/1.e9),
+                                      np.log(rate),
                                       reactants=reactants,
                                       products=products)
 

@@ -23,9 +23,9 @@ class TempTableInterpolator:
     ----------
     log_temp_points : numpy.ndarray
         an array giving the temperature at the points where we
-        tabulate the rate --- this is log10(T9)
+        tabulate the rate --- this is log(T9)
     log_rate_data : numpy.ndarray
-        an array giving the tabulated log10(rate) data
+        an array giving the tabulated log(rate) data
 
     """
 
@@ -42,7 +42,7 @@ class TempTableInterpolator:
         Parameters
         ----------
         log_T9_0 : float
-            temperature (log10(T/1.e9 K)) to interpolate at
+            temperature (log(T/1.e9 K)) to interpolate at
 
         Returns
         -------
@@ -56,7 +56,7 @@ class TempTableInterpolator:
     def interpolate(self, T0):
         """Given T0, the temperature where we want the rate, do
         cubic interpolation to find the value of the rate in the
-        table
+        table. Note this returns log(rate).
 
         Parameters
         ----------
@@ -69,8 +69,8 @@ class TempTableInterpolator:
 
         """
 
-        T9_0 = T0 / 1.e9
-        log_T9_0 = np.log10(T9_0)
+        T9_0 = T0 * 1.e-9
+        log_T9_0 = np.log(T9_0)
 
         # we'll give a little epsilon buffer here to allow for roundoff
         eps = 0.005
@@ -104,7 +104,7 @@ class TempTableInterpolator:
 
             r += fp[m] * l
 
-        return 10.0**r
+        return r
 
 
 class TemperatureTabularRate(Rate):
@@ -115,9 +115,9 @@ class TemperatureTabularRate(Rate):
     Parameters
     ----------
     log_t9_data : numpy.ndarray
-        The temperature (in log10(T / 1.e9 K)) where we tabulate the rate
+        The temperature (in log(T / 1.e9 K)) where we tabulate the rate
     log_rate_data : numpy.ndarray
-        The tabulated log10(rate) data, N_A <σv>
+        The tabulated log(rate) data, N_A <σv>
 
     """
 
@@ -142,8 +142,8 @@ class TemperatureTabularRate(Rate):
         assert len(self.log_t9_data) == len(self.log_rate_data)
 
         # store the extrema of the thermodynamics
-        self.table_Tmin = 1.e9 * 10.0**self.log_t9_data.min()
-        self.table_Tmax = 1.e9 * 10.0**self.log_t9_data.max()
+        self.table_Tmin = 1.e9 * np.exp(self.log_t9_data.min())
+        self.table_Tmax = 1.e9 * np.exp(self.log_t9_data.max())
 
         self.interpolator = TempTableInterpolator(self.log_t9_data, self.log_rate_data)
 
@@ -176,8 +176,8 @@ class TemperatureTabularRate(Rate):
         fstring += f"    # {self.rid}\n"
         fstring += f"    {self.fname}_interpolator = TempTableInterpolator(*{self.fname}_info)\n"
 
-        fstring += f"    r = {self.fname}_interpolator.interpolate(T)\n"
-        fstring += f"    rate_eval.{self.fname} = r\n\n"
+        fstring += f"    log_r = {self.fname}_interpolator.interpolate(T)\n"
+        fstring += f"    rate_eval.{self.fname} = np.exp(log_r)\n\n"
 
         return fstring
 
@@ -217,15 +217,14 @@ class TemperatureTabularRate(Rate):
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
-        fstring += "    amrex::Real log_t9 = tfactors.lnT9 * ln10_inv;\n"
         fstring += "    auto [_rate, _drate_dT] = interp_net::cubic_interp_uneven<do_T_derivatives>(\n"
-        fstring += "                                               log_t9,\n"
+        fstring += "                                               tfactors.lnT9,\n"
         fstring += f"                                               {self.fname}_data::log_t9,\n"
         fstring += f"                                               {self.fname}_data::log_rate);\n"
-        fstring += "    rate = amrex::Math::exp10(_rate);\n"
-        fstring += "    // we found dlog10(rate)/dlog10(T9)\n"
+        fstring += "    rate = std::exp(_rate);\n"
+        fstring += "    // we found dlog(rate)/dlog(T9)\n"
         fstring += "    if constexpr (do_T_derivatives) {\n"
-        fstring += "        drate_dT = (rate / tfactors.T9) * _drate_dT * 1.e-9;\n"
+        fstring += "        drate_dT = rate * tfactors.T9i * _drate_dT * 1.0e-9_rt;\n"
         fstring += "    }\n"
 
         if not leave_open:
@@ -257,7 +256,8 @@ class TemperatureTabularRate(Rate):
 
         """
 
-        r = self.interpolator.interpolate(T)
+        log_r = self.interpolator.interpolate(T)
+        r = np.exp(log_r)
 
         scor = 1.0
         if screen_func is not None:
