@@ -661,14 +661,13 @@ class BaseCxxNetwork(ABC, RateCollection):
         for n, i in temp_indices.items():
             # declare the partition function data
 
-            of.write(f"{self.indent*n_indent}// this is log10(partition function)\n\n")
+            of.write(f"{self.indent*n_indent}// this is log(partition function)\n\n")
 
             decl = f"extern AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
             of.write(f"{self.indent*n_indent}{decl} {n}_pf_array;\n")
+
+            # This is already in T9
             thresh_temp = n.get_part_func_threshold_temp()
-            # convert to T9 if it is physical
-            if thresh_temp > 0:
-                thresh_temp /= 1.e9
             of.write(f"{self.indent*n_indent}constexpr {self.dtype} {n}_pf_threshold_T9 = {thresh_temp};\n\n")
 
     def _fill_partition_function_data(self, n_indent, of):
@@ -685,6 +684,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             while batch := tuple(itertools.islice(it, n)):
                 yield batch
 
+        # temp_arrays are in T9
         temp_arrays, temp_indices = self.dedupe_partition_function_temperatures()
 
         for i, temp in enumerate(temp_arrays):
@@ -698,7 +698,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write(f"{self.indent*n_indent}{decl} temp_array_{i+1}= {{\n")
 
-            for data in batched(temp / 1.0e9, 5):
+            for data in batched(temp, 5):
                 tmp = " ".join([f"{t}," for t in data])
                 of.write(f"{self.indent*(n_indent+1)}{tmp}\n")
             of.write(f"{self.indent*n_indent}}};\n\n")
@@ -710,12 +710,12 @@ class BaseCxxNetwork(ABC, RateCollection):
             # write the partition function data out, but for readability, split
             # it to 5 values per line
 
-            of.write(f"{self.indent*n_indent}// this is log10(partition function)\n\n")
+            of.write(f"{self.indent*n_indent}// this is log(partition function)\n\n")
 
             decl = f"AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
             of.write(f"{self.indent*n_indent}{decl} {n}_pf_array = {{\n")
 
-            for data in batched(np.log10(n.partition_function.partition_function), 5):
+            for data in batched(n.partition_function.log_pf_data, 5):
                 tmp = " ".join([f"{x}," for x in data])
                 of.write(f"{self.indent*(n_indent+1)}{tmp}\n")
             of.write(f"{self.indent*n_indent}}};\n\n")
@@ -727,7 +727,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         for n, i in temp_indices.items():
             of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
             of.write(f"{self.indent*(n_indent+1)}if (tfactors.T9 > part_fun::{n}_pf_threshold_T9) {{\n")
-            of.write(f"{self.indent*(n_indent+2)}part_fun::interpolate_pf(tfactors.T9, pf_cache.index_temp_array_{i+1}, part_fun::temp_array_{i+1}, part_fun::{n}_pf_array, log10pf, dlog10pf_dT9);\n")
+            of.write(f"{self.indent*(n_indent+2)}part_fun::interpolate_pf(tfactors.T9, pf_cache.index_temp_array_{i+1}, part_fun::temp_array_{i+1}, part_fun::{n}_pf_array, logpf, dlogpf_dT9);\n")
             of.write(f"{self.indent*(n_indent+1)}}}\n")
             of.write(f"{self.indent*(n_indent+1)}break;\n\n")
 

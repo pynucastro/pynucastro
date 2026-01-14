@@ -198,7 +198,7 @@ class NSENetwork(RateCollection):
         Xs = {}
         for nuc in self.unique_nuclei:
             if nuc.partition_function:
-                pf = nuc.partition_function.eval(state.temp)
+                pf = np.exp(nuc.partition_function.eval(state.temp))
             else:
                 pf = 1.0
 

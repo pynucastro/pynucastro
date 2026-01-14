@@ -100,7 +100,8 @@ class SingleSet:
                                           (5./3.) * self.a[5] * tf.T913 * tf.T913 +
                                           self.a[6] * tf.T9i) / 1.e9
 
-    def set_string_py(self, *, prefix="set", plus_equal=False):
+    def set_string_py(self, *, prefix="set", plus_equal=False,
+                      with_exp=True):
         """Generate the python code needed to evaluate the set.
 
         Parameters
@@ -110,6 +111,10 @@ class SingleSet:
         plus_equal : bool
             do we add to the existing set? or create a new
             variable and initialize it to this set?
+        with_exp : bool
+            do we compute the set (``True``) or the log of the
+            set (``False``)?  The later is useful if we work
+            with a derived rate for reaclib rate.
 
         Returns
         -------
@@ -117,9 +122,11 @@ class SingleSet:
 
         """
         if plus_equal:
-            string = f"{prefix} += np.exp( "
+            string = f"{prefix} += "
         else:
-            string = f"{prefix} = np.exp( "
+            string = f"{prefix} = "
+        if with_exp:
+            string += "std::exp( "
         string += f" {self.a[0]}"
         if not self.a[1] == 0.0:
             string += f" + {self.a[1]}*tf.T9i"
@@ -136,7 +143,8 @@ class SingleSet:
             string += f" + {self.a[5]}*tf.T953"
         if not self.a[6] == 0.0:
             string += f" + {self.a[6]}*tf.lnT9"
-        string += ")"
+        if with_exp:
+            string += ")"
         return string
 
     def set_string_cxx(self, *, prefix="set", plus_equal=False,
