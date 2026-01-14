@@ -162,10 +162,9 @@ class DerivedRate(Rate):
             r += self.source_rate.eval(T=T, rho=rho, comp=comp, screen_func=None)
 
             # Apply equilibrium ratio terms
-            r *= self.ratio_factor
+            r *= self.ratio_factor * np.exp(self.Q_kBGK * tf.T9i)
             if self.net_stoich != 0:
                 r *= tf.T9**(1.5 * self.net_stoich)
-            r *= np.exp(self.Q_kBGK * tf.T9i)
 
         z_r = 1.0
         z_p = 1.0
@@ -358,19 +357,19 @@ class DerivedRate(Rate):
             fstring += f"        _drate_dT += {1.5 * self.net_stoich} - Q_kBT;\n"
             fstring += "        drate_dT = rate * tfactors.T9i * _drate_dT * 1.0e-9_rt;\n"
             fstring += "    }\n\n"
+
         else:
             fstring += "    // Evaluate the equilibrium ratio without partition function\n"
-            fstring += f"    {dtype} ratio = {self.ratio_factor};\n"
-            fstring += f"    constexpr {dtype} Q_kBGK = {self.Q} * 1.0e-9_rt / C::k_MeV;"
+            fstring += f"    constexpr {dtype} Q_kBGK = {self.Q} * 1.0e-9_rt / C::k_MeV;\n"
             fstring += f"    {dtype} Q_kBT = Q_kBGK * tfactors.T9i;\n"
-            fstring += "    ratio *= std::exp(Q_kBT);\n"
+            fstring += f"    {dtype} ratio = {self.ratio_factor} * std::exp(Q_kBT);\n"
             if self.net_stoich != 0:
                 fstring += f"    ratio *= std::sqrt(amrex::Math::powi<{3 * self.net_stoich}>(tfactors.T9));\n\n"
 
             fstring += "    // Apply the ratio without partition function\n"
-            fstring += "    // Note that screening is not yet applied to the inverse rate\n"
-            fstring += f"    rate = rate_eval.screened_rates(k_{self.source_rate.fname});\n"
+            fstring += "    // Note that screening is not yet applied to the inverse rate\n\n"
 
+            fstring += f"    rate = rate_eval.screened_rates(k_{self.source_rate.fname});\n"
             fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
             fstring += f"        {dtype} dratio_dT = ratio * tfactors.T9i * 1.0e-9_rt * ({1.5 * self.net_stoich} - Q_kBT);\n"
             fstring += f"        drate_dT = rate_eval.dscreened_rates_dT(k_{self.source_rate.fname});\n"
