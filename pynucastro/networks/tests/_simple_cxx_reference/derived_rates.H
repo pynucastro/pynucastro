@@ -128,9 +128,11 @@ inline
 void
 fill_derived_rates(const tf_t& tfactors, T& rate_eval)
 {
+    amrex::ignore_unused(tfactors);
+    amrex::ignore_unused(rate_eval);
 
-    Real rate;
-    Real drate_dT;
+    [[maybe_unused]] Real rate;
+    [[maybe_unused]] Real drate_dT;
 
     part_fun::pf_cache_t pf_cache{};
 
