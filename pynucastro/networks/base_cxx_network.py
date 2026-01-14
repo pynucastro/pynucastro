@@ -83,8 +83,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         # a dictionary of functions to call to handle specific parts
         # of the C++ template
         self.ftags = {}
-        self.ftags['<nrat_reaclib>'] = self._nrat_reaclib
-        self.ftags['<nrat_tabular>'] = self._nrat_tabular
         self.ftags['<nrxn>'] = self._nrxn
         self.ftags['<nrxn_enum_type>'] = self._nrxn_enum_type
         self.ftags['<rate_names>'] = self._rate_names
@@ -322,14 +320,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f'{self.indent*n_indent}}}\n')
 
             of.write('\n')
-
-    def _nrat_reaclib(self, n_indent, of):
-        # Writes the number of Reaclib rates
-        of.write(f'{self.indent*n_indent}const int NrateReaclib = {len(self.reaclib_rates + self.derived_rates)};\n')
-
-    def _nrat_tabular(self, n_indent, of):
-        # Writes the number of tabular rates
-        of.write(f'{self.indent*n_indent}const int NrateTabular = {len(self.tabular_rates)};\n')
 
     def _nrxn(self, n_indent, of):
         for i, r in enumerate(self.all_rates):
@@ -630,7 +620,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write("\n")
 
         for r in self.derived_rates:
-            of.write(f"{self.indent*n_indent}rate_{r.fname}<T>(tfactors, rate, drate_dT, rate_eval, pf_cache);\n")
+            of.write(f"{self.indent*n_indent}rate_{r.fname}<do_T_derivatives, T>(tfactors, rate, drate_dT, rate_eval, pf_cache);\n")
             of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
             of.write(f"{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
             of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
