@@ -61,6 +61,11 @@ class DerivedRate(Rate):
             if not all(nuc.spin_reliable for nuc in self.source_rate.products):
                 raise ValueError(f'One of the products spin ground state ({self.source_rate.products}), is considered unreliable')
 
+        super().__init__(reactants=self.source_rate.products,
+                         products=self.source_rate.reactants,
+                         label="derived", rate_source=self.source_rate.src,
+                         stoichiometry=self.source_rate.stoichiometry)
+
         # Compute temperature-independent prefactor of the equilibrium ratio
         F = 1.0
 
@@ -81,11 +86,6 @@ class DerivedRate(Rate):
 
         self.ratio_factor = F
         self.Q_kBGK = self.Q * 1.0e-9 / constants.k_MeV
-
-        super().__init__(reactants=self.source_rate.products,
-                         products=self.source_rate.reactants,
-                         label="derived", rate_source=self.source_rate.src,
-                         stoichiometry=self.source_rate.stoichiometry)
 
         # If source rate is a reaclib rate, then create a derived reaclib set based
         # on the source rate by absorbing the equilibrium ratio within the
