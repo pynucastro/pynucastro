@@ -82,7 +82,7 @@ void get_partition_function(const int inuc,
                             const part_fun::pf_cache_t& pf_cache,
                             amrex::Real& logpf, amrex::Real& dlogpf_dT9) {
 
-    dlogpf = 0.0_rt;
+    logpf = 0.0_rt;
     dlogpf_dT9 = 0.0_rt;
 
     // inuc is the 1-based index for the species
@@ -93,7 +93,7 @@ void get_partition_function(const int inuc,
 
     default:
 
-        dlogpf = 0.0_rt;
+        logpf = 0.0_rt;
         dlogpf_dT9 = 0.0_rt;
 
     }
