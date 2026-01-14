@@ -253,7 +253,7 @@ class DerivedRate(Rate):
                     fstring += "    " + t + "\n"
             fstring += "\n"
             fstring += "    # Include partition function effects\n"
-            fstring += "    log_r += net_log_pf\n\n"
+            fstring += f"    log_r += {len(self.derived_sets)} * net_log_pf\n\n"
 
             fstring += f"    rate_eval.{self.fname} = np.exp(log_r)\n\n"
 
@@ -370,7 +370,7 @@ class DerivedRate(Rate):
                     fstring += "        " + t + "\n"
                 fstring += "\n"
                 fstring += "        // Include partition function derivatives\n"
-                fstring += "        dln_set_rate_dT9 += net_dlog_pf_dT9\n\n"
+                fstring += "        dln_set_rate_dT9 += net_dlog_pf_dT9;\n"
                 fstring += "    }\n"
                 fstring += "\n"
 
@@ -381,7 +381,7 @@ class DerivedRate(Rate):
                 fstring += "    rate += set_rate;\n"
 
                 fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
-                fstring += "        drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;\n"
+                fstring += "        drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;\n"
                 fstring += "    }\n\n"
 
         elif isinstance(self.source_rate, TemperatureTabularRate):

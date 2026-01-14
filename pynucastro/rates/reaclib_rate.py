@@ -135,6 +135,8 @@ class SingleSet:
         if not self.a[3] == 0.0:
             string += f" + {self.a[3]}*tf.T913"
         if not (self.a[4] == 0.0 and self.a[5] == 0.0 and self.a[6] == 0.0):
+            if not with_exp:
+                string += " \\"
             indent = len(prefix)*" "
             string += f"\n{indent}         "
         if not self.a[4] == 0.0:
