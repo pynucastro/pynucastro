@@ -428,14 +428,14 @@ class BaseCxxNetwork(ABC, RateCollection):
                                            max_line_width=70, precision=17, separator=", ")
             of.write(f'{idnt}    inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_t9 = {{\n')
             for line in log_temp_str.split("\n"):
-                of.write(f"     {line.replace('[', ' ').replace(']', ' ')}\n")
+                of.write(f"     {line.replace('[', ' ').replace(']', ' ').strip()}\n")
             of.write("    };\n\n")
 
             log_rate_str = np.array2string(r.log_rate_data,
                                            max_line_width=70, precision=17, separator=", ")
             of.write(f'{idnt}    inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_rate = {{\n')
             for line in log_rate_str.split("\n"):
-                of.write(f"     {line.replace('[', ' ').replace(']', ' ')}\n")
+                of.write(f"     {line.replace('[', ' ').replace(']', ' ').strip()}\n")
             of.write("    };\n")
 
             of.write("}\n\n")
@@ -444,8 +444,10 @@ class BaseCxxNetwork(ABC, RateCollection):
         for r in self.temperature_tabular_rates:
             fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
             for line in fstr.split("\n"):
-                of.write(f"{self.indent*n_indent}{line}\n")
-            of.write("\n")
+                if line:
+                    of.write(f"{self.indent*n_indent}{line}\n")
+                else:
+                    of.write("\n")
 
     def _cxxify(self, s):
         # This is a helper function that converts sympy cxxcode to the actual c++ code we use.
