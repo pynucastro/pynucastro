@@ -244,18 +244,19 @@ class DerivedRate(Rate):
         # Now compute the rate based on the property of the source_rate
 
         if self.derived_sets is not None:
-            fstring += "    log_r = 0.0\n\n"
+            fstring += "    rate = 0.0\n\n"
 
             for s in self.derived_sets:
                 fstring += f"    # {s.labelprops[0:5]}\n"
-                set_string = s.set_string_py(prefix="log_r", plus_equal=True, with_exp=False)
+                set_string = s.set_string_py(prefix="ln_set_rate", plus_equal=False, with_exp=False)
                 for t in set_string.split("\n"):
                     fstring += "    " + t + "\n"
-            fstring += "\n"
-            fstring += "    # Include partition function effects\n"
-            fstring += f"    log_r += {len(self.derived_sets)} * net_log_pf\n\n"
+                fstring += "\n"
+                fstring += "    ln_set_rate += net_log_pf\n"
+                fstring += "    set_rate = np.exp(ln_set_rate)\n"
+                fstring += "    rate += set_rate\n\n"
 
-            fstring += f"    rate_eval.{self.fname} = np.exp(log_r)\n\n"
+            fstring += f"    rate_eval.{self.fname} = rate\n\n"
 
         elif isinstance(self.source_rate, TemperatureTabularRate):
             fstring += f"    {self.source_rate.fname}_interpolator = TempTableInterpolator(*{self.source_rate.fname}_info)\n"
