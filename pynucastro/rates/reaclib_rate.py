@@ -126,7 +126,7 @@ class SingleSet:
         else:
             string = f"{prefix} = "
         if with_exp:
-            string += "std::exp( "
+            string += "np.exp( "
         string += f" {self.a[0]}"
         if not self.a[1] == 0.0:
             string += f" + {self.a[1]}*tf.T9i"

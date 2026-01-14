@@ -17,8 +17,11 @@ void
 fill_derived_rates(const tf_t& tfactors, T& rate_eval)
 {
 
-    amrex::Real rate;
-    amrex::Real drate_dT;
+    amrex::ignore_unused(tfactors);
+    amrex::ignore_unused(rate_eval);
+
+    [[maybe_unused]] amrex::Real rate;
+    [[maybe_unused]] amrex::Real drate_dT;
 
     <fill_derived_rates>(1)
 
