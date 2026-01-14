@@ -78,7 +78,7 @@ class IliadisO16pgF17(TemperatureTabularRate):
         reactants = [Nucleus("o16"), Nucleus("p")]
         products = [Nucleus("f17")]
 
-        super().__init__(np.log10(T9), np.log10(rate),
+        super().__init__(np.log(T9), np.log(rate),
                          rate_source="iliadis2022",
                          reactants=reactants, products=products,
                          label="iliadis")
