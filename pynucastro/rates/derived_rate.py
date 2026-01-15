@@ -67,6 +67,7 @@ class DerivedRate(Rate):
                          stoichiometry=self.source_rate.stoichiometry)
 
         # Compute temperature-independent prefactor of the equilibrium ratio
+        # We will work in log space for convenience
         F = 1.0
 
         F *= math.prod(nucr.spin_states for nucr in self.source_rate.reactants)
@@ -84,7 +85,7 @@ class DerivedRate(Rate):
             F *= constants.m_u_C18**(2.5 * self.net_stoich)
             F *= (constants.k * 1.0e9 / (2.0 * np.pi * constants.hbar**2))**(1.5 * self.net_stoich)
 
-        self.ratio_factor = F
+        self.ratio_factor = np.log(F)
         self.Q_kBGK = self.Q * 1.0e-9 / constants.k_MeV
 
         # If source rate is a reaclib rate, then create a derived reaclib set based
@@ -104,7 +105,7 @@ class DerivedRate(Rate):
             self.derived_sets = []
             for source_set in source_sets:
                 a_derived = source_set.a.copy()
-                a_derived[0] += np.log(self.ratio_factor)
+                a_derived[0] += self.ratio_factor
                 a_derived[1] += self.Q_kBGK
                 a_derived[6] += 1.5 * self.net_stoich
                 self.derived_sets.append(SingleSet(a_derived, source_set.labelprops))
@@ -178,16 +179,16 @@ class DerivedRate(Rate):
             log_r = self.source_rate.interpolator.interpolate(T)
 
             # Apply equilibrium ratio terms
-            log_r += np.log(self.ratio_factor) + net_log_pf + \
-                self.Q_kBGK * tf.T9i + 1.5 * self.net_stoich * tf.lnT9
+            log_r += self.ratio_factor + self.Q_kBGK * tf.T9i + \
+                net_log_pf + 1.5 * self.net_stoich * tf.lnT9
             r += np.exp(log_r)
 
         else:
             r += self.source_rate.eval(T=T, rho=rho, comp=comp, screen_func=None)
 
             # Apply equilibrium ratio terms
-            r *= self.ratio_factor * \
-                np.exp(self.Q_kBGK * tf.T9i + net_log_pf + 1.5 * self.net_stoich * tf.lnT9)
+            r *= np.exp(self.ratio_factor + self.Q_kBGK * tf.T9i + netlog_pf +
+                        1.5 * self.net_stoich * tf.lnT9)
 
         # Apply screening correction
         scor = 1.0
@@ -259,18 +260,18 @@ class DerivedRate(Rate):
             fstring += f"    log_r = {self.source_rate.fname}_interpolator.interpolate(tf.T9 * 1.0e9)\n\n"
 
             fstring += "    # Apply equilibrium ratio\n"
-            fstring += f"    log_r += {np.log(self.ratio_factor)} + net_log_pf + {self.Q_kBGK} * tf.T9i\n"
+            fstring += f"    log_r += {self.ratio_factor} + {self.Q_kBGK} * tf.T9i + net_log_pf\n"
             if self.net_stoich != 0:
                 fstring += f"    log_r += {1.5 * self.net_stoich} * tf.lnT9\n\n"
             fstring += f"    rate_eval.{self.fname} = np.exp(log_r)\n\n"
 
         else:
             fstring += "    # Evaluate the equilibrium ratio\n"
-            fstring += f"    ratio = {self.ratio_factor} * np.exp({self.Q_kBGK} * tf.T9i + net_log_pf"
+            fstring += f"    ratio = np.exp({self.ratio_factor} + {self.Q_kBGK} * tf.T9i + net_log_pf"
             if self.net_stoich != 0:
                 fstring += f" + {1.5 * self.net_stoich} * tf.lnT9"
             fstring += ")\n\n"
-            fstring += f"    rate_eval.{self.fname} = rate_eval.{self.source_rate.fname} * ratio\n\n"
+            fstring += f"    rate_eval.{self.fname} = rate_eval.{self.source_rate.fname} * ratio\n"
 
         return fstring
 
@@ -395,7 +396,7 @@ class DerivedRate(Rate):
             fstring += "    // Apply Equilibrium Ratio\n"
             fstring += f"    constexpr {dtype} Q_kBGK = {self.Q} * 1.0e-9_rt / C::k_MeV;\n"
             fstring += f"    {dtype} Q_kBT = Q_kBGK * tfactors.T9i;\n"
-            fstring += f"    _rate += {np.log(self.ratio_factor)} + net_log_pf + Q_kBT;\n"
+            fstring += f"    _rate += {self.ratio_factor} + Q_kBT + net_log_pf;\n"
             if self.net_stoich != 0:
                 fstring += f"    _rate += {1.5 * self.net_stoich} * tfactors.lnT9;\n\n"
 
@@ -414,7 +415,7 @@ class DerivedRate(Rate):
             fstring += "    // Evaluate the equilibrium ratio\n"
             fstring += f"    constexpr {dtype} Q_kBGK = {self.Q} * 1.0e-9_rt / C::k_MeV;\n"
             fstring += f"    {dtype} Q_kBT = Q_kBGK * tfactors.T9i;\n"
-            fstring += f"    {dtype} ratio = {self.ratio_factor} * std::exp(Q_kBT + net_log_pf"
+            fstring += f"    {dtype} ratio = std::exp({self.ratio_factor} + Q_kBT + net_log_pf"
             if self.net_stoich != 0:
                 fstring += f"    + {1.5 * self.net_stoich} * tfactors.lnT9"
             fstring += ");\n\n"

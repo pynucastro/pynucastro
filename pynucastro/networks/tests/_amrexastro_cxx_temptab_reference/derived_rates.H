@@ -35,8 +35,9 @@ void rate_F17_to_O16_p_derived(const tf_t& tfactors, amrex::Real& rate, amrex::R
 
     // we found dlog(rate)/dlog(T9)
     if constexpr (std::is_same_v<T, rate_derivs_t>) {
-        _drate_dT += 1.5 - Q_kBT;
-        drate_dT = rate * tfactors.T9i * _drate_dT * 1.0e-9_rt;
+        // Convert to dlog(rate)/dT9 first
+        _drate_dT = (_drate_dT + 1.5 - Q_kBT) * tfactors.T9i;
+        drate_dT = rate * _drate_dT * 1.0e-9_rt;
     }
 
     // Now apply partition function effects
