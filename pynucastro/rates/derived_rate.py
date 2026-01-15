@@ -187,8 +187,8 @@ class DerivedRate(Rate):
             r += self.source_rate.eval(T=T, rho=rho, comp=comp, screen_func=None)
 
             # Apply equilibrium ratio terms
-            r *= np.exp(self.ratio_factor + self.Q_kBGK * tf.T9i + netlog_pf +
-                        1.5 * self.net_stoich * tf.lnT9)
+            r *= np.exp(self.ratio_factor + self.Q_kBGK * tf.T9i +
+                        net_log_pf + 1.5 * self.net_stoich * tf.lnT9)
 
         # Apply screening correction
         scor = 1.0
