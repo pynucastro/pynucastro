@@ -50,7 +50,7 @@ class TempTableInterpolator:
 
         """
 
-        max_idx = len(self.log_temp_points) - 3
+        max_idx = len(self.log_temp_points) - 2
         return max(1, min(max_idx, np.searchsorted(self.log_temp_points, log_T9_0)) - 1)
 
     def interpolate(self, T0):
