@@ -47,7 +47,7 @@ namespaces = false
 [tool.setuptools.package-data]
 # additional files to include when building a wheel
 pynucastro = [
-  "eos/helm_table_p128_q800.dat.gz",
+  "eos/helm_table_p128_q800.dat.bz2",
   "library/*",
   "library/tabular/*",
   "library/tabular/suzuki/*",
