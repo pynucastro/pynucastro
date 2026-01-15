@@ -154,17 +154,16 @@ class DerivedRate(Rate):
             log_r = self.source_rate.interpolator.interpolate(T)
 
             # Apply equilibrium ratio terms
-            log_r += np.log(self.ratio_factor) + self.Q_kBGK * tf.T9i
-            log_r += 1.5 * self.net_stoich * tf.lnT9
+            log_r += np.log(self.ratio_factor) + self.Q_kBGK * tf.T9i + \
+                1.5 * self.net_stoich * tf.lnT9
             r += np.exp(log_r)
 
         else:
             r += self.source_rate.eval(T=T, rho=rho, comp=comp, screen_func=None)
 
             # Apply equilibrium ratio terms
-            r *= self.ratio_factor * np.exp(self.Q_kBGK * tf.T9i)
-            if self.net_stoich != 0:
-                r *= tf.T9**(1.5 * self.net_stoich)
+            r *= self.ratio_factor * \
+                np.exp(self.Q_kBGK * tf.T9i * 1.5 * self.net_stoich * tf.lnT9)
 
         z_r = 1.0
         z_p = 1.0
@@ -231,9 +230,10 @@ class DerivedRate(Rate):
 
         else:
             fstring += "    # Evaluate the equilibrium ratio\n"
-            fstring += f"    ratio = {self.ratio_factor} * np.exp({self.Q_kBGK} * tf.T9i)\n"
+            fstring += f"    ratio = {self.ratio_factor} * np.exp({self.Q_kBGK} * tf.T9i"
             if self.net_stoich != 0:
-                fstring += f"    ratio *= tf.T9**({1.5 * self.net_stoich})\n"
+                fstring += f" + {1.5 * self.net_stoich} * tf.lnT9"
+            fstring += ")\n\n"
             fstring += f"    rate_eval.{self.fname} = rate_eval.{self.source_rate.fname} * ratio\n"
 
         if self.use_pf:
@@ -354,26 +354,28 @@ class DerivedRate(Rate):
 
             fstring += "    // we found dlog(rate)/dlog(T9)\n"
             fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
-            fstring += f"        _drate_dT += {1.5 * self.net_stoich} - Q_kBT;\n"
-            fstring += "        drate_dT = rate * tfactors.T9i * _drate_dT * 1.0e-9_rt;\n"
+            fstring += "        // Convert to dlog(rate)/dT9 first\n"
+            fstring += f"        _drate_dT = (_drate_dT + {1.5 * self.net_stoich} - Q_kBT) * tfactors.T9i;\n"
+            fstring += "        drate_dT = rate * _drate_dT * 1.0e-9_rt;\n"
             fstring += "    }\n\n"
 
         else:
             fstring += "    // Evaluate the equilibrium ratio without partition function\n"
             fstring += f"    constexpr {dtype} Q_kBGK = {self.Q} * 1.0e-9_rt / C::k_MeV;\n"
             fstring += f"    {dtype} Q_kBT = Q_kBGK * tfactors.T9i;\n"
-            fstring += f"    {dtype} ratio = {self.ratio_factor} * std::exp(Q_kBT);\n"
+            fstring += f"    {dtype} ratio = {self.ratio_factor} * std::exp(Q_kBT"
             if self.net_stoich != 0:
-                fstring += f"    ratio *= std::sqrt(amrex::Math::powi<{3 * self.net_stoich}>(tfactors.T9));\n\n"
+                fstring += f"    + {1.5 * self.net_stoich} * tfactors.lnT9"
+            fstring += ");\n\n"
 
             fstring += "    // Apply the ratio without partition function\n"
             fstring += "    // Note that screening is not yet applied to the inverse rate\n\n"
 
             fstring += f"    rate = rate_eval.screened_rates(k_{self.source_rate.fname});\n"
             fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
-            fstring += f"        {dtype} dratio_dT = ratio * tfactors.T9i * 1.0e-9_rt * ({1.5 * self.net_stoich} - Q_kBT);\n"
+            fstring += f"        {dtype} dlogratio_dT9 = ({1.5 * self.net_stoich} - Q_kBT) * tfactors.T9i;\n"
             fstring += f"        drate_dT = rate_eval.dscreened_rates_dT(k_{self.source_rate.fname});\n"
-            fstring += "        drate_dT = drate_dT * ratio + rate * dratio_dT;\n"
+            fstring += "        drate_dT = ratio * (drate_dT + rate * dlogratio_dT9 * 1.0e-9_rt);\n"
             fstring += "    }\n"
             fstring += "    rate *= ratio;\n\n"
 
