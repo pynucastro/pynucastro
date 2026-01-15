@@ -217,6 +217,7 @@ class DerivedRate(Rate):
         fstring += f"    # {self.rid}\n\n"
 
         # Evaluate partition function terms
+
         if self.use_pf:
             self._warn_about_missing_pf_tables()
             fstring += "    # Evaluate partition function terms\n"
