@@ -78,7 +78,7 @@ def Fe52_to_p_Mn51_derived(rate_eval, tf):
     rate = 0.0
 
     # ths8r
-    rate += np.exp(  61.7474313222804 + -85.61663846070292*tf.T9i + -36.1825*tf.T913i + 0.873042*tf.T913
+    rate += np.exp(  61.74743132228039 + -85.61663846070292*tf.T9i + -36.1825*tf.T913i + 0.873042*tf.T913
                   + -2.89731*tf.T9 + 0.364394*tf.T953 + 0.833333*tf.lnT9)
 
     rate_eval.Fe52_to_p_Mn51_derived = rate
@@ -136,11 +136,11 @@ def Ne20_to_He4_N14_derived(rate_eval, tf):
     rate = 0.0
 
     # il10r
-    rate += np.exp(  39.55827158733315 + -168.12237220574448*tf.T9i + -5.6227*tf.T913i)
+    rate += np.exp(  39.558271587333145 + -168.12237220574448*tf.T9i + -5.6227*tf.T913i)
     # il10r
-    rate += np.exp(  25.85560958733315 + -162.31711220574448*tf.T9i)
+    rate += np.exp(  25.855609587333145 + -162.31711220574448*tf.T9i)
     # il10n
-    rate += np.exp(  47.19267158733315 + -157.1567722057445*tf.T9i + -36.2504*tf.T913i
+    rate += np.exp(  47.192671587333145 + -157.1567722057445*tf.T9i + -36.2504*tf.T913i
                   + -5.0*tf.T953 + 0.833333*tf.lnT9)
 
     rate_eval.Ne20_to_He4_N14_derived = rate
