@@ -1,6 +1,5 @@
-from pytest import approx, raises
-
 import numpy as np
+from pytest import approx, raises
 
 from pynucastro.nucdata import Nucleus, get_nuclei_in_range
 
