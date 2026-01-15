@@ -362,7 +362,6 @@ class DerivedRate(Rate):
                 for t in set_string.split("\n"):
                     fstring += "    " + t + "\n"
                 fstring += "\n"
-                fstring += "    // Include partition function effects\n"
                 fstring += "    ln_set_rate += net_log_pf;\n\n"
 
                 fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
@@ -370,7 +369,6 @@ class DerivedRate(Rate):
                 for t in dln_set_string_dT9.split("\n"):
                     fstring += "        " + t + "\n"
                 fstring += "\n"
-                fstring += "        // Include partition function derivatives\n"
                 fstring += "        dln_set_rate_dT9 += net_dlog_pf_dT9;\n"
                 fstring += "    }\n"
                 fstring += "\n"
