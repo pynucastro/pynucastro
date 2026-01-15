@@ -116,6 +116,9 @@ class TabularElectronEOS:
                                    d2q_drhodT=fields[3])
                 self.ne.append(q)
 
+    def _index(self, irho, jtemp):
+        # in our 1D tabulation, density varies the fastest
+        return jtemp * self.rho_npts + irho
 
     def __str__(self):
         ostr = ""
