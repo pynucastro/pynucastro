@@ -9,7 +9,7 @@
 
 using namespace Rates;
 
-template <typename T>
+template <int do_T_derivatives, typename T>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void rate_F17_to_O16_p_derived(const tf_t& tfactors, amrex::Real& rate, amrex::Real& drate_dT, [[maybe_unused]] const T& rate_eval, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
 
@@ -18,33 +18,43 @@ void rate_F17_to_O16_p_derived(const tf_t& tfactors, amrex::Real& rate, amrex::R
     rate = 0.0;
     drate_dT = 0.0;
 
-    // Evaluate the equilibrium ratio without partition function
-    amrex::Real ratio = 9.674279321716613e-05;
-    amrex::Real Q_kBT = -0.6002689639985703 / (C::k_MeV * tfactors.T9 * 1.0e9_rt);
-    ratio *= std::exp(Q_kBT);
-    ratio *= std::sqrt(amrex::Math::powi<3>(tfactors.T9 * 1.0e9_rt));
+    auto [_rate, _drate_dT] = interp_net::cubic_interp_uneven<do_T_derivatives>(
+                                               tfactors.lnT9,
+                                               O16_p_to_F17_iliadis_data::log_t9,
+                                               O16_p_to_F17_iliadis_data::log_rate);
 
-    // Apply the ratio without partition function
-    // Note that screening is not yet applied to the inverse rate
-    rate = rate_eval.screened_rates(k_O16_p_to_F17_iliadis);
+    // Apply Equilibrium Ratio
+    constexpr amrex::Real Q_kBGK = -0.6002689639985703 * 1.0e-9_rt / C::k_MeV;
+    amrex::Real Q_kBT = Q_kBGK * tfactors.T9i;
+    _rate += 21.841444037879352 + Q_kBT;
+    _rate += 1.5 * tfactors.lnT9;
+
+    // avoid underflows by zeroing rates in [0.0, 1.e-100]
+    _rate = std::max(_rate, -230.0);
+    rate = std::exp(_rate);
+
+    // we found dlog(rate)/dlog(T9)
     if constexpr (std::is_same_v<T, rate_derivs_t>) {
-        amrex::Real dratio_dT = ratio * tfactors.T9i * 1.0e-9_rt * (1.5 - Q_kBT);
-        drate_dT = rate_eval.dscreened_rates_dT(k_O16_p_to_F17_iliadis);
-        drate_dT = drate_dT * ratio + rate * dratio_dT;
+        // Convert to dlog(rate)/dT9 first
+        _drate_dT = (_drate_dT + 1.5 - Q_kBT) * tfactors.T9i;
+        drate_dT = rate * _drate_dT * 1.0e-9_rt;
     }
-    rate *= ratio;
 
     // Now apply partition function effects
+
     amrex::Real p_pf, dp_pf_dT;
+
     // setting p partition function to 1.0 by default, independent of T
     p_pf = 1.0_rt;
     dp_pf_dT = 0.0_rt;
 
     amrex::Real F17_pf, dF17_pf_dT;
+
     // interpolating F17 partition function
     get_partition_function_cached(F17, tfactors, pf_cache, F17_pf, dF17_pf_dT);
 
     amrex::Real O16_pf, dO16_pf_dT;
+
     // interpolating O16 partition function
     get_partition_function_cached(O16, tfactors, pf_cache, O16_pf, dO16_pf_dT);
 
@@ -80,7 +90,7 @@ fill_derived_rates(const tf_t& tfactors, T& rate_eval)
 
     pf_cache.index_temp_array_1 = interp_net::find_index(tfactors.T9, part_fun::temp_array_1);
 
-    rate_F17_to_O16_p_derived<T>(tfactors, rate, drate_dT, rate_eval, pf_cache);
+    rate_F17_to_O16_p_derived<do_T_derivatives, T>(tfactors, rate, drate_dT, rate_eval, pf_cache);
     rate_eval.screened_rates(k_F17_to_O16_p_derived) = rate;
     if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dscreened_rates_dT(k_F17_to_O16_p_derived) = drate_dT;
