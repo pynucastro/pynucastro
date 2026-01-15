@@ -186,14 +186,8 @@ class DerivedRate(Rate):
             r += self.source_rate.eval(T=T, rho=rho, comp=comp, screen_func=None)
 
             # Apply equilibrium ratio terms
-            r *= self.ratio_factor
-            if net_log_pf != 0.0:
-                r *= np.exp(self.Q_kBGK * tf.T9i + net_log_pf)
-            else:
-                r *= np.exp(self.Q_kBGK * tf.T9i)
-
-            if self.net_stoich != 0:
-                r *= tf.T9**(1.5 * self.net_stoich)
+            r *= self.ratio_factor * \
+                np.exp(self.Q_kBGK * tf.T9i + net_log_pf + 1.5 * self.net_stoich * tf.lnT9)
 
         # Apply screening correction
         scor = 1.0
@@ -222,7 +216,6 @@ class DerivedRate(Rate):
         fstring += f"    # {self.rid}\n\n"
 
         # Evaluate partition function terms
-
         if self.use_pf:
             self._warn_about_missing_pf_tables()
             fstring += "    # Evaluate partition function terms\n"
@@ -239,7 +232,10 @@ class DerivedRate(Rate):
             fstring += " + ".join([f"{nucr}_log_pf" for nucr in self.source_rate.reactants])
             fstring += " - "
             fstring += " - ".join([f"{nucp}_log_pf" for nucp in self.source_rate.products])
-            fstring += "\n"
+            fstring += "\n\n"
+        else:
+            fstring += "    # Assume no partition function effects\n"
+            fstring += "    net_log_pf = 0.0\n"
 
         # Now compute the rate based on the property of the source_rate
 
@@ -270,9 +266,10 @@ class DerivedRate(Rate):
 
         else:
             fstring += "    # Evaluate the equilibrium ratio\n"
-            fstring += f"    ratio = {self.ratio_factor} * np.exp({self.Q_kBGK} * tf.T9i + net_log_pf)\n"
+            fstring += f"    ratio = {self.ratio_factor} * np.exp({self.Q_kBGK} * tf.T9i + net_log_pf"
             if self.net_stoich != 0:
-                fstring += f"    ratio *= tf.T9**({1.5 * self.net_stoich})\n\n"
+                fstring += f" + {1.5 * self.net_stoich} * tf.lnT9"
+            fstring += ")\n\n"
             fstring += f"    rate_eval.{self.fname} = rate_eval.{self.source_rate.fname} * ratio\n\n"
 
         return fstring
@@ -343,11 +340,16 @@ class DerivedRate(Rate):
             fstring += " - ".join([f"{nucp}_log_pf" for nucp in self.source_rate.products])
             fstring += ";\n"
 
-            fstring += f"    {dtype} net_dlog_pf_dT9 = "
+            fstring += f"    [[maybe_unused]] {dtype} net_dlog_pf_dT9 = "
             fstring += " + ".join([f"d{nucr}_log_pf_dT9" for nucr in self.source_rate.reactants])
             fstring += " - "
             fstring += " - ".join([f"d{nucp}_log_pf_dT9" for nucp in self.source_rate.products])
             fstring += ";\n\n"
+
+        else:
+            fstring += "    // Assume no partition function effects\n"
+            fstring += f"    {dtype} net_log_pf{{0.0}};\n"
+            fstring += f"    [[maybe_unused]] {dtype} net_dlog_pf_dT9{{0.0}};\n\n"
 
         # Now compute the rate based on the property of the source_rate
 
@@ -370,6 +372,7 @@ class DerivedRate(Rate):
                     fstring += "        " + t + "\n"
                 fstring += "\n"
                 fstring += "        dln_set_rate_dT9 += net_dlog_pf_dT9;\n"
+
                 fstring += "    }\n"
                 fstring += "\n"
 
@@ -411,9 +414,10 @@ class DerivedRate(Rate):
             fstring += "    // Evaluate the equilibrium ratio\n"
             fstring += f"    constexpr {dtype} Q_kBGK = {self.Q} * 1.0e-9_rt / C::k_MeV;\n"
             fstring += f"    {dtype} Q_kBT = Q_kBGK * tfactors.T9i;\n"
-            fstring += f"    {dtype} ratio = {self.ratio_factor} * std::exp(Q_kBT + net_log_pf);\n"
+            fstring += f"    {dtype} ratio = {self.ratio_factor} * std::exp(Q_kBT + net_log_pf"
             if self.net_stoich != 0:
-                fstring += f"    ratio *= std::sqrt(amrex::Math::powi<{3 * self.net_stoich}>(tfactors.T9));\n\n"
+                fstring += f"    + {1.5 * self.net_stoich} * tfactors.lnT9"
+            fstring += ");\n\n"
 
             fstring += "    // Note that screening is not yet applied to the inverse rate\n\n"
 
