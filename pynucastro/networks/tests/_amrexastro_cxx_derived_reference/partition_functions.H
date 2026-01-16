@@ -85,11 +85,18 @@ namespace part_fun {
     struct pf_cache_t {
         // Store the coefficient and derivative adjacent in memory, as they're
         // always accessed at the same time.
-        // The entries will be default-initialized to zero, which is fine since
-        // log10(x) is never zero.
-        amrex::Array2D<amrex::Real, 1, NumSpecTotal, 1, 2, amrex::Order::C> data{-300.0_rt};
+        amrex::Array2D<amrex::Real, 1, NumSpecTotal, 1, 2, amrex::Order::C> data;
         int index_temp_array_1{-1};
 
+        AMREX_GPU_HOST_DEVICE AMREX_INLINE
+        pf_cache_t() {
+            // The entries will be default-initialized to -300, log(partition_function)
+            // should never be -900.
+            for (int i = 1; i <= NumSpecTotal; ++i) {
+                    data(i,1) = -900.0_rt;
+                    data(i,2) = -900.0_rt;
+            }
+        }
     };
 
 }
@@ -103,7 +110,7 @@ void get_partition_function(const int inuc,
                             const part_fun::pf_cache_t& pf_cache,
                             amrex::Real& logpf, amrex::Real& dlogpf_dT9) {
 
-    dlogpf = 0.0_rt;
+    logpf = 0.0_rt;
     dlogpf_dT9 = 0.0_rt;
 
     // inuc is the 1-based index for the species
@@ -131,7 +138,7 @@ void get_partition_function(const int inuc,
 
     default:
 
-        dlogpf = 0.0_rt;
+        logpf = 0.0_rt;
         dlogpf_dT9 = 0.0_rt;
 
     }
@@ -167,7 +174,7 @@ AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void get_partition_function_cached(const int inuc, const tf_t& tfactors,
                                    part_fun::pf_cache_t& pf_cache,
                                    amrex::Real& logpf, amrex::Real& dlogpf_dT9) {
-    if (pf_cache.data(inuc, 1) != -300.0_rt) {
+    if (pf_cache.data(inuc, 1) != -900.0_rt) {
         // present in cache
         amrex::ignore_unused(tfactors);
         logpf = pf_cache.data(inuc, 1);
