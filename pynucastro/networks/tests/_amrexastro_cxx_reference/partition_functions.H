@@ -67,7 +67,7 @@ namespace part_fun {
         amrex::Array2D<amrex::Real, 1, NumSpecTotal, 1, 2, amrex::Order::C> data;
         AMREX_GPU_HOST_DEVICE AMREX_INLINE
         pf_cache_t() {
-            // The entries will be default-initialized to -300, log(partition_function)
+            // The entries will be default-initialized to -900, log(partition_function)
             // should never be -900.
             for (int i = 1; i <= NumSpecTotal; ++i) {
                     data(i,1) = -900.0_rt;
