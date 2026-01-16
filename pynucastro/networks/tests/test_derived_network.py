@@ -71,7 +71,7 @@ class TestPythonDerivedNetwork:
     def test_derived_function_string(self, pynet):
 
         ostr = \
-r"""@numba.njit()
+"""@numba.njit()
 def Fe52_to_p_Mn51_derived(rate_eval, tf):
     # Fe52 --> p + Mn51
 
@@ -90,7 +90,7 @@ def Fe52_to_p_Mn51_derived(rate_eval, tf):
     rate = 0.0
 
     # ths8r
-    ln_set_rate =  61.74743132228039 + -85.61663846070292*tf.T9i + -36.1825*tf.T913i + 0.873042*tf.T913 \
+    ln_set_rate =  61.74743132228039 + -85.61663846070292*tf.T9i + -36.1825*tf.T913i + 0.873042*tf.T913 \\
                          + -2.89731*tf.T9 + 0.364394*tf.T953 + 0.833333*tf.lnT9
 
     ln_set_rate += net_log_pf
@@ -130,7 +130,7 @@ def Fe52_to_p_Mn51_derived(rate_eval, tf):
     def test_derived_modified_function_string(self, pynet2):
 
         ostr = \
-r"""@numba.njit()
+"""@numba.njit()
 def Ne20_to_He4_N14_derived(rate_eval, tf):
     # Ne20 --> 1.5 He4 + N14
 
@@ -163,7 +163,7 @@ def Ne20_to_He4_N14_derived(rate_eval, tf):
     rate += set_rate
 
     # il10n
-    ln_set_rate =  47.192671587333145 + -157.1567722057445*tf.T9i + -36.2504*tf.T913i \
+    ln_set_rate =  47.192671587333145 + -157.1567722057445*tf.T9i + -36.2504*tf.T913i \\
                          + -5.0*tf.T953 + 0.833333*tf.lnT9
 
     ln_set_rate += net_log_pf
