@@ -156,15 +156,17 @@ class PartitionFunction:
 
         fig, ax = plt.subplots()
 
-        ax.plot(self.T9_points, np.exp(self.log_pf_data))
-        mask = (self.T9_points * 1.e9 >= T_min) & (self.T9_points * 1.e9 <= T_max)
+        T_points = self.T9_points * 1.e9
+
+        ax.plot(T_points, np.exp(self.log_pf_data))
+        mask = (T_points >= T_min) & (T_points <= T_max)
         ax.grid(ls=":")
         ax.set_xscale("log")
         ax.set_yscale("log")
         ax.set_xlim(T_min, T_max)
         ax.set_ylim(min(0.5, np.exp(self.log_pf_data[mask].min())),
                     max(2, np.exp(self.log_pf_data[mask].max())))
-        ax.set_xlabel("T (GK)")
+        ax.set_xlabel("T (K)")
         ax.set_ylabel("G(T)")
 
         return fig
