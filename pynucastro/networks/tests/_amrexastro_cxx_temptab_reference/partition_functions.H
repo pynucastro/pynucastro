@@ -23,12 +23,12 @@ namespace part_fun {
 
     extern AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1-1> temp_array_1;
 
-    // this is log10(partition function)
+    // this is log(partition function)
 
     extern AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1-1> O16_pf_array;
     constexpr amrex::Real O16_pf_threshold_T9 = 10.0;
 
-    // this is log10(partition function)
+    // this is log(partition function)
 
     extern AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1-1> F17_pf_array;
     constexpr amrex::Real F17_pf_threshold_T9 = 1.0;
@@ -40,7 +40,7 @@ namespace part_fun {
     AMREX_GPU_HOST_DEVICE AMREX_INLINE
     void interpolate_pf(const amrex::Real t9, int idx,
                         const T& temp_array, const T& pf_array,
-                        amrex::Real& pf, amrex::Real& dpf_dT) {
+                        amrex::Real& logpf, amrex::Real& dlogpf_dT9) {
 
         // if the index is -1, we are either outside of the bounds or
         // we never computed it.  try recomputing here
@@ -57,27 +57,21 @@ namespace part_fun {
             // temp_array[idx] <= t9 < temp_array[idx+1]
             AMREX_ASSERT(t9 >= temp_array(idx) && t9 < temp_array(idx+1));
 
-            // construct the slope -- this is
-            // (log10(pf_{i+1}) - log10(pf_i)) / (T_{i+1} - T_i)
+            // find the derivative: dlog(pf)/dT9 -- this is
+            // (log(pf_{i+1}) - log(pf_i)) / (T_{i+1} - T_i)
 
-            amrex::Real slope = (pf_array(idx+1) - pf_array(idx)) /
-                                (temp_array(idx+1) - temp_array(idx));
+            dlogpf_dT9 = (pf_array(idx+1) - pf_array(idx)) /
+                           (temp_array(idx+1) - temp_array(idx));
 
-            // find the PF
+            // find log(PF)
 
-            amrex::Real log10_pf = pf_array(idx) + slope * (t9 - temp_array(idx));
-            pf = amrex::Math::exp10(log10_pf);
-
-            // find the derivative (with respect to T, not T9)
-
-            amrex::Real dpf_dT9 = pf * std::numbers::ln10_v<amrex::Real> * slope;
-            dpf_dT = dpf_dT9 * 1.e-9_rt;
+            logpf = pf_array(idx) + dlogpf_dT9 * (t9 - temp_array(idx));
 
         } else {
 
             // T < the smallest T or >= the largest T in the partition function table
-            pf = 1.0;
-            dpf_dT = 0.0;
+            logpf = 0.0;
+            dlogpf_dT9 = 0.0;
 
         }
 
@@ -86,11 +80,18 @@ namespace part_fun {
     struct pf_cache_t {
         // Store the coefficient and derivative adjacent in memory, as they're
         // always accessed at the same time.
-        // The entries will be default-initialized to zero, which is fine since
-        // log10(x) is never zero.
-        amrex::Array2D<amrex::Real, 1, NumSpecTotal, 1, 2, amrex::Order::C> data{};
+        amrex::Array2D<amrex::Real, 1, NumSpecTotal, 1, 2, amrex::Order::C> data;
         int index_temp_array_1{-1};
 
+        AMREX_GPU_HOST_DEVICE AMREX_INLINE
+        pf_cache_t() {
+            // The entries will be default-initialized to -900, log(partition_function)
+            // should never be -900.
+            for (int i = 1; i <= NumSpecTotal; ++i) {
+                    data(i,1) = -900.0_rt;
+                    data(i,2) = -900.0_rt;
+            }
+        }
     };
 
 }
@@ -102,10 +103,10 @@ AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void get_partition_function(const int inuc,
                             [[maybe_unused]] const tf_t& tfactors,
                             const part_fun::pf_cache_t& pf_cache,
-                            amrex::Real& pf, amrex::Real& dpf_dT) {
+                            amrex::Real& logpf, amrex::Real& dlogpf_dT9) {
 
-    pf = 1.0_rt;
-    dpf_dT = 0.0_rt;
+    logpf = 0.0_rt;
+    dlogpf_dT9 = 0.0_rt;
 
     // inuc is the 1-based index for the species
 
@@ -113,21 +114,21 @@ void get_partition_function(const int inuc,
 
     case O16:
         if (tfactors.T9 > part_fun::O16_pf_threshold_T9) {
-            part_fun::interpolate_pf(tfactors.T9, pf_cache.index_temp_array_1, part_fun::temp_array_1, part_fun::O16_pf_array, pf, dpf_dT);
+            part_fun::interpolate_pf(tfactors.T9, pf_cache.index_temp_array_1, part_fun::temp_array_1, part_fun::O16_pf_array, logpf, dlogpf_dT9);
         }
         break;
 
     case F17:
         if (tfactors.T9 > part_fun::F17_pf_threshold_T9) {
-            part_fun::interpolate_pf(tfactors.T9, pf_cache.index_temp_array_1, part_fun::temp_array_1, part_fun::F17_pf_array, pf, dpf_dT);
+            part_fun::interpolate_pf(tfactors.T9, pf_cache.index_temp_array_1, part_fun::temp_array_1, part_fun::F17_pf_array, logpf, dlogpf_dT9);
         }
         break;
 
 
     default:
 
-        pf = 1.0_rt;
-        dpf_dT = 0.0_rt;
+        logpf = 0.0_rt;
+        dlogpf_dT9 = 0.0_rt;
 
     }
 
@@ -135,7 +136,8 @@ void get_partition_function(const int inuc,
 
 
 // a version of get_parition_function where we have not cached the
-// index into the arrays
+// index into the arrays. And returns pf and dpf_dT instead of
+// logpf and dlogpf_dT9
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void get_partition_function(const int inuc,
@@ -148,23 +150,28 @@ void get_partition_function(const int inuc,
 
     part_fun::pf_cache_t pf_cache;
 
-    get_partition_function(inuc, tfactors, pf_cache, pf, dpf_dT);
+    amrex::Real logpf, dlogpf_dT9;
+    get_partition_function(inuc, tfactors, pf_cache, logpf, dlogpf_dT9);
+
+    // Convert to logpf to pf and dlogpf_dT9 to dpf_dT
+    pf = std::exp(logpf);
+    dpf_dT = pf * dlogpf_dT9 * 1.e-9_rt;
 }
 
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void get_partition_function_cached(const int inuc, const tf_t& tfactors,
                                    part_fun::pf_cache_t& pf_cache,
-                                   amrex::Real& pf, amrex::Real& dpf_dT) {
-    if (pf_cache.data(inuc, 1) != 0.0_rt) {
+                                   amrex::Real& logpf, amrex::Real& dlogpf_dT9) {
+    if (pf_cache.data(inuc, 1) != -900.0_rt) {
         // present in cache
         amrex::ignore_unused(tfactors);
-        pf = pf_cache.data(inuc, 1);
-        dpf_dT = pf_cache.data(inuc, 2);
+        logpf = pf_cache.data(inuc, 1);
+        dlogpf_dT9 = pf_cache.data(inuc, 2);
     } else {
-        get_partition_function(inuc, tfactors, pf_cache, pf, dpf_dT);
-        pf_cache.data(inuc, 1) = pf;
-        pf_cache.data(inuc, 2) = dpf_dT;
+        get_partition_function(inuc, tfactors, pf_cache, logpf, dlogpf_dT9);
+        pf_cache.data(inuc, 1) = logpf;
+        pf_cache.data(inuc, 2) = dlogpf_dT9;
     }
 }
 

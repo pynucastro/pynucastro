@@ -354,9 +354,9 @@ class Nucleus:
         return Nucleus.from_Z_A(Z, A, dummy)
 
     def get_part_func_threshold_temp(self):
-        """Return the temperature corresponding to the last value where
-        the partition function is equal to 1.  For temperatures higher
-        than this, the partition function is not equal to 1.
+        """Return the temperature [GK] corresponding to the last value where
+        the log(partition function) is equal to 0.  For temperatures higher
+        than this, the log(partition function) is not equal to 0.
 
         Returns
         -------
@@ -364,16 +364,16 @@ class Nucleus:
 
         """
 
-        threshold_T = -1.0
-        for T, pf in zip(self.partition_function.temperature,
-                         self.partition_function.partition_function):
+        threshold_T9 = -1.0
+        for T9, log_pf in zip(self.partition_function.T9_points,
+                              self.partition_function.log_pf_data):
 
-            if pf == 1.0:
-                threshold_T = T
+            if log_pf == 0.0:
+                threshold_T9 = T9
             else:
                 break
 
-        return threshold_T
+        return threshold_T9
 
     @classmethod
     def cast(cls, obj):

@@ -197,10 +197,9 @@ class NSENetwork(RateCollection):
 
         Xs = {}
         for nuc in self.unique_nuclei:
-            if nuc.partition_function:
-                pf = nuc.partition_function.eval(state.temp)
-            else:
-                pf = 1.0
+            nse_exponent = 0.0
+            if nuc.partition_function is not None:
+                nse_exponent += nuc.partition_function.eval(state.temp)
 
             if not nuc.spin_states:
                 raise ValueError(f"The spin of {nuc} is not implemented for now.")
@@ -208,10 +207,10 @@ class NSENetwork(RateCollection):
                 raise ValueError(f"The spin of {nuc} is determined by a weak experimental or theoretical argument. "
                                  "Pass in use_unreliable_spins=True as a parameter to NSENetwork() to override.")
 
-            nse_exponent = (nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.nucbind * nuc.A) / (constants.k_MeV * state.temp)
+            nse_exponent += (nuc.Z * u[0] + nuc.N * u[1] - u_c[nuc] + nuc.nucbind * nuc.A) / (constants.k_MeV * state.temp)
             nse_exponent = min(500.0, nse_exponent)
 
-            Xs[nuc] = (nuc.A_nuc * constants.m_u_C18)**2.5 * pf * nuc.spin_states / state.dens * \
+            Xs[nuc] = (nuc.A_nuc * constants.m_u_C18)**2.5 * nuc.spin_states / state.dens * \
                 (constants.k * state.temp / (2.0 * np.pi * constants.hbar**2))**1.5 * np.exp(nse_exponent)
 
         return Xs
