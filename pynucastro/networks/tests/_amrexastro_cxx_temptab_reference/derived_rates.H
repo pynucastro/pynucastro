@@ -18,6 +18,27 @@ void rate_F17_to_O16_p_derived(const tf_t& tfactors, amrex::Real& rate, amrex::R
     rate = 0.0;
     drate_dT = 0.0;
 
+    // Evaluate partition function terms
+
+    amrex::Real p_log_pf, dp_log_pf_dT9;
+
+    // setting p log(partition function) to 0.0 by default, independent of T
+    p_log_pf = 0.0_rt;
+    dp_log_pf_dT9 = 0.0_rt;
+
+    amrex::Real F17_log_pf, dF17_log_pf_dT9;
+
+    // interpolating F17 partition function
+    get_partition_function_cached(F17, tfactors, pf_cache, F17_log_pf, dF17_log_pf_dT9);
+
+    amrex::Real O16_log_pf, dO16_log_pf_dT9;
+
+    // interpolating O16 partition function
+    get_partition_function_cached(O16, tfactors, pf_cache, O16_log_pf, dO16_log_pf_dT9);
+
+    amrex::Real net_log_pf = O16_log_pf + p_log_pf - F17_log_pf;
+    [[maybe_unused]] amrex::Real net_dlog_pf_dT9 = dO16_log_pf_dT9 + dp_log_pf_dT9 - dF17_log_pf_dT9;
+
     auto [_rate, _drate_dT] = interp_net::cubic_interp_uneven<do_T_derivatives>(
                                                tfactors.lnT9,
                                                O16_p_to_F17_iliadis_data::log_t9,
@@ -26,7 +47,7 @@ void rate_F17_to_O16_p_derived(const tf_t& tfactors, amrex::Real& rate, amrex::R
     // Apply Equilibrium Ratio
     constexpr amrex::Real Q_kBGK = -0.6002689639985703 * 1.0e-9_rt / C::k_MeV;
     amrex::Real Q_kBT = Q_kBGK * tfactors.T9i;
-    _rate += 21.841444037879352 + Q_kBT;
+    _rate += 21.841444037879352 + Q_kBT + net_log_pf;
     _rate += 1.5 * tfactors.lnT9;
 
     // avoid underflows by zeroing rates in [0.0, 1.e-100]
@@ -36,40 +57,9 @@ void rate_F17_to_O16_p_derived(const tf_t& tfactors, amrex::Real& rate, amrex::R
     // we found dlog(rate)/dlog(T9)
     if constexpr (std::is_same_v<T, rate_derivs_t>) {
         // Convert to dlog(rate)/dT9 first
-        _drate_dT = (_drate_dT + 1.5 - Q_kBT) * tfactors.T9i;
+        _drate_dT = (_drate_dT + 1.5 - Q_kBT) * tfactors.T9i + net_dlog_pf_dT9;
         drate_dT = rate * _drate_dT * 1.0e-9_rt;
     }
-
-    // Now apply partition function effects
-
-    amrex::Real p_pf, dp_pf_dT;
-
-    // setting p partition function to 1.0 by default, independent of T
-    p_pf = 1.0_rt;
-    dp_pf_dT = 0.0_rt;
-
-    amrex::Real F17_pf, dF17_pf_dT;
-
-    // interpolating F17 partition function
-    get_partition_function_cached(F17, tfactors, pf_cache, F17_pf, dF17_pf_dT);
-
-    amrex::Real O16_pf, dO16_pf_dT;
-
-    // interpolating O16 partition function
-    get_partition_function_cached(O16, tfactors, pf_cache, O16_pf, dO16_pf_dT);
-
-    amrex::Real z_r = O16_pf * p_pf;
-    amrex::Real z_p = F17_pf;
-
-    if constexpr (std::is_same_v<T, rate_derivs_t>) {
-        amrex::Real dz_r_dT = p_pf * dO16_pf_dT + O16_pf * dp_pf_dT;
-        amrex::Real dz_p_dT = dF17_pf_dT;
-
-        amrex::Real dzterm_dT = (z_p * dz_r_dT - z_r * dz_p_dT) / (z_p * z_p);
-
-        drate_dT = dzterm_dT * rate + drate_dT * (z_r / z_p);
-    }
-    rate *= z_r / z_p;
 
 }
 
