@@ -26,7 +26,7 @@ void rate_He4_Ne20_to_C12_C12_derived(const tf_t& tfactors, Real& rate, Real& dr
     Real dln_set_rate_dT9{0.0};
     Real set_rate{0.0};
 
-    // cf88r
+    // ReacLib set derived from cf88r
     ln_set_rate =  61.474151468919175 + -53.57824966896331 * tfactors.T9i + -84.165 * tfactors.T913i + -1.56627 * tfactors.T913
                          + -0.0736084 * tfactors.T9 + -0.072797 * tfactors.T953 + -0.666667 * tfactors.lnT9;
 
@@ -66,7 +66,7 @@ void rate_p_Na23_to_C12_C12_derived(const tf_t& tfactors, Real& rate, Real& drat
     Real dln_set_rate_dT9{0.0};
     Real set_rate{0.0};
 
-    // cf88r
+    // ReacLib set derived from cf88r
     ln_set_rate =  60.92541574740554 + -26.004360836807496 * tfactors.T9i + -84.165 * tfactors.T913i + -1.4191 * tfactors.T913
                          + -0.114619 * tfactors.T9 + -0.070307 * tfactors.T953 + -0.666667 * tfactors.lnT9;
 
@@ -106,7 +106,7 @@ void rate_O16_to_He4_C12_derived(const tf_t& tfactors, Real& rate, Real& drate_d
     Real dln_set_rate_dT9{0.0};
     Real set_rate{0.0};
 
-    // nac2 
+    // ReacLib set derived from nac2
     ln_set_rate =  279.29694929711803 + -84.95157686791683 * tfactors.T9i + 103.411 * tfactors.T913i + -420.567 * tfactors.T913
                          + 64.0874 * tfactors.T9 + -12.4624 * tfactors.T953 + 138.803 * tfactors.lnT9;
 
@@ -127,7 +127,7 @@ void rate_O16_to_He4_C12_derived(const tf_t& tfactors, Real& rate, Real& drate_d
         drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
     }
 
-    // nac2 
+    // ReacLib set derived from nac2
     ln_set_rate =  94.31554929711803 + -84.50314686791683 * tfactors.T9i + 58.9128 * tfactors.T913i + -148.273 * tfactors.T913
                          + 9.08324 * tfactors.T9 + -0.541041 * tfactors.T953 + 71.8554 * tfactors.lnT9;
 
