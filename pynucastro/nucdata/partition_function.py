@@ -220,8 +220,9 @@ class PartitionFunctionTable:
 
             # Now, we want to read the lines of the file where
             # the temperatures are located. Temperature is converted to GK
+            # Explicitly divide by 1e9 instead of multiply by 1.0e-9 to avoid roundoff
             temp_strings = fin.readline().strip().split()
-            self.T9_points = np.array(temp_strings, dtype=np.float64) * 1.0e-9
+            self.T9_points = np.array(temp_strings, dtype=np.float64) / 1.0e9
 
             # Now, we append on the array lines = [] all the remaining file, the structure
             # 1. The nucleus

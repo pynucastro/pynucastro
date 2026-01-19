@@ -26,7 +26,7 @@ namespace part_fun {
     // this is log(partition function)
 
     extern AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1-1> Fe52_pf_array;
-    constexpr amrex::Real Fe52_pf_threshold_T9 = 0.6000000000000001;
+    constexpr amrex::Real Fe52_pf_threshold_T9 = 0.6;
 
     // this is log(partition function)
 
