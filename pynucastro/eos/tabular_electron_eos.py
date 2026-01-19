@@ -8,8 +8,8 @@ import re
 
 import numpy as np
 
-from pynucastro.constants import constants
 from pynucastro.rates.files import _pynucastro_dir
+from .eos_components import EOSComponentState
 
 
 class Helmholtz:
@@ -47,6 +47,30 @@ class ThermoQuantity:
         self.d2q_drhodT = float(d2q_drhodT)
 
 
+def psi0(z):
+    """The ψ0 Hermite basis function and its derivatives, TS00 Eq. 15"""
+    _psi0 = z**3 * (z * (-6.0 * z + 15.0) - 10.0) + 1.0
+    _dpsi0_dz = z**2 * (z * (-30.0 * z + 60.0) - 30.0)
+    _d2psi0_dz2 = z * (z * (-120.0e0 * z + 180.0) - 60.0)
+    return _psi0, _dpsi0_dz, _d2psi0_dz2
+
+
+def psi1(z):
+    """The ψ1 Hermite basis function and its derivatives, TS00 Eq. 15"""
+    _psi1 = z * (z**2 * (z * (-3.0 * z + 8.0) - 6.0) + 1.0)
+    _dpsi1_dz = z**2 * (z * (-15.0 * z + 32.0) - 18.0) + 1.0
+    _d2psi1_dz2 = z * (z * (-60.0 * z + 96.0) - 36.0)
+    return _psi1, _dpsi1_dz, _d2psi1_dz2
+
+
+def psi2(z):
+    """The ψ2 Hermite basis function and its derivatives, TS00 Eq. 15"""
+    _psi2 = 0.5 * z**2 * (z * (z * (-z + 3.0) - 3.0) + 1.0)
+    _dpsi2_dz = 0.5 * z * (z * (z * (-5.0 * z + 12.0) - 9.0) + 2.0)
+    _d2psi2_dz2 = 0.5 * (z * (z * (-20.0 * z + 36.0) - 18.0) + 2.0)
+    return _psi2, _dpsi2_dz, _d2psi2_dz2
+
+
 class TabularElectronEOS:
     """tabular EOS"""
 
@@ -71,6 +95,17 @@ class TabularElectronEOS:
                         self.temp_npts = int(g.group(3))
                     elif g := version_line.match(line):
                         self.table_version = g.group(1)
+
+        # store spacings
+        self.dlogrho = (self.log10_rho_max - self.log10_rho_min) / float(self.rho_npts - 1)
+        self.dlogrho_inv = 1.0 / self.dlogrho
+
+        self.dlogT = (self.log10_temp_max - self.log10_temp_min) / float(self.temp_npts - 1)
+        self.dlogT_inv = 1.0 / self.dlogT
+
+        # compute the density and temperature grid points
+        self.rho = np.logspace(self.log10_rho_min, self.log10_rho_max, self.rho_npts, endpoint=True)
+        self.T = np.logspace(self.log10_temp_min, self.log10_temp_max, self.temp_npts, endpoint=True)
 
         # now read and store the data in 4 separate lists
         with bz2.open(_pynucastro_dir / "eos" / self.table, mode="rt") as tf:
@@ -119,6 +154,57 @@ class TabularElectronEOS:
     def _index(self, irho, jtemp):
         # in our 1D tabulation, density varies the fastest
         return jtemp * self.rho_npts + irho
+
+    def interp_helmholtz(self, i, j):
+        pass
+
+    def pe_state(self, rho=None, T=None, comp=None):
+        """Find the pressure and energy given density, temperature,
+        and composition"""
+
+        # find the i and j location (density and temperature indices into the table)
+        rho_e = rho * comp.ye()
+        _iat = int((np.log10(rho_e) - self.log10_rho_min) * self.dlogrho_inv) + 1
+        iat = np.clip(_iat, 1, self.rho_npts-1) - 1
+
+        _jat = int((np.log10(T) - self.log10_temp_min) * self.dlogT_inv) + 1
+        jat = np.clip(_jat, 1, self.temp_npts-1) - 1
+
+        # compute the dimensionless quantities used in the basis functions, TS00 Eq. 18
+        drho = self.rho[iat+1] - self.rho[iat]
+        dT = self.T[jat+1] - self.T[jat]
+
+        x = max((rho_e - self.rho[iat]) / drho, 0.0)
+        y = max((T - self.T[jat]) / dT, 0.0)
+
+        # get the basis functions
+        psi0_x, dpsi0_x, d2psi0_x = psi0(x)
+        psi0_1mx, dpsi0_1mx, d2psi0_1mx = psi0(1.0 - x)
+
+        psi1_x, dpsi1_x, d2psi1_x = psi1(x)
+        psi1_1mx, dpsi1_1mx, d2psi1_1mx = psi1(1.0 - x)
+
+        psi2_x, dpsi2_x, d2psi2_x = psi2(x)
+        psi2_1mx, dpsi2_1mx, d2psi2_1mx = psi2(1.0 - x)
+
+        psi0_y, dpsi0_y, d2psi0_y = psi0(y)
+        psi0_1my, dpsi0_1my, d2psi0_1my = psi0(1.0 - y)
+
+        psi1_y, dpsi1_y, d2psi1_y = psi1(y)
+        psi1_1my, dpsi1_1my, d2psi1_1my = psi1(1.0 - y)
+
+        psi2_y, dpsi2_y, d2psi2_y = psi2(y)
+        psi2_1my, dpsi2_1my, d2psi2_1my = psi2(1.0 - y)
+
+        
+        
+        ele_state = EOSComponentState(eta=eta,
+                                      n=n_e, p=p_e, e=e_e,
+                                      dn_drho=dne_drho, dn_dT=dne_dT,
+                                      dp_drho=dpe_drho, dp_dT=dpe_dT,
+                                      de_drho=dee_drho, de_dT=dee_dT)
+
+
 
     def __str__(self):
         ostr = ""
