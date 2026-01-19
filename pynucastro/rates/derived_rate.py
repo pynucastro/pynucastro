@@ -361,7 +361,7 @@ class DerivedRate(Rate):
             fstring += f"    {dtype} set_rate{{0.0}};\n\n"
 
             for s in self.derived_sets:
-                fstring += f"    // {s.labelprops[0:5]}\n"
+                fstring += f"    // ReacLib set derived from {s.labelprops[0:5].strip()}\n"
                 set_string = s.set_string_cxx(prefix="ln_set_rate", plus_equal=False, with_exp=False)
                 for t in set_string.split("\n"):
                     fstring += "    " + t + "\n"
