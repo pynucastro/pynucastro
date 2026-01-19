@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.nucdata.partition_function module &#8212; pynucastro 2.9.0.post9+gbf3c2fbea documentation</title>
+    <title>pynucastro.nucdata.partition_function module &#8212; pynucastro 2.9.0.post10+gad17143e1 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=0cc929e1"></script>
+    <script src="_static/documentation_options.js?v=0f5cbf1e"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -609,7 +609,7 @@ document.write(`
 <p>Classes and methods for dealing with nuclear partition functions.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunction">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.partition_function.</span></span><span class="sig-name descname"><span class="pre">PartitionFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nucleus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">partition_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolant_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunction" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.partition_function.</span></span><span class="sig-name descname"><span class="pre">PartitionFunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nucleus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T9_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_pf_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolant_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunction" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Store the tabulated data for the partition function for a
 specific nucleus, which can be combined with other
@@ -628,9 +628,9 @@ PartitionFunction objects.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nucleus</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The nucleus (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;ni56&quot;</span></code>)</p></li>
 <li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the table on which the nucleus is read</p></li>
-<li><p><strong>temperature</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – A sorted array of all the temperatures involved</p></li>
-<li><p><strong>partition_function</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – An array with all the partition function values given in the
-same order as <code class="docutils literal notranslate"><span class="pre">temperature</span></code></p></li>
+<li><p><strong>T9_points</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – A sorted array of all the temperatures involved. This is in GK.</p></li>
+<li><p><strong>log_pf_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – An array with all the partition function values given in the
+same order as <code class="docutils literal notranslate"><span class="pre">temperature</span></code>. This is log(pf)</p></li>
 <li><p><strong>interpolant_order</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The interpolation spline order, must be between 1 and 5, inclusive</p></li>
 </ul>
 </dd>
@@ -639,7 +639,7 @@ same order as <code class="docutils literal notranslate"><span class="pre">tempe
 <dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunction.eval">
 <span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunction.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunction.eval" title="Link to this definition">#</a></dt>
 <dd><p>Compute the interpolated partition function value for the
-temperature T.</p>
+temperature T. Note this returns log(pf)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – temperature in K</p>
@@ -653,7 +653,7 @@ temperature T.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunction.lower_temperature">
 <span class="sig-name descname"><span class="pre">lower_temperature</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunction.lower_temperature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunction.lower_temperature" title="Link to this definition">#</a></dt>
-<dd><p>Return the lowest temperature this object supports.</p>
+<dd><p>Return the lowest temperature [K] this object supports.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
@@ -668,8 +668,8 @@ temperature T.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>T_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – minimum temperature to plot</p></li>
-<li><p><strong>T_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – maximum temperature to plot</p></li>
+<li><p><strong>T_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – minimum temperature [K] to plot</p></li>
+<li><p><strong>T_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – maximum temperature [K] to plot</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -681,7 +681,7 @@ temperature T.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.nucdata.partition_function.PartitionFunction.upper_temperature">
 <span class="sig-name descname"><span class="pre">upper_temperature</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/partition_function.html#PartitionFunction.upper_temperature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.partition_function.PartitionFunction.upper_temperature" title="Link to this definition">#</a></dt>
-<dd><p>Return the highest temperature this object supports.</p>
+<dd><p>Return the highest temperature [K] this object supports.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
@@ -735,7 +735,7 @@ the form e.g.  “ni56”. The table files are stored in the
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> – the name of the table (as defined in the data file)</p></li>
-<li><p><strong>temperatures</strong> – an array of temperature values</p></li>
+<li><p><strong>T9_points</strong> – an array of temperature values in [GK]</p></li>
 </ul>
 </dd>
 </dl>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.nse_network &#8212; pynucastro 2.9.0.post9+gbf3c2fbea documentation</title>
+    <title>pynucastro.networks.nse_network &#8212; pynucastro 2.9.0.post10+gad17143e1 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=0cc929e1"></script>
+    <script src="../../../_static/documentation_options.js?v=0f5cbf1e"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -703,10 +703,9 @@ document.write(`
 
         <span class="n">Xs</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">partition_function</span><span class="p">:</span>
-                <span class="n">pf</span> <span class="o">=</span> <span class="n">nuc</span><span class="o">.</span><span class="n">partition_function</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">temp</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">pf</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">nse_exponent</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">partition_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">nse_exponent</span> <span class="o">+=</span> <span class="n">nuc</span><span class="o">.</span><span class="n">partition_function</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">temp</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">nuc</span><span class="o">.</span><span class="n">spin_states</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The spin of </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2"> is not implemented for now.&quot;</span><span class="p">)</span>
@@ -714,10 +713,10 @@ document.write(`
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The spin of </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2"> is determined by a weak experimental or theoretical argument. &quot;</span>
                                  <span class="s2">&quot;Pass in use_unreliable_spins=True as a parameter to NSENetwork() to override.&quot;</span><span class="p">)</span>
 
-            <span class="n">nse_exponent</span> <span class="o">=</span> <span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">*</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">nuc</span><span class="o">.</span><span class="n">N</span> <span class="o">*</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">u_c</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">+</span> <span class="n">nuc</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">k_MeV</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span><span class="p">)</span>
+            <span class="n">nse_exponent</span> <span class="o">+=</span> <span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">*</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">nuc</span><span class="o">.</span><span class="n">N</span> <span class="o">*</span> <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">u_c</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">+</span> <span class="n">nuc</span><span class="o">.</span><span class="n">nucbind</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">k_MeV</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span><span class="p">)</span>
             <span class="n">nse_exponent</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mf">500.0</span><span class="p">,</span> <span class="n">nse_exponent</span><span class="p">)</span>
 
-            <span class="n">Xs</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">A_nuc</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_C18</span><span class="p">)</span><span class="o">**</span><span class="mf">2.5</span> <span class="o">*</span> <span class="n">pf</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">spin_states</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">dens</span> <span class="o">*</span> \
+            <span class="n">Xs</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">A_nuc</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_C18</span><span class="p">)</span><span class="o">**</span><span class="mf">2.5</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">spin_states</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">dens</span> <span class="o">*</span> \
                 <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">k</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">hbar</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="mf">1.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">nse_exponent</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">Xs</span>

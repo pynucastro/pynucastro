@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.nucdata.nucleus &#8212; pynucastro 2.9.0.post9+gbf3c2fbea documentation</title>
+    <title>pynucastro.nucdata.nucleus &#8212; pynucastro 2.9.0.post10+gad17143e1 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=0cc929e1"></script>
+    <script src="../../../_static/documentation_options.js?v=0f5cbf1e"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -874,9 +874,9 @@ document.write(`
 <div class="viewcode-block" id="Nucleus.get_part_func_threshold_temp">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus.get_part_func_threshold_temp">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_part_func_threshold_temp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the temperature corresponding to the last value where</span>
-<span class="sd">        the partition function is equal to 1.  For temperatures higher</span>
-<span class="sd">        than this, the partition function is not equal to 1.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the temperature [GK] corresponding to the last value where</span>
+<span class="sd">        the log(partition function) is equal to 0.  For temperatures higher</span>
+<span class="sd">        than this, the log(partition function) is not equal to 0.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -884,16 +884,16 @@ document.write(`
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">threshold_T</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
-        <span class="k">for</span> <span class="n">T</span><span class="p">,</span> <span class="n">pf</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span>
-                         <span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span><span class="o">.</span><span class="n">partition_function</span><span class="p">):</span>
+        <span class="n">threshold_T9</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+        <span class="k">for</span> <span class="n">T9</span><span class="p">,</span> <span class="n">log_pf</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span><span class="o">.</span><span class="n">T9_points</span><span class="p">,</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span><span class="o">.</span><span class="n">log_pf_data</span><span class="p">):</span>
 
-            <span class="k">if</span> <span class="n">pf</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
-                <span class="n">threshold_T</span> <span class="o">=</span> <span class="n">T</span>
+            <span class="k">if</span> <span class="n">log_pf</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">threshold_T9</span> <span class="o">=</span> <span class="n">T9</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">break</span>
 
-        <span class="k">return</span> <span class="n">threshold_T</span></div>
+        <span class="k">return</span> <span class="n">threshold_T9</span></div>
 
 
 <div class="viewcode-block" id="Nucleus.cast">

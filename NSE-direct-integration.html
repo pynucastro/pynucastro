@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>NSE vs. Direct Integration &#8212; pynucastro 2.9.0.post9+gbf3c2fbea documentation</title>
+    <title>NSE vs. Direct Integration &#8212; pynucastro 2.9.0.post10+gad17143e1 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=0cc929e1"></script>
+    <script src="_static/documentation_options.js?v=0f5cbf1e"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -690,10 +690,10 @@ In pynucastro, this is the <a class="reference internal" href="pynucastro.rates.
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:120: UserWarning: C12 partition function is not supported by tables: set pf = 1.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
-/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:120: UserWarning: N13 partition function is not supported by tables: set pf = 1.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:120: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
+  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:120: UserWarning: N13 partition function is not supported by tables: set log_pf = 0.0 by default
+  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
 </pre></div>
 </div>
 </div>
@@ -773,7 +773,7 @@ In pynucastro, this is the <a class="reference internal" href="pynucastro.rates.
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/019664a2381f58ffc5feddc716f63fe60ac3b264510a7508ad2c8e361cec4896.png" src="_images/019664a2381f58ffc5feddc716f63fe60ac3b264510a7508ad2c8e361cec4896.png" />
+<img alt="_images/a982c9097e856d483518099b768606a586046018730f35c3f15e23fb8a3dd250.png" src="_images/a982c9097e856d483518099b768606a586046018730f35c3f15e23fb8a3dd250.png" />
 </div>
 </div>
 </section>
@@ -843,7 +843,7 @@ network</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/eac2d4fa2f0b5a8027fdaff4d0d0c039e6fd78a5393305f9456805229fe15aa7.png" src="_images/eac2d4fa2f0b5a8027fdaff4d0d0c039e6fd78a5393305f9456805229fe15aa7.png" />
+<img alt="_images/23ce6869f03ad644afd28f0aa0de6e22850215139541ddea6b29e530ea463d8e.png" src="_images/23ce6869f03ad644afd28f0aa0de6e22850215139541ddea6b29e530ea463d8e.png" />
 </div>
 </div>
 <p>Now a plot of absolute and relative difference shows that the mass fraction obtained from direct integration matches with NSE equations to machine precision. The differences between the two are largely set by the tolerances of both the NSE solver and the ODE integrator.</p>
@@ -866,7 +866,7 @@ network</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/87ba9fa6e1480ad5034d9a94a9a44786732e86b0c2e30a829aac155a62efadb3.png" src="_images/87ba9fa6e1480ad5034d9a94a9a44786732e86b0c2e30a829aac155a62efadb3.png" />
+<img alt="_images/52b26d4bb7acec5a444ca987527b24df2807298781714757c05c2e63db3d0028.png" src="_images/52b26d4bb7acec5a444ca987527b24df2807298781714757c05c2e63db3d0028.png" />
 </div>
 </div>
 </section>
@@ -898,13 +898,13 @@ by the total activity of the rate (forward + reverse) by doing <code class="docu
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:120: UserWarning: C12 partition function is not supported by tables: set pf = 1.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
-/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:120: UserWarning: N13 partition function is not supported by tables: set pf = 1.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set pf = 1.0 by default&#39;))
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:120: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
+  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+/opt/hostedtoolcache/Python/3.14.2/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:120: UserWarning: N13 partition function is not supported by tables: set log_pf = 0.0 by default
+  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
 </pre></div>
 </div>
-<img alt="_images/08e5f70061eedbf7e5125cec16b5c8e9c4246e42456a00c5454d02a82060cb92.png" src="_images/08e5f70061eedbf7e5125cec16b5c8e9c4246e42456a00c5454d02a82060cb92.png" />
+<img alt="_images/8a7f5acd34bd467c344372d05048650505094d5a8018f9665e55fbf69c9cb61c.png" src="_images/8a7f5acd34bd467c344372d05048650505094d5a8018f9665e55fbf69c9cb61c.png" />
 </div>
 </div>
 <p>Here we see that the normalized net rates are all &lt; <span class="math notranslate nohighlight">\(10^{-12}\)</span>, so we are effectively seeing the integration tolerance, and are very close to machine precision.</p>

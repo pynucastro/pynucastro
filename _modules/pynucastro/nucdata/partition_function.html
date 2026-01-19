@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.nucdata.partition_function &#8212; pynucastro 2.9.0.post9+gbf3c2fbea documentation</title>
+    <title>pynucastro.nucdata.partition_function &#8212; pynucastro 2.9.0.post10+gad17143e1 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=0cc929e1"></script>
+    <script src="../../../_static/documentation_options.js?v=0f5cbf1e"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -530,37 +530,37 @@ document.write(`
 <span class="sd">        The nucleus (e.g. ``&quot;ni56&quot;``)</span>
 <span class="sd">    name : str</span>
 <span class="sd">        The name of the table on which the nucleus is read</span>
-<span class="sd">    temperature : numpy.ndarray</span>
-<span class="sd">        A sorted array of all the temperatures involved</span>
-<span class="sd">    partition_function : numpy.ndarray</span>
+<span class="sd">    T9_points : numpy.ndarray</span>
+<span class="sd">        A sorted array of all the temperatures involved. This is in GK.</span>
+<span class="sd">    log_pf_data : numpy.ndarray</span>
 <span class="sd">        An array with all the partition function values given in the</span>
-<span class="sd">        same order as ``temperature``</span>
+<span class="sd">        same order as ``temperature``. This is log(pf)</span>
 <span class="sd">    interpolant_order : int</span>
 <span class="sd">        The interpolation spline order, must be between 1 and 5, inclusive</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nucleus</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span>
-                 <span class="n">partition_function</span><span class="p">,</span> <span class="n">interpolant_order</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nucleus</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">T9_points</span><span class="p">,</span>
+                 <span class="n">log_pf_data</span><span class="p">,</span> <span class="n">interpolant_order</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nucleus</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
-        <span class="n">temperature</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
-        <span class="n">partition_function</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">partition_function</span><span class="p">)</span>
+        <span class="n">T9_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">T9_points</span><span class="p">)</span>
+        <span class="n">log_pf_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_pf_data</span><span class="p">)</span>
 
-        <span class="k">assert</span> <span class="n">temperature</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">partition_function</span><span class="o">.</span><span class="n">shape</span>
-        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">temperature</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">temperature</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span> <span class="s2">&quot;temperature array must be sorted&quot;</span>
+        <span class="k">assert</span> <span class="n">T9_points</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">log_pf_data</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">T9_points</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">T9_points</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span> <span class="s2">&quot;temperature array must be sorted&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">nucleus</span> <span class="o">=</span> <span class="n">nucleus</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span> <span class="o">=</span> <span class="n">partition_function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T9_points</span> <span class="o">=</span> <span class="n">T9_points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_pf_data</span> <span class="o">=</span> <span class="n">log_pf_data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">interpolant_order</span> <span class="o">=</span> <span class="n">interpolant_order</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_interpolant</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="PartitionFunction.lower_temperature">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction.lower_temperature">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">lower_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the lowest temperature this object supports.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the lowest temperature [K] this object supports.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -568,20 +568,20 @@ document.write(`
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">T9_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.e9</span></div>
 
 
 <div class="viewcode-block" id="PartitionFunction.upper_temperature">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction.upper_temperature">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">upper_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the highest temperature this object supports.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the highest temperature [K] this object supports.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">T9_points</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.e9</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
@@ -596,29 +596,29 @@ document.write(`
         <span class="k">if</span> <span class="n">lower</span><span class="o">.</span><span class="n">upper_temperature</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">upper</span><span class="o">.</span><span class="n">lower_temperature</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;temperature ranges cannot overlap&quot;</span><span class="p">)</span>
 
-        <span class="n">temperature</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">lower</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span> <span class="n">upper</span><span class="o">.</span><span class="n">temperature</span><span class="p">])</span>
-        <span class="n">partition_function</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">lower</span><span class="o">.</span><span class="n">partition_function</span><span class="p">,</span>
-                                             <span class="n">upper</span><span class="o">.</span><span class="n">partition_function</span><span class="p">])</span>
+        <span class="n">T9_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">lower</span><span class="o">.</span><span class="n">T9_points</span><span class="p">,</span> <span class="n">upper</span><span class="o">.</span><span class="n">T9_points</span><span class="p">])</span>
+        <span class="n">log_pf_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">lower</span><span class="o">.</span><span class="n">log_pf_data</span><span class="p">,</span>
+                                      <span class="n">upper</span><span class="o">.</span><span class="n">log_pf_data</span><span class="p">])</span>
 
         <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">lower</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">+</span><span class="si">{</span><span class="n">upper</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span>
 
         <span class="n">order</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interpolant_order</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">interpolant_order</span><span class="p">)</span>
         <span class="n">newpf</span> <span class="o">=</span> <span class="n">PartitionFunction</span><span class="p">(</span><span class="n">nucleus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nucleus</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-                                  <span class="n">temperature</span><span class="o">=</span><span class="n">temperature</span><span class="p">,</span>
-                                  <span class="n">partition_function</span><span class="o">=</span><span class="n">partition_function</span><span class="p">,</span>
+                                  <span class="n">T9_points</span><span class="o">=</span><span class="n">T9_points</span><span class="p">,</span>
+                                  <span class="n">log_pf_data</span><span class="o">=</span><span class="n">log_pf_data</span><span class="p">,</span>
                                   <span class="n">interpolant_order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">newpf</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">partition_function</span><span class="p">)</span> <span class="ow">and</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">temperature</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_pf_data</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">log_pf_data</span><span class="p">)</span> <span class="ow">and</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T9_points</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">T9_points</span><span class="p">))</span>
 
 <div class="viewcode-block" id="PartitionFunction.eval">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction.eval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the interpolated partition function value for the</span>
-<span class="sd">        temperature T.</span>
+<span class="sd">        temperature T. Note this returns log(pf)</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -634,17 +634,17 @@ document.write(`
         <span class="c1"># lazily construct the interpolant object, since it&#39;s pretty expensive</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpolant</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_interpolant</span> <span class="o">=</span> <span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="o">/</span><span class="mf">1.0e9</span><span class="p">,</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">T9_points</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log_pf_data</span><span class="p">,</span>
                 <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">interpolant_order</span>
             <span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">T</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="o">/</span><span class="mf">1.0e9</span>
+            <span class="n">T</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="o">*</span><span class="mf">1.0e-9</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;invalid temperature&quot;</span><span class="p">)</span>
             <span class="k">raise</span>
         <span class="c1"># extrapolates keeping the boundaries fixed.</span>
-        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_interpolant</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s1">&#39;const&#39;</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_interpolant</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s1">&#39;const&#39;</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="PartitionFunction.plot">
@@ -655,9 +655,9 @@ document.write(`
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        T_min : float</span>
-<span class="sd">            minimum temperature to plot</span>
+<span class="sd">            minimum temperature [K] to plot</span>
 <span class="sd">        T_max : float</span>
-<span class="sd">            maximum temperature to plot</span>
+<span class="sd">            maximum temperature [K] to plot</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -667,14 +667,16 @@ document.write(`
 
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 
-        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span><span class="p">)</span>
-        <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">&gt;=</span> <span class="n">T_min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">&lt;=</span> <span class="n">T_max</span><span class="p">)</span>
+        <span class="n">T_points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T9_points</span> <span class="o">*</span> <span class="mf">1.e9</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">T_points</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_pf_data</span><span class="p">))</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">T_points</span> <span class="o">&gt;=</span> <span class="n">T_min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">T_points</span> <span class="o">&lt;=</span> <span class="n">T_max</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">T_min</span><span class="p">,</span> <span class="n">T_max</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span>
-                    <span class="nb">max</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">partition_function</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_pf_data</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())),</span>
+                    <span class="nb">max</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_pf_data</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())))</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;T (K)&quot;</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;G(T)&quot;</span><span class="p">)</span>
 
@@ -693,14 +695,14 @@ document.write(`
 <span class="sd">    ``PartitionFunction`` subdirectory.</span>
 
 <span class="sd">    :var name:         the name of the table (as defined in the data file)</span>
-<span class="sd">    :var temperatures: an array of temperature values</span>
+<span class="sd">    :var T9_points: an array of temperature values in [GK]</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">temperatures</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T9_points</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_read_table</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_add_nuclide_pfun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuc</span><span class="p">,</span> <span class="n">pfun</span><span class="p">):</span>
@@ -738,9 +740,10 @@ document.write(`
                 <span class="n">fin</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
 
             <span class="c1"># Now, we want to read the lines of the file where</span>
-            <span class="c1"># the temperatures are located</span>
+            <span class="c1"># the temperatures are located. Temperature is converted to GK</span>
+            <span class="c1"># Explicitly divide by 1e9 instead of multiply by 1.0e-9 to avoid roundoff</span>
             <span class="n">temp_strings</span> <span class="o">=</span> <span class="n">fin</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">temperatures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">temp_strings</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">T9_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">temp_strings</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1.0e9</span>
 
             <span class="c1"># Now, we append on the array lines = [] all the remaining file, the structure</span>
             <span class="c1"># 1. The nucleus</span>
@@ -753,11 +756,12 @@ document.write(`
                     <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span>
 
         <span class="c1"># Using .pop(0) twice we construct each nucleus partition function.</span>
+        <span class="c1"># Note the partition function value stored is log(pf)</span>
         <span class="k">while</span> <span class="n">lines</span><span class="p">:</span>
             <span class="n">nuc</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
             <span class="n">pfun_strings</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-            <span class="n">partitionfun</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pfun_strings</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-            <span class="n">pfun</span> <span class="o">=</span> <span class="n">PartitionFunction</span><span class="p">(</span><span class="n">nuc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperatures</span><span class="p">,</span> <span class="n">partitionfun</span><span class="p">)</span>
+            <span class="n">log_pf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pfun_strings</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">))</span>
+            <span class="n">pfun</span> <span class="o">=</span> <span class="n">PartitionFunction</span><span class="p">(</span><span class="n">nuc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T9_points</span><span class="p">,</span> <span class="n">log_pf</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_nuclide_pfun</span><span class="p">(</span><span class="n">nuc</span><span class="p">,</span> <span class="n">pfun</span><span class="p">)</span></div>
 
 
