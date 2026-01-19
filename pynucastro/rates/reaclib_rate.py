@@ -100,7 +100,8 @@ class SingleSet:
                                           (5./3.) * self.a[5] * tf.T913 * tf.T913 +
                                           self.a[6] * tf.T9i) / 1.e9
 
-    def set_string_py(self, *, prefix="set", plus_equal=False):
+    def set_string_py(self, *, prefix="set", plus_equal=False,
+                      with_exp=True):
         """Generate the python code needed to evaluate the set.
 
         Parameters
@@ -110,6 +111,10 @@ class SingleSet:
         plus_equal : bool
             do we add to the existing set? or create a new
             variable and initialize it to this set?
+        with_exp : bool
+            do we compute the set (``True``) or the log of the
+            set (``False``)?  The later is useful if we work
+            with a derived rate for reaclib rate.
 
         Returns
         -------
@@ -117,9 +122,11 @@ class SingleSet:
 
         """
         if plus_equal:
-            string = f"{prefix} += np.exp( "
+            string = f"{prefix} += "
         else:
-            string = f"{prefix} = np.exp( "
+            string = f"{prefix} = "
+        if with_exp:
+            string += "np.exp( "
         string += f" {self.a[0]}"
         if not self.a[1] == 0.0:
             string += f" + {self.a[1]}*tf.T9i"
@@ -128,6 +135,8 @@ class SingleSet:
         if not self.a[3] == 0.0:
             string += f" + {self.a[3]}*tf.T913"
         if not (self.a[4] == 0.0 and self.a[5] == 0.0 and self.a[6] == 0.0):
+            if not with_exp:
+                string += " \\"
             indent = len(prefix)*" "
             string += f"\n{indent}         "
         if not self.a[4] == 0.0:
@@ -136,7 +145,8 @@ class SingleSet:
             string += f" + {self.a[5]}*tf.T953"
         if not self.a[6] == 0.0:
             string += f" + {self.a[6]}*tf.lnT9"
-        string += ")"
+        if with_exp:
+            string += ")"
         return string
 
     def set_string_cxx(self, *, prefix="set", plus_equal=False,
@@ -285,7 +295,6 @@ class ReacLibRate(Rate):
 
         self.chapter = chapter    # the Reaclib chapter for this reaction
         self.original_source = original_source   # the contents of the original rate file
-        self.fname = None
 
         if reactants:
             self.reactants = Nucleus.cast_list(reactants)
@@ -319,10 +328,7 @@ class ReacLibRate(Rate):
         self.weak_type = None
         self.derived_from_inverse = None
 
-        self.removed = None
-
-        self.Q = Q
-
+        self.removed = False
         self.tabular = False
 
         self.use_identical_particle_factor = True
@@ -333,6 +339,11 @@ class ReacLibRate(Rate):
         # some subclasses might define a stoichmetry as a dict{Nucleus}
         # that gives the numbers for the dY/dt equations
         self.stoichiometry = None
+
+        if Q is None:
+            self._set_q()
+        else:
+            self.Q = Q
 
         if isinstance(rfile, Path):
             # read in the file, parse the different sets and store them as
@@ -353,29 +364,6 @@ class ReacLibRate(Rate):
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
-
-    def _set_print_representation(self):
-        """Compose the string representations of this Rate."""
-
-        super()._set_print_representation()
-
-        # This is used to determine which rates to detect as the same reaction
-        # from multiple sources in a Library file, so it should not be unique
-        # to a given source, e.g. wc12, but only unique to the reaction.
-        reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
-        products_str = '_'.join([repr(nuc) for nuc in self.products])
-        self.fname = f'{reactants_str}__{products_str}'
-
-        if self.weak:
-            self.fname += f'__weak__{self.weak_type}'
-        if self.modified:
-            self.fname += "__modified"
-        if self.approx:
-            self.fname += "__approx"
-        if self.derived:
-            self.fname += "__derived"
-        if self.removed:
-            self.fname += "__removed"
 
     def __hash__(self):
         return hash(self.__repr__())
@@ -419,6 +407,7 @@ class ReacLibRate(Rate):
         assert self.chapter == other.chapter
         assert isinstance(self.chapter, int)
         assert self.label == other.label
+        assert self.src == other.src
         assert self.weak == other.weak
         assert self.weak_type == other.weak_type
         assert self.derived_from_inverse == other.derived_from_inverse
@@ -471,30 +460,33 @@ class ReacLibRate(Rate):
         assert isinstance(self.labelprops, str)
         if self.labelprops == "approx":
             self.label = "approx"
+            self.src = ""
             self.resonant = False
             self.weak = False
             self.weak_type = None
             self.derived_from_inverse = False
         elif self.labelprops == "derived":
             self.label = "derived"
+            self.src = ""
             self.resonant = False  # Derived may be resonant in some cases
             self.weak = False
             self.weak_type = None
             self.derived_from_inverse = False
         else:
             assert len(self.labelprops) == 6
-            self.label = self.labelprops[0:4]
+            self.label = "reaclib"
+            self.src = self.labelprops[0:4]
+            self.source = RateSource.source(self.src)
             self.resonant = self.labelprops[4] == 'r'
             self.weak = self.labelprops[4] == 'w'
             if self.weak:
-                if self.label.strip() == 'ec' or self.label.strip() == 'bec':
+                if self.src.strip() == 'ec' or self.src.strip() == 'bec':
                     self.weak_type = 'electron_capture'
                 else:
-                    self.weak_type = self.label.strip().replace('+', '_pos_').replace('-', '_neg_')
+                    self.weak_type = self.src.strip().replace('+', '_pos').replace('-', '_neg')
             else:
                 self.weak_type = None
             self.derived_from_inverse = self.labelprops[5] == 'v'
-            self.source = RateSource.source(self.label)
 
     def _read_from_file(self, f):
         """Given a file object, read rate data from the file.
@@ -632,29 +624,6 @@ class ReacLibRate(Rate):
 
         print(self.original_source, file=f)
 
-    def get_rate_id(self):
-        """Get an identifying string for this rate.  Don't include
-        resonance state since we combine resonant and non-resonant
-        versions of reactions.
-
-        Returns
-        -------
-        str
-
-        """
-
-        srev = ''
-        if self.derived_from_inverse:
-            srev = 'derived_from_inverse'
-
-        sweak = ''
-        if self.weak:
-            sweak = 'weak'
-
-        ssrc = 'reaclib'
-
-        return f'{self.rid} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
-
     def function_string_py(self):
         """Return a string containing the python function that
         computes the rate.
@@ -715,7 +684,7 @@ class ReacLibRate(Rate):
         fstring = ""
         fstring += "template <int do_T_derivatives>\n"
         fstring += f"{specifiers}\n"
-        fstring += f"void rate_{self.cname()}({', '.join(args)}) {{\n\n"
+        fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
         fstring += "    rate = 0.0;\n"
         fstring += "    drate_dT = 0.0;\n\n"

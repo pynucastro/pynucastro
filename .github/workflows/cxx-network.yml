@@ -5,14 +5,14 @@ jobs:
   compilation:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Install Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.11'
+          python-version: '3.14'
           cache: "pip"
 
       - name: Install dependencies
@@ -51,7 +51,7 @@ jobs:
       - name: Regenerate he-burn-19am network
         run: |
           cd external/Microphysics/networks/he-burn/he-burn-19am
-          python he_burn_19am.py
+          NPY_DISABLE_CPU_FEATURES="AVX512F AVX512CD AVX512_SKX" python he_burn_19am.py
 
       - name: Compile burn_cell (he-burn-19am)
         run: |

@@ -10,33 +10,14 @@ from os import walk
 from pathlib import Path
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
+from pynucastro.rates.alternate_rates import DeBoerC12agO16
 from pynucastro.rates.derived_rate import DerivedRate
-from pynucastro.rates.files import (RateFileError, _find_rate_file,
-                                    get_rates_dir)
+from pynucastro.rates.files import _find_rate_file, get_rates_dir
 from pynucastro.rates.known_duplicates import (find_duplicate_rates,
                                                is_allowed_dupe)
 from pynucastro.rates.rate import Rate
 from pynucastro.rates.reaclib_rate import ReacLibRate
 from pynucastro.rates.tabular_rate import TabularRate
-
-
-def list_known_rates():
-    """Print a list of all of the rates found in the library."""
-
-    lib_path = Path(__file__).parents[1]/"library"
-
-    for _, _, filenames in walk(lib_path):
-        for f in filenames:
-            # skip over files that are not rate files
-            if Path(f).suffix in (".md", ".dat", ".py", "ipynb"):
-                continue
-            try:
-                lib = Library(f)
-            except (RateFileError, UnsupportedNucleus):
-                continue
-            print(f"{f:32} : ")
-            for r in lib.get_rates():
-                print(f"                                 : {r}")
 
 
 def _rate_name_to_nuc(name):
@@ -97,14 +78,14 @@ def _rate_name_to_nuc(name):
     return reactants, products
 
 
-def capitalize_rid(rid, delimiter):
+def capitalize_id(rate_id, delimiter):
     """Capitalize a ``Rate`` ``rid`` or ``fname`` given the delimiter.
     The delimiter is usually either "_" or " "
 
     Parameters
     ----------
-    rid : str
-        the rate's id
+    rate_id : str
+        the rate's id or rate's fname
     delimiter : str
         the delimiter used to split the rid into substrings
 
@@ -114,19 +95,23 @@ def capitalize_rid(rid, delimiter):
 
     """
 
-    rid_nucs = rid.split(delimiter)
-    rid_mod = []
-    do_capitalization = True
-    for n in rid_nucs:
-        if n in ("weak", "approx", "derived"):
-            do_capitalization = False
-        if do_capitalization:
-            if n not in ("n", "p"):
-                n = n.capitalize()
-        rid_mod.append(n)
+    # assume that Nucleus name will be letter+numbers, i.e. He4
+    # This ignores neutron and proton, n and p, as intended.
+    NUC_RE = re.compile(r"^([a-zA-Z]+)(\d+)$")
 
-    rid_mod = delimiter.join(rid_mod)
-    return rid_mod
+    id_parts = rate_id.split(delimiter)
+    id_mod = []
+
+    for part in id_parts:
+        m = NUC_RE.match(part)
+        if m:
+            nuc, A = m.groups()
+            id_mod.append(nuc.capitalize() + A)
+        else:
+            id_mod.append(part)
+
+    id_mod = delimiter.join(id_mod)
+    return id_mod
 
 
 class Library:
@@ -140,9 +125,6 @@ class Library:
 
     Parameters
     ----------
-    libfile : str
-        a file containing a sequence of rates in a format that we
-        understand (for example a ReacLib database)
     rates : list, dict, Rate
         a single :py:class:`Rate <pynucastro.rates.rate.Rate>` or an
         iterable of `Rate` objects.  If it is a dictionary, then it
@@ -150,7 +132,7 @@ class Library:
 
     """
 
-    def __init__(self, libfile=None, rates=None):
+    def __init__(self, rates=None):
         self._rates = {}
 
         if rates:
@@ -163,10 +145,6 @@ class Library:
             else:
                 raise TypeError("rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.id")
 
-        if libfile:
-            library_file = _find_rate_file(libfile)
-            self._read_library_file(library_file)
-
     def get_rates(self):
         """Return a list of the rates in this library.
 
@@ -177,8 +155,14 @@ class Library:
         """
         return list(self._rates.values())
 
-    def get_rate(self, rid):
-        """Return a rate matching the id provided.
+    def get_rate(self, rate_id):
+        """Return a rate matching the id or fname provided.
+
+        Parameters
+        ----------
+        rate_id : str
+            rid of the Rate or the fname, as returned by Rate.fname.
+            The base name of the fname, i.e. without label, is also accepted.
 
         Returns
         -------
@@ -186,18 +170,29 @@ class Library:
 
         """
 
+        # rid case
         try:
-            rid_mod = capitalize_rid(rid, " ")
+            rid_mod = capitalize_id(rate_id, " ")
             return self._rates[rid_mod]
         except KeyError:
             pass
 
-        # fallback to the rate fname
-        try:
-            rid_mod = capitalize_rid(rid, "_")
-            return [q for q in self.get_rates() if q.fname == rid_mod][0]
-        except IndexError:
-            raise LookupError(f"rate identifier {rid!r} does not match a rate in this library.") from None
+        # fname case
+        fname_mod = capitalize_id(rate_id, "_")
+        matched_rates = []
+        for q in self.get_rates():
+            # Get the base fname. Assume that fname follows reactants_to_products_label
+            q_base_fname = q.fname.split(f'_{q.label}')[0]
+            if fname_mod in (q.fname, q_base_fname):
+                matched_rates.append(q)
+
+        if not matched_rates:
+            raise LookupError(f"rate identifier {rate_id!r} does not match a rate in this library.")
+
+        if len(matched_rates) > 1:
+            raise LookupError(f"rate identifier {rate_id!r} is ambiguous. It matched {[q.fname for q in matched_rates]}.")
+
+        return matched_rates[0]
 
     @property
     def num_rates(self):
@@ -351,69 +346,6 @@ class Library:
                 nuc = rnuc
         return nuc
 
-    def _read_library_file(self, library_file):
-        # loop through library file, read lines
-
-        library_source_lines = collections.deque()
-
-        with library_file.open("r") as flib:
-            for line in flib:
-                ls = line.rstrip('\n')
-                if ls.strip():
-                    library_source_lines.append(ls)
-
-        # identify distinct rates from library lines
-        current_chapter = None
-        while True:
-            if len(library_source_lines) == 0:
-                break
-
-            # Check to see if there is a chapter ID, if not then use current_chapter
-            # (for Reaclib v1 formatted library files)
-            line = library_source_lines[0].strip()
-            chapter = None
-            if line in ('t', 'T'):
-                chapter = 't'
-                library_source_lines.popleft()
-            else:
-                try:
-                    chapter = int(line)
-                except (TypeError, ValueError):
-                    # we can't interpret line as a chapter so use current_chapter
-                    assert current_chapter, f'malformed library file {library_file}, cannot identify chapter.'
-                    chapter = current_chapter
-                else:
-                    library_source_lines.popleft()
-            current_chapter = chapter
-
-            rlines = None
-            rate_type = None
-            if chapter == 't':
-                rlines = [library_source_lines.popleft() for i in range(5)]
-                rate_type = "tabular"
-            elif isinstance(chapter, int):
-                rlines = [library_source_lines.popleft() for i in range(3)]
-                rate_type = "reaclib"
-            if rlines:
-                sio = io.StringIO('\n'.join([f'{chapter}'] +
-                                            rlines))
-                #print(sio.getvalue())
-                try:
-                    if rate_type == "reaclib":
-                        r = ReacLibRate(rfile=sio)
-                    elif rate_type == "tabular":
-                        r = TabularRate(rfile=sio)
-                    else:
-                        raise NotImplementedError("rate not implemented")
-                except UnsupportedNucleus:
-                    pass
-                else:
-                    rid = r.id
-                    if rid in self._rates:
-                        self._rates[rid] = self._rates[rid] + r
-                    else:
-                        self._rates[rid] = r
-
     def __repr__(self):
         """Return a string containing the rates IDs in this library."""
         rstrings = []
@@ -433,7 +365,12 @@ class Library:
 
     def __add__(self, other):
         """Add two libraries to get a library containing rates from
-        both.
+        both.  Note: if a rate in the other library shares the same
+        id as a rate in this library, then it is not added.
+
+        Returns
+        -------
+        Library
 
         """
         new_rates = self._rates.copy()
@@ -671,7 +608,7 @@ class Library:
         for r in onlyfwd.get_rates():
 
             try:
-                DerivedRate(rate=r, compute_Q=False, use_pf=False, use_unreliable_spins=use_unreliable_spins)
+                DerivedRate(source_rate=r, use_pf=False, use_unreliable_spins=use_unreliable_spins)
             except ValueError:
                 continue
             else:
@@ -680,7 +617,7 @@ class Library:
         list1 = Library(rates=collect_rates)
         return list1
 
-    def derived_backward(self, compute_Q=False, use_pf=False, use_unreliable_spins=True):
+    def derived_backward(self, use_pf=False, use_unreliable_spins=True):
         """Loop over all of the forward rates that can be used to
         derive inverse rates (as returned by
         :py:meth:`.forward_for_detailed_balance`) and derive the
@@ -689,8 +626,6 @@ class Library:
 
         Parameters
         ----------
-        compute_Q : bool
-            do we recompute the Q value based on the masses?
         use_pf : bool
             do we use the temperature-dependent partition function?
 
@@ -705,7 +640,7 @@ class Library:
 
         for r in onlyfwd.get_rates():
             try:
-                i = DerivedRate(rate=r, compute_Q=compute_Q, use_pf=use_pf, use_unreliable_spins=use_unreliable_spins)
+                i = DerivedRate(source_rate=r, use_pf=use_pf, use_unreliable_spins=use_unreliable_spins)
             except ValueError:
                 continue
             else:
@@ -916,11 +851,72 @@ class ReacLibLibrary(Library):
     """Create a :py:class:`Library` containing all of the rates in the
     latest stored version of the ReacLib library.
 
+    Parameters
+    ----------
+    libfile : str
+        The name of the ReacLib database file
+
     """
 
-    def __init__(self):
-        libfile = 'reaclib_default2_20250330'
-        Library.__init__(self, libfile=libfile)
+    def __init__(self, *, libfile='reaclib_default2_20250330'):
+
+        super().__init__()
+        library_file = _find_rate_file(libfile)
+        self._read_library_file(library_file)
+
+    def _read_library_file(self, library_file):
+        # loop through library file, read lines
+
+        library_source_lines = collections.deque()
+
+        with library_file.open("r") as flib:
+            for line in flib:
+                ls = line.rstrip('\n')
+                if ls.strip():
+                    library_source_lines.append(ls)
+
+        # identify distinct rates from library lines
+        current_chapter = None
+        while True:
+            if len(library_source_lines) == 0:
+                break
+
+            # Check to see if there is a chapter ID, if not then use current_chapter
+            # (for Reaclib v1 formatted library files)
+            line = library_source_lines[0].strip()
+            chapter = None
+            if line in ('t', 'T'):
+                raise ValueError("tabular chapter not supported")
+
+            try:
+                chapter = int(line)
+            except (TypeError, ValueError):
+                # we can't interpret line as a chapter so use current_chapter
+                assert current_chapter, f'malformed library file {library_file}, cannot identify chapter.'
+                chapter = current_chapter
+            else:
+                library_source_lines.popleft()
+            current_chapter = chapter
+
+            rlines = None
+            rate_type = None
+            rlines = [library_source_lines.popleft() for i in range(3)]
+            rate_type = "reaclib"
+            if rlines:
+                sio = io.StringIO('\n'.join([f'{chapter}'] + rlines))
+                try:
+                    if rate_type == "reaclib":
+                        r = ReacLibRate(rfile=sio)
+                    else:
+                        raise NotImplementedError("rate not implemented")
+                except UnsupportedNucleus:
+                    pass
+                else:
+                    rid = r.id
+                    if rid in self._rates:
+                        self._rates[rid] = self._rates[rid] + r
+                    else:
+                        self._rates[rid] = r
 
     def write_to_file(self, filename, *, prepend_rates_dir=False):
         """Write the library out to a file of the given name in
@@ -1038,3 +1034,27 @@ class OdaLibrary(TabularLibrary):
 
     def __init__(self):
         super().__init__(ordering=["oda"])
+
+
+def full_library():
+    """Return a Library with every rate known to pynucastro.
+    This will include a lot of duplicate rates (same process
+    but from different sources).
+
+    Returns
+    -------
+    Library
+
+    """
+
+    lib = Library()
+    lib += ReacLibLibrary()
+    lib += SuzukiLibrary()
+    lib += LangankeLibrary()
+    lib += PruetFullerLibrary()
+    lib += FFNLibrary()
+    lib += OdaLibrary()
+    _r = DeBoerC12agO16()
+    lib.add_rate(_r)
+
+    return lib

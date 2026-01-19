@@ -15,7 +15,7 @@ import pynucastro.numba_util as numba
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
 from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import RateFileError, _find_rate_file
-from pynucastro.rates.rate import Rate, RateSource
+from pynucastro.rates.rate import Rate
 
 
 class TableIndex(Enum):
@@ -213,33 +213,32 @@ class TabularRate(Rate):
     """
 
     def __init__(self, rfile=None):
-        super().__init__()
-        self.rate_eval_needs_rho = True
-        self.rate_eval_needs_comp = True
 
         self.rfile_path = None
         self.rfile = None
-        self.source = None
 
         if isinstance(rfile, (str, Path)):
             rfile = Path(rfile)
             self.rfile_path = _find_rate_file(rfile)
-            self.source = RateSource.source(self.rfile_path.parent.name)
             self.rfile = rfile.name
 
-        self.fname = None
-
-        self.label = "tabular"
-        self.tabular = True
-
-        # we should initialize this somehow
+        # Some initialization
+        # weak_type, reactants and products will be updated in _read_from_file
         self.weak_type = ""
+        self.reactants = []
+        self.products = []
 
         self._read_from_file(self.rfile_path)
 
-        self._set_rhs_properties()
-        self._set_screening()
-        self._set_print_representation()
+        super().__init__(reactants=self.reactants, products=self.products,
+                         weak_type=self.weak_type,
+                         rate_source=self.rfile_path.parent.name,
+                         label="weaktab")
+
+        self.rate_eval_needs_rho = True
+        self.rate_eval_needs_comp = True
+
+        self.tabular = True
 
         # store the extrema of the thermodynamics
         _rhoy = self.tabular_data_table[::self.table_temp_lines, TableIndex.RHOY.value]
@@ -289,9 +288,6 @@ class TabularRate(Rate):
 
         elif "betadecay" in str(table_file):
             self.weak_type = "beta_decay"
-
-        # for backwards compatibility, we'll set a chapter to "t"
-        self.chapter = "t"
 
         # read in the table data
         # there are a few header lines that start with "!", which we skip,
@@ -352,10 +348,6 @@ class TabularRate(Rate):
         self.table_index_name = f'j_{self.reactants[0]}_{self.products[0]}'
         self.labelprops = 'tabular'
 
-        # since the reactants and products were only now set, we need
-        # to recompute Q -- this is used for finding rate pairs
-        self._set_q()
-
     def _set_rhs_properties(self):
         """Compute statistical prefactor and density exponent from the
         reactants.
@@ -375,27 +367,6 @@ class TabularRate(Rate):
 
         """
         self.ion_screen = []
-
-        if not self.fname:
-            # This is used to determine which rates to detect as the same reaction
-            # from multiple sources in a Library file, so it should not be unique
-            # to a given source, e.g. wc12, but only unique to the reaction.
-            reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
-            products_str = '_'.join([repr(nuc) for nuc in self.products])
-            self.fname = f'{reactants_str}__{products_str}'
-
-    def get_rate_id(self):
-        """Get an identifying string for this rate.
-
-        Returns
-        -------
-        str
-
-        """
-
-        ssrc = 'tabular'
-
-        return f'{self.rid} <{self.label.strip()}_{ssrc}>'
 
     def function_string_py(self):
         """Construct the python function that computes the rate.

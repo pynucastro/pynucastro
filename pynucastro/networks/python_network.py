@@ -5,6 +5,8 @@ import sys
 import warnings
 from pathlib import Path
 
+import numpy as np
+
 from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.rates import ApproximateRate, ModifiedRate
@@ -239,14 +241,14 @@ class PythonNetwork(RateCollection):
         for r in self.reaclib_rates:
             ostr += format_rate_call(r)
 
-        if self.derived_rates:
-            ostr += f"\n{indent}# derived rates\n"
-        for r in self.derived_rates:
-            ostr += format_rate_call(r)
-
         if self.tabular_rates:
             ostr += f"\n{indent}# tabular rates\n"
         for r in self.tabular_rates:
+            ostr += format_rate_call(r, use_tf=False)
+
+        if self.temperature_tabular_rates:
+            ostr += f"\n{indent}# temperature tabular rates\n"
+        for r in self.temperature_tabular_rates:
             ostr += format_rate_call(r, use_tf=False)
 
         if self.custom_rates:
@@ -262,6 +264,13 @@ class PythonNetwork(RateCollection):
         if self.modified_rates:
             ostr += f"\n{indent}# modified rates\n"
         for r in self.modified_rates:
+            ostr += format_rate_call(r)
+
+        # Derived rate should go last (before approx rates)
+        # since the inverse rate should be evaluated first.
+        if self.derived_rates:
+            ostr += f"\n{indent}# derived rates\n"
+        for r in self.derived_rates:
             ostr += format_rate_call(r)
 
         ostr += "\n"
@@ -303,9 +312,12 @@ class PythonNetwork(RateCollection):
 
         of.write("import numba\n")
         of.write("import numpy as np\n")
-        of.write("from scipy import constants\n")
+        of.write("from pynucastro.constants import constants\n")
         of.write("from numba.experimental import jitclass\n\n")
-        of.write("from pynucastro.rates import TableIndex, TableInterpolator, TabularRate, Tfactors\n")
+
+        of.write("from pynucastro.rates import (TableIndex, TableInterpolator, TabularRate,\n")
+        of.write("                              TempTableInterpolator, TemperatureTabularRate,\n")
+        of.write("                              Tfactors)\n")
         of.write("from pynucastro.screening import PlasmaState, ScreenFactors\n\n")
 
         # integer keys
@@ -364,7 +376,7 @@ class PythonNetwork(RateCollection):
         of.write(f'{indent}'"enuc = 0.0\n")
         of.write(f'{indent}'"for i, y in enumerate(dY):\n")
         of.write(f'{indent*2}'"enuc += y * mass[i]\n")
-        of.write(f'{indent}'"enuc *= -1*constants.Avogadro\n")
+        of.write(f'{indent}'"enuc *= -1*constants.N_A\n")
         of.write(f'{indent}'"return enuc\n\n")
 
         # partition function data (if needed)
@@ -372,8 +384,8 @@ class PythonNetwork(RateCollection):
         nuclei_pfs = self.get_nuclei_needing_partition_functions()
 
         for n in nuclei_pfs:
-            of.write(f"{n}_temp_array = np.array({list(n.partition_function.temperature/1.0e9)})\n")
-            of.write(f"{n}_pf_array = np.array({list(n.partition_function.partition_function)})\n")
+            of.write(f"{n}_temp_array = np.array({list(n.partition_function.T9_points)})\n")
+            of.write(f"{n}_log_pf_array = np.array({list(n.partition_function.log_pf_data)})\n")
             of.write("\n")
 
         # rate_eval class
@@ -401,8 +413,32 @@ class PythonNetwork(RateCollection):
             of.write(f"                  {r.fname}_rate.table_temp_lines,\n")
             of.write(f"                  {r.fname}_rate.tabular_data_table)\n\n")
 
-        of.write("@numba.njit()\n")
+        # temperature tabular rate data
+        if self.temperature_tabular_rates:
+            of.write("# note: we cannot make the TempTableInterpolator global, since numba doesn't like global jitclass\n")
 
+        for r in self.temperature_tabular_rates:
+
+            of.write(f"# temperature / rate tabulation for {r.rid}\n")
+
+            log_temp_str = np.array2string(r.log_t9_data,
+                                           max_line_width=70, precision=17, separator=", ")
+            of.write(f"{r.fname}_log_t9_data = np.array(\n")
+            for line in log_temp_str.split("\n"):
+                of.write(f"     {line}\n")
+            of.write("   )\n")
+
+            log_rate_str = np.array2string(r.log_rate_data,
+                                           max_line_width=70, precision=17, separator=", ")
+            of.write(f"{r.fname}_log_rate_data = np.array(\n")
+            for line in log_rate_str.split("\n"):
+                of.write(f"     {line}\n")
+            of.write("   )\n")
+
+            of.write(f"{r.fname}_info = ({r.fname}_log_t9_data, {r.fname}_log_rate_data)\n\n")
+
+        # Ye helper function
+        of.write("@numba.njit()\n")
         of.write("def ye(Y):\n")
         of.write(f"{indent}return np.sum(Z * Y)/np.sum(A * Y)\n\n")
 

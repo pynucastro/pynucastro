@@ -1,5 +1,5 @@
-Initializing AMReX (25.10-11-g26054b26bb65)...
-AMReX (25.10-11-g26054b26bb65) initialized
+Initializing AMReX (25.11-47-gc4fcda1fb2ea)...
+AMReX (25.11-47-gc4fcda1fb2ea) initialized
 starting the single zone burn...
 reading in network electron-capture / beta-decay tables...
 Maximum Time (s): 0.01
@@ -30,37 +30,37 @@ RHS at t = 0
    S32 1323519.174
 ------------------------------------
 successful? 1
- - Hnuc = 5.491366142e+19
- - added e = 5.491366142e+17
- - final T = 7126065275
+ - Hnuc = 4.397909277e+19
+ - added e = 4.397909277e+17
+ - final T = 6656291303
 ------------------------------------
 e initial = 5.995956082e+17
-e final =   1.148732222e+18
+e final =   1.039386536e+18
 ------------------------------------
 new mass fractions: 
-H1 0.00900254878
-He4 6.899608988e-13
-O16 5.02310191e-07
-O20 0.009835982937
-F20 0.009834632311
-Ne20 4.012407296e-14
-Mg24 7.687349513e-06
-Al27 2.397057447e-17
-Si28 0.2644621097
-P31 1.618654609e-13
-S32 0.7068565366
+H1 0.009307048983
+He4 3.598820253e-13
+O16 6.945042998e-07
+O20 0.009997687144
+F20 0.009996314357
+Ne20 1.027891736e-13
+Mg24 1.24621466e-06
+Al27 1.645253981e-18
+Si28 0.3262434305
+P31 8.175490055e-14
+S32 0.6444535783
 ------------------------------------
 species creation rates: 
-omegadot(H1): -0.09974512199
+omegadot(H1): -0.06929510166
 omegadot(He4): -3
-omegadot(O16): -49.99994977
-omegadot(O20): -0.01640170629
-omegadot(F20): -0.01653676888
+omegadot(O16): -49.99993055
+omegadot(O20): -0.0002312855859
+omegadot(F20): -0.0003685642773
 omegadot(Ne20): -30
-omegadot(Mg24): -9.999231265
+omegadot(Mg24): -9.999875379
 omegadot(Al27): -1
-omegadot(Si28): 25.44621097
+omegadot(Si28): 31.62434305
 omegadot(P31): -1
-omegadot(S32): 69.68565366
-number of steps taken: 13271
-AMReX (25.10-11-g26054b26bb65) finalized
+omegadot(S32): 63.44535783
+number of steps taken: 598
+AMReX (25.11-47-gc4fcda1fb2ea) finalized

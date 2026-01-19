@@ -60,11 +60,11 @@ class TestElectronEOS:
         T = 1.e5
 
         for rho in [1.e4, 1.e5, 1.e7, 1.e9]:
-            es = e.pe_state(rho, T, comp)
+            es, _ = e.pe_state(rho, T, comp)
             p_zt, e_zt = zero_temperature_eos(rho, comp)
 
-            assert es.p_e == approx(p_zt, rel=1.e-4)
-            assert es.e_e == approx(e_zt, rel=1.e-4)
+            assert es.p == approx(p_zt, rel=1.e-4)
+            assert es.e == approx(e_zt, rel=1.e-4)
 
     def test_high_temperature(self):
         # at high temperatures, we should be an ideal electron gas.
@@ -77,10 +77,10 @@ class TestElectronEOS:
         T = 1.e10
 
         for rho in [1.e1, 1.e2, 1.e3]:
-            es = e.pe_state(rho, T, comp)
+            es, _ = e.pe_state(rho, T, comp)
             p_ideal = ideal_gas(rho, T, comp)
 
-            assert es.p_e == approx(p_ideal, rel=1.e-4)
+            assert es.p == approx(p_ideal, rel=1.e-4)
 
     def test_ne_rho_derivs(self):
 
@@ -94,11 +94,11 @@ class TestElectronEOS:
         for T in [1.e4, 1.e6, 1.e9]:
             for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
 
-                es = e.pe_state(rho, T, comp)
-                es_r = e.pe_state(rho * (1.0 + eps), T, comp)
+                es, _ = e.pe_state(rho, T, comp)
+                es_eps, _ = e.pe_state(rho * (1.0 + eps), T, comp)
 
-                dnedr_approx = (es_r.n_e - es.n_e) / (eps * rho)
-                assert es.dne_drho == approx(dnedr_approx)
+                dnedr_approx = (es_eps.n - es.n) / (eps * rho)
+                assert es.dn_drho == approx(dnedr_approx)
 
     @pytest.mark.skipif(sys.platform == "darwin", reason="Macs give different roundoff when the value is ~ 0")
     def test_ne_temp_derivs(self):
@@ -120,12 +120,12 @@ class TestElectronEOS:
         for T in [1.e4, 1.e6, 1.e9]:
             for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
 
-                es = e.pe_state(rho, T, comp)
-                es_r = e.pe_state(rho, T * (1.0 + eps), comp)
+                es, _ = e.pe_state(rho, T, comp)
+                es_eps, _ = e.pe_state(rho, T * (1.0 + eps), comp)
 
-                dnedT_approx = (es_r.n_e - es.n_e) / (eps * T)
-                scale = es.n_e / T
-                assert es.dne_dT == approx(dnedT_approx/scale, abs=5.e-9)
+                dnedT_approx = (es_eps.n - es.n) / (eps * T)
+                scale = es.n / T
+                assert es.dn_dT == approx(dnedT_approx/scale, abs=5.e-9)
 
     def test_pres_rho_derivs(self):
 
@@ -138,10 +138,10 @@ class TestElectronEOS:
 
         for T in [1.e4, 1.e7, 1.e9]:
             for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
-                es = e.pe_state(rho, T, comp)
-                es_r = e.pe_state(rho * (1.0 + eps_rho), T, comp)
-                dpdr_approx = (es_r.p_e - es.p_e) / (eps_rho * rho)
-                assert es.dpe_drho == approx(dpdr_approx)
+                es, _ = e.pe_state(rho, T, comp)
+                es_eps, _ = e.pe_state(rho * (1.0 + eps_rho), T, comp)
+                dpdr_approx = (es_eps.p - es.p) / (eps_rho * rho)
+                assert es.dp_drho == approx(dpdr_approx)
 
     def test_pres_temp_derivs(self):
 
@@ -162,11 +162,11 @@ class TestElectronEOS:
         for T in [1.e6, 1.e7, 1.e9]:
             for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
 
-                es = e.pe_state(rho, T, comp)
+                es, _ = e.pe_state(rho, T, comp)
                 dtemp = eps_T * T
-                deriv = fourth_order_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
-                                         T, dtemp, component="p_e")
-                assert es.dpe_dT == approx(deriv, rel=3.e-4)
+                deriv = fourth_order_diff(lambda _T: e.pe_state(rho, _T, comp)[0],  # pylint: disable=cell-var-from-loop
+                                         T, dtemp, component="p")
+                assert es.dp_dT == approx(deriv, rel=3.e-4)
 
     def test_e_rho_derivs(self):
 
@@ -182,11 +182,11 @@ class TestElectronEOS:
         for T in [1.e4, 1.e7, 1.e9]:
             for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
 
-                es = e.pe_state(rho, T, comp)
+                es, _ = e.pe_state(rho, T, comp)
                 drho = eps_rho * rho
-                deriv = fourth_order_diff(lambda _rho: e.pe_state(_rho, T, comp),  # pylint: disable=cell-var-from-loop
-                                          rho, drho, component="e_e")
-                assert es.dee_drho == approx(deriv, rel=1.e-3)
+                deriv = fourth_order_diff(lambda _rho: e.pe_state(_rho, T, comp)[0],  # pylint: disable=cell-var-from-loop
+                                          rho, drho, component="e")
+                assert es.de_drho == approx(deriv, rel=1.e-3)
 
     def test_e_temp_derivs(self):
 
@@ -207,11 +207,11 @@ class TestElectronEOS:
         for T in [1.e6, 1.e7, 1.e9]:
             for rho in [1.e-2, 1.e2, 1.e5, 1.e9]:
 
-                es = e.pe_state(rho, T, comp)
+                es, _ = e.pe_state(rho, T, comp)
                 dtemp = eps_T * T
-                deriv = fourth_order_diff(lambda _T: e.pe_state(rho, _T, comp),  # pylint: disable=cell-var-from-loop
-                                         T, dtemp, component="e_e")
-                assert es.dee_dT == approx(deriv, rel=5.e-4)
+                deriv = fourth_order_diff(lambda _T: e.pe_state(rho, _T, comp)[0],  # pylint: disable=cell-var-from-loop
+                                         T, dtemp, component="e")
+                assert es.de_dT == approx(deriv, rel=5.e-4)
 
     def test_gamma_limits(self):
 
@@ -226,5 +226,5 @@ class TestElectronEOS:
         rho = 1.e-2
         T = 1.e6
 
-        es = e.pe_state(rho, T, comp)
-        assert rho * es.e_e / es.p_e == approx(1.5, rel=5.e-4)
+        es, _ = e.pe_state(rho, T, comp)
+        assert rho * es.e / es.p == approx(1.5, rel=5.e-4)

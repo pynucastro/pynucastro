@@ -4,26 +4,14 @@ state.
 """
 
 
-from collections import namedtuple
-
 import numpy as np
 from scipy.optimize import brentq
 
 from pynucastro.constants import constants
 
 from .degeneracy_parameter_bounds import get_eta_bounds
+from .eos_components import EOSComponentState
 from .fermi_integrals import FermiIntegral
-
-EOSState = namedtuple("EOSState", ["n_e", "n_pos",
-                                   "p_e", "p_pos",
-                                   "e_e", "e_pos",
-                                   "eta",
-                                   "dne_drho", "dne_dT",
-                                   "dnp_drho", "dnp_dT",
-                                   "dpe_drho", "dpe_dT",
-                                   "dpp_drho", "dpp_dT",
-                                   "dee_drho", "dee_dT",
-                                   "dep_drho", "dep_dT"])
 
 
 class ElectronEOS:
@@ -55,10 +43,19 @@ class ElectronEOS:
             Temperature (K)
         comp : Composition
             Composition (abundances of each nucleus)
+        compute_derivs : bool
+            Are the derivatives with respect to rho and T computed?
+        eta_guess_min : float
+            The minimum degeneracy parameter guess for the root-finding
+        eta_guess_max : float
+            The maximum degeneracy parameter guess for the root-finding
 
         Returns
         -------
-        EOSState
+        electron_state : EOSComponentState
+            The thermodynamics of the electrons
+        positron_state : EOSComponentState
+            The thermodynamics of the positrons
 
         """
 
@@ -154,7 +151,6 @@ class ElectronEOS:
 
             f52_pos = FermiIntegral(2.5, eta_pos, beta)
             f52_pos.evaluate(do_first_derivs=True, do_second_derivs=False)
-
             n_pos = coeff * beta32 * (f12_pos.F + beta * f32_pos.F)
             p_pos = pcoeff * beta52 * (f32_pos.F + 0.5 * beta * f52_pos.F)
             E_pos = ecoeff * beta52 * (f32_pos.F + beta * f52_pos.F) + 2 * rest_mass * n_pos
@@ -249,17 +245,22 @@ class ElectronEOS:
         e_pos = 0.0
         dep_drho = 0.0
         dep_dT = 0.0
+
         if self.include_positrons:
             e_pos = E_pos / rho
             dep_drho = (dEp_drho - E_pos / rho) / rho
             dep_dT = dEp_dT / rho
 
-        return EOSState(eta=eta,
-                        n_e=n_e, p_e=p_e, e_e=e_e,
-                        n_pos=n_pos, p_pos=p_pos, e_pos=e_pos,
-                        dne_drho=dne_drho, dne_dT=dne_dT,
-                        dnp_drho=dnp_drho, dnp_dT=dnp_dT,
-                        dpe_drho=dpe_drho, dpe_dT=dpe_dT,
-                        dpp_drho=dpp_drho, dpp_dT=dpp_dT,
-                        dee_drho=dee_drho, dee_dT=dee_dT,
-                        dep_drho=dep_drho, dep_dT=dep_dT)
+        ele_state = EOSComponentState(eta=eta,
+                                      n=n_e, p=p_e, e=e_e,
+                                      dn_drho=dne_drho, dn_dT=dne_dT,
+                                      dp_drho=dpe_drho, dp_dT=dpe_dT,
+                                      de_drho=dee_drho, de_dT=dee_dT)
+
+        pos_state = EOSComponentState(eta=-eta,
+                             n=n_pos, p=p_pos, e=e_pos,
+                             dn_drho=dnp_drho, dn_dT=dnp_dT,
+                             dp_drho=dpp_drho, dp_dT=dpp_dT,
+                             de_drho=dep_drho, de_dT=dep_dT)
+
+        return ele_state, pos_state

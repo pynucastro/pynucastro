@@ -9,9 +9,9 @@ import re
 from pathlib import Path
 
 from pynucastro.constants import constants
-from pynucastro.networks.base_cxx_network import BaseCxxNetwork
+from pynucastro.networks.base_cxx_network import (BaseCxxNetwork,
+                                                  _signed_rate_dtype)
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates import ReacLibRate
 
 
 class AmrexAstroCxxNetwork(BaseCxxNetwork):
@@ -30,6 +30,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
         self.ftags['<rate_param_tests>'] = self._rate_param_tests
         self.ftags['<rate_indices>'] = self._fill_rate_indices
+        self.ftags['<rate_indices_extern>'] = self._fill_rate_indices_extern
         self.ftags['<npa_index>'] = self._fill_npa_index
 
         self.disable_rate_params = disable_rate_params
@@ -47,17 +48,17 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
         for _, r in enumerate(self.rates):
             if r in self.disable_rate_params:
-                of.write(f"{self.indent*n_indent}if (disable_{r.cname()}) {{\n")
-                of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{r.cname()}) = 0.0;\n")
+                of.write(f"{self.indent*n_indent}if (disable_{r.fname}) {{\n")
+                of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{r.fname}) = 0.0;\n")
                 of.write(f"{self.indent*n_indent}    if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
-                of.write(f"{self.indent*n_indent}        rate_eval.dscreened_rates_dT(k_{r.cname()}) = 0.0;\n")
+                of.write(f"{self.indent*n_indent}        rate_eval.dscreened_rates_dT(k_{r.fname}) = 0.0;\n")
                 of.write(f"{self.indent*n_indent}    }}\n")
                 # check for the reverse too -- we disable it with the same parameter
                 rr = self.find_reverse(r)
                 if rr is not None:
-                    of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{rr.cname()}) = 0.0;\n")
+                    of.write(f"{self.indent*n_indent}    rate_eval.screened_rates(k_{rr.fname}) = 0.0;\n")
                     of.write(f"{self.indent*n_indent}    if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
-                    of.write(f"{self.indent*n_indent}        rate_eval.dscreened_rates_dT(k_{rr.cname()}) = 0.0;\n")
+                    of.write(f"{self.indent*n_indent}        rate_eval.dscreened_rates_dT(k_{rr.fname}) = 0.0;\n")
                     of.write(f"{self.indent*n_indent}    }}\n")
                 of.write(f"{self.indent*n_indent}}}\n\n")
 
@@ -116,7 +117,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             of.write("@namespace: network\n\n")
             if self.disable_rate_params:
                 for r in self.disable_rate_params:
-                    of.write(f"disable_{r.cname()}    int     0\n")
+                    of.write(f"disable_{r.fname}    int     0\n")
 
     def _fill_npa_index(self, n_indent, of):
         #Get the index of h1, neutron, and helium-4 if they're present in the network.
@@ -143,8 +144,10 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
              indicating its not directly in the network.
         """
 
+        dtype = _signed_rate_dtype(len(self.all_rates))
+
         # Fill in the rate indices
-        of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED amrex::Array2D<int, 1, Rates::NumRates, 1, 7, amrex::Order::C> rate_indices {{\n")
+        of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED amrex::Array2D<{dtype}, 1, Rates::NumRates, 1, 7, amrex::Order::C> rate_indices {{\n")
 
         for n, rate in enumerate(self.all_rates):
             tmp = ','
@@ -152,8 +155,8 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
                 tmp = ''
 
             # meaning it is removed.
-            if isinstance(rate, ReacLibRate) and rate.removed is not None:
-                of.write(f"{self.indent*n_indent}    -1, -1, -1, -1, -1, -1, -1{tmp}\n")
+            if rate.weak_type or rate.removed:
+                of.write(f"{self.indent*n_indent}    -1, -1, -1, -1, -1, -1, -1{tmp}  // {rate.fname}\n")
                 continue
 
             # Find the reactants and products indices
@@ -177,6 +180,13 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             if rr is not None:
                 rr_ind = self.all_rates.index(rr) + 1
 
-            of.write(f"{self.indent*n_indent}    {reactant_ind[0]}, {reactant_ind[1]}, {reactant_ind[2]}, {product_ind[0]}, {product_ind[1]}, {product_ind[2]}, {rr_ind}{tmp}\n")
+            of.write(f"{self.indent*n_indent}    {reactant_ind[0]}, {reactant_ind[1]}, {reactant_ind[2]}, {product_ind[0]}, {product_ind[1]}, {product_ind[2]}, {rr_ind}{tmp}  // {rate.fname}\n")
 
         of.write(f"{self.indent*n_indent}}};\n")
+
+    def _fill_rate_indices_extern(self, n_indent, of):
+
+        dtype = _signed_rate_dtype(len(self.all_rates))
+
+        # Fill in the rate indices
+        of.write(f"{self.indent*n_indent}extern AMREX_GPU_MANAGED amrex::Array2D<{dtype}, 1, Rates::NumRates, 1, 7, amrex::Order::C> rate_indices;\n")

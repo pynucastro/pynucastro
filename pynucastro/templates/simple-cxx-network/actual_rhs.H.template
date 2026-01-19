@@ -7,6 +7,7 @@
 #include <burn_type.H>
 #include <screen.H>
 #include <reaclib_rates.H>
+#include <derived_rates.H>
 
 using namespace Species;
 using namespace Rates;
@@ -50,6 +51,9 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
     tf_t tfactors = evaluate_tfactors(state.T);
 
     fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
+
+    // Calculate Derived Rates. This should go last but before approx rates.
+    fill_derived_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
 #ifndef DISABLE_SCREENING
 

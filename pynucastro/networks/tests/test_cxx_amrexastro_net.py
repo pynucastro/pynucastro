@@ -34,31 +34,17 @@ class TestAmrexAstroCxxNetwork:
         output.close()
         return result
 
-    def test_nrat_reaclib(self, fn):
-        """ test the _nrat_reaclib function """
-
-        answer = '    const int NrateReaclib = 5;\n'
-
-        assert self.cromulent_ftag(fn._nrat_reaclib, answer, n_indent=1)
-
-    def test_nrat_tabular(self, fn):
-        """ test the _nrat_tabular function """
-
-        answer = '    const int NrateTabular = 2;\n'
-
-        assert self.cromulent_ftag(fn._nrat_tabular, answer, n_indent=1)
-
     def test_nrxn(self, fn):
         """ test the _nrxn function """
 
-        answer = ('    k_C12_C12_to_He4_Ne20 = 1,\n' +
-                  '    k_C12_C12_to_n_Mg23 = 2,\n' +
-                  '    k_C12_C12_to_p_Na23 = 3,\n' +
-                  '    k_He4_C12_to_O16 = 4,\n' +
-                  '    k_n_to_p_weak_wc12 = 5,\n' +
-                  '    k_Na23_to_Ne23 = 6,\n' +
-                  '    k_Ne23_to_Na23 = 7,\n' +
-                  '    NumRates = k_Ne23_to_Na23\n')
+        answer = ('    k_C12_C12_to_He4_Ne20_reaclib = 1,\n' +
+                  '    k_C12_C12_to_n_Mg23_reaclib = 2,\n' +
+                  '    k_C12_C12_to_p_Na23_reaclib = 3,\n' +
+                  '    k_He4_C12_to_O16_reaclib = 4,\n' +
+                  '    k_n_to_p_reaclib = 5,\n' +
+                  '    k_Na23_to_Ne23_weaktab = 6,\n' +
+                  '    k_Ne23_to_Na23_weaktab = 7,\n' +
+                  '    NumRates = k_Ne23_to_Na23_weaktab\n')
         assert self.cromulent_ftag(fn._nrxn, answer, n_indent=1)
 
     def test_ebind(self, fn):

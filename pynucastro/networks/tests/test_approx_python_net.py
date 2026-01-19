@@ -34,8 +34,8 @@ class TestPythonNetwork:
     def test_full_ydot_string(self, pynet):
         ostr = \
 """dYdt[jhe4] = (
-      ( -rho*Y[jhe4]*Y[jmg24]*rate_eval.Mg24_He4__Si28__approx +Y[jsi28]*rate_eval.Si28__Mg24_He4__approx ) +
-      ( -rho*Y[jhe4]*Y[jsi28]*rate_eval.Si28_He4__S32__approx +Y[js32]*rate_eval.S32__Si28_He4__approx )
+      ( -rho*Y[jhe4]*Y[jmg24]*rate_eval.Mg24_He4_to_Si28_approx +Y[jsi28]*rate_eval.Si28_to_Mg24_He4_approx ) +
+      ( -rho*Y[jhe4]*Y[jsi28]*rate_eval.Si28_He4_to_S32_approx +Y[js32]*rate_eval.S32_to_Si28_He4_approx )
    )
 
 """
@@ -46,23 +46,23 @@ class TestPythonNetwork:
 
         ostr = \
 """@numba.njit()
-def Mg24_He4__Si28__approx(rate_eval, tf):
-    r_ag = rate_eval.He4_Mg24__Si28__removed
-    r_ap = rate_eval.He4_Mg24__p_Al27__removed
-    r_pg = rate_eval.p_Al27__Si28__removed
-    r_pa = rate_eval.p_Al27__He4_Mg24__removed
+def Mg24_He4_to_Si28_approx(rate_eval, tf):
+    r_ag = rate_eval.He4_Mg24_to_Si28_removed
+    r_ap = rate_eval.He4_Mg24_to_p_Al27_removed
+    r_pg = rate_eval.p_Al27_to_Si28_removed
+    r_pa = rate_eval.p_Al27_to_He4_Mg24_removed
     rate = r_ag + r_ap * r_pg / (r_pg + r_pa)
-    rate_eval.Mg24_He4__Si28__approx = rate
+    rate_eval.Mg24_He4_to_Si28_approx = rate
 
 """
-        r = pynet.get_rate("mg24_he4__si28__approx")
+        r = pynet.get_rate("mg24_he4_to_si28_approx")
         assert r.function_string_py() == ostr
 
     def test_function_string(self, pynet):
 
         ostr = \
 """@numba.njit()
-def He4_Mg24__Si28__removed(rate_eval, tf):
+def He4_Mg24_to_Si28_removed(rate_eval, tf):
     # Mg24 + He4 --> Si28
     rate = 0.0
 
@@ -73,11 +73,11 @@ def He4_Mg24__Si28__removed(rate_eval, tf):
     rate += np.exp(  -50.5494 + -12.8332*tf.T9i + 21.3721*tf.T913i + 37.7649*tf.T913
                   + -4.10635*tf.T9 + 0.249618*tf.T953 + -1.5*tf.lnT9)
 
-    rate_eval.He4_Mg24__Si28__removed = rate
+    rate_eval.He4_Mg24_to_Si28_removed = rate
 
 """
 
-        r = pynet.get_rate("mg24_he4__si28__approx")
+        r = pynet.get_rate("mg24_he4_to_si28_approx")
         print(r)
         assert r.get_child_rates()[0].function_string_py().strip() == ostr.strip()
 

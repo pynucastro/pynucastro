@@ -21,17 +21,16 @@ namespace Rates
 
     enum NetworkRates
     {
-        k_C12_C12_to_He4_Ne20 = 1,
-        k_C12_C12_to_n_Mg23 = 2,
-        k_C12_C12_to_p_Na23 = 3,
-        k_He4_C12_to_O16 = 4,
-        k_n_to_p_weak_wc12 = 5,
-        NumRates = k_n_to_p_weak_wc12
+        k_C12_C12_to_He4_Ne20_reaclib = 1,
+        k_C12_C12_to_n_Mg23_reaclib = 2,
+        k_C12_C12_to_p_Na23_reaclib = 3,
+        k_He4_C12_to_O16_reaclib = 4,
+        k_n_to_p_reaclib = 5,
+        k_He4_Ne20_to_C12_C12_derived = 6,
+        k_p_Na23_to_C12_C12_derived = 7,
+        k_O16_to_He4_C12_derived = 8,
+        NumRates = k_O16_to_He4_C12_derived
     };
-
-    // number of reaclib rates
-
-    const int NrateReaclib = 5;
 
     // rate names -- note: the rates are 1-based, not zero-based, so we pad
     // this vector with rate_names[0] = "" so the indices line up with the
@@ -39,11 +38,14 @@ namespace Rates
 
     static const std::vector<std::string> rate_names = {
         "",   // 0
-        "C12_C12_to_He4_Ne20",  // 1,
-        "C12_C12_to_n_Mg23",  // 2,
-        "C12_C12_to_p_Na23",  // 3,
-        "He4_C12_to_O16",  // 4,
-        "n_to_p_weak_wc12"  // 5,
+        "C12_C12_to_He4_Ne20_reaclib",  // 1,
+        "C12_C12_to_n_Mg23_reaclib",  // 2,
+        "C12_C12_to_p_Na23_reaclib",  // 3,
+        "He4_C12_to_O16_reaclib",  // 4,
+        "n_to_p_reaclib",  // 5,
+        "He4_Ne20_to_C12_C12_derived",  // 6,
+        "p_Na23_to_C12_C12_derived",  // 7,
+        "O16_to_He4_C12_derived"  // 8,
     };
 
 }

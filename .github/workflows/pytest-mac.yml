@@ -17,10 +17,10 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.11", "3.12"]
+        python-version: ["3.11", "3.12", "3.13"]
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Install Python ${{ matrix.python-version }}
         uses: actions/setup-python@v6
@@ -53,7 +53,7 @@ jobs:
         run: pytest -v -s --color=yes
 
       - name: Upload output from failed write_network tests
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: failed_networks_${{ matrix.python-version }}

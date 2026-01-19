@@ -7,7 +7,8 @@ import pytest
 import pynucastro as pyna
 
 
-@pytest.mark.skipif(sys.platform == "darwin", reason="we get roundoff diffs on Macs")
+@pytest.mark.skipif(sys.platform == "darwin" or sys.platform.startswith("win"),
+                    reason="we get roundoff diffs on Macs and Windows")
 class TestAmrexAstroCxxNetwork:
     @pytest.fixture(scope="class")
     def fn(self, reaclib_library):
@@ -20,7 +21,7 @@ class TestAmrexAstroCxxNetwork:
         derived = []
         for r in lib.get_rates():
             try:
-                d = pyna.DerivedRate(rate=r, compute_Q=False, use_pf=True, use_unreliable_spins=False)
+                d = pyna.DerivedRate(source_rate=r, use_pf=True, use_unreliable_spins=False)
             except ValueError:
                 continue
             fwd_rates.append(r)

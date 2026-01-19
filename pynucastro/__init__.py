@@ -118,6 +118,21 @@ reaction rates.  The main core rate classes are:
   a tabulated (temperature and electron density) weak reaction rate),
   with methods to visualize and evaluate it.
 
+* :py:obj:`TemperatureTabularRate
+  <pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate>`
+  : a tabulated temperature dependent rate (T vs. N_A <σv>), with
+  methods to visualize and evaluate it.
+
+* :py:obj:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>` :
+  a rate computed via detailed balance from a forward rate.
+
+* :py:obj:`ApproximateRate <pynucastro.rates.approximate_rates.ApproximateRate>` :
+  an approximation to a rate that uses multiple "hidden rates" to
+  compute an effective rate.
+
+For some temperature-dependent rates, we have a class to hold
+temperature factors:
+
 * :py:obj:`Tfactors <pynucastro.rates.rate.Tfactors>` : a container
   class that holds common temperature factors.
 
@@ -161,7 +176,7 @@ __version__ = version
 
 
 import pynucastro.screening
-from pynucastro.eos import FermiIntegral
+from pynucastro.eos import FermiIntegral, StellarEOS
 from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
                                  Composition, Explorer, FortranNetwork,
                                  NSENetwork, PythonNetwork, RateCollection,
@@ -172,6 +187,6 @@ from pynucastro.rates import (ApproximateRate, DerivedRate, FFNLibrary,
                               LangankeLibrary, Library, ModifiedRate,
                               OdaLibrary, PruetFullerLibrary, Rate, RateFilter,
                               ReacLibLibrary, SuzukiLibrary, TabularLibrary,
-                              Tfactors, list_known_rates, load_rate)
+                              Tfactors, full_library, load_rate)
 from pynucastro.reduction import drgep, sens_analysis
 from pynucastro.screening import make_plasma_state, make_screen_factors

@@ -21,7 +21,7 @@ class TestPythonDerivedNetwork:
 
         derived = []
         for r in fwd_rates_lib.get_rates():
-            d = pyna.rates.DerivedRate(rate=r, compute_Q=False, use_pf=True, use_unreliable_spins=False)
+            d = pyna.rates.DerivedRate(source_rate=r, use_pf=True, use_unreliable_spins=False)
             derived.append(d)
 
         der_rates_lib = pyna.Library(rates=derived)
@@ -37,7 +37,11 @@ class TestPythonDerivedNetwork:
         n14agf18 = reaclib_library.get_rate_by_name("n14(a,g)f18")
         n14_new = pyna.ModifiedRate(n14agf18, new_products=["ne20"],
                                     stoichiometry={pyna.Nucleus("he4"): 1.5})
-        new_n14_reverse = pyna.DerivedRate(rate=n14_new, compute_Q=True, use_pf=True, use_unreliable_spins=False)
+
+        # To ignore stoichiometry warning.
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=UserWarning)
+            new_n14_reverse = pyna.DerivedRate(source_rate=n14_new, use_pf=True, use_unreliable_spins=False)
 
         my_net = pyna.Library(rates=[n14_new, new_n14_reverse])
         pynet = pyna.PythonNetwork(libraries=my_net)
@@ -56,8 +60,8 @@ class TestPythonDerivedNetwork:
 
         ostr = \
 """dYdt[jcr48] = (
-      ( -rho*Y[jhe4]*Y[jcr48]*rate_eval.He4_Cr48__Fe52 +Y[jfe52]*rate_eval.Fe52__He4_Cr48__derived ) +
-      ( -rho*Y[jhe4]*Y[jcr48]*rate_eval.He4_Cr48__p_Mn51 +rho*Y[jp]*Y[jmn51]*rate_eval.p_Mn51__He4_Cr48__derived )
+      ( -rho*Y[jhe4]*Y[jcr48]*rate_eval.He4_Cr48_to_Fe52_reaclib +Y[jfe52]*rate_eval.Fe52_to_He4_Cr48_derived ) +
+      ( -rho*Y[jhe4]*Y[jcr48]*rate_eval.He4_Cr48_to_p_Mn51_reaclib +rho*Y[jp]*Y[jmn51]*rate_eval.p_Mn51_to_He4_Cr48_derived )
    )
 
 """
@@ -68,52 +72,54 @@ class TestPythonDerivedNetwork:
 
         ostr = \
 """@numba.njit()
-def Fe52__p_Mn51__derived(rate_eval, tf):
+def Fe52_to_p_Mn51_derived(rate_eval, tf):
     # Fe52 --> p + Mn51
+
+    # Evaluate partition function terms
+    # interpolating Mn51 partition function
+    Mn51_log_pf = np.interp(tf.T9, xp=Mn51_temp_array, fp=Mn51_log_pf_array)
+
+    # setting p log(partition function) to 0.0 by default, independent of T
+    p_log_pf = 0.0
+
+    # interpolating Fe52 partition function
+    Fe52_log_pf = np.interp(tf.T9, xp=Fe52_temp_array, fp=Fe52_log_pf_array)
+
+    net_log_pf = p_log_pf + Mn51_log_pf - Fe52_log_pf
+
     rate = 0.0
 
     # ths8r
-    rate += np.exp(  61.74743132228039 + -85.63264034844842*tf.T9i + -36.1825*tf.T913i + 0.873042*tf.T913
-                  + -2.89731*tf.T9 + 0.364394*tf.T953 + 0.833333*tf.lnT9)
+    ln_set_rate =  61.74743132228039 + -85.61663846070292*tf.T9i + -36.1825*tf.T913i + 0.873042*tf.T913 \\
+                         + -2.89731*tf.T9 + 0.364394*tf.T953 + 0.833333*tf.lnT9
 
-    rate_eval.Fe52__p_Mn51__derived = rate
+    ln_set_rate += net_log_pf
+    set_rate = np.exp(ln_set_rate)
+    rate += set_rate
 
+    rate_eval.Fe52_to_p_Mn51_derived = rate
 
-    # interpolating Mn51 partition function
-    Mn51_pf_exponent = np.interp(tf.T9, xp=Mn51_temp_array, fp=np.log10(Mn51_pf_array))
-    Mn51_pf = 10.0**Mn51_pf_exponent
-
-    # setting p partition function to 1.0 by default, independent of T
-    p_pf = 1.0
-
-    # interpolating Fe52 partition function
-    Fe52_pf_exponent = np.interp(tf.T9, xp=Fe52_temp_array, fp=np.log10(Fe52_pf_array))
-    Fe52_pf = 10.0**Fe52_pf_exponent
-
-    z_r = p_pf*Mn51_pf
-    z_p = Fe52_pf
-    rate_eval.Fe52__p_Mn51__derived *= z_r/z_p
 """
 
-        r = pynet.get_rate("fe52__p_mn51__derived")
+        r = pynet.get_rate("fe52_to_p_mn51_derived")
         assert r.function_string_py() == ostr
 
     def test_derived_modified_ydot_string(self, pynet2):
         ostr1 = \
 """dYdt[jhe4] = (
-      ( + -1.5*rho*Y[jhe4]*Y[jn14]*rate_eval.He4_N14__Ne20__modified + 1.5*Y[jne20]*rate_eval.Ne20__He4_N14__derived )
+      ( + -1.5*rho*Y[jhe4]*Y[jn14]*rate_eval.He4_N14_to_Ne20_modified + 1.5*Y[jne20]*rate_eval.Ne20_to_He4_N14_derived )
    )
 
 """
         ostr2 = \
 """dYdt[jn14] = (
-      ( -rho*Y[jhe4]*Y[jn14]*rate_eval.He4_N14__Ne20__modified +Y[jne20]*rate_eval.Ne20__He4_N14__derived )
+      ( -rho*Y[jhe4]*Y[jn14]*rate_eval.He4_N14_to_Ne20_modified +Y[jne20]*rate_eval.Ne20_to_He4_N14_derived )
    )
 
 """
         ostr3 = \
 """dYdt[jne20] = (
-      ( +rho*Y[jhe4]*Y[jn14]*rate_eval.He4_N14__Ne20__modified -Y[jne20]*rate_eval.Ne20__He4_N14__derived )
+      ( +rho*Y[jhe4]*Y[jn14]*rate_eval.He4_N14_to_Ne20_modified -Y[jne20]*rate_eval.Ne20_to_He4_N14_derived )
    )
 
 """
@@ -125,34 +131,47 @@ def Fe52__p_Mn51__derived(rate_eval, tf):
 
         ostr = \
 """@numba.njit()
-def Ne20__He4_N14__derived(rate_eval, tf):
+def Ne20_to_He4_N14_derived(rate_eval, tf):
     # Ne20 --> 1.5 He4 + N14
-    rate = 0.0
 
-    # il10c
-    rate += np.exp(  39.55827158733315 + -168.12237220574448*tf.T9i + -5.6227*tf.T913i)
-    # il10c
-    rate += np.exp(  25.85560958733315 + -162.31711220574448*tf.T9i)
-    # il10c
-    rate += np.exp(  47.19267158733315 + -157.1567722057445*tf.T9i + -36.2504*tf.T913i
-                  + -5.0*tf.T953 + 0.833333*tf.lnT9)
-
-    rate_eval.Ne20__He4_N14__derived = rate
-
-
-    # setting He4 partition function to 1.0 by default, independent of T
-    He4_pf = 1.0
+    # Evaluate partition function terms
+    # setting He4 log(partition function) to 0.0 by default, independent of T
+    He4_log_pf = 0.0
 
     # interpolating Ne20 partition function
-    Ne20_pf_exponent = np.interp(tf.T9, xp=Ne20_temp_array, fp=np.log10(Ne20_pf_array))
-    Ne20_pf = 10.0**Ne20_pf_exponent
+    Ne20_log_pf = np.interp(tf.T9, xp=Ne20_temp_array, fp=Ne20_log_pf_array)
 
-    # setting N14 partition function to 1.0 by default, independent of T
-    N14_pf = 1.0
+    # setting N14 log(partition function) to 0.0 by default, independent of T
+    N14_log_pf = 0.0
 
-    z_r = He4_pf*N14_pf
-    z_p = Ne20_pf
-    rate_eval.Ne20__He4_N14__derived *= z_r/z_p
+    net_log_pf = He4_log_pf + N14_log_pf - Ne20_log_pf
+
+    rate = 0.0
+
+    # il10r
+    ln_set_rate =  39.558271587333145 + -168.12237220574448*tf.T9i + -5.6227*tf.T913i
+
+    ln_set_rate += net_log_pf
+    set_rate = np.exp(ln_set_rate)
+    rate += set_rate
+
+    # il10r
+    ln_set_rate =  25.855609587333145 + -162.31711220574448*tf.T9i
+
+    ln_set_rate += net_log_pf
+    set_rate = np.exp(ln_set_rate)
+    rate += set_rate
+
+    # il10n
+    ln_set_rate =  47.192671587333145 + -157.1567722057445*tf.T9i + -36.2504*tf.T913i \\
+                         + -5.0*tf.T953 + 0.833333*tf.lnT9
+
+    ln_set_rate += net_log_pf
+    set_rate = np.exp(ln_set_rate)
+    rate += set_rate
+
+    rate_eval.Ne20_to_He4_N14_derived = rate
+
 """
 
         # To ignore partition function warning.

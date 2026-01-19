@@ -119,22 +119,14 @@ namespace Rates
     enum NetworkRates :
     std::uint8_t
     {
-        k_He4_Fe52_to_Ni56 = 1,
-        k_p_Co55_to_Ni56 = 2,
-        k_He4_Fe52_to_p_Co55 = 3,
+        k_He4_Fe52_to_Ni56_reaclib = 1,
+        k_p_Co55_to_Ni56_reaclib = 2,
+        k_He4_Fe52_to_p_Co55_reaclib = 3,
         k_Ni56_to_He4_Fe52_derived = 4,
         k_Ni56_to_p_Co55_derived = 5,
         k_p_Co55_to_He4_Fe52_derived = 6,
         NumRates = k_p_Co55_to_He4_Fe52_derived
     };
-
-    // number of reaclib rates
-
-    const int NrateReaclib = 6;
-
-    // number of tabular rates
-
-    const int NrateTabular = 0;
 
     // rate names -- note: the rates are 1-based, not zero-based, so we pad
     // this vector with rate_names[0] = "" so the indices line up with the
@@ -142,9 +134,9 @@ namespace Rates
 
     static const std::vector<std::string> rate_names = {
         "",   // 0
-        "He4_Fe52_to_Ni56",  // 1,
-        "p_Co55_to_Ni56",  // 2,
-        "He4_Fe52_to_p_Co55",  // 3,
+        "He4_Fe52_to_Ni56_reaclib",  // 1,
+        "p_Co55_to_Ni56_reaclib",  // 2,
+        "He4_Fe52_to_p_Co55_reaclib",  // 3,
         "Ni56_to_He4_Fe52_derived",  // 4,
         "Ni56_to_p_Co55_derived",  // 5,
         "p_Co55_to_He4_Fe52_derived"  // 6,
@@ -163,7 +155,7 @@ namespace NSE_INDEX
     // First 3 row indices for reactants, followed by 3 product indices
     // last index is the corresponding reverse rate index.
 
-    extern AMREX_GPU_MANAGED amrex::Array2D<int, 1, Rates::NumRates, 1, 7, amrex::Order::C> rate_indices;
+    extern AMREX_GPU_MANAGED amrex::Array2D<std::int8_t, 1, Rates::NumRates, 1, 7, amrex::Order::C> rate_indices;
 }
 #endif
 

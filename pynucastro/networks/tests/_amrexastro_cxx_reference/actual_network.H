@@ -143,23 +143,15 @@ namespace Rates
     enum NetworkRates :
     std::uint8_t
     {
-        k_C12_C12_to_He4_Ne20 = 1,
-        k_C12_C12_to_n_Mg23 = 2,
-        k_C12_C12_to_p_Na23 = 3,
-        k_He4_C12_to_O16 = 4,
-        k_n_to_p_weak_wc12 = 5,
-        k_Na23_to_Ne23 = 6,
-        k_Ne23_to_Na23 = 7,
-        NumRates = k_Ne23_to_Na23
+        k_C12_C12_to_He4_Ne20_reaclib = 1,
+        k_C12_C12_to_n_Mg23_reaclib = 2,
+        k_C12_C12_to_p_Na23_reaclib = 3,
+        k_He4_C12_to_O16_reaclib = 4,
+        k_n_to_p_reaclib = 5,
+        k_Na23_to_Ne23_weaktab = 6,
+        k_Ne23_to_Na23_weaktab = 7,
+        NumRates = k_Ne23_to_Na23_weaktab
     };
-
-    // number of reaclib rates
-
-    const int NrateReaclib = 5;
-
-    // number of tabular rates
-
-    const int NrateTabular = 2;
 
     // rate names -- note: the rates are 1-based, not zero-based, so we pad
     // this vector with rate_names[0] = "" so the indices line up with the
@@ -167,13 +159,13 @@ namespace Rates
 
     static const std::vector<std::string> rate_names = {
         "",   // 0
-        "C12_C12_to_He4_Ne20",  // 1,
-        "C12_C12_to_n_Mg23",  // 2,
-        "C12_C12_to_p_Na23",  // 3,
-        "He4_C12_to_O16",  // 4,
-        "n_to_p_weak_wc12",  // 5,
-        "Na23_to_Ne23",  // 6,
-        "Ne23_to_Na23"  // 7,
+        "C12_C12_to_He4_Ne20_reaclib",  // 1,
+        "C12_C12_to_n_Mg23_reaclib",  // 2,
+        "C12_C12_to_p_Na23_reaclib",  // 3,
+        "He4_C12_to_O16_reaclib",  // 4,
+        "n_to_p_reaclib",  // 5,
+        "Na23_to_Ne23_weaktab",  // 6,
+        "Ne23_to_Na23_weaktab"  // 7,
     };
 
 }
@@ -189,7 +181,7 @@ namespace NSE_INDEX
     // First 3 row indices for reactants, followed by 3 product indices
     // last index is the corresponding reverse rate index.
 
-    extern AMREX_GPU_MANAGED amrex::Array2D<int, 1, Rates::NumRates, 1, 7, amrex::Order::C> rate_indices;
+    extern AMREX_GPU_MANAGED amrex::Array2D<std::int8_t, 1, Rates::NumRates, 1, 7, amrex::Order::C> rate_indices;
 }
 #endif
 
