@@ -29,12 +29,12 @@ void rate_F17_to_O16_p_derived(const tf_t& tfactors, amrex::Real& rate, amrex::R
     amrex::Real F17_log_pf, dF17_log_pf_dT9;
 
     // interpolating F17 partition function
-    get_partition_function_cached(F17, tfactors, pf_cache, F17_log_pf, dF17_log_pf_dT9);
+    get_partition_function_cached(F17, tfactors.T9, pf_cache, F17_log_pf, dF17_log_pf_dT9);
 
     amrex::Real O16_log_pf, dO16_log_pf_dT9;
 
     // interpolating O16 partition function
-    get_partition_function_cached(O16, tfactors, pf_cache, O16_log_pf, dO16_log_pf_dT9);
+    get_partition_function_cached(O16, tfactors.T9, pf_cache, O16_log_pf, dO16_log_pf_dT9);
 
     amrex::Real net_log_pf = O16_log_pf + p_log_pf - F17_log_pf;
     [[maybe_unused]] amrex::Real net_dlog_pf_dT9 = dO16_log_pf_dT9 + dp_log_pf_dT9 - dF17_log_pf_dT9;

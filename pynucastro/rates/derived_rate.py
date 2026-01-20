@@ -329,7 +329,7 @@ class DerivedRate(Rate):
 
                 if nuc.partition_function is not None:
                     fstring += f"    // interpolating {nuc} partition function\n"
-                    fstring += f"    get_partition_function_cached({nuc.cindex()}, tfactors, pf_cache, {nuc}_log_pf, d{nuc}_log_pf_dT9);\n"
+                    fstring += f"    get_partition_function_cached({nuc.cindex()}, tfactors.T9, pf_cache, {nuc}_log_pf, d{nuc}_log_pf_dT9);\n"
                 else:
                     fstring += f"    // setting {nuc} log(partition function) to 0.0 by default, independent of T\n"
                     fstring += f"    {nuc}_log_pf = 0.0_rt;\n"

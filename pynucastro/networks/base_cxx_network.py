@@ -726,8 +726,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         for n, i in temp_indices.items():
             of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
-            of.write(f"{self.indent*(n_indent+1)}if (tfactors.T9 > part_fun::{n}_pf_threshold_T9) {{\n")
-            of.write(f"{self.indent*(n_indent+2)}part_fun::interpolate_pf(tfactors.T9, pf_cache.index_temp_array_{i+1}, part_fun::temp_array_{i+1}, part_fun::{n}_pf_array, logpf, dlogpf_dT9);\n")
+            of.write(f"{self.indent*(n_indent+1)}if (T9 > part_fun::{n}_pf_threshold_T9) {{\n")
+            of.write(f"{self.indent*(n_indent+2)}part_fun::interpolate_pf(T9, pf_cache.index_temp_array_{i+1}, part_fun::temp_array_{i+1}, part_fun::{n}_pf_array, logpf, dlogpf_dT9);\n")
             of.write(f"{self.indent*(n_indent+1)}}}\n")
             of.write(f"{self.indent*(n_indent+1)}break;\n\n")
 
