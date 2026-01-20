@@ -93,7 +93,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
                 of.write(f"{self.indent*n_indent}if constexpr (spec == {nuc.cindex()}) {{\n")
             else:
                 of.write(f"{self.indent*n_indent}else if constexpr (spec == {nuc.cindex()}) {{\n")
-            of.write(f"{self.indent*(n_indent+1)}return {nuc.spin_states}.0_rt;\n")
+            of.write(f"{self.indent*(n_indent+1)}return {spin}.0_rt;\n")
             of.write(f"{self.indent*(n_indent)}}}\n")
 
     def _cxxify(self, s):
