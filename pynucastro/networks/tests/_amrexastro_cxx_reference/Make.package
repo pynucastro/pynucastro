@@ -1,3 +1,4 @@
+PYNUCASTRO_NETWORK = TRUE
 CEXE_headers += network_properties.H
 
 ifeq ($(USE_REACT),TRUE)
