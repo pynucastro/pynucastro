@@ -31,12 +31,19 @@ class PlasmaState:
     """Store precomputed values that are reused for all screening
     correction factor calculations.
 
-    Attributes
+    Parameters
     ----------
     temp : float
         temperature in K
     dens : float
         density in g/cm^3
+    Ys : Iterable
+        molar fractions of the composition
+    Zs : Iterable
+         proton numbers of the composition
+
+    Attributes
+    ----------
     qlam0z : float
         a common factor from Graboske 1973
     taufac : float
@@ -172,7 +179,7 @@ class ScreenFactors:
     """Store values that will be used to calculate the screening
     correction factor for a specific pair of nuclei.
 
-    Attributes
+    Parameters
     ----------
     z1 : float
         atomic number of first nucleus
@@ -182,6 +189,9 @@ class ScreenFactors:
         atomic mass of first nucleus
     a2 : float
         atomic mass of second nucleus
+
+    Attributes
+    ----------
     zs13 : float
         (z1+z2)**(1/3)
     zhat : float
