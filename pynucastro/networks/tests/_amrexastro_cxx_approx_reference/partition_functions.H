@@ -152,25 +152,26 @@ constexpr amrex::Real get_spin_state() {
 
     static_assert(spec >= 1 && spec <= NumSpec);
 
-    // Set the spin (2J + 1) of the element
+    // Set the spin states (2J + 1) of the element
 
-    if constexpr (spec == He4) {
+    if constexpr (
+        He4 || Mg24 || Si28 ||
+        S32
+                  )
+    {
         return 1.0_rt;
     }
-    else if constexpr (spec == Mg24) {
-        return 1.0_rt;
-    }
-    else if constexpr (spec == Si28) {
-        return 1.0_rt;
-    }
-    else if constexpr (spec == S32) {
-        return 1.0_rt;
-    }
-    else if constexpr (spec == Al27) {
-        return 6.0_rt;
-    }
-    else if constexpr (spec == P31) {
+    else if constexpr (
+        P31
+                       )
+    {
         return 2.0_rt;
+    }
+    else if constexpr (
+        Al27
+                       )
+    {
+        return 6.0_rt;
     }
 
     // Return -1 if we don't recognize the species.
@@ -185,7 +186,8 @@ amrex::Real get_spin_state (int spec) {
 
     amrex::Real s = -1.0_rt;
 
-    // Set the spin (2J + 1) of the element
+    // Set the spin states (2J + 1) of the element
+
     amrex::constexpr_for<1, NumSpec+1>([&] (auto n) {
         if (n == spec) {
             s = get_spin_state<n>();

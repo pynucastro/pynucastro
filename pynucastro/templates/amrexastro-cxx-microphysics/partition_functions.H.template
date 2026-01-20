@@ -155,7 +155,7 @@ constexpr amrex::Real get_spin_state() {
 
     static_assert(spec >= 1 && spec <= NumSpec);
 
-    // Set the spin (2J + 1) of the element
+    // Set the spin states (2J + 1) of the element
 
     <spin_state_cases>(1)
 
@@ -171,7 +171,8 @@ amrex::Real get_spin_state (int spec) {
 
     amrex::Real s = -1.0_rt;
 
-    // Set the spin (2J + 1) of the element
+    // Set the spin states (2J + 1) of the element
+
     amrex::constexpr_for<1, NumSpec+1>([&] (auto n) {
         if (n == spec) {
             s = get_spin_state<n>();
