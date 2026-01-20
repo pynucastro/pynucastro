@@ -75,28 +75,29 @@ class TestPythonDerivedNetwork:
 def Fe52_to_p_Mn51_derived(rate_eval, tf):
     # Fe52 --> p + Mn51
 
+    # Evaluate partition function terms
+    # interpolating Mn51 partition function
+    Mn51_log_pf = np.interp(tf.T9, xp=Mn51_temp_array, fp=Mn51_log_pf_array)
+
+    # setting p log(partition function) to 0.0 by default, independent of T
+    p_log_pf = 0.0
+
+    # interpolating Fe52 partition function
+    Fe52_log_pf = np.interp(tf.T9, xp=Fe52_temp_array, fp=Fe52_log_pf_array)
+
+    net_log_pf = p_log_pf + Mn51_log_pf - Fe52_log_pf
+
     rate = 0.0
 
     # ths8r
-    rate += np.exp(  61.7474313222804 + -85.61663846070292*tf.T9i + -36.1825*tf.T913i + 0.873042*tf.T913
-                  + -2.89731*tf.T9 + 0.364394*tf.T953 + 0.833333*tf.lnT9)
+    ln_set_rate =  61.74743132228039 + -85.61663846070292*tf.T9i + -36.1825*tf.T913i + 0.873042*tf.T913 \\
+                         + -2.89731*tf.T9 + 0.364394*tf.T953 + 0.833333*tf.lnT9
+
+    ln_set_rate += net_log_pf
+    set_rate = np.exp(ln_set_rate)
+    rate += set_rate
 
     rate_eval.Fe52_to_p_Mn51_derived = rate
-
-    # interpolating Mn51 partition function
-    Mn51_pf_exponent = np.interp(tf.T9, xp=Mn51_temp_array, fp=np.log10(Mn51_pf_array))
-    Mn51_pf = 10.0**Mn51_pf_exponent
-
-    # setting p partition function to 1.0 by default, independent of T
-    p_pf = 1.0
-
-    # interpolating Fe52 partition function
-    Fe52_pf_exponent = np.interp(tf.T9, xp=Fe52_temp_array, fp=np.log10(Fe52_pf_array))
-    Fe52_pf = 10.0**Fe52_pf_exponent
-
-    z_r = p_pf*Mn51_pf
-    z_p = Fe52_pf
-    rate_eval.Fe52_to_p_Mn51_derived *= z_r / z_p
 
 """
 
@@ -133,31 +134,43 @@ def Fe52_to_p_Mn51_derived(rate_eval, tf):
 def Ne20_to_He4_N14_derived(rate_eval, tf):
     # Ne20 --> 1.5 He4 + N14
 
+    # Evaluate partition function terms
+    # setting He4 log(partition function) to 0.0 by default, independent of T
+    He4_log_pf = 0.0
+
+    # interpolating Ne20 partition function
+    Ne20_log_pf = np.interp(tf.T9, xp=Ne20_temp_array, fp=Ne20_log_pf_array)
+
+    # setting N14 log(partition function) to 0.0 by default, independent of T
+    N14_log_pf = 0.0
+
+    net_log_pf = He4_log_pf + N14_log_pf - Ne20_log_pf
+
     rate = 0.0
 
     # il10r
-    rate += np.exp(  39.55827158733315 + -168.12237220574448*tf.T9i + -5.6227*tf.T913i)
+    ln_set_rate =  39.558271587333145 + -168.12237220574448*tf.T9i + -5.6227*tf.T913i
+
+    ln_set_rate += net_log_pf
+    set_rate = np.exp(ln_set_rate)
+    rate += set_rate
+
     # il10r
-    rate += np.exp(  25.85560958733315 + -162.31711220574448*tf.T9i)
+    ln_set_rate =  25.855609587333145 + -162.31711220574448*tf.T9i
+
+    ln_set_rate += net_log_pf
+    set_rate = np.exp(ln_set_rate)
+    rate += set_rate
+
     # il10n
-    rate += np.exp(  47.19267158733315 + -157.1567722057445*tf.T9i + -36.2504*tf.T913i
-                  + -5.0*tf.T953 + 0.833333*tf.lnT9)
+    ln_set_rate =  47.192671587333145 + -157.1567722057445*tf.T9i + -36.2504*tf.T913i \\
+                         + -5.0*tf.T953 + 0.833333*tf.lnT9
+
+    ln_set_rate += net_log_pf
+    set_rate = np.exp(ln_set_rate)
+    rate += set_rate
 
     rate_eval.Ne20_to_He4_N14_derived = rate
-
-    # setting He4 partition function to 1.0 by default, independent of T
-    He4_pf = 1.0
-
-    # interpolating Ne20 partition function
-    Ne20_pf_exponent = np.interp(tf.T9, xp=Ne20_temp_array, fp=np.log10(Ne20_pf_array))
-    Ne20_pf = 10.0**Ne20_pf_exponent
-
-    # setting N14 partition function to 1.0 by default, independent of T
-    N14_pf = 1.0
-
-    z_r = He4_pf*N14_pf
-    z_p = Ne20_pf
-    rate_eval.Ne20_to_He4_N14_derived *= z_r / z_p
 
 """
 

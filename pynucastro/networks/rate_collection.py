@@ -1165,7 +1165,7 @@ class RateCollection:
         temp_indices = {}
         # nuclei must be sorted, so the output is deterministic
         for nuc in nuclei:
-            nuc_temp = nuc.partition_function.temperature
+            nuc_temp = nuc.partition_function.T9_points
             # do a sequential search on temp_arrays, since it should be short
             for i, temp in enumerate(temp_arrays):
                 # np.array_equal handles comparing arrays of different shapes
