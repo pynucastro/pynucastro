@@ -6,6 +6,7 @@
 #include <AMReX_REAL.H>
 #include <AMReX_Array.H>
 #include <AMReX_Math.H>
+#include <AMReX_ConstexprFor.H>
 
 #include <tfactors.H>
 #include <fundamental_constants.H>
