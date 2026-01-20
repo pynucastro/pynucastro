@@ -35,9 +35,9 @@ class TempTableInterpolator:
         self.log_rate_data = log_rate_data
 
     def _get_logT9_idx(self, log_T9_0):
-        """Find the index into the temperatures such that T[i-1] < T0
-        <= T[i].  We return i-1 here, corresponding to the lower
-        value.  We also make sure that i-2 and i+1 are in bounds.
+        """Find the index into the temperatures such that T[i] < T0
+        <= T[i+1].  We return i here, corresponding to the lower
+        value.  We also make sure that i-1 and i+2 are in bounds.
 
         Parameters
         ----------
@@ -56,7 +56,9 @@ class TempTableInterpolator:
     def interpolate(self, T0):
         """Given T0, the temperature where we want the rate, do
         cubic interpolation to find the value of the rate in the
-        table. Note this returns log(rate).
+        table. If T0 goes out of bound of the table, then we do
+        extrapolation based on the first or last 4 table points.
+        Note this returns log(rate).
 
         Parameters
         ----------
@@ -71,11 +73,6 @@ class TempTableInterpolator:
 
         T9_0 = T0 * 1.e-9
         log_T9_0 = np.log(T9_0)
-
-        # we'll give a little epsilon buffer here to allow for roundoff
-        eps = 0.005
-        if log_T9_0 < self.log_temp_points.min() - eps or log_T9_0 > self.log_temp_points.max() + eps:
-            raise ValueError("temperature out of table bounds")
 
         idx_t = self._get_logT9_idx(log_T9_0)
 
