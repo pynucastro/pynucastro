@@ -84,7 +84,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         for n, nuc in enumerate(self.unique_nuclei + self.approx_nuclei):
             spin = nuc.spin_states
 
-            # An error will be raised if spin is not when creating the DerivedRate
+            # An error will be raised if spin is None when creating the DerivedRate
             # So this is generally not an issue.
             if spin is None:
                 spin = -1
