@@ -106,7 +106,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             group = list(group)
             subgroups = [group[n:n+3] for n in range(0, len(group), 3)]
             for i, subgroup in enumerate(subgroups):
-                spec_string = " || ".join([n.cindex() for n in subgroup])
+                spec_string = " || ".join([f"spec == {n.cindex()}" for n in subgroup])
 
                 # If it is not the last subgroup, add || in the end
                 if i != len(subgroups) - 1:

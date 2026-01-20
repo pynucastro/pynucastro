@@ -155,20 +155,20 @@ constexpr amrex::Real get_spin_state() {
     // Set the spin states (2J + 1) of the element
 
     if constexpr (
-        He4 || Mg24 || Si28 ||
-        S32
+        spec == He4 || spec == Mg24 || spec == Si28 ||
+        spec == S32
                   )
     {
         return 1.0_rt;
     }
     else if constexpr (
-        P31
+        spec == P31
                        )
     {
         return 2.0_rt;
     }
     else if constexpr (
-        Al27
+        spec == Al27
                        )
     {
         return 6.0_rt;

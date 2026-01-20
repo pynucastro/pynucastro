@@ -185,19 +185,19 @@ constexpr amrex::Real get_spin_state() {
     // Set the spin states (2J + 1) of the element
 
     if constexpr (
-        O16
+        spec == O16
                   )
     {
         return 1.0_rt;
     }
     else if constexpr (
-        H1
+        spec == H1
                        )
     {
         return 2.0_rt;
     }
     else if constexpr (
-        F17
+        spec == F17
                        )
     {
         return 6.0_rt;

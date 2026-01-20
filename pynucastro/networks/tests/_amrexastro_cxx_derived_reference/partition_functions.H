@@ -196,19 +196,19 @@ constexpr amrex::Real get_spin_state() {
     // Set the spin states (2J + 1) of the element
 
     if constexpr (
-        He4 || Fe52 || Ni56
+        spec == He4 || spec == Fe52 || spec == Ni56
                   )
     {
         return 1.0_rt;
     }
     else if constexpr (
-        H1
+        spec == H1
                        )
     {
         return 2.0_rt;
     }
     else if constexpr (
-        Co55
+        spec == Co55
                        )
     {
         return 8.0_rt;
