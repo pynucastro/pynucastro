@@ -96,11 +96,11 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
             if FIRST_ENCOUNTER:
                 of.write(f"{self.indent*n_indent}if constexpr (\n")
-                indent = f"{self.indent*(n_indent+1)}          "
+                parenthesis_indent = f"{self.indent*(n_indent+1)}          "
                 FIRST_ENCOUNTER = False
             else:
                 of.write(f"{self.indent*n_indent}else if constexpr (\n")
-                indent = f"{self.indent*(n_indent+1)}               "
+                parenthesis_indent = f"{self.indent*(n_indent+1)}               "
 
             # Divide group of spec into subgroups of 3 for better formatting
             group = list(group)
@@ -113,7 +113,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
                     spec_string += " ||"
                 of.write(f"{self.indent*(n_indent+1)}{spec_string}\n")
 
-            of.write(f"{indent})\n")
+            of.write(f"{parenthesis_indent})\n")
             of.write(f"{self.indent*n_indent}{{\n")
             of.write(f"{self.indent*(n_indent+1)}return {spin_state}.0_rt;\n")
             of.write(f"{self.indent*n_indent}}}\n")
