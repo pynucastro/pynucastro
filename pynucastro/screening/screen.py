@@ -2,6 +2,7 @@
 
 import numpy as np
 
+import pynucastro.numba_util as numba
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
 from pynucastro.numba_util import jitclass, njit
@@ -14,7 +15,18 @@ __all__ = ["NseState", "PlasmaState", "ScreenFactors",
            "potekhin_1998", "screen5", "smooth_clip", "screening_check"]
 
 
-@jitclass()
+@jitclass([
+    ("temp", numba.float64),
+    ("dens", numba.float64),
+    ("qlam0z", numba.float64),
+    ("taufac", numba.float64),
+    ("aa", numba.float64),
+    ("abar", numba.float64),
+    ("zbar", numba.float64),
+    ("z2bar", numba.float64),
+    ("n_e", numba.float64),
+    ("gamma_e_fac", numba.float64)
+])
 class PlasmaState:
     """Store precomputed values that are reused for all screening
     correction factor calculations.
@@ -43,17 +55,6 @@ class PlasmaState:
          temperature-independent part of Gamma_e
 
     """
-
-    temp: float
-    dens: float
-    qlam0z: float
-    taufac: float
-    aa: float
-    abar: float
-    zbar: float
-    z2bar: float
-    n_e: float
-    gamma_e_fac: float
 
     def __init__(self, temp, dens, Ys, Zs):
         self.temp = temp
@@ -155,7 +156,18 @@ def make_plasma_state(temp, dens, molar_fractions):
     return PlasmaState(temp, dens, Ys, Zs)
 
 
-@jitclass()
+@jitclass([
+    ("z1", numba.int32),
+    ("z2", numba.int32),
+    ("a1", numba.int32),
+    ("a2", numba.int32),
+    ("zs13", numba.float64),
+    ("zhat", numba.float64),
+    ("zhat2", numba.float64),
+    ("lzav", numba.float64),
+    ("aznut", numba.float64),
+    ("ztilde", numba.float64)
+])
 class ScreenFactors:
     """Store values that will be used to calculate the screening
     correction factor for a specific pair of nuclei.
@@ -184,17 +196,6 @@ class ScreenFactors:
         effective ion radius factor for a MCP
 
     """
-
-    z1: int
-    z2: int
-    a1: int
-    a2: int
-    zs13: float
-    zhat: float
-    zhat2: float
-    lzav: float
-    aznut: float
-    ztilde: float
 
     def __init__(self, z1, a1, z2, a2):
         self.z1 = z1
