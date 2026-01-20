@@ -105,7 +105,12 @@ class PlasmaState:
         self.gamma_e_fac = constants.q_e**2 / constants.k * np.cbrt(4 * np.pi / 3) * np.cbrt(self.n_e)
 
 
-@jitclass()
+@jitclass([
+    ("temp", numba.float64),
+    ("dens", numba.float64),
+    ("ye", numba.float64),
+    ("gamma_e_fac", numba.float64)
+])
 class NseState:
     """Store precomputed values that are reused in the NSE state
     screening calculations
@@ -125,11 +130,6 @@ class NseState:
         Temperature-independent part of Gamma_e.
 
     """
-
-    temp: float
-    dens: float
-    ye: float
-    gamma_e_fac: float
 
     def __init__(self, temp, dens, ye):
 
