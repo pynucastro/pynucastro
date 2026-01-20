@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.temperature_tabular_rate &#8212; pynucastro 2.9.0.post14+g8ed389987 documentation</title>
+    <title>pynucastro.rates.temperature_tabular_rate &#8212; pynucastro 2.9.0.post15+gf8e47f436 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=5f2c048f"></script>
+    <script src="../../../_static/documentation_options.js?v=58f9d7ed"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -535,9 +535,9 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">log_rate_data</span> <span class="o">=</span> <span class="n">log_rate_data</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_logT9_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_T9_0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the index into the temperatures such that T[i-1] &lt; T0</span>
-<span class="sd">        &lt;= T[i].  We return i-1 here, corresponding to the lower</span>
-<span class="sd">        value.  We also make sure that i-2 and i+1 are in bounds.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the index into the temperatures such that T[i] &lt; T0</span>
+<span class="sd">        &lt;= T[i+1].  We return i here, corresponding to the lower</span>
+<span class="sd">        value.  We also make sure that i-1 and i+2 are in bounds.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -556,7 +556,9 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Given T0, the temperature where we want the rate, do</span>
 <span class="sd">        cubic interpolation to find the value of the rate in the</span>
-<span class="sd">        table. Note this returns log(rate).</span>
+<span class="sd">        table. If T0 goes out of bound of the table, then we do</span>
+<span class="sd">        extrapolation based on the first or last 4 table points.</span>
+<span class="sd">        Note this returns log(rate).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -571,11 +573,6 @@ document.write(`
 
         <span class="n">T9_0</span> <span class="o">=</span> <span class="n">T0</span> <span class="o">*</span> <span class="mf">1.e-9</span>
         <span class="n">log_T9_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T9_0</span><span class="p">)</span>
-
-        <span class="c1"># we&#39;ll give a little epsilon buffer here to allow for roundoff</span>
-        <span class="n">eps</span> <span class="o">=</span> <span class="mf">0.005</span>
-        <span class="k">if</span> <span class="n">log_T9_0</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_temp_points</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="n">eps</span> <span class="ow">or</span> <span class="n">log_T9_0</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_temp_points</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="n">eps</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;temperature out of table bounds&quot;</span><span class="p">)</span>
 
         <span class="n">idx_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logT9_idx</span><span class="p">(</span><span class="n">log_T9_0</span><span class="p">)</span>
 

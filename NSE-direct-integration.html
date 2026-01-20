@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>NSE vs. Direct Integration &#8212; pynucastro 2.9.0.post14+g8ed389987 documentation</title>
+    <title>NSE vs. Direct Integration &#8212; pynucastro 2.9.0.post15+gf8e47f436 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=5f2c048f"></script>
+    <script src="_static/documentation_options.js?v=58f9d7ed"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -604,7 +604,7 @@ document.write(`
 </div>
 <p>To further demonstrate the validity of the NSE equation,
 we will compare the equilibrium mass fractions computed via direct integration and the mass fractions obtained from NSE equations.</p>
-<p>We will create the <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a> needed for direct integration using the same library as our previous example.</p>
+<p>We will create the <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a> needed for direct integration using the same set of nuclei as our previous example.</p>
 <p>First we recreate our library, but we make sure that we use reverse rates calculated via detailed balance.
 In pynucastro, this is the <a class="reference internal" href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate" title="pynucastro.rates.derived_rate.DerivedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DerivedRate</span></code></a>.</p>
 <div class="cell docutils container">
@@ -613,7 +613,8 @@ In pynucastro, this is the <a class="reference internal" href="pynucastro.rates.
 
 <span class="n">all_nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span>
               <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;n13&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;o16&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">,</span> <span class="s2">&quot;na23&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;o16&quot;</span><span class="p">,</span> <span class="s2">&quot;f17&quot;</span><span class="p">,</span>
+              <span class="s2">&quot;ne20&quot;</span><span class="p">,</span> <span class="s2">&quot;na23&quot;</span><span class="p">,</span>
               <span class="s2">&quot;mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;al27&quot;</span><span class="p">,</span> <span class="s2">&quot;si28&quot;</span><span class="p">,</span>
               <span class="s2">&quot;p31&quot;</span><span class="p">,</span> <span class="s2">&quot;s32&quot;</span><span class="p">,</span> <span class="s2">&quot;cl35&quot;</span><span class="p">,</span>
               <span class="s2">&quot;ar36&quot;</span><span class="p">,</span> <span class="s2">&quot;k39&quot;</span><span class="p">,</span> <span class="s2">&quot;ca40&quot;</span><span class="p">,</span>
@@ -661,6 +662,24 @@ In pynucastro, this is the <a class="reference internal" href="pynucastro.rates.
     <span class="n">forward_rate</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ModifiedRate</span><span class="p">(</span><span class="n">_r</span><span class="p">,</span> <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">mp</span><span class="p">])</span>
     <span class="n">derived_rate</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">DerivedRate</span><span class="p">(</span><span class="n">source_rate</span><span class="o">=</span><span class="n">forward_rate</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">lib</span><span class="o">.</span><span class="n">add_rates</span><span class="p">([</span><span class="n">forward_rate</span><span class="p">,</span> <span class="n">derived_rate</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The <a class="reference internal" href="pynucastro.rates.temperature_tabular_rate.html#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate" title="pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code></a>, in which the strong reaction rate is tabulated, is also compatible with NSE as long as a corresponding <code class="docutils literal notranslate"><span class="pre">DerivedRate</span></code> is added. We will use <a class="reference internal" href="pynucastro.rates.alternate_rates.html#pynucastro.rates.alternate_rates.IliadisO16pgF17" title="pynucastro.rates.alternate_rates.IliadisO16pgF17"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IliadisO16pgF17</span></code></a>, a subclass of <code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code> for <code class="docutils literal notranslate"><span class="pre">O16(p,g)F17</span></code> rate, as an example to demonstrate compatibility with NSE.</p>
+<p>Let’s remove the <a class="reference internal" href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate" title="pynucastro.rates.reaclib_rate.ReacLibRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a> version for <code class="docutils literal notranslate"><span class="pre">O16(p,g)F17</span></code> and its <code class="docutils literal notranslate"><span class="pre">DerivedRate</span></code> and add <code class="docutils literal notranslate"><span class="pre">IliadisO16pgF17</span></code> and its corresponding <code class="docutils literal notranslate"><span class="pre">DerivedRate</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rates_to_remove</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;o16(p,g)f17&quot;</span><span class="p">,</span> <span class="s2">&quot;f17(g,p)o16&quot;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rates_to_remove</span><span class="p">:</span>
+    <span class="n">_r</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="n">lib</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">_r</span><span class="p">)</span>
+
+<span class="n">iliadis</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">alternate_rates</span><span class="o">.</span><span class="n">IliadisO16pgF17</span><span class="p">()</span>
+<span class="n">iliadis_derived</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">DerivedRate</span><span class="p">(</span><span class="n">iliadis</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">lib</span><span class="o">.</span><span class="n">add_rate</span><span class="p">(</span><span class="n">iliadis</span><span class="p">)</span>
+<span class="n">lib</span><span class="o">.</span><span class="n">add_rate</span><span class="p">(</span><span class="n">iliadis_derived</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -773,7 +792,7 @@ In pynucastro, this is the <a class="reference internal" href="pynucastro.rates.
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a982c9097e856d483518099b768606a586046018730f35c3f15e23fb8a3dd250.png" src="_images/a982c9097e856d483518099b768606a586046018730f35c3f15e23fb8a3dd250.png" />
+<img alt="_images/98523799f7ba3d5aac8f6b97ef5953dac688a87b459b6d094c949c9a8a03255b.png" src="_images/98523799f7ba3d5aac8f6b97ef5953dac688a87b459b6d094c949c9a8a03255b.png" />
 </div>
 </div>
 </section>
@@ -791,20 +810,20 @@ network</p>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Network summary
 ---------------
-  explicitly carried nuclei: 18
+  explicitly carried nuclei: 19
   approximated-out nuclei: 6
   inert nuclei (included in carried): 0
 
-  total number of rates: 105
+  total number of rates: 109
 
-  rates explicitly connecting nuclei: 66
+  rates explicitly connecting nuclei: 70
   hidden rates: 39
 
-  reaclib rates: 45
+  reaclib rates: 46
   weak tabular rates: 0
-  temperature tabular rates: 0
+  temperature tabular rates: 1
   approximate rates: 12
-  derived rates: 45
+  derived rates: 47
   modified rates: 3
   custom rates: 0
 </pre></div>
@@ -843,7 +862,7 @@ network</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/23ce6869f03ad644afd28f0aa0de6e22850215139541ddea6b29e530ea463d8e.png" src="_images/23ce6869f03ad644afd28f0aa0de6e22850215139541ddea6b29e530ea463d8e.png" />
+<img alt="_images/74a6a73716e837f0b935615dbc0bd34512780e890de887aad720522dc5f09609.png" src="_images/74a6a73716e837f0b935615dbc0bd34512780e890de887aad720522dc5f09609.png" />
 </div>
 </div>
 <p>Now a plot of absolute and relative difference shows that the mass fraction obtained from direct integration matches with NSE equations to machine precision. The differences between the two are largely set by the tolerances of both the NSE solver and the ODE integrator.</p>
@@ -866,7 +885,7 @@ network</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/52b26d4bb7acec5a444ca987527b24df2807298781714757c05c2e63db3d0028.png" src="_images/52b26d4bb7acec5a444ca987527b24df2807298781714757c05c2e63db3d0028.png" />
+<img alt="_images/6f0655b7f764e0f24f5b5ac3324ef95ad60fd4e4394316ae77376e1c4be5d9be.png" src="_images/6f0655b7f764e0f24f5b5ac3324ef95ad60fd4e4394316ae77376e1c4be5d9be.png" />
 </div>
 </div>
 </section>
@@ -904,7 +923,7 @@ by the total activity of the rate (forward + reverse) by doing <code class="docu
   warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
 </pre></div>
 </div>
-<img alt="_images/8a7f5acd34bd467c344372d05048650505094d5a8018f9665e55fbf69c9cb61c.png" src="_images/8a7f5acd34bd467c344372d05048650505094d5a8018f9665e55fbf69c9cb61c.png" />
+<img alt="_images/5ba58aebdf1ae92afafe365e988cd84a3a0c30c39e276280bde08d169d2aa331.png" src="_images/5ba58aebdf1ae92afafe365e988cd84a3a0c30c39e276280bde08d169d2aa331.png" />
 </div>
 </div>
 <p>Here we see that the normalized net rates are all &lt; <span class="math notranslate nohighlight">\(10^{-12}\)</span>, so we are effectively seeing the integration tolerance, and are very close to machine precision.</p>
