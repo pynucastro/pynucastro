@@ -145,41 +145,63 @@ void get_partition_function_cached(const int inuc, const tf_t& tfactors,
     }
 }
 
-// spins
 
+template <int spec>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-constexpr amrex::Real get_spin_state(const int inuc) {
+constexpr amrex::Real get_spin_state() {
 
-    amrex::Real spin = -1.0;
+    static_assert(spec >= 1 && spec <= NumSpec);
 
-    switch (inuc) {  // NOLINT(bugprone-switch-missing-default-case)
+    // Set the spin (2J + 1) of the element
 
-    case He4:
-    case C12:
-    case O16:
-    case Ne20:
-        spin = 1;
-        break;
-
-    case N:
-    case H1:
-        spin = 2;
-        break;
-
-    case Na23:
-    case Mg23:
-        spin = 4;
-        break;
-
-    case Ne23:
-        spin = 6;
-        break;
-
-
+    if constexpr (spec == N) {
+        return 2.0_rt;
+    }
+    else if constexpr (spec == H1) {
+        return 2.0_rt;
+    }
+    else if constexpr (spec == He4) {
+        return 1.0_rt;
+    }
+    else if constexpr (spec == C12) {
+        return 1.0_rt;
+    }
+    else if constexpr (spec == O16) {
+        return 1.0_rt;
+    }
+    else if constexpr (spec == Ne20) {
+        return 1.0_rt;
+    }
+    else if constexpr (spec == Ne23) {
+        return 6.0_rt;
+    }
+    else if constexpr (spec == Na23) {
+        return 4.0_rt;
+    }
+    else if constexpr (spec == Mg23) {
+        return 4.0_rt;
     }
 
-    return spin;
+    // Return -1 if we don't recognize the species.
+    return -1.0_rt;
+}
 
+
+// Legacy (non-templated) interface
+
+AMREX_GPU_HOST_DEVICE AMREX_INLINE
+amrex::Real get_spin_state (int spec) {
+
+    amrex::Real s = -1.0_rt;
+
+    // Set the spin (2J + 1) of the element
+    amrex::constexpr_for<1, NumSpec+1>([&] (auto n) {
+        if (n == spec) {
+            s = get_spin_state<n>();
+        }
+    });
+
+    return s;
 }
 
 
