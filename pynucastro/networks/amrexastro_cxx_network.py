@@ -4,7 +4,7 @@ hydrodynamics codes
 
 """
 
-
+import itertools
 import re
 from pathlib import Path
 
@@ -79,6 +79,44 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
                 of.write(f"{self.indent*n_indent}else if constexpr (spec == {nuc.cindex()}) {{\n")
             of.write(f"{self.indent*(n_indent+1)}return {nuc.A_nuc * constants.m_u_C18}_rt;\n")
             of.write(f"{self.indent*(n_indent)}}}\n")
+
+    def _fill_spin_state_cases(self, n_indent, of):
+        def key_func(nuc):
+            if nuc.spin_states is None:
+                return -1
+            return nuc.spin_states
+
+        # group identical cases together to satisfy clang-tidy
+        nuclei = sorted(self.unique_nuclei + self.approx_nuclei, key=key_func)
+
+        FIRST_ENCOUNTER = True
+        for spin_state, group in itertools.groupby(nuclei, key=key_func):
+            if spin_state == -1:
+                continue
+
+            if FIRST_ENCOUNTER:
+                of.write(f"{self.indent*n_indent}if constexpr (\n")
+                parenthesis_indent = f"{self.indent*(n_indent+1)}          "
+                FIRST_ENCOUNTER = False
+            else:
+                of.write(f"{self.indent*n_indent}else if constexpr (\n")
+                parenthesis_indent = f"{self.indent*(n_indent+1)}               "
+
+            # Divide group of spec into subgroups of 3 for better formatting
+            group = list(group)
+            subgroups = [group[n:n+3] for n in range(0, len(group), 3)]
+            for i, subgroup in enumerate(subgroups):
+                spec_string = " || ".join([f"spec == {n.cindex()}" for n in subgroup])
+
+                # If it is not the last subgroup, add || in the end
+                if i != len(subgroups) - 1:
+                    spec_string += " ||"
+                of.write(f"{self.indent*(n_indent+1)}{spec_string}\n")
+
+            of.write(f"{parenthesis_indent})\n")
+            of.write(f"{self.indent*n_indent}{{\n")
+            of.write(f"{self.indent*(n_indent+1)}return {spin_state}.0_rt;\n")
+            of.write(f"{self.indent*n_indent}}}\n")
 
     def _cxxify(self, s):
         # Replace std::pow(x, n) with amrex::Math::powi<n>(x) for amrexastro_cxx_network
