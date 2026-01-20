@@ -80,6 +80,22 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             of.write(f"{self.indent*(n_indent+1)}return {nuc.A_nuc * constants.m_u_C18}_rt;\n")
             of.write(f"{self.indent*(n_indent)}}}\n")
 
+    def _fill_spin_state_cases(self, n_indent, of):
+        for n, nuc in enumerate(self.unique_nuclei + self.approx_nuclei):
+            spin = nuc.spin_states
+
+            # An error will be raised if spin is not when creating the DerivedRate
+            # So this is generally not an issue.
+            if spin is None:
+                spin = -1
+
+            if n == 0:
+                of.write(f"{self.indent*n_indent}if constexpr (spec == {nuc.cindex()}) {{\n")
+            else:
+                of.write(f"{self.indent*n_indent}else if constexpr (spec == {nuc.cindex()}) {{\n")
+            of.write(f"{self.indent*(n_indent+1)}return {nuc.spin_states}.0_rt;\n")
+            of.write(f"{self.indent*(n_indent)}}}\n")
+
     def _cxxify(self, s):
         # Replace std::pow(x, n) with amrex::Math::powi<n>(x) for amrexastro_cxx_network
 
