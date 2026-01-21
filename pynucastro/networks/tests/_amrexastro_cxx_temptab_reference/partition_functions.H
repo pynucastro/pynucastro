@@ -86,8 +86,8 @@ namespace part_fun {
 
         AMREX_GPU_HOST_DEVICE AMREX_INLINE
         pf_cache_t() {
-            // The entries will be default-initialized to -900, log(partition_function)
-            // should never be -900.
+            // The entries will be default-initialized to -900,
+            // log(partition_function) should never be -900.
             for (int i = 1; i <= NumSpecTotal; ++i) {
                     data(i, 1) = -900.0_rt;
                     data(i, 2) = -900.0_rt;
