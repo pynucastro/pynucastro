@@ -124,7 +124,7 @@ void get_partition_function(const int inuc,
     amrex::Real logpf, dlogpf_dT9;
     get_partition_function(inuc, tfactors.T9, pf_cache, logpf, dlogpf_dT9);
 
-    // Convert to logpf to pf and dlogpf_dT9 to dpf_dT
+    // Convert logpf to pf and dlogpf_dT9 to dpf_dT
     pf = std::exp(logpf);
     dpf_dT = pf * dlogpf_dT9 * 1.e-9_rt;
 }
