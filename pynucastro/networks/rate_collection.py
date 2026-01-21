@@ -1558,6 +1558,32 @@ class RateCollection:
 
         return rvals
 
+    def jacobian_mask(self):
+        """Create an array of 0 and 1 indicating the sparsity pattern
+        of the Jacobian.
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        nnuc = len(self.unique_nuclei)
+        jac = np.zeros((nnuc, nnuc), dtype=np.int8)
+
+        for i, n_i in enumerate(self.unique_nuclei):
+            for j, n_j in enumerate(self.unique_nuclei):
+
+                jac[i, j] = 0
+
+                # we are considering dYdot(n_i) / dY(n_j)
+                for r in self.nuclei_consumed[n_i] + self.nuclei_produced[n_i]:
+                    if n_j in r.reactants + r.products:
+                        jac[i, j] = 1
+                        break
+
+        return jac
+
     def evaluate_jacobian(self, rho, T, comp, *,
                           screen_func=None, exclude_rates=None):
         """Return an array of the form J_ij = dYdot_i/dY_j for the
