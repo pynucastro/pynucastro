@@ -108,7 +108,7 @@ void get_partition_function(const int inuc,
 
 // a version of get_partition_function where we have not cached the
 // index into the arrays. Uses tfactors instead of T9 as argument,
-// And returns pf and dpf_dT instead of logpf and dlogpf_dT9
+// and returns pf and dpf_dT instead of logpf and dlogpf_dT9
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void get_partition_function(const int inuc,
