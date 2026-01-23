@@ -108,7 +108,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
         self.ftags['<fill_approx_rates>'] = self._fill_approx_rates
         self.ftags['<part_fun_data>'] = self._fill_partition_function_data
-        self.ftags['<part_fun_declare>'] = self._fill_partition_function_declare
         self.ftags['<part_fun_cases>'] = self._fill_partition_function_cases
         self.ftags['<declare_pf_cache_temp_index>'] = self._declare_pf_cache_temp_index
         self.ftags['<spin_state_cases>'] = self._fill_spin_state_cases
@@ -641,35 +640,6 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n\n")
             of.write(f"{self.indent*n_indent}}}\n")
 
-    def _fill_partition_function_declare(self, n_indent, of):
-
-        temp_arrays, temp_indices = self.dedupe_partition_function_temperatures()
-
-        for i, temp in enumerate(temp_arrays):
-
-            decl = f"extern AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
-
-            # number of points
-            of.write(f"{self.indent*n_indent}constexpr int npts_{i+1} = {len(temp)};\n\n")
-
-            # write the temperature array sizes out
-
-            of.write(f"{self.indent*n_indent}// this is T9\n\n")
-
-            of.write(f"{self.indent*n_indent}{decl} temp_array_{i+1};\n\n")
-
-        for n, i in temp_indices.items():
-            # declare the partition function data
-
-            of.write(f"{self.indent*n_indent}// this is log(partition function)\n\n")
-
-            decl = f"extern AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
-            of.write(f"{self.indent*n_indent}{decl} {n}_pf_array;\n")
-
-            # This is already in T9
-            thresh_temp = n.get_part_func_threshold_temp()
-            of.write(f"{self.indent*n_indent}constexpr {self.dtype} {n}_pf_threshold_T9 = {thresh_temp};\n\n")
-
     def _fill_partition_function_data(self, n_indent, of):
         # itertools recipe
         def batched(iterable, n):
@@ -688,15 +658,17 @@ class BaseCxxNetwork(ABC, RateCollection):
         temp_arrays, temp_indices = self.dedupe_partition_function_temperatures()
 
         for i, temp in enumerate(temp_arrays):
-            # number of points
 
-            decl = f"AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
+            # number of points
+            of.write(f"{self.indent*n_indent}constexpr int npts_{i+1} = {len(temp)};\n\n")
+
+            decl = f"inline AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
 
             # write the temperature out, but for readability, split it to 5 values per line
 
             of.write(f"{self.indent*n_indent}// this is T9\n\n")
 
-            of.write(f"{self.indent*n_indent}{decl} temp_array_{i+1}= {{\n")
+            of.write(f"{self.indent*n_indent}{decl} temp_array_{i+1} = {{\n")
 
             for data in batched(temp, 5):
                 tmp = " ".join([f"{t}," for t in data])
@@ -710,15 +682,20 @@ class BaseCxxNetwork(ABC, RateCollection):
             # write the partition function data out, but for readability, split
             # it to 5 values per line
 
+            of.write(f"{self.indent*n_indent}// {n}\n\n")
             of.write(f"{self.indent*n_indent}// this is log(partition function)\n\n")
 
-            decl = f"AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
+            decl = f"inline AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
             of.write(f"{self.indent*n_indent}{decl} {n}_pf_array = {{\n")
 
             for data in batched(n.partition_function.log_pf_data, 5):
                 tmp = " ".join([f"{x}," for x in data])
                 of.write(f"{self.indent*(n_indent+1)}{tmp}\n")
             of.write(f"{self.indent*n_indent}}};\n\n")
+
+            # This is already in T9
+            thresh_temp = n.get_part_func_threshold_temp()
+            of.write(f"{self.indent*n_indent}constexpr {self.dtype} {n}_pf_threshold_T9 = {thresh_temp};\n\n")
 
     def _fill_partition_function_cases(self, n_indent, of):
 

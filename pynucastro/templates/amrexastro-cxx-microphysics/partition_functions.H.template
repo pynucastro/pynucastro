@@ -18,7 +18,7 @@ using namespace Species;
 
 namespace part_fun {
 
-    <part_fun_declare>(1)
+    <part_fun_data>(1)
 
     // interpolation routine
 
