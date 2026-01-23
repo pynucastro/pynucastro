@@ -29,9 +29,8 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         super().__init__(*args, **kwargs)
 
         self.ftags['<rate_param_tests>'] = self._rate_param_tests
-        self.ftags['<rate_indices>'] = self._fill_rate_indices
-        self.ftags['<rate_indices_extern>'] = self._fill_rate_indices_extern
         self.ftags['<npa_index>'] = self._fill_npa_index
+        self.ftags['<nse_rate_pair_data>'] = self._write_nse_rate_pair_data
 
         self.disable_rate_params = disable_rate_params
         self.function_specifier = "AMREX_GPU_HOST_DEVICE AMREX_INLINE"
@@ -157,74 +156,106 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
                 for r in self.disable_rate_params:
                     of.write(f"disable_{r.fname}    int     0\n")
 
-    def _fill_npa_index(self, n_indent, of):
-        #Get the index of h1, neutron, and helium-4 if they're present in the network.
+    def _get_nse_rate_pairs(self):
+        """Return a list of RatePairs eligible for NSE_NET grouping.
 
-        LIG = list(map(Nucleus, ["p", "n", "he4"]))
+        Filtering criteria:
+        1. Must have a reverse rate (RatePairs only)
+        2. Excludes weak or removed rates
+        3. At most 2 reactants and 2 products (except for triple-alpha)
+        4. Only 1 or 2 nuclei not in {p, n, He4} across reactants + products
 
-        for nuc in LIG:
-            if nuc in self.unique_nuclei:
-                of.write(f"{self.indent*n_indent}constexpr int {nuc.short_spec_name.capitalize()}_index = {self.unique_nuclei.index(nuc)};\n")
-            else:
-                of.write(f"{self.indent*n_indent}constexpr int {nuc.short_spec_name.capitalize()}_index = -1;\n")
-
-    def _fill_rate_indices(self, n_indent, of):
-        """
-        Fill the index needed for the NSE_NET algorithm.
-
-        Fill rate_indices: 2D array with 1-based index of shape of size (NumRates, 7).
-           - Each row represents a rate in self.all_rates.
-           - The first 3 elements of the row represents the index of reactants in self.unique_nuclei
-           - The next 3 elements of the row represents the index of the products in self.unique_nuclei.
-           - The 7th element of the row represents the index of the corresponding reverse rate
-             (set to -1 if no corresponding reverse rate). This is a 1-based instead of 0-based index.
-           - Set all elements of the current row to -1 if the rate has removed suffix
-             indicating its not directly in the network.
         """
 
-        dtype = _signed_rate_dtype(len(self.all_rates))
+        nse_rate_pairs = []
 
-        # Fill in the rate indices
-        of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED amrex::Array2D<{dtype}, 1, Rates::NumRates, 1, 7, amrex::Order::C> rate_indices {{\n")
+        # Light isotope group
+        LIG = Nucleus.cast_list(["p", "n", "he4"])
 
-        for n, rate in enumerate(self.all_rates):
-            tmp = ','
-            if n == len(self.all_rates) - 1:
-                tmp = ''
+        # Triple alpha reactants and products
+        reactants_3a = Nucleus.cast_list(["he4", "he4", "he4"])
+        products_3a = [Nucleus("c12")]
 
-            # meaning it is removed.
-            if rate.weak_type or rate.removed:
-                of.write(f"{self.indent*n_indent}    -1, -1, -1, -1, -1, -1, -1{tmp}  // {rate.fname}\n")
+        # Get all available RatePairs, i.e. rates that have reverse rates.
+        # It also filters out removed rates since it considers self.rates
+        # Then do additional filtering based on different criteria
+        for rp in self.get_rate_pairs():
+            reactants = rp.forward.reactants
+            products = rp.forward.products
+            if rp.forward.weak or rp.reverse.weak:
+                continue
+            if len(reactants) > 2 or len(products) > 2:
+                if reactants == reactants_3a and products == products_3a:
+                    nse_rate_pairs.append(rp)
                 continue
 
-            # Find the reactants and products indices
-            reactant_ind = [-1 for n in range(3 - len(rate.reactants))]
-            product_ind = [-1 for n in range(3 - len(rate.products))]
+            non_LIG_count = sum(nuc not in LIG for nuc in reactants + products)
+            if non_LIG_count in (1, 2):
+                nse_rate_pairs.append(rp)
 
-            for nuc in rate.reactants:
-                reactant_ind.append(self.unique_nuclei.index(nuc))
+        return nse_rate_pairs
 
-            for nuc in rate.products:
-                product_ind.append(self.unique_nuclei.index(nuc))
+    def _fill_npa_index(self, n_indent, of):
+        """Write 1-based indices of light isotopes (p, n, he4) if present in the network
+        (set to -1 if absent).
 
-            reactant_ind.sort()
-            product_ind.sort()
+        """
 
-            # Find the reverse rate index
-            rr_ind = -1
-            rr = self.find_reverse(rate)
+        LIG = Nucleus.cast_list(["p", "n", "he4"])
+        for nuc in LIG:
+            idx = self.unique_nuclei.index(nuc) + 1 if nuc in self.unique_nuclei else -1
+            of.write(f"{self.indent*n_indent}constexpr int {nuc.short_spec_name.capitalize()}_index = {idx};\n")
 
-            # Note that rate index is 1-based
-            if rr is not None:
-                rr_ind = self.all_rates.index(rr) + 1
+    def _write_nse_rate_pair_data(self, n_indent, of):
+        """Write the RatePair data table, 2D array of shape (NumNSERatePairs, 8),
+        needed for the NSE_NET algorithm.
 
-            of.write(f"{self.indent*n_indent}    {reactant_ind[0]}, {reactant_ind[1]}, {reactant_ind[2]}, {product_ind[0]}, {product_ind[1]}, {product_ind[2]}, {rr_ind}{tmp}  // {rate.fname}\n")
+        Each row corresponds to a RatePair returned by _get_nse_rate_pairs().
+        Nuclei indices follow NetworkSpecies and rate indices follow NetworkRates.
+
+        - Columns 1–3: 1-based index of reactant nuclei (forward rate)
+        - Columns 4–6: 1-based index of product nuclei (forward rate)
+        - Column 7:    1-based index of the forward rate
+        - Column 8:    1-based index of the reverse rate
+
+        """
+
+        nse_rate_pairs = self._get_nse_rate_pairs()
+        NumNSERatePairs = len(nse_rate_pairs)
+        dtype = _signed_rate_dtype(NumNSERatePairs)
+
+        # Write Fill in the rate indices
+        of.write(f"{self.indent*n_indent}constexpr int NumNSERatePairs = {NumNSERatePairs};\n\n")
+        of.write(f"{self.indent*n_indent}inline AMREX_GPU_MANAGED amrex::Array2D<{dtype}, 1, NumNSERatePairs, 1, 8, amrex::Order::C> rate_pair_data {{\n")
+
+        for n, rp in enumerate(nse_rate_pairs):
+            fr = rp.forward
+            rr = rp.reverse
+
+            # Find the reactants and products indices for the forward rate
+            # Change nuclei indices to 1-based
+            reactant_idx = [-1 for n in range(3 - len(fr.reactants))]
+            product_idx = [-1 for n in range(3 - len(fr.products))]
+
+            for nuc in fr.reactants:
+                reactant_idx.append(self.unique_nuclei.index(nuc) + 1)
+            for nuc in fr.products:
+                product_idx.append(self.unique_nuclei.index(nuc) + 1)
+
+            reactant_idx.sort()
+            product_idx.sort()
+
+            # Find rate index and note that they are 1-based
+            fr_idx = self.all_rates.index(fr) + 1
+            rr_idx = self.all_rates.index(rr) + 1
+
+            of.write(f"{self.indent*(n_indent+1)}"
+                     f"{reactant_idx[0]}, {reactant_idx[1]}, {reactant_idx[2]}, "
+                     f"{product_idx[0]}, {product_idx[1]}, {product_idx[2]}, "
+                     f"{fr_idx}, {rr_idx}")
+
+            if n < NumNSERatePairs - 1:
+                of.write(",")
+            of.write(f"  // fr: {fr.fname}, rr: {rr.fname}\n")
 
         of.write(f"{self.indent*n_indent}}};\n")
-
-    def _fill_rate_indices_extern(self, n_indent, of):
-
-        dtype = _signed_rate_dtype(len(self.all_rates))
-
-        # Fill in the rate indices
-        of.write(f"{self.indent*n_indent}extern AMREX_GPU_MANAGED amrex::Array2D<{dtype}, 1, Rates::NumRates, 1, 7, amrex::Order::C> rate_indices;\n")
