@@ -163,13 +163,23 @@ namespace NSE_INDEX
 {
     constexpr int H1_index = -1;
     constexpr int N_index = -1;
-    constexpr int He4_index = 0;
+    constexpr int He4_index = 1;
 
-    // Each row corresponds to the rate in NetworkRates enum
-    // First 3 row indices for reactants, followed by 3 product indices
-    // last index is the corresponding reverse rate index.
+    // A RatePair data table, 2D array of shape (NumNSERatePairs, 8).
+    // Each row corresponds to a RatePair returned by _get_nse_rate_pairs().
+    // Nuclei indices follow NetworkSpecies and rate indices follow NetworkRates.
 
-    extern AMREX_GPU_MANAGED amrex::Array2D<std::int8_t, 1, Rates::NumRates, 1, 7, amrex::Order::C> rate_indices;
+    //  - Columns 1–3: 1-based index of reactant nuclei (forward rate)
+    //  - Columns 4–6: 1-based index of product nuclei (forward rate)
+    //  - Column 7:    1-based index of the forward rate
+    //  - Column 8:    1-based index of the reverse rate
+
+    constexpr int NumNSERatePairs = 2;
+
+    inline AMREX_GPU_MANAGED amrex::Array2D<std::int8_t, 1, NumNSERatePairs, 1, 8, amrex::Order::C> rate_pair_data {
+        -1, 1, 2, -1, -1, 3, 13, 14,  // fr: Mg24_He4_to_Si28_approx, rr: Si28_to_Mg24_He4_approx
+        -1, 1, 3, -1, -1, 4, 15, 16  // fr: Si28_He4_to_S32_approx, rr: S32_to_Si28_He4_approx
+    };
 }
 #endif
 

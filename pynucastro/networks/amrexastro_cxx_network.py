@@ -160,7 +160,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         """Return a list of RatePairs eligible for NSE_NET grouping.
 
         Filtering criteria:
-        1. Must have a reverse rate (RatePairs only)
+        1. Must have both forward and reverse rate
         2. Excludes weak or removed rates
         3. At most 2 reactants and 2 products (except for triple-alpha)
         4. Only 1 or 2 nuclei not in {p, n, He4} across reactants + products
@@ -176,10 +176,13 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         reactants_3a = Nucleus.cast_list(["he4", "he4", "he4"])
         products_3a = [Nucleus("c12")]
 
-        # Get all available RatePairs, i.e. rates that have reverse rates.
+        # Get RatePairs, and make sure both forward and reverse are not None
         # It also filters out removed rates since it considers self.rates
         # Then do additional filtering based on different criteria
         for rp in self.get_rate_pairs():
+            if rp.forward is None or rp.reverse is None:
+                continue
+
             reactants = rp.forward.reactants
             products = rp.forward.products
             if rp.forward.weak or rp.reverse.weak:

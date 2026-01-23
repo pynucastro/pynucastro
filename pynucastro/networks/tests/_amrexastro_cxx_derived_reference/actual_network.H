@@ -147,15 +147,26 @@ namespace Rates
 #ifdef NSE_NET
 namespace NSE_INDEX
 {
-    constexpr int H1_index = 0;
+    constexpr int H1_index = 1;
     constexpr int N_index = -1;
-    constexpr int He4_index = 1;
+    constexpr int He4_index = 2;
 
-    // Each row corresponds to the rate in NetworkRates enum
-    // First 3 row indices for reactants, followed by 3 product indices
-    // last index is the corresponding reverse rate index.
+    // A RatePair data table, 2D array of shape (NumNSERatePairs, 8).
+    // Each row corresponds to a RatePair returned by _get_nse_rate_pairs().
+    // Nuclei indices follow NetworkSpecies and rate indices follow NetworkRates.
 
-    extern AMREX_GPU_MANAGED amrex::Array2D<std::int8_t, 1, Rates::NumRates, 1, 7, amrex::Order::C> rate_indices;
+    //  - Columns 1–3: 1-based index of reactant nuclei (forward rate)
+    //  - Columns 4–6: 1-based index of product nuclei (forward rate)
+    //  - Column 7:    1-based index of the forward rate
+    //  - Column 8:    1-based index of the reverse rate
+
+    constexpr int NumNSERatePairs = 3;
+
+    inline AMREX_GPU_MANAGED amrex::Array2D<std::int8_t, 1, NumNSERatePairs, 1, 8, amrex::Order::C> rate_pair_data {
+        -1, 2, 3, -1, -1, 5, 1, 4,  // fr: He4_Fe52_to_Ni56_reaclib, rr: Ni56_to_He4_Fe52_derived
+        -1, 1, 4, -1, -1, 5, 2, 5,  // fr: p_Co55_to_Ni56_reaclib, rr: Ni56_to_p_Co55_derived
+        -1, 2, 3, -1, 1, 4, 3, 6  // fr: He4_Fe52_to_p_Co55_reaclib, rr: p_Co55_to_He4_Fe52_derived
+    };
 }
 #endif
 
