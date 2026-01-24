@@ -180,17 +180,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                     if not foundkey:
                         of.write(l)
 
-        # Copy any tables in the network to the current directory
-        # if the table file cannot be found, print a warning and continue.
-        for tr in self.tabular_rates:
-            tdir = tr.rfile_path.resolve().parent
-            if tdir != Path.cwd():
-                tdat_file = Path(tdir, tr.table_file)
-                if tdat_file.is_file():
-                    shutil.copy(tdat_file, odir or Path.cwd())
-                else:
-                    warnings.warn(UserWarning(f'Table data file {tr.table_file} not found.'))
-
     def compose_ydot(self):
         """Create the expressions for dY/dt for each nucleus, where Y
         is the molar fraction.
@@ -369,7 +358,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 for jrho in range(len(r.interpolator.rhoy)):
                     of.write(f'{idnt}        ')
                     for itemp in range(len(r.interpolator.temp)):
-                        val = r.interpolator.data[r.interpolator._rhoy_T_to_idx(jrho, itemp), ncomp.value]
+                        val = r.interpolator.data[r.interpolator._rhoy_T_to_idx(jrho, itemp), ncomp.value]  # pylint: disable=protected-access
                         of.write(f'{val:15}, ')
                     if jrho == 0:
                         of.write(f' // {ncomp.name}')
