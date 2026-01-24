@@ -25,12 +25,9 @@ using namespace amrex::literals;
 
 enum TableVars : std::uint8_t
 {
-    jtab_mu      = 1,
-    jtab_dq      = 2,
-    jtab_vs      = 3,
-    jtab_rate    = 4,
-    jtab_nuloss  = 5,
-    jtab_gamma   = 6,
+    jtab_rate    = 1,
+    jtab_nuloss  = 2,
+    jtab_gamma   = 3,
     num_vars = jtab_gamma
 };
 
@@ -43,14 +40,15 @@ struct table_t
     int nheader;
 };
 
-// we add a 7th index, k_index_dlogr_dlogt used for computing the derivative
-// of Log(rate) with respect of Log(temperature) by using the table
-// values. It isn't an index into the table but into the 'entries'
-// array. Is important to mention that although we compute dlogr/dlogT as
-// the computed quantity in 'entries', we pursue ultimately
-// dr/dt as the final desired quantity to be computed for this index.
+// we add an additional index, k_index_dlogr_dlogt used for computing
+// the derivative of Log(rate) with respect of Log(temperature) by
+// using the table values. It isn't an index into the table but into
+// the 'entries' array. Is important to mention that although we
+// compute dlogr/dlogT as the computed quantity in 'entries', we
+// pursue ultimately dr/dt as the final desired quantity to be
+// computed for this index.
 
-const int  k_index_dlogr_dlogt  = 7;
+constexpr int k_index_dlogr_dlogt = num_vars + 1;
 constexpr int add_vars = 1;  // 1 Additional Var in entries
 
 
