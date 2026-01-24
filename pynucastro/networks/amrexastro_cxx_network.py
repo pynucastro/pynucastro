@@ -29,7 +29,6 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         super().__init__(*args, **kwargs)
 
         self.ftags['<rate_param_tests>'] = self._rate_param_tests
-        self.ftags['<npa_index>'] = self._fill_npa_index
         self.ftags['<nse_rate_pair_data>'] = self._write_nse_rate_pair_data
 
         self.disable_rate_params = disable_rate_params
@@ -198,38 +197,36 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
         return nse_rate_pairs
 
-    def _fill_npa_index(self, n_indent, of):
-        """Write 1-based indices of light isotopes (p, n, he4) if present in the network
-        (set to -1 if absent).
-
-        """
-
-        LIG = Nucleus.cast_list(["p", "n", "he4"])
-        for nuc in LIG:
-            idx = self.unique_nuclei.index(nuc) + 1 if nuc in self.unique_nuclei else -1
-            of.write(f"{self.indent*n_indent}constexpr int {nuc.short_spec_name.capitalize()}_index = {idx};\n")
-
     def _write_nse_rate_pair_data(self, n_indent, of):
-        """Write the RatePair data table, 2D array of shape (NumNSERatePairs, 8),
-        needed for the NSE_NET algorithm.
+        """Write 1-based indices of light isotopes (n, H1, He4) if present
+        in the network (set to -1 if absent). Also write the RatePair data table,
+        2D array of shape (NumNSERatePairs, 10), needed for the NSE_NET algorithm.
 
         Each row corresponds to a RatePair returned by _get_nse_rate_pairs().
         Nuclei indices follow NetworkSpecies and rate indices follow NetworkRates.
 
         - Columns 1–3: 1-based index of reactant nuclei (forward rate)
         - Columns 4–6: 1-based index of product nuclei (forward rate)
-        - Column 7:    1-based index of the forward rate
-        - Column 8:    1-based index of the reverse rate
+        - Columns 7-8: 1-based index of non (n, H1, He4) nuclei.
+        - Column  9:   1-based index of the forward rate
+        - Column  10:  1-based index of the reverse rate
 
         """
 
+        # Write index for the light-isotope-group
+        LIG = Nucleus.cast_list(["p", "n", "he4"])
+        for nuc in LIG:
+            idx = self.unique_nuclei.index(nuc) + 1 if nuc in self.unique_nuclei else -1
+            of.write(f"{self.indent*n_indent}constexpr int {nuc.short_spec_name.capitalize()}_index = {idx};\n")
+
+        # Write RatePair data table
         nse_rate_pairs = self._get_nse_rate_pairs()
         NumNSERatePairs = len(nse_rate_pairs)
         dtype = _signed_rate_dtype(NumNSERatePairs)
 
         # Write Fill in the rate indices
         of.write(f"{self.indent*n_indent}constexpr int NumNSERatePairs = {NumNSERatePairs};\n\n")
-        of.write(f"{self.indent*n_indent}inline AMREX_GPU_MANAGED amrex::Array2D<{dtype}, 1, NumNSERatePairs, 1, 8, amrex::Order::C> rate_pair_data {{\n")
+        of.write(f"{self.indent*n_indent}inline AMREX_GPU_MANAGED amrex::Array2D<{dtype}, 1, NumNSERatePairs, 1, 10, amrex::Order::C> rate_pair_data {{\n")
 
         for n, rp in enumerate(nse_rate_pairs):
             fr = rp.forward
@@ -238,17 +235,27 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             # Find the reactants and products indices for the forward rate
             # Use -1 as sentinel value if there are less than 3 reactants
             # or products, also change nuclei indices to 1-based
+            # Also find nuclei index of the rate that are not (n, H1, He4)
 
             reactant_idx = []
             product_idx = []
+            non_NHA_idx = []
 
             for nuc in fr.reactants:
-                reactant_idx.append(self.unique_nuclei.index(nuc) + 1)
-            for nuc in fr.products:
-                product_idx.append(self.unique_nuclei.index(nuc) + 1)
+                idx = self.unique_nuclei.index(nuc) + 1
+                reactant_idx.append(idx)
+                if nuc not in LIG:
+                    non_NHA_idx.append(idx)
 
-            reactant_idx += [-1 for n in range(3 - len(fr.reactants))]
-            product_idx += [-1 for n in range(3 - len(fr.products))]
+            for nuc in fr.products:
+                idx = self.unique_nuclei.index(nuc) + 1
+                product_idx.append(self.unique_nuclei.index(nuc) + 1)
+                if nuc not in LIG:
+                    non_NHA_idx.append(idx)
+
+            reactant_idx += [-1 for n in range(3 - len(reactant_idx))]
+            product_idx += [-1 for n in range(3 - len(product_idx))]
+            non_NHA_idx += [-1 for n in range(2 - len(non_NHA_idx))]
 
             # Find rate index and note that they are 1-based
             fr_idx = self.all_rates.index(fr) + 1
@@ -257,6 +264,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             of.write(f"{self.indent*(n_indent+1)}"
                      f"{reactant_idx[0]}, {reactant_idx[1]}, {reactant_idx[2]}, "
                      f"{product_idx[0]}, {product_idx[1]}, {product_idx[2]}, "
+                     f"{non_NHA_idx[0]}, {non_NHA_idx[1]}, "
                      f"{fr_idx}, {rr_idx}")
 
             if n < NumNSERatePairs - 1:
