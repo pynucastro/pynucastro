@@ -354,11 +354,13 @@ class BaseCxxNetwork(ABC, RateCollection):
         for r in self.tabular_rates:
             idnt = self.indent*n_indent
 
+            of.write(f'{idnt}// {r.rid}\n')
             of.write(f'{idnt}inline constexpr table_t {r.table_index_name}_meta{{.ntemp={r.table_temp_lines}, .nrhoy={r.table_rhoy_lines}, .nvars={r.table_num_vars}, .nheader={r.table_header_lines}}};\n')
 
-            of.write(f'{idnt}extern AMREX_GPU_MANAGED {self.array_namespace}Array3D<{self.dtype}, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, {r.table_num_vars}> {r.table_index_name}_data;\n')
-            of.write(f'{idnt}inline const AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy{{{", ".join(str(v) for v in r.interpolator.rhoy)}}};\n')
-            of.write(f'{idnt}inline const AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_temp_lines}> {r.table_index_name}_temp{{{", ".join(str(v) for v in r.interpolator.temp)}}};\n')
+            of.write(f'{idnt}inline const AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_index_name}_meta.nrhoy> {r.table_index_name}_rhoy{{{", ".join(str(v) for v in r.interpolator.rhoy)}}};\n')
+            of.write(f'{idnt}inline const AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_index_name}_meta.ntemp> {r.table_index_name}_temp{{{", ".join(str(v) for v in r.interpolator.temp)}}};\n')
+            of.write(f'{idnt}inline const AMREX_GPU_MANAGED {self.array_namespace}Array3D<{self.dtype}, 1, {r.table_index_name}_meta.ntemp, 1, {r.table_index_name}_meta.nrhoy, 1, {r.table_index_name}_meta.nvars>\n')
+            of.write(f'{idnt}     {r.table_index_name}_data{{}};\n')
             of.write('\n')
 
     def _table_declare_meta(self, n_indent, of):

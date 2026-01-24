@@ -12,7 +12,6 @@
 
 using namespace amrex::literals;
 
-void init_tabular();
 
 // Table is expected to be in terms of dens*ye and temp (logarithmic, cgs units)
 // Table energy units are expected in terms of ergs
@@ -58,51 +57,6 @@ constexpr int add_vars = 1;  // 1 Additional Var in entries
 namespace rate_tables
 {
 <declare_tables>(1)
-}
-
-template <typename R, typename T, typename D>
-void init_tab_info(const table_t& tf, const std::string& file, R& log_rhoy_table, T& log_temp_table, D& data)
-{
-    // This function initializes the selected tabular-rate tables. From the tables we are interested
-    // on the rate, neutrino-energy-loss and the gamma-energy entries.
-
-    std::ifstream table;
-    table.open(file);
-
-    if (!table.is_open()) {
-        // the table was not present or we could not open it; abort
-        amrex::Error("table could not be opened");
-    }
-
-    std::string line;
-
-    // read and skip over the header
-
-    for (int i = 0; i < tf.nheader; ++i) {
-        std::getline(table, line);
-    }
-
-    // now the data -- there are 2 extra columns, for log_temp and log_rhoy
-
-    for (int j = 1; j <= tf.nrhoy; ++j) {
-        for (int i = 1; i <= tf.ntemp; ++i) {
-            std::getline(table, line);
-            if (line.empty()) {
-                amrex::Error("Error reading table data");
-            }
-
-            std::istringstream sdata(line);
-
-            amrex::Real _a;
-            amrex::Real _b;
-            sdata >> _a >> _b;
-
-            for (int n = 1; n <= tf.nvars; ++n) {
-                sdata >> data(i, j, n);
-            }
-        }
-    }
-    table.close();
 }
 
 
