@@ -345,22 +345,22 @@ class BaseCxxNetwork(ABC, RateCollection):
             comps = [TableIndex.RATE, TableIndex.NU, TableIndex.GAMMA]
 
             of.write(f'{idnt}// {r.rid}\n')
-            of.write(f'{idnt}inline constexpr table_t {r.table_index_name}_meta{{.ntemp={r.table_temp_lines}, .nrhoy={r.table_rhoy_lines}, .nvars={len(comps)}, .nheader={r.table_header_lines}}};\n')
+            of.write(f'{idnt}inline AMREX_GPU_MANAGED table_t {r.table_index_name}_meta{{.ntemp={r.table_temp_lines}, .nrhoy={r.table_rhoy_lines}, .nvars={len(comps)}, .nheader={r.table_header_lines}}};\n')
 
-            of.write(f'{idnt}inline const AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_index_name}_meta.nrhoy> {r.table_index_name}_rhoy{{{", ".join(str(v) for v in r.interpolator.rhoy)}}};\n')
-            of.write(f'{idnt}inline const AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_index_name}_meta.ntemp> {r.table_index_name}_temp{{{", ".join(str(v) for v in r.interpolator.temp)}}};\n')
+            of.write(f'{idnt}inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy{{{", ".join(str(v) for v in r.interpolator.rhoy)}}};\n')
+            of.write(f'{idnt}inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_temp_lines}> {r.table_index_name}_temp{{{", ".join(str(v) for v in r.interpolator.temp)}}};\n')
             of.write(f'{idnt}// Array3D is column-major (Fortran-ordering).  T varies fastest, then rho Ye, then the component\n')
-            of.write(f'{idnt}inline const AMREX_GPU_MANAGED {self.array_namespace}Array3D<{self.dtype}, 1, {r.table_index_name}_meta.ntemp, 1, {r.table_index_name}_meta.nrhoy, 1, {r.table_index_name}_meta.nvars>\n')
+            of.write(f'{idnt}inline AMREX_GPU_MANAGED {self.array_namespace}Array3D<{self.dtype}, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, num_vars>\n')
             of.write(f'{idnt}     {r.table_index_name}_data{{\n')
             for ncomp in comps:
                 for jrho in range(len(r.interpolator.rhoy)):
-                    of.write(f'{idnt}        ')
+                    line = f'{idnt}        '
                     for itemp in range(len(r.interpolator.temp)):
                         val = r.interpolator.data[r.interpolator._rhoy_T_to_idx(jrho, itemp), ncomp.value]  # pylint: disable=protected-access
-                        of.write(f'{val:15}, ')
+                        line += f'{val:15}, '
                     if jrho == 0:
-                        of.write(f' // {ncomp.name}')
-                    of.write('\n')
+                        line += f' // {ncomp.name}'
+                    of.write(f'{line.strip()}\n')
             of.write(f'{idnt}     }};\n')
             of.write('\n')
 
