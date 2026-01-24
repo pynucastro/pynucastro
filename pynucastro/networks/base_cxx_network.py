@@ -354,31 +354,22 @@ class BaseCxxNetwork(ABC, RateCollection):
         for r in self.tabular_rates:
             idnt = self.indent*n_indent
 
-            of.write(f'{idnt}extern AMREX_GPU_MANAGED table_t {r.table_index_name}_meta;\n')
+            of.write(f'{idnt}inline constexpr table_t {r.table_index_name}_meta{{.ntemp={r.table_temp_lines}, .nrhoy={r.table_rhoy_lines}, .nvars={r.table_num_vars}, .nheader={r.table_header_lines}}};\n')
+
             of.write(f'{idnt}extern AMREX_GPU_MANAGED {self.array_namespace}Array3D<{self.dtype}, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, {r.table_num_vars}> {r.table_index_name}_data;\n')
-            of.write(f'{idnt}extern AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy;\n')
-            of.write(f'{idnt}extern AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_temp_lines}> {r.table_index_name}_temp;\n')
+            of.write(f'{idnt}inline const AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy{{{", ".join(str(v) for v in r.interpolator.rhoy)}}};\n')
+            of.write(f'{idnt}inline const AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_temp_lines}> {r.table_index_name}_temp{{{", ".join(str(v) for v in r.interpolator.temp)}}};\n')
             of.write('\n')
 
     def _table_declare_meta(self, n_indent, of):
         for r in self.tabular_rates:
             idnt = self.indent*n_indent
 
-            of.write(f"{idnt}AMREX_GPU_MANAGED table_t {r.table_index_name}_meta;\n")
-
             of.write(f'{idnt}AMREX_GPU_MANAGED {self.array_namespace}Array3D<{self.dtype}, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, {r.table_num_vars}> {r.table_index_name}_data;\n')
-
-            of.write(f'{idnt}AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy;\n')
-            of.write(f'{idnt}AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_temp_lines}> {r.table_index_name}_temp;\n\n')
 
     def _table_init_meta(self, n_indent, of):
         for r in self.tabular_rates:
             idnt = self.indent*n_indent
-            of.write(f'{idnt}{r.table_index_name}_meta.ntemp = {r.table_temp_lines};\n')
-            of.write(f'{idnt}{r.table_index_name}_meta.nrhoy = {r.table_rhoy_lines};\n')
-            of.write(f'{idnt}{r.table_index_name}_meta.nvars = {r.table_num_vars};\n')
-            of.write(f'{idnt}{r.table_index_name}_meta.nheader = {r.table_header_lines};\n\n')
-
             of.write(f'{idnt}init_tab_info({r.table_index_name}_meta, "{r.rfile}", {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data);\n\n')
 
             of.write('\n')

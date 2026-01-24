@@ -93,7 +93,9 @@ void init_tab_info(const table_t& tf, const std::string& file, R& log_rhoy_table
 
             std::istringstream sdata(line);
 
-            sdata >> log_rhoy_table(j) >> log_temp_table(i);
+            amrex::Real _a;
+            amrex::Real _b;
+            sdata >> _a >> _b;
 
             for (int n = 1; n <= tf.nvars; ++n) {
                 sdata >> data(i, j, n);
