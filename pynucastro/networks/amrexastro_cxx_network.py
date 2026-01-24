@@ -236,17 +236,19 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             rr = rp.reverse
 
             # Find the reactants and products indices for the forward rate
-            # Change nuclei indices to 1-based
-            reactant_idx = [-1 for n in range(3 - len(fr.reactants))]
-            product_idx = [-1 for n in range(3 - len(fr.products))]
+            # Use -1 as sentinel value if there are less than 3 reactants
+            # or products, also change nuclei indices to 1-based
+
+            reactant_idx = []
+            product_idx = []
 
             for nuc in fr.reactants:
                 reactant_idx.append(self.unique_nuclei.index(nuc) + 1)
             for nuc in fr.products:
                 product_idx.append(self.unique_nuclei.index(nuc) + 1)
 
-            reactant_idx.sort()
-            product_idx.sort()
+            reactant_idx += [-1 for n in range(3 - len(fr.reactants))]
+            product_idx += [-1 for n in range(3 - len(fr.products))]
 
             # Find rate index and note that they are 1-based
             fr_idx = self.all_rates.index(fr) + 1
