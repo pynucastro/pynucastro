@@ -22,7 +22,7 @@ namespace part_fun {
 
     // this is T9
 
-    inline AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1-1> temp_array_1 = {
+    inline const AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1-1> temp_array_1 = {
         0.01, 0.15, 0.2, 0.3, 0.4,
         0.5, 0.6, 0.7, 0.8, 0.9,
         1.0, 1.5, 2.0, 2.5, 3.0,
@@ -45,7 +45,7 @@ namespace part_fun {
 
     // this is log(partition function)
 
-    inline AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1-1> O16_pf_array = {
+    inline const AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1-1> O16_pf_array = {
         0.0, 0.0, 0.0, 0.0, 0.0,
         0.0, 0.0, 0.0, 0.0, 0.0,
         0.0, 0.0, 0.0, 0.0, 0.0,
@@ -69,7 +69,7 @@ namespace part_fun {
 
     // this is log(partition function)
 
-    inline AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1-1> F17_pf_array = {
+    inline const AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1-1> F17_pf_array = {
         0.0, 0.0, 0.0, 0.0, 0.0,
         0.0, 0.0, 0.0, 0.0, 0.0,
         0.0, 0.009950330853168092, 0.01980262729617973, 0.02955880224154443, 0.04879016416943205,

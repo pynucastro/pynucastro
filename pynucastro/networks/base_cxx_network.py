@@ -662,7 +662,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             # number of points
             of.write(f"{self.indent*n_indent}constexpr int npts_{i+1} = {len(temp)};\n\n")
 
-            decl = f"inline AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
+            decl = f"inline const AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
 
             # write the temperature out, but for readability, split it to 5 values per line
 
@@ -685,7 +685,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}// {n}\n\n")
             of.write(f"{self.indent*n_indent}// this is log(partition function)\n\n")
 
-            decl = f"inline AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
+            decl = f"inline const AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
             of.write(f"{self.indent*n_indent}{decl} {n}_pf_array = {{\n")
 
             for data in batched(n.partition_function.log_pf_data, 5):
