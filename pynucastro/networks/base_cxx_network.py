@@ -7,9 +7,7 @@ comprised of the rates that are passed in.
 
 import itertools
 import re
-import shutil
 import sys
-import warnings
 from abc import ABC, abstractmethod
 from pathlib import Path
 
