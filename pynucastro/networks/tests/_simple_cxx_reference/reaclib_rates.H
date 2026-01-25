@@ -250,8 +250,8 @@ fill_approx_rates([[maybe_unused]] const tf_t& tfactors,
                   [[maybe_unused]] T& rate_eval)
 {
 
-    Real rate{};
-    Real drate_dT{};
+    [[maybe_unused]] Real rate{};
+    [[maybe_unused]] Real drate_dT{};
 
 
 }
