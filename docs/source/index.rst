@@ -72,7 +72,7 @@ and interactively exploring nuclear reaction networks.
    screening-examples
    modify-example.ipynb
    custom-rates.ipynb
-   partition-function
+   derived-rates
 
 .. toctree::
    :maxdepth: 1
