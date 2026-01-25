@@ -3,7 +3,6 @@
 
 namespace network
 {
-    Array1D<Real, 1, NumSpec> bion;
     Array1D<Real, 1, NumSpec> mion;
 }
 
@@ -11,16 +10,6 @@ void actual_network_init()
 {
     using namespace Species;
     using namespace network;
-
-    // binding energies per nucleon in MeV
-    Array1D<Real, 1, NumSpec> ebind_per_nucleon;
-
-    <ebind>(1)
-
-    // convert to binding energies per nucleus in MeV
-    for (int i = 1; i <= NumSpec; ++i) {
-        bion(i) = ebind_per_nucleon(i) * aion[i-1];
-    }
 
     // Set the mass -- this will be in grams
     <mion>(1)

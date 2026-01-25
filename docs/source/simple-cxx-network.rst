@@ -37,7 +37,7 @@ A simple C++ network can be created as:
 
 .. note::
 
-   A C++17 compiler is required
+   A C++20 compiler is required
 
 
 This will output the following files:
