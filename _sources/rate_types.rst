@@ -8,6 +8,8 @@ the core functionality.
 
 Here we describe the most commonly used rates.
 
+.. _reaclib:
+
 ReacLib
 -------
 
@@ -92,7 +94,7 @@ The ReacLib database lists the source / reference of each rate with a 6 characte
   .. note::
 
      This is not necessarily a reverse rate ($Q < 0$), so in
-     pynucastro, we call it "derived from inverse".  
+     pynucastro, we call it "derived from inverse".
 
 
 Weak rates

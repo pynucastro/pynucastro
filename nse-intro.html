@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>NSE Intro &#8212; pynucastro 2.9.0.post19+ge7b1895a5 documentation</title>
+    <title>NSE Intro &#8212; pynucastro 2.9.0.post20+g525240920 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=ac0d0662"></script>
+    <script src="_static/documentation_options.js?v=9033000a"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -204,7 +204,7 @@
 <li class="toctree-l1"><a class="reference internal" href="screening-examples.html">Screening Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modify-example.html">Modifying Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom-rates.html">Creating a Custom Rate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="partition-function.html">Derived Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="derived-rates.html">Derived Rates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
 <ul class="nav bd-sidenav">
@@ -613,7 +613,7 @@ This can be viewed as a net reaction of the form:</p>
 <div class="math notranslate nohighlight">
 \[\mu_i = Z_i \mu_p + N_i \mu_n\]</div>
 <p>Now recall that for gas that follows Maxwell-Boltzmann statistics,
-as derived in <a class="reference internal" href="partition-function.html#gas-model"><span class="std std-ref">Semi-relativistic ideal gas model</span></a>, the chemical potential of any isotope is:</p>
+as derived in <a class="reference internal" href="derived-rates.html#gas-model"><span class="std std-ref">Semi-relativistic ideal gas model</span></a>, the chemical potential of any isotope is:</p>
 <div class="math notranslate nohighlight">
 \[\mu_i = \mu_i^{\mathrm{kin}} + m_i c^2 + \mu_i^c\]</div>
 <p>Combining with the NSE chemical equilibrium condition, we obtain:</p>
@@ -621,7 +621,7 @@ as derived in <a class="reference internal" href="partition-function.html#gas-mo
 \[\mu_i^{\mathrm{kin}} = Z_i (\mu_p^{\mathrm{kin}} + \mu_p^c) + N_i \mu_n^{\mathrm{kin}} + \underbrace{(Z_i m_p + N_i m_n - m_i) c^2}_{B_i} - \mu^c_i\]</div>
 <p>Where <span class="math notranslate nohighlight">\(B_i\)</span> is the binding energy of the isotope. The above expression
 can then be used in the mass fraction equation derived from Maxwell-Boltzmann statistics
-shown in <a class="reference internal" href="partition-function.html#gas-model"><span class="std std-ref">Semi-relativistic ideal gas model</span></a>, giving the mass abundance equation for system in NSE.</p>
+shown in <a class="reference internal" href="derived-rates.html#gas-model"><span class="std std-ref">Semi-relativistic ideal gas model</span></a>, giving the mass abundance equation for system in NSE.</p>
 <div class="math notranslate nohighlight">
 \[X_{i, \mathrm{NSE}} = \dfrac{(m_i)^{5/2}}{\rho} g_i \left( \dfrac{k_B T}{2\pi \hbar^2} \right)^{3/2} \exp{\left( \dfrac{Z_i (\mu_p^{\mathrm{kin}} + \mu_p^c) + N_i \mu_n^{\mathrm{kin}} + B_i - \mu^c_i}{k_B T} \right)}\]</div>
 </section>

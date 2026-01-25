@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Third Party Data &#8212; pynucastro 2.9.0.post20+g525240920 documentation</title>
+    <title>Derived Rates &#8212; pynucastro 2.9.0.post20+g525240920 documentation</title>
   
   
   
@@ -49,11 +49,11 @@
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'sources';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'derived-rates';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Nuclear Properties" href="nucleus.html" />
-    <link rel="prev" title="Contributing" href="contributing.html" />
+    <link rel="next" title="Approximate and Modified Rates" href="approximate-rates.html" />
+    <link rel="prev" title="Creating a Custom Rate" href="custom-rates.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -173,8 +173,8 @@
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Properties</span></p>
-<ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Third Party Data</a></li>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nucleus.html">Nuclear Properties</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lodders_composition.html">Solar Composition</a></li>
 </ul>
@@ -200,11 +200,11 @@
 <li class="toctree-l1"><a class="reference internal" href="inert-nuclei.html">Inert Nuclei</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Rate Operations</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="screening-examples.html">Screening Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modify-example.html">Modifying Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom-rates.html">Creating a Custom Rate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="derived-rates.html">Derived Rates</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Derived Rates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
 <ul class="nav bd-sidenav">
@@ -421,7 +421,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/sources.rst?plain=1" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/derived-rates.rst?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -438,7 +438,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/sources.rst" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/derived-rates.rst" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -455,7 +455,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fsources.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fderived-rates.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -485,7 +485,7 @@
       
       
       
-      <li><a href="_sources/sources.rst" target="_blank"
+      <li><a href="_sources/derived-rates.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -569,7 +569,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Third Party Data</h1>
+    <h1>Derived Rates</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -579,14 +579,10 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reaction-rates">Reaction rates</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nuclear-reaction-rates-from-jina-reaclib">Nuclear reaction rates from JINA Reaclib</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tabulated-weak-nuclear-reaction-rates">Tabulated weak nuclear reaction rates</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#physical-constants">Physical constants</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nuclei-properties">Nuclei properties</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#semi-relativistic-ideal-gas-model">Semi-relativistic ideal gas model</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#partition-functions">Partition functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementing-partition-functions">Implementing partition functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#derived-rate-definition">Derived rate definition</a></li>
 </ul>
             </nav>
         </div>
@@ -598,126 +594,242 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="third-party-data">
-<h1>Third Party Data<a class="headerlink" href="#third-party-data" title="Link to this heading">#</a></h1>
-<p>pynucastro incorporates the following publicly-available
-third-party data. Links to this data as well as citations to the
-relevant publications are as follows.</p>
-<section id="reaction-rates">
-<h2>Reaction rates<a class="headerlink" href="#reaction-rates" title="Link to this heading">#</a></h2>
-<section id="nuclear-reaction-rates-from-jina-reaclib">
-<h3>Nuclear reaction rates from JINA Reaclib<a class="headerlink" href="#nuclear-reaction-rates-from-jina-reaclib" title="Link to this heading">#</a></h3>
-<p>The reaction rate parameterizations in <a class="reference external" href="https://github.com/pynucastro/pynucastro/tree/main/pynucastro/library">pynucastro/library</a>
-were obtained from the <a class="reference external" href="https://reaclib.jinaweb.org/">JINA Reaclib database</a>, <span id="id1">Cyburt <em>et al.</em> [<a class="reference internal" href="zreferences.html#id3" title="Richard H. Cyburt, A. Matthew Amthor, Ryan Ferguson, Zach Meisel, Karl Smith, Scott Warren, Alexander Heger, R. D. Hoffman, Thomas Rauscher, Alexander Sakharuk, Hendrik Schatz, F. K. Thielemann, and Michael Wiescher. The JINA REACLIB database: its recent updates and impact on type-i x-ray bursts. The Astrophysical Journal Supplement Series, 189(1):240, 2010. URL: https://stacks.iop.org/0067-0049/189/i=1/a=240.">2010</a>]</span>.</p>
-</section>
-<section id="tabulated-weak-nuclear-reaction-rates">
-<span id="tabulated-rate-sources"></span><h3>Tabulated weak nuclear reaction rates<a class="headerlink" href="#tabulated-weak-nuclear-reaction-rates" title="Link to this heading">#</a></h3>
-<p>The weak rates come from several different sources, each of which focuses on
-a particular range of masses.  There is overlap in the mass range between
-these sources, so pynucastro provides a way to give priority to particular
-sources.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>In the C++ networks, no error is produced if you try to evaluate a rate outside of the table
-limits.  Instead, an extrapolation is done using the data at the edge of the table.</p>
-</div>
-<p>The available sources are:</p>
-<ul>
-<li><p><span id="id2">Fuller <em>et al.</em> [<a class="reference internal" href="zreferences.html#id31" title="G. M. Fuller, W. A. Fowler, and M. J. Newman. Stellar weak interaction rates for intermediate mass nuclei. III - Rate tables for the free nucleons and nuclei with A = 21 to A = 60. Astrophysical Journal Supplement, 48:279-319, March 1982. doi:10.1086/190779.">1982</a>]</span> (covers <span class="math notranslate nohighlight">\(A = 21\)</span> to <span class="math notranslate nohighlight">\(60\)</span>):</p>
-<p>The density (g/cm<span class="math notranslate nohighlight">\(^3\)</span>) and temperature (K) ranges of the rates are:</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(1 \le \log_{10}(\rho Y_e) \le 11\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(7 \le \log_{10}(T) \le 11\)</span></p></li>
-</ul>
-</li>
-<li><p><span id="id3">Oda <em>et al.</em> [<a class="reference internal" href="zreferences.html#id32" title="T. Oda, M. Hino, K. Muto, M. Takahara, and K. Sato. Rate tables for the weak processes of sd-shell nuclei in stellar matter. Atomic Data and Nuclear Data Tables, 56(2):231-403, 1994. URL: https://www.sciencedirect.com/science/article/pii/S0092640X84710072, doi:https://doi.org/10.1006/adnd.1994.1007.">1994</a>]</span> (covers <span class="math notranslate nohighlight">\(A = 17\)</span> to <span class="math notranslate nohighlight">\(39\)</span>):</p>
-<p>The density (g/cm<span class="math notranslate nohighlight">\(^3\)</span>) and temperature (K) ranges of the rates are:</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(1 \le \log_{10}(\rho Y_e) \le 11\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(7 \le \log_{10}(T) \le 10.48\)</span></p></li>
-</ul>
-</li>
-<li><p><span id="id4">Langanke and Martínez-Pinedo [<a class="reference internal" href="zreferences.html#id9" title="K. Langanke and G. Martínez-Pinedo. Rate tables for the weak processes of pf-shell nuclei in stellar environments. Atomic Data and Nuclear Data Tables, 79(1):1-46, 2001. doi:10.1006/adnd.2001.0865.">2001</a>]</span> (covers <span class="math notranslate nohighlight">\(A = 45\)</span> to <span class="math notranslate nohighlight">\(65\)</span>):</p>
-<p>The data tables are provided as part of that journal link.</p>
-<p>The density (g/cm<span class="math notranslate nohighlight">\(^3\)</span>) and temperature (K) ranges of the rates are:</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(1 \le \log_{10}(\rho Y_e) \le 11\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(7 \le \log_{10}(T) \le 11\)</span></p></li>
-</ul>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>These rates should be preferred to the FFN rates where there is
-overlap.</p>
-</div>
-</li>
-<li><p><span id="id5">Pruet and Fuller [<a class="reference internal" href="zreferences.html#id34" title="Jason Pruet and George M. Fuller. Estimates of stellar weak interaction rates for nuclei in the mass range a = 65-80. The Astrophysical Journal Supplement Series, 149(1):189, nov 2003. URL: https://dx.doi.org/10.1086/376753, doi:10.1086/376753.">2003</a>]</span> (covers <span class="math notranslate nohighlight">\(A = 65\)</span> to <span class="math notranslate nohighlight">\(80\)</span>)</p>
-<p>The density (g/cm<span class="math notranslate nohighlight">\(^3\)</span>) and temperature (K) ranges of the rates are:</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(1 \le \log_{10}(\rho Y_e) \le 11.5\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(7 \le \log_{10}(T) \le 11\)</span></p></li>
-</ul>
-</li>
-<li><p><span id="id6">Suzuki <em>et al.</em> [<a class="reference internal" href="zreferences.html#id10" title="Toshio Suzuki, Hiroshi Toki, and Ken’ichi Nomoto. Electron-capture and β-decay rates for sd-shell nuclei in stellar environments relevant to high-density o–ne–mg cores. The Astrophysical Journal, 817(2):163, January 2016. doi:10.3847/0004-637X/817/2/163.">2016</a>]</span> (covers <span class="math notranslate nohighlight">\(A = 17\)</span> to <span class="math notranslate nohighlight">\(28\)</span>):</p>
-<p>These data tables were obtained from
-<a class="reference external" href="https://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html">https://www.phys.chs.nihon-u.ac.jp/suzuki/data2/link.html</a>.</p>
-<p>The density (g/cm<span class="math notranslate nohighlight">\(^3\)</span>) and temperature (K) ranges of the rates are:</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(7 \le \log_{10}(\rho Y_e) \le 11\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(7 \le \log_{10}(T) \le 9.65\)</span></p></li>
-</ul>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The paper <span id="id7">[<a class="reference internal" href="zreferences.html#id10" title="Toshio Suzuki, Hiroshi Toki, and Ken’ichi Nomoto. Electron-capture and β-decay rates for sd-shell nuclei in stellar environments relevant to high-density o–ne–mg cores. The Astrophysical Journal, 817(2):163, January 2016. doi:10.3847/0004-637X/817/2/163.">Suzuki <em>et al.</em>, 2016</a>]</span> says that the rates are evaluated
-are in the range <span class="math notranslate nohighlight">\(8 \le \log_{10}(\rho Y_e) \le 11\)</span>, but the
-tables provided have the lower limit as <span class="math notranslate nohighlight">\(\log_{10}(\rho Y_e) =
-7\)</span>.</p>
-</div>
-</li>
-</ul>
-</section>
-</section>
-<section id="physical-constants">
-<h2>Physical constants<a class="headerlink" href="#physical-constants" title="Link to this heading">#</a></h2>
-<p>We use the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/constants.html">scipy.constants</a> module
-from SciPy to get all the physical constants.  This in turn gets the constants from the CODATA
-recommended values (for SciPy versions 1.14 and earlier, this is CODATA 2018, <span id="id8">Tiesinga <em>et al.</em> [<a class="reference internal" href="zreferences.html#id14" title="Eite Tiesinga, Peter J. Mohr, David B. Newell, and Barry N. Taylor. Codata recommended values of the fundamental physical constants: 2018. Journal of Physical and Chemical Reference Data, 50:033105, 2021. doi:10.1063/5.0064853.">2021</a>]</span>;
-for SciPy 1.15 they are CODATA 2022).</p>
-</section>
-<section id="nuclei-properties">
-<h2>Nuclei properties<a class="headerlink" href="#nuclei-properties" title="Link to this heading">#</a></h2>
-<p>We get the basic nuclear properties from the Nubase 2020 evaluation <span id="id9">Kondev <em>et al.</em> [<a class="reference internal" href="zreferences.html#id20" title="F.G. Kondev, M. Wang, W.J. Huang, S. Naimi, and G. Audi. The nubase2020 evaluation of nuclear physics properties *. Chinese Physics C, 45(3):030001, mar 2021. URL: https://dx.doi.org/10.1088/1674-1137/abddae, doi:10.1088/1674-1137/abddae.">2021</a>]</span>.  This
-is available online at <a class="reference external" href="https://www-nds.iaea.org/amdc/">Nuclear Data Services</a>.
-We are currently using the file <a class="reference external" href="https://www-nds.iaea.org/amdc/ame2020/nubase_4.mas20.txt">nubase_4.mas20.txt</a>.</p>
-<p>In particular, we get the mass excesses, <span class="math notranslate nohighlight">\(\Delta m\)</span>, and spins from there.  We then compute
-mass of the nucleus as:</p>
+  <section id="derived-rates">
+<h1>Derived Rates<a class="headerlink" href="#derived-rates" title="Link to this heading">#</a></h1>
+<p>In this section we discuss the implementation of
+<a class="reference internal" href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate" title="pynucastro.rates.derived_rate.DerivedRate"><code class="xref py py-class docutils literal notranslate"><span class="pre">DerivedRate</span></code></a>
+via detailed balance.
+We will also discuss the partition functions mentioned in
+<span id="id1">Rauscher and Thielemann [<a class="reference internal" href="zreferences.html#id22" title="Thomas Rauscher and Friedrich-Karl Thielemann. Astrophysical Reaction Rates From Statistical Model Calculations. Atomic Data and Nuclear Data Tables, 75(1-2):1-351, May 2000. arXiv:astro-ph/0004059, doi:10.1006/adnd.2000.0834.">2000</a>]</span> and <span id="id2">Rauscher [<a class="reference internal" href="zreferences.html#id23" title="T. Rauscher. Nuclear partition functions at temperatures exceeding 10^10 K. The Astrophysical Journal Supplement Series, 147(2):403, August 2003. doi:10.1086/375733.">2003</a>]</span>
+with the purpose to compute inverse rates at extreme temperatures and
+heavy nuclide conditions.</p>
+<section id="semi-relativistic-ideal-gas-model">
+<span id="gas-model"></span><h2>Semi-relativistic ideal gas model<a class="headerlink" href="#semi-relativistic-ideal-gas-model" title="Link to this heading">#</a></h2>
+<p>In order to illustrate our implementation, we will start first by computing
+the number density of reaction specie in terms of its chemical potential.
+Let us start our discussion by introducing the 1-particle <em>canonical partition function</em> by</p>
 <div class="math notranslate nohighlight">
-\[m = \Delta M + A m_u\]</div>
-<p>and the binding energies from the mass excesses as:</p>
+\[Z_{1-p} = \sum_l (2J_l + 1) \dfrac{1}{(2\pi \hbar)^3} \int \, d^3q \,d^3p \, \exp{\left(-\dfrac{\epsilon(l, \mathbf{p}, \mathbf{q})}{k_B T}\right)}\]</div>
+<p>Our purpose is to compute the number density in terms of the chemical potential
+by assuming a first order velocity approximation of the energy, internal excitation energy,
+rest energy and coulomb screening potential for each particle as:</p>
 <div class="math notranslate nohighlight">
-\[B = Z m_H + N m_n - (A m_u + \Delta m)\]</div>
-<p>where <span class="math notranslate nohighlight">\(m_H\)</span> is the mass of the hydrogen atom, computed from the mass
-excess of <code class="docutils literal notranslate"><span class="pre">1H</span></code> listed in the table.  This is consistent with the
-discussion in section 2 of the AME 2020 paper <span id="id10">[<a class="reference internal" href="zreferences.html#id17" title="W.J. Huang, Meng Wang, F.G. Kondev, G. Audi, and S. Naimi. The ame 2020 atomic mass evaluation (i). evaluation of input data, and adjustment procedures*. Chinese Physics C, 45(3):030002, mar 2021. URL: https://dx.doi.org/10.1088/1674-1137/abddb0, doi:10.1088/1674-1137/abddb0.">Huang <em>et al.</em>, 2021</a>]</span>, and
-these numbers match the binding energies computed in the AME tables to
-the uncertainty in the nuclear masses.</p>
-<p>Binding energies are also computed and tablulated in the AME mass
-evaluation (see <a class="reference external" href="https://www-nds.iaea.org/amdc/ame2020/mass_1.mas20.txt">AME2020 mass table</a>).  But note
-that the Nubase evaluation seems to more closely follow the “rounded”
-version of the table <a class="reference external" href="https://www-nds.iaea.org/amdc/ame2020/massround.mas20.txt">AME2020 rounded mass
-table</a>.
-The rounding procedure is discussed in Table I on the <a class="reference external" href="https://iopscience.iop.org/article/10.1088/1674-1137/abddaf">AME 2020 paper
-II</a> (also
-see the <a class="reference external" href="https://iopscience.iop.org/article/10.1088/1674-1137/abddae">Nubase2020
-paper</a>,
-Table I).</p>
+\[\epsilon(l, \mathbf{p}, \mathbf{q}) = \underbrace{\dfrac{p^2}{2m}}_{\mathrm{Kinetic}} + \underbrace{\Delta_l}_{\mathrm{Excitation}} + \underbrace{mc^2}_{\mathrm{Rest}} + \underbrace{\mu^c}_{\mathrm{Coulomb}}\]</div>
+<div class="math notranslate nohighlight">
+\begin{eqnarray}
+Z_{1-p} &amp;=&amp; \underbrace{\sum_l(2J_l + 1) e^{-\Delta_l/(k_B T)}}_{g} \dfrac{1}{(2\pi \hbar)^3} \int \, d^3q \,d^3p \, \exp{\left(-\dfrac{\mathbf{p}^2/2m + mc^2 + \mu^c}{k_B T} \right)} \\
+        &amp;=&amp; e^{-(mc^2 + \mu^c)/(k_B T)} \times gV\left(\dfrac{m k_B T}{2\pi\hbar^2} \right)^{3/2}
+\end{eqnarray}</div><p>From this point, we may compute the N-particle <em>canonical partition function</em> by</p>
+<div class="math notranslate nohighlight">
+\[Z_N = \dfrac{1}{N!}Z_{1-p}^N\]</div>
+<p>and by using the fugacity parameter, defined by <span class="math notranslate nohighlight">\(z=e^{\mu/(kT)}\)</span>,
+we also may compute the <em>grand-canonical partition function</em>:</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{Z} = \sum_{N=0}^{\infty} z^N Z_N = \sum_{N=0}^{\infty} \dfrac{(zZ_{1-p})^N}{N!} = \exp\left[e^{-(mc^2+\mu^c)/(kT)}\times zgV\left(\dfrac{k_B T}{2\pi \hbar^2} \right)^{3/2} \right]\]</div>
+<p>with the associated grand-canonical potential:</p>
+<div class="math notranslate nohighlight">
+\[\Omega = -k_B T\log \mathcal{Z} = -k_B T gV\left(\dfrac{k_B T}{2\pi \hbar^2} \right)^{3/2} e^{(\mu - mc^2 - \mu^c)/(k_B T)}\]</div>
+<p>and the number of particles may be computed as the first derivative of the
+grand-canonical potential with respect to the chemical potential <span class="math notranslate nohighlight">\(\mu\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[N = - \left( \dfrac{\partial \Omega}{\partial \mu} \right ) = gV\left( \dfrac{m k_B T}{2\pi \hbar^2} \right)^{3/2} e^{(\mu - mc^2 - \mu^c)/(k_B T)}\]</div>
+<p>From the number density definition, <span class="math notranslate nohighlight">\(n=N/V\)</span> we may compute finally,
+the relationship between the number density and the chemical potential for a
+semi-relativistic ideal gas by:</p>
+<div class="math notranslate nohighlight">
+\[n = g \left( \dfrac{m k_B T}{2\pi \hbar^2} \right)^{3/2} e^{(\mu - mc^2 - \mu^c)/(k_B T)}\]</div>
+<p>or equivalently,</p>
+<div class="math notranslate nohighlight">
+\[\mu = \underbrace{k_B T \log \left[\dfrac{n}{g}\left( \dfrac{2\pi \hbar^2}{mkT} \right)^{3/2} \right]}_{\mu^{kin}} + mc^2 + \mu^c\]</div>
+<p>as summarized in <span id="id3">[<a class="reference internal" href="zreferences.html#id22" title="Thomas Rauscher and Friedrich-Karl Thielemann. Astrophysical Reaction Rates From Statistical Model Calculations. Atomic Data and Nuclear Data Tables, 75(1-2):1-351, May 2000. arXiv:astro-ph/0004059, doi:10.1006/adnd.2000.0834.">Rauscher and Thielemann, 2000</a>]</span>.</p>
+<p>Often times we want to work in massfractions, <span class="math notranslate nohighlight">\(X_i = m_i n_i / \rho\)</span>,
+or in molar fractions, <span class="math notranslate nohighlight">\(Y_i = X_i / A_i\)</span>. Hence:</p>
+<div class="math notranslate nohighlight">
+\[Y_i = \dfrac{1}{\rho} \dfrac{(m_i)^{5/2}}{A_i} g_i \left( \dfrac{k_B T}{2\pi \hbar^2} \right)^{3/2} e^{(\mu_i - m_i c^2 - \mu_i^c)/(k_B T)}\]</div>
 </section>
 <section id="partition-functions">
 <h2>Partition functions<a class="headerlink" href="#partition-functions" title="Link to this heading">#</a></h2>
-<p>We use the tabulated partition functions from the following sources:</p>
+<p>Until now, we have not discussed the role of <span class="math notranslate nohighlight">\(g\)</span>, which encompasses the
+number of spin states that a particle may adopt. Now, since the ingoing and
+outgoing particles are far apart in comparison with the nucleus size before
+the collision takes place; this allow us to assume that particles are likely
+in their ground state as they approach. Hence to account for state degeneracy,
+<span class="math notranslate nohighlight">\(g = 2J_0 + 1\)</span>, where <span class="math notranslate nohighlight">\(J_0\)</span> is the particle spin in the ground state.
+However, particles may be in a superposition of states due to excitation
+of upper levels, with excitation energies <span class="math notranslate nohighlight">\(\Delta_l\)</span>,
+caused by an steady increase of the temperature.
+As pointed out in <span id="id4">[<a class="reference internal" href="zreferences.html#id22" title="Thomas Rauscher and Friedrich-Karl Thielemann. Astrophysical Reaction Rates From Statistical Model Calculations. Atomic Data and Nuclear Data Tables, 75(1-2):1-351, May 2000. arXiv:astro-ph/0004059, doi:10.1006/adnd.2000.0834.">Rauscher and Thielemann, 2000</a>]</span>, we have to replace
+<span class="math notranslate nohighlight">\(g \rightarrow (2J_0 + 1) G\)</span>, where <span class="math notranslate nohighlight">\(G\)</span> is the internal partition
+function normalized by the ground state spin.</p>
+<div class="math notranslate nohighlight">
+\[g \equiv (2 J_0 + 1) \times \underbrace{\frac{\sum_l(2J_l + 1) e^{-\Delta_l/(k_B T)}}{2 J_0 + 1}}_{G}\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>ReacLib rates with <code class="docutils literal notranslate"><span class="pre">-v</span></code> flag are derived similarly, but setting <span class="math notranslate nohighlight">\(G = 1\)</span>.</p>
+</div>
+</section>
+<section id="implementing-partition-functions">
+<h2>Implementing partition functions<a class="headerlink" href="#implementing-partition-functions" title="Link to this heading">#</a></h2>
+<p>The partition function information is contained in three main classes:</p>
 <ul class="simple">
-<li><p><span id="id11">Rauscher <em>et al.</em> [<a class="reference internal" href="zreferences.html#id21" title="Thomas Rauscher, Friedrich-Karl Thielemann, and Karl-Ludwig Kratz. Nuclear level density and the determination of thermonuclear rates for astrophysics. Phys. Rev. C, 56:1613–1625, September 1997. URL: https://link.aps.org/doi/10.1103/PhysRevC.56.1613, doi:10.1103/PhysRevC.56.1613.">1997</a>]</span></p></li>
-<li><p><span id="id12">Rauscher [<a class="reference internal" href="zreferences.html#id23" title="T. Rauscher. Nuclear partition functions at temperatures exceeding 10^10 K. The Astrophysical Journal Supplement Series, 147(2):403, August 2003. doi:10.1086/375733.">2003</a>]</span></p></li>
+<li><p><a class="reference internal" href="pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction" title="pynucastro.nucdata.partition_function.PartitionFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartitionFunction</span></code></a>
+materialize the temperature and the partition function values into an object,
+interpolating across all the defined points using a cubic spline interpolation.
+If a temperature value is outside the temperature range, we keep its value
+constant to the nearest boundary value.</p></li>
+<li><p><a class="reference internal" href="pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunctionTable" title="pynucastro.nucdata.partition_function.PartitionFunctionTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartitionFunctionTable</span></code></a>
+reads a table and construct a dictionary between each nucleus and their partition function class object.</p></li>
+<li><p><a class="reference internal" href="pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunctionCollection" title="pynucastro.nucdata.partition_function.PartitionFunctionCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartitionFunctionCollection</span></code></a>
+collects all the formatted table information, inside <code class="docutils literal notranslate"><span class="pre">/nucdata/PartitionFunction/</span></code>.
+It allow us to include the high temperature tables in <span id="id5">[<a class="reference internal" href="zreferences.html#id23" title="T. Rauscher. Nuclear partition functions at temperatures exceeding 10^10 K. The Astrophysical Journal Supplement Series, 147(2):403, August 2003. doi:10.1086/375733.">Rauscher, 2003</a>]</span> and to
+select the model used to compute the partition functions, respectively. By default,
+we include high temperatures, and our partition function model to be the
+<em>finite range droplet model (FRDM)</em>. If a nucleus is not in the collection,
+we set the partition function values to 1.0 by default.</p></li>
 </ul>
+<p>Inside the <a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><code class="xref py py-class docutils literal notranslate"><span class="pre">Nucleus</span></code></a> class,
+we have defined <code class="docutils literal notranslate"><span class="pre">set_partition_function()</span></code> which setup our partition function
+collection, our high temperatures consideration, and the model used to compute
+the partition function data. On the other hand, <code class="docutils literal notranslate"><span class="pre">get_partition_function()</span></code>
+assigns a partition function class object to the defined nucleus.
+Let us illustrate how it work:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span>
+
+<span class="n">co46</span> <span class="o">=</span> <span class="n">pynucastro</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s1">&#39;co46&#39;</span><span class="p">)</span>
+<span class="n">pCollection</span> <span class="o">=</span> <span class="n">pynucastro</span><span class="o">.</span><span class="n">nucdata</span><span class="o">.</span><span class="n">PartitionFunctionCollection</span><span class="p">()</span>
+
+<span class="n">co46</span><span class="o">.</span><span class="n">set_partition_function</span><span class="p">(</span><span class="n">pCollection</span><span class="o">=</span><span class="n">pCollection</span><span class="p">,</span> <span class="n">set_data</span><span class="o">=</span><span class="s1">&#39;etfsiq&#39;</span><span class="p">,</span> <span class="n">use_high_temperatures</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">pf_co46</span> <span class="o">=</span> <span class="n">co46</span><span class="o">.</span><span class="n">get_partition_function</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Now, from this point we define a method inside a <a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rate</span></code></a>
+named <code class="docutils literal notranslate"><span class="pre">set_partition_function()</span></code> which reads a partition function collection
+and setup all the nucleus inside the reaction rate. Let us illustrate now,
+how it works:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span>
+
+<span class="n">p_collection</span> <span class="o">=</span> <span class="n">pynucastro</span><span class="o">.</span><span class="n">nucdata</span><span class="o">.</span><span class="n">PartitionFunctionCollection</span><span class="p">()</span>
+
+<span class="n">o18_pg_f19</span> <span class="o">=</span> <span class="n">pynucastro</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">Rate</span><span class="p">(</span><span class="s1">&#39;../library/o18-pg-f19-il10&#39;</span><span class="p">)</span>
+<span class="n">o18_pg_f19</span><span class="o">.</span><span class="n">set_partition_function</span><span class="p">(</span><span class="n">p_collection</span><span class="o">=</span><span class="n">p_collection</span><span class="p">,</span> <span class="n">set_data</span><span class="o">=</span><span class="s1">&#39;frdm&#39;</span><span class="p">,</span> <span class="n">use_high_temperatures</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">p</span> <span class="o">=</span> <span class="n">o18_pg_f19</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">o18</span> <span class="o">=</span> <span class="n">o18_pg_f19</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">f19</span> <span class="o">=</span> <span class="n">o18_pg_f19</span><span class="o">.</span><span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">pf_p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get_partition_function</span><span class="p">()</span>
+<span class="n">pf_o18</span> <span class="o">=</span> <span class="n">o18</span><span class="o">.</span><span class="n">get_partition_function</span><span class="p">()</span>
+<span class="n">pf_f19</span> <span class="o">=</span> <span class="n">f19</span><span class="o">.</span><span class="n">get_partition_function</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="derived-rate-definition">
+<h2>Derived rate definition<a class="headerlink" href="#derived-rate-definition" title="Link to this heading">#</a></h2>
+<p>The forward and reverse reactions are entangled due to thermodynamical and
+nuclear equilibrium aspects. In this section we will see how this connection is introduced
+and explore its consequences in the nuclear rates computation,
+as discussed in <span id="id6">[<a class="reference internal" href="zreferences.html#id22" title="Thomas Rauscher and Friedrich-Karl Thielemann. Astrophysical Reaction Rates From Statistical Model Calculations. Atomic Data and Nuclear Data Tables, 75(1-2):1-351, May 2000. arXiv:astro-ph/0004059, doi:10.1006/adnd.2000.0834.">Rauscher and Thielemann, 2000</a>]</span>. The general case is worked out in the appendix of
+<span id="id7">[<a class="reference internal" href="zreferences.html#id38" title="Alexander I. Smith, Eric T. Johnson, Zhi Chen, Kiran Eiden, Donald E. Willcox, Brendan Boyd, Lyra Cao, Christopher J. DeGrendele, and Michael Zingale. Pynucastro: A Python Library for Nuclear Astrophysics. The Astrophysical Journal, 947(2):65, April 2023. URL: https://iopscience.iop.org/article/10.3847/1538-4357/acbaff (visited on 2025-04-21), doi:10.3847/1538-4357/acbaff.">Smith <em>et al.</em>, 2023</a>]</span>. Here we demonstrate a less general reaction channel,
+<span class="math notranslate nohighlight">\(A + B \rightarrow C + D\)</span>, discussed in <span id="id8">[<a class="reference internal" href="zreferences.html#id3" title="Richard H. Cyburt, A. Matthew Amthor, Ryan Ferguson, Zach Meisel, Karl Smith, Scott Warren, Alexander Heger, R. D. Hoffman, Thomas Rauscher, Alexander Sakharuk, Hendrik Schatz, F. K. Thielemann, and Michael Wiescher. The JINA REACLIB database: its recent updates and impact on type-i x-ray bursts. The Astrophysical Journal Supplement Series, 189(1):240, 2010. URL: https://stacks.iop.org/0067-0049/189/i=1/a=240.">Cyburt <em>et al.</em>, 2010</a>]</span>, for simplicity.</p>
+<p>Starting with a pair of reaction channels, where <span class="math notranslate nohighlight">\(A\)</span>, <span class="math notranslate nohighlight">\(B\)</span>, <span class="math notranslate nohighlight">\(C\)</span>, <span class="math notranslate nohighlight">\(D\)</span> are distinct
+nuclear species:</p>
+<div class="math notranslate nohighlight">
+\[N_A \  A + N_B \ B \rightleftharpoons N_C \ C + N_D \ D\]</div>
+<p>The coupled ordinary differential equations characterizing the evolution
+of the species can be written as the following:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+\frac{1}{N_A} \frac{d}{d t} Y_A &amp;= \frac{1}{N_B} \frac{d}{d t} Y_B = - \frac{\rho^{\nu_r} Y_A^{N_A} Y_B^{N_B}}{N_A! N_B!} \underbrace{N_a^{\nu_r} \langle \sigma v \rangle}_{\lambda_\mathrm{for}} + \frac{\rho^{\nu_p} Y_C^{N_C} Y_D^{N_D}}{N_C! N_D!} \underbrace{N_a^{\nu_p} \langle \sigma v \rangle}_{\lambda_\mathrm{rev}} \\
+\frac{1}{N_C} \frac{d}{d t} Y_C &amp;= \frac{1}{N_D} \frac{d}{d t} Y_D = + \frac{\rho^{\nu_r} Y_A^{N_A} Y_B^{N_B}}{N_A! N_B!} \lambda_\mathrm{for} - \frac{\rho^{\nu_p} Y_C^{N_C} Y_D^{N_D}}{N_C! N_D!} \lambda_\mathrm{rev}
+\end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\nu_r = N_A + N_B - 1\)</span> and <span class="math notranslate nohighlight">\(\nu_p = N_C + N_D - 1\)</span>
+Now, taking in consideration that forward and reverse rates are in equilibrium:</p>
+<div class="math notranslate nohighlight">
+\[\frac{d }{d t} Y_A = \frac{d }{d t} Y_B = \frac{d }{d t} Y_C = \frac{d }{d t} Y_D = 0\]</div>
+<p>Hence the ratio between the screened forward and the screened reverse rate can be written as:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\lambda^\mathrm{scn}_\mathrm{rev}}{\lambda^\mathrm{scn}_\mathrm{for}} = \rho^{\nu_r - \nu_p} \ \frac{Y^{N_A}_{\mathrm{eq},A} Y^{N_B}_{\mathrm{eq},B}}{Y^{N_C}_{\mathrm{eq},C} Y^{N_D}_{\mathrm{eq},D}} \ \frac{N_C! N_D!}{N_A! N_B!}\]</div>
+<p>To continue further, the molar fraction at equilibrium state is characterized by
+the form of molar fraction that we obtained in <a class="reference internal" href="#gas-model"><span class="std std-ref">Semi-relativistic ideal gas model</span></a> with
+the chemical potential representing the equilibrium state,
+i.e. <span class="math notranslate nohighlight">\(\mu = \mu^{\mathrm{eq}}\)</span>. With the definition of the Q-value of the
+reverse rate:</p>
+<div class="math notranslate nohighlight">
+\[Q_\mathrm{rev} \equiv (N_C \ m_C + N_D \ m_D) c^2 - (N_A \ m_A + N_B \ m_B) c^2\]</div>
+<p>And the detailed balance condition, i.e. chemical equilibrium:</p>
+<div class="math notranslate nohighlight">
+\[N_A \ \mu^\mathrm{eq}_A + N_B \ \mu^\mathrm{eq}_B = N_C \ \mu^\mathrm{eq}_C + N_D \ \mu^\mathrm{eq}_D\]</div>
+<p>We finally obtain:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\lambda^\mathrm{scn}_\mathrm{rev}}{\lambda^\mathrm{scn}_\mathrm{for}} = \underbrace{\frac{K_A^{N_A} K_B^{N_B}}{K_C^{N_C} K_D^{N_D}} \frac{N_C! N_D!}{N_A! N_B!} \exp{\left(\frac{Q_{\mathrm{rev}}}{k_B T}\right)}}_{R} \exp{ \left(-\frac{N_A \ \mu^c_A + N_B \ \mu^c_B - N_C \ \mu^c_C - N_D \ \mu^c_D}{k_B T} \right)}\]</div>
+<p>where <span class="math notranslate nohighlight">\(R\)</span> is the equilibrium ratio without the screening term
+and the prefactor <span class="math notranslate nohighlight">\(K\)</span> is defined as:</p>
+<div class="math notranslate nohighlight">
+\[K_i \equiv \frac{m_i^{5/2}}{A_i} g_i \left(\frac{k_B T}{2\pi\hbar^2}\right)^{3/2}\]</div>
+<p>Now assuming that the electron screening routine follows linear mixing rule
+<span id="id9">[<a class="reference internal" href="zreferences.html#id39" title="H. E. Dewitt, H. C. Graboske, and M. S. Cooper. Screening Factors for Nuclear Reactions. I. General Theory. The Astrophysical Journal, 181:439–456, April 1973. URL: https://ui.adsabs.harvard.edu/abs/1973ApJ...181..439D/abstract (visited on 2025-12-22), doi:10.1086/152061.">Dewitt <em>et al.</em>, 1973</a>]</span>, then the screening enhancement factors for
+the forward and reverse reaction channels that we’re considering where
+<span class="math notranslate nohighlight">\(\lambda^\mathrm{scn}_\mathrm{rev} = \lambda^\mathrm{uns}_\mathrm{rev} \ F^\mathrm{scn}_\mathrm{rev}\)</span>
+and <span class="math notranslate nohighlight">\(\lambda^\mathrm{scn}_\mathrm{for} = \lambda^\mathrm{uns}_\mathrm{for} \ F^\mathrm{scn}_\mathrm{for}\)</span>
+will be:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The only screening routine that follows the linear mixing rule is
+<a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.potekhin_1998" title="pynucastro.screening.screen.potekhin_1998"><code class="xref py py-func docutils literal notranslate"><span class="pre">potekhin_1998</span></code></a>.
+This is important if you want to be self-consistent with NSE.</p>
+</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+F^\mathrm{scn}_\mathrm{for} &amp;= \exp{\left(\frac{N_A \mu^c(Z_A) + N_B \mu^c(Z_B) - \mu^c(N_A Z_A + N_B Z_B)}{k_B T}\right)} \\
+F^\mathrm{scn}_\mathrm{rev} &amp;= \exp{\left(\frac{N_C \mu^c(Z_C) + N_D \mu^c(Z_D) - \mu^c(N_C Z_C + N_D Z_D)}{k_B T}\right)}
+\end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(Z\)</span> is the atomic number of the reactants involved in the reaction.
+With the above rule, the ratio between the screened reverse rate and the
+unscreened forward rate is:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\lambda^\mathrm{scn}_\mathrm{rev}}{\lambda^\mathrm{uns}_\mathrm{for}} = R \times \exp{ \left(\frac{N_C \ \mu^c_C + N_D \ \mu^c_D - \mu^c(N_A Z_A + N_B Z_B) }{k_B T} \right)}\]</div>
+<p>Now due to conservation of charge for strong reactions:</p>
+<div class="math notranslate nohighlight">
+\[N_A Z_A + N_B Z_B = N_C Z_C + N_D Z_D\]</div>
+<p>We finally obtain:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\lambda^\mathrm{scn}_\mathrm{rev}}{\lambda^\mathrm{uns}_\mathrm{for}} = R \ F^\mathrm{scn}_\mathrm{rev}\]</div>
+<p>We note the above expression is self-consistent with the definition
+of the electron screening enhancement where:</p>
+<div class="math notranslate nohighlight">
+\[\lambda^\mathrm{scn}_\mathrm{rev} = \underbrace{\lambda^\mathrm{uns}_\mathrm{for} \ R}_{\lambda^\mathrm{uns}_\mathrm{rev}} \ F^\mathrm{scn}_\mathrm{rev}\]</div>
+<p>In theory, we can stop here and the unscreened
+<a class="reference internal" href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate" title="pynucastro.rates.derived_rate.DerivedRate"><code class="xref py py-class docutils literal notranslate"><span class="pre">DerivedRate</span></code></a>
+can be evaluated by taking the provided source rate and multiplying it by the
+temperature-dependent equilibrium ratio, <span class="math notranslate nohighlight">\(R\)</span>.
+The appropriate screening enhancement factor can then be computed and
+applied in the usual way, just as for any other rate.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is completely general to compute the derived <em>forward</em> rate
+based on the reverse rate. Examples of this are forward rates,
+i.e. <code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>, provided by ReacLib but with the <code class="docutils literal notranslate"><span class="pre">-v</span></code> flag.</p>
+</div>
+<p>However, it is worth noting a potential issue when computing the
+derived <em>forward</em> rate from a reverse rate. At low temperatures,
+<span class="math notranslate nohighlight">\(T \lesssim 10^8 \ \mathrm{K}\)</span>, the reverse rate is often <span class="math notranslate nohighlight">\(\sim 0\)</span>.
+while the equilibrium ratio,
+<span class="math notranslate nohighlight">\(R \sim \exp{\left(\frac{Q_\mathrm{inv}}{k_B T}\right)}\)</span>,
+can overflow in machine precision since <span class="math notranslate nohighlight">\(Q_\mathrm{inv} &gt; 0\)</span>
+for derived <em>forward</em> rates. This leads to the classic case of a large number
+multiplied by a small number. To avoid this issue, it is preferable to
+work in log-space:</p>
+<div class="math notranslate nohighlight">
+\[\lambda^\mathrm{uns}_\mathrm{rev} = \exp{\left( \log{R} + \log{\lambda^\mathrm{uns}_\mathrm{for}} \right)}\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When deriving an inverse rate from a ReacLib rate,
+the equilibrium ratio, excluding the partition functions,
+can be absorbed into the <a class="reference internal" href="rate_types.html#reaclib"><span class="std std-ref">ReacLib</span></a> parameterization,
+as shown in <span id="id10">[<a class="reference internal" href="zreferences.html#id22" title="Thomas Rauscher and Friedrich-Karl Thielemann. Astrophysical Reaction Rates From Statistical Model Calculations. Atomic Data and Nuclear Data Tables, 75(1-2):1-351, May 2000. arXiv:astro-ph/0004059, doi:10.1006/adnd.2000.0834.">Rauscher and Thielemann, 2000</a>]</span>.
+The general ReacLib parameterization of the DerivedRate
+is given in the appendix of <span id="id11">[<a class="reference internal" href="zreferences.html#id38" title="Alexander I. Smith, Eric T. Johnson, Zhi Chen, Kiran Eiden, Donald E. Willcox, Brendan Boyd, Lyra Cao, Christopher J. DeGrendele, and Michael Zingale. Pynucastro: A Python Library for Nuclear Astrophysics. The Astrophysical Journal, 947(2):65, April 2023. URL: https://iopscience.iop.org/article/10.3847/1538-4357/acbaff (visited on 2025-04-21), doi:10.3847/1538-4357/acbaff.">Smith <em>et al.</em>, 2023</a>]</span>.</p>
+</div>
 </section>
 </section>
 
@@ -733,20 +845,20 @@ Table I).</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="contributing.html"
+       href="custom-rates.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Contributing</p>
+        <p class="prev-next-title">Creating a Custom Rate</p>
       </div>
     </a>
     <a class="right-next"
-       href="nucleus.html"
+       href="approximate-rates.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Nuclear Properties</p>
+        <p class="prev-next-title">Approximate and Modified Rates</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -766,14 +878,10 @@ Table I).</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reaction-rates">Reaction rates</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nuclear-reaction-rates-from-jina-reaclib">Nuclear reaction rates from JINA Reaclib</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tabulated-weak-nuclear-reaction-rates">Tabulated weak nuclear reaction rates</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#physical-constants">Physical constants</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nuclei-properties">Nuclei properties</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#semi-relativistic-ideal-gas-model">Semi-relativistic ideal gas model</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#partition-functions">Partition functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementing-partition-functions">Implementing partition functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#derived-rate-definition">Derived rate definition</a></li>
 </ul>
   </nav></div>
 

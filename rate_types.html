@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Reaction Rate Types &#8212; pynucastro 2.9.0.post19+ge7b1895a5 documentation</title>
+    <title>Reaction Rate Types &#8212; pynucastro 2.9.0.post20+g525240920 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=ac0d0662"></script>
+    <script src="_static/documentation_options.js?v=9033000a"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -204,7 +204,7 @@
 <li class="toctree-l1"><a class="reference internal" href="screening-examples.html">Screening Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modify-example.html">Modifying Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom-rates.html">Creating a Custom Rate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="partition-function.html">Derived Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="derived-rates.html">Derived Rates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
 <ul class="nav bd-sidenav">
@@ -589,9 +589,9 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabulated-weak-rates">Tabulated Weak Rates</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">ydot term</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">ydot term</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#table-format">Table format</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Rate evaluation functions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Rate evaluation functions</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#temperature-tabulated-rates">Temperature-tabulated Rates</a></li>
@@ -614,7 +614,7 @@ as the base class for all the different rate types and provides
 the core functionality.</p>
 <p>Here we describe the most commonly used rates.</p>
 <section id="reaclib">
-<h2>ReacLib<a class="headerlink" href="#reaclib" title="Link to this heading">#</a></h2>
+<span id="id1"></span><h2>ReacLib<a class="headerlink" href="#reaclib" title="Link to this heading">#</a></h2>
 <p>The <a class="reference external" href="https://reaclib.jinaweb.org/">JINA ReacLib database</a> provides
 the core thermonuclear rates.  These are managed in pynucastro through
 the <a class="reference internal" href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate" title="pynucastro.rates.reaclib_rate.ReacLibRate"><code class="xref py py-func docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a> class.</p>
@@ -796,8 +796,8 @@ into a single rate.</p>
 <p>The data reading and interpolation are managed by the
 <a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate" title="pynucastro.rates.tabular_rate.TabularRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularRate</span></code></a>
 class.</p>
-<section id="id1">
-<h3>ydot term<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<section id="id2">
+<h3>ydot term<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
 <p>The form of the reaction <span class="math notranslate nohighlight">\(A \rightarrow B\)</span> is:</p>
 <div class="math notranslate nohighlight">
 \[\dot{Y}_A = -Y(A) \lambda\]</div>
@@ -842,8 +842,8 @@ given <code class="docutils literal notranslate"><span class="pre">rhoY</span></
 is inferred from the data file itself.</p>
 </div>
 </section>
-<section id="id2">
-<h3>Rate evaluation functions<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<section id="id3">
+<h3>Rate evaluation functions<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
 <p>Analogous to <code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code>, <code class="docutils literal notranslate"><span class="pre">TabularRate</span></code> provides functions to
 evaluate the rate and output the python code.  The function
 <a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.function_string_py" title="pynucastro.rates.tabular_rate.TabularRate.function_string_py"><code class="xref py py-func docutils literal notranslate"><span class="pre">function_string_py</span></code></a>
@@ -919,9 +919,9 @@ function string needed to evaluate the rate.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabulated-weak-rates">Tabulated Weak Rates</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">ydot term</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">ydot term</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#table-format">Table format</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Rate evaluation functions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Rate evaluation functions</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#temperature-tabulated-rates">Temperature-tabulated Rates</a></li>
