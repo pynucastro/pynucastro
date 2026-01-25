@@ -37,17 +37,13 @@ A simple C++ network can be created as:
 
 .. note::
 
-   A C++17 compiler is required
+   A C++20 compiler is required
 
 
 This will output the following files:
 
-* ``actual_network_data.cpp`` : this contains the initialization
-  function, ``actual_network_init()`` and the definitions of the mass
-  and binding energy arrays.
-
-* ``actual_network.H`` : this provides enums to index the rates and a
-  vector of strings that give the rate names.
+* ``actual_network.H`` : this provides the nuclei masses, enums to
+  index the rates, and a vector of strings that give the rate names.
 
 * ``actual_rhs.H`` : this provides the righthand side function and Jacobian.
 
