@@ -3,7 +3,7 @@ name: C++ HIP network
 on: [pull_request, workflow_dispatch]
 
 concurrency:
-  group: ${{ github.ref }}-${{ github.head_ref }}-cuda
+  group: ${{ github.ref }}-${{ github.head_ref }}-hip
   cancel-in-progress: true
 
 
