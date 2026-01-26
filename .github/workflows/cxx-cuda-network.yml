@@ -12,8 +12,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+
+      - name: Install Python
+        uses: actions/setup-python@v6
         with:
-          fetch-depth: 0
+          python-version: '3.14'
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install pynucastro
+        run: pip install .
 
       - name: Get AMReX
         run: |
