@@ -1,0 +1,72 @@
+name: C++ CUDA network
+
+on: [pull_request, workflow_dispatch]
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.head_ref }}-cuda
+  cancel-in-progress: true
+
+jobs:
+  CUDA-compilation:
+    name: CUDA@12.9 GCC
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Get AMReX
+        run: |
+          mkdir external
+          cd external
+          git clone https://github.com/AMReX-Codes/amrex.git
+          cd amrex
+          git checkout development
+          echo 'AMREX_HOME=$(GITHUB_WORKSPACE)/external/amrex' >> $GITHUB_ENV
+          echo $AMREX_HOME
+          if [[ -n "${AMREX_HOME}" ]]; then exit 1; fi
+          cd ../..
+
+      - name: Get Microphysics
+        run: |
+          cd external
+          git clone https://github.com/AMReX-Astro/Microphysics.git
+          cd Microphysics
+          git checkout development
+          cd ../..
+
+      - name: Dependencies
+        run: .github/workflows/dependencies/dependencies_nvcc.sh 12.9
+
+      - name: Regenerate he-burn-19am network
+        run: |
+          cd external/Microphysics/networks/he-burn/he-burn-19am
+          NPY_DISABLE_CPU_FEATURES="AVX512F AVX512CD AVX512_SKX" python he_burn_19am.py
+
+      - name: Compile burn_cell (he-burn-19am)
+        run: |
+          cd external/Microphysics/unit_test/burn_cell
+          make clean
+          make USE_CUDA=TRUE NETWORK_DIR=he-burn/he-burn-19am -j 4
+
+      - name: Regenerate ECSN network
+        run: |
+          cd external/Microphysics/networks/ECSN
+          NPY_DISABLE_CPU_FEATURES="AVX512F AVX512CD AVX512_SKX" python ecsn.py
+
+      - name: Compile burn_cell (ECSN)
+        run: |
+          cd external/Microphysics/unit_test/burn_cell
+          make clean
+          make USE_CUDA=TRUE NETWORK_DIR=ECSN -j 4
+
+      - name: Regenerate ase network
+        run: |
+          cd external/Microphysics/networks/ase
+          NPY_DISABLE_CPU_FEATURES="AVX512F AVX512CD AVX512_SKX" python ase.py
+
+      - name: Compile nse_net_cell (NSE_NET, ase)
+        run: |
+          cd external/Microphysics/unit_test/nse_net_cell
+          make USE_CUDA=TRUE clean
+          make -j 4
