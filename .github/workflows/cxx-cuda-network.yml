@@ -57,6 +57,7 @@ jobs:
 
       - name: Compile burn_cell (he-burn-19am)
         run: |
+          export PATH=$PATH:/usr/local/cuda/bin
           cd external/Microphysics/unit_test/burn_cell
           make clean
           make USE_CUDA=TRUE NETWORK_DIR=he-burn/he-burn-19am -j 4
@@ -68,6 +69,7 @@ jobs:
 
       - name: Compile burn_cell (ECSN)
         run: |
+          export PATH=$PATH:/usr/local/cuda/bin
           cd external/Microphysics/unit_test/burn_cell
           make clean
           make USE_CUDA=TRUE NETWORK_DIR=ECSN -j 4
@@ -79,6 +81,7 @@ jobs:
 
       - name: Compile nse_net_cell (NSE_NET, ase)
         run: |
+          export PATH=$PATH:/usr/local/cuda/bin
           cd external/Microphysics/unit_test/nse_net_cell
           make clean
           make USE_CUDA=TRUE -j 4
