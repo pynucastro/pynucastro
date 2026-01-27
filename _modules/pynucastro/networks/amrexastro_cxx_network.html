@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.amrexastro_cxx_network &#8212; pynucastro 2.9.0.post26+g53cca3e75 documentation</title>
+    <title>pynucastro.networks.amrexastro_cxx_network &#8212; pynucastro 2.9.0.post27+gf5dadcc7c documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=73d89761"></script>
+    <script src="../../../_static/documentation_options.js?v=515cad1e"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -529,9 +529,7 @@ document.write(`
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;rate_param_tests&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rate_param_tests</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;rate_indices&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_rate_indices</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;rate_indices_extern&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_rate_indices_extern</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;npa_index&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_npa_index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;nse_rate_pair_data&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_nse_rate_pair_data</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">disable_rate_params</span> <span class="o">=</span> <span class="n">disable_rate_params</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">function_specifier</span> <span class="o">=</span> <span class="s2">&quot;AMREX_GPU_HOST_DEVICE AMREX_INLINE&quot;</span>
@@ -657,77 +655,123 @@ document.write(`
                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_rate_params</span><span class="p">:</span>
                     <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;disable_</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">    int     0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_fill_npa_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
-        <span class="c1">#Get the index of h1, neutron, and helium-4 if they&#39;re present in the network.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_nse_rate_pairs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of RatePairs eligible for NSE_NET grouping.</span>
 
-        <span class="n">LIG</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">]))</span>
+<span class="sd">        Filtering criteria:</span>
+<span class="sd">        1. Must have both forward and reverse rate</span>
+<span class="sd">        2. Excludes weak or removed rates</span>
+<span class="sd">        3. At most 2 reactants and 2 products (except for triple-alpha)</span>
+<span class="sd">        4. Only 1 or 2 nuclei not in {p, n, He4} across reactants + products</span>
 
-        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">LIG</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
-                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">constexpr int </span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">short_spec_name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">_index = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span><span class="si">}</span><span class="s2">;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">constexpr int </span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">short_spec_name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">_index = -1;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_fill_rate_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Fill the index needed for the NSE_NET algorithm.</span>
-
-<span class="sd">        Fill rate_indices: 2D array with 1-based index of shape of size (NumRates, 7).</span>
-<span class="sd">           - Each row represents a rate in self.all_rates.</span>
-<span class="sd">           - The first 3 elements of the row represents the index of reactants in self.unique_nuclei</span>
-<span class="sd">           - The next 3 elements of the row represents the index of the products in self.unique_nuclei.</span>
-<span class="sd">           - The 7th element of the row represents the index of the corresponding reverse rate</span>
-<span class="sd">             (set to -1 if no corresponding reverse rate). This is a 1-based instead of 0-based index.</span>
-<span class="sd">           - Set all elements of the current row to -1 if the rate has removed suffix</span>
-<span class="sd">             indicating its not directly in the network.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">dtype</span> <span class="o">=</span> <span class="n">_signed_rate_dtype</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">))</span>
+        <span class="n">nse_rate_pairs</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="c1"># Fill in the rate indices</span>
-        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">AMREX_GPU_MANAGED amrex::Array2D&lt;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">, 1, Rates::NumRates, 1, 7, amrex::Order::C&gt; rate_indices </span><span class="se">{{\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># Light isotope group</span>
+        <span class="n">LIG</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">([</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">])</span>
 
-        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">rate</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">):</span>
-            <span class="n">tmp</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span>
-            <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">tmp</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="c1"># Triple alpha reactants and products</span>
+        <span class="n">reactants_3a</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">([</span><span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">])</span>
+        <span class="n">products_3a</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">)]</span>
 
-            <span class="c1"># meaning it is removed.</span>
-            <span class="k">if</span> <span class="n">rate</span><span class="o">.</span><span class="n">weak_type</span> <span class="ow">or</span> <span class="n">rate</span><span class="o">.</span><span class="n">removed</span><span class="p">:</span>
-                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">    -1, -1, -1, -1, -1, -1, -1</span><span class="si">{</span><span class="n">tmp</span><span class="si">}</span><span class="s2">  // </span><span class="si">{</span><span class="n">rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># Get RatePairs, and make sure both forward and reverse are not None</span>
+        <span class="c1"># It also filters out removed rates since it considers self.rates</span>
+        <span class="c1"># Then do additional filtering based on different criteria</span>
+        <span class="k">for</span> <span class="n">rp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate_pairs</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">continue</span>
 
-            <span class="c1"># Find the reactants and products indices</span>
-            <span class="n">reactant_ind</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">))]</span>
-            <span class="n">product_ind</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">))]</span>
+            <span class="n">reactants</span> <span class="o">=</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="o">.</span><span class="n">reactants</span>
+            <span class="n">products</span> <span class="o">=</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="o">.</span><span class="n">products</span>
+            <span class="k">if</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span><span class="o">.</span><span class="n">weak</span> <span class="ow">or</span> <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="o">.</span><span class="n">weak</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">reactants</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">products</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">reactants</span> <span class="o">==</span> <span class="n">reactants_3a</span> <span class="ow">and</span> <span class="n">products</span> <span class="o">==</span> <span class="n">products_3a</span><span class="p">:</span>
+                    <span class="n">nse_rate_pairs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rp</span><span class="p">)</span>
+                <span class="k">continue</span>
 
-            <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
-                <span class="n">reactant_ind</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">nuc</span><span class="p">))</span>
+            <span class="n">non_LIG_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">nuc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">LIG</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">reactants</span> <span class="o">+</span> <span class="n">products</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">non_LIG_count</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                <span class="n">nse_rate_pairs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rp</span><span class="p">)</span>
 
-            <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
-                <span class="n">product_ind</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">nuc</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">nse_rate_pairs</span>
 
-            <span class="n">reactant_ind</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-            <span class="n">product_ind</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write_nse_rate_pair_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write 1-based indices of light isotopes (n, H1, He4) if present</span>
+<span class="sd">        in the network (set to -1 if absent). Also write the RatePair data table,</span>
+<span class="sd">        2D array of shape (NumNSERatePairs, 10), needed for the NSE_NET algorithm.</span>
 
-            <span class="c1"># Find the reverse rate index</span>
-            <span class="n">rr_ind</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-            <span class="n">rr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_reverse</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
+<span class="sd">        Each row corresponds to a RatePair returned by _get_nse_rate_pairs().</span>
+<span class="sd">        Nuclei indices follow NetworkSpecies and rate indices follow NetworkRates.</span>
 
-            <span class="c1"># Note that rate index is 1-based</span>
-            <span class="k">if</span> <span class="n">rr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">rr_ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="sd">        - Columns 1–3: 1-based index of reactant nuclei (forward rate)</span>
+<span class="sd">        - Columns 4–6: 1-based index of product nuclei (forward rate)</span>
+<span class="sd">        - Columns 7-8: 1-based index of non (n, H1, He4) nuclei.</span>
+<span class="sd">        - Column  9:   1-based index of the forward rate</span>
+<span class="sd">        - Column  10:  1-based index of the reverse rate</span>
 
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">    </span><span class="si">{</span><span class="n">reactant_ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">reactant_ind</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">reactant_ind</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">product_ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">product_ind</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">product_ind</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">rr_ind</span><span class="si">}{</span><span class="n">tmp</span><span class="si">}</span><span class="s2">  // </span><span class="si">{</span><span class="n">rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="se">}}</span><span class="s2">;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># Write index for the light-isotope-group</span>
+        <span class="n">LIG</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">([</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">LIG</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">constexpr int </span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">short_spec_name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">_index = </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_fill_rate_indices_extern</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="c1"># Write RatePair data table</span>
+        <span class="n">nse_rate_pairs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_nse_rate_pairs</span><span class="p">()</span>
+        <span class="n">NumNSERatePairs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">nse_rate_pairs</span><span class="p">)</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">_signed_rate_dtype</span><span class="p">(</span><span class="n">NumNSERatePairs</span><span class="p">)</span>
 
-        <span class="n">dtype</span> <span class="o">=</span> <span class="n">_signed_rate_dtype</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">))</span>
+        <span class="c1"># Write Fill in the rate indices</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">constexpr int NumNSERatePairs = </span><span class="si">{</span><span class="n">NumNSERatePairs</span><span class="si">}</span><span class="s2">;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">inline AMREX_GPU_MANAGED amrex::Array2D&lt;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">, 1, NumNSERatePairs, 1, 10, amrex::Order::C&gt; rate_pair_data </span><span class="se">{{\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Fill in the rate indices</span>
-        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">extern AMREX_GPU_MANAGED amrex::Array2D&lt;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">, 1, Rates::NumRates, 1, 7, amrex::Order::C&gt; rate_indices;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">rp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nse_rate_pairs</span><span class="p">):</span>
+            <span class="n">fr</span> <span class="o">=</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span>
+            <span class="n">rr</span> <span class="o">=</span> <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span>
+
+            <span class="c1"># Find the reactants and products indices for the forward rate</span>
+            <span class="c1"># Use -1 as sentinel value if there are less than 3 reactants</span>
+            <span class="c1"># or products, also change nuclei indices to 1-based</span>
+            <span class="c1"># Also find nuclei index of the rate that are not (n, H1, He4)</span>
+
+            <span class="n">reactant_idx</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">product_idx</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">non_NHA_idx</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">fr</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">reactant_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">nuc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">LIG</span><span class="p">:</span>
+                    <span class="n">non_NHA_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">fr</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">product_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">nuc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">LIG</span><span class="p">:</span>
+                    <span class="n">non_NHA_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+            <span class="n">reactant_idx</span> <span class="o">+=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">reactant_idx</span><span class="p">))]</span>
+            <span class="n">product_idx</span> <span class="o">+=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">product_idx</span><span class="p">))]</span>
+            <span class="n">non_NHA_idx</span> <span class="o">+=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">non_NHA_idx</span><span class="p">))]</span>
+
+            <span class="c1"># Find rate index and note that they are 1-based</span>
+            <span class="n">fr_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">fr</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">rr_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">reactant_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">reactant_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">reactant_idx</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
+                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">product_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">product_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">product_idx</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
+                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">non_NHA_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">non_NHA_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
+                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fr_idx</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">rr_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">NumNSERatePairs</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  // fr: </span><span class="si">{</span><span class="n">fr</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">, rr: </span><span class="si">{</span><span class="n">rr</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="se">}}</span><span class="s2">;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 </pre></div>
 
