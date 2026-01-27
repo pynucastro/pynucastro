@@ -50,11 +50,6 @@ jobs:
       - name: Dependencies
         run: .github/workflows/dependencies/dependencies_nvcc.sh 12.9
 
-      - name: Regenerate he-burn-19am network
-        run: |
-          cd external/Microphysics/networks/he-burn/he-burn-19am
-          NPY_DISABLE_CPU_FEATURES="AVX512F AVX512CD AVX512_SKX" python he_burn_19am.py
-
       - name: Regenerate ase-iron network
         run: |
           cd external/Microphysics/networks/he-burn/ase-iron
