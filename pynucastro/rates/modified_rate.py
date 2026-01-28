@@ -120,7 +120,19 @@ class ModifiedRate(Rate):
 
         """
 
-        return self.original_rate.eval(T, rho=rho, comp=comp, screen_func=screen_func)
+        # Evaluate original rate without screening
+        # The modified rate can have a different set of reactants for screening
+        r = self.original_rate.eval(T, rho=rho, comp=comp, screen_func=None)
+
+        scor = 1.0
+        if screen_func is not None:
+            if rho is None or comp is None:
+                raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
+            scor = self.evaluate_screening(rho, T, comp, screen_func)
+
+        r *= scor
+
+        return r
 
     def function_string_py(self):
         """Return a string containing the python function that
