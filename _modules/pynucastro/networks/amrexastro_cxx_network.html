@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.amrexastro_cxx_network &#8212; pynucastro 2.9.0.post28+g63d071caf documentation</title>
+    <title>pynucastro.networks.amrexastro_cxx_network &#8212; pynucastro 2.9.0.post29+gdf9677d00 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=d699a50a"></script>
+    <script src="../../../_static/documentation_options.js?v=a14e6c7e"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -733,33 +733,32 @@ document.write(`
             <span class="n">rr</span> <span class="o">=</span> <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span>
 
             <span class="c1"># Find the reactants and products indices for the forward rate</span>
-            <span class="c1"># Use -1 as sentinel value if there are less than 3 reactants</span>
-            <span class="c1"># or products, also change nuclei indices to 1-based</span>
-            <span class="c1"># Also find nuclei index of the rate that are not (n, H1, He4)</span>
+            <span class="c1"># Use -1 if there are less than 3 reactants / products.</span>
+            <span class="c1"># Species / rate names are enums when wring out the C++ code</span>
+            <span class="c1"># Note that they&#39;re 1-based indexing.</span>
 
             <span class="n">reactant_idx</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">product_idx</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">non_NHA_idx</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">fr</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
-                <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-                <span class="n">reactant_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+                <span class="n">spec_name</span> <span class="o">=</span> <span class="n">nuc</span><span class="o">.</span><span class="n">short_spec_name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
+                <span class="n">reactant_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec_name</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">nuc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">LIG</span><span class="p">:</span>
-                    <span class="n">non_NHA_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+                    <span class="n">non_NHA_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec_name</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">fr</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
-                <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-                <span class="n">product_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">spec_name</span> <span class="o">=</span> <span class="n">nuc</span><span class="o">.</span><span class="n">short_spec_name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
+                <span class="n">product_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec_name</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">nuc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">LIG</span><span class="p">:</span>
-                    <span class="n">non_NHA_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+                    <span class="n">non_NHA_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec_name</span><span class="p">)</span>
 
             <span class="n">reactant_idx</span> <span class="o">+=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">reactant_idx</span><span class="p">))]</span>
             <span class="n">product_idx</span> <span class="o">+=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">product_idx</span><span class="p">))]</span>
             <span class="n">non_NHA_idx</span> <span class="o">+=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">non_NHA_idx</span><span class="p">))]</span>
 
-            <span class="c1"># Find rate index and note that they are 1-based</span>
-            <span class="n">fr_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">fr</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-            <span class="n">rr_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">fr_idx</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;k_</span><span class="si">{</span><span class="n">fr</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">rr_idx</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;k_</span><span class="si">{</span><span class="n">rr</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">&quot;</span>
 
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
                      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">reactant_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">reactant_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">reactant_idx</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
@@ -769,8 +768,7 @@ document.write(`
 
             <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">NumNSERatePairs</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  // fr: </span><span class="si">{</span><span class="n">fr</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">, rr: </span><span class="si">{</span><span class="n">rr</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="se">}}</span><span class="s2">;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 </pre></div>
