@@ -171,10 +171,13 @@ class TemperatureTabularRate(Rate):
         fstring += "@numba.njit()\n"
         fstring += f"def {self.fname}(rate_eval, T):\n"
         fstring += f"    # {self.rid}\n"
-        fstring += f"    {self.fname}_interpolator = TempTableInterpolator(*{self.fname}_info)\n"
 
+        fstring += f"    Assume the screening term is precomputed and stored in rate_eval\n"
+        fstring += f"    log_scor = rate_eval.{self.fname}\n\n"
+
+        fstring += f"    {self.fname}_interpolator = TempTableInterpolator(*{self.fname}_info)\n"
         fstring += f"    log_r = {self.fname}_interpolator.interpolate(T)\n"
-        fstring += f"    rate_eval.{self.fname} = np.exp(log_r)\n\n"
+        fstring += f"    rate_eval.{self.fname} = np.exp(log_r + log_scor)\n\n"
 
         return fstring
 

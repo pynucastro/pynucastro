@@ -640,11 +640,17 @@ class ReacLibRate(Rate):
         fstring += f"    # {self.rid}\n"
         fstring += "    rate = 0.0\n\n"
 
+        fstring += f"    Assume the screening term is precomputed and stored in rate_eval\n"
+        fstring += f"    log_scor = rate_eval.{self.fname}\n\n"
         for s in self.sets:
             fstring += f"    # {s.labelprops[0:5]}\n"
-            set_string = s.set_string_py(prefix="rate", plus_equal=True)
+            set_string = s.set_string_py(prefix="ln_set_rate", plus_equal=True, with_exp=False)
             for t in set_string.split("\n"):
                 fstring += "    " + t + "\n"
+                fstring += "\n"
+                fstring += "    ln_set_rate += log_scor\n"
+                fstring += "    set_rate = np.exp(ln_set_rate)\n"
+                fstring += "    rate += set_rate\n\n"
 
         fstring += "\n"
         fstring += f"    rate_eval.{self.fname} = rate\n\n"

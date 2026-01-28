@@ -146,8 +146,9 @@ class PythonNetwork(RateCollection):
     def screening_string(self, indent=""):
         """Create a string containing the python code that sets up the
         screening (PlasmaState) and calls the screening function on
-        every set of reactants in our network, and updating the reaction
-        rate values stored in the network.
+        every set of reactants in our network. This stores log(screening)
+        in the reaction rates, which will be applied appropriately during
+        the rate function calls.
 
         Parameters
         ----------
@@ -162,13 +163,22 @@ class PythonNetwork(RateCollection):
         """
 
         ostr = ""
-        ostr += f"{indent}plasma_state = PlasmaState(T, rho, Y, Z)\n"
 
+        # Get screening map to initialize log_scor to 0 to appropriate rates
+        screening_map = get_screening_map(self.get_rates())
+
+        for i, scr in enumerate(screening_map):
+            for r in scr.rates:
+                ostr += f"{indent}rate_eval.{r.fname} = 0.0\n"
+
+        # Check if we're doing screening, return early if not screening
         if not self.do_screening:
-            screening_map = []
-        else:
-            screening_map = get_screening_map(self.get_rates())
+            return ostr
 
+        ostr += f"{indent}if screen_func is not None:\n"
+
+        indent += "    "
+        ostr += f"{indent}plasma_state = PlasmaState(T, rho, Y, Z)\n"
         for i, scr in enumerate(screening_map):
             if not (scr.n1.dummy or scr.n2.dummy):
                 # calculate the screening factor
@@ -191,7 +201,7 @@ class PythonNetwork(RateCollection):
                 # we can have both a(aa,g)c12 and a(aa,p)b11
                 for r in scr.rates:
                     # use scor from the previous loop iteration
-                    ostr += f"{indent}rate_eval.{r.fname} *= scor * scor2\n"
+                    ostr += f"{indent}rate_eval.{r.fname} += scor + scor2\n"
 
             else:
                 # there might be several rates that have the same
@@ -199,7 +209,7 @@ class PythonNetwork(RateCollection):
                 # -- handle them all now
 
                 for r in scr.rates:
-                    ostr += f"{indent}rate_eval.{r.fname} *= scor\n"
+                    ostr += f"{indent}rate_eval.{r.fname} += scor\n"
 
         return ostr
 
@@ -237,6 +247,12 @@ class PythonNetwork(RateCollection):
             return f"{indent}{r.fname}({', '.join(args)})\n"
 
         ostr = ""
+
+        # Set screening. Rates will store log(screening) initially
+        # This will used in rate functions to include screening enhancement.
+        ostr += self.screening_string(indent=indent + 4*" ")
+        ostr += "\n"
+
         ostr += f"{indent}# reaclib rates\n"
         for r in self.reaclib_rates:
             ostr += format_rate_call(r)
@@ -257,7 +273,7 @@ class PythonNetwork(RateCollection):
             ostr += format_rate_call(r)
 
         # modified rates will have their own screening,
-        # either using the origina rate or any modified
+        # either using the original rate or any modified
         # form.  Therefore we call them before applying
         # screening factors.
 
@@ -272,12 +288,6 @@ class PythonNetwork(RateCollection):
             ostr += f"\n{indent}# derived rates\n"
         for r in self.derived_rates:
             ostr += format_rate_call(r)
-
-        ostr += "\n"
-
-        # apply screening factors, if we're given a screening function
-        ostr += f"{indent}if screen_func is not None:\n"
-        ostr += self.screening_string(indent=indent + 4*" ")
 
         if self.approx_rates:
             ostr += f"\n{indent}# approximate rates\n"

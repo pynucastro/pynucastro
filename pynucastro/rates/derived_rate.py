@@ -215,6 +215,9 @@ class DerivedRate(Rate):
         fstring += f"def {self.fname}(rate_eval, tf):\n"
         fstring += f"    # {self.rid}\n\n"
 
+        fstring += f"    Assume the screening term is precomputed and stored in rate_eval\n"
+        fstring += f"    log_scor = rate_eval.{self.fname}\n\n"
+
         # Evaluate partition function terms
 
         if self.use_pf:
@@ -249,7 +252,7 @@ class DerivedRate(Rate):
                 for t in set_string.split("\n"):
                     fstring += "    " + t + "\n"
                 fstring += "\n"
-                fstring += "    ln_set_rate += net_log_pf\n"
+                fstring += "    ln_set_rate += net_log_pf + log_scor\n"
                 fstring += "    set_rate = np.exp(ln_set_rate)\n"
                 fstring += "    rate += set_rate\n\n"
 
@@ -259,15 +262,15 @@ class DerivedRate(Rate):
             fstring += f"    {self.source_rate.fname}_interpolator = TempTableInterpolator(*{self.source_rate.fname}_info)\n"
             fstring += f"    log_r = {self.source_rate.fname}_interpolator.interpolate(tf.T9 * 1.0e9)\n\n"
 
-            fstring += "    # Apply equilibrium ratio\n"
-            fstring += f"    log_r += {self.ratio_factor} + {self.Q_kBGK} * tf.T9i + net_log_pf\n"
+            fstring += "    # Apply equilibrium ratio and screening\n"
+            fstring += f"    log_r += {self.ratio_factor} + {self.Q_kBGK} * tf.T9i + net_log_pf + log_scor\n"
             if self.net_stoich != 0:
                 fstring += f"    log_r += {1.5 * self.net_stoich} * tf.lnT9\n\n"
             fstring += f"    rate_eval.{self.fname} = np.exp(log_r)\n\n"
 
         else:
-            fstring += "    # Evaluate the equilibrium ratio\n"
-            fstring += f"    ratio = np.exp({self.ratio_factor} + {self.Q_kBGK} * tf.T9i + net_log_pf"
+            fstring += "    # Evaluate the equilibrium ratio and screening\n"
+            fstring += f"    ratio = np.exp({self.ratio_factor} + {self.Q_kBGK} * tf.T9i + net_log_pf + log_scor"
             if self.net_stoich != 0:
                 fstring += f" + {1.5 * self.net_stoich} * tf.lnT9"
             fstring += ")\n\n"
