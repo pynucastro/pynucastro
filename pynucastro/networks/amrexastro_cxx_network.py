@@ -233,33 +233,32 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             rr = rp.reverse
 
             # Find the reactants and products indices for the forward rate
-            # Use -1 as sentinel value if there are less than 3 reactants
-            # or products, also change nuclei indices to 1-based
-            # Also find nuclei index of the rate that are not (n, H1, He4)
+            # Use -1 if there are less than 3 reactants / products.
+            # Species / rate names are enums when wring out the C++ code
+            # Note that they're 1-based indexing.
 
             reactant_idx = []
             product_idx = []
             non_NHA_idx = []
 
             for nuc in fr.reactants:
-                idx = self.unique_nuclei.index(nuc) + 1
-                reactant_idx.append(idx)
+                spec_name = nuc.short_spec_name.capitalize()
+                reactant_idx.append(spec_name)
                 if nuc not in LIG:
-                    non_NHA_idx.append(idx)
+                    non_NHA_idx.append(spec_name)
 
             for nuc in fr.products:
-                idx = self.unique_nuclei.index(nuc) + 1
-                product_idx.append(self.unique_nuclei.index(nuc) + 1)
+                spec_name = nuc.short_spec_name.capitalize()
+                product_idx.append(spec_name)
                 if nuc not in LIG:
-                    non_NHA_idx.append(idx)
+                    non_NHA_idx.append(spec_name)
 
             reactant_idx += [-1 for n in range(3 - len(reactant_idx))]
             product_idx += [-1 for n in range(3 - len(product_idx))]
             non_NHA_idx += [-1 for n in range(2 - len(non_NHA_idx))]
 
-            # Find rate index and note that they are 1-based
-            fr_idx = self.all_rates.index(fr) + 1
-            rr_idx = self.all_rates.index(rr) + 1
+            fr_idx = f"k_{fr.fname}"
+            rr_idx = f"k_{rr.fname}"
 
             of.write(f"{self.indent*(n_indent+1)}"
                      f"{reactant_idx[0]}, {reactant_idx[1]}, {reactant_idx[2]}, "
@@ -269,6 +268,5 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
             if n < NumNSERatePairs - 1:
                 of.write(",")
-            of.write(f"  // fr: {fr.fname}, rr: {rr.fname}\n")
-
+            of.write("\n")
         of.write(f"{self.indent*n_indent}}};\n")
