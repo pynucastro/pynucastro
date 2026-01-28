@@ -266,10 +266,7 @@ def debye_huckel(state, scn_fac) -> float:
     # eq. A1
     h_DH = z1z2 * np.sqrt(3 * Gamma_e**3 * state.z2bar / state.zbar)
 
-    # machine limit the output
-    h_max = 300
-    h = min(h_DH, h_max)
-    return np.exp(h)
+    return h_DH
 
 
 @njit
@@ -296,7 +293,6 @@ def screen5(state: PlasmaState, scn_fac):
     fact = np.cbrt(2)
     gamefx = 0.3e0  # lower gamma limit for intermediate screening
     gamefs = 0.8e0  # upper gamma limit for intermediate screening
-    h12_max = 300.e0
 
     # Get the ion data based on the input index
     z1 = scn_fac.z1
@@ -410,12 +406,10 @@ def screen5(state: PlasmaState, scn_fac):
 
         # end of intermediate and strong screening
 
-    # machine limit the output
-    # further limit to avoid the pycnonuclear regime
-    h12 = max(min(h12, h12_max), 0.0)
-    scor = np.exp(h12)
+    # limit to avoid the pycnonuclear regime
+    log_scor = max(h12, 0.0)
 
-    return scor
+    return log_scor
 
 
 @njit
@@ -556,12 +550,10 @@ def chugunov_2007(state, scn_fac):
 
     h = gamtilde**(3 / 2) * (A1 * term1 + A3 * term2) + B1 * term3 + B3 * term4
 
-    # machine limit the output
-    h_max = 300
-    h = min(h, h_max)
-    scor = np.exp(h)
+    # Assume h >= 0
+    log_scor = max(h, 0.0)
 
-    return scor
+    return log_scor
 
 
 @njit
@@ -667,12 +659,10 @@ def chugunov_2009(state, scn_fac):
     denom = 1 + Gamma_12_2
     h12 = numer / denom * h_fit
 
-    # machine limit the output
-    h12_max = 300
-    h12 = min(h12, h12_max)
-    scor = np.exp(h12)
+    # Assume h >= 0
+    log_scor = max(h12, 0.0)
 
-    return scor
+    return log_scor
 
 
 @njit
@@ -715,15 +705,14 @@ def potekhin_1998(state, scn_fac):
 
     h12 = f1 + f2 - f12
 
-    # machine limit the output
-    h12_max = 300
-    h12 = min(h12, h12_max)
-    scor = np.exp(h12)
+    # Assume h >= 0
+    log_scor = max(h12, 0.0)
 
-    return scor
+    return log_scor
 
 
-def screening_check(check_func=debye_huckel, threshold: float = 1.01):
+
+def screening_check(check_func=debye_huckel, threshold: float = 1e-3):
     """Create a decorator factory that wraps a screening function with
     a check that determines whether that function can be skipped for a
     given plasma state and screening pair.
