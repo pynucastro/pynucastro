@@ -146,6 +146,13 @@ class DerivedRate(Rate):
         r = 0.0
         tf = Tfactors(T)
 
+        # Evaluate screening correction term
+        log_scor = 0.0
+        if screen_func is not None:
+            if rho is None or comp is None:
+                raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
+            log_scor = self.evaluate_screening(rho, T, comp, screen_func)
+
         # Evaluate partition function terms
 
         net_log_pf = 0.0
@@ -168,7 +175,7 @@ class DerivedRate(Rate):
             derived_pf_sets = []
             for derived_set in self.derived_sets:
                 a = derived_set.a.copy()
-                a[0] += net_log_pf
+                a[0] += net_log_pf + log_scor
                 derived_pf_sets.append(SingleSet(a, derived_set.labelprops))
 
             for s in derived_pf_sets:
@@ -178,26 +185,18 @@ class DerivedRate(Rate):
         elif isinstance(self.source_rate, TemperatureTabularRate):
             log_r = self.source_rate.interpolator.interpolate(T)
 
-            # Apply equilibrium ratio terms
+            # Apply equilibrium ratio terms and screening
             log_r += self.ratio_factor + self.Q_kBGK * tf.T9i + \
-                net_log_pf + 1.5 * self.net_stoich * tf.lnT9
+                net_log_pf + 1.5 * self.net_stoich * tf.lnT9 + log_scor
+
             r += np.exp(log_r)
 
         else:
             r += self.source_rate.eval(T=T, rho=rho, comp=comp, screen_func=None)
 
-            # Apply equilibrium ratio terms
+            # Apply equilibrium ratio terms and screening
             r *= np.exp(self.ratio_factor + self.Q_kBGK * tf.T9i +
-                        net_log_pf + 1.5 * self.net_stoich * tf.lnT9)
-
-        # Apply screening correction
-        scor = 1.0
-        if screen_func is not None:
-            if rho is None or comp is None:
-                raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
-            scor = self.evaluate_screening(rho, T, comp, screen_func)
-
-        r *= scor
+                        net_log_pf + 1.5 * self.net_stoich * tf.lnT9 + log_scor)
 
         return r
 

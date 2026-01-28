@@ -254,15 +254,14 @@ class TemperatureTabularRate(Rate):
         """
 
         log_r = self.interpolator.interpolate(T)
-        r = np.exp(log_r)
 
-        scor = 1.0
+        log_scor = 0.0
         if screen_func is not None:
             if rho is None or comp is None:
                 raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
-            scor = self.evaluate_screening(rho, T, comp, screen_func)
+            log_scor = self.evaluate_screening(rho, T, comp, screen_func)
 
-        r *= scor
+        r = np.exp(log_r + log_scor)
 
         return r
 

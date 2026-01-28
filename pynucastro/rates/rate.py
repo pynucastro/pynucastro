@@ -592,6 +592,7 @@ class Rate:
 
     def evaluate_screening(self, rho, T, composition, screen_func):
         """Evaluate the screening correction for this rate.
+        Note this returns log(screening).
 
         Parameters
         ----------
@@ -612,7 +613,7 @@ class Rate:
 
         ys = composition.get_molar()
         plasma_state = make_plasma_state(T, rho, ys)
-        scor = 1.0
+        log_scor = 0.0
 
         # We can have three cases:
         # 3-body reaction, i.e. 3-alpha: 2 ScreeningPair's
@@ -623,7 +624,7 @@ class Rate:
 
         # Handle 0 ScreeningPair case
         if not screening_map:
-            return scor
+            return log_scor
 
         # Handle 3-alpha case explicitly
         if "He4_He4_He4" in [scr.name for scr in screening_map]:
@@ -634,7 +635,7 @@ class Rate:
 
             for scr in screening_map:
                 scn_fac = make_screen_factors(scr.n1, scr.n2)
-                scor *= screen_func(plasma_state, scn_fac)
+                log_scor += screen_func(plasma_state, scn_fac)
 
         # Now handle 2-body reaction
         else:
@@ -646,9 +647,9 @@ class Rate:
             assert len(screening_map) == 1
 
             scn_fac = make_screen_factors(scr.n1, scr.n2)
-            scor = screen_func(plasma_state, scn_fac)
+            log_scor = screen_func(plasma_state, scn_fac)
 
-        return scor
+        return log_scor
 
     def ydot_string_py(self):
         """Construct the string containing the term in a dY/dt

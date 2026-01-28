@@ -749,17 +749,22 @@ class ReacLibRate(Rate):
 
         tf = Tfactors(T)
         r = 0.0
-        for s in self.sets:
-            f = s.f()
-            r += f(tf)
 
-        scor = 1.0
+        log_scor = 0.0
         if screen_func is not None:
             if rho is None or comp is None:
                 raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
-            scor = self.evaluate_screening(rho, T, comp, screen_func)
+            log_scor = self.evaluate_screening(rho, T, comp, screen_func)
 
-        r *= scor
+        screen_sets = []
+        for s in self.sets:
+            a = s.a.copy()
+            a[0] += log_scor
+            screen_sets.append(SingleSet(a, s.labelprops))
+
+        for s in screen_sets:
+            f = s.f()
+            r += f(tf)
 
         return r
 
