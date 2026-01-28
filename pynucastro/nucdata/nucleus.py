@@ -115,7 +115,7 @@ class Nucleus:
             self.short_spec_name = "he4"
             self.raw = "he4"
             self.caps_name = "He4"
-        elif name == "n":
+        elif name == "n" or name == 'neut':
             self.el = "n"
             self.A = 1
             self.Z = 0
