@@ -10,6 +10,7 @@ from pynucastro.rates import BaryonConservationError, ModifiedRate
 from pynucastro.rates.alternate_rates import IliadisO16pgF17
 from pynucastro.screening.screen import chugunov_2007
 
+
 class TestTfactors:
     @pytest.fixture(scope="class")
     def tf(self):
@@ -443,6 +444,7 @@ class TestModify:
         assert rate.Q == approx(13.933578000000125)
         assert rate.products == [Nucleus("mg24")]
         assert rate.modified
+
 
 class TestModifiedRate:
     @pytest.fixture(scope="function")
