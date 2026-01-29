@@ -1,5 +1,5 @@
-Initializing AMReX (26.01-26-g667b7362c88c)...
-AMReX (26.01-26-g667b7362c88c) initialized
+Initializing AMReX (26.01-40-gbac24575699e)...
+AMReX (26.01-40-gbac24575699e) initialized
 starting the single zone burn...
 chemical potential of proton is -3
 chemical potential of neutron is -12
@@ -31,14 +31,14 @@ Using nse.solve_nse_e_mode == 1 :
 change in T: 6000000000 6069144727
 change in abar: 7.026880148 6.26238884
 recovered energy: 2.784234255e+18 2.784234255e+18
-Constraint Eqns using solved input are: 2.861599846e-14 1.221245327e-15 -1.998401444e-15 
+Constraint Eqns using solved input are: 6.175615574e-14 2.997602166e-15 1.33226763e-15 
 Constraint Jacobian using solved input are: 19.70206532 19.80498652 3.069602949 9.82702147 9.875043853 1.533907452 0.2616834419 0.2616834419 0.7450188201 
 -----------------------------------------------
 Using nse.solve_nse_e_mode == 2 :
 change in T: 6000000000 6069144727
 change in abar: 7.026880148 6.26238884
 recovered energy: 2.784234255e+18 2.784234255e+18
-Constraint Eqns using solved input are: -6.303013667e-13 -2.770006446e-14 -3.76254583e-13 
+Constraint Eqns using solved input are: -7.35966843e-13 -3.319566844e-14 -4.042322033e-13 
 Constraint Jacobian using solved input are: 19.70206532 19.80498652 3.069602949 9.82702147 9.875043853 1.533907452 0.2616834419 0.2616834419 0.7450188201 
 -----------------------------------------------
-AMReX (26.01-26-g667b7362c88c) finalized
+AMReX (26.01-40-gbac24575699e) finalized
