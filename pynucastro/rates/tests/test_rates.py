@@ -472,7 +472,7 @@ class TestModifiedRate:
                           new_reactants=["he4", "c12"],
                           new_products=["o16"], update_screening=True)
 
-        # Sync ion_screen between the ModifiedRate the original rate manually
+        # Sync ion_screen between the ModifiedRate and the original rate
         # then the results should match.
         rate.ion_screen = r2.ion_screen
 
