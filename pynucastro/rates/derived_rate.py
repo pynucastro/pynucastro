@@ -191,6 +191,8 @@ class DerivedRate(Rate):
                         net_log_pf + 1.5 * self.net_stoich * tf.lnT9)
 
         # Apply screening correction
+
+        # pylint: disable=duplicate-code
         scor = 1.0
         if screen_func is not None:
             if rho is None or comp is None:
@@ -198,6 +200,7 @@ class DerivedRate(Rate):
             scor = self.evaluate_screening(rho, T, comp, screen_func)
 
         r *= scor
+        # pylint: enable=duplicate-code
 
         return r
 

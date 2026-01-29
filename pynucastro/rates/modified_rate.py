@@ -124,6 +124,9 @@ class ModifiedRate(Rate):
         # The modified rate can have a different set of reactants for screening
         r = self.original_rate.eval(T, rho=rho, comp=comp, screen_func=None)
 
+        # Apply screening correction
+
+        # pylint: disable=duplicate-code
         scor = 1.0
         if screen_func is not None:
             if rho is None or comp is None:
@@ -131,6 +134,7 @@ class ModifiedRate(Rate):
             scor = self.evaluate_screening(rho, T, comp, screen_func)
 
         r *= scor
+        # pylint: enable=duplicate-code
 
         return r
 
