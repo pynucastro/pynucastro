@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.derived_rate &#8212; pynucastro 2.9.0.post30+gad1495eba documentation</title>
+    <title>pynucastro.rates.derived_rate &#8212; pynucastro 2.9.0.post31+g38d48870c documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=25cca7eb"></script>
+    <script src="../../../_static/documentation_options.js?v=5ff4334a"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -693,6 +693,8 @@ document.write(`
                         <span class="n">net_log_pf</span> <span class="o">+</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">lnT9</span><span class="p">)</span>
 
         <span class="c1"># Apply screening correction</span>
+
+        <span class="c1"># pylint: disable=duplicate-code</span>
         <span class="n">scor</span> <span class="o">=</span> <span class="mf">1.0</span>
         <span class="k">if</span> <span class="n">screen_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">comp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -700,6 +702,7 @@ document.write(`
             <span class="n">scor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_screening</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">)</span>
 
         <span class="n">r</span> <span class="o">*=</span> <span class="n">scor</span>
+        <span class="c1"># pylint: enable=duplicate-code</span>
 
         <span class="k">return</span> <span class="n">r</span></div>
 
