@@ -194,7 +194,7 @@ class DerivedRate(Rate):
         fstring += f"def {self.fname}(rate_eval, tf):\n"
         fstring += f"    # {self.rid}\n\n"
 
-        fstring += "    Assume the screening term is precomputed and stored in rate_eval\n"
+        fstring += "    # Assume the screening term is precomputed and stored in rate_eval\n"
         fstring += f"    log_scor = rate_eval.{self.fname}\n\n"
 
         # Evaluate partition function terms

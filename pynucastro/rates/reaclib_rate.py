@@ -651,7 +651,7 @@ class ReacLibRate(Rate):
         fstring += f"    # {self.rid}\n"
         fstring += "    rate = 0.0\n\n"
 
-        fstring += "    Assume the screening term is precomputed and stored in rate_eval\n"
+        fstring += "    # Assume the screening term is precomputed and stored in rate_eval\n"
         fstring += f"    log_scor = rate_eval.{self.fname}\n\n"
         for s in self.sets:
             fstring += f"    # {s.labelprops[0:5]}\n"

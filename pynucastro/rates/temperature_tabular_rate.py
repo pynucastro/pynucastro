@@ -172,7 +172,7 @@ class TemperatureTabularRate(Rate):
         fstring += f"def {self.fname}(rate_eval, T):\n"
         fstring += f"    # {self.rid}\n"
 
-        fstring += "    Assume the screening term is precomputed and stored in rate_eval\n"
+        fstring += "    # Assume the screening term is precomputed and stored in rate_eval\n"
         fstring += f"    log_scor = rate_eval.{self.fname}\n\n"
 
         fstring += f"    {self.fname}_interpolator = TempTableInterpolator(*{self.fname}_info)\n"
