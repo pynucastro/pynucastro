@@ -232,9 +232,9 @@ class TemperatureTabularRate(Rate):
 
         return fstring
 
-    def eval(self, T, *, rho=None, comp=None,
-             screen_func=None):
-        """Evaluate the reaction rate.
+    def log_eval(self, T, *, rho=None, comp=None,
+                 screen_func=None):
+        """Evaluate the natural log of reaction rate for temperature T.
 
         Parameters
         ----------
@@ -256,7 +256,7 @@ class TemperatureTabularRate(Rate):
 
         """
 
-        log_r = self.interpolator.interpolate(T)
+        log_rate = self.interpolator.interpolate(T)
 
         log_scor = 0.0
         if screen_func is not None:
@@ -264,9 +264,9 @@ class TemperatureTabularRate(Rate):
                 raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
             log_scor = self.evaluate_screening(rho, T, comp, screen_func)
 
-        r = np.exp(log_r + log_scor)
+        log_rate += log_scor
 
-        return r
+        return log_rate
 
     def plot(self, *, Tmin=None, Tmax=None, figsize=(6, 6),
              rho=None, comp=None, screen_func=None):

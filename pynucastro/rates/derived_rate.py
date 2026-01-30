@@ -119,9 +119,9 @@ class DerivedRate(Rate):
             if nuc.partition_function is None:
                 warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 
-    def eval(self, T, *, rho=None, comp=None,
-             screen_func=None):
-        """Evaluate the derived reverse rate.
+    def log_eval(self, T, *, rho=None, comp=None,
+                 screen_func=None):
+        """Evaluate the natural log of reaction rate for temperature T.
 
         Parameters
         ----------
@@ -139,11 +139,10 @@ class DerivedRate(Rate):
 
         Returns
         -------
-        float
+        numpy.ndarray
 
         """
 
-        r = 0.0
         tf = Tfactors(T)
 
         # Evaluate screening correction term
@@ -154,7 +153,6 @@ class DerivedRate(Rate):
             log_scor = self.evaluate_screening(rho, T, comp, screen_func)
 
         # Evaluate partition function terms
-
         net_log_pf = 0.0
         if self.use_pf:
             self._warn_about_missing_pf_tables()
@@ -167,38 +165,19 @@ class DerivedRate(Rate):
                 if nucp.partition_function is not None:
                     net_log_pf -= nucp.partition_function.eval(T)
 
-        # Now compute the rate based on the property of the source_rate
+        # Now compute the log rate of the source_rate without screening
+        # This can be a list of log_rates (ReacLib) or a scalar number
+        log_rates = self.source_rate.log_eval(T, rho=rho, comp=comp,
+                                              screen_func=None)
 
-        if self.derived_sets is not None:
+        # To consider general cases, convert to 1D array
+        log_rates = np.atleast_1d(log_rates)
 
-            # Create another reaclib set that absorbs the partition function terms
-            derived_pf_sets = []
-            for derived_set in self.derived_sets:
-                a = derived_set.a.copy()
-                a[0] += net_log_pf + log_scor
-                derived_pf_sets.append(SingleSet(a, derived_set.labelprops))
+        # Apply equilibrium ratio terms and screening
+        log_rates += self.ratio_factor + self.Q_kBGK * tf.T9i + \
+            net_log_pf + 1.5 * self.net_stoich * tf.lnT9 + log_scor
 
-            for s in derived_pf_sets:
-                f = s.f()
-                r += f(tf)
-
-        elif isinstance(self.source_rate, TemperatureTabularRate):
-            log_r = self.source_rate.interpolator.interpolate(T)
-
-            # Apply equilibrium ratio terms and screening
-            log_r += self.ratio_factor + self.Q_kBGK * tf.T9i + \
-                net_log_pf + 1.5 * self.net_stoich * tf.lnT9 + log_scor
-
-            r += np.exp(log_r)
-
-        else:
-            r += self.source_rate.eval(T=T, rho=rho, comp=comp, screen_func=None)
-
-            # Apply equilibrium ratio terms and screening
-            r *= np.exp(self.ratio_factor + self.Q_kBGK * tf.T9i +
-                        net_log_pf + 1.5 * self.net_stoich * tf.lnT9 + log_scor)
-
-        return r
+        return log_rates
 
     def function_string_py(self):
         """Return a string containing the python function that

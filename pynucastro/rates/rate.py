@@ -690,10 +690,10 @@ class Rate:
 
         return "*".join(ydot_string_components)
 
-    def eval(self, T, *, rho=None, comp=None,
-             screen_func=None):
-        """Evaluate the reaction rate for temperature T.  This is a stub
-        and should be implemented by the derived class.
+    def log_eval(self, T, *, rho=None, comp=None,
+                 screen_func=None):
+        """Evaluate natural log of reaction rate for temperature T.
+        This is a stub and should be implemented by the derived class.
 
         Parameters
         ----------
@@ -715,7 +715,37 @@ class Rate:
 
         """
 
-        raise NotImplementedError("base Rate class does not know how to eval()")
+        raise NotImplementedError("base Rate class does not know how to log_eval()")
+
+    def eval(self, T, *, rho=None, comp=None,
+             screen_func=None):
+        """Evaluate the reaction rate for temperature T.
+
+        Parameters
+        ----------
+        T : float
+            the temperature to evaluate the rate at
+        rho : float
+            the density to evaluate the rate and screening effects at.
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            to evaluate the rate and screening effects with.
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the rate will include the screening correction
+
+        Raises
+        ------
+        float
+
+        """
+
+        # Convert to 1D array to consider cases where log_eval can return:
+        # 1) A scalar
+        # 2) A list of log_rates, e.g. ReacLib
+        log_rates = np.atleast_1d(self.log_eval(T, rho=rho, comp=comp, screen_func=screen_func))
+        return np.exp(log_rates).sum()
 
     def function_string_py(self):
         """Return a string containing the python function that

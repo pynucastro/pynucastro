@@ -95,10 +95,10 @@ class ModifiedRate(Rate):
             if len(nucz) == 3:
                 self.ion_screen.append(nucz[2])
 
-    def eval(self, T, *, rho=None, comp=None,
-             screen_func=None):
-        """Evaluate the modified rate.  This simply calls the
-        evaluation of the underlying original rate.
+    def log_eval(self, T, *, rho=None, comp=None,
+                 screen_func=None):
+        """Evaluate natural log of reaction rates for the modified rate.
+        This simply calls the evaluation of the underlying original rate.
 
         Parameters
         ----------
@@ -122,21 +122,18 @@ class ModifiedRate(Rate):
 
         # Evaluate original rate without screening
         # The modified rate can have a different set of reactants for screening
-        r = self.original_rate.eval(T, rho=rho, comp=comp, screen_func=None)
+        log_rate = self.original_rate.log_eval(T, rho=rho, comp=comp, screen_func=None)
 
         # Apply screening correction
-
-        # pylint: disable=duplicate-code
-        scor = 1.0
+        log_scor = 0.0
         if screen_func is not None:
             if rho is None or comp is None:
                 raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
-            scor = self.evaluate_screening(rho, T, comp, screen_func)
+            log_scor = self.evaluate_screening(rho, T, comp, screen_func)
 
-        r *= scor
-        # pylint: enable=duplicate-code
+        log_rate += log_scor
 
-        return r
+        return log_rate
 
     def function_string_py(self):
         """Return a string containing the python function that
@@ -153,6 +150,10 @@ class ModifiedRate(Rate):
         fstring += "@numba.njit()\n"
         fstring += f"def {self.fname}(rate_eval, tf):\n"
         fstring += f"    # {self.rid}\n"
+        fstring += f"    Assume the screening term is precomputed and stored in rate_eval\n"
+        fstring += f"    log_scor = rate_eval.{self.fname}\n\n"
+        fstring += f"    Pass the screening term to rate_eval.original_rate and evaluate\n"
+        fstring += f"    rate_eval.{self.original_rate.fname} = log_scor\n"
         fstring += f"    {self.original_rate.fname}(rate_eval, tf)\n"
         fstring += f"    rate_eval.{self.fname} = rate_eval.{self.original_rate.fname}\n\n"
         return fstring

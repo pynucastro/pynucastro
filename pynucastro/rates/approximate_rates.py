@@ -308,6 +308,32 @@ class ApproximateRate(Rate):
         # the individual rates are screened -- we don't screen the combination of them
         pass
 
+
+    def log_eval(self, T, *, rho=None, comp=None,
+             screen_func=None):
+        """Evaluate the natural log of reaction rate for approximate rate.
+
+        Parameters
+        ----------
+        T : float
+            the temperature to evaluate the rate at
+        rho : float
+            the density to evaluate screening effects at.
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            to evaluate screening effects with.
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the rate will include screening correction.
+
+        Returns
+        -------
+        float
+        """
+
+        return np.log(self.eval(T, rho=rho, comp=comp, screen_func=screen_func))
+
     def eval(self, T, *, rho=None, comp=None,
              screen_func=None):
         """Evaluate the approximate rate.

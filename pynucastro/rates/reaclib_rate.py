@@ -65,6 +65,23 @@ class SingleSet:
         x = x and (self.derived_from_inverse == other.derived_from_inverse)
         return x
 
+    def log_f(self):
+        """Return a function for ``log_rate(tf)`` where ``tf`` is a
+        :py:class:`Tfactors <pynucastro.rates.rate.Tfactors>` object
+
+        Returns
+        -------
+        Callable
+
+        """
+        return lambda tf: float(self.a[0] +
+                                self.a[1]*tf.T9i +
+                                self.a[2]*tf.T913i +
+                                self.a[3]*tf.T913 +
+                                self.a[4]*tf.T9 +
+                                self.a[5]*tf.T953 +
+                                self.a[6]*tf.lnT9)
+
     def f(self):
         """Return a function for ``rate(tf)`` where ``tf`` is a
         :py:class:`Tfactors <pynucastro.rates.rate.Tfactors>` object
@@ -74,13 +91,7 @@ class SingleSet:
         Callable
 
         """
-        return lambda tf: float(np.exp(self.a[0] +
-                                       self.a[1]*tf.T9i +
-                                       self.a[2]*tf.T913i +
-                                       self.a[3]*tf.T913 +
-                                       self.a[4]*tf.T9 +
-                                       self.a[5]*tf.T953 +
-                                       self.a[6]*tf.lnT9))
+        return lambda tf: np.exp(self.log_f()(tf))
 
     def dfdT(self):
         """Return a function for the temperature derivative of the
@@ -727,9 +738,10 @@ class ReacLibRate(Rate):
 
         return fstring
 
-    def eval(self, T, *, rho=None, comp=None,
-             screen_func=None):
-        """Evaluate the reaction rate for temperature T
+    def log_eval(self, T, *, rho=None, comp=None,
+                 screen_func=None):
+        """Evaluate the natural log of reaction rate for all the ReacLib sets
+        for temperature T.
 
         Parameters
         ----------
@@ -749,12 +761,12 @@ class ReacLibRate(Rate):
 
         Returns
         -------
-        float
+        list(float)
 
         """
 
         tf = Tfactors(T)
-        r = 0.0
+        log_rates = []
 
         log_scor = 0.0
         if screen_func is not None:
@@ -762,17 +774,11 @@ class ReacLibRate(Rate):
                 raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
             log_scor = self.evaluate_screening(rho, T, comp, screen_func)
 
-        screen_sets = []
         for s in self.sets:
-            a = s.a.copy()
-            a[0] += log_scor
-            screen_sets.append(SingleSet(a, s.labelprops))
+            log_f = s.log_f()
+            log_rates.append(log_f(tf) + log_scor)
 
-        for s in screen_sets:
-            f = s.f()
-            r += f(tf)
-
-        return r
+        return log_rates
 
     def eval_deriv(self, T, *, rho=None, comp=None):
         """Evaluate the derivative of reaction rate with respect to T.
