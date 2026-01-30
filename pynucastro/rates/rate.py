@@ -744,8 +744,8 @@ class Rate:
         # Convert to 1D array to consider cases where log_eval can return:
         # 1) A scalar
         # 2) A list of log_rates, e.g. ReacLib
-        log_rates = np.atleast_1d(self.log_eval(T, rho=rho, comp=comp, screen_func=screen_func))
-        return np.exp(log_rates).sum()
+        log_rate = np.atleast_1d(self.log_eval(T, rho=rho, comp=comp, screen_func=screen_func))
+        return np.exp(log_rate).sum()
 
     def function_string_py(self):
         """Return a string containing the python function that

@@ -42,7 +42,7 @@ class TestScreening:
 
         factors = {}
         for r in rc.get_rates():
-            factors[r] = r.evaluate_screening(1.e6, 1.e8, c, screen_func=chugunov_2007)
+            factors[r] = np.exp(r.evaluate_screening(1.e6, 1.e8, c, screen_func=chugunov_2007))
 
         for r, factor in factors.items():
             assert factor == approx(rates[r.id])
@@ -59,7 +59,7 @@ class TestScreening:
 
         factors = {}
         for r in rc.get_rates():
-            factors[r] = r.evaluate_screening(1.e6, 1.e8, c, screen_func=chugunov_2009)
+            factors[r] = np.exp(r.evaluate_screening(1.e6, 1.e8, c, screen_func=chugunov_2009))
 
         for r, factor in factors.items():
             assert factor == approx(rates[r.id])

@@ -766,7 +766,7 @@ class ReacLibRate(Rate):
         """
 
         tf = Tfactors(T)
-        log_rates = []
+        log_rate = []
 
         log_scor = 0.0
         if screen_func is not None:
@@ -776,9 +776,9 @@ class ReacLibRate(Rate):
 
         for s in self.sets:
             log_f = s.log_f()
-            log_rates.append(log_f(tf) + log_scor)
+            log_rate.append(log_f(tf) + log_scor)
 
-        return log_rates
+        return log_rate
 
     def eval_deriv(self, T, *, rho=None, comp=None):
         """Evaluate the derivative of reaction rate with respect to T.

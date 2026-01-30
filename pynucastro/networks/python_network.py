@@ -178,6 +178,7 @@ class PythonNetwork(RateCollection):
         ostr += f"{indent}if screen_func is not None:\n"
 
         indent += "    "
+        ostr += f"{indent}# Precompute screening and temporarily store in rate_eval\n\n"
         ostr += f"{indent}plasma_state = PlasmaState(T, rho, Y, Z)\n"
         for i, scr in enumerate(screening_map):
             if not (scr.n1.dummy or scr.n2.dummy):

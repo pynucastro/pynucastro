@@ -166,18 +166,18 @@ class DerivedRate(Rate):
                     net_log_pf -= nucp.partition_function.eval(T)
 
         # Now compute the log rate of the source_rate without screening
-        # This can be a list of log_rates (ReacLib) or a scalar number
-        log_rates = self.source_rate.log_eval(T, rho=rho, comp=comp,
+        # This can be a list of log_rate (ReacLib) or a scalar number
+        log_rate = self.source_rate.log_eval(T, rho=rho, comp=comp,
                                               screen_func=None)
 
         # To consider general cases, convert to 1D array
-        log_rates = np.atleast_1d(log_rates)
+        log_rate = np.atleast_1d(log_rate)
 
         # Apply equilibrium ratio terms and screening
-        log_rates += self.ratio_factor + self.Q_kBGK * tf.T9i + \
+        log_rate += self.ratio_factor + self.Q_kBGK * tf.T9i + \
             net_log_pf + 1.5 * self.net_stoich * tf.lnT9 + log_scor
 
-        return log_rates
+        return log_rate
 
     def function_string_py(self):
         """Return a string containing the python function that

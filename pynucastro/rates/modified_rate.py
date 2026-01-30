@@ -3,6 +3,8 @@ properties have been modified from the original source.
 
 """
 
+import numpy as np
+
 from pynucastro.rates.rate import Rate
 from pynucastro.rates.reaclib_rate import ReacLibRate
 
@@ -131,6 +133,10 @@ class ModifiedRate(Rate):
                 raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
             log_scor = self.evaluate_screening(rho, T, comp, screen_func)
 
+        # To consider general cases, convert to 1D array
+        log_rate = np.atleast_1d(log_rate)
+
+        # Apply screening
         log_rate += log_scor
 
         return log_rate
