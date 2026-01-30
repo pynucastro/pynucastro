@@ -6,8 +6,9 @@ from pytest import approx
 
 from pynucastro import Composition, Rate, rates
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates import BaryonConservationError
+from pynucastro.rates import BaryonConservationError, ModifiedRate
 from pynucastro.rates.alternate_rates import IliadisO16pgF17
+from pynucastro.screening.screen import chugunov_2007
 
 
 class TestTfactors:
@@ -443,3 +444,37 @@ class TestModify:
         assert rate.Q == approx(13.933578000000125)
         assert rate.products == [Nucleus("mg24")]
         assert rate.modified
+
+
+class TestModifiedRate:
+    @pytest.fixture(scope="function")
+    def rate(self):
+        return rates.load_rate("c12-c12n-mg23-cf88")
+
+    def test_eval(self, rate):
+
+        # pick a composition that gives Ye = 0.5 just for testing
+        comp = Composition(["c12", "o16"])
+        comp.set_equal()
+
+        # Test eval against the original rate without updating ion_screen,
+        # i.e. use same reactants as the original rate
+        r1 = ModifiedRate(rate,
+                          new_reactants=["he4", "c12"],
+                          new_products=["o16"], update_screening=False)
+
+        assert (r1.eval(2e9, rho=1e8, comp=comp, screen_func=chugunov_2007) ==
+                rate.eval(2e9, rho=1e8, comp=comp, screen_func=chugunov_2007))
+
+        # Test eval against the original rate with updating ion_screen,
+        # i.e. uses the new_reactants for screening
+        r2 = ModifiedRate(rate,
+                          new_reactants=["he4", "c12"],
+                          new_products=["o16"], update_screening=True)
+
+        # Sync ion_screen between the ModifiedRate and the original rate
+        # then the results should match.
+        rate.ion_screen = r2.ion_screen
+
+        assert (r2.eval(2e9, rho=1e8, comp=comp, screen_func=chugunov_2007) ==
+                rate.eval(2e9, rho=1e8, comp=comp, screen_func=chugunov_2007))

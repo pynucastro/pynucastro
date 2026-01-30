@@ -173,15 +173,18 @@ namespace Rates
 #ifdef NSE_NET
 namespace NSE_INDEX
 {
-    // A RatePair data table, 2D array of shape (NumNSERatePairs, 8).
+    // A RatePair data table, 2D array of shape (NumNSERatePairs, 10).
     // Each row corresponds to a RatePair returned by _get_nse_rate_pairs().
-    // Nuclei indices follow NetworkSpecies and rate indices follow NetworkRates.
+    // Use enum names following NetworkSpecies and NetworkRates.
 
     //  - Columns 1–3: 1-based index of reactant nuclei (forward rate)
     //  - Columns 4–6: 1-based index of product nuclei (forward rate)
     //  - Columns 7-8: 1-based index of non (n, H1, He4) nuclei.
     //  - Column  9:   1-based index of the forward rate
     //  - Column  10:  1-based index of the reverse rate
+
+    using namespace Species;
+    using namespace Rates;
 
     constexpr int H1_index = 2;
     constexpr int N_index = 1;
