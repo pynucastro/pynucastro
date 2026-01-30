@@ -4,6 +4,8 @@ equilibrium through a nucleus.
 
 """
 
+import numpy as np
+
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.rate import Rate
 
@@ -307,7 +309,6 @@ class ApproximateRate(Rate):
     def _set_screening(self):
         # the individual rates are screened -- we don't screen the combination of them
         pass
-
 
     def log_eval(self, T, *, rho=None, comp=None,
              screen_func=None):
