@@ -251,7 +251,7 @@ class PythonNetwork(RateCollection):
 
         # Set screening. Rates will store log(screening) initially
         # This will used in rate functions to include screening enhancement.
-        ostr += self.screening_string(indent=indent + 4*" ")
+        ostr += self.screening_string(indent=indent)
         ostr += "\n"
 
         ostr += f"{indent}# reaclib rates\n"
