@@ -164,8 +164,9 @@ class PythonNetwork(RateCollection):
         ostr = ""
 
         screening_map = get_screening_map(self.get_rates())
+
         # Initialize log_scor to 0.0
-        for i, scr in enumerate(screening_map):
+        for scr in screening_map:
             screen_var = f"log_scor_{scr.n1}_{scr.n2}"
             ostr += f"{indent}{screen_var} = 0.0\n"
 
