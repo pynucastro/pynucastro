@@ -154,13 +154,9 @@ class ModifiedRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf):\n"
+        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
         fstring += f"    # {self.rid}\n"
-        fstring += "    # Assume the screening term is precomputed and stored in rate_eval\n"
-        fstring += f"    log_scor = rate_eval.{self.fname}\n\n"
-        fstring += "    # Pass the screening term to rate_eval.original_rate and evaluate\n"
-        fstring += f"    rate_eval.{self.original_rate.fname} = log_scor\n"
-        fstring += f"    {self.original_rate.fname}(rate_eval, tf)\n"
+        fstring += f"    {self.original_rate.fname}(rate_eval, tf, log_scor=log_scor)\n"
         fstring += f"    rate_eval.{self.fname} = rate_eval.{self.original_rate.fname}\n\n"
         return fstring
 

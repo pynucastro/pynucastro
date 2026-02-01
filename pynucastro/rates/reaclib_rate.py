@@ -647,12 +647,10 @@ class ReacLibRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf):\n"
+        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
         fstring += f"    # {self.rid}\n"
         fstring += "    rate = 0.0\n\n"
 
-        fstring += "    # Assume the screening term is precomputed and stored in rate_eval\n"
-        fstring += f"    log_scor = rate_eval.{self.fname}\n\n"
         for s in self.sets:
             fstring += f"    # {s.labelprops[0:5]}\n"
             set_string = s.set_string_py(prefix="ln_set_rate", plus_equal=False, with_exp=False)

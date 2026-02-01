@@ -28,7 +28,7 @@ class MyRate(pyna.Rate):
         the rate"""
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf):\n"
+        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
         fstring += f"    rate_eval.{self.fname} = {self.r0} * (tf.T9 * 1.e9 / {self.T0} )**({self.nu})\n\n"
         return fstring
 
@@ -36,7 +36,7 @@ class MyRate(pyna.Rate):
                  screen_func=None):
         """Evaluate the natural log of rate along with screening correction."""
 
-        log_rate = self.nu * np.log(self.r0 * (T / self.T0))
+        log_rate = np.log(self.r0 * (T / self.T0)**self.nu)
         log_scor = 0.0
         if screen_func is not None:
             if rho is None or comp is None:
@@ -112,7 +112,7 @@ class TestPythonCustomNetwork:
 
         func = \
 """@numba.njit()
-def N14_p_to_O15_custom(rate_eval, tf):
+def N14_p_to_O15_custom(rate_eval, tf, log_scor=0.0):
     rate_eval.N14_p_to_O15_custom = 1.416655077954945e-13 * (tf.T9 * 1.e9 / 30000000.0 )**(15.601859314950396)
 
 """
