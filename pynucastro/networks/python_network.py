@@ -146,9 +146,8 @@ class PythonNetwork(RateCollection):
     def screening_string(self, indent=""):
         """Create a string containing the python code that sets up the
         screening (PlasmaState) and calls the screening function on
-        every set of reactants in our network. This stores log(screening)
-        in the reaction rates, which will be applied appropriately during
-        the rate function calls.
+        every set of reactants in our network. This computes log(screening)
+        term and stores them in local variables.
 
         Parameters
         ----------
