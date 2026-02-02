@@ -178,7 +178,7 @@ class PythonNetwork(RateCollection):
         ostr += f"{indent}if screen_func is not None:\n"
         indent += "    "
         ostr += f"{indent}plasma_state = PlasmaState(T, rho, Y, Z)\n\n"
-        for i, scr in enumerate(screening_map):
+        for scr in screening_map:
             screen_var = f"log_scor_{scr.n1}_{scr.n2}"
             ostr += f"{indent}scn_fac = ScreenFactors({scr.n1.Z}, {scr.n1.A}, {scr.n2.Z}, {scr.n2.A})\n"
             ostr += f"{indent}{screen_var} = screen_func(plasma_state, scn_fac)\n"
