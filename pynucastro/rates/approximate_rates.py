@@ -4,7 +4,7 @@ equilibrium through a nucleus.
 
 """
 
-import numpy as np
+import math
 
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.rate import Rate
@@ -311,7 +311,7 @@ class ApproximateRate(Rate):
         self.ion_screen = []
 
     def log_eval(self, T, *, rho=None, comp=None,
-             screen_func=None):
+                 screen_func=None):
         """Evaluate the natural log of reaction rate for approximate rate.
 
         Parameters
@@ -333,7 +333,7 @@ class ApproximateRate(Rate):
         float
         """
 
-        return np.log(self.eval(T, rho=rho, comp=comp, screen_func=screen_func))
+        return math.log(self.eval(T, rho=rho, comp=comp, screen_func=screen_func))
 
     def eval(self, T, *, rho=None, comp=None,
              screen_func=None):

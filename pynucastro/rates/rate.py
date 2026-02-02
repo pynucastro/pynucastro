@@ -745,7 +745,7 @@ class Rate:
         # 1) A scalar
         # 2) A list of log_rates, e.g. ReacLib
         log_rate = np.atleast_1d(self.log_eval(T, rho=rho, comp=comp, screen_func=screen_func))
-        return np.exp(log_rate).sum()
+        return float(np.exp(log_rate).sum())
 
     def function_string_py(self):
         """Return a string containing the python function that

@@ -74,13 +74,13 @@ class SingleSet:
         Callable
 
         """
-        return lambda tf: float(self.a[0] +
-                                self.a[1]*tf.T9i +
-                                self.a[2]*tf.T913i +
-                                self.a[3]*tf.T913 +
-                                self.a[4]*tf.T9 +
-                                self.a[5]*tf.T953 +
-                                self.a[6]*tf.lnT9)
+        return lambda tf: (self.a[0] +
+                           self.a[1]*tf.T9i +
+                           self.a[2]*tf.T913i +
+                           self.a[3]*tf.T913 +
+                           self.a[4]*tf.T9 +
+                           self.a[5]*tf.T953 +
+                           self.a[6]*tf.lnT9)
 
     def f(self):
         """Return a function for ``rate(tf)`` where ``tf`` is a
@@ -91,7 +91,7 @@ class SingleSet:
         Callable
 
         """
-        return lambda tf: np.exp(self.log_f()(tf))
+        return lambda tf: float(np.exp(self.log_f()(tf)))
 
     def dfdT(self):
         """Return a function for the temperature derivative of the

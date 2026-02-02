@@ -168,7 +168,7 @@ class DerivedRate(Rate):
         # Now compute the log rate of the source_rate without screening
         # This can be a list of log_rate (ReacLib) or a scalar number
         log_rate = self.source_rate.log_eval(T, rho=rho, comp=comp,
-                                              screen_func=None)
+                                             screen_func=None)
 
         # To consider general cases, convert to 1D array
         log_rate = np.atleast_1d(log_rate)
