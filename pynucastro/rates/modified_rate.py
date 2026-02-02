@@ -118,7 +118,7 @@ class ModifiedRate(Rate):
 
         Returns
         -------
-        float
+        numpy.ndarray
 
         """
 
