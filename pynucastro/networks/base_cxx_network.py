@@ -566,10 +566,9 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
 
     def write_screen_var(self, n_indent, of, rate):
-        """Helper function to return the string that composes the screening
-        variable for a rate by finding a list of reactant pairs for screening
-        following the linear mixing rule. For example, for 3-alpha, it is
-        [(He4, He4), (He4, Be8)]
+        """Returns the string that composes the screening variable for a rate
+        by finding a list of reactant pairs for screening following the linear
+        mixing rule. For example, for 3-alpha, it is [(He4, He4), (He4, Be8)].
 
         """
         reactant_pairs = []
