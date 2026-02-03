@@ -28,8 +28,7 @@ namespace Rates
         <nrxn>(2)
     };
 
-    enum ScreenPairs :
-    <screen_pair_enum_type>(1)
+    enum ScreenPairs
     {
         <screen_pair>(2)
     };

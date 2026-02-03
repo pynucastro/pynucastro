@@ -41,11 +41,7 @@ class SimpleCxxNetwork(BaseCxxNetwork):
             else:
                 # Scope the screening calculation to avoid multiple definitions of scn_fac.
                 of.write(f'{self.indent*n_indent}' + '{\n')
-                of.write(f'{self.indent*(n_indent+1)}constexpr auto scn_fac = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n')
-
-                # Insert a static assert (which will always pass) to require the
-                # compiler to evaluate the screen factor at compile time.
-                of.write(f'{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(scr.n1.Z)}_rt);\n')
+                of.write(f'{self.indent*(n_indent+1)}auto scn_fac = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n')
                 of.write(f'{self.indent*(n_indent+1)}actual_log_screen(pstate, scn_fac, log_scor);\n')
                 of.write(f'{self.indent*(n_indent+1)}rate_eval.log_screen(k_{scr.n1}_{scr.n2}) = log_scor;\n')
                 of.write(f'{self.indent*n_indent}' + '}\n\n')
