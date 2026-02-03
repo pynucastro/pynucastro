@@ -43,27 +43,27 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
         Y(n) = state.xn[n-1] * aion_inv[n-1];
     }
 
-    // Calculate Reaclib rates
+#ifndef DISABLE_SCREENING
+    // Evaluating screening factors
 
     plasma_state_t pstate{};
     fill_plasma_state(pstate, state.T, state.rho, Y);
-
-    tf_t tfactors = evaluate_tfactors(state.T);
-
-    fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
-
-    // Calculate Derived Rates. This should go last but before approx rates.
-    fill_derived_rates<do_T_derivatives, T>(tfactors, rate_eval);
-
-#ifndef DISABLE_SCREENING
-
-    // Evaluating screening factors
 
     Real scor;
     [[maybe_unused]] Real scor2;
 
     <compute_screening_factors>(1)
 #endif
+
+    tf_t tfactors = evaluate_tfactors(state.T);
+
+    // Calculate Reaclib rates
+
+    fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
+
+    // Calculate Derived Rates. This should go last but before approx rates.
+
+    fill_derived_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
     // Fill approximate rates
 

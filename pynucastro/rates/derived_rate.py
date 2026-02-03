@@ -309,7 +309,9 @@ class DerivedRate(Rate):
         if extra_args is None:
             extra_args = ()
 
-        args = ["const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT",
+        args = ["const tf_t& tfactors",
+                f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
+                f"{dtype}& rate", f"{dtype}& drate_dT",
                 "[[maybe_unused]] const T& rate_eval",
                 "[[maybe_unused]] part_fun::pf_cache_t& pf_cache", *extra_args]
 
@@ -369,14 +371,14 @@ class DerivedRate(Rate):
                 for t in set_string.split("\n"):
                     fstring += "    " + t + "\n"
                 fstring += "\n"
-                fstring += "    ln_set_rate += net_log_pf;\n\n"
+                fstring += "    ln_set_rate += net_log_pf + log_scor;\n\n"
 
                 fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
                 dln_set_string_dT9 = s.dln_set_string_dT9_cxx(prefix="dln_set_rate_dT9", plus_equal=False)
                 for t in dln_set_string_dT9.split("\n"):
                     fstring += "        " + t + "\n"
                 fstring += "\n"
-                fstring += "        dln_set_rate_dT9 += net_dlog_pf_dT9;\n"
+                fstring += "        dln_set_rate_dT9 += net_dlog_pf_dT9 + dlog_scor_dT * 1.0e9_rt;\n"
 
                 fstring += "    }\n"
                 fstring += "\n"
@@ -400,7 +402,7 @@ class DerivedRate(Rate):
             fstring += "    // Apply Equilibrium Ratio\n"
             fstring += f"    constexpr {dtype} Q_kBGK = {self.Q} * 1.0e-9_rt / C::k_MeV;\n"
             fstring += f"    {dtype} Q_kBT = Q_kBGK * tfactors.T9i;\n"
-            fstring += f"    _rate += {self.ratio_factor} + Q_kBT + net_log_pf;\n"
+            fstring += f"    _rate += {self.ratio_factor} + Q_kBT + net_log_pf + log_scor;\n"
             if self.net_stoich != 0:
                 fstring += f"    _rate += {1.5 * self.net_stoich} * tfactors.lnT9;\n\n"
 
@@ -411,7 +413,7 @@ class DerivedRate(Rate):
             fstring += "    // we found dlog(rate)/dlog(T9)\n"
             fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
             fstring += "        // Convert to dlog(rate)/dT9 first\n"
-            fstring += f"        _drate_dT = (_drate_dT + {1.5 * self.net_stoich} - Q_kBT) * tfactors.T9i + net_dlog_pf_dT9;\n"
+            fstring += f"        _drate_dT = (_drate_dT + {1.5 * self.net_stoich} - Q_kBT) * tfactors.T9i + net_dlog_pf_dT9 + dlog_scor_dT * 1.0e9_rt;\n"
             fstring += "        drate_dT = rate * _drate_dT * 1.0e-9_rt;\n"
             fstring += "    }\n\n"
 
@@ -419,7 +421,7 @@ class DerivedRate(Rate):
             fstring += "    // Evaluate the equilibrium ratio\n"
             fstring += f"    constexpr {dtype} Q_kBGK = {self.Q} * 1.0e-9_rt / C::k_MeV;\n"
             fstring += f"    {dtype} Q_kBT = Q_kBGK * tfactors.T9i;\n"
-            fstring += f"    {dtype} ratio = std::exp({self.ratio_factor} + Q_kBT + net_log_pf"
+            fstring += f"    {dtype} ratio = std::exp({self.ratio_factor} + Q_kBT + net_log_pf + log_scor"
             if self.net_stoich != 0:
                 fstring += f"    + {1.5 * self.net_stoich} * tfactors.lnT9"
             fstring += ");\n\n"
