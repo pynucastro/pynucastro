@@ -1,3 +1,9 @@
+DO_SCREENING ?= TRUE
+
+ifeq ($(DO_SCREENING),TRUE)
+   DEFINES += -DSCREENING
+endif
+
 CPPSOURCES := $(wildcard *.cpp)
 FSOURCES := $(wildcard *.f90)
 
@@ -7,7 +13,7 @@ FOBJECTS := $(FSOURCES:.f90=.o)
 HEADERS := $(wildcard *.H)
 
 %.o: %.cpp $(HEADERS)
-	g++ -I. -std=c++20 -c $<
+	g++ -I. -std=c++20 $(DEFINES) -c $<
 
 %.o: %.f90
 	gfortran -c $<
