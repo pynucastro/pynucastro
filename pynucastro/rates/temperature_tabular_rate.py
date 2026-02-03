@@ -205,6 +205,7 @@ class TemperatureTabularRate(Rate):
 
         """
 
+        # pylint: disable=duplicate-code
         if extra_args is None:
             extra_args = ()
 
@@ -216,6 +217,8 @@ class TemperatureTabularRate(Rate):
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
+        # pylint: enable=duplicate-code
+
         fstring += "    auto [_rate, _drate_dT] = interp_net::cubic_interp_uneven<do_T_derivatives>(\n"
         fstring += "                                               tfactors.lnT9,\n"
         fstring += f"                                               {self.fname}_data::log_t9,\n"

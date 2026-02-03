@@ -677,6 +677,7 @@ class ReacLibRate(Rate):
 
         """
 
+        # pylint: disable=duplicate-code
         if extra_args is None:
             extra_args = ()
 
@@ -688,6 +689,8 @@ class ReacLibRate(Rate):
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
+        # pylint: enable=duplicate-code
+
         fstring += "    rate = 0.0;\n"
         fstring += "    drate_dT = 0.0;\n\n"
         fstring += f"    {dtype} ln_set_rate{{0.0}};\n"

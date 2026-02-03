@@ -248,7 +248,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         """
         screening_map = get_screening_map(self.get_rates())
-        for i, scr in enumerate(screening_map):
+        for scr in screening_map:
             nuc1_info = f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt'
             nuc2_info = f'{float(scr.n2.Z)}_rt, {float(scr.n2.A)}_rt'
 
@@ -566,7 +566,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
 
     def write_screen_var(self, n_indent, of, rate):
-        """A helper function to return the string that composes the screening
+        """Helper function to return the string that composes the screening
         variable for a rate by finding a list of reactant pairs for screening
         following the linear mixing rule. For example, for 3-alpha, it is
         [(He4, He4), (He4, Be8)]
@@ -593,12 +593,12 @@ class BaseCxxNetwork(ABC, RateCollection):
             log_screen_term = " + ".join(f"rate_eval.log_screen(k_{r1}_{r2})" for r1, r2 in reactant_pairs)
             dlog_screen_dT_term = " + ".join(f"rate_eval.dlog_screen_dT(k_{r1}_{r2})" for r1, r2 in reactant_pairs)
 
-            of.write(f"#ifdef SCREENING\n")
+            of.write("#ifdef SCREENING\n")
             of.write(f"{self.indent*n_indent}log_scor = " + log_screen_term + ";\n")
             of.write(f"{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
             of.write(f"{self.indent*n_indent}    dlog_scor_dT = " + dlog_screen_dT_term + ";\n")
             of.write(f"{self.indent*n_indent}}}\n")
-            of.write(f"#endif\n")
+            of.write("#endif\n")
 
     def _fill_temp_tabular_rates(self, n_indent, of):
         for r in self.temperature_tabular_rates:

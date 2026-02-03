@@ -28,6 +28,12 @@ namespace Rates
         <nrxn>(2)
     };
 
+    enum ScreenPairs :
+    <screen_pair_enum_type>(1)
+    {
+        <screen_pair>(2)
+    };
+
     // rate names -- note: the rates are 1-based, not zero-based, so we pad
     // this vector with rate_names[0] = "" so the indices line up with the
     // NetworkRates enum

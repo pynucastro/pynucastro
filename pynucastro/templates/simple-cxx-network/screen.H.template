@@ -190,9 +190,9 @@ void actual_screen(const plasma_state_t& state,
     actual_log_screen(state, scn_fac, log_scor);
 
     // machine limit the output
-    constexpr Real h_max = 300.e0_rt;
-    h = std::min(h, h_max);
-    scor = std::exp(h);
+    constexpr Real log_scor_max = 300.e0_rt;
+    log_scor = std::min(log_scor, log_scor_max);
+    scor = std::exp(log_scor);
 }
 
 #endif

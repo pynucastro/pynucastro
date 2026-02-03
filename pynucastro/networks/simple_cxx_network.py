@@ -31,7 +31,7 @@ class SimpleCxxNetwork(BaseCxxNetwork):
 
         """
         screening_map = get_screening_map(self.get_rates())
-        for i, scr in enumerate(screening_map):
+        for scr in screening_map:
             nuc1_info = f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt'
             nuc2_info = f'{float(scr.n2.Z)}_rt, {float(scr.n2.A)}_rt'
 
