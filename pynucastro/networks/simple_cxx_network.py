@@ -26,56 +26,29 @@ class SimpleCxxNetwork(BaseCxxNetwork):
         return path.glob("*.template")
 
     def _compute_screening_factors(self, n_indent, of):
-        if not self.do_screening:
-            screening_map = []
-        else:
-            screening_map = get_screening_map(self.get_rates())
-        for i, scr in enumerate(screening_map):
+        """Compose the screening factors string. It evaluates log(screening)
+        and stores them to rate_eval.log_screen.
 
+        """
+        screening_map = get_screening_map(self.get_rates())
+        for i, scr in enumerate(screening_map):
             nuc1_info = f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt'
             nuc2_info = f'{float(scr.n2.Z)}_rt, {float(scr.n2.A)}_rt'
 
-            if not (scr.n1.dummy or scr.n2.dummy):
-                # Scope the screening calculation to avoid multiple definitions of scn_fac.
-                of.write(f'\n{self.indent*n_indent}' + '{\n')
-
-                of.write(f'{self.indent*(n_indent+1)}auto scn_fac = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n')
-
-                of.write(f'{self.indent*(n_indent+1)}actual_screen(pstate, scn_fac, scor);\n')
-
-                of.write(f'{self.indent*n_indent}' + '}\n')
-
-            if scr.name == "He4_He4_He4":
-                # we don't need to do anything here, but we want to avoid immediately applying the screening
-                pass
-
-            elif scr.name == "He4_He4_He4_dummy":
-                # make sure the previous iteration was the first part of 3-alpha
-                assert screening_map[i - 1].name == "He4_He4_He4"
-                # handle the second part of the screening for 3-alpha
-                of.write(f'\n{self.indent*n_indent}' + '{\n')
-
-                of.write(f'{self.indent*(n_indent+1)}auto scn_fac2 = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n')
-
-                of.write(f'{self.indent*(n_indent+1)}actual_screen(pstate, scn_fac2, scor2);\n')
-
-                of.write(f'{self.indent*n_indent}' + '}\n')
-
-                # we can have both a(aa,g)c12 and a(aa,p)b11
-                of.write('\n')
-                for rr in scr.rates:
-                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.fname}) *= scor * scor2;\n')
-
+            if not self.do_screening:
+                # Set log_scor terms to be 0 if not doing screening
+                of.write(f'{self.indent*(n_indent)}rate_eval.log_screen(k_{scr.n1}_{scr.n2}) = 0.0_rt;\n')
             else:
-                # there might be several rates that have the same
-                # reactants and therefore the same screening applies
-                # -- handle them all now
+                # Scope the screening calculation to avoid multiple definitions of scn_fac.
+                of.write(f'{self.indent*n_indent}' + '{\n')
+                of.write(f'{self.indent*(n_indent+1)}constexpr auto scn_fac = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n')
 
-                of.write('\n')
-                for rr in scr.rates:
-                    of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{rr.fname}) *= scor;\n')
-
-            of.write('\n')
+                # Insert a static assert (which will always pass) to require the
+                # compiler to evaluate the screen factor at compile time.
+                of.write(f'{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(scr.n1.Z)}_rt);\n')
+                of.write(f'{self.indent*(n_indent+1)}actual_log_screen(pstate, scn_fac, log_scor);\n')
+                of.write(f'{self.indent*(n_indent+1)}rate_eval.log_screen(k_{scr.n1}_{scr.n2}) = log_scor;\n')
+                of.write(f'{self.indent*n_indent}' + '}\n\n')
 
     def _write_network(self, odir=None):
         """Output the the RHS, jacobian and ancillary files for the

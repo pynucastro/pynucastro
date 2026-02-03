@@ -32,6 +32,23 @@ void ener_gener_rate(T const& dydt, Real& enuc)
 }
 
 
+#ifndef DISABLE_SCREENING
+template <int do_T_derivatives, typename T>
+inline
+void evaluate_screening(const burn_t& state, T& rate_eval) {
+
+    // Evaluating screening factors
+
+    plasma_state_t pstate{};
+    fill_plasma_state(pstate, state.T, state.rho, Y);
+
+    Real scor;
+
+    <compute_screening_factors>(1)
+}
+#endif
+
+
 template <int do_T_derivatives, typename T>
 inline
 void evaluate_rates(const burn_t& state, T& rate_eval) {
@@ -43,16 +60,10 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
         Y(n) = state.xn[n-1] * aion_inv[n-1];
     }
 
+    // Precompute screening terms
+
 #ifndef DISABLE_SCREENING
-    // Evaluating screening factors
-
-    plasma_state_t pstate{};
-    fill_plasma_state(pstate, state.T, state.rho, Y);
-
-    Real scor;
-    [[maybe_unused]] Real scor2;
-
-    <compute_screening_factors>(1)
+    evaluate_screening<do_T_derivatives, T>(state, rate_eval);
 #endif
 
     tf_t tfactors = evaluate_tfactors(state.T);
