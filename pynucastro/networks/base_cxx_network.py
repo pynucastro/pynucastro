@@ -583,7 +583,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 scr_reactants = [r1 + r2] + scr_reactants[2:]
                 scr_reactants.sort(key=lambda x: x.Z)
 
-        # Set defaut log screening to be 0
+        # Set default log screening to be 0
         of.write(f"{self.indent*n_indent}{self.dtype} log_scor {{0.0_rt}};\n")
         of.write(f"{self.indent*n_indent}{self.dtype} dlog_scor_dT {{0.0_rt}};\n")
 
