@@ -32,6 +32,48 @@ void ener_gener_rate(T const& dydt, Real& enuc)
 }
 
 
+#ifdef SCREENING
+template <int do_T_derivatives, typename T>
+inline
+void evaluate_screening(const burn_t& state,
+                        const Array1D<Real, 1, NumSpec>& Y,
+                        T& rate_eval) {
+
+    // Evaluating screening factors
+
+    plasma_state_t pstate{};
+    fill_plasma_state(pstate, state.T, state.rho, Y);
+
+    Real log_scor;
+
+    {
+        auto scn_fac = scrn::calculate_screen_factor(6.0_rt, 12.0_rt, 6.0_rt, 12.0_rt);
+        actual_log_screen(pstate, scn_fac, log_scor);
+        rate_eval.log_screen(k_C12_C12) = log_scor;
+    }
+
+    {
+        auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 6.0_rt, 12.0_rt);
+        actual_log_screen(pstate, scn_fac, log_scor);
+        rate_eval.log_screen(k_He4_C12) = log_scor;
+    }
+
+    {
+        auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 10.0_rt, 20.0_rt);
+        actual_log_screen(pstate, scn_fac, log_scor);
+        rate_eval.log_screen(k_He4_Ne20) = log_scor;
+    }
+
+    {
+        auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 11.0_rt, 23.0_rt);
+        actual_log_screen(pstate, scn_fac, log_scor);
+        rate_eval.log_screen(k_p_Na23) = log_scor;
+    }
+
+}
+#endif
+
+
 template <int do_T_derivatives, typename T>
 inline
 void evaluate_rates(const burn_t& state, T& rate_eval) {
@@ -43,50 +85,10 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
         Y(n) = state.xn[n-1] * aion_inv[n-1];
     }
 
-#ifndef DISABLE_SCREENING
-    // Evaluating screening factors
+    // Precompute screening terms
 
-    plasma_state_t pstate{};
-    fill_plasma_state(pstate, state.T, state.rho, Y);
-
-    Real scor;
-    [[maybe_unused]] Real scor2;
-
-
-    {
-        auto scn_fac = scrn::calculate_screen_factor(6.0_rt, 12.0_rt, 6.0_rt, 12.0_rt);
-        actual_screen(pstate, scn_fac, scor);
-    }
-
-    rate_eval.screened_rates(k_C12_C12_to_He4_Ne20_reaclib) *= scor;
-    rate_eval.screened_rates(k_C12_C12_to_n_Mg23_reaclib) *= scor;
-    rate_eval.screened_rates(k_C12_C12_to_p_Na23_reaclib) *= scor;
-
-
-    {
-        auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 6.0_rt, 12.0_rt);
-        actual_screen(pstate, scn_fac, scor);
-    }
-
-    rate_eval.screened_rates(k_He4_C12_to_O16_reaclib) *= scor;
-
-
-    {
-        auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 10.0_rt, 20.0_rt);
-        actual_screen(pstate, scn_fac, scor);
-    }
-
-    rate_eval.screened_rates(k_He4_Ne20_to_Mg24_reaclib) *= scor;
-    rate_eval.screened_rates(k_He4_Ne20_to_C12_C12_derived) *= scor;
-
-
-    {
-        auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 11.0_rt, 23.0_rt);
-        actual_screen(pstate, scn_fac, scor);
-    }
-
-    rate_eval.screened_rates(k_p_Na23_to_C12_C12_derived) *= scor;
-
+#ifdef SCREENING
+    evaluate_screening<do_T_derivatives, T>(state, Y, rate_eval);
 #endif
 
     tf_t tfactors = evaluate_tfactors(state.T);

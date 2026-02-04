@@ -4,8 +4,10 @@ HEADERS := $(wildcard *.H)
 
 DEFINES :=
 
-ifeq ($(DISABLE_SCREENING),TRUE)
-   DEFINES += -DDISABLE_SCREENING
+USE_SCREENING ?= TRUE
+
+ifeq ($(USE_SCREENING),TRUE)
+   DEFINES += -DSCREENING
 endif
 
 %.o: %.cpp $(HEADERS)

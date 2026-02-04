@@ -46,53 +46,34 @@ rate_eval.He4_He4_He4_to_p_B11_derived *= scor * scor2
         output.close()
 
         good = \
-"""
-{
+"""{
     constexpr auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 5.0_rt, 11.0_rt);
     static_assert(scn_fac.z1 == 1.0_rt);
-    actual_screen(pstate, scn_fac, scor, dscor_dt);
+    actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+    rate_eval.log_screen(k_p_B11) = log_scor;
+    if constexpr (do_T_derivatives) {
+        rate_eval.dlog_screen_dT(k_p_B11) = dlog_scor_dT;
+    }
 }
-
-ratraw = rate_eval.screened_rates(k_p_B11_to_C12_reaclib);
-rate_eval.screened_rates(k_p_B11_to_C12_reaclib) *= scor;
-if constexpr (std::is_same_v<T, rate_derivs_t>) {
-    dratraw_dT = rate_eval.dscreened_rates_dT(k_p_B11_to_C12_reaclib);
-    rate_eval.dscreened_rates_dT(k_p_B11_to_C12_reaclib) = ratraw * dscor_dt + dratraw_dT * scor;
-}
-
-ratraw = rate_eval.screened_rates(k_p_B11_to_He4_He4_He4_reaclib);
-rate_eval.screened_rates(k_p_B11_to_He4_He4_He4_reaclib) *= scor;
-if constexpr (std::is_same_v<T, rate_derivs_t>) {
-    dratraw_dT = rate_eval.dscreened_rates_dT(k_p_B11_to_He4_He4_He4_reaclib);
-    rate_eval.dscreened_rates_dT(k_p_B11_to_He4_He4_He4_reaclib) = ratraw * dscor_dt + dratraw_dT * scor;
-}
-
 
 {
     constexpr auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 2.0_rt, 4.0_rt);
     static_assert(scn_fac.z1 == 2.0_rt);
-    actual_screen(pstate, scn_fac, scor, dscor_dt);
+    actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+    rate_eval.log_screen(k_He4_He4) = log_scor;
+    if constexpr (do_T_derivatives) {
+        rate_eval.dlog_screen_dT(k_He4_He4) = dlog_scor_dT;
+    }
 }
-
 
 {
-    constexpr auto scn_fac2 = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 4.0_rt, 8.0_rt);
-    static_assert(scn_fac2.z1 == 2.0_rt);
-    actual_screen(pstate, scn_fac2, scor2, dscor2_dt);
-}
-
-ratraw = rate_eval.screened_rates(k_He4_He4_He4_to_C12_reaclib);
-rate_eval.screened_rates(k_He4_He4_He4_to_C12_reaclib) *= scor * scor2;
-if constexpr (std::is_same_v<T, rate_derivs_t>) {
-    dratraw_dT = rate_eval.dscreened_rates_dT(k_He4_He4_He4_to_C12_reaclib);
-    rate_eval.dscreened_rates_dT(k_He4_He4_He4_to_C12_reaclib) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor * scor2;
-}
-
-ratraw = rate_eval.screened_rates(k_He4_He4_He4_to_p_B11_derived);
-rate_eval.screened_rates(k_He4_He4_He4_to_p_B11_derived) *= scor * scor2;
-if constexpr (std::is_same_v<T, rate_derivs_t>) {
-    dratraw_dT = rate_eval.dscreened_rates_dT(k_He4_He4_He4_to_p_B11_derived);
-    rate_eval.dscreened_rates_dT(k_He4_He4_He4_to_p_B11_derived) = ratraw * (scor * dscor2_dt + dscor_dt * scor2) + dratraw_dT * scor * scor2;
+    constexpr auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 4.0_rt, 8.0_rt);
+    static_assert(scn_fac.z1 == 2.0_rt);
+    actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+    rate_eval.log_screen(k_He4_Be8) = log_scor;
+    if constexpr (do_T_derivatives) {
+        rate_eval.dlog_screen_dT(k_He4_Be8) = dlog_scor_dT;
+    }
 }
 
 """
@@ -108,29 +89,23 @@ if constexpr (std::is_same_v<T, rate_derivs_t>) {
         output.close()
 
         good = \
-"""
-{
+"""{
     auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 5.0_rt, 11.0_rt);
-    actual_screen(pstate, scn_fac, scor);
+    actual_log_screen(pstate, scn_fac, log_scor);
+    rate_eval.log_screen(k_p_B11) = log_scor;
 }
-
-rate_eval.screened_rates(k_p_B11_to_C12_reaclib) *= scor;
-rate_eval.screened_rates(k_p_B11_to_He4_He4_He4_reaclib) *= scor;
-
 
 {
     auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 2.0_rt, 4.0_rt);
-    actual_screen(pstate, scn_fac, scor);
+    actual_log_screen(pstate, scn_fac, log_scor);
+    rate_eval.log_screen(k_He4_He4) = log_scor;
 }
-
 
 {
-    auto scn_fac2 = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 4.0_rt, 8.0_rt);
-    actual_screen(pstate, scn_fac2, scor2);
+    auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 4.0_rt, 8.0_rt);
+    actual_log_screen(pstate, scn_fac, log_scor);
+    rate_eval.log_screen(k_He4_Be8) = log_scor;
 }
-
-rate_eval.screened_rates(k_He4_He4_He4_to_C12_reaclib) *= scor * scor2;
-rate_eval.screened_rates(k_He4_He4_He4_to_p_B11_derived) *= scor * scor2;
 
 """
 

@@ -169,19 +169,34 @@ Real chugunov2007 (const plasma_state_t& state,
     Real inner = A1 * term1 + A3 * term2;
     Real h = std::pow(gamtilde, 1.5_rt) * inner + B1 * term3 + B3 * term4;
 
-    // machine limit the output
-    constexpr Real h_max = 300.e0_rt;
-    h = std::min(h, h_max);
-    return std::exp(h);
+    // Assume h >= 0
+    return std::max(h, 0.0_rt);
 }
 
+
+inline
+void actual_log_screen(const plasma_state_t& state,
+                       const scrn::screen_factors_t& scn_fac,
+                       Real& log_scor)
+{
+    log_scor = chugunov2007(state, scn_fac);
+}
 
 inline
 void actual_screen(const plasma_state_t& state,
                    const scrn::screen_factors_t& scn_fac,
                    Real& scor)
 {
-    scor = chugunov2007(state, scn_fac);
+    Real log_scor = 0.0_rt;
+    actual_log_screen(state, scn_fac, log_scor);
+    if (log_scor <= 0.0) {
+        scor = 1.0_rt;
+    } else {
+        // machine limit the output
+        constexpr Real log_scor_max = 300.e0_rt;
+        log_scor = std::min(log_scor, log_scor_max);
+        scor = std::exp(log_scor);
+    }
 }
 
 #endif
