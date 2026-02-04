@@ -100,7 +100,7 @@ class ModifiedRate(Rate):
             scr_reactants = self.ion_screen.copy()
             while len(scr_reactants) > 1:
                 r1, r2 = scr_reactants[0], scr_reactants[1]
-                screening_pairs.append((r1, r2))
+                self.screening_pairs.append((r1, r2))
 
                 # merge reactants to get composite nucleus and get new list
                 scr_reactants = [r1 + r2] + scr_reactants[2:]

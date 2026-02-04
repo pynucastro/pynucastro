@@ -11,7 +11,7 @@ from pynucastro.nucdata import Nucleus
 from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import _find_rate_file
 from pynucastro.rates.known_duplicates import ALLOWED_DUPLICATES
-from pynucastro.screening import (make_plasma_state, make_screen_factors)
+from pynucastro.screening import make_plasma_state, make_screen_factors
 
 
 class BaryonConservationError(Exception):

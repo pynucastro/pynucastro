@@ -19,8 +19,8 @@ class Test3alphaScreening:
     def test_ion_screen(self, net):
         r1 = net.get_rate_by_name("a(aa,g)c12")
         r2 = net.get_rate_by_name("a(aa,p)b11")
-        r3 = net.get_rate_by_nuclei(["n","p","he4","he4"],
-                                    ["p","be9"])
+        r3 = net.get_rate_by_nuclei(["n", "p", "he4", "he4"],
+                                    ["p", "be9"])
 
         ans1 = pyna.Nucleus.cast_list(["he4", "he4", "he4"])
         ans2 = pyna.Nucleus.cast_list(["p", "he4", "he4"])
@@ -31,8 +31,8 @@ class Test3alphaScreening:
     def test_screening_pairs(self, net):
         r1 = net.get_rate_by_name("a(aa,g)c12")
         r2 = net.get_rate_by_name("a(aa,p)b11")
-        r3 = net.get_rate_by_nuclei(["n","p","he4","he4"],
-                                    ["p","be9"])
+        r3 = net.get_rate_by_nuclei(["n", "p", "he4", "he4"],
+                                    ["p", "be9"])
 
         ans1 = [(pyna.Nucleus("He4"), pyna.Nucleus("He4")),
                 (pyna.Nucleus("He4"), pyna.Nucleus("Be8"))]

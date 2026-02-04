@@ -1,5 +1,6 @@
 """Some helper functions for determining which rates need screening"""
 
+
 def get_screening_pair_set(rates):
     """Create a set of unique screening pairs for a list of rates.
 

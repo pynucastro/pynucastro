@@ -286,7 +286,7 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _screen_pair(self, n_indent, of):
         screening_pair_set = get_screening_pair_set(self.get_rates())
         NumScreenPairs = len(screening_pair_set)
-        for i, (n1, n2) in enumerate(screening_pair_list, start=1):
+        for i, (n1, n2) in enumerate(screening_pair_set, start=1):
             of.write(f"{self.indent*n_indent}k_{n1}_{n2} = {i},\n")
             if i == NumScreenPairs:
                 of.write(f'{self.indent*n_indent}NumScreenPairs = k_{n1}_{n2}\n')
@@ -567,9 +567,8 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
 
     def write_screen_var(self, n_indent, of, rate):
-        """Return the string that composes the screening variable for a rate.
+        """Return the string that composes the screening variable for a rate."""
 
-        """
         # Set default log screening to be 0
         of.write(f"{self.indent*n_indent}{self.dtype} log_scor {{0.0_rt}};\n")
         of.write(f"{self.indent*n_indent}{self.dtype} dlog_scor_dT {{0.0_rt}};\n")
