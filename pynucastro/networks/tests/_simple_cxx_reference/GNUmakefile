@@ -5,7 +5,6 @@ HEADERS := $(wildcard *.H)
 DEFINES :=
 
 USE_SCREENING ?= TRUE
-
 ifeq ($(USE_SCREENING),TRUE)
    DEFINES += -DSCREENING
 endif
