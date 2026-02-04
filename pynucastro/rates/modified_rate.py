@@ -80,9 +80,8 @@ class ModifiedRate(Rate):
         update_screening.
 
         """
-        # Tells if this rate is eligible for screening, and if it is
-        # then Rate.ion_screen is a 2-element (3 for 3-alpha) list of
-        # Nucleus objects for screening; otherwise it is set to none
+        # ion_screen holds the list of reactants eligible for screening
+        # empty list if there is only one eligible reactant
         self.ion_screen = []
         if self.update_screening:
             _reac = self.reactants
@@ -90,12 +89,22 @@ class ModifiedRate(Rate):
             _reac = self.original_rate.reactants
         nucz = [q for q in _reac if q.Z != 0]
         if len(nucz) > 1:
-            nucz.sort(key=lambda x: x.Z)
-            self.ion_screen = []
-            self.ion_screen.append(nucz[0])
-            self.ion_screen.append(nucz[1])
-            if len(nucz) == 3:
-                self.ion_screen.append(nucz[2])
+            nucz.sort(key=lambda x: (x.Z, x.A))
+            self.ion_screen = nucz.copy()
+
+        # Find a list reactant pairs used for screening.
+        # For reactions that use more than 2 reactants,
+        # intermediate composite nuclei is created for screening.
+        self.screening_pairs = []
+        if self.ion_screen:
+            scr_reactants = self.ion_screen.copy()
+            while len(scr_reactants) > 1:
+                r1, r2 = scr_reactants[0], scr_reactants[1]
+                screening_pairs.append((r1, r2))
+
+                # merge reactants to get composite nucleus and get new list
+                scr_reactants = [r1 + r2] + scr_reactants[2:]
+                scr_reactants.sort(key=lambda x: (x.Z, x.A))
 
     def log_eval(self, T, *, rho=None, comp=None,
                  screen_func=None):

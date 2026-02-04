@@ -4,7 +4,7 @@
 from pathlib import Path
 
 from pynucastro.networks.base_cxx_network import BaseCxxNetwork
-from pynucastro.screening import get_screening_map
+from pynucastro.screening import get_screening_pair_set
 
 
 class SimpleCxxNetwork(BaseCxxNetwork):
@@ -30,20 +30,20 @@ class SimpleCxxNetwork(BaseCxxNetwork):
         and stores them to rate_eval.log_screen.
 
         """
-        screening_map = get_screening_map(self.get_rates())
-        for scr in screening_map:
-            nuc1_info = f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt'
-            nuc2_info = f'{float(scr.n2.Z)}_rt, {float(scr.n2.A)}_rt'
+        screening_pair_set = get_screening_pair_set(self.get_rates())
+        for n1, n2 in screening_pair_set:
+            nuc1_info = f'{float(n1.Z)}_rt, {float(n1.A)}_rt'
+            nuc2_info = f'{float(n2.Z)}_rt, {float(n2.A)}_rt'
 
             if not self.do_screening:
                 # Set log_scor terms to be 0 if not doing screening
-                of.write(f'{self.indent*(n_indent)}rate_eval.log_screen(k_{scr.n1}_{scr.n2}) = 0.0_rt;\n')
+                of.write(f'{self.indent*(n_indent)}rate_eval.log_screen(k_{n1}_{n2}) = 0.0_rt;\n')
             else:
                 # Scope the screening calculation to avoid multiple definitions of scn_fac.
                 of.write(f'{self.indent*n_indent}' + '{\n')
                 of.write(f'{self.indent*(n_indent+1)}auto scn_fac = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n')
                 of.write(f'{self.indent*(n_indent+1)}actual_log_screen(pstate, scn_fac, log_scor);\n')
-                of.write(f'{self.indent*(n_indent+1)}rate_eval.log_screen(k_{scr.n1}_{scr.n2}) = log_scor;\n')
+                of.write(f'{self.indent*(n_indent+1)}rate_eval.log_screen(k_{n1}_{n2}) = log_scor;\n')
                 of.write(f'{self.indent*n_indent}' + '}\n\n')
 
     def _write_network(self, odir=None):
