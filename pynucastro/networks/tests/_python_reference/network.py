@@ -173,7 +173,7 @@ def He4_C12_to_O16_reaclib(rate_eval, tf, log_scor=0.0):
     # C12 + He4 --> O16
     rate = 0.0
 
-    # nac2 
+    # nac2
     ln_set_rate =  254.634 + -1.84097*tf.T9i + 103.411*tf.T913i + -420.567*tf.T913 \
                          + 64.0874*tf.T9 + -12.4624*tf.T953 + 137.303*tf.lnT9
 
@@ -181,7 +181,7 @@ def He4_C12_to_O16_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    # nac2 
+    # nac2
     ln_set_rate =  69.6526 + -1.39254*tf.T9i + 58.9128*tf.T913i + -148.273*tf.T913 \
                          + 9.08324*tf.T9 + -0.541041*tf.T953 + 70.3554*tf.lnT9
 

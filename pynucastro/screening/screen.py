@@ -711,7 +711,7 @@ def potekhin_1998(state, scn_fac):
     return log_scor
 
 
-def screening_check(check_func=debye_huckel, threshold: float = 1e-3):
+def screening_check(check_func=debye_huckel, threshold: float = 1e-2):
     """Create a decorator factory that wraps a screening function with
     a check that determines whether that function can be skipped for a
     given plasma state and screening pair.
