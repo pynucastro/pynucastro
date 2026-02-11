@@ -124,76 +124,115 @@ def ye(Y):
     return np.sum(Z * Y)/np.sum(A * Y)
 
 @numba.njit()
-def C12_C12_to_He4_Ne20_reaclib(rate_eval, tf):
+def C12_C12_to_He4_Ne20_reaclib(rate_eval, tf, log_scor=0.0):
     # C12 + C12 --> He4 + Ne20
     rate = 0.0
 
     # cf88r
-    rate += np.exp(  61.2863 + -84.165*tf.T913i + -1.56627*tf.T913
-                  + -0.0736084*tf.T9 + -0.072797*tf.T953 + -0.666667*tf.lnT9)
+    ln_set_rate =  61.2863 + -84.165*tf.T913i + -1.56627*tf.T913 \
+                         + -0.0736084*tf.T9 + -0.072797*tf.T953 + -0.666667*tf.lnT9
+
+    ln_set_rate += log_scor
+    set_rate = np.exp(ln_set_rate)
+    rate += set_rate
 
     rate_eval.C12_C12_to_He4_Ne20_reaclib = rate
 
 @numba.njit()
-def C12_C12_to_n_Mg23_reaclib(rate_eval, tf):
+def C12_C12_to_n_Mg23_reaclib(rate_eval, tf, log_scor=0.0):
     # C12 + C12 --> n + Mg23
     rate = 0.0
 
     # cf88r
-    rate += np.exp(  -12.8056 + -30.1498*tf.T9i + 11.4826*tf.T913
-                  + 1.82849*tf.T9 + -0.34844*tf.T953)
+    ln_set_rate =  -12.8056 + -30.1498*tf.T9i + 11.4826*tf.T913 \
+                         + 1.82849*tf.T9 + -0.34844*tf.T953
+
+    ln_set_rate += log_scor
+    set_rate = np.exp(ln_set_rate)
+    rate += set_rate
 
     rate_eval.C12_C12_to_n_Mg23_reaclib = rate
 
 @numba.njit()
-def C12_C12_to_p_Na23_reaclib(rate_eval, tf):
+def C12_C12_to_p_Na23_reaclib(rate_eval, tf, log_scor=0.0):
     # C12 + C12 --> p + Na23
     rate = 0.0
 
     # cf88r
-    rate += np.exp(  60.9649 + -84.165*tf.T913i + -1.4191*tf.T913
-                  + -0.114619*tf.T9 + -0.070307*tf.T953 + -0.666667*tf.lnT9)
+    ln_set_rate =  60.9649 + -84.165*tf.T913i + -1.4191*tf.T913 \
+                         + -0.114619*tf.T9 + -0.070307*tf.T953 + -0.666667*tf.lnT9
+
+    ln_set_rate += log_scor
+    set_rate = np.exp(ln_set_rate)
+    rate += set_rate
 
     rate_eval.C12_C12_to_p_Na23_reaclib = rate
 
 @numba.njit()
-def He4_C12_to_O16_reaclib(rate_eval, tf):
+def He4_C12_to_O16_reaclib(rate_eval, tf, log_scor=0.0):
     # C12 + He4 --> O16
     rate = 0.0
 
     # nac2 
-    rate += np.exp(  254.634 + -1.84097*tf.T9i + 103.411*tf.T913i + -420.567*tf.T913
-                  + 64.0874*tf.T9 + -12.4624*tf.T953 + 137.303*tf.lnT9)
+    ln_set_rate =  254.634 + -1.84097*tf.T9i + 103.411*tf.T913i + -420.567*tf.T913 \
+                         + 64.0874*tf.T9 + -12.4624*tf.T953 + 137.303*tf.lnT9
+
+    ln_set_rate += log_scor
+    set_rate = np.exp(ln_set_rate)
+    rate += set_rate
+
     # nac2 
-    rate += np.exp(  69.6526 + -1.39254*tf.T9i + 58.9128*tf.T913i + -148.273*tf.T913
-                  + 9.08324*tf.T9 + -0.541041*tf.T953 + 70.3554*tf.lnT9)
+    ln_set_rate =  69.6526 + -1.39254*tf.T9i + 58.9128*tf.T913i + -148.273*tf.T913 \
+                         + 9.08324*tf.T9 + -0.541041*tf.T953 + 70.3554*tf.lnT9
+
+    ln_set_rate += log_scor
+    set_rate = np.exp(ln_set_rate)
+    rate += set_rate
 
     rate_eval.He4_C12_to_O16_reaclib = rate
 
 @numba.njit()
-def n_to_p_reaclib(rate_eval, tf):
+def n_to_p_reaclib(rate_eval, tf, log_scor=0.0):
     # n --> p
     rate = 0.0
 
     # wc12w
-    rate += np.exp(  -6.78161)
+    ln_set_rate =  -6.78161
+
+    ln_set_rate += log_scor
+    set_rate = np.exp(ln_set_rate)
+    rate += set_rate
 
     rate_eval.n_to_p_reaclib = rate
 
 @numba.njit()
-def He4_He4_He4_to_C12_reaclib(rate_eval, tf):
+def He4_He4_He4_to_C12_reaclib(rate_eval, tf, log_scor=0.0):
     # 3 He4 --> C12
     rate = 0.0
 
     # fy05r
-    rate += np.exp(  -11.7884 + -1.02446*tf.T9i + -23.57*tf.T913i + 20.4886*tf.T913
-                  + -12.9882*tf.T9 + -20.0*tf.T953 + -2.16667*tf.lnT9)
+    ln_set_rate =  -11.7884 + -1.02446*tf.T9i + -23.57*tf.T913i + 20.4886*tf.T913 \
+                         + -12.9882*tf.T9 + -20.0*tf.T953 + -2.16667*tf.lnT9
+
+    ln_set_rate += log_scor
+    set_rate = np.exp(ln_set_rate)
+    rate += set_rate
+
     # fy05n
-    rate += np.exp(  -0.971052 + -37.06*tf.T913i + 29.3493*tf.T913
-                  + -115.507*tf.T9 + -10.0*tf.T953 + -1.33333*tf.lnT9)
+    ln_set_rate =  -0.971052 + -37.06*tf.T913i + 29.3493*tf.T913 \
+                         + -115.507*tf.T9 + -10.0*tf.T953 + -1.33333*tf.lnT9
+
+    ln_set_rate += log_scor
+    set_rate = np.exp(ln_set_rate)
+    rate += set_rate
+
     # fy05r
-    rate += np.exp(  -24.3505 + -4.12656*tf.T9i + -13.49*tf.T913i + 21.4259*tf.T913
-                  + -1.34769*tf.T9 + 0.0879816*tf.T953 + -13.1653*tf.lnT9)
+    ln_set_rate =  -24.3505 + -4.12656*tf.T9i + -13.49*tf.T913i + 21.4259*tf.T913 \
+                         + -1.34769*tf.T9 + 0.0879816*tf.T953 + -13.1653*tf.lnT9
+
+    ln_set_rate += log_scor
+    set_rate = np.exp(ln_set_rate)
+    rate += set_rate
 
     rate_eval.He4_He4_He4_to_C12_reaclib = rate
 
@@ -222,36 +261,34 @@ def rhs_eq(t, Y, rho, T, screen_func):
     tf = Tfactors(T)
     rate_eval = RateEval()
 
-    # reaclib rates
-    C12_C12_to_He4_Ne20_reaclib(rate_eval, tf)
-    C12_C12_to_n_Mg23_reaclib(rate_eval, tf)
-    C12_C12_to_p_Na23_reaclib(rate_eval, tf)
-    He4_C12_to_O16_reaclib(rate_eval, tf)
-    n_to_p_reaclib(rate_eval, tf)
-    He4_He4_He4_to_C12_reaclib(rate_eval, tf)
-
-    # tabular rates
-    Na23_to_Ne23_weaktab(rate_eval, T, rho=rho, Y=Y)
-    Ne23_to_Na23_weaktab(rate_eval, T, rho=rho, Y=Y)
+    log_scor_C12_C12 = 0.0
+    log_scor_He4_C12 = 0.0
+    log_scor_He4_He4 = 0.0
+    log_scor_He4_Be8 = 0.0
 
     if screen_func is not None:
         plasma_state = PlasmaState(T, rho, Y, Z)
 
         scn_fac = ScreenFactors(6, 12, 6, 12)
-        scor = screen_func(plasma_state, scn_fac)
-        rate_eval.C12_C12_to_He4_Ne20_reaclib *= scor
-        rate_eval.C12_C12_to_n_Mg23_reaclib *= scor
-        rate_eval.C12_C12_to_p_Na23_reaclib *= scor
-
+        log_scor_C12_C12 = screen_func(plasma_state, scn_fac)
         scn_fac = ScreenFactors(2, 4, 6, 12)
-        scor = screen_func(plasma_state, scn_fac)
-        rate_eval.He4_C12_to_O16_reaclib *= scor
-
+        log_scor_He4_C12 = screen_func(plasma_state, scn_fac)
         scn_fac = ScreenFactors(2, 4, 2, 4)
-        scor = screen_func(plasma_state, scn_fac)
-        scn_fac2 = ScreenFactors(2, 4, 4, 8)
-        scor2 = screen_func(plasma_state, scn_fac2)
-        rate_eval.He4_He4_He4_to_C12_reaclib *= scor * scor2
+        log_scor_He4_He4 = screen_func(plasma_state, scn_fac)
+        scn_fac = ScreenFactors(2, 4, 4, 8)
+        log_scor_He4_Be8 = screen_func(plasma_state, scn_fac)
+
+    # reaclib rates
+    C12_C12_to_He4_Ne20_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
+    C12_C12_to_n_Mg23_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
+    C12_C12_to_p_Na23_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
+    He4_C12_to_O16_reaclib(rate_eval, tf, log_scor=log_scor_He4_C12)
+    n_to_p_reaclib(rate_eval, tf)
+    He4_He4_He4_to_C12_reaclib(rate_eval, tf, log_scor=log_scor_He4_He4+log_scor_He4_Be8)
+
+    # tabular rates
+    Na23_to_Ne23_weaktab(rate_eval, T, rho=rho, Y=Y)
+    Ne23_to_Na23_weaktab(rate_eval, T, rho=rho, Y=Y)
 
     dYdt = np.zeros((nnuc), dtype=np.float64)
 
@@ -311,36 +348,34 @@ def jacobian_eq(t, Y, rho, T, screen_func):
     tf = Tfactors(T)
     rate_eval = RateEval()
 
-    # reaclib rates
-    C12_C12_to_He4_Ne20_reaclib(rate_eval, tf)
-    C12_C12_to_n_Mg23_reaclib(rate_eval, tf)
-    C12_C12_to_p_Na23_reaclib(rate_eval, tf)
-    He4_C12_to_O16_reaclib(rate_eval, tf)
-    n_to_p_reaclib(rate_eval, tf)
-    He4_He4_He4_to_C12_reaclib(rate_eval, tf)
-
-    # tabular rates
-    Na23_to_Ne23_weaktab(rate_eval, T, rho=rho, Y=Y)
-    Ne23_to_Na23_weaktab(rate_eval, T, rho=rho, Y=Y)
+    log_scor_C12_C12 = 0.0
+    log_scor_He4_C12 = 0.0
+    log_scor_He4_He4 = 0.0
+    log_scor_He4_Be8 = 0.0
 
     if screen_func is not None:
         plasma_state = PlasmaState(T, rho, Y, Z)
 
         scn_fac = ScreenFactors(6, 12, 6, 12)
-        scor = screen_func(plasma_state, scn_fac)
-        rate_eval.C12_C12_to_He4_Ne20_reaclib *= scor
-        rate_eval.C12_C12_to_n_Mg23_reaclib *= scor
-        rate_eval.C12_C12_to_p_Na23_reaclib *= scor
-
+        log_scor_C12_C12 = screen_func(plasma_state, scn_fac)
         scn_fac = ScreenFactors(2, 4, 6, 12)
-        scor = screen_func(plasma_state, scn_fac)
-        rate_eval.He4_C12_to_O16_reaclib *= scor
-
+        log_scor_He4_C12 = screen_func(plasma_state, scn_fac)
         scn_fac = ScreenFactors(2, 4, 2, 4)
-        scor = screen_func(plasma_state, scn_fac)
-        scn_fac2 = ScreenFactors(2, 4, 4, 8)
-        scor2 = screen_func(plasma_state, scn_fac2)
-        rate_eval.He4_He4_He4_to_C12_reaclib *= scor * scor2
+        log_scor_He4_He4 = screen_func(plasma_state, scn_fac)
+        scn_fac = ScreenFactors(2, 4, 4, 8)
+        log_scor_He4_Be8 = screen_func(plasma_state, scn_fac)
+
+    # reaclib rates
+    C12_C12_to_He4_Ne20_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
+    C12_C12_to_n_Mg23_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
+    C12_C12_to_p_Na23_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
+    He4_C12_to_O16_reaclib(rate_eval, tf, log_scor=log_scor_He4_C12)
+    n_to_p_reaclib(rate_eval, tf)
+    He4_He4_He4_to_C12_reaclib(rate_eval, tf, log_scor=log_scor_He4_He4+log_scor_He4_Be8)
+
+    # tabular rates
+    Na23_to_Ne23_weaktab(rate_eval, T, rho=rho, Y=Y)
+    Ne23_to_Na23_weaktab(rate_eval, T, rho=rho, Y=Y)
 
     jac = np.zeros((nnuc, nnuc), dtype=np.float64)
 

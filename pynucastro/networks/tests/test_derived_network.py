@@ -72,7 +72,7 @@ class TestPythonDerivedNetwork:
 
         ostr = \
 """@numba.njit()
-def Fe52_to_p_Mn51_derived(rate_eval, tf):
+def Fe52_to_p_Mn51_derived(rate_eval, tf, log_scor=0.0):
     # Fe52 --> p + Mn51
 
     # Evaluate partition function terms
@@ -93,7 +93,7 @@ def Fe52_to_p_Mn51_derived(rate_eval, tf):
     ln_set_rate =  61.74743132228039 + -85.61663846070292*tf.T9i + -36.1825*tf.T913i + 0.873042*tf.T913 \\
                          + -2.89731*tf.T9 + 0.364394*tf.T953 + 0.833333*tf.lnT9
 
-    ln_set_rate += net_log_pf
+    ln_set_rate += net_log_pf + log_scor
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
@@ -131,7 +131,7 @@ def Fe52_to_p_Mn51_derived(rate_eval, tf):
 
         ostr = \
 """@numba.njit()
-def Ne20_to_He4_N14_derived(rate_eval, tf):
+def Ne20_to_He4_N14_derived(rate_eval, tf, log_scor=0.0):
     # Ne20 --> 1.5 He4 + N14
 
     # Evaluate partition function terms
@@ -151,14 +151,14 @@ def Ne20_to_He4_N14_derived(rate_eval, tf):
     # il10r
     ln_set_rate =  39.558271587333145 + -168.12237220574448*tf.T9i + -5.6227*tf.T913i
 
-    ln_set_rate += net_log_pf
+    ln_set_rate += net_log_pf + log_scor
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
     # il10r
     ln_set_rate =  25.855609587333145 + -162.31711220574448*tf.T9i
 
-    ln_set_rate += net_log_pf
+    ln_set_rate += net_log_pf + log_scor
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
@@ -166,7 +166,7 @@ def Ne20_to_He4_N14_derived(rate_eval, tf):
     ln_set_rate =  47.192671587333145 + -157.1567722057445*tf.T9i + -36.2504*tf.T913i \\
                          + -5.0*tf.T953 + 0.833333*tf.lnT9
 
-    ln_set_rate += net_log_pf
+    ln_set_rate += net_log_pf + log_scor
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
