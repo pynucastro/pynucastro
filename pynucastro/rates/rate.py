@@ -427,23 +427,14 @@ class Rate:
         if self.weak_type == 'electron_capture':
             self.dens_exp = self.dens_exp + 1
 
-    def _set_screening(self):
-        """Determine if this rate is eligible for screening and the
-        nuclei to use.
+    def _set_screening_pairs(self):
+        """ Find a list reactant pairs used for screening. For reactions
+        that use more than 2 reactants, intermediate composite nuclei is
+        created for screening. For example, He4 + He4 + He4 → C12 give
+        [(He4, He4), (He4, Be8)]. This assumes that ion_screen is set.
 
         """
 
-        # ion_screen holds the list of reactants eligible for screening
-        # empty list if there is only one eligible reactant
-        self.ion_screen = []
-        nucz = [q for q in self.reactants if q.Z != 0]
-        if len(nucz) > 1:
-            nucz.sort(key=lambda x: (x.Z, x.A))
-            self.ion_screen = nucz.copy()
-
-        # Find a list reactant pairs used for screening.
-        # For reactions that use more than 2 reactants,
-        # intermediate composite nuclei is created for screening.
         self.screening_pairs = []
         if self.ion_screen:
             scr_reactants = self.ion_screen.copy()
@@ -463,6 +454,23 @@ class Rate:
                     scr_reactants = [n1 + n2] + scr_reactants[2:]
 
                 scr_reactants.sort(key=lambda x: (x.Z, x.A))
+
+    def _set_screening(self):
+        """Determine if this rate is eligible for screening and the
+        nuclei to use. This determines ion_screen and screening_pairs
+
+        """
+
+        # ion_screen holds the list of reactants eligible for screening
+        # empty list if there is only one eligible reactant
+        self.ion_screen = []
+        nucz = [q for q in self.reactants if q.Z != 0]
+        if len(nucz) > 1:
+            nucz.sort(key=lambda x: (x.Z, x.A))
+            self.ion_screen = nucz.copy()
+
+        # Find screening_pairs
+        self._set_screening_pairs()
 
     def get_rate_id(self):
         """Get an identifying string for this rate.

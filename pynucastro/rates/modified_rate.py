@@ -92,19 +92,8 @@ class ModifiedRate(Rate):
             nucz.sort(key=lambda x: (x.Z, x.A))
             self.ion_screen = nucz.copy()
 
-        # Find a list reactant pairs used for screening.
-        # For reactions that use more than 2 reactants,
-        # intermediate composite nuclei is created for screening.
-        self.screening_pairs = []
-        if self.ion_screen:
-            scr_reactants = self.ion_screen.copy()
-            while len(scr_reactants) > 1:
-                r1, r2 = scr_reactants[0], scr_reactants[1]
-                self.screening_pairs.append((r1, r2))
-
-                # merge reactants to get composite nucleus and get new list
-                scr_reactants = [r1 + r2] + scr_reactants[2:]
-                scr_reactants.sort(key=lambda x: (x.Z, x.A))
+        # Find screening_pairs
+        self._set_screening_pairs()
 
     def log_eval(self, T, *, rho=None, comp=None,
                  screen_func=None):
