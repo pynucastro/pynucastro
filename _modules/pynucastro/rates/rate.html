@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.9.0.post31+g38d48870c documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.9.0.post32+g331abaa1a documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=5ff4334a"></script>
+    <script src="../../../_static/documentation_options.js?v=687eaca1"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1121,6 +1121,7 @@ document.write(`
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.evaluate_screening">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_screening</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the screening correction for this rate.</span>
+<span class="sd">        Note this returns log(screening).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1141,7 +1142,7 @@ document.write(`
 
         <span class="n">ys</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
         <span class="n">plasma_state</span> <span class="o">=</span> <span class="n">make_plasma_state</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span>
-        <span class="n">scor</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">log_scor</span> <span class="o">=</span> <span class="mf">0.0</span>
 
         <span class="c1"># We can have three cases:</span>
         <span class="c1"># 3-body reaction, i.e. 3-alpha: 2 ScreeningPair&#39;s</span>
@@ -1152,7 +1153,7 @@ document.write(`
 
         <span class="c1"># Handle 0 ScreeningPair case</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">screening_map</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">scor</span>
+            <span class="k">return</span> <span class="n">log_scor</span>
 
         <span class="c1"># Handle 3-alpha case explicitly</span>
         <span class="k">if</span> <span class="s2">&quot;He4_He4_He4&quot;</span> <span class="ow">in</span> <span class="p">[</span><span class="n">scr</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">scr</span> <span class="ow">in</span> <span class="n">screening_map</span><span class="p">]:</span>
@@ -1163,7 +1164,7 @@ document.write(`
 
             <span class="k">for</span> <span class="n">scr</span> <span class="ow">in</span> <span class="n">screening_map</span><span class="p">:</span>
                 <span class="n">scn_fac</span> <span class="o">=</span> <span class="n">make_screen_factors</span><span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="p">,</span> <span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="p">)</span>
-                <span class="n">scor</span> <span class="o">*=</span> <span class="n">screen_func</span><span class="p">(</span><span class="n">plasma_state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">)</span>
+                <span class="n">log_scor</span> <span class="o">+=</span> <span class="n">screen_func</span><span class="p">(</span><span class="n">plasma_state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">)</span>
 
         <span class="c1"># Now handle 2-body reaction</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1175,9 +1176,9 @@ document.write(`
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">screening_map</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
 
             <span class="n">scn_fac</span> <span class="o">=</span> <span class="n">make_screen_factors</span><span class="p">(</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="p">,</span> <span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="p">)</span>
-            <span class="n">scor</span> <span class="o">=</span> <span class="n">screen_func</span><span class="p">(</span><span class="n">plasma_state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">)</span>
+            <span class="n">log_scor</span> <span class="o">=</span> <span class="n">screen_func</span><span class="p">(</span><span class="n">plasma_state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">scor</span></div>
+        <span class="k">return</span> <span class="n">log_scor</span></div>
 
 
 <div class="viewcode-block" id="Rate.ydot_string_py">
@@ -1222,12 +1223,12 @@ document.write(`
         <span class="k">return</span> <span class="s2">&quot;*&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ydot_string_components</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Rate.eval">
-<a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-             <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the reaction rate for temperature T.  This is a stub</span>
-<span class="sd">        and should be implemented by the derived class.</span>
+<div class="viewcode-block" id="Rate.log_eval">
+<a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.log_eval">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate natural log of reaction rate for temperature T.</span>
+<span class="sd">        This is a stub and should be implemented by the derived class.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1249,7 +1250,40 @@ document.write(`
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;base Rate class does not know how to eval()&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;base Rate class does not know how to log_eval()&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Rate.eval">
+<a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the reaction rate for temperature T.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        T : float</span>
+<span class="sd">            the temperature to evaluate the rate at</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            the density to evaluate the rate and screening effects at.</span>
+<span class="sd">        comp : float</span>
+<span class="sd">            the composition (of type</span>
+<span class="sd">            :py:class:`Composition &lt;pynucastro.networks.rate_collection.Composition&gt;`)</span>
+<span class="sd">            to evaluate the rate and screening effects with.</span>
+<span class="sd">        screen_func : Callable</span>
+<span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
+<span class="sd">            -- if provided, then the rate will include the screening correction</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Convert to 1D array to consider cases where log_eval can return:</span>
+        <span class="c1"># 1) A scalar</span>
+        <span class="c1"># 2) A list of log_rates, e.g. ReacLib</span>
+        <span class="n">log_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_rate</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="Rate.function_string_py">

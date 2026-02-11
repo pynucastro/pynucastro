@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.derived_rate &#8212; pynucastro 2.9.0.post31+g38d48870c documentation</title>
+    <title>pynucastro.rates.derived_rate &#8212; pynucastro 2.9.0.post32+g331abaa1a documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=5ff4334a"></script>
+    <script src="../../../_static/documentation_options.js?v=687eaca1"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -619,11 +619,11 @@ document.write(`
             <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">partition_function</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s1"> partition function is not supported by tables: set log_pf = 0.0 by default&#39;</span><span class="p">))</span>
 
-<div class="viewcode-block" id="DerivedRate.eval">
-<a class="viewcode-back" href="../../../pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate.eval">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-             <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the derived reverse rate.</span>
+<div class="viewcode-block" id="DerivedRate.log_eval">
+<a class="viewcode-back" href="../../../pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate.log_eval">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the natural log of reaction rate for temperature T.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -641,15 +641,20 @@ document.write(`
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        float</span>
+<span class="sd">        numpy.ndarray</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">r</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="n">tf</span> <span class="o">=</span> <span class="n">Tfactors</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
 
-        <span class="c1"># Evaluate partition function terms</span>
+        <span class="c1"># Evaluate screening correction term</span>
+        <span class="n">log_scor</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="n">screen_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">comp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;rho (density) and comp (Composition) needs to be defined when applying electron screening.&quot;</span><span class="p">)</span>
+            <span class="n">log_scor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_screening</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">)</span>
 
+        <span class="c1"># Evaluate partition function terms</span>
         <span class="n">net_log_pf</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_pf</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_warn_about_missing_pf_tables</span><span class="p">()</span>
@@ -662,49 +667,19 @@ document.write(`
                 <span class="k">if</span> <span class="n">nucp</span><span class="o">.</span><span class="n">partition_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">net_log_pf</span> <span class="o">-=</span> <span class="n">nucp</span><span class="o">.</span><span class="n">partition_function</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
 
-        <span class="c1"># Now compute the rate based on the property of the source_rate</span>
+        <span class="c1"># Now compute the log rate of the source_rate without screening</span>
+        <span class="c1"># This can be a list of log_rate (ReacLib) or a scalar number</span>
+        <span class="n">log_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">log_eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                             <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_sets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># To consider general cases, convert to 1D array</span>
+        <span class="n">log_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">log_rate</span><span class="p">)</span>
 
-            <span class="c1"># Create another reaclib set that absorbs the partition function terms</span>
-            <span class="n">derived_pf_sets</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">derived_set</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_sets</span><span class="p">:</span>
-                <span class="n">a</span> <span class="o">=</span> <span class="n">derived_set</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-                <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">net_log_pf</span>
-                <span class="n">derived_pf_sets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">derived_set</span><span class="o">.</span><span class="n">labelprops</span><span class="p">))</span>
+        <span class="c1"># Apply equilibrium ratio terms and screening</span>
+        <span class="n">log_rate</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q_kBGK</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">T9i</span> <span class="o">+</span> \
+            <span class="n">net_log_pf</span> <span class="o">+</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">lnT9</span> <span class="o">+</span> <span class="n">log_scor</span>
 
-            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">derived_pf_sets</span><span class="p">:</span>
-                <span class="n">f</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">f</span><span class="p">()</span>
-                <span class="n">r</span> <span class="o">+=</span> <span class="n">f</span><span class="p">(</span><span class="n">tf</span><span class="p">)</span>
-
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="p">,</span> <span class="n">TemperatureTabularRate</span><span class="p">):</span>
-            <span class="n">log_r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">interpolator</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
-
-            <span class="c1"># Apply equilibrium ratio terms</span>
-            <span class="n">log_r</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q_kBGK</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">T9i</span> <span class="o">+</span> \
-                <span class="n">net_log_pf</span> <span class="o">+</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">lnT9</span>
-            <span class="n">r</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_r</span><span class="p">)</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">r</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-
-            <span class="c1"># Apply equilibrium ratio terms</span>
-            <span class="n">r</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q_kBGK</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">T9i</span> <span class="o">+</span>
-                        <span class="n">net_log_pf</span> <span class="o">+</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">lnT9</span><span class="p">)</span>
-
-        <span class="c1"># Apply screening correction</span>
-
-        <span class="c1"># pylint: disable=duplicate-code</span>
-        <span class="n">scor</span> <span class="o">=</span> <span class="mf">1.0</span>
-        <span class="k">if</span> <span class="n">screen_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">comp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;rho (density) and comp (Composition) needs to be defined when applying electron screening.&quot;</span><span class="p">)</span>
-            <span class="n">scor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_screening</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">)</span>
-
-        <span class="n">r</span> <span class="o">*=</span> <span class="n">scor</span>
-        <span class="c1"># pylint: enable=duplicate-code</span>
-
-        <span class="k">return</span> <span class="n">r</span></div>
+        <span class="k">return</span> <span class="n">log_rate</span></div>
 
 
 <div class="viewcode-block" id="DerivedRate.function_string_py">
@@ -721,11 +696,10 @@ document.write(`
 
         <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;@numba.njit()</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf):</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf, log_scor=0.0):</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
         <span class="c1"># Evaluate partition function terms</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_pf</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_warn_about_missing_pf_tables</span><span class="p">()</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    # Evaluate partition function terms</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -758,7 +732,7 @@ document.write(`
                 <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">set_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
                     <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="n">t</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    ln_set_rate += net_log_pf</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    ln_set_rate += net_log_pf + log_scor</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    set_rate = np.exp(ln_set_rate)</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate += set_rate</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
@@ -768,15 +742,15 @@ document.write(`
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator = TempTableInterpolator(*</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_info)</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    log_r = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator.interpolate(tf.T9 * 1.0e9)</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    # Apply equilibrium ratio</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    log_r += </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Q_kBGK</span><span class="si">}</span><span class="s2"> * tf.T9i + net_log_pf</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    # Apply equilibrium ratio and screening</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    log_r += </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Q_kBGK</span><span class="si">}</span><span class="s2"> * tf.T9i + net_log_pf + log_scor</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    log_r += </span><span class="si">{</span><span class="mf">1.5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span><span class="si">}</span><span class="s2"> * tf.lnT9</span><span class="se">\n\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = np.exp(log_r)</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    # Evaluate the equilibrium ratio</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    ratio = np.exp(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Q_kBGK</span><span class="si">}</span><span class="s2"> * tf.T9i + net_log_pf&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    # Evaluate the equilibrium ratio and screening</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    ratio = np.exp(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Q_kBGK</span><span class="si">}</span><span class="s2"> * tf.T9i + net_log_pf + log_scor&quot;</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + </span><span class="si">{</span><span class="mf">1.5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span><span class="si">}</span><span class="s2"> * tf.lnT9&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;)</span><span class="se">\n\n</span><span class="s2">&quot;</span>

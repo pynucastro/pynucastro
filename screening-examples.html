@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Screening Rates &#8212; pynucastro 2.9.0.post31+g38d48870c documentation</title>
+    <title>Screening Rates &#8212; pynucastro 2.9.0.post32+g331abaa1a documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=5ff4334a"></script>
+    <script src="_static/documentation_options.js?v=687eaca1"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -596,6 +596,11 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="screening-rates">
 <h1>Screening Rates<a class="headerlink" href="#screening-rates" title="Link to this heading">#</a></h1>
+<p>Consider nuclear fusion between two ions surrounded by a sea of electrons. The electron screening effect reduces the effective Coulomb potential barrier that the ions must overcome for fusion to take place, causing an enhancement to the nuclear reaction rates.
+Suppose the unscreened rate is represented by <span class="math notranslate nohighlight">\(R_\mathrm{uns}\)</span>, then screened rate is</p>
+<div class="math notranslate nohighlight">
+\[R_\mathrm{scn} = R_\mathrm{uns} \exp{(h)}\]</div>
+<p>where <span class="math notranslate nohighlight">\(h\)</span> characterizes the screening magnitude. pynucastro has various screening implementations that computes screening magnitude, <span class="math notranslate nohighlight">\(h\)</span>.</p>
 <section id="screening-implementations">
 <h2>Screening implementations<a class="headerlink" href="#screening-implementations" title="Link to this heading">#</a></h2>
 <p>pynucastro currently has 4 screening implementations:</p>
@@ -619,7 +624,8 @@ document.write(`
 <a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.make_plasma_state" title="pynucastro.screening.screen.make_plasma_state"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_plasma_state</span></code></a> can create the <code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> object</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
 </pre></div>
 </div>
 </div>
@@ -670,6 +676,10 @@ document.write(`
 </div>
 <p>Finally, we’ll select the Chugunov (2009) screening and compute the screening factor.  All of the needed thermodynamic information is contained in the <code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> and all of the needed
 reaction rate information is contained in the <code class="docutils literal notranslate"><span class="pre">ScreenFactors</span></code></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All screening routines return <span class="math notranslate nohighlight">\(h\)</span> = log(screening). Therefore, in order to get the actual multiplicative rate enhancement factor, we need to do an <code class="docutils literal notranslate"><span class="pre">exp()</span></code> afterwards.</p>
+</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">chugunov_2009</span>
@@ -679,7 +689,8 @@ reaction rate information is contained in the <code class="docutils literal notr
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scn</span> <span class="o">=</span> <span class="n">chugunov_2009</span><span class="p">(</span><span class="n">plasma</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">log_scn</span> <span class="o">=</span> <span class="n">chugunov_2009</span><span class="p">(</span><span class="n">plasma</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">)</span>
+<span class="n">scn</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_scn</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">scn</span><span class="si">:</span><span class="s2">12.8f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -849,7 +860,7 @@ rates:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/68bba8679f6317811a99e31b31f467ce7fddfd39879d84250803f71f9238761e.png" src="_images/68bba8679f6317811a99e31b31f467ce7fddfd39879d84250803f71f9238761e.png" />
+<img alt="_images/5343e47d9da840a2d0ce3b39ffb9120895db77d53f5a7124312f66f84890111a.png" src="_images/5343e47d9da840a2d0ce3b39ffb9120895db77d53f5a7124312f66f84890111a.png" />
 </div>
 </div>
 <p>As expected, using screening makes the carbon burn much more quickly.</p>

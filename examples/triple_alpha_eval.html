@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Computing the Screened Triple-alpha rate &#8212; pynucastro 2.9.0.post31+g38d48870c documentation</title>
+    <title>Computing the Screened Triple-alpha rate &#8212; pynucastro 2.9.0.post32+g331abaa1a documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../_static/documentation_options.js?v=5ff4334a"></script>
+    <script src="../_static/documentation_options.js?v=687eaca1"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -598,7 +598,8 @@ document.write(`
 We’ll do this 2 different ways (but both will get the same answer).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
 </pre></div>
 </div>
 </div>
@@ -671,12 +672,12 @@ We’ll do this 2 different ways (but both will get the same answer).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scn_fac1</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">make_screen_factors</span><span class="p">(</span><span class="n">he4</span><span class="p">,</span> <span class="n">he4</span><span class="p">)</span>
-<span class="n">scn1</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">screening</span><span class="o">.</span><span class="n">screen5</span><span class="p">(</span><span class="n">plasma</span><span class="p">,</span> <span class="n">scn_fac1</span><span class="p">)</span>
+<span class="n">log_scn1</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">screening</span><span class="o">.</span><span class="n">screen5</span><span class="p">(</span><span class="n">plasma</span><span class="p">,</span> <span class="n">scn_fac1</span><span class="p">)</span>
 
 <span class="n">scn_fac2</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">make_screen_factors</span><span class="p">(</span><span class="n">he4</span><span class="p">,</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;be8&quot;</span><span class="p">))</span>
-<span class="n">scn2</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">screening</span><span class="o">.</span><span class="n">screen5</span><span class="p">(</span><span class="n">plasma</span><span class="p">,</span> <span class="n">scn_fac2</span><span class="p">)</span>
+<span class="n">log_scn2</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">screening</span><span class="o">.</span><span class="n">screen5</span><span class="p">(</span><span class="n">plasma</span><span class="p">,</span> <span class="n">scn_fac2</span><span class="p">)</span>
 
-<span class="n">scn</span> <span class="o">=</span> <span class="n">scn1</span> <span class="o">*</span> <span class="n">scn2</span>
+<span class="n">scn</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_scn1</span> <span class="o">+</span> <span class="n">log_scn2</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">scn</span><span class="si">:</span><span class="s2">20.10g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -730,7 +731,7 @@ We’ll do this 2 different ways (but both will get the same answer).</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{3 He4 ⟶ C12 + 𝛾: 2.2474377346294803e-14}
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{3 He4 ⟶ C12 + 𝛾: 2.247437734629482e-14}
 </pre></div>
 </div>
 </div>

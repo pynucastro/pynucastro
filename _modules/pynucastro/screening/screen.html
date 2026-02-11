@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.screening.screen &#8212; pynucastro 2.9.0.post31+g38d48870c documentation</title>
+    <title>pynucastro.screening.screen &#8212; pynucastro 2.9.0.post32+g331abaa1a documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../../_static/documentation_options.js?v=5ff4334a"></script>
+    <script src="../../../_static/documentation_options.js?v=687eaca1"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -781,10 +781,7 @@ document.write(`
     <span class="c1"># eq. A1</span>
     <span class="n">h_DH</span> <span class="o">=</span> <span class="n">z1z2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">Gamma_e</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">z2bar</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">zbar</span><span class="p">)</span>
 
-    <span class="c1"># machine limit the output</span>
-    <span class="n">h_max</span> <span class="o">=</span> <span class="mi">300</span>
-    <span class="n">h</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">h_DH</span><span class="p">,</span> <span class="n">h_max</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">h_DH</span></div>
 
 
 
@@ -814,7 +811,6 @@ document.write(`
     <span class="n">fact</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">gamefx</span> <span class="o">=</span> <span class="mf">0.3e0</span>  <span class="c1"># lower gamma limit for intermediate screening</span>
     <span class="n">gamefs</span> <span class="o">=</span> <span class="mf">0.8e0</span>  <span class="c1"># upper gamma limit for intermediate screening</span>
-    <span class="n">h12_max</span> <span class="o">=</span> <span class="mf">300.e0</span>
 
     <span class="c1"># Get the ion data based on the input index</span>
     <span class="n">z1</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span>
@@ -928,12 +924,10 @@ document.write(`
 
         <span class="c1"># end of intermediate and strong screening</span>
 
-    <span class="c1"># machine limit the output</span>
-    <span class="c1"># further limit to avoid the pycnonuclear regime</span>
-    <span class="n">h12</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">h12</span><span class="p">,</span> <span class="n">h12_max</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span>
-    <span class="n">scor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h12</span><span class="p">)</span>
+    <span class="c1"># limit to avoid the pycnonuclear regime</span>
+    <span class="n">log_scor</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">h12</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">scor</span></div>
+    <span class="k">return</span> <span class="n">log_scor</span></div>
 
 
 
@@ -1080,12 +1074,10 @@ document.write(`
 
     <span class="n">h</span> <span class="o">=</span> <span class="n">gamtilde</span><span class="o">**</span><span class="p">(</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">A1</span> <span class="o">*</span> <span class="n">term1</span> <span class="o">+</span> <span class="n">A3</span> <span class="o">*</span> <span class="n">term2</span><span class="p">)</span> <span class="o">+</span> <span class="n">B1</span> <span class="o">*</span> <span class="n">term3</span> <span class="o">+</span> <span class="n">B3</span> <span class="o">*</span> <span class="n">term4</span>
 
-    <span class="c1"># machine limit the output</span>
-    <span class="n">h_max</span> <span class="o">=</span> <span class="mi">300</span>
-    <span class="n">h</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">h_max</span><span class="p">)</span>
-    <span class="n">scor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+    <span class="c1"># Assume h &gt;= 0</span>
+    <span class="n">log_scor</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">scor</span></div>
+    <span class="k">return</span> <span class="n">log_scor</span></div>
 
 
 
@@ -1197,12 +1189,10 @@ document.write(`
     <span class="n">denom</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">Gamma_12_2</span>
     <span class="n">h12</span> <span class="o">=</span> <span class="n">numer</span> <span class="o">/</span> <span class="n">denom</span> <span class="o">*</span> <span class="n">h_fit</span>
 
-    <span class="c1"># machine limit the output</span>
-    <span class="n">h12_max</span> <span class="o">=</span> <span class="mi">300</span>
-    <span class="n">h12</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">h12</span><span class="p">,</span> <span class="n">h12_max</span><span class="p">)</span>
-    <span class="n">scor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h12</span><span class="p">)</span>
+    <span class="c1"># Assume h &gt;= 0</span>
+    <span class="n">log_scor</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">h12</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">scor</span></div>
+    <span class="k">return</span> <span class="n">log_scor</span></div>
 
 
 
@@ -1248,18 +1238,16 @@ document.write(`
 
     <span class="n">h12</span> <span class="o">=</span> <span class="n">f1</span> <span class="o">+</span> <span class="n">f2</span> <span class="o">-</span> <span class="n">f12</span>
 
-    <span class="c1"># machine limit the output</span>
-    <span class="n">h12_max</span> <span class="o">=</span> <span class="mi">300</span>
-    <span class="n">h12</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">h12</span><span class="p">,</span> <span class="n">h12_max</span><span class="p">)</span>
-    <span class="n">scor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h12</span><span class="p">)</span>
+    <span class="c1"># Assume h &gt;= 0</span>
+    <span class="n">log_scor</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">h12</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">scor</span></div>
+    <span class="k">return</span> <span class="n">log_scor</span></div>
 
 
 
 <div class="viewcode-block" id="screening_check">
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.screening_check">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">screening_check</span><span class="p">(</span><span class="n">check_func</span><span class="o">=</span><span class="n">debye_huckel</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.01</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">screening_check</span><span class="p">(</span><span class="n">check_func</span><span class="o">=</span><span class="n">debye_huckel</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-2</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a decorator factory that wraps a screening function with</span>
 <span class="sd">    a check that determines whether that function can be skipped for a</span>
 <span class="sd">    given plasma state and screening pair.</span>
