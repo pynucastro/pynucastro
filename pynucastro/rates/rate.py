@@ -428,14 +428,13 @@ class Rate:
             self.dens_exp = self.dens_exp + 1
 
     def _set_screening_pairs(self):
-        """ Find a list reactant pairs used for screening. For reactions
+        """Find a list reactant pairs used for screening. For reactions
         that use more than 2 reactants, intermediate composite nuclei is
         created for screening. For example, He4 + He4 + He4 → C12 give
         [(He4, He4), (He4, Be8)]. This assumes that ion_screen is set.
 
         """
 
-        self.screening_pairs = []
         if self.ion_screen:
             scr_reactants = self.ion_screen.copy()
             He4 = Nucleus("He4")
@@ -470,6 +469,7 @@ class Rate:
             self.ion_screen = nucz.copy()
 
         # Find screening_pairs
+        self.screening_pairs = []
         self._set_screening_pairs()
 
     def get_rate_id(self):

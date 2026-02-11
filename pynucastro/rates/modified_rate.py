@@ -93,6 +93,7 @@ class ModifiedRate(Rate):
             self.ion_screen = nucz.copy()
 
         # Find screening_pairs
+        self.screening_pairs = []
         self._set_screening_pairs()
 
     def log_eval(self, T, *, rho=None, comp=None,
