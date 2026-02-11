@@ -169,12 +169,11 @@ class TemperatureTabularRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, T):\n"
+        fstring += f"def {self.fname}(rate_eval, T, log_scor=0.0):\n"
         fstring += f"    # {self.rid}\n"
         fstring += f"    {self.fname}_interpolator = TempTableInterpolator(*{self.fname}_info)\n"
-
         fstring += f"    log_r = {self.fname}_interpolator.interpolate(T)\n"
-        fstring += f"    rate_eval.{self.fname} = np.exp(log_r)\n\n"
+        fstring += f"    rate_eval.{self.fname} = np.exp(log_r + log_scor)\n\n"
 
         return fstring
 
@@ -235,9 +234,9 @@ class TemperatureTabularRate(Rate):
 
         return fstring
 
-    def eval(self, T, *, rho=None, comp=None,
-             screen_func=None):
-        """Evaluate the reaction rate.
+    def log_eval(self, T, *, rho=None, comp=None,
+                 screen_func=None):
+        """Evaluate the natural log of reaction rate for temperature T.
 
         Parameters
         ----------
@@ -259,18 +258,17 @@ class TemperatureTabularRate(Rate):
 
         """
 
-        log_r = self.interpolator.interpolate(T)
-        r = np.exp(log_r)
+        log_rate = self.interpolator.interpolate(T)
 
-        scor = 1.0
+        log_scor = 0.0
         if screen_func is not None:
             if rho is None or comp is None:
                 raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
-            scor = self.evaluate_screening(rho, T, comp, screen_func)
+            log_scor = self.evaluate_screening(rho, T, comp, screen_func)
 
-        r *= scor
+        log_rate += log_scor
 
-        return r
+        return log_rate
 
     def plot(self, *, Tmin=None, Tmax=None, figsize=(6, 6),
              rho=None, comp=None, screen_func=None):

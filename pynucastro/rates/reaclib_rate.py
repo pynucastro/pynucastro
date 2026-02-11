@@ -65,6 +65,23 @@ class SingleSet:
         x = x and (self.derived_from_inverse == other.derived_from_inverse)
         return x
 
+    def log_f(self):
+        """Return a function for ``log_rate(tf)`` where ``tf`` is a
+        :py:class:`Tfactors <pynucastro.rates.rate.Tfactors>` object
+
+        Returns
+        -------
+        Callable
+
+        """
+        return lambda tf: (self.a[0] +
+                           self.a[1]*tf.T9i +
+                           self.a[2]*tf.T913i +
+                           self.a[3]*tf.T913 +
+                           self.a[4]*tf.T9 +
+                           self.a[5]*tf.T953 +
+                           self.a[6]*tf.lnT9)
+
     def f(self):
         """Return a function for ``rate(tf)`` where ``tf`` is a
         :py:class:`Tfactors <pynucastro.rates.rate.Tfactors>` object
@@ -74,13 +91,7 @@ class SingleSet:
         Callable
 
         """
-        return lambda tf: float(np.exp(self.a[0] +
-                                       self.a[1]*tf.T9i +
-                                       self.a[2]*tf.T913i +
-                                       self.a[3]*tf.T913 +
-                                       self.a[4]*tf.T9 +
-                                       self.a[5]*tf.T953 +
-                                       self.a[6]*tf.lnT9))
+        return lambda tf: float(np.exp(self.log_f()(tf)))
 
     def dfdT(self):
         """Return a function for the temperature derivative of the
@@ -636,17 +647,20 @@ class ReacLibRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf):\n"
+        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
         fstring += f"    # {self.rid}\n"
         fstring += "    rate = 0.0\n\n"
 
         for s in self.sets:
             fstring += f"    # {s.labelprops[0:5]}\n"
-            set_string = s.set_string_py(prefix="rate", plus_equal=True)
+            set_string = s.set_string_py(prefix="ln_set_rate", plus_equal=False, with_exp=False)
             for t in set_string.split("\n"):
                 fstring += "    " + t + "\n"
+            fstring += "\n"
+            fstring += "    ln_set_rate += log_scor\n"
+            fstring += "    set_rate = np.exp(ln_set_rate)\n"
+            fstring += "    rate += set_rate\n\n"
 
-        fstring += "\n"
         fstring += f"    rate_eval.{self.fname} = rate\n\n"
         return fstring
 
@@ -730,9 +744,10 @@ class ReacLibRate(Rate):
 
         return fstring
 
-    def eval(self, T, *, rho=None, comp=None,
-             screen_func=None):
-        """Evaluate the reaction rate for temperature T
+    def log_eval(self, T, *, rho=None, comp=None,
+                 screen_func=None):
+        """Evaluate the natural log of reaction rate for all the ReacLib sets
+        for temperature T.
 
         Parameters
         ----------
@@ -752,25 +767,24 @@ class ReacLibRate(Rate):
 
         Returns
         -------
-        float
+        list(float)
 
         """
 
         tf = Tfactors(T)
-        r = 0.0
-        for s in self.sets:
-            f = s.f()
-            r += f(tf)
+        log_rate = []
 
-        scor = 1.0
+        log_scor = 0.0
         if screen_func is not None:
             if rho is None or comp is None:
                 raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
-            scor = self.evaluate_screening(rho, T, comp, screen_func)
+            log_scor = self.evaluate_screening(rho, T, comp, screen_func)
 
-        r *= scor
+        for s in self.sets:
+            log_f = s.log_f()
+            log_rate.append(log_f(tf) + log_scor)
 
-        return r
+        return log_rate
 
     def eval_deriv(self, T, *, rho=None, comp=None):
         """Evaluate the derivative of reaction rate with respect to T.
