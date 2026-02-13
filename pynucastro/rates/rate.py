@@ -592,6 +592,7 @@ class Rate:
 
     def evaluate_screening(self, rho, T, composition, screen_func):
         """Evaluate the screening correction for this rate.
+        Note this returns log(screening).
 
         Parameters
         ----------
@@ -612,7 +613,7 @@ class Rate:
 
         ys = composition.get_molar()
         plasma_state = make_plasma_state(T, rho, ys)
-        scor = 1.0
+        log_scor = 0.0
 
         # We can have three cases:
         # 3-body reaction, i.e. 3-alpha: 2 ScreeningPair's
@@ -623,7 +624,7 @@ class Rate:
 
         # Handle 0 ScreeningPair case
         if not screening_map:
-            return scor
+            return log_scor
 
         # Handle 3-alpha case explicitly
         if "He4_He4_He4" in [scr.name for scr in screening_map]:
@@ -634,7 +635,7 @@ class Rate:
 
             for scr in screening_map:
                 scn_fac = make_screen_factors(scr.n1, scr.n2)
-                scor *= screen_func(plasma_state, scn_fac)
+                log_scor += screen_func(plasma_state, scn_fac)
 
         # Now handle 2-body reaction
         else:
@@ -646,9 +647,9 @@ class Rate:
             assert len(screening_map) == 1
 
             scn_fac = make_screen_factors(scr.n1, scr.n2)
-            scor = screen_func(plasma_state, scn_fac)
+            log_scor = screen_func(plasma_state, scn_fac)
 
-        return scor
+        return log_scor
 
     def ydot_string_py(self):
         """Construct the string containing the term in a dY/dt
@@ -689,10 +690,10 @@ class Rate:
 
         return "*".join(ydot_string_components)
 
-    def eval(self, T, *, rho=None, comp=None,
-             screen_func=None):
-        """Evaluate the reaction rate for temperature T.  This is a stub
-        and should be implemented by the derived class.
+    def log_eval(self, T, *, rho=None, comp=None,
+                 screen_func=None):
+        """Evaluate natural log of reaction rate for temperature T.
+        This is a stub and should be implemented by the derived class.
 
         Parameters
         ----------
@@ -714,7 +715,37 @@ class Rate:
 
         """
 
-        raise NotImplementedError("base Rate class does not know how to eval()")
+        raise NotImplementedError("base Rate class does not know how to log_eval()")
+
+    def eval(self, T, *, rho=None, comp=None,
+             screen_func=None):
+        """Evaluate the reaction rate for temperature T.
+
+        Parameters
+        ----------
+        T : float
+            the temperature to evaluate the rate at
+        rho : float
+            the density to evaluate the rate and screening effects at.
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            to evaluate the rate and screening effects with.
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the rate will include the screening correction
+
+        Raises
+        ------
+        float
+
+        """
+
+        # Convert to 1D array to consider cases where log_eval can return:
+        # 1) A scalar
+        # 2) A list of log_rates, e.g. ReacLib
+        log_rate = np.atleast_1d(self.log_eval(T, rho=rho, comp=comp, screen_func=screen_func))
+        return float(np.exp(log_rate).sum())
 
     def function_string_py(self):
         """Return a string containing the python function that
