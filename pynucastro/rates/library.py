@@ -1012,7 +1012,7 @@ class StarLibLibrary(Library):
 
     def __init__(self, seed=None):
         rates = []
-        with bz2.open(self.file_path,mode="rt") as f:
+        with bz2.open(self.file_path, mode="rt") as f:
             for header in f:
                 # Read header and relevant info
                 rate_info = self.parse_header(header)
@@ -1028,11 +1028,18 @@ class StarLibLibrary(Library):
                     if rate > 0.0:
                         log_rate.append(np.log(rate))
                     else:
-                        log_rate.append(-1.0e300)
+                        log_rate.append(-700)
 
                 #Skip unsupported al26 rates
                 unsupported_nuc = ["al-6", "al*6", "al01", "al02", "al03"]
                 if any(nuc in unsupported_nuc for nuc in rate_info["nuclides"]):
+                    continue
+
+                # The rate p+p-->d is repeated twice in Starlib as multiple sources are
+                # considered. To avoid duplicate rates, the theoretical rate is filtered out
+                if (rate_info["reactants"] == ['p', 'p'] and
+                    rate_info["products"] == ['d'] and
+                    rate_info["reference"] == 'ec'):
                     continue
 
                 # Convert data to np.arrays to ensure numpy operations
@@ -1041,14 +1048,11 @@ class StarLibLibrary(Library):
                 log_rate = np.array(log_rate)
                 sigma = np.array(sigma)
 
+                #Create rate
                 rate = StarLibRate(log_T9, log_rate, sigma, seed=seed,
                                    reactants=rate_info["reactants"],
                                    products=rate_info["products"],
                                    Q=rate_info["Q"])
-
-                #skip over duplicate rates
-                if any(r.rid == rate.rid for r in rates):
-                    continue
 
                 rates.append(rate)
         super().__init__(rates=rates)
