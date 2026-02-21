@@ -1035,14 +1035,7 @@ class StarLibLibrary(Library):
                 if any(nuc in unsupported_nuc for nuc in rate_info["nuclides"]):
                     continue
 
-                # The rate p+p-->d is repeated twice in Starlib as multiple sources are
-                # considered. To avoid duplicate rates, the theoretical rate is filtered out
-                if (rate_info["reactants"] == ['p', 'p'] and
-                    rate_info["products"] == ['d'] and
-                    rate_info["reference"] == 'ec'):
-                    continue
-
-                # Convert data to np.arrays to ensure numpy operations
+                # Convert data to np.array to ensure numpy operations
                 # are valid when sampling rates
                 log_T9 = np.array(log_T9)
                 log_rate = np.array(log_rate)
@@ -1052,10 +1045,12 @@ class StarLibLibrary(Library):
                 rate = StarLibRate(log_T9, log_rate, sigma, seed=seed,
                                    reactants=rate_info["reactants"],
                                    products=rate_info["products"],
-                                   Q=rate_info["Q"])
+                                   Q=rate_info["Q"],
+                                   rate_source=rate_info["reference"])
 
                 rates.append(rate)
         super().__init__(rates=rates)
+
 
     def parse_header(self, line):
         """Starlib provides its data in blocks where each block consists of
@@ -1083,8 +1078,7 @@ class StarLibLibrary(Library):
         products = nuclides[nreactants:]
 
         #In accordance with STARLIB documentation
-        reference = line[43:47].strip()
-        tag = line[47].strip()
+        reference = line[43:48].strip()
         Q_val = float(line[53:65].strip())
 
         return {"interaction_type": interaction_type,
@@ -1092,7 +1086,6 @@ class StarLibLibrary(Library):
                 "products": products,
                 "nuclides": nuclides,
                 "reference": reference,
-                "tag": tag,
                 "Q": Q_val}
 
 
