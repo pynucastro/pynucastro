@@ -20,7 +20,8 @@ import pynucastro.numba_util as numba
 
 from .quadrature_weights import w_lag, w_leg, x_lag, x_leg
 
-MAX_EXPONENT = np.trunc(np.log(np.finfo(np.float64).max))
+INFO = np.finfo(np.float64)
+MAX_EXPONENT = np.trunc(np.log(INFO.max))  # pylint: disable=no-member
 
 
 class BreakPoints:
