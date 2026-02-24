@@ -1051,7 +1051,6 @@ class StarLibLibrary(Library):
                 rates.append(rate)
         super().__init__(rates=rates)
 
-
     def parse_header(self, line):
         """Starlib provides its data in blocks where each block consists of
         a header followed by a 60 row grid of temperature, median rate and factor
