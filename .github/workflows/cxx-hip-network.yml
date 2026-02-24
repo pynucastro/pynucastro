@@ -53,7 +53,7 @@ jobs:
       - name: Regenerate ase-iron network
         run: |
           cd external/Microphysics/networks/he-burn/ase-iron
-          NPY_DISABLE_CPU_FEATURES="AVX512F AVX512CD AVX512_SKX" python ase_iron.py
+          NPY_DISABLE_CPU_FEATURES="X86_V4" python ase_iron.py
 
       - name: Compile nse_net_cell (NSE_NET, ase)
         run: |
