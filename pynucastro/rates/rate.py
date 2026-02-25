@@ -328,7 +328,7 @@ class Rate:
                     rhs_other.append("e+")
                     rhs_other.append("nu")
 
-                elif reactant_Zs + 1 == product_Zs
+                elif reactant_Zs + 1 == product_Zs:
                     rhs_other.append("e-")
                     rhs_other.append("nubar")
 
