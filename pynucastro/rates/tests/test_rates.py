@@ -278,7 +278,7 @@ class TestRate:
                                Nucleus("o16"): 1}
         c12ag._set_print_representation()  # pylint: disable=protected-access
 
-        assert repr(c12ag) == "C12 + 1.5 He4 ⟶ O16"
+        assert repr(c12ag) == "C12 + 1.5 He4 ⟶ O16 + e⁺ + 𝜈"
         assert c12ag.rid == "C12 + 1.5 He4 --> O16"
 
         assert c12ag.reactant_count(Nucleus("he4")) == 1.5
