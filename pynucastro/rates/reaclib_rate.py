@@ -336,7 +336,7 @@ class ReacLibRate(Rate):
         self.label = None
         self.resonant = None
         self.weak = None
-        self.weak_type = None
+        self.weak_type = ""
         self.derived_from_inverse = None
 
         self.removed = False
@@ -493,10 +493,11 @@ class ReacLibRate(Rate):
             if self.weak:
                 if self.src.strip() == 'ec' or self.src.strip() == 'bec':
                     self.weak_type = 'electron_capture'
-                else:
-                    self.weak_type = self.src.strip().replace('+', '_pos').replace('-', '_neg')
-            else:
-                self.weak_type = None
+                elif sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1:
+                    self.weak_type = "beta_pos"
+                elif sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products):
+                    self.weak_type = "beta_neg"
+
             self.derived_from_inverse = self.labelprops[5] == 'v'
 
     def _read_from_file(self, f):

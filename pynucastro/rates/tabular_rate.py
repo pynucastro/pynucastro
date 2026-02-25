@@ -287,7 +287,8 @@ class TabularRate(Rate):
             self.weak_type = "electron_capture"
 
         elif "betadecay" in str(table_file):
-            self.weak_type = "beta_decay"
+            # Assume beta-decay is beta_minus decay
+            self.weak_type = "beta_neg"
 
         # read in the table data
         # there are a few header lines that start with "!", which we skip,

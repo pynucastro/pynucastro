@@ -126,8 +126,23 @@ class Rate:
         if self.src is not None:
             self.source = RateSource.source(rate_source)
 
-        self.weak = False
+        # Figure out the weak rate type.
+        # If no weak_type is passed in, try to figure it out via charge conservation
+        # By assuming either beta minus decay or beta plus decay
         self.weak_type = weak_type
+        if not self.weak_type:
+            if sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1:
+                self.weak_type = "beta_pos"
+            elif sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products):
+                self.weak_type = "beta_neg"
+
+        # Currently only allow three weak rate types:
+        # 1. electron capture
+        # 2. beta-plus decay
+        # 3. beta-minus decay
+        assert self.weak_type in ("electron_capture", "beta_pos", "beta_neg")
+
+        self.weak = False
         if self.weak_type:
             self.weak = True
 
@@ -286,14 +301,7 @@ class Rate:
                 lhs_other.append("e-")
                 rhs_other.append("nu")
 
-            elif self.weak_type == "beta_decay":
-                # we expect an electron on the right
-                assert sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products)
-
-                rhs_other.append("e-")
-                rhs_other.append("nubar")
-
-            elif self.weak_type and "_pos_" in self.weak_type:
+            elif self.weak_type == "beta_pos":
 
                 # we expect a positron on the right -- let's make sure
                 assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
@@ -301,7 +309,7 @@ class Rate:
                 rhs_other.append("e+")
                 rhs_other.append("nu")
 
-            elif self.weak_type and "_neg_" in self.weak_type:
+            elif self.weak_type == "beta_neg":
 
                 # we expect an electron on the right -- let's make sure
                 assert sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products)
@@ -319,7 +327,6 @@ class Rate:
                     rhs_other.append("nu")
 
                 elif sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products):
-
                     rhs_other.append("e-")
                     rhs_other.append("nubar")
 
