@@ -298,7 +298,7 @@ class Rate:
 
                 # we expect an electron on the left -- let's make sure
                 # the charge on the left should be +1 the charge on the right
-                assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
+                assert reactant_Zs == product_Zs + 1
 
                 lhs_other.append("e-")
                 rhs_other.append("nu")
@@ -306,7 +306,7 @@ class Rate:
             elif self.weak_type == "beta_pos":
 
                 # we expect a positron on the right -- let's make sure
-                assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
+                assert reactant_Zs == product_Zs + 1
 
                 rhs_other.append("e+")
                 rhs_other.append("nu")
@@ -314,7 +314,7 @@ class Rate:
             elif self.weak_type == "beta_neg":
 
                 # we expect an electron on the right -- let's make sure
-                assert sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products)
+                assert reactant_Zs + 1 == product_Zs
 
                 rhs_other.append("e-")
                 rhs_other.append("nubar")
@@ -324,11 +324,11 @@ class Rate:
                 # we need to figure out what the rate is.  We'll assume that it is
                 # not an electron capture
 
-                if sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1:
+                if reactant_Zs == product_Zs + 1:
                     rhs_other.append("e+")
                     rhs_other.append("nu")
 
-                elif sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products):
+                elif reactant_Zs + 1 == product_Zs
                     rhs_other.append("e-")
                     rhs_other.append("nubar")
 
