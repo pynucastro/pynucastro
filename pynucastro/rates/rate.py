@@ -131,9 +131,11 @@ class Rate:
         # By assuming either beta minus decay or beta plus decay
         self.weak_type = weak_type
         if not self.weak_type:
-            if sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1:
+            reactant_Zs = sum(n.Z * self.reactant_count(n) for n in set(self.reactants))
+            product_Zs = sum(n.Z * self.product_count(n) for n in set(self.products))
+            if reactants_Zs == product_Zs + 1:
                 self.weak_type = "beta_pos"
-            elif sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products):
+            elif reactants_Zs + 1 == product_Zs:
                 self.weak_type = "beta_neg"
 
         # Currently only allow three weak rate types:

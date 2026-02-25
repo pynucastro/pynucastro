@@ -491,11 +491,13 @@ class ReacLibRate(Rate):
             self.resonant = self.labelprops[4] == 'r'
             self.weak = self.labelprops[4] == 'w'
             if self.weak:
+                reactant_Zs = sum(n.Z * self.reactant_count(n) for n in set(self.reactants))
+                product_Zs = sum(n.Z * self.product_count(n) for n in set(self.products))
                 if self.src.strip() == 'ec' or self.src.strip() == 'bec':
                     self.weak_type = 'electron_capture'
-                elif sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1:
+                elif reactant_Zs == product_Zs + 1:
                     self.weak_type = "beta_pos"
-                elif sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products):
+                elif reactant_Zs + 1 == product_Zs:
                     self.weak_type = "beta_neg"
 
             self.derived_from_inverse = self.labelprops[5] == 'v'
