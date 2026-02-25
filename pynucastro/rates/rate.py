@@ -133,9 +133,9 @@ class Rate:
         if not self.weak_type:
             reactant_Zs = sum(n.Z * self.reactant_count(n) for n in set(self.reactants))
             product_Zs = sum(n.Z * self.product_count(n) for n in set(self.products))
-            if reactants_Zs == product_Zs + 1:
+            if reactant_Zs == product_Zs + 1:
                 self.weak_type = "beta_pos"
-            elif reactants_Zs + 1 == product_Zs:
+            elif reactant_Zs + 1 == product_Zs:
                 self.weak_type = "beta_neg"
 
         # Currently only allow three weak rate types:
