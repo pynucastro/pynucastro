@@ -244,6 +244,11 @@ class TestRate:
         assert self.rate1.weak
         assert not self.rate2.weak
 
+    def test_weak_type(self):
+        assert self.rate1.weak_type == "beta_pos"
+        assert self.rate2.weak_type == ""
+        assert self.rate11.weak_type == "beta_neg"
+
     def test_screen(self):
         assert not self.rate1.ion_screen
         assert self.rate4.ion_screen == [Nucleus("he4"), Nucleus("c12")]
