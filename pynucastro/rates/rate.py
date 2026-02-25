@@ -140,7 +140,7 @@ class Rate:
         # 1. electron capture
         # 2. beta-plus decay
         # 3. beta-minus decay
-        assert self.weak_type in ("electron_capture", "beta_pos", "beta_neg")
+        assert self.weak_type in ("", "electron_capture", "beta_pos", "beta_neg")
 
         self.weak = False
         if self.weak_type:
