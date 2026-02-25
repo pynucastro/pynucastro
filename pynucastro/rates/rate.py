@@ -126,6 +126,10 @@ class Rate:
         if self.src is not None:
             self.source = RateSource.source(rate_source)
 
+        # some subclasses might define a stoichmetry as a dict{Nucleus}
+        # that gives the numbers for the dY/dt equations
+        self.stoichiometry = stoichiometry
+
         # Figure out the weak rate type.
         # If no weak_type is passed in, try to figure it out via charge conservation
         # By assuming either beta minus decay or beta plus decay
@@ -160,10 +164,6 @@ class Rate:
         # behavior, but for approximate rates, sometimes we need to
         # disable it.
         self.use_identical_particle_factor = use_identical_particle_factor
-
-        # some subclasses might define a stoichmetry as a dict{Nucleus}
-        # that gives the numbers for the dY/dt equations
-        self.stoichiometry = stoichiometry
 
         # Set Q-value of the reaction rate. Needs to go after stoichiometry.
         if Q is None:
