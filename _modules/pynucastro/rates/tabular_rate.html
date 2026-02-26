@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.tabular_rate &#8212; pynucastro 2.9.0.post35+g0375f4526 documentation</title>
+    <title>pynucastro.rates.tabular_rate &#8212; pynucastro 2.9.0.post36+g24e314d40 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=284d459f"></script>
+    <script src="../../../_static/documentation_options.js?v=be5abb15"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -779,7 +779,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="s2">&quot;electron_capture&quot;</span>
 
         <span class="k">elif</span> <span class="s2">&quot;betadecay&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">table_file</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="s2">&quot;beta_decay&quot;</span>
+            <span class="c1"># Assume beta-decay is beta_minus decay</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="s2">&quot;beta_neg&quot;</span>
 
         <span class="c1"># read in the table data</span>
         <span class="c1"># there are a few header lines that start with &quot;!&quot;, which we skip,</span>
