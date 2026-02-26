@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.9.0.post34+g455798fc0 documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.9.0.post35+g0375f4526 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=b1c5ed8a"></script>
+    <script src="../../../_static/documentation_options.js?v=284d459f"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1425,18 +1425,8 @@
 
     <span class="n">csv_path</span> <span class="o">=</span> <span class="n">_find_rate_file</span><span class="p">(</span><span class="s2">&quot;rate_sources.csv&quot;</span><span class="p">)</span>
 
-    <span class="n">urls</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;debo&quot;</span><span class="p">:</span> <span class="s2">&quot;https://doi.org/10.1103/RevModPhys.89.035007&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;langanke&quot;</span><span class="p">:</span> <span class="s2">&quot;https://doi.org/10.1006/adnd.2001.0865&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;suzuki&quot;</span><span class="p">:</span> <span class="s2">&quot;https://doi.org/10.3847/0004-637X/817/2/163&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;ffn&quot;</span><span class="p">:</span> <span class="s2">&quot;https://doi.org/10.1086/190779&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;pruet_fuller&quot;</span><span class="p">:</span> <span class="s2">&quot;https://doi.org/10.1086/376753&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;reaclib&quot;</span><span class="p">:</span> <span class="s2">&quot;https://reaclib.jinaweb.org/labels.php?action=viewLabel&amp;label=&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;iliadis2022&quot;</span><span class="p">:</span> <span class="s2">&quot;https://journals.aps.org/prc/abstract/10.1103/PhysRevC.106.055802&quot;</span>
-    <span class="p">}</span>
-
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_read_rate_sources</span><span class="p">(</span><span class="n">urls</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">csv_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_rate_sources</span><span class="p">(</span><span class="n">csv_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Build the labels dictionary from the supplied csv file.&quot;&quot;&quot;</span>
 
         <span class="n">labels</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1446,11 +1436,11 @@
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
                 <span class="n">cells</span> <span class="o">=</span> <span class="p">[</span><span class="n">cell</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)]</span>
                 <span class="n">label</span> <span class="o">=</span> <span class="n">cells</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">label_data</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">label</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">column_titles</span><span class="p">,</span> <span class="n">cells</span><span class="p">))</span>
-                <span class="n">label_data</span><span class="p">[</span><span class="s2">&quot;URL&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">urls</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">urls</span><span class="p">[</span><span class="s2">&quot;reaclib&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">label</span><span class="p">)</span>
+                <span class="n">labels</span><span class="p">[</span><span class="n">label</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">column_titles</span><span class="p">,</span> <span class="n">cells</span><span class="p">))</span>
+
         <span class="k">return</span> <span class="n">labels</span>
 
-    <span class="n">labels</span> <span class="o">=</span> <span class="n">_read_rate_sources</span><span class="p">(</span><span class="n">urls</span><span class="p">,</span> <span class="n">csv_path</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">_read_rate_sources</span><span class="p">(</span><span class="n">csv_path</span><span class="p">)</span>
 
 <div class="viewcode-block" id="RateSource.source">
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.RateSource.source">[docs]</a>
