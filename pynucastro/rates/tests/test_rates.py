@@ -244,6 +244,11 @@ class TestRate:
         assert self.rate1.weak
         assert not self.rate2.weak
 
+    def test_weak_type(self):
+        assert self.rate1.weak_type == "beta_pos"
+        assert self.rate2.weak_type == ""
+        assert self.rate11.weak_type == "beta_neg"
+
     def test_screen(self):
         assert not self.rate1.ion_screen
         assert self.rate4.ion_screen == [Nucleus("he4"), Nucleus("c12")]
@@ -273,7 +278,7 @@ class TestRate:
                                Nucleus("o16"): 1}
         c12ag._set_print_representation()  # pylint: disable=protected-access
 
-        assert repr(c12ag) == "C12 + 1.5 He4 ⟶ O16"
+        assert repr(c12ag) == "C12 + 1.5 He4 ⟶ O16 + e⁺ + 𝜈"
         assert c12ag.rid == "C12 + 1.5 He4 --> O16"
 
         assert c12ag.reactant_count(Nucleus("he4")) == 1.5
