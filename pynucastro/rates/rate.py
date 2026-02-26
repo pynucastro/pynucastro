@@ -888,18 +888,8 @@ class RateSource:
 
     csv_path = _find_rate_file("rate_sources.csv")
 
-    urls = {
-        "debo": "https://doi.org/10.1103/RevModPhys.89.035007",
-        "langanke": "https://doi.org/10.1006/adnd.2001.0865",
-        "suzuki": "https://doi.org/10.3847/0004-637X/817/2/163",
-        "ffn": "https://doi.org/10.1086/190779",
-        "pruet_fuller": "https://doi.org/10.1086/376753",
-        "reaclib": "https://reaclib.jinaweb.org/labels.php?action=viewLabel&label=",
-        "iliadis2022": "https://journals.aps.org/prc/abstract/10.1103/PhysRevC.106.055802"
-    }
-
     @staticmethod
-    def _read_rate_sources(urls: dict[str, str], csv_path: Path) -> dict[str, dict[str, str]]:
+    def _read_rate_sources(csv_path: Path) -> dict[str, dict[str, str]]:
         """Build the labels dictionary from the supplied csv file."""
 
         labels = {}
@@ -909,11 +899,11 @@ class RateSource:
             for line in lines[1:]:
                 cells = [cell.strip() for cell in line.split("|")]
                 label = cells[0]
-                label_data = labels[label.lower()] = dict(zip(column_titles, cells))
-                label_data["URL"] = urls.get(label, urls["reaclib"] + label)
+                labels[label.lower()] = dict(zip(column_titles, cells))
+
         return labels
 
-    labels = _read_rate_sources(urls, csv_path)
+    labels = _read_rate_sources(csv_path)
 
     @classmethod
     def source(cls, label: str) -> dict[str, str] | None:
