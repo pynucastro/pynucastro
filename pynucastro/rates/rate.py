@@ -899,7 +899,7 @@ class RateSource:
             for line in lines[1:]:
                 cells = [cell.strip() for cell in line.split("|")]
                 label = cells[0]
-                label_data = labels[label.lower()] = dict(zip(column_titles, cells))
+                labels[label.lower()] = dict(zip(column_titles, cells))
 
         return labels
 
