@@ -347,6 +347,8 @@ class ReacLibRate(Rate):
         assert self.weak == other.weak
         assert self.weak_type == other.weak_type
         assert self.derived_from_inverse == other.derived_from_inverse
+        if self.resonant != other.resonant:
+            self.labelprops = self.labelprops[:4] + 'c' + self.labelprops[5:]
 
         new_rate = ReacLibRate(reactants=self.reactants,
                                products=self.products,
@@ -355,7 +357,7 @@ class ReacLibRate(Rate):
                                weak_type=self.weak_type,
                                rate_source=self.src)
 
-        # Now modify the metadata
+        # Update the metadata for the rate data file
         new_rate.rfile_name = self.rfile_name | other.rfile_name
         new_rate.rfile_path = self.rfile_path | other.rfile_path
         new_rate.chapter = self.chapter
