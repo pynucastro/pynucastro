@@ -285,8 +285,8 @@ class ReacLibRate(Rate):
                  sets=None, Q=None, weak_type="", rate_source=None):
 
         # Metadata for rate data files
-        self.rfile_name = set(None)
-        self.rfile_path = set(None)
+        self.rfile_name = set([None])
+        self.rfile_path = set([None])
         self.original_data = None
         self.chapter = None
         self.labelprops = None
