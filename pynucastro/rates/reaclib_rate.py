@@ -269,11 +269,15 @@ class ReacLibRate(Rate):
         the products for the reaction
     sets : list(SingleSet)
         the sets that make up the rate
+    Q : float
+        the energy release (in MeV)
+    weak_type : str
+        the type of weak reaction the rate represents.
+        Possible values include "electron_capture", "beta_pos", or
+        "beta_neg"
     rate_source: str
         the key to get the source information for the rate
         from rate_sources.csv
-    Q : float
-        the energy release (in MeV)
 
     """
 
