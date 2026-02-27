@@ -285,8 +285,8 @@ class ReacLibRate(Rate):
                  sets=None, Q=None, weak_type="", rate_source=None):
 
         # Metadata for rate data files
-        self.rfile_name = set([None])
-        self.rfile_path = set([None])
+        self.rfile_name = set()
+        self.rfile_path = set()
         self.original_data = None
         self.chapter = None
         self.labelprops = None
@@ -578,8 +578,10 @@ class ReacLibRate(Rate):
                   weak_type=weak_type, rate_source=rate_source)
 
         # Store file-specific metadata
-        obj.rfile_name.add(rate_data["rfile_name"])
-        obj.rfile_path.add(rate_data["rfile_path"])
+        if (rfile_name := rate_data["rfile_name"]) is not None:
+            obj.rfile_name.add(rfile_name)
+        if (rfile_path := rate_data["rfile_path"]) is not None:
+            obj.rfile_path.add(rfile_path)
         obj.original_data = rate_data["original_data"]
         obj.chapter = rate_data["chapter"]
         obj.labelprops = rate_data["labelprops"]
