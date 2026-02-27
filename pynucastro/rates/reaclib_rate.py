@@ -570,7 +570,7 @@ class ReacLibRate(Rate):
         # Explicitly handle electron-capture weak type.
         # Otherwise the constructor automatically determines beta-decay type.
         weak_type = ""
-        if rate_source.strip() in ("ec" or "bec"):
+        if rate_source.strip() in ("ec", "bec"):
             weak_type = "electron_capture"
 
         obj = cls(reactants=rate_data["reactants"], products=rate_data["products"],
