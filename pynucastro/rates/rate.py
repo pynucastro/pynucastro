@@ -102,7 +102,7 @@ class Rate:
         count of each nucleus in the list of reactants and products
         will be used.
     rate_source: str
-        the key to get the soure information for the rate
+        the key to get the source information for the rate
         from rate_sources.csv
     use_identical_particle_factor : bool
         For a rate that has the same nucleus multiple times as a reactant

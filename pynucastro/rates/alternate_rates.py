@@ -22,7 +22,7 @@ class DeBoerC12agO16(ReacLibRate):
         products = [Nucleus("o16")]
 
         super().__init__(reactants=reactants, products=products,
-                         rate_source="deboer")
+                         rate_source="deboer2017")
 
         # from DeBoer et al. 2017
         # https://arxiv.org/pdf/1709.03144

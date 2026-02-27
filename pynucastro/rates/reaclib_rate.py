@@ -270,7 +270,7 @@ class ReacLibRate(Rate):
     sets : list(SingleSet)
         the sets that make up the rate
     rate_source: str
-        the key to get the soure information for the rate
+        the key to get the source information for the rate
         from rate_sources.csv
     Q : float
         the energy release (in MeV)
@@ -281,8 +281,8 @@ class ReacLibRate(Rate):
                  sets=None, Q=None, weak_type="", rate_source=None):
 
         # Metadata for rate data files
-        self.rfile_name = set()
-        self.rfile_path = set()
+        self.rfile_name = set(None)
+        self.rfile_path = set(None)
         self.original_data = None
         self.chapter = None
         self.labelprops = None
@@ -547,7 +547,7 @@ class ReacLibRate(Rate):
 
     @classmethod
     def from_file(cls, rfile):
-        """Constructs the ReacLibRate given the rfile.
+        """Construct the ReacLibRate object given the rfile.
 
         Parameters
         ----------
