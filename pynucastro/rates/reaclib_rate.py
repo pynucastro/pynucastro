@@ -11,7 +11,7 @@ import numpy as np
 
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.files import RateFileError, _find_rate_file
-from pynucastro.rates.rate import Rate, RateSource, Tfactors
+from pynucastro.rates.rate import Rate, Tfactors
 
 
 class SingleSet:
@@ -263,118 +263,39 @@ class ReacLibRate(Rate):
 
     Parameters
     ----------
-    rfile : str, pathlib.Path, io.StringIO
-        the data file or string containing the rate in ReacLib format.
-    chapter : int
-        the ReacLib chapter describing the number of reactants and products
-    original_source : str
-        the original source.  This is usually set automatically when
-        reading ``rfile``, but can be manually provided when adding
-        rates together.
     reactants : list(str), list(Nucleus)
         the reactants for the reaction
     products : list(str), list(Nucleus)
         the products for the reaction
     sets : list(SingleSet)
         the sets that make up the rate
-    labelprops : str
-        a collection of flags that classify a ReacLib rate
+    rate_source: str
+        the key to get the soure information for the rate
+        from rate_sources.csv
     Q : float
         the energy release (in MeV)
 
-    Raises
-    ------
-    RateFileError
-        If the rate file is not correctly formatted.
-    UnsupportedNucleus
-        If the nucleus is unknown to pynucastro
-
     """
 
-    def __init__(self, rfile=None, chapter=None, original_source=None,
-                 reactants=None, products=None, sets=None, labelprops=None, Q=None):
-        # pylint: disable=super-init-not-called
+    def __init__(self, reactants=None, products=None,
+                 sets=None, Q=None, weak_type="", rate_source=None):
 
-        self.rfile_path = None
-        self.rfile = None
-        self.source = None
+        # Metadata for rate data files
+        self.rfile_name = set()
+        self.rfile_path = set()
+        self.original_data = None
+        self.chapter = None
+        self.labelprops = None
 
-        if isinstance(rfile, (str, Path)):
-            rfile = Path(rfile)
-            self.rfile_path = _find_rate_file(rfile)
-            self.rfile = rfile.name
-
-        self.chapter = chapter    # the Reaclib chapter for this reaction
-        self.original_source = original_source   # the contents of the original rate file
-
-        if reactants:
-            self.reactants = Nucleus.cast_list(reactants)
-        else:
-            self.reactants = []
-
-        if products:
-            self.products = Nucleus.cast_list(products)
-        else:
-            self.products = []
-
-        if sets:
+        if sets is not None:
             self.sets = sets
         else:
             self.sets = []
 
-        # a modified rate is one where we manually changed some of its
-        # properties
-
-        self.modified = False
-
-        self.labelprops = labelprops
-
-        self.approx = self.labelprops == "approx"
-
-        self.derived = self.labelprops == "derived"
-
-        self.label = None
-        self.resonant = None
-        self.weak = None
-        self.weak_type = ""
-        self.derived_from_inverse = None
-
-        self.removed = False
-        self.tabular = False
-
-        self.use_identical_particle_factor = True
-
-        self.rate_eval_needs_rho = False
-        self.rate_eval_needs_comp = False
-
-        # some subclasses might define a stoichmetry as a dict{Nucleus}
-        # that gives the numbers for the dY/dt equations
-        self.stoichiometry = None
-
-        if Q is None:
-            self._set_q()
-        else:
-            self.Q = Q
-
-        if isinstance(rfile, Path):
-            # read in the file, parse the different sets and store them as
-            # SingleSet objects in sets[]
-            f = self.rfile_path.open()
-        elif isinstance(rfile, io.StringIO):
-            # Set f to the io.StringIO object
-            f = rfile
-        else:
-            f = None
-
-        if f:
-            self._read_from_file(f)
-            f.close()
-        else:
-            self._set_label_properties()
-
-        self._set_rhs_properties()
-        self._set_screening()
-        self._set_print_representation()
+        super().__init__(reactants=reactants, products=products,
+                         Q=Q, weak_type=weak_type, label="reaclib",
+                         stoichiometry=None, rate_source=rate_source,
+                         use_identical_particle_factor=True)
 
     def __hash__(self):
         return hash(self.__repr__())
@@ -423,106 +344,97 @@ class ReacLibRate(Rate):
         assert self.weak_type == other.weak_type
         assert self.derived_from_inverse == other.derived_from_inverse
 
-        if self.resonant != other.resonant:
-            self._labelprops_combine_resonance()
-        new_rate = ReacLibRate(chapter=self.chapter,
-                               original_source='\n'.join([self.original_source,
-                                                          other.original_source]),
-                               reactants=self.reactants,
+        new_rate = ReacLibRate(reactants=self.reactants,
                                products=self.products,
                                sets=self.sets + other.sets,
-                               labelprops=self.labelprops,
-                               Q=self.Q)
+                               Q=self.Q,
+                               weak_type=self.weak_type,
+                               rate_source=self.src)
+
+        # Now modify the metadata
+        new_rate.rfile_name = self.rfile_name | other.rfile_name
+        new_rate.rfile_path = self.rfile_path | other.rfile_path
+        new_rate.chapter = self.chapter
+        new_rate.original_data = '\n'.join([self.original_data,
+                                            other.original_data])
+        new_rate.labelprops = self.labelprops
+
+        # Update label based on labelprops
+        new_rate._set_label_properties()
+
         return new_rate
 
-    def _set_label_properties(self, labelprops=None):
-        """Call _update_resonance_combined and then
-        _update_label_properties.
+    def _set_label_properties(self):
+        """Update labelprops based on the Sets in this Rate
+        to set the resonance_combined flag properly.
+        And update different rate properties based on labelprops.
 
         """
-        if labelprops:
-            self.labelprops = labelprops
 
-        # Update labelprops based on the Sets in this Rate
-        # to set the resonance_combined flag properly
-        self._update_resonance_combined()
-        self._update_label_properties()
-
-    def _update_resonance_combined(self):
-        """Check the Sets in this Rate and updates the
-        resonance_combined flag as well as self.labelprops[4]
-
-        """
-        sres = [s.resonant for s in self.sets]
-        if True in sres and False in sres:
-            self._labelprops_combine_resonance()
-
-    def _labelprops_combine_resonance(self):
-        """Update self.labelprops[4] = 'c'"""
-        llp = list(self.labelprops)
-        llp[4] = 'c'
-        self.labelprops = ''.join(llp)
-
-    def _update_label_properties(self):
-        """Set label and flags indicating Rate is resonant, weak, or
-        reverse.
-
-        """
-        assert isinstance(self.labelprops, str)
-        if self.labelprops == "approx":
-            self.label = "approx"
-            self.src = ""
-            self.resonant = False
-            self.weak = False
-            self.weak_type = None
-            self.derived_from_inverse = False
-        elif self.labelprops == "derived":
-            self.label = "derived"
-            self.src = ""
-            self.resonant = False  # Derived may be resonant in some cases
-            self.weak = False
-            self.weak_type = None
-            self.derived_from_inverse = False
-        else:
+        if self.labelprops is not None:
+            assert isinstance(self.labelprops, str)
             assert len(self.labelprops) == 6
-            self.label = "reaclib"
-            self.src = self.labelprops[0:4]
-            self.source = RateSource.source(self.src)
+
+            # Update labelprops with 'c' to indicate resonance_combined
+            sres = [s.resonant for s in self.sets]
+            if True in sres and False in sres:
+                self.labelprops = self.labelprops[:4] + 'c' + self.labelprops[5:]
+
+            # Update other flags
             self.resonant = self.labelprops[4] == 'r'
             self.weak = self.labelprops[4] == 'w'
-            if self.weak:
-                reactant_Zs = sum(n.Z * self.reactant_count(n) for n in set(self.reactants))
-                product_Zs = sum(n.Z * self.product_count(n) for n in set(self.products))
-                if self.src.strip() == 'ec' or self.src.strip() == 'bec':
-                    self.weak_type = 'electron_capture'
-                elif reactant_Zs == product_Zs + 1:
-                    self.weak_type = "beta_pos"
-                elif reactant_Zs + 1 == product_Zs:
-                    self.weak_type = "beta_neg"
-
             self.derived_from_inverse = self.labelprops[5] == 'v'
 
-    def _read_from_file(self, f):
+    @staticmethod
+    def _read_from_file(rfile):
         """Given a file object, read rate data from the file.
 
         Parameters
         ----------
-        f : io.TextIOWrapper, io.StringIO
+        rfile : str, pathlib.Path, io.StringIO
+            the data file or string containing the rate in ReacLib format.
 
+        Returns
+        -------
+        dict(str)
         """
+
+        if not isinstance(rfile, (str, Path, io.StringIO)):
+            raise TypeError(f"rfile must be a str or pathlib.Path or io.StringIO, "
+                            f"got {type(rfile).__name__}")
+
+        rfile_name = None
+        rfile_path = None
+        if isinstance(rfile, (str, Path)):
+            rfile = Path(rfile)
+            rfile_name = rfile.name
+            rfile_path = _find_rate_file(rfile)
+
+            # Read in the rate data file
+            f = rfile_path.open()
+        else:
+            # Set f to the io.StringIO object
+            assert isinstance(rfile, io.StringIO)
+            f = rfile
+
         lines = f.readlines()
         f.close()
 
-        self.original_source = "".join(lines)
+        # Get the original rate data content
+        original_data = "".join(lines)
 
         # first line is the chapter
-        self.chapter = lines[0].strip()
-        self.chapter = int(self.chapter)
+        chapter = int(lines[0].strip())
 
         # remove any blank lines
         set_lines = [line for line in lines[1:] if not line.strip() == ""]
 
-        # the rest is the sets
+        # Initialize in case of potential using variable before assignment
+        reactants = []
+        products = []
+
+        # the rest is the sets, which can have multiple of them.
+        sets = []
         first = 1
         while len(set_lines) > 0:
             # check for a new chapter id in case of Reaclib v2 format
@@ -532,8 +444,8 @@ class ReacLibRate(Rate):
                 check_chapter = int(check_chapter)
                 # check that the chapter number is the same as the first
                 # set in this rate file
-                if check_chapter != self.chapter:
-                    raise RateFileError(f'read chapter {check_chapter}, expected chapter {self.chapter} for this rate set.')
+                if check_chapter != chapter:
+                    raise RateFileError(f'read chapter {check_chapter}, expected chapter {chapter} for this rate set.')
                 # get rid of chapter number so we can read a rate set
                 set_lines.pop(0)
             except (TypeError, ValueError):
@@ -575,8 +487,6 @@ class ReacLibRate(Rate):
             Q = float(s1.strip())
 
             if first:
-                self.Q = Q
-
                 # what's left are the nuclei -- their interpretation
                 # depends on the chapter
 
@@ -595,17 +505,17 @@ class ReacLibRate(Rate):
                 }
 
                 try:
-                    r, p = chapter_dict[self.chapter]
-                    self.reactants += [Nucleus.from_cache(f[i-1]) for i in r]
-                    self.products += [Nucleus.from_cache(f[j-1]) for j in p]
+                    r, p = chapter_dict[chapter]
+                    reactants = [Nucleus.from_cache(f[i-1]) for i in r]
+                    products = [Nucleus.from_cache(f[j-1]) for j in p]
 
                     # support historical format, where chapter 8 also handles what are
                     # now chapter 9 rates
-                    if self.chapter == 8 and len(f) == 5:
-                        self.products.append(Nucleus.from_cache(f[4]))
+                    if chapter == 8 and len(f) == 5:
+                        products.append(Nucleus.from_cache(f[4]))
 
                 except KeyError as exc:
-                    raise RateFileError(f'Chapter {self.chapter} could not be identified in {self.original_source}') from exc
+                    raise RateFileError(f'Chapter {chapter} could not be identified in {original_data}') from exc
 
                 first = 0
 
@@ -617,8 +527,63 @@ class ReacLibRate(Rate):
             a += [s3[i:i+n] for i in range(0, len(s3), n)]
 
             a = [float(e) for e in a if not e.strip() == ""]
-            self.sets.append(SingleSet(a, labelprops=labelprops))
-            self._set_label_properties(labelprops)
+            sets.append(SingleSet(a, labelprops=labelprops))
+
+            # Update labelprops to have "c" -- combined
+            # when we a mix of resonant and non-resonant sets
+            sres = [s.resonant for s in sets]
+            if True in sres and False in sres:
+                labelprops = labelprops[:4] + 'c' + labelprops[5:]
+
+        return {"rfile_name": rfile_name,
+                "rfile_path": rfile_path,
+                "original_data": original_data,
+                "chapter": chapter,
+                "reactants": reactants,
+                "products": products,
+                "sets": sets,
+                "labelprops": labelprops,
+                "Q": Q}
+
+    @classmethod
+    def from_file(cls, rfile):
+        """Constructs the ReacLibRate given the rfile.
+
+        Parameters
+        ----------
+        rfile : str, pathlib.Path, io.StringIO
+            the data file or string containing the rate in ReacLib format.
+
+        Returns
+        -------
+        ReacLibRate
+        """
+
+        # Parse the data and create the Rate
+        rate_data = cls._read_from_file(rfile)
+        rate_source = rate_data["labelprops"][0:4]
+
+        # Explicitly handle electron-capture weak type.
+        # Otherwise the constructor automatically determines beta-decay type.
+        weak_type = ""
+        if rate_source.strip() in ("ec" or "bec"):
+            weak_type = "electron_capture"
+
+        obj = cls(reactants=rate_data["reactants"], products=rate_data["products"],
+                  sets=rate_data["sets"], Q=rate_data["Q"],
+                  weak_type=weak_type, rate_source=rate_source)
+
+        # Store file-specific metadata
+        obj.rfile_name.add(rate_data["rfile_name"])
+        obj.rfile_path.add(rate_data["rfile_path"])
+        obj.original_data = rate_data["original_data"]
+        obj.chapter = rate_data["chapter"]
+        obj.labelprops = rate_data["labelprops"]
+
+        # Update properties based on labelprops
+        obj._set_label_properties()
+
+        return obj
 
     def write_to_file(self, f):
         """Given a file object, write rate data to the file.
@@ -629,14 +594,14 @@ class ReacLibRate(Rate):
 
         """
 
-        if self.original_source is None:
+        if self.original_data is None:
             raise NotImplementedError(
-                f"Original source is not stored for this rate ({self})."
+                f"Original rate data is not stored for this rate ({self})."
                 " At present, we cannot reconstruct the rate representation without"
-                " storing the original source."
+                " storing the original rate data"
             )
 
-        print(self.original_source, file=f)
+        print(self.original_data, file=f)
 
     def function_string_py(self):
         """Return a string containing the python function that

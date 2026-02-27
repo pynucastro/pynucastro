@@ -18,21 +18,17 @@ class DeBoerC12agO16(ReacLibRate):
 
     def __init__(self):
 
-        labelprops = "deboer"
-
         reactants = [Nucleus("c12"), Nucleus("he4")]
         products = [Nucleus("o16")]
 
-        # we'll use the same chapter notation as ReacLib
-        chapter = 4
-
         super().__init__(reactants=reactants, products=products,
-                         chapter=chapter,
-                         labelprops=labelprops)
+                         rate_source="deboer")
 
         # from DeBoer et al. 2017
         # https://arxiv.org/pdf/1709.03144
         # table XXVI
+
+        labelprops = "deboer"
 
         # non-resonant
         a = [24.1, 0.0, -32.0, -5.9, 1.8, -0.17, -2./3.]

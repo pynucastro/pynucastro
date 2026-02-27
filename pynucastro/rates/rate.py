@@ -91,11 +91,19 @@ class Rate:
         the energy release (in MeV) for the rate
     weak_type : str
         the type of weak reaction the rate represents.
-        Possible values include "electron_capture", "beta_decay", or
-        may include "_pos_" or "_neg_".
+        Possible values include "electron_capture", "beta_pos", or
+        "beta_neg"
     label : str
         A descriptive label for the rate (usually representative of the
         source
+    stoichiometry : dict(Nucleus)
+        a custom set of coefficients to be used in the evolution
+        equations dY(Nucleus)/dt.  If this is not set, then simply the
+        count of each nucleus in the list of reactants and products
+        will be used.
+    rate_source: str
+        the key to get the soure information for the rate
+        from rate_sources.csv
     use_identical_particle_factor : bool
         For a rate that has the same nucleus multiple times as a reactant
         we apply a multiplicity factor, N!, where N is the number of times
@@ -155,8 +163,9 @@ class Rate:
         self.removed = False
         self.modified = False
         self.tabular = False
-        self.derived_from_inverse = False
         self.approx = False
+        self.resonant = False
+        self.derived_from_inverse = False
 
         # the identical particle factor scales the rate to prevent
         # double counting for a rate that has the same nucleus
