@@ -82,6 +82,13 @@ class Nucleus:
         experimentally strong arguments
     """
 
+    __slots__ = ["raw", "dummy", "nse",
+                 "el", "short_spec_name", "spec_name",
+                 "caps_name", "pretty",
+                 "A", "Z", "N",
+                 "spin_states", "spin_reliable", "partition_function",
+                 "dm", "A_nuc", "mass", "nucbind", "tau"]
+
     _cache = {}
 
     def __init__(self, name, dummy=False):
