@@ -39,6 +39,6 @@ def load_rate(rfile=None):
     try:
         rate = TabularRate(rfile=rfile)
     except (AttributeError, RateFileError, UnsupportedNucleus):
-        rate = ReacLibRate(rfile=rfile)
+        rate = ReacLibRate.from_file(rfile=rfile)
 
     return rate
