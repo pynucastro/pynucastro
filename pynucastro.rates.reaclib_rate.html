@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.reaclib_rate module &#8212; pynucastro 2.9.0.post39+gf0239ddff documentation</title>
+    <title>pynucastro.rates.reaclib_rate module &#8212; pynucastro 2.9.0.post40+g86e163cd2 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=09114695"></script>
+    <script src="_static/documentation_options.js?v=4cae9290"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -564,6 +564,7 @@
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate"><code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.eval_deriv"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.eval_deriv()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.from_file"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.from_file()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.function_string_cxx"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.function_string_cxx()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.function_string_py"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.function_string_py()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.get_rate_exponent"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.get_rate_exponent()</span></code></a></li>
@@ -598,29 +599,22 @@
 library.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.reaclib_rate.ReacLibRate">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.reaclib_rate.</span></span><span class="sig-name descname"><span class="pre">ReacLibRate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chapter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reactants</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">products</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelprops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/reaclib_rate.html#ReacLibRate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.reaclib_rate.ReacLibRate" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.reaclib_rate.</span></span><span class="sig-name descname"><span class="pre">ReacLibRate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reactants</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">products</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weak_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/reaclib_rate.html#ReacLibRate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.reaclib_rate.ReacLibRate" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rate</span></code></a></p>
 <p>A single reaction rate from the ReacLib library, which
 can be composed of multiple sets.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rfile</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><em>pathlib.Path</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/io.html#io.StringIO" title="(in Python v3.14)"><em>io.StringIO</em></a>) – the data file or string containing the rate in ReacLib format.</p></li>
-<li><p><strong>chapter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – the ReacLib chapter describing the number of reactants and products</p></li>
-<li><p><strong>original_source</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – the original source.  This is usually set automatically when
-reading <code class="docutils literal notranslate"><span class="pre">rfile</span></code>, but can be manually provided when adding
-rates together.</p></li>
 <li><p><strong>reactants</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>)</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>(</em><a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a><em>)</em>) – the reactants for the reaction</p></li>
 <li><p><strong>products</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>)</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>(</em><a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a><em>)</em>) – the products for the reaction</p></li>
 <li><p><strong>sets</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>(</em><a class="reference internal" href="#pynucastro.rates.reaclib_rate.SingleSet" title="pynucastro.rates.reaclib_rate.SingleSet"><em>SingleSet</em></a><em>)</em>) – the sets that make up the rate</p></li>
-<li><p><strong>labelprops</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – a collection of flags that classify a ReacLib rate</p></li>
 <li><p><strong>Q</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the energy release (in MeV)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="pynucastro.rates.files.html#pynucastro.rates.files.RateFileError" title="pynucastro.rates.files.RateFileError"><strong>RateFileError</strong></a> – If the rate file is not correctly formatted.</p></li>
-<li><p><a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.UnsupportedNucleus" title="pynucastro.nucdata.nucleus.UnsupportedNucleus"><strong>UnsupportedNucleus</strong></a> – If the nucleus is unknown to pynucastro</p></li>
+<li><p><strong>weak_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – the type of weak reaction the rate represents.
+Possible values include “electron_capture”, “beta_pos”, or
+“beta_neg”</p></li>
+<li><p><strong>rate_source</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – the key to get the source information for the rate
+from rate_sources.csv</p></li>
 </ul>
 </dd>
 </dl>
@@ -642,6 +636,20 @@ to evaluate the rate with (not needed for ReacLib rates).</p></li>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.rates.reaclib_rate.ReacLibRate.from_file">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rfile</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/reaclib_rate.html#ReacLibRate.from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.reaclib_rate.ReacLibRate.from_file" title="Link to this definition">#</a></dt>
+<dd><p>Construct the ReacLibRate object given the rfile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rfile</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><em>pathlib.Path</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/io.html#io.StringIO" title="(in Python v3.14)"><em>io.StringIO</em></a>) – the data file or string containing the rate in ReacLib format.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#pynucastro.rates.reaclib_rate.ReacLibRate" title="pynucastro.rates.reaclib_rate.ReacLibRate">ReacLibRate</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -932,6 +940,7 @@ with a derived rate for reaclib rate.</p></li>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate"><code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.eval_deriv"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.eval_deriv()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.from_file"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.from_file()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.function_string_cxx"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.function_string_cxx()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.function_string_py"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.function_string_py()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.reaclib_rate.ReacLibRate.get_rate_exponent"><code class="docutils literal notranslate"><span class="pre">ReacLibRate.get_rate_exponent()</span></code></a></li>

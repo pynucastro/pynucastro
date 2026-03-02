@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.alternate_rates &#8212; pynucastro 2.9.0.post39+gf0239ddff documentation</title>
+    <title>pynucastro.rates.alternate_rates &#8212; pynucastro 2.9.0.post40+g86e163cd2 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=09114695"></script>
+    <script src="../../../_static/documentation_options.js?v=4cae9290"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -504,21 +504,17 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="n">labelprops</span> <span class="o">=</span> <span class="s2">&quot;deboer&quot;</span>
-
         <span class="n">reactants</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)]</span>
         <span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">)]</span>
 
-        <span class="c1"># we&#39;ll use the same chapter notation as ReacLib</span>
-        <span class="n">chapter</span> <span class="o">=</span> <span class="mi">4</span>
-
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="n">products</span><span class="p">,</span>
-                         <span class="n">chapter</span><span class="o">=</span><span class="n">chapter</span><span class="p">,</span>
-                         <span class="n">labelprops</span><span class="o">=</span><span class="n">labelprops</span><span class="p">)</span>
+                         <span class="n">rate_source</span><span class="o">=</span><span class="s2">&quot;deboer2017&quot;</span><span class="p">)</span>
 
         <span class="c1"># from DeBoer et al. 2017</span>
         <span class="c1"># https://arxiv.org/pdf/1709.03144</span>
         <span class="c1"># table XXVI</span>
+
+        <span class="n">labelprops</span> <span class="o">=</span> <span class="s2">&quot;deboer&quot;</span>
 
         <span class="c1"># non-resonant</span>
         <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mf">24.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">32.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.9</span><span class="p">,</span> <span class="mf">1.8</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.17</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.</span><span class="o">/</span><span class="mf">3.</span><span class="p">]</span>

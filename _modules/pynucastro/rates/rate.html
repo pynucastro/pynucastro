@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.9.0.post39+gf0239ddff documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.9.0.post40+g86e163cd2 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=09114695"></script>
+    <script src="../../../_static/documentation_options.js?v=4cae9290"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -583,11 +583,19 @@
 <span class="sd">        the energy release (in MeV) for the rate</span>
 <span class="sd">    weak_type : str</span>
 <span class="sd">        the type of weak reaction the rate represents.</span>
-<span class="sd">        Possible values include &quot;electron_capture&quot;, &quot;beta_decay&quot;, or</span>
-<span class="sd">        may include &quot;_pos_&quot; or &quot;_neg_&quot;.</span>
+<span class="sd">        Possible values include &quot;electron_capture&quot;, &quot;beta_pos&quot;, or</span>
+<span class="sd">        &quot;beta_neg&quot;</span>
 <span class="sd">    label : str</span>
 <span class="sd">        A descriptive label for the rate (usually representative of the</span>
 <span class="sd">        source</span>
+<span class="sd">    stoichiometry : dict(Nucleus)</span>
+<span class="sd">        a custom set of coefficients to be used in the evolution</span>
+<span class="sd">        equations dY(Nucleus)/dt.  If this is not set, then simply the</span>
+<span class="sd">        count of each nucleus in the list of reactants and products</span>
+<span class="sd">        will be used.</span>
+<span class="sd">    rate_source: str</span>
+<span class="sd">        the key to get the source information for the rate</span>
+<span class="sd">        from rate_sources.csv</span>
 <span class="sd">    use_identical_particle_factor : bool</span>
 <span class="sd">        For a rate that has the same nucleus multiple times as a reactant</span>
 <span class="sd">        we apply a multiplicity factor, N!, where N is the number of times</span>
@@ -647,8 +655,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">removed</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modified</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">approx</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># the identical particle factor scales the rate to prevent</span>
         <span class="c1"># double counting for a rate that has the same nucleus</span>

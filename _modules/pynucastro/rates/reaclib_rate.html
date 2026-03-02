@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.reaclib_rate &#8212; pynucastro 2.9.0.post39+gf0239ddff documentation</title>
+    <title>pynucastro.rates.reaclib_rate &#8212; pynucastro 2.9.0.post40+g86e163cd2 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=09114695"></script>
+    <script src="../../../_static/documentation_options.js?v=4cae9290"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -495,7 +495,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.files</span><span class="w"> </span><span class="kn">import</span> <span class="n">RateFileError</span><span class="p">,</span> <span class="n">_find_rate_file</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">RateSource</span><span class="p">,</span> <span class="n">Tfactors</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">Tfactors</span>
 
 
 <div class="viewcode-block" id="SingleSet">
@@ -770,118 +770,43 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    rfile : str, pathlib.Path, io.StringIO</span>
-<span class="sd">        the data file or string containing the rate in ReacLib format.</span>
-<span class="sd">    chapter : int</span>
-<span class="sd">        the ReacLib chapter describing the number of reactants and products</span>
-<span class="sd">    original_source : str</span>
-<span class="sd">        the original source.  This is usually set automatically when</span>
-<span class="sd">        reading ``rfile``, but can be manually provided when adding</span>
-<span class="sd">        rates together.</span>
 <span class="sd">    reactants : list(str), list(Nucleus)</span>
 <span class="sd">        the reactants for the reaction</span>
 <span class="sd">    products : list(str), list(Nucleus)</span>
 <span class="sd">        the products for the reaction</span>
 <span class="sd">    sets : list(SingleSet)</span>
 <span class="sd">        the sets that make up the rate</span>
-<span class="sd">    labelprops : str</span>
-<span class="sd">        a collection of flags that classify a ReacLib rate</span>
 <span class="sd">    Q : float</span>
 <span class="sd">        the energy release (in MeV)</span>
-
-<span class="sd">    Raises</span>
-<span class="sd">    ------</span>
-<span class="sd">    RateFileError</span>
-<span class="sd">        If the rate file is not correctly formatted.</span>
-<span class="sd">    UnsupportedNucleus</span>
-<span class="sd">        If the nucleus is unknown to pynucastro</span>
+<span class="sd">    weak_type : str</span>
+<span class="sd">        the type of weak reaction the rate represents.</span>
+<span class="sd">        Possible values include &quot;electron_capture&quot;, &quot;beta_pos&quot;, or</span>
+<span class="sd">        &quot;beta_neg&quot;</span>
+<span class="sd">    rate_source: str</span>
+<span class="sd">        the key to get the source information for the rate</span>
+<span class="sd">        from rate_sources.csv</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">chapter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">original_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="c1"># pylint: disable=super-init-not-called</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">sets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weak_type</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">rate_source</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Metadata for rate data files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rfile_name</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rfile</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
-            <span class="n">rfile</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span> <span class="o">=</span> <span class="n">_find_rate_file</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span> <span class="o">=</span> <span class="n">rfile</span><span class="o">.</span><span class="n">name</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">=</span> <span class="n">chapter</span>    <span class="c1"># the Reaclib chapter for this reaction</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">original_source</span> <span class="o">=</span> <span class="n">original_source</span>   <span class="c1"># the contents of the original rate file</span>
-
-        <span class="k">if</span> <span class="n">reactants</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">reactants</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="k">if</span> <span class="n">products</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">products</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="k">if</span> <span class="n">sets</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">sets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sets</span> <span class="o">=</span> <span class="n">sets</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sets</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="c1"># a modified rate is one where we manually changed some of its</span>
-        <span class="c1"># properties</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">modified</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="n">labelprops</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">approx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">==</span> <span class="s2">&quot;approx&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">derived</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">==</span> <span class="s2">&quot;derived&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">=</span> <span class="kc">None</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">removed</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">use_identical_particle_factor</span> <span class="o">=</span> <span class="kc">True</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_rho</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="c1"># some subclasses might define a stoichmetry as a dict{Nucleus}</span>
-        <span class="c1"># that gives the numbers for the dY/dt equations</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stoichiometry</span> <span class="o">=</span> <span class="kc">None</span>
-
-        <span class="k">if</span> <span class="n">Q</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_set_q</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span>
-
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rfile</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
-            <span class="c1"># read in the file, parse the different sets and store them as</span>
-            <span class="c1"># SingleSet objects in sets[]</span>
-            <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rfile</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">):</span>
-            <span class="c1"># Set f to the io.StringIO object</span>
-            <span class="n">f</span> <span class="o">=</span> <span class="n">rfile</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">f</span> <span class="o">=</span> <span class="kc">None</span>
-
-        <span class="k">if</span> <span class="n">f</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_read_from_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_set_label_properties</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_rhs_properties</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_screening</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="n">products</span><span class="p">,</span>
+                         <span class="n">Q</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span> <span class="n">weak_type</span><span class="o">=</span><span class="n">weak_type</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;reaclib&quot;</span><span class="p">,</span>
+                         <span class="n">stoichiometry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rate_source</span><span class="o">=</span><span class="n">rate_source</span><span class="p">,</span>
+                         <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span>
@@ -929,107 +854,100 @@
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">weak</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">weak_type</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">derived_from_inverse</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">resonant</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_labelprops_combine_resonance</span><span class="p">()</span>
-        <span class="n">new_rate</span> <span class="o">=</span> <span class="n">ReacLibRate</span><span class="p">(</span><span class="n">chapter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chapter</span><span class="p">,</span>
-                               <span class="n">original_source</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">original_source</span><span class="p">,</span>
-                                                          <span class="n">other</span><span class="o">.</span><span class="n">original_source</span><span class="p">]),</span>
-                               <span class="n">reactants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span>
+
+        <span class="n">new_rate</span> <span class="o">=</span> <span class="n">ReacLibRate</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span>
                                <span class="n">products</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">,</span>
                                <span class="n">sets</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sets</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">sets</span><span class="p">,</span>
-                               <span class="n">labelprops</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">,</span>
-                               <span class="n">Q</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="p">)</span>
+                               <span class="n">Q</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span>
+                               <span class="n">weak_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span><span class="p">,</span>
+                               <span class="n">rate_source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">src</span><span class="p">)</span>
+
+        <span class="c1"># Update the metadata for the rate data file</span>
+        <span class="n">new_rate</span><span class="o">.</span><span class="n">rfile_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfile_name</span> <span class="o">|</span> <span class="n">other</span><span class="o">.</span><span class="n">rfile_name</span>
+        <span class="n">new_rate</span><span class="o">.</span><span class="n">rfile_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span> <span class="o">|</span> <span class="n">other</span><span class="o">.</span><span class="n">rfile_path</span>
+        <span class="n">new_rate</span><span class="o">.</span><span class="n">chapter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span>
+        <span class="n">new_rate</span><span class="o">.</span><span class="n">original_data</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">original_data</span><span class="p">,</span>
+                                            <span class="n">other</span><span class="o">.</span><span class="n">original_data</span><span class="p">])</span>
+        <span class="n">new_rate</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span>
+
+        <span class="c1"># Update label based on labelprops</span>
+        <span class="n">new_rate</span><span class="o">.</span><span class="n">_set_label_properties</span><span class="p">()</span>
+
         <span class="k">return</span> <span class="n">new_rate</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_set_label_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call _update_resonance_combined and then</span>
-<span class="sd">        _update_label_properties.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_label_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update labelprops based on the Sets in this Rate</span>
+<span class="sd">        to set the resonance_combined flag properly.</span>
+<span class="sd">        And update different rate properties based on labelprops.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">labelprops</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="n">labelprops</span>
 
-        <span class="c1"># Update labelprops based on the Sets in this Rate</span>
-        <span class="c1"># to set the resonance_combined flag properly</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_update_resonance_combined</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_update_label_properties</span><span class="p">()</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_update_resonance_combined</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check the Sets in this Rate and updates the</span>
-<span class="sd">        resonance_combined flag as well as self.labelprops[4]</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">sres</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">resonant</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="p">]</span>
-        <span class="k">if</span> <span class="kc">True</span> <span class="ow">in</span> <span class="n">sres</span> <span class="ow">and</span> <span class="kc">False</span> <span class="ow">in</span> <span class="n">sres</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_labelprops_combine_resonance</span><span class="p">()</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_labelprops_combine_resonance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update self.labelprops[4] = &#39;c&#39;&quot;&quot;&quot;</span>
-        <span class="n">llp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">)</span>
-        <span class="n">llp</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;c&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">llp</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_update_label_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set label and flags indicating Rate is resonant, weak, or</span>
-<span class="sd">        reverse.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">==</span> <span class="s2">&quot;approx&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;approx&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">==</span> <span class="s2">&quot;derived&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;derived&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Derived may be resonant in some cases</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;reaclib&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">src</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">RateSource</span><span class="o">.</span><span class="n">source</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">src</span><span class="p">)</span>
+
+            <span class="c1"># Update labelprops with &#39;c&#39; to indicate resonance_combined</span>
+            <span class="n">sres</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">resonant</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="p">]</span>
+            <span class="k">if</span> <span class="kc">True</span> <span class="ow">in</span> <span class="n">sres</span> <span class="ow">and</span> <span class="kc">False</span> <span class="ow">in</span> <span class="n">sres</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span>
+
+            <span class="c1"># Update other flags</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;r&#39;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak</span><span class="p">:</span>
-                <span class="n">reactant_Zs</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactant_count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))</span>
-                <span class="n">product_Zs</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">product_count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">))</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">src</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;ec&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">src</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;bec&#39;</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="s1">&#39;electron_capture&#39;</span>
-                <span class="k">elif</span> <span class="n">reactant_Zs</span> <span class="o">==</span> <span class="n">product_Zs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="s2">&quot;beta_pos&quot;</span>
-                <span class="k">elif</span> <span class="n">reactant_Zs</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="n">product_Zs</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="s2">&quot;beta_neg&quot;</span>
-
             <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;v&#39;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_read_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_from_file</span><span class="p">(</span><span class="n">rfile</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Given a file object, read rate data from the file.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        f : io.TextIOWrapper, io.StringIO</span>
+<span class="sd">        rfile : str, pathlib.Path, io.StringIO</span>
+<span class="sd">            the data file or string containing the rate in ReacLib format.</span>
 
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict(str)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rfile</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rfile must be a str or pathlib.Path or io.StringIO, &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">rfile_name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">rfile_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rfile</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
+            <span class="n">rfile</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span>
+            <span class="n">rfile_name</span> <span class="o">=</span> <span class="n">rfile</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">rfile_path</span> <span class="o">=</span> <span class="n">_find_rate_file</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span>
+
+            <span class="c1"># Read in the rate data file</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">rfile_path</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Set f to the io.StringIO object</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rfile</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">)</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">rfile</span>
+
         <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">original_source</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+        <span class="c1"># Get the original rate data content</span>
+        <span class="n">original_data</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
 
         <span class="c1"># first line is the chapter</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chapter</span><span class="p">)</span>
+        <span class="n">chapter</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
 
         <span class="c1"># remove any blank lines</span>
         <span class="n">set_lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
 
-        <span class="c1"># the rest is the sets</span>
+        <span class="c1"># Initialize in case of potential using variable before assignment</span>
+        <span class="n">reactants</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">products</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># the rest is the sets, which can have multiple of them.</span>
+        <span class="n">sets</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">first</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">set_lines</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># check for a new chapter id in case of Reaclib v2 format</span>
@@ -1039,8 +957,8 @@
                 <span class="n">check_chapter</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">check_chapter</span><span class="p">)</span>
                 <span class="c1"># check that the chapter number is the same as the first</span>
                 <span class="c1"># set in this rate file</span>
-                <span class="k">if</span> <span class="n">check_chapter</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">RateFileError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;read chapter </span><span class="si">{</span><span class="n">check_chapter</span><span class="si">}</span><span class="s1">, expected chapter </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chapter</span><span class="si">}</span><span class="s1"> for this rate set.&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">check_chapter</span> <span class="o">!=</span> <span class="n">chapter</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">RateFileError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;read chapter </span><span class="si">{</span><span class="n">check_chapter</span><span class="si">}</span><span class="s1">, expected chapter </span><span class="si">{</span><span class="n">chapter</span><span class="si">}</span><span class="s1"> for this rate set.&#39;</span><span class="p">)</span>
                 <span class="c1"># get rid of chapter number so we can read a rate set</span>
                 <span class="n">set_lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
             <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
@@ -1082,8 +1000,6 @@
             <span class="n">Q</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">s1</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
 
             <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span>
-
                 <span class="c1"># what&#39;s left are the nuclei -- their interpretation</span>
                 <span class="c1"># depends on the chapter</span>
 
@@ -1102,17 +1018,17 @@
                 <span class="p">}</span>
 
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">r</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">chapter_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">chapter</span><span class="p">]</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">r</span><span class="p">]</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">p</span><span class="p">]</span>
+                    <span class="n">r</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">chapter_dict</span><span class="p">[</span><span class="n">chapter</span><span class="p">]</span>
+                    <span class="n">reactants</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">r</span><span class="p">]</span>
+                    <span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">p</span><span class="p">]</span>
 
                     <span class="c1"># support historical format, where chapter 8 also handles what are</span>
                     <span class="c1"># now chapter 9 rates</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="mi">8</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">]))</span>
+                    <span class="k">if</span> <span class="n">chapter</span> <span class="o">==</span> <span class="mi">8</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+                        <span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">]))</span>
 
                 <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">RateFileError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Chapter </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">chapter</span><span class="si">}</span><span class="s1"> could not be identified in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_source</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+                    <span class="k">raise</span> <span class="n">RateFileError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Chapter </span><span class="si">{</span><span class="n">chapter</span><span class="si">}</span><span class="s1"> could not be identified in </span><span class="si">{</span><span class="n">original_data</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 
                 <span class="n">first</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -1124,8 +1040,68 @@
             <span class="n">a</span> <span class="o">+=</span> <span class="p">[</span><span class="n">s3</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">s3</span><span class="p">),</span> <span class="n">n</span><span class="p">)]</span>
 
             <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">a</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">e</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="n">labelprops</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_set_label_properties</span><span class="p">(</span><span class="n">labelprops</span><span class="p">)</span>
+            <span class="n">sets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="n">labelprops</span><span class="p">))</span>
+
+            <span class="c1"># Update labelprops to have &quot;c&quot; -- combined</span>
+            <span class="c1"># when we a mix of resonant and non-resonant sets</span>
+            <span class="n">sres</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">resonant</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sets</span><span class="p">]</span>
+            <span class="k">if</span> <span class="kc">True</span> <span class="ow">in</span> <span class="n">sres</span> <span class="ow">and</span> <span class="kc">False</span> <span class="ow">in</span> <span class="n">sres</span><span class="p">:</span>
+                <span class="n">labelprops</span> <span class="o">=</span> <span class="n">labelprops</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;rfile_name&quot;</span><span class="p">:</span> <span class="n">rfile_name</span><span class="p">,</span>
+                <span class="s2">&quot;rfile_path&quot;</span><span class="p">:</span> <span class="n">rfile_path</span><span class="p">,</span>
+                <span class="s2">&quot;original_data&quot;</span><span class="p">:</span> <span class="n">original_data</span><span class="p">,</span>
+                <span class="s2">&quot;chapter&quot;</span><span class="p">:</span> <span class="n">chapter</span><span class="p">,</span>
+                <span class="s2">&quot;reactants&quot;</span><span class="p">:</span> <span class="n">reactants</span><span class="p">,</span>
+                <span class="s2">&quot;products&quot;</span><span class="p">:</span> <span class="n">products</span><span class="p">,</span>
+                <span class="s2">&quot;sets&quot;</span><span class="p">:</span> <span class="n">sets</span><span class="p">,</span>
+                <span class="s2">&quot;labelprops&quot;</span><span class="p">:</span> <span class="n">labelprops</span><span class="p">,</span>
+                <span class="s2">&quot;Q&quot;</span><span class="p">:</span> <span class="n">Q</span><span class="p">}</span>
+
+<div class="viewcode-block" id="ReacLibRate.from_file">
+<a class="viewcode-back" href="../../../pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.from_file">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">rfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the ReacLibRate object given the rfile.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rfile : str, pathlib.Path, io.StringIO</span>
+<span class="sd">            the data file or string containing the rate in ReacLib format.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ReacLibRate</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Parse the data and create the Rate</span>
+        <span class="n">rate_data</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_read_from_file</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span>
+        <span class="n">rate_source</span> <span class="o">=</span> <span class="n">rate_data</span><span class="p">[</span><span class="s2">&quot;labelprops&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+
+        <span class="c1"># Explicitly handle electron-capture weak type.</span>
+        <span class="c1"># Otherwise the constructor automatically determines beta-decay type.</span>
+        <span class="n">weak_type</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">rate_source</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;ec&quot;</span><span class="p">,</span> <span class="s2">&quot;bec&quot;</span><span class="p">):</span>
+            <span class="n">weak_type</span> <span class="o">=</span> <span class="s2">&quot;electron_capture&quot;</span>
+
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="n">rate_data</span><span class="p">[</span><span class="s2">&quot;reactants&quot;</span><span class="p">],</span> <span class="n">products</span><span class="o">=</span><span class="n">rate_data</span><span class="p">[</span><span class="s2">&quot;products&quot;</span><span class="p">],</span>
+                  <span class="n">sets</span><span class="o">=</span><span class="n">rate_data</span><span class="p">[</span><span class="s2">&quot;sets&quot;</span><span class="p">],</span> <span class="n">Q</span><span class="o">=</span><span class="n">rate_data</span><span class="p">[</span><span class="s2">&quot;Q&quot;</span><span class="p">],</span>
+                  <span class="n">weak_type</span><span class="o">=</span><span class="n">weak_type</span><span class="p">,</span> <span class="n">rate_source</span><span class="o">=</span><span class="n">rate_source</span><span class="p">)</span>
+
+        <span class="c1"># Store file-specific metadata</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">rfile_name</span> <span class="o">:=</span> <span class="n">rate_data</span><span class="p">[</span><span class="s2">&quot;rfile_name&quot;</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">rfile_name</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">rfile_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">rfile_path</span> <span class="o">:=</span> <span class="n">rate_data</span><span class="p">[</span><span class="s2">&quot;rfile_path&quot;</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">rfile_path</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">rfile_path</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">original_data</span> <span class="o">=</span> <span class="n">rate_data</span><span class="p">[</span><span class="s2">&quot;original_data&quot;</span><span class="p">]</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">chapter</span> <span class="o">=</span> <span class="n">rate_data</span><span class="p">[</span><span class="s2">&quot;chapter&quot;</span><span class="p">]</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="n">rate_data</span><span class="p">[</span><span class="s2">&quot;labelprops&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Update properties based on labelprops</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">_set_label_properties</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">obj</span></div>
+
 
 <div class="viewcode-block" id="ReacLibRate.write_to_file">
 <a class="viewcode-back" href="../../../pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.write_to_file">[docs]</a>
@@ -1138,14 +1114,14 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Original source is not stored for this rate (</span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2">).&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Original rate data is not stored for this rate (</span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2">).&quot;</span>
                 <span class="s2">&quot; At present, we cannot reconstruct the rate representation without&quot;</span>
-                <span class="s2">&quot; storing the original source.&quot;</span>
+                <span class="s2">&quot; storing the original rate data&quot;</span>
             <span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_source</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span></div>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_data</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ReacLibRate.function_string_py">
