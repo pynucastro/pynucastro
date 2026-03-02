@@ -910,7 +910,7 @@ class ReacLibLibrary(Library):
                 sio = io.StringIO('\n'.join([f'{chapter}'] + rlines))
                 try:
                     if rate_type == "reaclib":
-                        r = ReacLibRate(rfile=sio)
+                        r = ReacLibRate.from_file(rfile=sio)
                     else:
                         raise NotImplementedError("rate not implemented")
                 except UnsupportedNucleus:

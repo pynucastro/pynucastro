@@ -107,6 +107,48 @@ class TestRate:
     def test_source(self):
         assert self.rate1.source["Year"] == "2012"
 
+    def test_rfile_name(self):
+        assert self.rate1.rfile_name == {"o15--n15-wc12"}
+        assert self.rate2.rfile_name == {"t-gn-d-nk06"}
+        assert self.rate3.rfile_name == {"he6-gnn-he4-cf88"}
+        assert self.rate4.rfile_name == {"c12-ag-o16-nac2"}
+        assert self.rate5.rfile_name == {"n15-pa-c12-nacr"}
+        assert self.rate6.rfile_name == {"he3-he3pp-he4-nacr"}
+        assert self.rate7.rfile_name == {"li7-tnna-he4-mafo"}
+        assert self.rate8.rfile_name == {"he4-aag-c12-fy05"}
+        assert self.rate8_hist.rfile_name == {"he4-pphe3-he3-nacr-historical"}
+        assert self.rate9.rfile_name == {"he4-pphe3-he3-nacr"}
+        assert self.rate10.rfile_name == {"he4-npahe3-li7-mafo"}
+        assert self.rate11.rfile_name == {"b17-nnn-c14-wc12"}
+
+    def test_chapter(self):
+        assert self.rate1.chapter == 1
+        assert self.rate2.chapter == 2
+        assert self.rate3.chapter == 3
+        assert self.rate4.chapter == 4
+        assert self.rate5.chapter == 5
+        assert self.rate6.chapter == 6
+        assert self.rate7.chapter == 7
+        assert self.rate8.chapter == 8
+        assert self.rate8_hist.chapter == 8
+        assert self.rate9.chapter == 9
+        assert self.rate10.chapter == 10
+        assert self.rate11.chapter == 11
+
+    def test_labelprops(self):
+        assert self.rate1.labelprops == "wc12w "
+        assert self.rate2.labelprops == "nk06nv"
+        assert self.rate3.labelprops == "cf88rv"
+        assert self.rate4.labelprops == "nac2  "
+        assert self.rate5.labelprops == "nacrc "
+        assert self.rate6.labelprops == "nacrn "
+        assert self.rate7.labelprops == "mafon "
+        assert self.rate8.labelprops == "fy05c "
+        assert self.rate8_hist.labelprops == "nacrnv"
+        assert self.rate9.labelprops == "nacrnv"
+        assert self.rate10.labelprops == "mafonv"
+        assert self.rate11.labelprops == "wc12w "
+
     def test_reactants(self):
 
         # o15--n15-wc12
