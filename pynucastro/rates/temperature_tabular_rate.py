@@ -107,8 +107,6 @@ class TempTableInterpolator:
 class TemperatureTabularRate(Rate):
     """A rate whose temperature dependence is tabulated.
 
-    Note: presently this only supports strong-mediated rates.
-
     Parameters
     ----------
     log_t9_data : numpy.ndarray
@@ -123,11 +121,6 @@ class TemperatureTabularRate(Rate):
         super().__init__(label=label, rate_source=rate_source, **kwargs)
 
         self.tabular = True
-
-        # make sure there are no weak interactions -- we don't
-        # support those yet
-        #assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products)
-        #assert sum(n.A for n in self.reactants) == sum(n.A for n in self.products)
 
         self.log_t9_data = log_t9_data
         self.log_rate_data = log_rate_data

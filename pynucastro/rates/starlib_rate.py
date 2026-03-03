@@ -12,7 +12,6 @@ from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
 class StarLibRate(TemperatureTabularRate):
     """A rate whose temperature dependence and factor uncertainty are tabulated.
     Upon creation of an instance, rates at all tabulated log(T9) values are sampled.
-    Note: presently this only supports strong-mediated rates.
 
     Parameters
     ----------
@@ -26,8 +25,8 @@ class StarLibRate(TemperatureTabularRate):
         Seed to pass to rng for rate sampling
     """
 
-    def __init__(self, log_t9_data, log_rate_data, sigma_data, seed=None,
-                 label="starlib", **kwargs):
+    def __init__(self, log_t9_data, log_rate_data, sigma_data,
+                 labelprops, seed=None, label="starlib", **kwargs):
 
         self.sigma_data = sigma_data
         self.log_median_rates = log_rate_data
@@ -36,7 +35,24 @@ class StarLibRate(TemperatureTabularRate):
         assert (len(self.log_median_rates) == len(self.sigma_data))
 
         sampled_rates = self.sample_rates(seed)
-        super().__init__(log_t9_data, sampled_rates, label=label, **kwargs)
+
+        #Read in labelprops and call super
+        assert isinstance(labelprops, str)
+        assert len(labelprops) == 5
+        rate_source = labelprops[0:4].strip()
+
+        #Check for electron capture
+        weak_type = ''
+        if rate_source == 'ec':
+            weak_type = "electron_capture"
+
+        super().__init__(log_t9_data, sampled_rates, label=label,
+                         rate_source=rate_source, weak_type = weak_type,
+                         **kwargs)
+
+        #Set relevant flags
+        self.weak = labelprops[4] == 'w' or rate_source == 'ec'
+        self.derived_from_inverse = labelprops[4] == 'v'
 
     def sample_rates(self, seed=None):
         """Sample rate values as median_rate + N(0,1)*sigma for each of the

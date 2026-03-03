@@ -992,7 +992,7 @@ class TabularLibrary(Library):
 
 class StarLibLibrary(Library):
     """Create a :py:class:`Library` containing tabulated rates (excluding
-    duplications and isomers of 'al26') as described in the Starlib Library.
+    isomers of 'al26') as described in the Starlib Library.
 
     Parameters
     ----------
@@ -1046,7 +1046,7 @@ class StarLibLibrary(Library):
                                    reactants=rate_info["reactants"],
                                    products=rate_info["products"],
                                    Q=rate_info["Q"],
-                                   rate_source=rate_info["reference"])
+                                   labelprops=rate_info["labelprops"])
 
                 rates.append(rate)
         super().__init__(rates=rates)
@@ -1077,14 +1077,14 @@ class StarLibLibrary(Library):
         products = nuclides[nreactants:]
 
         #In accordance with STARLIB documentation
-        reference = line[43:48].strip()
+        labelprops = line[43:48]
         Q_val = float(line[53:65].strip())
 
         return {"interaction_type": interaction_type,
                 "reactants": reactants,
                 "products": products,
                 "nuclides": nuclides,
-                "reference": reference,
+                "labelprops": labelprops,
                 "Q": Q_val}
 
 
