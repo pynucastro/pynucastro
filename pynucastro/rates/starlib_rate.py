@@ -47,7 +47,7 @@ class StarLibRate(TemperatureTabularRate):
             weak_type = "electron_capture"
 
         super().__init__(log_t9_data, sampled_rates, label=label,
-                         rate_source=rate_source, weak_type = weak_type,
+                         rate_source=rate_source, weak_type=weak_type,
                          **kwargs)
 
         #Set relevant flags
