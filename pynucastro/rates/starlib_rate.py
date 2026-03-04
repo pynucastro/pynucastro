@@ -39,8 +39,9 @@ class StarLibRate(TemperatureTabularRate):
         #Read in labelprops and call super
         assert isinstance(labelprops, str)
         assert len(labelprops) == 5
-        rate_source = labelprops[0:4].strip()
+        self.labelprops = labelprops
 
+        rate_source = labelprops[0:4].strip()
         #Check for electron capture
         weak_type = ''
         if rate_source == 'ec':
