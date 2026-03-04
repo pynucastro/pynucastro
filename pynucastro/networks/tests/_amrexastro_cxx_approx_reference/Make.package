@@ -7,11 +7,9 @@ ifeq ($(USE_REACT),TRUE)
   CEXE_headers += tfactors.H
   CEXE_headers += interp_tools.H
   CEXE_headers += partition_functions.H
-  CEXE_sources += partition_functions_data.cpp
   CEXE_headers += actual_rhs.H
   CEXE_headers += reaclib_rates.H
   CEXE_headers += table_rates.H
-  CEXE_sources += table_rates_data.cpp
   CEXE_headers += temperature_table_rates.H
   CEXE_headers += derived_rates.H
   USE_SCREENING = TRUE

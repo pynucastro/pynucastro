@@ -62,16 +62,25 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 
         ostr = \
 """@numba.njit()
-def He4_Mg24_to_Si28_removed(rate_eval, tf):
+def He4_Mg24_to_Si28_removed(rate_eval, tf, log_scor=0.0):
     # Mg24 + He4 --> Si28
     rate = 0.0
 
     # st08r
-    rate += np.exp(  8.03977 + -15.629*tf.T9i
-                  + -1.5*tf.lnT9)
+    ln_set_rate =  8.03977 + -15.629*tf.T9i \\
+                         + -1.5*tf.lnT9
+
+    ln_set_rate += log_scor
+    set_rate = np.exp(ln_set_rate)
+    rate += set_rate
+
     # st08r
-    rate += np.exp(  -50.5494 + -12.8332*tf.T9i + 21.3721*tf.T913i + 37.7649*tf.T913
-                  + -4.10635*tf.T9 + 0.249618*tf.T953 + -1.5*tf.lnT9)
+    ln_set_rate =  -50.5494 + -12.8332*tf.T9i + 21.3721*tf.T913i + 37.7649*tf.T913 \\
+                         + -4.10635*tf.T9 + 0.249618*tf.T953 + -1.5*tf.lnT9
+
+    ln_set_rate += log_scor
+    set_rate = np.exp(ln_set_rate)
+    rate += set_rate
 
     rate_eval.He4_Mg24_to_Si28_removed = rate
 

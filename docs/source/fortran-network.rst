@@ -24,7 +24,7 @@ energy evolution to the network.
 
 .. note::
 
-   A C++17 compiler and Fortran 2003 compiler is required.
+   A C++20 compiler and Fortran 2003 compiler is required.
 
 In addition to the files output from a ``SimpleCxxNetwork``, the
 following additional files are output:

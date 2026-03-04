@@ -35,9 +35,9 @@ class TempTableInterpolator:
         self.log_rate_data = log_rate_data
 
     def _get_logT9_idx(self, log_T9_0):
-        """Find the index into the temperatures such that T[i-1] < T0
-        <= T[i].  We return i-1 here, corresponding to the lower
-        value.  We also make sure that i-2 and i+1 are in bounds.
+        """Find the index into the temperatures such that T[i] < T0
+        <= T[i+1].  We return i here, corresponding to the lower
+        value.  We also make sure that i-1 and i+2 are in bounds.
 
         Parameters
         ----------
@@ -56,7 +56,9 @@ class TempTableInterpolator:
     def interpolate(self, T0):
         """Given T0, the temperature where we want the rate, do
         cubic interpolation to find the value of the rate in the
-        table. Note this returns log(rate).
+        table. If T0 goes out of bound of the table, then we do
+        extrapolation based on the first or last 4 table points.
+        Note this returns log(rate).
 
         Parameters
         ----------
@@ -71,11 +73,6 @@ class TempTableInterpolator:
 
         T9_0 = T0 * 1.e-9
         log_T9_0 = np.log(T9_0)
-
-        # we'll give a little epsilon buffer here to allow for roundoff
-        eps = 0.005
-        if log_T9_0 < self.log_temp_points.min() - eps or log_T9_0 > self.log_temp_points.max() + eps:
-            raise ValueError("temperature out of table bounds")
 
         idx_t = self._get_logT9_idx(log_T9_0)
 
@@ -172,12 +169,11 @@ class TemperatureTabularRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, T):\n"
+        fstring += f"def {self.fname}(rate_eval, T, log_scor=0.0):\n"
         fstring += f"    # {self.rid}\n"
         fstring += f"    {self.fname}_interpolator = TempTableInterpolator(*{self.fname}_info)\n"
-
         fstring += f"    log_r = {self.fname}_interpolator.interpolate(T)\n"
-        fstring += f"    rate_eval.{self.fname} = np.exp(log_r)\n\n"
+        fstring += f"    rate_eval.{self.fname} = np.exp(log_r + log_scor)\n\n"
 
         return fstring
 
@@ -232,9 +228,9 @@ class TemperatureTabularRate(Rate):
 
         return fstring
 
-    def eval(self, T, *, rho=None, comp=None,
-             screen_func=None):
-        """Evaluate the reaction rate.
+    def log_eval(self, T, *, rho=None, comp=None,
+                 screen_func=None):
+        """Evaluate the natural log of reaction rate for temperature T.
 
         Parameters
         ----------
@@ -256,18 +252,17 @@ class TemperatureTabularRate(Rate):
 
         """
 
-        log_r = self.interpolator.interpolate(T)
-        r = np.exp(log_r)
+        log_rate = self.interpolator.interpolate(T)
 
-        scor = 1.0
+        log_scor = 0.0
         if screen_func is not None:
             if rho is None or comp is None:
                 raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
-            scor = self.evaluate_screening(rho, T, comp, screen_func)
+            log_scor = self.evaluate_screening(rho, T, comp, screen_func)
 
-        r *= scor
+        log_rate += log_scor
 
-        return r
+        return log_rate
 
     def plot(self, *, Tmin=None, Tmax=None, figsize=(6, 6),
              rho=None, comp=None, screen_func=None):

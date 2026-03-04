@@ -6,6 +6,7 @@
 #include <AMReX_REAL.H>
 #include <AMReX_Array.H>
 #include <AMReX_Math.H>
+#include <AMReX_ConstexprFor.H>
 
 #include <tfactors.H>
 #include <fundamental_constants.H>
@@ -67,11 +68,11 @@ namespace part_fun {
         amrex::Array2D<amrex::Real, 1, NumSpecTotal, 1, 2, amrex::Order::C> data;
         AMREX_GPU_HOST_DEVICE AMREX_INLINE
         pf_cache_t() {
-            // The entries will be default-initialized to -900, log(partition_function)
-            // should never be -900.
+            // The entries will be default-initialized to -900,
+            // log(partition_function) should never be -900.
             for (int i = 1; i <= NumSpecTotal; ++i) {
-                    data(i,1) = -900.0_rt;
-                    data(i,2) = -900.0_rt;
+                    data(i, 1) = -900.0_rt;
+                    data(i, 2) = -900.0_rt;
             }
         }
     };
@@ -83,7 +84,7 @@ namespace part_fun {
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void get_partition_function(const int inuc,
-                            [[maybe_unused]] const tf_t& tfactors,
+                            [[maybe_unused]] const amrex::Real T9,
                             const part_fun::pf_cache_t& pf_cache,
                             amrex::Real& logpf, amrex::Real& dlogpf_dT9) {
 
@@ -105,9 +106,9 @@ void get_partition_function(const int inuc,
 }
 
 
-// a version of get_parition_function where we have not cached the
-// index into the arrays. And returns pf and dpf_dT instead of
-// logpf and dlogpf_dT9
+// a version of get_partition_function where we have not cached the
+// index into the arrays. Uses tfactors instead of T9 as argument,
+// and returns pf and dpf_dT instead of logpf and dlogpf_dT9
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void get_partition_function(const int inuc,
@@ -121,59 +122,80 @@ void get_partition_function(const int inuc,
     part_fun::pf_cache_t pf_cache;
 
     amrex::Real logpf, dlogpf_dT9;
-    get_partition_function(inuc, tfactors, pf_cache, logpf, dlogpf_dT9);
+    get_partition_function(inuc, tfactors.T9, pf_cache, logpf, dlogpf_dT9);
 
-    // Convert to logpf to pf and dlogpf_dT9 to dpf_dT
+    // Convert logpf to pf and dlogpf_dT9 to dpf_dT
     pf = std::exp(logpf);
     dpf_dT = pf * dlogpf_dT9 * 1.e-9_rt;
 }
 
 
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void get_partition_function_cached(const int inuc, const tf_t& tfactors,
+void get_partition_function_cached(const int inuc, const amrex::Real T9,
                                    part_fun::pf_cache_t& pf_cache,
                                    amrex::Real& logpf, amrex::Real& dlogpf_dT9) {
     if (pf_cache.data(inuc, 1) != -900.0_rt) {
         // present in cache
-        amrex::ignore_unused(tfactors);
+        amrex::ignore_unused(T9);
         logpf = pf_cache.data(inuc, 1);
         dlogpf_dT9 = pf_cache.data(inuc, 2);
     } else {
-        get_partition_function(inuc, tfactors, pf_cache, logpf, dlogpf_dT9);
+        get_partition_function(inuc, T9, pf_cache, logpf, dlogpf_dT9);
         pf_cache.data(inuc, 1) = logpf;
         pf_cache.data(inuc, 2) = dlogpf_dT9;
     }
 }
 
-// spins
 
+template <int spec>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
-constexpr amrex::Real get_spin_state(const int inuc) {
+constexpr amrex::Real get_spin_state() {
 
-    amrex::Real spin = -1.0;
+    static_assert(spec >= 1 && spec <= NumSpec);
 
-    switch (inuc) {  // NOLINT(bugprone-switch-missing-default-case)
+    // Set the spin states (2J + 1) of the element
 
-    case He4:
-    case Mg24:
-    case Si28:
-    case S32:
-        spin = 1;
-        break;
-
-    case P31:
-        spin = 2;
-        break;
-
-    case Al27:
-        spin = 6;
-        break;
-
-
+    if constexpr (
+        spec == He4 || spec == Mg24 || spec == Si28 ||
+        spec == S32
+                  )
+    {
+        return 1.0_rt;
+    }
+    else if constexpr (
+        spec == P31
+                       )
+    {
+        return 2.0_rt;
+    }
+    else if constexpr (
+        spec == Al27
+                       )
+    {
+        return 6.0_rt;
     }
 
-    return spin;
+    // Return -1 if we don't recognize the species.
+    return -1.0_rt;
+}
 
+
+// Legacy (non-templated) interface
+
+AMREX_GPU_HOST_DEVICE AMREX_INLINE
+amrex::Real get_spin_state (int spec) {
+
+    amrex::Real s = -1.0_rt;
+
+    // Set the spin states (2J + 1) of the element
+
+    amrex::constexpr_for<1, NumSpec+1>([&] (auto n) {
+        if (n == spec) {
+            s = get_spin_state<n>();
+        }
+    });
+
+    return s;
 }
 
 

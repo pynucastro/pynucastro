@@ -119,9 +119,9 @@ class DerivedRate(Rate):
             if nuc.partition_function is None:
                 warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 
-    def eval(self, T, *, rho=None, comp=None,
-             screen_func=None):
-        """Evaluate the derived reverse rate.
+    def log_eval(self, T, *, rho=None, comp=None,
+                 screen_func=None):
+        """Evaluate the natural log of reaction rate for temperature T.
 
         Parameters
         ----------
@@ -139,15 +139,20 @@ class DerivedRate(Rate):
 
         Returns
         -------
-        float
+        numpy.ndarray
 
         """
 
-        r = 0.0
         tf = Tfactors(T)
 
-        # Evaluate partition function terms
+        # Evaluate screening correction term
+        log_scor = 0.0
+        if screen_func is not None:
+            if rho is None or comp is None:
+                raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
+            log_scor = self.evaluate_screening(rho, T, comp, screen_func)
 
+        # Evaluate partition function terms
         net_log_pf = 0.0
         if self.use_pf:
             self._warn_about_missing_pf_tables()
@@ -160,46 +165,19 @@ class DerivedRate(Rate):
                 if nucp.partition_function is not None:
                     net_log_pf -= nucp.partition_function.eval(T)
 
-        # Now compute the rate based on the property of the source_rate
+        # Now compute the log rate of the source_rate without screening
+        # This can be a list of log_rate (ReacLib) or a scalar number
+        log_rate = self.source_rate.log_eval(T, rho=rho, comp=comp,
+                                             screen_func=None)
 
-        if self.derived_sets is not None:
+        # To consider general cases, convert to 1D array
+        log_rate = np.atleast_1d(log_rate)
 
-            # Create another reaclib set that absorbs the partition function terms
-            derived_pf_sets = []
-            for derived_set in self.derived_sets:
-                a = derived_set.a.copy()
-                a[0] += net_log_pf
-                derived_pf_sets.append(SingleSet(a, derived_set.labelprops))
+        # Apply equilibrium ratio terms and screening
+        log_rate += self.ratio_factor + self.Q_kBGK * tf.T9i + \
+            net_log_pf + 1.5 * self.net_stoich * tf.lnT9 + log_scor
 
-            for s in derived_pf_sets:
-                f = s.f()
-                r += f(tf)
-
-        elif isinstance(self.source_rate, TemperatureTabularRate):
-            log_r = self.source_rate.interpolator.interpolate(T)
-
-            # Apply equilibrium ratio terms
-            log_r += self.ratio_factor + self.Q_kBGK * tf.T9i + \
-                net_log_pf + 1.5 * self.net_stoich * tf.lnT9
-            r += np.exp(log_r)
-
-        else:
-            r += self.source_rate.eval(T=T, rho=rho, comp=comp, screen_func=None)
-
-            # Apply equilibrium ratio terms
-            r *= np.exp(self.ratio_factor + self.Q_kBGK * tf.T9i +
-                        net_log_pf + 1.5 * self.net_stoich * tf.lnT9)
-
-        # Apply screening correction
-        scor = 1.0
-        if screen_func is not None:
-            if rho is None or comp is None:
-                raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
-            scor = self.evaluate_screening(rho, T, comp, screen_func)
-
-        r *= scor
-
-        return r
+        return log_rate
 
     def function_string_py(self):
         """Return a string containing the python function that
@@ -213,11 +191,10 @@ class DerivedRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf):\n"
+        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
         fstring += f"    # {self.rid}\n\n"
 
         # Evaluate partition function terms
-
         if self.use_pf:
             self._warn_about_missing_pf_tables()
             fstring += "    # Evaluate partition function terms\n"
@@ -250,7 +227,7 @@ class DerivedRate(Rate):
                 for t in set_string.split("\n"):
                     fstring += "    " + t + "\n"
                 fstring += "\n"
-                fstring += "    ln_set_rate += net_log_pf\n"
+                fstring += "    ln_set_rate += net_log_pf + log_scor\n"
                 fstring += "    set_rate = np.exp(ln_set_rate)\n"
                 fstring += "    rate += set_rate\n\n"
 
@@ -260,15 +237,15 @@ class DerivedRate(Rate):
             fstring += f"    {self.source_rate.fname}_interpolator = TempTableInterpolator(*{self.source_rate.fname}_info)\n"
             fstring += f"    log_r = {self.source_rate.fname}_interpolator.interpolate(tf.T9 * 1.0e9)\n\n"
 
-            fstring += "    # Apply equilibrium ratio\n"
-            fstring += f"    log_r += {self.ratio_factor} + {self.Q_kBGK} * tf.T9i + net_log_pf\n"
+            fstring += "    # Apply equilibrium ratio and screening\n"
+            fstring += f"    log_r += {self.ratio_factor} + {self.Q_kBGK} * tf.T9i + net_log_pf + log_scor\n"
             if self.net_stoich != 0:
                 fstring += f"    log_r += {1.5 * self.net_stoich} * tf.lnT9\n\n"
             fstring += f"    rate_eval.{self.fname} = np.exp(log_r)\n\n"
 
         else:
-            fstring += "    # Evaluate the equilibrium ratio\n"
-            fstring += f"    ratio = np.exp({self.ratio_factor} + {self.Q_kBGK} * tf.T9i + net_log_pf"
+            fstring += "    # Evaluate the equilibrium ratio and screening\n"
+            fstring += f"    ratio = np.exp({self.ratio_factor} + {self.Q_kBGK} * tf.T9i + net_log_pf + log_scor"
             if self.net_stoich != 0:
                 fstring += f" + {1.5 * self.net_stoich} * tf.lnT9"
             fstring += ")\n\n"
@@ -329,7 +306,7 @@ class DerivedRate(Rate):
 
                 if nuc.partition_function is not None:
                     fstring += f"    // interpolating {nuc} partition function\n"
-                    fstring += f"    get_partition_function_cached({nuc.cindex()}, tfactors, pf_cache, {nuc}_log_pf, d{nuc}_log_pf_dT9);\n"
+                    fstring += f"    get_partition_function_cached({nuc.cindex()}, tfactors.T9, pf_cache, {nuc}_log_pf, d{nuc}_log_pf_dT9);\n"
                 else:
                     fstring += f"    // setting {nuc} log(partition function) to 0.0 by default, independent of T\n"
                     fstring += f"    {nuc}_log_pf = 0.0_rt;\n"

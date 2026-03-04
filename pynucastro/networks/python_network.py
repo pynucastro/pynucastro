@@ -146,8 +146,8 @@ class PythonNetwork(RateCollection):
     def screening_string(self, indent=""):
         """Create a string containing the python code that sets up the
         screening (PlasmaState) and calls the screening function on
-        every set of reactants in our network, and updating the reaction
-        rate values stored in the network.
+        every set of reactants in our network. This computes log(screening)
+        terms and store them in local variables.
 
         Parameters
         ----------
@@ -162,44 +162,26 @@ class PythonNetwork(RateCollection):
         """
 
         ostr = ""
-        ostr += f"{indent}plasma_state = PlasmaState(T, rho, Y, Z)\n"
 
+        screening_map = get_screening_map(self.get_rates())
+
+        # Initialize log_scor to 0.0
+        for scr in screening_map:
+            screen_var = f"log_scor_{scr.n1}_{scr.n2}"
+            ostr += f"{indent}{screen_var} = 0.0\n"
+
+        # Check if we're doing screening, return early if not screening
         if not self.do_screening:
-            screening_map = []
-        else:
-            screening_map = get_screening_map(self.get_rates())
+            return ostr
 
-        for i, scr in enumerate(screening_map):
-            if not (scr.n1.dummy or scr.n2.dummy):
-                # calculate the screening factor
-                ostr += f"\n{indent}scn_fac = ScreenFactors({scr.n1.Z}, {scr.n1.A}, {scr.n2.Z}, {scr.n2.A})\n"
-                ostr += f"{indent}scor = screen_func(plasma_state, scn_fac)\n"
-
-            if scr.name == "He4_He4_He4":
-                # we don't need to do anything here, but we want to
-                # avoid immediately applying the screening
-                pass
-
-            elif scr.name == "He4_He4_He4_dummy":
-                # make sure the previous iteration was the first part
-                # of 3-alpha
-                assert screening_map[i - 1].name == "He4_He4_He4"
-                # handle the second part of the screening for 3-alpha
-                ostr += f"{indent}scn_fac2 = ScreenFactors({scr.n1.Z}, {scr.n1.A}, {scr.n2.Z}, {scr.n2.A})\n"
-                ostr += f"{indent}scor2 = screen_func(plasma_state, scn_fac2)\n"
-
-                # we can have both a(aa,g)c12 and a(aa,p)b11
-                for r in scr.rates:
-                    # use scor from the previous loop iteration
-                    ostr += f"{indent}rate_eval.{r.fname} *= scor * scor2\n"
-
-            else:
-                # there might be several rates that have the same
-                # reactants and therefore the same screening applies
-                # -- handle them all now
-
-                for r in scr.rates:
-                    ostr += f"{indent}rate_eval.{r.fname} *= scor\n"
+        ostr += "\n"
+        ostr += f"{indent}if screen_func is not None:\n"
+        indent += "    "
+        ostr += f"{indent}plasma_state = PlasmaState(T, rho, Y, Z)\n\n"
+        for scr in screening_map:
+            screen_var = f"log_scor_{scr.n1}_{scr.n2}"
+            ostr += f"{indent}scn_fac = ScreenFactors({scr.n1.Z}, {scr.n1.A}, {scr.n2.Z}, {scr.n2.A})\n"
+            ostr += f"{indent}{screen_var} = screen_func(plasma_state, scn_fac)\n"
 
         return ostr
 
@@ -234,9 +216,26 @@ class PythonNetwork(RateCollection):
                 args.append("rho=rho")
             if r.rate_eval_needs_comp:
                 args.append("Y=Y")
+            if r.ion_screen:
+                scr_reactants = r.ion_screen.copy()
+                screen_terms = []
+                while len(scr_reactants) > 1:
+                    a, b = scr_reactants[0], scr_reactants[1]
+                    screen_terms.append(f"log_scor_{a}_{b}")
+
+                    # merge reactants to get compound nucleus
+                    scr_reactants = [a + b] + scr_reactants[2:]
+                    scr_reactants.sort(key=lambda x: x.Z)
+
+                args.append("log_scor=" + "+".join(screen_terms))
             return f"{indent}{r.fname}({', '.join(args)})\n"
 
         ostr = ""
+
+        # Precompute screening terms. Note here we compute log_screening
+        ostr += self.screening_string(indent=indent)
+        ostr += "\n"
+
         ostr += f"{indent}# reaclib rates\n"
         for r in self.reaclib_rates:
             ostr += format_rate_call(r)
@@ -257,7 +256,7 @@ class PythonNetwork(RateCollection):
             ostr += format_rate_call(r)
 
         # modified rates will have their own screening,
-        # either using the origina rate or any modified
+        # either using the original rate or any modified
         # form.  Therefore we call them before applying
         # screening factors.
 
@@ -272,12 +271,6 @@ class PythonNetwork(RateCollection):
             ostr += f"\n{indent}# derived rates\n"
         for r in self.derived_rates:
             ostr += format_rate_call(r)
-
-        ostr += "\n"
-
-        # apply screening factors, if we're given a screening function
-        ostr += f"{indent}if screen_func is not None:\n"
-        ostr += self.screening_string(indent=indent + 4*" ")
 
         if self.approx_rates:
             ostr += f"\n{indent}# approximate rates\n"

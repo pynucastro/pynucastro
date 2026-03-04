@@ -6,14 +6,26 @@
 #include <fundamental_constants.H>
 #include <network_properties.H>
 
-void actual_network_init();
+inline void actual_network_init() {}
 
 const std::string network_name = "pynucastro-cxx";
 
 namespace network
 {
-    extern Array1D<Real, 1, NumSpec> bion;
-    extern Array1D<Real, 1, NumSpec> mion;
+
+    // nuclei masses (in grams)
+
+    inline Array1D<Real, 1, NumSpec> mion{
+        1.674927498034172e-24_rt,  // n
+        1.6735328377636005e-24_rt,  // p
+        6.646479071584587e-24_rt,  // He4
+        1.99264687992e-23_rt,  // C12
+        2.6560180592333686e-23_rt,  // O16
+        3.3198227947612416e-23_rt,  // Ne20
+        3.817541002484691e-23_rt,  // Na23
+        3.8182640828719474e-23_rt,  // Mg23
+        3.9828098739467446e-23_rt,  // Mg24
+    };
 }
 
 namespace Rates

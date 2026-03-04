@@ -115,7 +115,7 @@ class Nucleus:
             self.short_spec_name = "he4"
             self.raw = "he4"
             self.caps_name = "He4"
-        elif name == "n":
+        elif name in ("n", 'neut'):
             self.el = "n"
             self.A = 1
             self.Z = 0
@@ -159,7 +159,7 @@ class Nucleus:
         self.el = self.el.lower()
 
         # atomic number comes from periodic table
-        if name not in ["n", "p_nse"]:
+        if name not in ["n", "neut", "p_nse"]:
             i = PeriodicTable.lookup_abbreviation(self.el)
             self.Z = i.Z
             assert isinstance(self.Z, int)

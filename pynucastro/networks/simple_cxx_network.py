@@ -101,19 +101,21 @@ class SimpleCxxNetwork(BaseCxxNetwork):
 
             of.write(f"constexpr int NumSpec = {len(self.unique_nuclei)};\n\n")
 
+            of.write("// Note: these are 0-based\n")
+
             of.write("constexpr Real aion[NumSpec] = {\n")
             for n, nuc in enumerate(self.unique_nuclei):
-                of.write(f"    {nuc.A:6.1f}, // {n}\n")
+                of.write(f"    {nuc.A:6.1f}, // {n} : {nuc}\n")
             of.write(" };\n\n")
 
             of.write("constexpr Real aion_inv[NumSpec] = {\n")
             for n, nuc in enumerate(self.unique_nuclei):
-                of.write(f"    1.0/{nuc.A:6.1f}, // {n}\n")
+                of.write(f"    1.0/{nuc.A:6.1f}, // {n} : {nuc}\n")
             of.write(" };\n\n")
 
             of.write("constexpr Real zion[NumSpec] = {\n")
             for n, nuc in enumerate(self.unique_nuclei):
-                of.write(f"    {nuc.Z:6.1f}, // {n}\n")
+                of.write(f"    {nuc.Z:6.1f}, // {n} : {nuc}\n")
             of.write(" };\n\n")
 
             of.write("static const std::vector<std::string> spec_names = {\n")

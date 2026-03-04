@@ -1,7 +1,9 @@
 #include <amrex_bridge.H>
 #include <network_properties.H>
+#include <actual_network.H>
 #include <actual_rhs.H>
 
+#include <cstdlib>
 #include <iostream>
 #include <iomanip>
 

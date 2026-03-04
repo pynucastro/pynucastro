@@ -3,6 +3,8 @@ properties have been modified from the original source.
 
 """
 
+import numpy as np
+
 from pynucastro.rates.rate import Rate
 from pynucastro.rates.reaclib_rate import ReacLibRate
 
@@ -95,10 +97,10 @@ class ModifiedRate(Rate):
             if len(nucz) == 3:
                 self.ion_screen.append(nucz[2])
 
-    def eval(self, T, *, rho=None, comp=None,
-             screen_func=None):
-        """Evaluate the modified rate.  This simply calls the
-        evaluation of the underlying original rate.
+    def log_eval(self, T, *, rho=None, comp=None,
+                 screen_func=None):
+        """Evaluate natural log of reaction rates for the modified rate.
+        This simply calls the evaluation of the underlying original rate.
 
         Parameters
         ----------
@@ -116,11 +118,28 @@ class ModifiedRate(Rate):
 
         Returns
         -------
-        float
+        numpy.ndarray
 
         """
 
-        return self.original_rate.eval(T, rho=rho, comp=comp, screen_func=screen_func)
+        # Evaluate original rate without screening
+        # The modified rate can have a different set of reactants for screening
+        log_rate = self.original_rate.log_eval(T, rho=rho, comp=comp, screen_func=None)
+
+        # Apply screening correction
+        log_scor = 0.0
+        if screen_func is not None:
+            if rho is None or comp is None:
+                raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
+            log_scor = self.evaluate_screening(rho, T, comp, screen_func)
+
+        # To consider general cases, convert to 1D array
+        log_rate = np.atleast_1d(log_rate)
+
+        # Apply screening
+        log_rate += log_scor
+
+        return log_rate
 
     def function_string_py(self):
         """Return a string containing the python function that
@@ -135,9 +154,9 @@ class ModifiedRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf):\n"
+        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
         fstring += f"    # {self.rid}\n"
-        fstring += f"    {self.original_rate.fname}(rate_eval, tf)\n"
+        fstring += f"    {self.original_rate.fname}(rate_eval, tf, log_scor=log_scor)\n"
         fstring += f"    rate_eval.{self.fname} = rate_eval.{self.original_rate.fname}\n\n"
         return fstring
 

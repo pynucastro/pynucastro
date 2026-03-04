@@ -2,7 +2,7 @@
 ipywidgets>=7.1.2
 matplotlib
 networkx>=3.4
-numpy>=1.13.3,<3.0
+numpy>=2.0,<3.0
 scipy>=1.0.0
 sympy>=1.1.1
 
@@ -25,7 +25,7 @@ sphinx-math-dollar
 sphinx-mdinclude
 sphinx-prompt
 sphinxcontrib-bibtex
-sphinx-book-theme
+git+https://github.com/executablebooks/sphinx-book-theme.git
 myst-nb
 jupyterlab-myst
 nbclient!=0.10.3

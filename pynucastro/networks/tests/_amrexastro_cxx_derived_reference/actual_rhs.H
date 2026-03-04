@@ -447,7 +447,6 @@ void actual_jac(const burn_t& state, MatrixType& jac)
 AMREX_INLINE
 void actual_rhs_init () {
 
-    init_tabular();
 
 }
 

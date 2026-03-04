@@ -174,10 +174,10 @@ of the species can be written as the following:
 
 .. math::
 
-    \begin{eqnarray}
-      \frac{1}{N_A} \frac{d}{d t} Y_A &= \frac{1}{N_B} \frac{d}{d t} Y_B &= - \frac{\rho^{\nu_r} Y_A^{N_A} Y_B^{N_B}}{N_A! N_B!} \underbrace{N_a^{\nu_r} \langle \sigma v \rangle}_{\lambda_\mathrm{for}} + \frac{\rho^{\nu_p} Y_C^{N_C} Y_D^{N_D}}{N_C! N_D!} \underbrace{N_a^{\nu_p} \langle \sigma v \rangle}_{\lambda_\mathrm{rev}} \\
-      \frac{1}{N_C} \frac{d}{d t} Y_C &= \frac{1}{N_D} \frac{d}{d t} Y_D &= + \frac{\rho^{\nu_r} Y_A^{N_A} Y_B^{N_B}}{N_A! N_B!} \lambda_\mathrm{for} - \frac{\rho^{\nu_p} Y_C^{N_C} Y_D^{N_D}}{N_C! N_D!} \lambda_\mathrm{rev}
-    \end{eqnarray}
+   \begin{aligned}
+   \frac{1}{N_A} \frac{d}{d t} Y_A &= \frac{1}{N_B} \frac{d}{d t} Y_B = - \frac{\rho^{\nu_r} Y_A^{N_A} Y_B^{N_B}}{N_A! N_B!} \underbrace{N_a^{\nu_r} \langle \sigma v \rangle}_{\lambda_\mathrm{for}} + \frac{\rho^{\nu_p} Y_C^{N_C} Y_D^{N_D}}{N_C! N_D!} \underbrace{N_a^{\nu_p} \langle \sigma v \rangle}_{\lambda_\mathrm{rev}} \\
+   \frac{1}{N_C} \frac{d}{d t} Y_C &= \frac{1}{N_D} \frac{d}{d t} Y_D = + \frac{\rho^{\nu_r} Y_A^{N_A} Y_B^{N_B}}{N_A! N_B!} \lambda_\mathrm{for} - \frac{\rho^{\nu_p} Y_C^{N_C} Y_D^{N_D}}{N_C! N_D!} \lambda_\mathrm{rev}
+   \end{aligned}
 
 where $\nu_r = N_A + N_B - 1$ and $\nu_p = N_C + N_D - 1$
 Now, taking in consideration that forward and reverse rates are in equilibrium:
@@ -186,7 +186,7 @@ Now, taking in consideration that forward and reverse rates are in equilibrium:
 
    \frac{d }{d t} Y_A = \frac{d }{d t} Y_B = \frac{d }{d t} Y_C = \frac{d }{d t} Y_D = 0
 
-Hence the ratio between the screend forward and the screened reverse rate can be written as:
+Hence the ratio between the screened forward and the screened reverse rate can be written as:
 
 .. math::
 
@@ -237,10 +237,10 @@ will be:
 
 .. math::
 
-   \begin{eqnarray}
+   \begin{aligned}
    F^\mathrm{scn}_\mathrm{for} &= \exp{\left(\frac{N_A \mu^c(Z_A) + N_B \mu^c(Z_B) - \mu^c(N_A Z_A + N_B Z_B)}{k_B T}\right)} \\
    F^\mathrm{scn}_\mathrm{rev} &= \exp{\left(\frac{N_C \mu^c(Z_C) + N_D \mu^c(Z_D) - \mu^c(N_C Z_C + N_D Z_D)}{k_B T}\right)}
-   \end{eqnarray}
+   \end{aligned}
 
 where :math:`Z` is the atomic number of the reactants involved in the reaction.
 With the above rule, the ratio between the screened reverse rate and the
@@ -269,16 +269,39 @@ of the electron screening enhancement where:
 
    \lambda^\mathrm{scn}_\mathrm{rev} = \underbrace{\lambda^\mathrm{uns}_\mathrm{for} \ R}_{\lambda^\mathrm{uns}_\mathrm{rev}} \ F^\mathrm{scn}_\mathrm{rev}
 
-
-Therefore, the unscreened
+In theory, we can stop here and the unscreened
 :class:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>`
-is evaluated by taking the provided source rate and multiplying it by the
-temperature-dependent equilibrium ratio, :math:`R`. The appropriate
-screening enhancement factor can then be computed and applied in the usual way,
-just as for any other rate.
+can be evaluated by taking the provided source rate and multiplying it by the
+temperature-dependent equilibrium ratio, :math:`R`.
+The appropriate screening enhancement factor can then be computed and
+applied in the usual way, just as for any other rate.
 
 .. note::
 
    It is completely general to compute the derived *forward* rate
    based on the reverse rate. Examples of this are forward rates,
    i.e. ``Q > 0``, provided by ReacLib but with the ``-v`` flag.
+
+
+However, it is worth noting a potential issue when computing the
+derived *forward* rate from a reverse rate. At low temperatures,
+:math:`T \lesssim 10^8 \ \mathrm{K}`, the reverse rate is often :math:`\sim 0`.
+while the equilibrium ratio,
+:math:`R \sim \exp{\left(\frac{Q_\mathrm{inv}}{k_B T}\right)}`,
+can overflow in machine precision since :math:`Q_\mathrm{inv} > 0`
+for derived *forward* rates. This leads to the classic case of a large number
+multiplied by a small number. To avoid this issue, it is preferable to
+work in log-space:
+
+.. math::
+
+   \lambda^\mathrm{uns}_\mathrm{rev} = \exp{\left( \log{R} + \log{\lambda^\mathrm{uns}_\mathrm{for}} \right)}
+
+.. note::
+
+   When deriving an inverse rate from a ReacLib rate,
+   the equilibrium ratio, excluding the partition functions,
+   can be absorbed into the :ref:`reaclib` parameterization,
+   as shown in :cite:`rauscher:2000`.
+   The general ReacLib parameterization of the DerivedRate
+   is given in the appendix of :cite:`smith_pynucastro_2023`.
