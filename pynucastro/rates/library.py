@@ -1156,7 +1156,6 @@ def full_library():
     lib += PruetFullerLibrary()
     lib += FFNLibrary()
     lib += OdaLibrary()
-    lib += StarLibLibrary()
     lib.add_rates([DeBoerC12agO16(), IliadisO16pgF17()])
 
     return lib
