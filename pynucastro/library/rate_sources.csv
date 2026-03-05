@@ -2,9 +2,14 @@ Label|Author|Title|Publisher|Year|URL|
 6an9CYBT|Cyburt, R.H.|evaluation of He6(a,n)Be9 data|-|2010|-|https://reaclib.jinaweb.org/labels.php?action=viewLabel&label=6an9CYBT
 ac12|Arnold, C.W.|Cross Section Measurement of 9Be(&gamma;,n)8Be and Implications for &alpha;+&alpha;+n -> 9Be in the r-Process|PRC 85,4|2012|https://doi.org/10.1103/PhysRevC.85.044605
 an06|S. Ando|Radiative neutron capture on a proton at big-bang nucleosynthesis energies|PRC 74, 025809|2006|https://doi.org/10.1103/PhysRevC.74.025809
+ar12|Arnold, C.W.|Cross Section Measurement of 9Be(&gamma;,n)8Be and Implications for &alpha;+&alpha;+n -> 9Be in the r-Process|PRC 85,4|2012|https://doi.org/10.1103/PhysRevC.85.044605
+au03|Audi et al.|The NUBASE evaluation of nuclear and decay properties|NPA 729, 3|2003|https://doi.org/10.1016/j.nuclphysa.2003.11.001
 ba00|D.W. Bardayan et al.|The astrophysically important 3+ state in Ne18 and the F17(p,&gamma;)Ne18 stellar rate|PRC 62, 055804|2000|https://doi.org/10.1103/PhysRevC.62.055804
+ba16|Barbagallo et al.|7Be(n,&alpha;)4He Reaction and the Cosmological Lithium Problem: Measurement of the Cross section in a Wide Energy Range at n_TOF at CERN|PRL 117, 152701|2016|https://doi.org/10.1103/PhysRevLett.117.152701
 baka|Z Y Bao|Neutron Capture Cross Sections for s-Process Studies|ADNDT 36, 411|1987|https://doi.org/10.1016/0092-640X(87)90011-8
 bb92|T Rauscher|Production of heavy elements in inhomogeneous cosmologies|ApJ 429, 499|1994|https://doi.org/10.1086/174339
+be01|Beaumel et al.|Determination of the astrophysical S factor of the 8B(p,&gamma;)9C capture reaction from the d(8B,9C)n reaction|PLB 514, 226|2001|https://doi.org/10.1016/S0370-2693(01)00828-0
+be12|Beringer et al.|-|[Particle Data Group]|2012|
 be13|A. Best et al.|Measurement of the reaction 17O(?,n)20Ne and its impact on the s process in massive stars|PHYSICAL REVIEW C 87, 045805 (2013)|2013|https://doi.org/10.1103/PhysRevC.87.045805
 bec|-|experimental electron-capture rates|-|0|https://reaclib.jinaweb.org/labels.php?action=viewLabel&label=bec
 bet+|-|experimental beta-plus rates|-|-|https://reaclib.jinaweb.org/labels.php?action=viewLabel&label=bet+
@@ -20,23 +25,29 @@ bqa+|P. Moller|theoretical beta decay rates|At. Data Nucl. Data Tables 66|1997|h
 br10|Burda, O et al.|Resonance parameters of the first 1/2+ state in 9Be and astrophysical implications|PRC 82, 015808|2010|https://doi.org/10.1103/PhysRevC.82.015808
 BS99|Bradfield-Smith, W|Breakout from the hot CNO cycle via the 18Ne(&alpha;,p)21Na reaction|PhRvC 59, 6, p3402|1999|https://doi.org/10.1103/PhysRevC.59.3402
 btyk|K Takahashi|Beta-Decay Half-Lives Calculated on the Gross Theory|ADNDT 12, 101|1973|https://doi.org/10.1016/0092-640X(73)90015-6
+bu15|Buckner et al.|High-intensity-beam study of 17O(p,&gamma;)18F and thermonuclear reaction rates for 17O + p|PRC 91, 015812|2015|https://doi.org/10.1103/PhysRevC.91.015812
 bu96|L. Buchmann|New Stellar Reaction Rate for 12C(&alpha;,&gamma;)16O|ApJL 468, 127|1996|https://doi.org/10.1086/310240
 cb01|Caggiano, J.A.|Spectroscopy of 23Al and 27P using the (7Li,8He|PRC 64, 025802|2001|https://doi.org/10.1103/PhysRevC.64.025802
 cb09|Chipps, K.A.|The 17F(p,&gamma;)18Ne resonant cross section|PRC 80, 065810|2009|https://doi.org/10.1103/PhysRevC.80.065810
 cd08|Cyburt, R.H.|Evaluation of modern He3(a,g)Be7 data|PRC 78, 064614|2008|https://doi.org/10.1103/PhysRevC.78.064614
 cd09|-|-|-|0|https://reaclib.jinaweb.org/labels.php?action=viewLabel&label=cd09
+ce14|Cesaratto et al.|Measurement of the E=138 keV resonance in the 23Na(p,&gamma;)24Mg reaction and the abundance of sodium in AGB stars|PRC 88, 065806|2013|https://doi.org/10.1103/PhysRevC.88.065806
 cf88|G R Caughlan|Thermonuclear Reaction Rates V|ADNDT 40, 283|1988|https://doi.org/10.1016/0092-640X(88)90009-5
 ch09|K. Y. Chae|Constraint on the astrophysical 18Ne(&alpha;, p)21Na reaction rate through a 24Mg( p,t)22Mg measurement|PRC 79, 055804|2009|https://doi.org/10.1103/PhysRevC.79.055804
 chw0|Cyburt, R. H.|Re-evaluation of Buchmann 1996 C12(a,g) and Hoffman Ca40(a,g) and Ti44(a,p) rates|REACLIB|2012|https://reaclib.jinaweb.org/labels.php?action=viewLabel&label=chw0
 cn18|D. Connolly et al.|Direct measurement of resonance strengths in 34S(?,? ) 38Ar at astrophysically relevant energies using the DRAGON recoil separator|Phys. Rev. C 97, 035801 (2018)|2018|https://doi.org/10.1103/PhysRevC.97.035801
 co10|Constantini, H. et al|16O(&alpha;,&gamma;)20Ne S factor: Measurements and R-matrix analysis|PRC 82, 035802|2010|https://doi.org/10.1103/PhysRevC.82.035802
+co15|Coc et al.|New reaction rates for improved primordial D/H calculation and the cosmic evolution of deuterium|PRD 92, 123526|2015|https://doi.org/10.1103/PhysRevD.92.123526
 ct07|A. Chafa et al.|Experimental determination of the <sup>17</sup>O(p,&alpha;)<sup>14</sup>N and <sup>17</sup>O(p,&amp;gamm|PRC 75, 035810|2007|https://doi.org/10.1103/PhysRevC.75.035810
+cy08|Cyburt and Davids|Evaluation of modern 3He(&alpha;&gamma;)7Be data|PRC 78, 064614|2008|https://doi.org/10.1103/PhysRevC.78.064614
 cybtCO|Richard H. Cyburt|CO burning re-evaluation based on experimental papers cited in cf88|-|2007|https://reaclib.jinaweb.org/labels.php?action=viewLabel&label=cybtCO
 da04|D'Auria|The Na21(p,&gamma;)Mg22 reaction from Ec.m.=200 to 1103 keV in novae and x-ray bursts|PRC 69, 065803|2004|https://doi.org/10.1103/PhysRevC.69.065803
 da18|G. D'Agata et al.|The 19F(?, p)22Ne Reaction at Energies of Astrophysical Relevance by Means of the Trojan Horse Method and Its Implications in AGB Stars|APJ 860 (2018) 11|2018|https://doi.org/10.3847/1538-4357/aac207
 db18|L. Damone et al.|7Be(n,p)7Li Reaction and the Cosmological Lithium Problem: Measurement of the Cross Section in a Wide Energy Range at n_TOF at CERN|PHYSICAL REVIEW LETTERS 121, 042701 (2018)|2018|https://doi.org/10.1103/PhysRevLett.121.042701
 dc11|Davids, B.|THE INFLUENCE OF UNCERTAINTIES IN THE 15 O(&alpha;, &gamma; ) 19 Ne REACTION RATE ON MODELS OF TYPE I X-RAY BURSTS|ApJ 735, 40|2011|https://doi.org/10.1088/0004-637X/735/1/40
 de04|Descouvemont, P|Compilation and R-matrix analysis of Big Bang nuclear reaction rates|ADNDT 88, 203|2004|https://doi.org/10.1016/j.adt.2004.08.001
+de18|de Souza et al.|Thermonuclear fusion rates for tritium + deuterium using Bayesian methods|PRC 99, 014619|2019|https://doi.org/10.1103/PhysRevC.99.014619
+de19|de Souza, Iliadis and Coc|Astrophysical S-factors, Thermonuclear Rates, and Electron Screening Potential for the 3He(d,p)4He Big Bang Reaction via a Hierarchical Bayesian Model|ApJ 872, 75|2019|https://doi.org/10.3847/1538-4357/aafda9
 de20|J. Dermigny et al.,|Thermonuclear reaction rate of 30Si(p,?)31P|Physical Review C, Volume 102, Issue 1, article id.014609 (2020)|2020|https://doi.org/10.1103/PhysRevC.102.014609
 De99|Descouvemont, P|Microscopic study of proton-capture reactions on unstable nuclei|Nuclear Physics A, 646, 261-27|1999|https://doi.org/10.1016/S0375-9474(98)00629-0
 dh03|S. Dababneh|Stellar He burning of O18: A measurement of low-energy resonances and their astrophysical implication|PRC 68, 025801|2003|https://doi.org/10.1103/PhysRevC.68.025801
@@ -48,6 +59,7 @@ fi05|C. Fox et al.|Thermonuclear reaction rate of O17(p,&gamma;)F18|PRC 71, 0558
 fkth|thielemann|theoretical rates calculated with SMOKER|-|1987|https://reaclib.jinaweb.org/labels.php?action=viewLabel&label=fkth
 fo18|V. Foteinou et al.|Cross section measurements of proton capture reactions on Se isotopes relevant to the astrophysical p process|Phys. Rev. C 97 (2018) 035806|2018|https://doi.org/10.1103/PhysRevC.97.035806
 fs07|J.L. Fisker, W. Tan, J. Goerres, M. Wies|Experimental measurements of the O15(&alpha;,&gamma;)Ne19 reaction rate vs. observations of type I X|astro-ph/0702412|2007|https://doi.org/10.48550/arXiv.astro-ph/0702412
+fu90|Fukugita & Kajino|Contribution of the 3He(t,&gamma;)6Li reaction to 6Li production in primordial nucleosynthesis|PRD 42, 4251|1990|https://doi.org/10.1103/PhysRevD.42.4251
 fy05|H.O.U. Fynbo et al|Revised rates for the stellar triple-a process from measurement of 12C nuclear resonances|Nature 433, 136-139|2005|https://doi.org/10.1038/nature03219
 ga00|J. Gorres, C. Arlandini, U. Giesen, M. H|Low-energy resonances in N14(&alpha;,&gamma;)F18 and their astrophysical imlpications|PRC 62, 055801|2000|https://doi.org/10.1103/PhysRevC.62.055801
 GG90|Görres, J|Proton capture on 14C and its astrophysical implications|NuPhA 517, p329|1990|https://doi.org/10.1016/0375-9474(90)90038-N
@@ -62,6 +74,7 @@ GW95|Görres, J|Bridging the waiting points: The role of two-proton capture reac
 ha01|Hale, S.E.|Investigation of the Ne22(p,&gamma;)Na23 reaction via (He3,d) spectroscopy (new)|PRC 65, 015801|2001|https://doi.org/10.1103/PhysRevC.65.015801
 ha01g|-|Investigation of the Ne22(p,&gamma;)Na23 reaction via (He3,d) spectroscopy (old)|PRC 65, 015801|2001|https://doi.org/10.1103/PhysRevC.65.015801
 ha04|Hale et al.|Investigation of the Na23(p,&gamma;) and Na23(p,&alpha;) reactions via (He3,d) spectroscopy|PRC 70, 045802|2004|https://doi.org/10.1103/PhysRevC.70.045802
+ha10|Hammache et al.|High-energy breakup of 6Li as a tool to study the Big Bang nucleosynthesis reaction 2H(&alpha,&gamma)6Li|PRC 82, 065803|2010|https://doi.org/10.1103/PhysRevC.82.065803
 Ha96|Hahn, K I|Structure of 18Ne and the breakout from the hot CNO cycle|PhRvC 54, 4, p1999-2013|1996|https://doi.org/10.1103/PhysRevC.54.1999
 Ha96c|Hahn, K I|Structure of 18Ne and the breakout from the hot CNO cycle (constructive interference)|PhRvC 54, 4, p1999-2013|1996|https://doi.org/10.1103/PhysRevC.54.1999
 Ha96d|Hahn, K I|Structure of 18Ne and the breakout from the hot CNO cycle (destructive interference)|PhRvC 54, 4, p1999-2013|1996|https://doi.org/10.1103/PhysRevC.54.1999
@@ -76,20 +89,26 @@ ia08|Iliadis, C.|New reaction rate for 16O( p,&gamma;)17F and its influence on t
 ib96|Iliadis, C.|New Stellar reaction rates for <sup>25</sup>Mg(p,&gamma;)<sup>26</sup>Al and <sup>25</sup>Al(p,&gamma;)<sup>26</sup>Si|PRC 43, 475|1996|https://doi.org/10.1103/PhysRevC.53.475
 il01|Iliadis C|Proton-induced thermonuclear reaction rates for A=20-40 nuclei|ApJS 134, 151-171|2001|https://doi.org/10.1086/320364
 il10|Iliadis, C.|Charged-particle thermonuclear reaction rates|NPA 841, 1; 31; 251; 323|2010|https://doi.org/10.1016/j.nuclphysa.2010.04.012
+il11|Iliadis et al.|The Effects of Thermonuclear Reaction Rate Variations on Al26 Production in Massive Stars: A Sensitive Study|ApJS 193, 16|2011|https://doi.org/10.1088/0067-0049/193/1/16
+il16|Iliadis et al.|Bayesian Estimation of Thermonuclear Reaction Rates|ApJ 831, 107|2016|https://doi.org/10.3847/0004-637x/831/1/107
 il99|C. Iliadis|Explosive Hydrogen Burning of 27Si, 31S, 35Ar and 39Ca in Novae and X-ray Bursts|ApJ 524, 434|1999|https://doi.org/10.1086/307778
 im05|G. Imbriani et al|S-factor of <sup>14</sup>N(p,&gamma;)<sup>15</sup>O|European Physics Journal A 25,|2005|https://link.springer.com/article/10.1140/epja/i2005-10138-7
+in17|Gomez Inesta et al.|Bayesian Estimation of Thermonuclear Reaction Rates for Deuterium+Deuterium Reactions|ApJ 849, 134|2017|https://doi.org/10.3847/1538-4357/aa9025
 iucf|Schatz|First measurement of excited states in the very proton rich nucleus 24Si and the consequences for 22|Physics Review Lett. 79 3845|1997|https://doi.org/10.1103/PhysRevLett.79.3845
 jm06|Jenkins, D.G.|Reevaluation of the <sup>30</sup>P(p,&gamma;)<sup>31</sup>S astrophysical reaction rate from a stud|PRC 73, 065802|2006|https://doi.org/10.1103/PhysRevC.73.065802
 jz10|Su Jun|Neutron Spectroscopic Factors of 7Li and Astrophysical 6Li(n,&gamma;)7Li Reaction Rates|Chinese Physics Letters 27, 05|2010|https://doi.org/10.1088/0256-307X/27/5/052101
 ka02|I. Dillman|KADoNiS v0.2|AIP Conf. Proc. 819, 123|2007|https://doi.org/10.1063/1.2187846
 ka12|Katsuma, et al|THEORETICAL REACTION RATES OF 12C($alpha;,&gamma;)16O BELOW T9 = 3|The Astrophysical Journal, 745|2012|https://doi.org/10.1088/0004-637X/745/2/192
+ka88|Kajino et al.|Beta decay rates of sd-shell nuclei in stellar interiors|NPA 480, 175|1988|https://doi.org/10.1016/0375-9474(88)90391-0
 kd02|I. Dillman|KADoNiS refit to elliminate blowups and match to theory|AIP Conf. Proc. 819, 123|2007|https://doi.org/10.1063/1.2187846
 kd03|Dillman, I.|KADONIS V0.3|KADoNiS v0.3 - The third updat|2009|https://www.kadonis.org/
+ke16|Kelly et al.|New Measurement of low-energy resonances in the 23Ne(p, &gamma;)23Na reaction|PRC 95, 015806|2010|https://doi.org/10.1103/PhysRevC.95.015806
 ke17|K. J. Kelly|New measurements of low-energy resonances in the 22Ne(p,?)23Na reaction|Phys. Rev. C 95 (2017) 015806|2017|https://doi.org/10.1103/PhysRevC.95.015806
 kf02|R. Kunz|Astrophysical Reaction Rate of C12(&alpha;,&gamma;)O16|ApJ 567, 643-650|2002|https://doi.org/10.1086/338384
 kg91|P.E. Koehler|O17(n,&alpha;)C14 cross section from 25 meV to approximately 1 MeV|PRC 44, 2788|1991|https://doi.org/10.1103/PhysRevC.44.2788
 ks03|-|KADONIS V0.3 refit 2017|KADoNiS v0.3|2009|https://www.kadonis.org/
 ks12|-|Investigation of $alpha;-induced reactions on 127I for the astrophysical &gamma; process|PHYSICAL REVIEW C 86, 035801|2012|https://doi.org/10.1103/PhysRevC.86.035801
+ku02|Kunz et al.|Astrophysical Reaction Rate of 12C(&alpha,&gamma)16O|PRC 82, 065803|2010|https://doi.org/10.1086/338384
 ku92|Kubono, S.|Level structure of 21Mg and the 20Na(p,g)21Mg stellar reaction rate|NPA 537, 153|1992|https://doi.org/10.1016/0375-9474(92)90162-D
 la14|C. Langer et al.|Determining the rp-Process Flow through 56Ni: Resonances in 57Cu(p,?)58Zn Identified with GRETINA|PRL 113, 032502 (2014)|2014|https://doi.org/10.1103/PhysRevLett.113.032502
 la16|Y. H. Lam et al.|REACTION RATES OF 64Ge(p,?)65As AND 65As(p,?)66Se AND THE EXTENT OF NUCLEOSYNTHESIS IN TYPE I X-RAY BURSTS|APJ 818 (2016) 78|2016|https://doi.org/10.3847/0004-637X/818/1/78
@@ -108,6 +127,8 @@ ma11|Matic, A. et al|High-precision 28Si(p,t)26Si reaction to determine 22Mg(a,p
 mafo|R Malaney|Late-time neutron diffusion and nucleosynthesis in a post-QCD inhomogeneous Omega(b) = 1 universe|ApJ 333, 14|1988|https://doi.org/10.1016/0003-4916(89)90114-0
 mb07|Ma, Z.|Astrophysically important 31S states studied with the 32S( p, d)31S reaction|PRC 76, 015803|2007|https://doi.org/10.1103/PhysRevC.76.015803
 mb11|Mukhamedzhanov, A.M.|Reexamination of the astrophysical S factor for the &alpha;+d→6Li+&gamma; reaction|PRC 83, 055805|2011|https://doi.org/10.1103/PhysRevC.83.055805
+mc10|C. Iliadis et al.|Charged-particle thermonuclear reaction rates: II. Tables and graphs of reaction rates and probability density functions|NPA 841, 31|2010|https://doi.org/10.1016/j.nuclphysa.2010.04.009
+mc13|Sallaska et al.|STARLIB: A Next-Generation Reaction-Rate Library for Nuclear Astrophysics|ApJ Supp. Ser. 207, 18|2013|https://doi.org/10.1088/0067-0049/207/1/18
 mm11|M. Matos et al.|Unbound states of 32Cl and the 31S(p,&gamma;)32Cl reaction rate|PRC 84, 055806|2011|https://doi.org/10.1103/PhysRevC.84.055806
 mo03|P. Möller|New calculations of gross β-decay properties for astrophysical applications: Speeding-up the c|PRC 67, 055802|2003|https://doi.org/10.1103/PhysRevC.67.055802
 mo14|P. Mohr, R. Longland,  C. Iliadis,|Thermonuclear reaction rate of 18Ne(?,p)21Na from Monte Carlo calculations|PHYSICAL REVIEW C 90, 065806 (2014)|2014|https://doi.org/10.1103/PhysRevC.90.065806
@@ -122,6 +143,7 @@ nfis|Fisker J.L.|Shell-model calculation with nuclear masses from newmass tables
 nk06|Nagai, Y.|Measurement of the 2 H(n, &gamma; ) 3 H reaction cross section between 10 and 550 keV|PRC 74, 025804|2006|https://doi.org/10.1103/PhysRevC.74.025804
 nw00|Nelson, S.O.|Evaluations of thermonuclear proton capture reaction rates for 2H, 7Li, 9Be, and 11B|NPA 679, 199|2000|https://doi.org/10.1016/S0375-9474(00)00341-9
 ol11|Oginni, B.H.|Theoretical evaluation of the reaction rates for 26Al(n,p)26Mg and 26Al(n,a)23Na|PRC 83, 025802|2011|https://doi.org/10.1103/PhysRevC.83.025802
+pe16|Perez-Loureiro et al.| &beta;-delayed &gamma; decay of 26P: Possible evidence of a proton halo|PRC 93, 064320|2016|https://doi.org/10.1103/PhysRevC.93.064320
 pepd|-|pep-->dnu reaction rate (cf88)|-|0|https://reaclib.jinaweb.org/labels.php?action=viewLabel&label=pepd
 pg06|Y. Parpottas et al.|Astrophysically important <sup>26</sup>Si states studied with the (<sup>3</sup>He, n) reaction and t|PRC 73, 049907|2006|https://doi.org/10.1103/PhysRevC.70.065805
 PI99|Powell, D C|Reaction rate of 24Mg(p,&gamma;)25Al|Nucl. Phys. A660, 349|1999|https://doi.org/10.1016/S0375-9474(99)00390-5
@@ -130,15 +152,19 @@ pkrF|Panov, I.V.|FRDM Neutron-induced astrophysical reaction rates|Astron. Astro
 pkrH|Panov, I.V.|HFB14 Neutron-induced astrophysical reaction rates|Astron. Astrophys. 513, A69|2010|https://www.aanda.org/articles/aa/full_html/2010/05/aa11967-09/aa11967-09.html
 pkrT|Panov, I.V.|TF Neutron-induced astrophysical reaction rates|Astron. Astrophys. 513, A69|2010|https://www.aanda.org/articles/aa/full_html/2010/05/aa11967-09/aa11967-09.html
 ppde|-|pp-->denu reaction rate|-|0|https://reaclib.jinaweb.org/labels.php?action=viewLabel&label=ppde
+po13|Pogrebnyak et al.|Mean proton and &alpha;-particle reduced widths of the Porter-Thomas distribution and astrophysical applications|PRC 88, 015808|2013|https://doi.org/10.1103/PhysRevC.88.015808
 pt05|R.G. Pizzone et al.|Trojan Horse estimate of bare nucleus astrophysical S(E)-factor for the 6Li(p,&alpha;)|A & A 438, 779-784|2005|https://www.aanda.org/articles/aa/abs/2005/30/aa2863-05/aa2863-05.html
 rath|Rauscher, T|NON-SMOKER Hauser-Feshbach w/ FRDM Mass Input|ADNDT 75, 1, p1-351|2000|https://doi.org/10.1006/adnd.2000.0834
+re98|Rehm et al.|Study of the 56Ni(d,p)57Ni Reaction and the Astrophysical 56Ni(p, &gamma;)57Cu Reaction Rate|1998|https://doi.org/10.1103/PhysRevLett.80.676
 rh10|Hoffman, R.D.|Reaction rate sensitivity of 44Ti production in massive stars and implications of a thick target yield measurement of 40Ca(a,g)44Ti|ApJ 715, 1383|2010|https://doi.org/10.1088/0004-637X/715/2/1383
 rk12|Rauscher, T|Astrophysical analysis of the measurement of (&alpha;,&gamma;) and (&alpha;,n) cross sections of 169Tm|PRC 86, 015804|2012|https://doi.org/10.1103/PhysRevC.86.015804
 ro95|Stegmuller, F|22Na(p,g)23Mg resonant reaction at low energies|Nucl. Phys. A601, 168|1996|https://doi.org/10.1016/0375-9474(96)00084-X
 rolf|Hulke, G|Comparison of the fusion reactions 12C + 20Ne and 16O + 16O near the coulomb barrier|Zeitschrift fur Physik A297, 1|1980|https://doi.org/10.1007/BF01421473
 rpsm|T. Rauscher|NON-SMOKER Hauser Feshbach rates with Audi Wapastra masses|private communication|1999|https://reaclib.jinaweb.org/labels.php?action=viewLabel&label=rpsm
+ru09|Rugel et al.|New Measurement of the 60Fe Half-Life|PRL 109, 072502|2009|https://doi.org/10.1103/PhysRevLett.103.072502
 sa12|Sauerwein et al|Investigation of the reaction 74Ge( p,&gamma;)75As using the in-beam method to improve reaction network predictions for p nuclei|PHYSICAL REVIEW C 86, 035802|2012|https://doi.org/10.1103/PhysRevC.86.035802
 sb05|H. Schatz|Revised result for the Cl32(p,&gamma;)Ar33 reaction rate for astrophysical rp-process calculations|PRC 72, 065804|2005|https://doi.org/10.1103/PhysRevC.72.065804
+se04|Serpico et al.|Nuclear reaction network for primordial nucleosynthesis: a detailed analysis of rates, uncertainties and light nuclei yields|JCAP 12, 010|2004|https://doi.org/10.1088/1475-7516/2004/12/010
 se19|K. Setoodehnia et al.,|Impact of 16O(?,?)12C measurements on the 12C(?,?)16O astrophysical reaction rate|(2019) Phys.Rev.C 99, 055802|2019|https://doi.org/10.1103/PhysRevC.99.055802
 sh03|N.C. Shu|New Astrophysical Reaction Rates for 18F(p,&alpha;)15O and 18F(p,&gamma;)19Ne|Chinese Physics Letters 20, 14|2003|https://doi.org/10.1088/0256-307X/20/9/317
 sh05|N.C. Shu|The C11(p,&gamma;)N12 reaction rate and the covnersion of He3 into CNO|NPA 758, 419|2005|https://doi.org/10.1016/j.nuclphysa.2005.05.077
@@ -152,8 +178,11 @@ sp12|Salter, P.J.C|Measurement of the 18Ne(&alpha;,p<sub>0&lt;\sub>)21Na Reactio
 st08|E. Strandberg et al.|Mg24(a,g)Si28 resonance parameters at low alpha-particle energies|PRC 77, 055801|2008|https://doi.org/10.1103/PhysRevC.77.055801
 st13|Straniero et al.|IMPACT OF A REVISED 25Mg(p,&gamma;)26Al REACTION RATE ON THE OPERATION OF THE Mg-Al CYCLE|ApJ 763 100|2013|https://doi.org/10.1088/0004-637X/763/2/100
 sw12|Vermote, S.|Experimental determination of the 41Ca(n,&alpha;)38Ar reaction cross section up to 80 keV, and calculation of the Maxwellian averaged cross section at stellar temperatures|PRC85,015803|2012|https://doi.org/10.1103/PhysRevC.85.015803
+ta03|Tang et al.|Determination of the astrophysical S factor for 11C(p,&gamma;)12N from the 12N11 C + p asymptotic normalization coefficient|PRC 67, 015804|2003|https://doi.org/10.1103/PhysRevC.67.015804
 ta04|X. Tang et al|Determination of the direct capture contribution for N13(p,&gamma;)O14 from the O14 -> N13+p asympto|PRC 69, 055807|2004|https://doi.org/10.1103/PhysRevC.69.055807
 ta18|R. Talwar et al.|Experimental study of 38Ar+? reaction cross sections relevant to the 41Ca abundance in the solar system|PHYSICAL REVIEW C 97, 055801 (2018)|2018|https://doi.org/10.1103/PhysRevC.97.055801
+taex|-|Experimental Neutron Induced Rates, extrapolated using TAYLS|-|-|
+taly|Sallaska et al.|STARLIB: A Next-Generation Reaction-Rate Library for Nuclear Astrophysics|ApJ Supp. Ser. 207, 18|2013|https://doi.org/10.1088/0067-0049/207/1/18
 tb18|R. Talwar et al.|Experimental study of 38Ar+? reaction cross sections relevant to the 41Ca abundance in the solar system|PHYSICAL REVIEW C 97, 055801 (2018)|2018|https://doi.org/10.1103/PhysRevC.97.055801
 thra|T. Rauscher|NON-SMOKER Hauser-Feshbach w/ ETSFIQ Mass Input|ADNDT 75, 1, p1-351|2000|https://doi.org/10.1006/adnd.2000.0834
 ths8|Cyburt, R.H. et al.|Theory rates from T. Rauscher as part of REACLIB V1.0 release|ApJS (189) 240|2010|https://doi.org/10.1088/0067-0049/189/1/240
@@ -179,7 +208,7 @@ wien2|-|Thermonuclear reaction rate of Ni56(p,&gamma;)Cu57 and Cu57(p,&gamma;)Zn
 wies|michael wiescher|various|-|2000|https://reaclib.jinaweb.org/labels.php?action=viewLabel&label=wies
 wr09|Wrede, C.|Thermonuclear 30S( p, &gamma; )31Cl reaction in type I x-ray bursts|PHYSICAL REVIEW C 79, 045808|2009|https://doi.org/10.1103/PhysRevC.79.045808
 ww02|S. Wilmes, V. Wilmes, G. Staudt, P. Mohr|The N15(a,&gamma;)F19 reaction and nucleosynthesis of F19|PRC 66, 065802|2002|https://doi.org/10.1103/PhysRevC.66.065802
-debo|deBoer, R. J.|The 12C(&alpha;,&gamma;)16O reaction and its implications for stellar helium burning|Reviews of Modern Physics, Vol. 89, Issue 3; ISSN 0034-6861|2017|https://doi.org/10.1103/RevModPhys.89.035007
+deboer2017|deBoer, R. J.|The 12C(&alpha;,&gamma;)16O reaction and its implications for stellar helium burning|Reviews of Modern Physics, Vol. 89, Issue 3; ISSN 0034-6861|2017|https://doi.org/10.1103/RevModPhys.89.035007
 langanke|K. Langanke, G. Martínez-Pinedo|Rate Tables for the Weak Processes of pf-Shell Nuclei in Stellar Environments|Atomic Data and Nuclear Data Tables, Volume 79, Issue 1|2001|https://doi.org/10.1006/adnd.2001.0865
 suzuki|T. Suzuki, H. Toki, K. Nomoto|Electron Capture and &beta;-Decay Rates for sd-Shell Nuclei in Stellar Environments Relevant to High-Density O-NE-MG Cores|The Astrophysical Journal, Volume 817, Number 2|2016|https://doi.org/10.3847/0004-637X/817/2/163
 ffn|G. M. Fuller, W. A. Fowler, M. J. Newman|Stellar weak interaction rates for intermediate mass nuclei. III - Rate tables for the free nucleons and nuclei with A = 21 to A = 60|Astrophysical Journal Supplement, 48, 279|1982|https://doi.org/10.1086/190779

@@ -107,19 +107,19 @@ class TestRate:
     def test_source(self):
         assert self.rate1.source["Year"] == "2012"
 
-    def test_rfile(self):
-        assert self.rate1.rfile == "o15--n15-wc12"
-        assert self.rate2.rfile == "t-gn-d-nk06"
-        assert self.rate3.rfile == "he6-gnn-he4-cf88"
-        assert self.rate4.rfile == "c12-ag-o16-nac2"
-        assert self.rate5.rfile == "n15-pa-c12-nacr"
-        assert self.rate6.rfile == "he3-he3pp-he4-nacr"
-        assert self.rate7.rfile == "li7-tnna-he4-mafo"
-        assert self.rate8.rfile == "he4-aag-c12-fy05"
-        assert self.rate8_hist.rfile == "he4-pphe3-he3-nacr-historical"
-        assert self.rate9.rfile == "he4-pphe3-he3-nacr"
-        assert self.rate10.rfile == "he4-npahe3-li7-mafo"
-        assert self.rate11.rfile == "b17-nnn-c14-wc12"
+    def test_rfile_name(self):
+        assert self.rate1.rfile_name == {"o15--n15-wc12"}
+        assert self.rate2.rfile_name == {"t-gn-d-nk06"}
+        assert self.rate3.rfile_name == {"he6-gnn-he4-cf88"}
+        assert self.rate4.rfile_name == {"c12-ag-o16-nac2"}
+        assert self.rate5.rfile_name == {"n15-pa-c12-nacr"}
+        assert self.rate6.rfile_name == {"he3-he3pp-he4-nacr"}
+        assert self.rate7.rfile_name == {"li7-tnna-he4-mafo"}
+        assert self.rate8.rfile_name == {"he4-aag-c12-fy05"}
+        assert self.rate8_hist.rfile_name == {"he4-pphe3-he3-nacr-historical"}
+        assert self.rate9.rfile_name == {"he4-pphe3-he3-nacr"}
+        assert self.rate10.rfile_name == {"he4-npahe3-li7-mafo"}
+        assert self.rate11.rfile_name == {"b17-nnn-c14-wc12"}
 
     def test_chapter(self):
         assert self.rate1.chapter == 1

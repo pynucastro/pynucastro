@@ -32,7 +32,7 @@ class TestRateIds:
         r1 = DeBoerC12agO16()
 
         assert r1.rid == "C12 + He4 --> O16"
-        assert r1.id == "C12 + He4 --> O16 <deboer_debo>"
+        assert r1.id == "C12 + He4 --> O16 <deboer_deboer2017>"
         assert r1.fname == "C12_He4_to_O16_deboer"
 
         r2 = IliadisO16pgF17()
