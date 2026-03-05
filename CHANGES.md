@@ -2,6 +2,10 @@
 
 ## 2.10.0
 
+  * add support for StarLib rates (#1258)
+
+  * clean-up `ReacLibRate` (#1267)
+
   * unit test additions (#1268)
 
   * add a pull request template (#1264)
@@ -32,7 +36,8 @@
   * `AmrexAstroCxxNetwork` : inline the tabular rate data (#1245)
 
   * CI updates : drop python 3.11 testing (#1252), add a HIP C++
-    compilation test (#1251), and a CUDA C++ compilation test (#1250)
+    compilation test (#1251), and a CUDA C++ compilation test (#1250),
+    bump actions (#1270)
 
   * `AmrexAstroCxxNetwork` : switch partition function data to inline
     (#1243) and work on "T9" directly (#1241)
