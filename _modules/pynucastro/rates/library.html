@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.library &#8212; pynucastro 2.9.0.post40+g86e163cd2 documentation</title>
+    <title>pynucastro.rates.library &#8212; pynucastro 2.9.0.post42+g28c757137 documentation</title>
   
   
   
@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/myfile.css?v=15ab05d9" />
   
   <!-- So that users can add custom icons -->
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=4cae9290"></script>
+    <script src="../../../_static/documentation_options.js?v=1af494ba"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -487,11 +487,14 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">bz2</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">walk</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span><span class="p">,</span> <span class="n">UnsupportedNucleus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.alternate_rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeBoerC12agO16</span>
@@ -501,6 +504,7 @@
                                                <span class="n">is_allowed_dupe</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.reaclib_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReacLibRate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.starlib_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">StarLibRate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.tabular_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">TabularRate</span>
 
 
@@ -1548,6 +1552,110 @@
 
 
 
+<div class="viewcode-block" id="StarLibLibrary">
+<a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.StarLibLibrary">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StarLibLibrary</span><span class="p">(</span><span class="n">Library</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a :py:class:`Library` containing tabulated rates (excluding</span>
+<span class="sd">    isomers of &#39;al26&#39;) as described in the Starlib Library.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    seed : int</span>
+<span class="sd">        Rates in StarLibLibrary are sampled from a lognormal distribution</span>
+<span class="sd">        upon creation. This argument seeds the rng necessary to carry out</span>
+<span class="sd">        sampling. If no seed is proved then rates will return median</span>
+<span class="sd">        values.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">file_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="s2">&quot;library/starlib.dat.bz2&quot;</span>
+    <span class="n">INTERACTION_MAP</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">2</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">3</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">4</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                       <span class="mi">5</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">6</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">7</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="mi">8</span><span class="p">:</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                       <span class="mi">9</span><span class="p">:</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">10</span><span class="p">:</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">11</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)}</span>
+    <span class="n">NLINES</span> <span class="o">=</span> <span class="mi">60</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">rates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="n">bz2</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">header</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="c1"># Read header and relevant info</span>
+                <span class="n">rate_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_header</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+                <span class="c1"># Read data columns</span>
+                <span class="n">log_T9</span><span class="p">,</span> <span class="n">log_rate</span><span class="p">,</span> <span class="n">sigma</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NLINES</span><span class="p">):</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                    <span class="n">T9</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">exp_sig</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+                    <span class="n">log_T9</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T9</span><span class="p">))</span>
+                    <span class="n">sigma</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">exp_sig</span><span class="p">))</span>
+
+                    <span class="c1">#handle zero rates</span>
+                    <span class="k">if</span> <span class="n">rate</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+                        <span class="n">log_rate</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">rate</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">log_rate</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">-</span><span class="mi">700</span><span class="p">)</span>
+
+                <span class="c1">#Skip unsupported al26 rates</span>
+                <span class="n">unsupported_nuc</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;al-6&quot;</span><span class="p">,</span> <span class="s2">&quot;al*6&quot;</span><span class="p">,</span> <span class="s2">&quot;al01&quot;</span><span class="p">,</span> <span class="s2">&quot;al02&quot;</span><span class="p">,</span> <span class="s2">&quot;al03&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">nuc</span> <span class="ow">in</span> <span class="n">unsupported_nuc</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">rate_info</span><span class="p">[</span><span class="s2">&quot;nuclides&quot;</span><span class="p">]):</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># Convert data to np.array to ensure numpy operations</span>
+                <span class="c1"># are valid when sampling rates</span>
+                <span class="n">log_T9</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">log_T9</span><span class="p">)</span>
+                <span class="n">log_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">log_rate</span><span class="p">)</span>
+                <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+
+                <span class="c1">#Create rate</span>
+                <span class="n">rate</span> <span class="o">=</span> <span class="n">StarLibRate</span><span class="p">(</span><span class="n">log_T9</span><span class="p">,</span> <span class="n">log_rate</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+                                   <span class="n">reactants</span><span class="o">=</span><span class="n">rate_info</span><span class="p">[</span><span class="s2">&quot;reactants&quot;</span><span class="p">],</span>
+                                   <span class="n">products</span><span class="o">=</span><span class="n">rate_info</span><span class="p">[</span><span class="s2">&quot;products&quot;</span><span class="p">],</span>
+                                   <span class="n">Q</span><span class="o">=</span><span class="n">rate_info</span><span class="p">[</span><span class="s2">&quot;Q&quot;</span><span class="p">],</span>
+                                   <span class="n">labelprops</span><span class="o">=</span><span class="n">rate_info</span><span class="p">[</span><span class="s2">&quot;labelprops&quot;</span><span class="p">])</span>
+
+                <span class="n">rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">rates</span><span class="p">)</span>
+
+<div class="viewcode-block" id="StarLibLibrary.parse_header">
+<a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.StarLibLibrary.parse_header">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Starlib provides its data in blocks where each block consists of</span>
+<span class="sd">        a header followed by a 60 row grid of temperature, median rate and factor</span>
+<span class="sd">        uncertainty. This method parses the header and returns a dict containing</span>
+<span class="sd">        reactants, products, Q and more.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        line: str</span>
+<span class="sd">            header that is to be parsed</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">interaction_type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">nreactants</span><span class="p">,</span> <span class="n">nproducts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">INTERACTION_MAP</span><span class="p">[</span><span class="n">interaction_type</span><span class="p">]</span>
+        <span class="n">nnuc</span> <span class="o">=</span> <span class="n">nreactants</span> <span class="o">+</span> <span class="n">nproducts</span>
+
+        <span class="n">begin_idx</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">nuclides</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nnuc</span><span class="p">):</span>
+            <span class="n">nuclide</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">begin_idx</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">5</span><span class="p">:</span> <span class="n">begin_idx</span> <span class="o">+</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">5</span><span class="p">]</span>
+            <span class="n">nuclides</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nuclide</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+        <span class="n">reactants</span> <span class="o">=</span> <span class="n">nuclides</span><span class="p">[:</span><span class="n">nreactants</span><span class="p">]</span>
+        <span class="n">products</span> <span class="o">=</span> <span class="n">nuclides</span><span class="p">[</span><span class="n">nreactants</span><span class="p">:]</span>
+
+        <span class="c1">#In accordance with STARLIB documentation</span>
+        <span class="n">labelprops</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">43</span><span class="p">:</span><span class="mi">48</span><span class="p">]</span>
+        <span class="n">Q_val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">53</span><span class="p">:</span><span class="mi">65</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;interaction_type&quot;</span><span class="p">:</span> <span class="n">interaction_type</span><span class="p">,</span>
+                <span class="s2">&quot;reactants&quot;</span><span class="p">:</span> <span class="n">reactants</span><span class="p">,</span>
+                <span class="s2">&quot;products&quot;</span><span class="p">:</span> <span class="n">products</span><span class="p">,</span>
+                <span class="s2">&quot;nuclides&quot;</span><span class="p">:</span> <span class="n">nuclides</span><span class="p">,</span>
+                <span class="s2">&quot;labelprops&quot;</span><span class="p">:</span> <span class="n">labelprops</span><span class="p">,</span>
+                <span class="s2">&quot;Q&quot;</span><span class="p">:</span> <span class="n">Q_val</span><span class="p">}</span></div>
+</div>
+
+
+
 <div class="viewcode-block" id="SuzukiLibrary">
 <a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.SuzukiLibrary">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SuzukiLibrary</span><span class="p">(</span><span class="n">TabularLibrary</span><span class="p">):</span>
@@ -1633,8 +1741,7 @@
     <span class="n">lib</span> <span class="o">+=</span> <span class="n">PruetFullerLibrary</span><span class="p">()</span>
     <span class="n">lib</span> <span class="o">+=</span> <span class="n">FFNLibrary</span><span class="p">()</span>
     <span class="n">lib</span> <span class="o">+=</span> <span class="n">OdaLibrary</span><span class="p">()</span>
-    <span class="n">_r</span> <span class="o">=</span> <span class="n">DeBoerC12agO16</span><span class="p">()</span>
-    <span class="n">lib</span><span class="o">.</span><span class="n">add_rate</span><span class="p">(</span><span class="n">_r</span><span class="p">)</span>
+    <span class="n">lib</span><span class="o">.</span><span class="n">add_rate</span><span class="p">(</span><span class="n">DeBoerC12agO16</span><span class="p">())</span>
 
     <span class="k">return</span> <span class="n">lib</span></div>
 

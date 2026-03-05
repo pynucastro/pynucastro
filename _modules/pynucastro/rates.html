@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates &#8212; pynucastro 2.9.0.post40+g86e163cd2 documentation</title>
+    <title>pynucastro.rates &#8212; pynucastro 2.9.0.post42+g28c757137 documentation</title>
   
   
   
@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/myfile.css?v=15ab05d9" />
   
   <!-- So that users can add custom icons -->
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=4cae9290"></script>
+    <script src="../../_static/documentation_options.js?v=1af494ba"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -492,10 +492,12 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.known_duplicates</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_duplicate_rates</span><span class="p">,</span> <span class="n">is_allowed_dupe</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.library</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">FFNLibrary</span><span class="p">,</span> <span class="n">LangankeLibrary</span><span class="p">,</span> <span class="n">Library</span><span class="p">,</span> <span class="n">OdaLibrary</span><span class="p">,</span>
                       <span class="n">PruetFullerLibrary</span><span class="p">,</span> <span class="n">RateFilter</span><span class="p">,</span> <span class="n">ReacLibLibrary</span><span class="p">,</span>
-                      <span class="n">SuzukiLibrary</span><span class="p">,</span> <span class="n">TabularLibrary</span><span class="p">,</span> <span class="n">full_library</span><span class="p">)</span>
+                      <span class="n">StarLibLibrary</span><span class="p">,</span> <span class="n">SuzukiLibrary</span><span class="p">,</span> <span class="n">TabularLibrary</span><span class="p">,</span>
+                      <span class="n">full_library</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.modified_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModifiedRate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaryonConservationError</span><span class="p">,</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">RatePair</span><span class="p">,</span> <span class="n">Tfactors</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.reaclib_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">SingleSet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.starlib_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">StarLibRate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.tabular_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">TableIndex</span><span class="p">,</span> <span class="n">TableInterpolator</span><span class="p">,</span> <span class="n">TabularRate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.temperature_tabular_rate</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">TemperatureTabularRate</span><span class="p">,</span>
                                        <span class="n">TempTableInterpolator</span><span class="p">)</span>

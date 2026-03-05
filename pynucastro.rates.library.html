@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.library module &#8212; pynucastro 2.9.0.post40+g86e163cd2 documentation</title>
+    <title>pynucastro.rates.library module &#8212; pynucastro 2.9.0.post42+g28c757137 documentation</title>
   
   
   
@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="_static/myfile.css?v=15ab05d9" />
   
   <!-- So that users can add custom icons -->
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=4cae9290"></script>
+    <script src="_static/documentation_options.js?v=1af494ba"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -597,6 +597,13 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.ReacLibLibrary.write_to_file"><code class="docutils literal notranslate"><span class="pre">ReacLibLibrary.write_to_file()</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.StarLibLibrary"><code class="docutils literal notranslate"><span class="pre">StarLibLibrary</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.StarLibLibrary.INTERACTION_MAP"><code class="docutils literal notranslate"><span class="pre">StarLibLibrary.INTERACTION_MAP</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.StarLibLibrary.NLINES"><code class="docutils literal notranslate"><span class="pre">StarLibLibrary.NLINES</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.StarLibLibrary.file_path"><code class="docutils literal notranslate"><span class="pre">StarLibLibrary.file_path</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.StarLibLibrary.parse_header"><code class="docutils literal notranslate"><span class="pre">StarLibLibrary.parse_header()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.SuzukiLibrary"><code class="docutils literal notranslate"><span class="pre">SuzukiLibrary</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.TabularLibrary"><code class="docutils literal notranslate"><span class="pre">TabularLibrary</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.TabularLibrary.lib_path"><code class="docutils literal notranslate"><span class="pre">TabularLibrary.lib_path</span></code></a></li>
@@ -1055,6 +1062,51 @@ directory.</p></li>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="pynucastro.rates.library.StarLibLibrary">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">StarLibLibrary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#StarLibLibrary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.StarLibLibrary" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><code class="xref py py-class docutils literal notranslate"><span class="pre">Library</span></code></a></p>
+<p>Create a <a class="reference internal" href="#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><code class="xref py py-class docutils literal notranslate"><span class="pre">Library</span></code></a> containing tabulated rates (excluding
+isomers of ‘al26’) as described in the Starlib Library.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Rates in StarLibLibrary are sampled from a lognormal distribution
+upon creation. This argument seeds the rng necessary to carry out
+sampling. If no seed is proved then rates will return median
+values.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.rates.library.StarLibLibrary.INTERACTION_MAP">
+<span class="sig-name descname"><span class="pre">INTERACTION_MAP</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{1:</span> <span class="pre">(1,</span> <span class="pre">1),</span> <span class="pre">2:</span> <span class="pre">(1,</span> <span class="pre">2),</span> <span class="pre">3:</span> <span class="pre">(1,</span> <span class="pre">3),</span> <span class="pre">4:</span> <span class="pre">(2,</span> <span class="pre">1),</span> <span class="pre">5:</span> <span class="pre">(2,</span> <span class="pre">2),</span> <span class="pre">6:</span> <span class="pre">(2,</span> <span class="pre">3),</span> <span class="pre">7:</span> <span class="pre">(2,</span> <span class="pre">4),</span> <span class="pre">8:</span> <span class="pre">(3,</span> <span class="pre">1),</span> <span class="pre">9:</span> <span class="pre">(3,</span> <span class="pre">2),</span> <span class="pre">10:</span> <span class="pre">(4,</span> <span class="pre">2),</span> <span class="pre">11:</span> <span class="pre">(1,</span> <span class="pre">4)}</span></span><a class="headerlink" href="#pynucastro.rates.library.StarLibLibrary.INTERACTION_MAP" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.rates.library.StarLibLibrary.NLINES">
+<span class="sig-name descname"><span class="pre">NLINES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">60</span></span><a class="headerlink" href="#pynucastro.rates.library.StarLibLibrary.NLINES" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.rates.library.StarLibLibrary.file_path">
+<span class="sig-name descname"><span class="pre">file_path</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PosixPath('/home/runner/work/pynucastro/pynucastro/pynucastro/library/starlib.dat.bz2')</span></span><a class="headerlink" href="#pynucastro.rates.library.StarLibLibrary.file_path" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.rates.library.StarLibLibrary.parse_header">
+<span class="sig-name descname"><span class="pre">parse_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#StarLibLibrary.parse_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.StarLibLibrary.parse_header" title="Link to this definition">#</a></dt>
+<dd><p>Starlib provides its data in blocks where each block consists of
+a header followed by a 60 row grid of temperature, median rate and factor
+uncertainty. This method parses the header and returns a dict containing
+reactants, products, Q and more.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>line</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – header that is to be parsed</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.library.SuzukiLibrary">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.library.</span></span><span class="sig-name descname"><span class="pre">SuzukiLibrary</span></span><a class="reference internal" href="_modules/pynucastro/rates/library.html#SuzukiLibrary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.SuzukiLibrary" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pynucastro.rates.library.TabularLibrary" title="pynucastro.rates.library.TabularLibrary"><code class="xref py py-class docutils literal notranslate"><span class="pre">TabularLibrary</span></code></a></p>
@@ -1198,6 +1250,13 @@ but from different sources).</p>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.ReacLibLibrary"><code class="docutils literal notranslate"><span class="pre">ReacLibLibrary</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.ReacLibLibrary.write_to_file"><code class="docutils literal notranslate"><span class="pre">ReacLibLibrary.write_to_file()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.StarLibLibrary"><code class="docutils literal notranslate"><span class="pre">StarLibLibrary</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.StarLibLibrary.INTERACTION_MAP"><code class="docutils literal notranslate"><span class="pre">StarLibLibrary.INTERACTION_MAP</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.StarLibLibrary.NLINES"><code class="docutils literal notranslate"><span class="pre">StarLibLibrary.NLINES</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.StarLibLibrary.file_path"><code class="docutils literal notranslate"><span class="pre">StarLibLibrary.file_path</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.StarLibLibrary.parse_header"><code class="docutils literal notranslate"><span class="pre">StarLibLibrary.parse_header()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.library.SuzukiLibrary"><code class="docutils literal notranslate"><span class="pre">SuzukiLibrary</span></code></a></li>
