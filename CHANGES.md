@@ -1,5 +1,80 @@
 # Changelog
 
+## 2.10.0
+
+  * add support for StarLib rates (#1258)
+
+  * clean-up `ReacLibRate` (#1267)
+
+  * unit test additions (#1268)
+
+  * add a pull request template (#1264)
+
+  * standardize `weak_type` to work across rate types (#1265)
+
+  * add URLs to the rate source properties CSV file (#1266)
+
+  * update CPU dispatch features in unit tests for numpy 2.4.x (#1263)
+
+  * update docs theme (#1261)
+
+  * group log(rate) and log(screening) before doing exp() in
+    `PythonNetwork` (#1257)
+
+  * updated `ModifiedRate` to correctly handle screening nuclei
+    (#1255)
+
+  * sync CI benchmarks due to AMReX-Astro Microphysics changes (#1234,
+    #1238, #1248, #1256)
+
+  * `AmrexAstroCxxNetwork` : use an `enum` for `NSE_INDEX` (#1254) and
+    update the contents of the array to filter out unneeded rates
+    (#1244)
+
+  * Add `neut` as an alias for neutrons (#1253)
+
+  * `AmrexAstroCxxNetwork` : inline the tabular rate data (#1245)
+
+  * CI updates : drop python 3.11 testing (#1252), add a HIP C++
+    compilation test (#1251), and a CUDA C++ compilation test (#1250),
+    bump actions (#1270)
+
+  * `AmrexAstroCxxNetwork` : switch partition function data to inline
+    (#1243) and work on "T9" directly (#1241)
+
+  * docs updates: update the derived rates documentation (#1247), fix
+    some sphinx API doc warning (#1237), add a temperature evolution
+    integration example (#1223)
+
+  * clean up `SimpleCxxNetwork` (#1246)
+
+  * `AmrexAstroCxxNetwork` : template the spin function (#1239, #1240)
+
+  * allow `TemperatureTabularRate` to extrapolate (#1233)
+
+  * `AmrexAstroCxxNetwork` now sets `PYNUCASTRO_NETWORK=TRUE` at
+    compile time (#1236)
+
+  * `AmrexAstroCxxNetwork` : fix whitespace formatting (#1235)
+
+  * Store partition function data in log space and temperature in T9
+    (#1231) and do log term addition for deriving from
+    `TemperatureTabularRate` (#1230)
+
+  * `AmrexAstroCxxNetwork` : separate derived rates into their own
+    header (#1227)
+
+  * `TemperatureTabularRate` : work in natural log space (#1228)
+
+  * `AmrexAstroCxxNetwork` : remove unused functions (#1229)
+
+  * `SimpleCxxNetwork` : add a `partition_function.H` (#1226)
+
+  * Add C++ `TemperatureTabularRate` unit tests (#1225)
+
+  * Update `AmrexAstroCxxNetwork` to C++20 and do some optimizations
+    (#1224)
+
 ## 2.9.0
 
   * complete a stellar EOS with ideal gas and radiation (#1201)
