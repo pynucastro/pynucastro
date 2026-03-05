@@ -13,7 +13,7 @@ from pathlib import Path
 import numpy as np
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
-from pynucastro.rates.alternate_rates import DeBoerC12agO16, IliadisO16pgF17
+from pynucastro.rates.alternate_rates import DeBoerC12agO16
 from pynucastro.rates.derived_rate import DerivedRate
 from pynucastro.rates.files import _find_rate_file, get_rates_dir
 from pynucastro.rates.known_duplicates import (find_duplicate_rates,
