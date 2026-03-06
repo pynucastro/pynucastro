@@ -368,6 +368,7 @@ class TabularRate(Rate):
 
         """
         self.ion_screen = []
+        self.screening_pairs = []
 
     def function_string_py(self):
         """Construct the python function that computes the rate.
