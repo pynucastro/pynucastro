@@ -12,12 +12,19 @@ using namespace Species;
 
 struct rate_t {
     amrex::Array1D<amrex::Real, 1, NumRates>  screened_rates;
+#ifdef SCREENING
+    amrex::Array1D<amrex::Real, 1, NumScreenPairs>  log_screen;
+#endif
     amrex::Real enuc_weak;
 };
 
 struct rate_derivs_t {
     amrex::Array1D<amrex::Real, 1, NumRates>  screened_rates;
     amrex::Array1D<amrex::Real, 1, NumRates>  dscreened_rates_dT;
+#ifdef SCREENING
+    amrex::Array1D<amrex::Real, 1, NumScreenPairs>  log_screen;
+    amrex::Array1D<amrex::Real, 1, NumScreenPairs>  dlog_screen_dT;
+#endif
     amrex::Real enuc_weak;
 };
 
