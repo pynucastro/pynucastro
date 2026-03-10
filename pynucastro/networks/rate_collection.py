@@ -1481,6 +1481,80 @@ class RateCollection:
 
         self._build_collection()
 
+    def isNSECompatible(self):
+        """Determine whether the current network is compatible
+        with the NSE description. Checks if there are any rate that
+        uses stoichiometry, or if every strong rate has a corresponding
+        inverse rate. If none of the both are true, check if we are sufficienctly
+        connected by checking whether the the nullity of the network
+        stoichiometric matrix is not greater than 2, then the
+        NSE equation will predict the correct equilibrium abundance.
+        If all isotope in the network have the same Ye ratio,
+        then the nullity must not be greater than 1.
+        An example would be the alpha-chain network, i.e. Ye = 0.5 always.
+        In this case, the second NSE constraint on Ye is pointless.
+
+        Returns
+        -------
+        boolean
+
+        """
+
+        S = []
+        for rp in self.get_rate_pairs():
+            fr = rp.forward
+            rr = rp.reverse
+
+            # Skip for weak rates.
+            if fr is not None and fr.weak:
+                continue
+            if rr is not None and rr.weak:
+                continue
+
+            # After treating weak rate cases, return False if one of them is None
+            if fr is None or rr is None:
+                return False
+
+            # Now both fr and rr are not None,
+            # Check if there are any rate uses stoichiometry
+            if fr.stoichiometry is not None or rr.stoichiometry is not None:
+                return False
+
+            # Record the stoichiometric coefficient of the valid RatePair.
+            stoich = [0] * len(self.unique_nuclei)
+            for reactant in fr.reactants:
+                idx = self.unique_nuclei.index(reactant)
+                stoich[idx] -= 1
+
+            for product in fr.products:
+                idx = self.unique_nuclei.index(product)
+                stoich[idx] += 1
+
+            S.append(stoich)
+
+        # Check if there are enough links such that we can represent
+        # the chemical potential of any nuclei with chemical potential
+        # of 2 nuclei in the network.
+        S = np.array(S)
+
+        # Find nullity via Nullity-Rank theorem
+        rank = np.linalg.matrix_rank(S)
+        nullity = len(self.unique_nuclei) - rank
+
+        # If all nuclei have the same Z/A ratio,
+        # then can only have 1 independent chemical potential
+        # since the Ye constraint no longer applies, otherwise 2
+        max_mu_dim = 2
+        Z_A_ratios = {nuc.Z / nuc.A for nuc in self.unique_nuclei}
+        if len(Z_A_ratios) == 1:
+            max_mu_dim = 1
+
+        if self.verbose:
+            print(f"NSE compatibility: nullity = {nullity}, allowed = {max_mu_dim}, "
+                  f"number of species = {len(self.unique_nuclei)}, rank={rank}")
+
+        return nullity <= n_mu
+
     def summary(self):
         """Print a summary of the nuclei and rates for this network"""
 
