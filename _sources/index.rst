@@ -42,6 +42,7 @@ and interactively exploring nuclear reaction networks.
    plot-types.ipynb
    basic_network.ipynb
    pynucastro-integration.ipynb
+   starlib.ipynb
 
 
 .. toctree::

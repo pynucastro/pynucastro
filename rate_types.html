@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Reaction Rate Types &#8212; pynucastro 2.9.0.post43+gd06cbac51 documentation</title>
+    <title>Reaction Rate Types &#8212; pynucastro 2.9.0.post44+g77ed73b73 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=3465fdce"></script>
+    <script src="_static/documentation_options.js?v=747143b3"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -173,6 +173,7 @@
 <li class="toctree-l1"><a class="reference internal" href="plot-types.html">Plotting Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="basic_network.html">Basic Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Integrating a Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="starlib.html">Network Integration with StarLib rates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Working with Libraries</span></p>
 <ul class="nav bd-sidenav">
@@ -311,6 +312,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.modified_rate.html">pynucastro.rates.modified_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.rate.html">pynucastro.rates.rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.reaclib_rate.html">pynucastro.rates.reaclib_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.starlib_rate.html">pynucastro.rates.starlib_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.tabular_rate.html">pynucastro.rates.tabular_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.temperature_tabular_rate.html">pynucastro.rates.temperature_tabular_rate module</a></li>
 </ul>
@@ -574,6 +576,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ydot-term">ydot term</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#starlib-rates">StarLib rates</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabulated-weak-rates">Tabulated Weak Rates</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">ydot term</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#table-format">Table format</a></li>
@@ -765,6 +768,36 @@ is the responsibility of the network.</p>
 outputs the contribution to the Jacobian for this rate.</p>
 </section>
 </section>
+<section id="starlib-rates">
+<h2>StarLib rates<a class="headerlink" href="#starlib-rates" title="Link to this heading">#</a></h2>
+<p><a class="reference external" href="https://starlib.github.io/Rate-Library/">STARLIB</a> is a rate library that provides rate probability densities over a
+tabulated temperature grid ranging from 0.001 GK to 10 GK. These rate
+probability densities are approximated as lognormal distributions, i.e.,
+they are described by two parameters <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span> as follows:</p>
+<div class="math notranslate nohighlight">
+\[f(x) = \frac{1}{ \sigma \sqrt{2 \pi}} \frac{1}{x}e^{-( \ln x - \mu)^2 / 2 \sigma^2}\]</div>
+<p>Thus, for each rate at every listed temperature, StarLib provides the
+median rate and the factor uncertainty, i.e., <span class="math notranslate nohighlight">\(e^{\mu}\)</span> and <span class="math notranslate nohighlight">\(e^{\sigma}\)</span> respectively.
+Every rate also has an associated header which provides more relevant
+information for that rate. This includes:</p>
+<ul class="simple">
+<li><p>An interaction type that classifies reactions based on number of
+reactants and products. Analogous to chapters for ReacLib Rates.</p></li>
+<li><p>Nuclides that are to be interpreted as reactants or products given the
+interaction type.</p></li>
+<li><p>A label that corresponds to the source of a given rate along with an
+“interaction specific label” that is a <code class="docutils literal notranslate"><span class="pre">char</span></code> which is set to “w”
+if a given rate is weak, “v” if a rate is a reverse reaction and
+“g” if a rate describes a gamma-ray transition.</p></li>
+<li><p>Energy released (+) or consumed (-).</p></li>
+</ul>
+<p>The <a class="reference internal" href="pynucastro.rates.starlib_rate.html#pynucastro.rates.starlib_rate.StarLibRate" title="pynucastro.rates.starlib_rate.StarLibRate"><code class="xref py py-class docutils literal notranslate"><span class="pre">StarLibRate</span></code></a> class provides the
+structure necessary to store and sample StarLib rates within pynucastro.
+Upon creation, instances of <code class="docutils literal notranslate"><span class="pre">StarLibRate</span></code> sample log rates across the
+temperature grid given the lognormal distributions and a rng seed.</p>
+<p>Note that StarLib provides rates for isomers of Al26 which are not
+presently supported in pynucastro.</p>
+</section>
 <section id="tabulated-weak-rates">
 <h2>Tabulated Weak Rates<a class="headerlink" href="#tabulated-weak-rates" title="Link to this heading">#</a></h2>
 <p>For electron captures and beta-decays (which are of the form
@@ -906,6 +939,7 @@ function string needed to evaluate the rate.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ydot-term">ydot term</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#starlib-rates">StarLib rates</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tabulated-weak-rates">Tabulated Weak Rates</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">ydot term</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#table-format">Table format</a></li>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Binding Energy per Nucleon &#8212; pynucastro 2.9.0.post43+gd06cbac51 documentation</title>
+    <title>Binding Energy per Nucleon &#8212; pynucastro 2.9.0.post44+g77ed73b73 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=3465fdce"></script>
+    <script src="../_static/documentation_options.js?v=747143b3"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -173,6 +173,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../plot-types.html">Plotting Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../basic_network.html">Basic Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../pynucastro-integration.html">Integrating a Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../starlib.html">Network Integration with StarLib rates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Working with Libraries</span></p>
 <ul class="nav bd-sidenav">
@@ -311,6 +312,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../pynucastro.rates.modified_rate.html">pynucastro.rates.modified_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../pynucastro.rates.rate.html">pynucastro.rates.rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../pynucastro.rates.reaclib_rate.html">pynucastro.rates.reaclib_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../pynucastro.rates.starlib_rate.html">pynucastro.rates.starlib_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../pynucastro.rates.tabular_rate.html">pynucastro.rates.tabular_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../pynucastro.rates.temperature_tabular_rate.html">pynucastro.rates.temperature_tabular_rate module</a></li>
 </ul>
@@ -833,7 +835,7 @@ First let’s get the extent of <span class="math notranslate nohighlight">\(N\)
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7fd81e87b770&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7fec90d2b620&gt;
 </pre></div>
 </div>
 <img alt="../_images/275b75a4aaaa20e7817d574bc7b8db090bf37db0fce6b86673e20fd3163de83f.png" src="../_images/275b75a4aaaa20e7817d574bc7b8db090bf37db0fce6b86673e20fd3163de83f.png" />
@@ -856,7 +858,7 @@ First let’s get the extent of <span class="math notranslate nohighlight">\(N\)
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7fd81e757380&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7fec90c03230&gt;
 </pre></div>
 </div>
 <img alt="../_images/ffb598e8153db8efca4b955201e0e68178dad2c2709371d8a80f729d49f4ab6a.png" src="../_images/ffb598e8153db8efca4b955201e0e68178dad2c2709371d8a80f729d49f4ab6a.png" />
