@@ -1513,11 +1513,29 @@ class RateCollection:
 
             # After treating weak rate cases, return False if one of them is None
             if fr is None or rr is None:
+                if self.verbose:
+                    print("Either the forward or the reverse rate for the "
+                          f"following strong reaction rate pair is missing: {rp}")
                 return False
 
             # Now both fr and rr are not None,
+            # Check to make sure one of the rate is a DerivedRate,
+            # and the source rate of that DerivedRate is the other rate.
+            # ApproximateRate are instrinsically compatible with NSE
+            # as long as the appropriate DerivedRate is used when creating the ApproximateRate
+            if not ((isinstance(fr, DerivedRate) and fr.source_rate == rr) or
+                    (isinstance(rr, DerivedRate) and rr.source_rate == fr) or
+                    (isinstance(fr, ApproximateRate) and isinstance(rr, ApproximateRate))):
+                if self.verbose:
+                    print("Either the forward or the reverse rate for the "
+                          f"following strong reaction rate pair is not a DerivedRate: {rp}")
+                return False
+
             # Check if there are any rate uses stoichiometry
             if fr.stoichiometry is not None or rr.stoichiometry is not None:
+                if self.verbose:
+                    print("Either the forward or the reverse rate for the "
+                          f"following strong reaction rate pair uses stoichiometry: {rp}")
                 return False
 
             # Record the stoichiometric coefficient of the valid RatePair.
@@ -1544,16 +1562,20 @@ class RateCollection:
         # If all nuclei have the same Z/A ratio,
         # then can only have 1 independent chemical potential
         # since the Ye constraint no longer applies, otherwise 2
-        max_mu_dim = 2
+        max_dim = 2
         Z_A_ratios = {nuc.Z / nuc.A for nuc in self.unique_nuclei}
         if len(Z_A_ratios) == 1:
-            max_mu_dim = 1
+            max_dim = 1
 
         if self.verbose:
-            print(f"NSE compatibility: nullity = {nullity}, allowed = {max_mu_dim}, "
-                  f"number of species = {len(self.unique_nuclei)}, rank={rank}")
+            print("NSE Compatibility Summary \n"
+                  "-------------------------\n"
+                  f"  Nullity: {nullity}\n"
+                  f"  Rank: {rank}\n"
+                  f"  Max allowed dimension: {max_dim}\n"
+                  f"  Number of species: {len(self.unique_nuclei)}\n")
 
-        return nullity <= n_mu
+        return nullity <= max_dim
 
     def summary(self):
         """Print a summary of the nuclei and rates for this network"""
