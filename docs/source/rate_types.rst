@@ -189,6 +189,45 @@ Similarly,  :func:`jacobian_string_py <pynucastro.rates.rate.Rate.jacobian_strin
 outputs the contribution to the Jacobian for this rate.
 
 
+StarLib rates
+-------------
+
+`STARLIB <https://starlib.github.io/Rate-Library/>`_ is a rate library that provides rate probability densities over a
+tabulated temperature grid ranging from 0.001 GK to 10 GK. These rate
+probability densities are approximated as lognormal distributions, i.e.,
+they are described by two parameters :math:`\mu` and :math:`\sigma` as follows:
+
+.. math::
+
+   f(x) = \frac{1}{ \sigma \sqrt{2 \pi}} \frac{1}{x}e^{-( \ln x - \mu)^2 / 2 \sigma^2}
+
+Thus, for each rate at every listed temperature, StarLib provides the
+median rate and the factor uncertainty, i.e., :math:`e^{\mu}` and :math:`e^{\sigma}` respectively.
+Every rate also has an associated header which provides more relevant
+information for that rate. This includes:
+
+* An interaction type that classifies reactions based on number of
+  reactants and products. Analogous to chapters for ReacLib Rates.
+
+* Nuclides that are to be interpreted as reactants or products given the
+  interaction type.
+
+* A label that corresponds to the source of a given rate along with an
+  "interaction specific label" that is a ``char`` which is set to "w"
+  if a given rate is weak, "v" if a rate is a reverse reaction and
+  "g" if a rate describes a gamma-ray transition.
+
+* Energy released (+) or consumed (-).
+
+The :py:class:`StarLibRate <pynucastro.rates.starlib_rate.StarLibRate>` class provides the
+structure necessary to store and sample StarLib rates within pynucastro.
+Upon creation, instances of ``StarLibRate`` sample log rates across the
+temperature grid given the lognormal distributions and a rng seed.
+
+Note that StarLib provides rates for isomers of Al26 which are not
+presently supported in pynucastro.
+
+
 Tabulated Weak Rates
 --------------------
 
