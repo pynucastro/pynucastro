@@ -1496,7 +1496,7 @@ class RateCollection:
 
         Returns
         -------
-        boolean
+        bool
 
         """
 
