@@ -1096,7 +1096,7 @@ class StarLibLibrary(Library):
                 "Q": Q_val}
 
     def resample(self, seed=None):
-        """A user facing method that resamples rates
+        """Resample rates
 
         Parameters
         ----------
@@ -1115,9 +1115,7 @@ class StarLibLibrary(Library):
             rate.sample_rates(rng=rng)
 
     def unsample(self):
-        """A user facing method that restores rates to
-         median values
-        """
+        """Restore rates to median values."""
         for rate in self._rates.values():
             rate.sample_rates()
 

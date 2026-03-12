@@ -4,9 +4,8 @@ uncertainties as per the StarLib Library
 
 """
 
-import numpy as np
-
-from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate, TempTableInterpolator
+from pynucastro.rates.temperature_tabular_rate import (TemperatureTabularRate,
+                                                       TempTableInterpolator)
 
 
 class StarLibRate(TemperatureTabularRate):
@@ -21,8 +20,8 @@ class StarLibRate(TemperatureTabularRate):
         The tabulated log(rate) data, N_A <σv>
     sigma_data : numpy.ndarray
         The tabulated log(uncertainty) data
-    seed: int
-        Seed to pass to rng for rate sampling
+    rng : numpy.random.Generator
+        An rng for rate sampling
     """
 
     def __init__(self, log_t9_data, log_rate_data, sigma_data,
@@ -64,7 +63,7 @@ class StarLibRate(TemperatureTabularRate):
 
         Parameters
         ----------
-        rng : np.random.default_rng
+        rng : numpy.random.Generator
             An rng that draws the gaussian deviate required for rate sampling
         """
 
