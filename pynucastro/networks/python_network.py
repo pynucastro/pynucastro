@@ -3,14 +3,16 @@
 import shutil
 import sys
 import warnings
+import types
+import io
 from pathlib import Path
 
 import numpy as np
 
 from pynucastro.constants import constants
-from pynucastro.networks.rate_collection import RateCollection
+from pynucastro.networks.rate_collection import RateCollection, Composition
 from pynucastro.rates import ApproximateRate, ModifiedRate
-from pynucastro.screening import get_screening_map
+from pynucastro.screening import get_screening_map, get_screening_func
 
 
 class PythonNetwork(RateCollection):
@@ -295,11 +297,18 @@ class PythonNetwork(RateCollection):
 
         """
         # pylint: disable=arguments-differ
+
         if outfile is None:
             of = sys.stdout
+            close_file = False
+        elif hasattr(outfile, "write"):
+            # already a file-like object
+            of = outfile
+            close_file = False
         else:
             outfile = Path(outfile)
             of = outfile.open("w")
+            close_file = True
 
         indent = 4*" "
 
@@ -516,7 +525,7 @@ class PythonNetwork(RateCollection):
 
         of.write(f"{indent}return jac\n")
 
-        if outfile is not None:
+        if close_file:
             of.close()
 
         # Copy any tables in the network to the current directory
@@ -539,3 +548,69 @@ class PythonNetwork(RateCollection):
                     shutil.copy(rtoki_file, odir or Path.cwd())
                 else:
                     warnings.warn(UserWarning(f'Table metadata file {tr.rfile_name} not found.'))
+
+    def integrate_network(self, tmax, rho, T, Y0=None,
+                          screen_method=None,
+                          initial_comp="uniform",
+                          rtol=1e-8, atol=1e-8):
+        '''Integrate the network to tmax given (rho, T, Y0) using
+        SciPy's solve_ivp() with BDF method.
+
+        Parameters
+        ----------
+        tmax: float
+            final integration time.
+        rho : float
+            density used to integrate the network
+        T : float
+            temperature used to integrate the network
+        Y0 : numpy.ndarray or None
+            initial molar abundance of the nuclei. If not provided,
+            the initial composition is initialized according to `initial_comp`
+        screen_method : str or None
+            name of the screening function used to evaluate rates when integrating
+            the network. Valid choices are: `screen5`, `chugunov_2007`, `chugunov_2009`,
+            `potekhin_1998`, and `debye_huckel`. If `None`, no screening is applied.
+        initial_comp : str
+            different modes to use to set up the initial composition if Y0 is None.
+            Valid choices are: `uniform`, `random`, and `solar.
+        rtol : float
+            relative tolerance for SciPy's solve_ivp()
+        atol : float
+            absolute tolerance for SciPy's solve_ivp()
+
+        Returns
+        -------
+        OdeSolution
+        '''
+
+        from scipy.integrate import solve_ivp
+
+        # Write the network module as a string
+        f = io.StringIO()
+        self.write_network(outfile=f)
+        network_code = f.getvalue()
+
+        # Create a new in-memory module called `network`
+        network = types.ModuleType("network")
+
+        # Execute the code inside the module namespace
+        exec(network_code, network.__dict__)
+
+        # Get the appropriate screening function
+        screen_func = get_screening_func(screen_method)
+
+        # Setup the initial molar abundance if Y0 is None
+        if Y0 is None:
+            if initial_comp is None:
+                raise ValueError("Valid initial compositions are ['uniform', 'random', 'solar']")
+            comp = Composition(self.unique_nuclei, init=initial_comp)
+            ys = comp.get_molar()
+            Y0 = np.array([ys[nuc] for nuc in self.unique_nuclei])
+
+        # Integrate using SciPy's solve_ivp() using BDF method -- good for stiff system.
+        sol = solve_ivp(network.rhs, [0, tmax], Y0, method="BDF",
+                        dense_output=True, args=(rho, T, screen_func),
+                        rtol=rtol, atol=atol, jac=network.jacobian)
+
+        return sol
