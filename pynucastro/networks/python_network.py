@@ -549,35 +549,6 @@ class PythonNetwork(RateCollection):
                 else:
                     warnings.warn(UserWarning(f'Table metadata file {tr.rfile} not found.'))
 
-    def _get_screening_method(self, screen_method):
-        '''Helper function to get the desired screening method'''
-        if screen_method is None:
-            return None
-
-        from pynucastro.screening import (
-            screen5,
-            potekhin_1998,
-            chugunov_2007,
-            chugunov_2009,
-            debye_huckel
-        )
-
-        methods = {
-            "screen5": screen5,
-            "potekhin_1998": potekhin_1998,
-            "chugunov_2007": chugunov_2007,
-            "chugunov_2009": chugunov_2009,
-            "debye_huckel": debye_huckel,
-        }
-
-        try:
-            return methods[screen_method]
-        except KeyError:
-            raise ValueError(
-                f"{screen_method} is not a valid screening method. "
-                f"Choose from: {list(methods)}"
-            )
-
     def integrate_network(self, tmax, rho, T, Y0=None,
                           screen_method=None,
                           initial_comp="uniform",
