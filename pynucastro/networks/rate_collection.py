@@ -2198,7 +2198,6 @@ class RateCollection:
             k = names.count(n)
             if k > 1:
                 print(f'Found rate {r} named {n} with {k} entries in the RateCollection.')
-                print(f'Rate {r} has the original source:\n{r.original_source}')
         return len(set(names)) == len(self.rates)
 
     def _write_network(self, *args, **kwargs):
