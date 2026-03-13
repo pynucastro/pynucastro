@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>NSE vs. Direct Integration &#8212; pynucastro 2.9.0.post45+g3072af69f documentation</title>
+    <title>NSE vs. Direct Integration &#8212; pynucastro 2.9.0.post46+g6e1939ae1 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=98e33b92"></script>
+    <script src="_static/documentation_options.js?v=fbc8c53b"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -567,9 +567,11 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nse-compatibility">NSE Compatibility</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#direct-integration">Direct integration</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nse-calculation">NSE calculation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparing-with-nse-calculation">Comparing with NSE calculation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-equilibrium">Visualizing equilibrium</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-incompatibility">Examples of incompatibility</a></li>
 </ul>
             </nav>
         </div>
@@ -586,13 +588,67 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>To further demonstrate the validity of the NSE equation,
-we will compare the equilibrium mass fractions computed via direct integration and the mass fractions obtained from NSE equations.</p>
-<p>We will create the <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a> needed for direct integration using the same set of nuclei as our previous example.</p>
+<section id="nse-compatibility">
+<h2>NSE Compatibility<a class="headerlink" href="#nse-compatibility" title="Link to this heading">#</a></h2>
+<p>Previously, we have demonstrated the ability to compute an unique composition by solving the NSE equation given input, <span class="math notranslate nohighlight">\((\rho, T, Y_e)\)</span>.
+Now the question arises on whether the equilibrium mass abundance obtained from integrating the reaction network will match, up to machine precision, with what is predicted from the NSE equation.
+To understand this, we need to revisit the assumptions made when deriving the NSE equation, i.e.</p>
+<ol class="arabic simple">
+<li><p>Assumed that only strong-mediated nuclear reactions take place such that the <span class="math notranslate nohighlight">\(Y_e\)</span> remains unchanged, i.e.</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+   \sum_i \frac{Z_i X_i}{A_i} - Y_e =0
+\]</div>
+<ol class="arabic simple" start="2">
+<li><p>Assumed that the mass fraction of any species is characterized by Boltzmann gas, see <a class="reference internal" href="derived-rates.html#gas-model"><span class="std std-ref">Semi-relativistic ideal gas model</span></a>, such that</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+X_i = \frac{m_i}{\rho}G_i \left(\frac{m_i k_B T}{2\pi\hbar^2}\right)^{3/2} \exp{\left(\frac{\mu_i - m_i c^2 - \mu^C_i}{k_B T}\right)}
+\]</div>
+<ol class="arabic simple" start="3">
+<li><p>Assumed that the chemical potential of any species in the network can be represented as a linear combination of chemical potential of any 2 species. The NSE condition specifically chooses to work in the basis of proton and neutron, but any two can work. See Appendix B in <span id="id1">Lippuner and Roberts [<a class="reference internal" href="zreferences.html#id40" title="Jonas Lippuner and Luke F. Roberts. SkyNet: A Modular Nuclear Reaction Network Library. \apjs , 233(2):18, December 2017. arXiv:1706.06198, doi:10.3847/1538-4365/aa94cb.">2017</a>]</span> for reference.</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+\mu_i = Z_i \mu_p + N_i \mu_n
+\]</div>
+<p>To resolve the assumptions made above consider the following:</p>
+<p>To address assumption #1, consider a reaction network that includes a set of weak reaction rates, such that the electron fraction, <span class="math notranslate nohighlight">\(Y_e\)</span>, evolves according to</p>
+<div class="math notranslate nohighlight">
+\[
+\dot{Y}_e = \sum_i Z_i \dot{Y}_i^{\mathrm{weak}}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\dot{Y}_i^{\mathrm{weak}}\)</span> is the rate of change of the molar fraction of the <span class="math notranslate nohighlight">\(i\)</span>-th species due to weak rates. If the timescale for strong reactions to reach equilibrium is much shorter than the timescale for weak reactions, then the composition can still be treated as being in equilibrium with respect to the strong rates. In this case, the equilibrium composition is still well-defined as long as the electron fraction, <span class="math notranslate nohighlight">\(Y_e\)</span>, is evolved over time based on the weak rate contributions.</p>
+<p>To address assumption #2, the reaction network must be consistent with the same Boltzmann-gas form of the mass fractions described in Eq. 2. This requires that every strong reaction is paired with its inverse reaction. One of the two rates, either forward or reverse, must
+then be derived from the other using detailed balance. This is implemented by using <a class="reference internal" href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate" title="pynucastro.rates.derived_rate.DerivedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DerivedRate</span></code></a>, see <a class="reference internal" href="derived-rates.html#derived-rate"><span class="std std-ref">Derived rate definition</span></a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Rates that use <code class="docutils literal notranslate"><span class="pre">stoichiometry</span></code> are not compatible with NSE. This is because the rate equation with <code class="docutils literal notranslate"><span class="pre">stoichiometry</span></code> is different from
+the rate equation assumed when deriving the <code class="docutils literal notranslate"><span class="pre">DerivedRate</span></code>.</p>
+</div>
+<p>To address assumption #3, the reaction network must be sufficiently connected so that the chemical potential of any species and be expressed in terms of the chemical potentials of only two species. Consider a network with <span class="math notranslate nohighlight">\(N\)</span> number of species and <span class="math notranslate nohighlight">\(M\)</span> number of strong reaction pairs, then the difference in the chemical potential between the reactants and products for the <span class="math notranslate nohighlight">\(i\)</span>-th reaction pair can be written as</p>
+<div class="math notranslate nohighlight">
+\[ S_{ij} \mu_j = \delta_i \]</div>
+<p>where <span class="math notranslate nohighlight">\(\mu_j\)</span> is the chemical potential of the <span class="math notranslate nohighlight">\(j\)</span>-th species, <span class="math notranslate nohighlight">\(S\)</span> is the stoichiometric matrix and <span class="math notranslate nohighlight">\(S_{ij}\)</span> is the stoichiometric coefficient of the <span class="math notranslate nohighlight">\(j\)</span>-th species participated in the <span class="math notranslate nohighlight">\(i\)</span>-th reaction pair, with opposite signs depending on whether it is a reactant or a product. System reaches global chemical equilibrium for <span class="math notranslate nohighlight">\(\mu_j = \mu^{\mathrm{eq}}_j\)</span> such that <span class="math notranslate nohighlight">\(\delta_i = 0\)</span> for all reaction pairs.
+For the equilibrium state to be consistent with NSE, the dimension of <span class="math notranslate nohighlight">\(\mu^{\mathrm{eq}}\)</span> must not be greater than the maximum independent equilibrium chemical potentials, <span class="math notranslate nohighlight">\(\mathrm{MAX\_DIM}\)</span>. In general, <span class="math notranslate nohighlight">\(\mathrm{MAX\_DIM} = 2\)</span> as there are two possible NSE constraints.
+If all species in the network have the same <span class="math notranslate nohighlight">\(Z/A\)</span> ratio, such as the <span class="math notranslate nohighlight">\(\alpha\)</span>-chain network, the <span class="math notranslate nohighlight">\(Y_e\)</span> constraint becomes redundant and <span class="math notranslate nohighlight">\(\mathrm{MAX\_DIM} \rightarrow 1\)</span>. The mathematical equivalent statement is to require</p>
+<div class="math notranslate nohighlight">
+\[
+ \mathrm{nullity}(S) \leq \mathrm{MAX\_DIM}
+\]</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>In pynucastro, <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateCollection</span></code></a> provides a convenient method, <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.isNSECompatible" title="pynucastro.networks.rate_collection.RateCollection.isNSECompatible"><code class="xref py py-meth docutils literal notranslate"><span class="pre">isNSECompatible</span></code></a>, that checks all the above assumptions and pre-determines whether a network will be compatible with NSE.</p>
+</div>
+<p>To demonstrate, we will create the <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a> needed for direct integration using the same set of nuclei as our previous example.</p>
 <p>First we recreate our library, but we make sure that we use reverse rates calculated via detailed balance.
 In pynucastro, this is the <a class="reference internal" href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate" title="pynucastro.rates.derived_rate.DerivedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DerivedRate</span></code></a>.</p>
 <div class="cell docutils container">
@@ -636,10 +692,6 @@ In pynucastro, this is the <a class="reference internal" href="pynucastro.rates.
 </div>
 </div>
 <p>We can also use <a class="reference internal" href="pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate" title="pynucastro.rates.modified_rate.ModifiedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModifiedRate</span></code></a> where we modify the reactants and/or the products of a reaction rate but still use the original rate. This is compatible with NSE as long as a corresponding <code class="docutils literal notranslate"><span class="pre">DerivedRate</span></code> is added.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Currently <code class="docutils literal notranslate"><span class="pre">stoichiometry</span></code> does NOT work with NSE.</p>
-</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">other_rates</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;c12(c12,n)mg23&quot;</span><span class="p">,</span> <span class="s2">&quot;mg24&quot;</span><span class="p">),</span>
@@ -683,44 +735,68 @@ In pynucastro, this is the <a class="reference internal" href="pynucastro.rates.
 <p>We can also do some approximations, such as the <span class="math notranslate nohighlight">\((\alpha,p)(p,\gamma)\)</span> approximation. This is fully compatible with NSE.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">make_ap_pg_approx</span><span class="p">(</span><span class="n">intermediate_nuclei</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;cl35&quot;</span><span class="p">,</span> <span class="s2">&quot;k39&quot;</span><span class="p">,</span> <span class="s2">&quot;sc43&quot;</span><span class="p">,</span> <span class="s2">&quot;v47&quot;</span><span class="p">,</span> <span class="s2">&quot;mn51&quot;</span><span class="p">,</span> <span class="s2">&quot;co55&quot;</span><span class="p">])</span>
-<span class="n">net</span><span class="o">.</span><span class="n">remove_nuclei</span><span class="p">([</span><span class="s2">&quot;cl35&quot;</span><span class="p">,</span> <span class="s2">&quot;k39&quot;</span><span class="p">,</span> <span class="s2">&quot;sc43&quot;</span><span class="p">,</span> <span class="s2">&quot;v47&quot;</span><span class="p">,</span> <span class="s2">&quot;mn51&quot;</span><span class="p">,</span> <span class="s2">&quot;co55&quot;</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Finally, we write out python module that contains essential functions needed for integration, such as the <code class="docutils literal notranslate"><span class="pre">rhs</span></code> and <code class="docutils literal notranslate"><span class="pre">jacobian</span></code>.</p>
-<div class="cell tag_nbval-ignore-output docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="n">outfile</span><span class="o">=</span><span class="s2">&quot;network.py&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">make_ap_pg_approx</span><span class="p">(</span><span class="n">intermediate_nuclei</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;cl35&quot;</span><span class="p">,</span> <span class="s2">&quot;k39&quot;</span><span class="p">,</span> <span class="s2">&quot;sc43&quot;</span><span class="p">,</span> <span class="s2">&quot;v47&quot;</span><span class="p">,</span> <span class="s2">&quot;mn51&quot;</span><span class="p">])</span>
+<span class="n">net</span><span class="o">.</span><span class="n">remove_nuclei</span><span class="p">([</span><span class="s2">&quot;cl35&quot;</span><span class="p">,</span> <span class="s2">&quot;k39&quot;</span><span class="p">,</span> <span class="s2">&quot;sc43&quot;</span><span class="p">,</span> <span class="s2">&quot;v47&quot;</span><span class="p">,</span> <span class="s2">&quot;mn51&quot;</span><span class="p">])</span>
+<span class="n">net</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.3/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:120: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
-/opt/hostedtoolcache/Python/3.14.3/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:120: UserWarning: N13 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Network summary
+---------------
+  explicitly carried nuclei: 20
+  approximated-out nuclei: 5
+  inert nuclei (included in carried): 0
+
+  total number of rates: 107
+
+  rates explicitly connecting nuclei: 74
+  hidden rates: 33
+
+  reaclib rates: 46
+  weak tabular rates: 0
+  temperature tabular rates: 1
+  approximate rates: 10
+  derived rates: 47
+  modified rates: 3
+  custom rates: 0
 </pre></div>
 </div>
 </div>
 </div>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>In order for the integrated equilibrium result to be fully compatible with NSE equations, watch out for a number of things:</p>
-<ol class="arabic simple">
-<li><p>Make sure that all forward rates in the network has a corresponding <code class="docutils literal notranslate"><span class="pre">DerivedRate</span></code>. Otherwise there is no detailed balance.</p></li>
-<li><p>All species are connected.</p></li>
-<li><p>NSE only guarantees equilibrium of strong reactions. So if there are weak rates in the network, <span class="math notranslate nohighlight">\(Y_e\)</span> will evolve in time.</p></li>
-</ol>
+<p>Let’s predict whether our network <code class="docutils literal notranslate"><span class="pre">net</span></code> will be compatible with NSE by using <code class="docutils literal notranslate"><span class="pre">isNSECompatible()</span></code></p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Set <code class="docutils literal notranslate"><span class="pre">verbose=True</span></code> when creating the network to output additional information of the network property such as the rank of the stoichiometric matrix, <span class="math notranslate nohighlight">\(S\)</span>.</p>
 </div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is net compatible with NSE? </span><span class="si">{</span><span class="n">net</span><span class="o">.</span><span class="n">isNSECompatible</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>NSE Compatibility Summary 
+-------------------------
+  Nullity: 2
+  Rank: 18
+  Max allowed dimension: 2
+  Number of species: 20
+
+Is net compatible with NSE? True
+</pre></div>
+</div>
+</div>
+</div>
+<p>We see that in theory, this network will be compatible with NSE. Now let’s verify it by integrating directly.</p>
+</section>
 <section id="direct-integration">
 <h2>Direct integration<a class="headerlink" href="#direct-integration" title="Link to this heading">#</a></h2>
-<p>Now we want to integrate.  Since we will compare to NSE, we want to use the same screening that NSE uses–<a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.potekhin_1998" title="pynucastro.screening.screen.potekhin_1998"><code class="xref py py-meth docutils literal notranslate"><span class="pre">potekhin_1998</span></code></a></p>
+<p>Now we want to integrate.  Since we will compare to NSE, we want to use the same screening that NSE uses – <a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.potekhin_1998" title="pynucastro.screening.screen.potekhin_1998"><code class="xref py py-meth docutils literal notranslate"><span class="pre">potekhin_1998</span></code></a></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">potekhin_1998</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">network</span>
 </pre></div>
 </div>
 </div>
@@ -730,152 +806,144 @@ In pynucastro, this is the <a class="reference internal" href="pynucastro.rates.
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib.util</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_ivp</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>Set up an initial condition and let it evolve until we reach equilibrium.</p>
+<p>We can write out python module that contains essential functions needed for integration, such as the <code class="docutils literal notranslate"><span class="pre">rhs</span></code> and <code class="docutils literal notranslate"><span class="pre">jacobian</span></code>.
+Set up an initial condition and let it evolve until we reach equilibrium.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1e7</span>
-<span class="n">T</span> <span class="o">=</span> <span class="mf">6e9</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">integrate_network</span><span class="p">(</span><span class="n">mynet</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">1e7</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">6e9</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="mf">1.e-1</span><span class="p">):</span>
 
-<span class="n">X0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">nnuc</span><span class="p">)</span>
-<span class="n">X0</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">X0</span><span class="p">)</span>
-<span class="n">Y0</span> <span class="o">=</span> <span class="n">X0</span><span class="o">/</span><span class="n">network</span><span class="o">.</span><span class="n">A</span>
+    <span class="c1"># Write out the module for rhs, jacobian ...</span>
+    <span class="n">mynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="n">outfile</span><span class="o">=</span><span class="s2">&quot;network.py&quot;</span><span class="p">)</span>
 
-<span class="n">ye</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">ye</span><span class="p">(</span><span class="n">Y0</span><span class="p">)</span>
+    <span class="c1"># Load in the module</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">spec_from_file_location</span><span class="p">(</span><span class="s2">&quot;network&quot;</span><span class="p">,</span> <span class="s2">&quot;network.py&quot;</span><span class="p">)</span>
+    <span class="n">network</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">module_from_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+    <span class="n">spec</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">exec_module</span><span class="p">(</span><span class="n">network</span><span class="p">)</span>
 
-<span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e-1</span>
-<span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span>
-                 <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">potekhin_1998</span><span class="p">),</span>
-                 <span class="n">rtol</span><span class="o">=</span><span class="mf">3.e-14</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">3.e-14</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">network</span><span class="o">.</span><span class="n">jacobian</span><span class="p">)</span>
+    <span class="c1"># Assume uniform composition as initial condition then integrate</span>
+    <span class="n">X0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">nnuc</span><span class="p">)</span>
+    <span class="n">X0</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">X0</span><span class="p">)</span>
+    <span class="n">Y0</span> <span class="o">=</span> <span class="n">X0</span><span class="o">/</span><span class="n">network</span><span class="o">.</span><span class="n">A</span>
+
+    <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span>
+                    <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">potekhin_1998</span><span class="p">),</span>
+                    <span class="n">rtol</span><span class="o">=</span><span class="mf">3.e-14</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">3.e-14</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">network</span><span class="o">.</span><span class="n">jacobian</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sol</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sol</span> <span class="o">=</span> <span class="n">integrate_network</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <p>Let’s plot the evolution to see how mass fraction evolve with time. Equilibrium is indicated by flat lines.</p>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nucs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">,</span> <span class="n">network</span><span class="o">.</span><span class="n">names</span><span class="p">))</span>
-<span class="n">nuc_labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">n</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">$&quot;</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nucs</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">plot_evolution</span><span class="p">(</span><span class="n">mynet</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="mf">1.e-1</span><span class="p">):</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mynet</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">*</span><span class="n">nuc</span><span class="o">.</span><span class="n">A</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">rf</span><span class="s2">&quot;X($</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">$)&quot;</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1e-16</span><span class="p">,</span> <span class="n">tmax</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;time [s]&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mass fractions&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 </div>
-<div class="cell tag_nbval-ignore-output docutils container">
+<div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">*</span><span class="n">network</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">rf</span><span class="s2">&quot;X($</span><span class="si">{</span><span class="n">nucs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">$)&quot;</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1e-16</span><span class="p">,</span> <span class="n">tmax</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;time [s]&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mass fractions&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_evolution</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">sol</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/261c9f72c42bf27140bb8c6b74167ff85c82470c640fc5aa9a123561256b3d94.png" src="_images/261c9f72c42bf27140bb8c6b74167ff85c82470c640fc5aa9a123561256b3d94.png" />
+<img alt="_images/520b6aaafcbf436f4c3555d6fd7b155329874f82ddbf474eba7a45f40f966b22.png" src="_images/520b6aaafcbf436f4c3555d6fd7b155329874f82ddbf474eba7a45f40f966b22.png" />
 </div>
 </div>
 </section>
-<section id="nse-calculation">
-<h2>NSE calculation<a class="headerlink" href="#nse-calculation" title="Link to this heading">#</a></h2>
-<p>We can create an <a class="reference internal" href="pynucastro.networks.nse_network.html#pynucastro.networks.nse_network.NSENetwork" title="pynucastro.networks.nse_network.NSENetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NSENetwork</span></code></a> by simply grabbing the rates from our current network and using them to construct the NSE
-network</p>
+<section id="comparing-with-nse-calculation">
+<h2>Comparing with NSE calculation<a class="headerlink" href="#comparing-with-nse-calculation" title="Link to this heading">#</a></h2>
+<p>We can create an <a class="reference internal" href="pynucastro.networks.nse_network.html#pynucastro.networks.nse_network.NSENetwork" title="pynucastro.networks.nse_network.NSENetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NSENetwork</span></code></a> by simply grabbing the rates from our current network and using them to construct the NSE network. From the <code class="docutils literal notranslate"><span class="pre">NSENetwork</span></code>, we can directly compute the NSE state, and make some plots to compare it to the integration results.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nse</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">NSENetwork</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">net</span><span class="o">.</span><span class="n">get_rates</span><span class="p">())</span>
-<span class="n">nse</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">NSE_comparison</span><span class="p">(</span><span class="n">mynet</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">1e7</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">6e9</span><span class="p">):</span>
+
+    <span class="c1"># Create the NSENetwork</span>
+    <span class="n">nse_net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">NSENetwork</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">mynet</span><span class="o">.</span><span class="n">get_rates</span><span class="p">())</span>
+
+    <span class="c1"># Compute electron fraction assuming uniform composition.</span>
+    <span class="c1"># This is to avoid numerical error deviating from the initial electron fraction</span>
+    <span class="n">ye</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">/</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mynet</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">mynet</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+    
+    <span class="c1"># Compute the NSE state</span>
+    <span class="n">nse_comp</span> <span class="o">=</span> <span class="n">nse_net</span><span class="o">.</span><span class="n">get_comp_nse</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">ye</span><span class="p">,</span> <span class="n">init_guess</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">14.0</span><span class="p">),</span> <span class="n">use_coulomb_corr</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Make plots to see comparison between the two results</span>
+    <span class="n">As</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">mynet</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">])</span>
+    <span class="n">X_net</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">As</span>
+    <span class="n">X_nse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">nse_comp</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+    
+    <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">nuc_labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">rf</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">$&quot;</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">mynet</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">]</span>
+    
+    <span class="c1"># Abundance Histogram plot</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mynet</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">))</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="mf">0.35</span>
+    
+    <span class="n">ax1</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">width</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">X_nse</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;NSE&#39;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">width</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">X_net</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Integration&#39;</span><span class="p">)</span>
+    
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Mass fractions&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ymax</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+
+    <span class="c1"># Error plot</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">X_net</span> <span class="o">-</span> <span class="n">X_nse</span><span class="p">)</span> 
+    <span class="n">diff_rel</span> <span class="o">=</span> <span class="n">diff</span> <span class="o">/</span> <span class="n">X_net</span>
+    
+    <span class="n">ax2</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">diff</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Absolute Error&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">diff_rel</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Relative Error&#39;</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+    
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Nucleus&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Error&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ymax</span><span class="o">=</span><span class="mf">1.01</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">nuc_labels</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Network summary
----------------
-  explicitly carried nuclei: 19
-  approximated-out nuclei: 6
-  inert nuclei (included in carried): 0
-
-  total number of rates: 109
-
-  rates explicitly connecting nuclei: 70
-  hidden rates: 39
-
-  reaclib rates: 46
-  weak tabular rates: 0
-  temperature tabular rates: 1
-  approximate rates: 12
-  derived rates: 47
-  modified rates: 3
-  custom rates: 0
-</pre></div>
 </div>
-</div>
-</div>
-<p>Now let’s get the directly-computed NSE state</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nse_comp</span> <span class="o">=</span> <span class="n">nse</span><span class="o">.</span><span class="n">get_comp_nse</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">ye</span><span class="p">,</span> <span class="n">init_guess</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">14.0</span><span class="p">),</span> <span class="n">use_coulomb_corr</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Finally, we can make some plots to see the direct comparison between the two results.</p>
-<div class="cell tag_nbval-ignore-output docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_net</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">network</span><span class="o">.</span><span class="n">A</span>
-<span class="n">X_nse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">nse_comp</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
-
-<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">names</span><span class="p">))</span>
-<span class="n">width</span> <span class="o">=</span> <span class="mf">0.35</span>
-
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">width</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">X_nse</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;NSE&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">width</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">X_net</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Integration&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;nucleus&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">nuc_labels</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;mass fractions&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ymax</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">NSE_comparison</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">sol</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/74a6a73716e837f0b935615dbc0bd34512780e890de887aad720522dc5f09609.png" src="_images/74a6a73716e837f0b935615dbc0bd34512780e890de887aad720522dc5f09609.png" />
+<img alt="_images/5f605339964156c599f4e4126dcfbccc292f80ed763611f6f01896e97e9c422f.png" src="_images/5f605339964156c599f4e4126dcfbccc292f80ed763611f6f01896e97e9c422f.png" />
 </div>
 </div>
-<p>Now a plot of absolute and relative difference shows that the mass fraction obtained from direct integration matches with NSE equations to machine precision. The differences between the two are largely set by the tolerances of both the NSE solver and the ODE integrator.</p>
-<div class="cell tag_nbval-ignore-output docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">X_net</span> <span class="o">-</span> <span class="n">X_nse</span><span class="p">)</span> 
-<span class="n">diff_rel</span> <span class="o">=</span> <span class="n">diff</span> <span class="o">/</span> <span class="n">X_net</span>
-
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">diff</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Absolute Error&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">diff_rel</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Relative Error&#39;</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">nucs</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;nucleus&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ymax</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/6f0655b7f764e0f24f5b5ac3324ef95ad60fd4e4394316ae77376e1c4be5d9be.png" src="_images/6f0655b7f764e0f24f5b5ac3324ef95ad60fd4e4394316ae77376e1c4be5d9be.png" />
-</div>
-</div>
+<p>We see that the plot of absolute and relative difference shows that the mass fraction obtained from direct integration matches with NSE equations to machine precision just as <code class="docutils literal notranslate"><span class="pre">isNSECompatible()</span></code> predicted. The differences between the two are largely set by the tolerances of both the NSE solver and the ODE integrator.</p>
 </section>
 <section id="visualizing-equilibrium">
 <h2>Visualizing equilibrium<a class="headerlink" href="#visualizing-equilibrium" title="Link to this heading">#</a></h2>
@@ -884,17 +952,14 @@ graphically using the network <a class="reference internal" href="pynucastro.net
 and plotting the difference between the forward and reverse rates (<code class="docutils literal notranslate"><span class="pre">use_net_rate=True</span></code>).  We will also normalize
 by the total activity of the rate (forward + reverse) by doing <code class="docutils literal notranslate"><span class="pre">normalize_net_rate=True</span></code>.</p>
 <p>First we’ll convert the final composition from the integration into a pynucastro <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Composition</span></code></a>, keeping in mind that the network evolved molar fractions (<span class="math notranslate nohighlight">\(Y = X / A\)</span>).</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">network</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1e7</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mf">6e9</span>
+<span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">A</span><span class="o">.</span><span class="n">values</span><span class="p">())))</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span>
                <span class="n">screen_func</span><span class="o">=</span><span class="n">potekhin_1998</span><span class="p">,</span>
                <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1200</span><span class="p">,</span> <span class="mi">500</span><span class="p">),</span>
                <span class="n">node_size</span><span class="o">=</span><span class="mi">650</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="s2">&quot;9&quot;</span><span class="p">,</span>
@@ -905,16 +970,156 @@ by the total activity of the rate (forward + reverse) by doing <code class="docu
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.3/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:120: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
-/opt/hostedtoolcache/Python/3.14.3/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:120: UserWarning: N13 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
-</pre></div>
-</div>
-<img alt="_images/67611ae4c27aebc307867ea5915315afd15f5b26fa2f995091941a7c8ca17316.png" src="_images/67611ae4c27aebc307867ea5915315afd15f5b26fa2f995091941a7c8ca17316.png" />
+<img alt="_images/1093b8594006dabebbb8d844efc94120b45ac66e49f2132ee3afdd4dc10b92d3.png" src="_images/1093b8594006dabebbb8d844efc94120b45ac66e49f2132ee3afdd4dc10b92d3.png" />
 </div>
 </div>
 <p>Here we see that the normalized net rates are all &lt; <span class="math notranslate nohighlight">\(10^{-12}\)</span>, so we are effectively seeing the integration tolerance, and are very close to machine precision.</p>
+</section>
+<section id="examples-of-incompatibility">
+<h2>Examples of incompatibility<a class="headerlink" href="#examples-of-incompatibility" title="Link to this heading">#</a></h2>
+<p>We previously demonstrated a potentially useful 19-nuclei network for Helium burning, where the network is intrinsically compatible with NSE. Now the question is what are some examples that are not compatible with NSE?</p>
+<p>Let’s consider expanding the network by adding more iron-group elementsabove by adding two rate pairs</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+{}^{52}\mathrm{Fe} + \mathrm{n} \rightleftharpoons {}^{53}\mathrm{Fe} \\
+\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[
+ {}^{53}\mathrm{Fe} + \mathrm{n} \rightleftharpoons {}^{54}\mathrm{Fe}
+\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fe52n_fe53</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;fe52(n,g)fe53&quot;</span><span class="p">)</span>
+<span class="n">fe53_fe52n</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">DerivedRate</span><span class="p">(</span><span class="n">source_rate</span><span class="o">=</span><span class="n">fe52n_fe53</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">fe53n_fe54</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;fe53(n,g)fe54&quot;</span><span class="p">)</span>
+<span class="n">fe54_fe53n</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">DerivedRate</span><span class="p">(</span><span class="n">source_rate</span><span class="o">=</span><span class="n">fe53n_fe54</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">net</span><span class="o">.</span><span class="n">add_rates</span><span class="p">([</span><span class="n">fe52n_fe53</span><span class="p">,</span> <span class="n">fe53_fe52n</span><span class="p">,</span>
+               <span class="n">fe53n_fe54</span><span class="p">,</span> <span class="n">fe54_fe53n</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Check if it is still compatible with NSE via <code class="docutils literal notranslate"><span class="pre">isNSECompatible()</span></code></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is net compatible with NSE? </span><span class="si">{</span><span class="n">net</span><span class="o">.</span><span class="n">isNSECompatible</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>NSE Compatibility Summary 
+-------------------------
+  Nullity: 3
+  Rank: 20
+  Max allowed dimension: 2
+  Number of species: 23
+
+Is net compatible with NSE? False
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here we see that the nullity of the stoichiometric matrix exceeds the maximum allowed dimension, hence it is not compatible with NSE.
+But let’s verify it by integrating the network.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sol</span> <span class="o">=</span> <span class="n">integrate_network</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+<span class="n">plot_evolution</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">sol</span><span class="p">)</span>
+<span class="n">NSE_comparison</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">sol</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/1fc2f684000b43f5a1f297d570d5d6c083ec07949ea7cf9247eecd725464cec1.png" src="_images/1fc2f684000b43f5a1f297d570d5d6c083ec07949ea7cf9247eecd725464cec1.png" />
+<img alt="_images/e37f8e7a5af29d03375bd7debf370667916ad6dab83ed592ac7d1039ebc95fd4.png" src="_images/e37f8e7a5af29d03375bd7debf370667916ad6dab83ed592ac7d1039ebc95fd4.png" />
+</div>
+</div>
+<p>We see that the mass abundance computed from NSE is indeed different from integrating the network to equilibrium,
+suggesting the isotopes are not sufficiently connected. To resolve this issue, we need additional rates to provide connections
+from the newly added <span class="math notranslate nohighlight">\({}^{54}\mathrm{Fe}\)</span> to <span class="math notranslate nohighlight">\({}^{55}\mathrm{Co}\)</span>. Let’s consider adding,
+$<span class="math notranslate nohighlight">\(
+{}^{54}\mathrm{Fe} + \mathrm{p} \rightleftharpoons {}^{55}\mathrm{Co}
+\)</span><span class="math notranslate nohighlight">\(
+This rate completes the loop between \)</span>{}^{52}\mathrm{Fe}<span class="math notranslate nohighlight">\(, \)</span>{}^{53}\mathrm{Fe}<span class="math notranslate nohighlight">\(, \)</span>{}^{54}\mathrm{Fe}<span class="math notranslate nohighlight">\(, and \)</span>{}^{55}\mathrm{Co}<span class="math notranslate nohighlight">\(,
+allowing for the exchange of \)</span>{}^{4}\mathrm{He}$ to 2 protons and 2 neutrons</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fe54p_co55</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;fe54(p,g)co55&quot;</span><span class="p">)</span>
+<span class="n">co55_fe54p</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">DerivedRate</span><span class="p">(</span><span class="n">source_rate</span><span class="o">=</span><span class="n">fe54p_co55</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">net</span><span class="o">.</span><span class="n">add_rates</span><span class="p">([</span><span class="n">fe54p_co55</span><span class="p">,</span> <span class="n">co55_fe54p</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is net compatible with NSE? </span><span class="si">{</span><span class="n">net</span><span class="o">.</span><span class="n">isNSECompatible</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>NSE Compatibility Summary 
+-------------------------
+  Nullity: 2
+  Rank: 21
+  Max allowed dimension: 2
+  Number of species: 23
+
+Is net compatible with NSE? True
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we see that the network is compatible with NSE as nullity and the maximum allowed dimension are now the same.
+But we can do better by approximating out <span class="math notranslate nohighlight">\({}^{53}\mathrm{Fe}\)</span> using the double neutron-capture approximation.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">make_nn_g_approx</span><span class="p">(</span><span class="n">intermediate_nuclei</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;fe53&quot;</span><span class="p">])</span>
+<span class="n">net</span><span class="o">.</span><span class="n">remove_nuclei</span><span class="p">([</span><span class="s2">&quot;fe53&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is net compatible with NSE? </span><span class="si">{</span><span class="n">net</span><span class="o">.</span><span class="n">isNSECompatible</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>approximating out Fe53
+using approximate rate Fe52 + n + n ⟶ Fe54 + 𝛾
+using approximate rate Fe54 ⟶ Fe52 + n + n
+removing rate Fe52 + n ⟶ Fe53 + 𝛾
+removing rate Fe53 + n ⟶ Fe54 + 𝛾
+removing rate Fe54 ⟶ n + Fe53
+removing rate Fe53 ⟶ n + Fe52
+NSE Compatibility Summary 
+-------------------------
+  Nullity: 2
+  Rank: 20
+  Max allowed dimension: 2
+  Number of species: 22
+
+Is net compatible with NSE? True
+</pre></div>
+</div>
+</div>
+</div>
+<p>We see that using the double neutron-capture approximation remains compatible with NSE.
+It reduces both the rank of the stoichiometric matrix and and the number of species by one, leaving nullity unchanged.
+Let’s verify its prediction by integrating the network.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sol</span> <span class="o">=</span> <span class="n">integrate_network</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+<span class="n">plot_evolution</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">sol</span><span class="p">)</span>
+<span class="n">NSE_comparison</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">sol</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/302c0bf833fdf592b8a70a15c3febff674d453991a5d09ddf1853048ce416f91.png" src="_images/302c0bf833fdf592b8a70a15c3febff674d453991a5d09ddf1853048ce416f91.png" />
+<img alt="_images/e8ec9e42644f70c86b0877b2e6c06e86dfaa2b6be929dc40d77ef58936b7f10f.png" src="_images/e8ec9e42644f70c86b0877b2e6c06e86dfaa2b6be929dc40d77ef58936b7f10f.png" />
+</div>
+</div>
+<p>The error plot above shows that NSE and integration agrees to machine-precision once again.</p>
 </section>
 </section>
 
@@ -965,9 +1170,11 @@ by the total activity of the rate (forward + reverse) by doing <code class="docu
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nse-compatibility">NSE Compatibility</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#direct-integration">Direct integration</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nse-calculation">NSE calculation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparing-with-nse-calculation">Comparing with NSE calculation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-equilibrium">Visualizing equilibrium</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-incompatibility">Examples of incompatibility</a></li>
 </ul>
   </nav></div>
 

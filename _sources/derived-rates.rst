@@ -153,6 +153,7 @@ how it works:
    pf_o18 = o18.get_partition_function()
    pf_f19 = f19.get_partition_function()
 
+.. _derived_rate:
 
 Derived rate definition
 -----------------------

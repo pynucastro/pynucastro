@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.9.0.post45+g3072af69f documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.9.0.post46+g6e1939ae1 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=98e33b92"></script>
+    <script src="../../../_static/documentation_options.js?v=fbc8c53b"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -2069,6 +2069,105 @@
                     <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span><span class="o">.</span><span class="n">swap_protons</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="RateCollection.isNSECompatible">
+<a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.isNSECompatible">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">isNSECompatible</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine whether the current network is compatible</span>
+<span class="sd">        with the NSE description. Checks if there are any rate that</span>
+<span class="sd">        uses stoichiometry, or if every strong rate has a corresponding</span>
+<span class="sd">        inverse rate. If none of the both are true, check if we are sufficienctly</span>
+<span class="sd">        connected by checking whether the the nullity of the network</span>
+<span class="sd">        stoichiometric matrix is not greater than 2, then the</span>
+<span class="sd">        NSE equation will predict the correct equilibrium abundance.</span>
+<span class="sd">        If all isotope in the network have the same Ye ratio,</span>
+<span class="sd">        then the nullity must not be greater than 1.</span>
+<span class="sd">        An example would be the alpha-chain network, i.e. Ye = 0.5 always.</span>
+<span class="sd">        In this case, the second NSE constraint on Ye is pointless.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">S</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">rp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate_pairs</span><span class="p">():</span>
+            <span class="n">fr</span> <span class="o">=</span> <span class="n">rp</span><span class="o">.</span><span class="n">forward</span>
+            <span class="n">rr</span> <span class="o">=</span> <span class="n">rp</span><span class="o">.</span><span class="n">reverse</span>
+
+            <span class="c1"># Skip for weak rates.</span>
+            <span class="k">if</span> <span class="n">fr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">fr</span><span class="o">.</span><span class="n">weak</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">rr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">rr</span><span class="o">.</span><span class="n">weak</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># After treating weak rate cases, return False if one of them is None</span>
+            <span class="k">if</span> <span class="n">fr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">rr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Either the forward or the reverse rate for the &quot;</span>
+                          <span class="sa">f</span><span class="s2">&quot;following strong reaction rate pair is missing: </span><span class="si">{</span><span class="n">rp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="c1"># Now both fr and rr are not None,</span>
+            <span class="c1"># Check to make sure one of the rate is a DerivedRate,</span>
+            <span class="c1"># and the source rate of that DerivedRate is the other rate.</span>
+            <span class="c1"># ApproximateRate are instrinsically compatible with NSE</span>
+            <span class="c1"># as long as the appropriate DerivedRate is used when creating the ApproximateRate</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">((</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">fr</span><span class="p">,</span> <span class="n">DerivedRate</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fr</span><span class="o">.</span><span class="n">source_rate</span> <span class="o">==</span> <span class="n">rr</span><span class="p">)</span> <span class="ow">or</span>
+                    <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">rr</span><span class="p">,</span> <span class="n">DerivedRate</span><span class="p">)</span> <span class="ow">and</span> <span class="n">rr</span><span class="o">.</span><span class="n">source_rate</span> <span class="o">==</span> <span class="n">fr</span><span class="p">)</span> <span class="ow">or</span>
+                    <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">fr</span><span class="p">,</span> <span class="n">ApproximateRate</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rr</span><span class="p">,</span> <span class="n">ApproximateRate</span><span class="p">))):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Either the forward or the reverse rate for the &quot;</span>
+                          <span class="sa">f</span><span class="s2">&quot;following strong reaction rate pair is not a DerivedRate: </span><span class="si">{</span><span class="n">rp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="c1"># Check if there are any rate uses stoichiometry</span>
+            <span class="k">if</span> <span class="n">fr</span><span class="o">.</span><span class="n">stoichiometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">rr</span><span class="o">.</span><span class="n">stoichiometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Either the forward or the reverse rate for the &quot;</span>
+                          <span class="sa">f</span><span class="s2">&quot;following strong reaction rate pair uses stoichiometry: </span><span class="si">{</span><span class="n">rp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="c1"># Record the stoichiometric coefficient of the valid RatePair.</span>
+            <span class="n">stoich</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">reactant</span> <span class="ow">in</span> <span class="n">fr</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">reactant</span><span class="p">)</span>
+                <span class="n">stoich</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
+
+            <span class="k">for</span> <span class="n">product</span> <span class="ow">in</span> <span class="n">fr</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">product</span><span class="p">)</span>
+                <span class="n">stoich</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">S</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stoich</span><span class="p">)</span>
+
+        <span class="c1"># Check if there are enough links such that we can represent</span>
+        <span class="c1"># the chemical potential of any nuclei with chemical potential</span>
+        <span class="c1"># of 2 nuclei in the network.</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
+
+        <span class="c1"># Find nullity via Nullity-Rank theorem</span>
+        <span class="n">rank</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">matrix_rank</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
+        <span class="n">nullity</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span> <span class="o">-</span> <span class="n">rank</span>
+
+        <span class="c1"># If all nuclei have the same Z/A ratio,</span>
+        <span class="c1"># then can only have 1 independent chemical potential</span>
+        <span class="c1"># since the Ye constraint no longer applies, otherwise 2</span>
+        <span class="n">max_dim</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">Z_A_ratios</span> <span class="o">=</span> <span class="p">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">/</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">}</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">Z_A_ratios</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">max_dim</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NSE Compatibility Summary </span><span class="se">\n</span><span class="s2">&quot;</span>
+                  <span class="s2">&quot;-------------------------</span><span class="se">\n</span><span class="s2">&quot;</span>
+                  <span class="sa">f</span><span class="s2">&quot;  Nullity: </span><span class="si">{</span><span class="n">nullity</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                  <span class="sa">f</span><span class="s2">&quot;  Rank: </span><span class="si">{</span><span class="n">rank</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                  <span class="sa">f</span><span class="s2">&quot;  Max allowed dimension: </span><span class="si">{</span><span class="n">max_dim</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                  <span class="sa">f</span><span class="s2">&quot;  Number of species: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">nullity</span> <span class="o">&lt;=</span> <span class="n">max_dim</span></div>
 
 
 <div class="viewcode-block" id="RateCollection.summary">
