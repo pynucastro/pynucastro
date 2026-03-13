@@ -410,7 +410,7 @@ class PythonNetwork(RateCollection):
         for r in self.tabular_rates:
 
             of.write(f"# load data for {r.rid}\n")
-            of.write(f"{r.fname}_rate = TabularRate(rfile='{r.rfile}')\n")
+            of.write(f"{r.fname}_rate = TabularRate(rfile='{r.rfile_name}')\n")
             of.write(f"{r.fname}_info = ({r.fname}_rate.table_rhoy_lines,\n")
             of.write(f"                  {r.fname}_rate.table_temp_lines,\n")
             of.write(f"                  {r.fname}_rate.tabular_data_table)\n\n")
@@ -543,11 +543,11 @@ class PythonNetwork(RateCollection):
                     shutil.copy(tdat_file, odir or Path.cwd())
                 else:
                     warnings.warn(UserWarning(f'Table data file {tr.table_file} not found.'))
-                rtoki_file = tdir/tr.rfile
+                rtoki_file = tdir/tr.rfile_name
                 if rtoki_file.is_file():
                     shutil.copy(rtoki_file, odir or Path.cwd())
                 else:
-                    warnings.warn(UserWarning(f'Table metadata file {tr.rfile} not found.'))
+                    warnings.warn(UserWarning(f'Table metadata file {tr.rfile_name} not found.'))
 
     def integrate_network(self, tmax, rho, T, Y0=None,
                           screen_method=None,
