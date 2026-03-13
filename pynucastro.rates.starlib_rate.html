@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.starlib_rate module &#8212; pynucastro 2.9.0.post46+g6e1939ae1 documentation</title>
+    <title>pynucastro.rates.starlib_rate module &#8212; pynucastro 2.9.0.post47+g42713e934 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=fbc8c53b"></script>
+    <script src="_static/documentation_options.js?v=badd234c"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -586,7 +586,7 @@ tabulated in terms of and temperature.along with corresponding
 uncertainties as per the StarLib Library</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.starlib_rate.StarLibRate">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.starlib_rate.</span></span><span class="sig-name descname"><span class="pre">StarLibRate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_t9_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_rate_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelprops</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'starlib'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/starlib_rate.html#StarLibRate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.starlib_rate.StarLibRate" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.starlib_rate.</span></span><span class="sig-name descname"><span class="pre">StarLibRate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_t9_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_rate_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelprops</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'starlib'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/starlib_rate.html#StarLibRate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.starlib_rate.StarLibRate" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pynucastro.rates.temperature_tabular_rate.html#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate" title="pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate"><code class="xref py py-class docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code></a></p>
 <p>A rate whose temperature dependence and factor uncertainty are tabulated.
 Upon creation of an instance, rates at all tabulated log(T9) values are sampled.</p>
@@ -596,19 +596,19 @@ Upon creation of an instance, rates at all tabulated log(T9) values are sampled.
 <li><p><strong>log_t9_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – The temperature (in log(T / 1.e9 K)) where we tabulate the rate</p></li>
 <li><p><strong>log_rate_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – The tabulated log(rate) data, N_A &lt;σv&gt;</p></li>
 <li><p><strong>sigma_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – The tabulated log(uncertainty) data</p></li>
-<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Seed to pass to rng for rate sampling</p></li>
+<li><p><strong>rng</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.4)"><em>numpy.random.Generator</em></a>) – An rng for rate sampling</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.starlib_rate.StarLibRate.sample_rates">
-<span class="sig-name descname"><span class="pre">sample_rates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/starlib_rate.html#StarLibRate.sample_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.starlib_rate.StarLibRate.sample_rates" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">sample_rates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/starlib_rate.html#StarLibRate.sample_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.starlib_rate.StarLibRate.sample_rates" title="Link to this definition">#</a></dt>
 <dd><p>Sample rate values as median_rate + N(0,1)*sigma for each of the
-60 entries in the data for a Starlib rate.</p>
+60 entries in the data for a Starlib rate, given a non-empty seed. Use
+sampled rates to overwrite interpolator</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Seed for the rng necessary to sample rates. If seed is none, the
-method returns median rates.</p>
+<dd class="field-odd"><p><strong>rng</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.4)"><em>numpy.random.Generator</em></a>) – An rng that draws the gaussian deviate required for rate sampling</p>
 </dd>
 </dl>
 </dd></dl>
