@@ -153,6 +153,14 @@ namespace Rates
         NumRates = k_Ne23_to_Na23_weaktab
     };
 
+    enum ScreenPairs :
+    std::uint8_t
+    {
+        k_He4_C12 = 1,
+        k_C12_C12 = 2,
+        NumScreenPairs = k_C12_C12
+    };
+
     // rate names -- note: the rates are 1-based, not zero-based, so we pad
     // this vector with rate_names[0] = "" so the indices line up with the
     // NetworkRates enum
