@@ -2437,6 +2437,7 @@ class RateCollection:
              always_show_p=False, always_show_alpha=False,
              hide_xp=False, hide_xalpha=False,
              edge_labels=None,
+             rate_color_min=None, rate_color_max=None,
              highlight_filter_function=None,
              nucleus_filter_function=None, rate_filter_function=None,
              legend_coord=None, plot_to_cbar_ratio=20,
@@ -2525,6 +2526,10 @@ class RateCollection:
             a dictionary of the form {(n1, n2): "label"}
             that gives labels for the edges in the network connecting
             nucleus n1 to n2.
+        rate_color_min : float
+            minimum value used for rate colorscale
+        rate_color_max : float
+            minimum value used for rate colorscale
         highlight_filter_function : Callable
             a function that takes a ``Rate`` object and returns True or
             False if we want to highlight the rate edge.
@@ -2741,10 +2746,19 @@ class RateCollection:
         else:
             widths *= 2
 
+        log_rate_color_min = None
+        if rate_color_min is not None:
+            log_rate_color_min = np.log10(rate_color_min)
+
+        log_rate_color_max = None
+        if rate_color_max is not None:
+            log_rate_color_max = np.log10(rate_color_max)
+
         real_edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
                                                edgelist=real_edges, edge_color=edge_color,
                                                connectionstyle=connectionstyle,
                                                node_size=node_size,
+                                               edge_vmin=log_rate_color_min, edge_vmax=log_rate_color_max,
                                                edge_cmap=plt.cm.viridis, ax=ax)
 
         # highlight edges -- this is basically overplotting the edges we already drew
@@ -2799,6 +2813,7 @@ class RateCollection:
         if rate_ydots is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
             pc.set_array(real_weights)
+            pc.set_clim(log_rate_color_min, log_rate_color_max)
             label = r"$\log_{10}(\mathrm{rate})$"
             if use_net_rate:
                 if normalize_net_rate:
