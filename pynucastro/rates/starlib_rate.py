@@ -4,9 +4,8 @@ uncertainties as per the StarLib Library
 
 """
 
-import numpy as np
-
-from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
+from pynucastro.rates.temperature_tabular_rate import (TemperatureTabularRate,
+                                                       TempTableInterpolator)
 
 
 class StarLibRate(TemperatureTabularRate):
@@ -21,20 +20,12 @@ class StarLibRate(TemperatureTabularRate):
         The tabulated log(rate) data, N_A <σv>
     sigma_data : numpy.ndarray
         The tabulated log(uncertainty) data
-    seed: int
-        Seed to pass to rng for rate sampling
+    rng : numpy.random.Generator
+        An rng for rate sampling
     """
 
     def __init__(self, log_t9_data, log_rate_data, sigma_data,
-                 labelprops, seed=None, label="starlib", **kwargs):
-
-        self.sigma_data = sigma_data
-        self.log_median_rates = log_rate_data
-
-        #Ensure same number of data points in rate and sigma
-        assert (len(self.log_median_rates) == len(self.sigma_data))
-
-        sampled_rates = self.sample_rates(seed)
+                 labelprops, rng=None, label="starlib", **kwargs):
 
         #Read in labelprops and call super
         assert isinstance(labelprops, str)
@@ -47,7 +38,7 @@ class StarLibRate(TemperatureTabularRate):
         if rate_source == 'ec':
             weak_type = "electron_capture"
 
-        super().__init__(log_t9_data, sampled_rates, label=label,
+        super().__init__(log_t9_data, log_rate_data, label=label,
                          rate_source=rate_source, weak_type=weak_type,
                          **kwargs)
 
@@ -55,25 +46,38 @@ class StarLibRate(TemperatureTabularRate):
         self.weak = labelprops[4] == 'w' or rate_source == 'ec'
         self.derived_from_inverse = labelprops[4] == 'v'
 
-    def sample_rates(self, seed=None):
+        #Store data necessary for sampling
+        self.sigma_data = sigma_data
+        self.log_median_rates = log_rate_data.copy()
+
+        #Redefine the Interpolator to reflect sampled rates
+        self.sample_rates(rng=rng)
+
+        #Ensure same number of data points in rate and sigma
+        assert (len(self.log_median_rates) == len(self.sigma_data))
+
+    def sample_rates(self, rng=None):
         """Sample rate values as median_rate + N(0,1)*sigma for each of the
-        60 entries in the data for a Starlib rate.
+        60 entries in the data for a Starlib rate, given a non-empty seed. Use
+        sampled rates to overwrite interpolator
 
         Parameters
         ----------
-        seed : int
-            Seed for the rng necessary to sample rates. If seed is none, the
-            method returns median rates.
+        rng : numpy.random.Generator
+            An rng that draws the gaussian deviate required for rate sampling
         """
 
-        #When no seed is provided, rates are median values
+        #When no rng is provided, rates are median values
         sampled = self.log_median_rates.copy()
+
         #Otherwise sample using normal distribution
-        if seed is not None:
-            rng = np.random.default_rng(seed=seed)
-            sampled = (self.log_median_rates +
-                       rng.normal(size=len(self.log_median_rates))*self.sigma_data)
-        return sampled
+        if rng is not None:
+            p = rng.normal()
+            sampled += p*self.sigma_data
+
+        #Rewrite interpolator
+        self.log_rate_data = sampled
+        self.interpolator = TempTableInterpolator(self.log_t9_data, sampled)
 
     def __eq__(self, other):
         """Determine whether two Rate objects are equal.  They are

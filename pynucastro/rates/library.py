@@ -1012,6 +1012,14 @@ class StarLibLibrary(Library):
 
     def __init__(self, seed=None):
         rates = []
+
+        #Initialize rng for rate sampling
+        rng = None
+        self.seed = seed
+        if seed is not None:
+            rng = np.random.default_rng(seed=self.seed)
+
+        #Read data
         with bz2.open(self.file_path, mode="rt") as f:
             for header in f:
                 # Read header and relevant info
@@ -1042,7 +1050,7 @@ class StarLibLibrary(Library):
                 sigma = np.array(sigma)
 
                 #Create rate
-                rate = StarLibRate(log_T9, log_rate, sigma, seed=seed,
+                rate = StarLibRate(log_T9, log_rate, sigma, rng=rng,
                                    reactants=rate_info["reactants"],
                                    products=rate_info["products"],
                                    Q=rate_info["Q"],
@@ -1086,6 +1094,30 @@ class StarLibLibrary(Library):
                 "nuclides": nuclides,
                 "labelprops": labelprops,
                 "Q": Q_val}
+
+    def resample(self, seed=None):
+        """Resample rates
+
+        Parameters
+        ----------
+        seed: int
+            Seed for resampling. If no seed is provided then
+            an arbitrary seed is used.
+        """
+        if seed is None:
+            #arbitrarily chosen upper limit for np.random
+            #since it requires one.
+            seed = np.random.randint(10e5)
+        self.seed = seed
+        rng = np.random.default_rng(seed=self.seed)
+
+        for rate in self._rates.values():
+            rate.sample_rates(rng=rng)
+
+    def unsample(self):
+        """Restore rates to median values."""
+        for rate in self._rates.values():
+            rate.sample_rates()
 
 
 class SuzukiLibrary(TabularLibrary):
