@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>NSE vs. Direct Integration &#8212; pynucastro 2.9.0.post47+g42713e934 documentation</title>
+    <title>NSE vs. Direct Integration &#8212; pynucastro 2.9.0.post48+g90e398717 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=badd234c"></script>
+    <script src="_static/documentation_options.js?v=151e6f05"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -637,7 +637,7 @@ the rate equation assumed when deriving the <code class="docutils literal notran
 <p>To address assumption #3, the reaction network must be sufficiently connected so that the chemical potential of any species and be expressed in terms of the chemical potentials of only two species. Consider a network with <span class="math notranslate nohighlight">\(N\)</span> number of species and <span class="math notranslate nohighlight">\(M\)</span> number of strong reaction pairs, then the difference in the chemical potential between the reactants and products for the <span class="math notranslate nohighlight">\(i\)</span>-th reaction pair can be written as</p>
 <div class="math notranslate nohighlight">
 \[ S_{ij} \mu_j = \delta_i \]</div>
-<p>where <span class="math notranslate nohighlight">\(\mu_j\)</span> is the chemical potential of the <span class="math notranslate nohighlight">\(j\)</span>-th species, <span class="math notranslate nohighlight">\(S\)</span> is the stoichiometric matrix and <span class="math notranslate nohighlight">\(S_{ij}\)</span> is the stoichiometric coefficient of the <span class="math notranslate nohighlight">\(j\)</span>-th species participated in the <span class="math notranslate nohighlight">\(i\)</span>-th reaction pair, with opposite signs depending on whether it is a reactant or a product. System reaches global chemical equilibrium for <span class="math notranslate nohighlight">\(\mu_j = \mu^{\mathrm{eq}}_j\)</span> such that <span class="math notranslate nohighlight">\(\delta_i = 0\)</span> for all reaction pairs.
+<p>where <span class="math notranslate nohighlight">\(\mu_j\)</span> is the chemical potential of the <span class="math notranslate nohighlight">\(j\)</span>-th species, <span class="math notranslate nohighlight">\(S\)</span> is the stoichiometric matrix of shape <span class="math notranslate nohighlight">\((M, N)\)</span>, and <span class="math notranslate nohighlight">\(S_{ij}\)</span> is the stoichiometric coefficient of the <span class="math notranslate nohighlight">\(j\)</span>-th species participated in the <span class="math notranslate nohighlight">\(i\)</span>-th reaction pair, with opposite signs depending on whether it is a reactant or a product. System reaches global chemical equilibrium for <span class="math notranslate nohighlight">\(\mu_j = \mu^{\mathrm{eq}}_j\)</span> such that <span class="math notranslate nohighlight">\(\delta_i = 0\)</span> for all reaction pairs.
 For the equilibrium state to be consistent with NSE, the dimension of <span class="math notranslate nohighlight">\(\mu^{\mathrm{eq}}\)</span> must not be greater than the maximum independent equilibrium chemical potentials, <span class="math notranslate nohighlight">\(\mathrm{MAX\_DIM}\)</span>. In general, <span class="math notranslate nohighlight">\(\mathrm{MAX\_DIM} = 2\)</span> as there are two possible NSE constraints.
 If all species in the network have the same <span class="math notranslate nohighlight">\(Z/A\)</span> ratio, such as the <span class="math notranslate nohighlight">\(\alpha\)</span>-chain network, the <span class="math notranslate nohighlight">\(Y_e\)</span> constraint becomes redundant and <span class="math notranslate nohighlight">\(\mathrm{MAX\_DIM} \rightarrow 1\)</span>. The mathematical equivalent statement is to require</p>
 <div class="math notranslate nohighlight">
@@ -872,7 +872,7 @@ Set up an initial condition and let it evolve until we reach equilibrium.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/520b6aaafcbf436f4c3555d6fd7b155329874f82ddbf474eba7a45f40f966b22.png" src="_images/520b6aaafcbf436f4c3555d6fd7b155329874f82ddbf474eba7a45f40f966b22.png" />
+<img alt="_images/69b38485aa2fdd342cebeebbd4a59cb1210da4f6775ec3e163a751b5142869be.png" src="_images/69b38485aa2fdd342cebeebbd4a59cb1210da4f6775ec3e163a751b5142869be.png" />
 </div>
 </div>
 </section>
@@ -940,7 +940,7 @@ Set up an initial condition and let it evolve until we reach equilibrium.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/5f605339964156c599f4e4126dcfbccc292f80ed763611f6f01896e97e9c422f.png" src="_images/5f605339964156c599f4e4126dcfbccc292f80ed763611f6f01896e97e9c422f.png" />
+<img alt="_images/af04031383cebc193a927cbef752edc2ba65a440144db397ddfa82ffde2b6d9d.png" src="_images/af04031383cebc193a927cbef752edc2ba65a440144db397ddfa82ffde2b6d9d.png" />
 </div>
 </div>
 <p>We see that the plot of absolute and relative difference shows that the mass fraction obtained from direct integration matches with NSE equations to machine precision just as <code class="docutils literal notranslate"><span class="pre">isNSECompatible()</span></code> predicted. The differences between the two are largely set by the tolerances of both the NSE solver and the ODE integrator.</p>
@@ -970,7 +970,7 @@ by the total activity of the rate (forward + reverse) by doing <code class="docu
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/1093b8594006dabebbb8d844efc94120b45ac66e49f2132ee3afdd4dc10b92d3.png" src="_images/1093b8594006dabebbb8d844efc94120b45ac66e49f2132ee3afdd4dc10b92d3.png" />
+<img alt="_images/4f94ed968f13606735825aedbc00e9d3b4fd968cd06dfa5e0887009e1ca59ce3.png" src="_images/4f94ed968f13606735825aedbc00e9d3b4fd968cd06dfa5e0887009e1ca59ce3.png" />
 </div>
 </div>
 <p>Here we see that the normalized net rates are all &lt; <span class="math notranslate nohighlight">\(10^{-12}\)</span>, so we are effectively seeing the integration tolerance, and are very close to machine precision.</p>
@@ -978,11 +978,11 @@ by the total activity of the rate (forward + reverse) by doing <code class="docu
 <section id="examples-of-incompatibility">
 <h2>Examples of incompatibility<a class="headerlink" href="#examples-of-incompatibility" title="Link to this heading">#</a></h2>
 <p>We previously demonstrated a potentially useful 19-nuclei network for Helium burning, where the network is intrinsically compatible with NSE. Now the question is what are some examples that are not compatible with NSE?</p>
-<p>Let’s consider expanding the network by adding more iron-group elementsabove by adding two rate pairs</p>
+<p>Let’s consider expanding the network with more iron-group species by adding two rate pairs</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}
-{}^{52}\mathrm{Fe} + \mathrm{n} \rightleftharpoons {}^{53}\mathrm{Fe} \\
-\end{split}\]</div>
+\[
+{}^{52}\mathrm{Fe} + \mathrm{n} \rightleftharpoons {}^{53}\mathrm{Fe}
+\]</div>
 <div class="math notranslate nohighlight">
 \[
  {}^{53}\mathrm{Fe} + \mathrm{n} \rightleftharpoons {}^{54}\mathrm{Fe}
@@ -1032,18 +1032,19 @@ But let’s verify it by integrating the network.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/1fc2f684000b43f5a1f297d570d5d6c083ec07949ea7cf9247eecd725464cec1.png" src="_images/1fc2f684000b43f5a1f297d570d5d6c083ec07949ea7cf9247eecd725464cec1.png" />
+<img alt="_images/5e377eb3f579aea0083b11a17dde74c4605f85722aa0d0c0ba6725883f15d378.png" src="_images/5e377eb3f579aea0083b11a17dde74c4605f85722aa0d0c0ba6725883f15d378.png" />
 <img alt="_images/e37f8e7a5af29d03375bd7debf370667916ad6dab83ed592ac7d1039ebc95fd4.png" src="_images/e37f8e7a5af29d03375bd7debf370667916ad6dab83ed592ac7d1039ebc95fd4.png" />
 </div>
 </div>
 <p>We see that the mass abundance computed from NSE is indeed different from integrating the network to equilibrium,
 suggesting the isotopes are not sufficiently connected. To resolve this issue, we need additional rates to provide connections
-from the newly added <span class="math notranslate nohighlight">\({}^{54}\mathrm{Fe}\)</span> to <span class="math notranslate nohighlight">\({}^{55}\mathrm{Co}\)</span>. Let’s consider adding,
-$<span class="math notranslate nohighlight">\(
+from the newly added <span class="math notranslate nohighlight">\({}^{54}\mathrm{Fe}\)</span> to <span class="math notranslate nohighlight">\({}^{55}\mathrm{Co}\)</span>. Let’s consider adding,</p>
+<div class="math notranslate nohighlight">
+\[
 {}^{54}\mathrm{Fe} + \mathrm{p} \rightleftharpoons {}^{55}\mathrm{Co}
-\)</span><span class="math notranslate nohighlight">\(
-This rate completes the loop between \)</span>{}^{52}\mathrm{Fe}<span class="math notranslate nohighlight">\(, \)</span>{}^{53}\mathrm{Fe}<span class="math notranslate nohighlight">\(, \)</span>{}^{54}\mathrm{Fe}<span class="math notranslate nohighlight">\(, and \)</span>{}^{55}\mathrm{Co}<span class="math notranslate nohighlight">\(,
-allowing for the exchange of \)</span>{}^{4}\mathrm{He}$ to 2 protons and 2 neutrons</p>
+\]</div>
+<p>This rate completes the loop between <span class="math notranslate nohighlight">\({}^{52}\mathrm{Fe}\)</span>, <span class="math notranslate nohighlight">\({}^{53}\mathrm{Fe}\)</span>, <span class="math notranslate nohighlight">\({}^{54}\mathrm{Fe}\)</span>, and <span class="math notranslate nohighlight">\({}^{55}\mathrm{Co}\)</span>,
+allowing for the exchange of <span class="math notranslate nohighlight">\({}^{4}\mathrm{He}\)</span> to 2 protons and 2 neutrons</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fe54p_co55</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;fe54(p,g)co55&quot;</span><span class="p">)</span>
@@ -1115,8 +1116,8 @@ Let’s verify its prediction by integrating the network.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/302c0bf833fdf592b8a70a15c3febff674d453991a5d09ddf1853048ce416f91.png" src="_images/302c0bf833fdf592b8a70a15c3febff674d453991a5d09ddf1853048ce416f91.png" />
-<img alt="_images/e8ec9e42644f70c86b0877b2e6c06e86dfaa2b6be929dc40d77ef58936b7f10f.png" src="_images/e8ec9e42644f70c86b0877b2e6c06e86dfaa2b6be929dc40d77ef58936b7f10f.png" />
+<img alt="_images/4ee6c86924817f78bf1af6186ec6a9a8c4d102251e6c99dba11b9535ffc4a779.png" src="_images/4ee6c86924817f78bf1af6186ec6a9a8c4d102251e6c99dba11b9535ffc4a779.png" />
+<img alt="_images/81aaa96ee52e66bd7396a1c5dfaf42fa44bb56fd1bd03c7ffcee0924ed385f9d.png" src="_images/81aaa96ee52e66bd7396a1c5dfaf42fa44bb56fd1bd03c7ffcee0924ed385f9d.png" />
 </div>
 </div>
 <p>The error plot above shows that NSE and integration agrees to machine-precision once again.</p>
