@@ -1,8 +1,6 @@
 """Support modules to write a pure python reaction network ODE source."""
 
-import shutil
 import sys
-import warnings
 from pathlib import Path
 
 import numpy as np
@@ -403,7 +401,7 @@ class PythonNetwork(RateCollection):
             of.write(f"{r.fname}_info = (\n")
             of.write(f"    {r.table_rhoy_lines},    # table_rhoy_lines\n")
             of.write(f"    {r.table_temp_lines},    # table_temp_lines\n")
-            of.write(f"    # tabular_data_table\n")
+            of.write("    # tabular_data_table\n")
             of.write(f"    np.array({r.tabular_data_table.tolist()})\n")
             of.write(")\n\n")
 
