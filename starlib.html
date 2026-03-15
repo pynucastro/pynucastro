@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Network Integration with StarLib rates &#8212; pynucastro 2.9.0.post48+g90e398717 documentation</title>
+    <title>Networks with StarLib rates &#8212; pynucastro 2.9.0.post49+gb30521b69 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=151e6f05"></script>
+    <script src="_static/documentation_options.js?v=bfa98812"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -170,7 +170,7 @@
 <li class="toctree-l1"><a class="reference internal" href="plot-types.html">Plotting Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="basic_network.html">Basic Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Integrating a Network</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Network Integration with StarLib rates</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Networks with StarLib rates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Working with Libraries</span></p>
 <ul class="nav bd-sidenav">
@@ -554,7 +554,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Network Integration with StarLib rates</h1>
+    <h1>Networks with StarLib rates</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -564,7 +564,7 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#writing-and-integrating-networks-with-sampled-rates">Writing and Integrating Networks with sampled rates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-networks-with-sampled-rates">Integrating Networks with sampled rates</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-solutions">Plotting Solutions</a></li>
 </ul>
             </nav>
@@ -577,8 +577,8 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="network-integration-with-starlib-rates">
-<h1>Network Integration with StarLib rates<a class="headerlink" href="#network-integration-with-starlib-rates" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="networks-with-starlib-rates">
+<h1>Networks with StarLib rates<a class="headerlink" href="#networks-with-starlib-rates" title="Link to this heading">#</a></h1>
 <p>StarLib is a library of thermonuclear reaction rates and weak laboratory interaction rates tabulated as a function of temperature. Its key distinction from other sources is that it provides factor uncertainties for each tabulated rate. Here, we elaborate upon its current implementation within pynucastro and provide examples to illustrate its usage.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -590,23 +590,37 @@
 <p>The intended way to access StarLib rates in pynucastro is through a <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.StarLibLibrary" title="pynucastro.rates.library.StarLibLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StarLibLibrary</span></code></a>. When an instance of <code class="docutils literal notranslate"><span class="pre">StarLibLibrary</span></code> is created without an argument, it returns a <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library</span></code></a> holding instances of <a class="reference internal" href="pynucastro.rates.starlib_rate.html#pynucastro.rates.starlib_rate.StarLibRate" title="pynucastro.rates.starlib_rate.StarLibRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StarLibRate</span></code></a> at their respective median values, i.e., no sampling is performed.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sl_m</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">StarLibLibrary</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">StarLibLibrary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>To enable sampling, we must pass a seed. This seed can be an integer of an array of integers. Here, we create several sampled libraries with arbitrarily fixed seeds to ensure reproducibility.</p>
+<p>To enable sampling, we must pass a seed. This seed can be passed when a <code class="docutils literal notranslate"><span class="pre">StarLibLibrary</span></code> is initialized or we can resample an existing <code class="docutils literal notranslate"><span class="pre">StarLibLibrary</span></code>. Here, we demonstrate the latter by writing out several basic CNO networks. Note that the seeds are chosen arbitrarily to ensure reproducibility.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">seeds</span> <span class="o">=</span> <span class="p">[</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">,</span> <span class="mi">2468</span><span class="p">,</span> <span class="mi">46802</span><span class="p">,</span> <span class="mi">13579</span><span class="p">,</span> <span class="mi">97531</span><span class="p">,</span> <span class="mi">235711</span><span class="p">]</span>
-<span class="n">sampled_libs</span> <span class="o">=</span> <span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">StarLibLibrary</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">seeds</span><span class="p">]</span>
-<span class="n">n_sampled</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sampled_libs</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span>  <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;c13&quot;</span><span class="p">,</span> <span class="s2">&quot;n13&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;n14&quot;</span><span class="p">,</span> <span class="s2">&quot;n15&quot;</span><span class="p">,</span> <span class="s2">&quot;o14&quot;</span><span class="p">,</span> <span class="s2">&quot;o15&quot;</span> <span class="p">]</span>
+
+<span class="c1">#Write network with median rates</span>
+<span class="n">smrates</span> <span class="o">=</span> <span class="n">sl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
+<span class="n">smnet</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">smrates</span><span class="p">)</span>
+<span class="n">smnet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;smnet.py&quot;</span><span class="p">)</span>
+
+<span class="c1"># Write networks with sampled rates</span>
+<span class="n">seeds</span> <span class="o">=</span> <span class="p">[</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">,</span> <span class="mi">2468</span><span class="p">,</span> <span class="mi">46802</span><span class="p">,</span> <span class="mi">13579</span><span class="p">,</span> <span class="mi">11235</span><span class="p">,</span> <span class="mi">235711</span><span class="p">]</span>
+<span class="n">n_sampled</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">seeds</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">seeds</span><span class="p">):</span>
+    <span class="n">sl</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">lib</span> <span class="o">=</span> <span class="n">sl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
+    <span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">lib</span><span class="p">)</span>
+    <span class="n">net</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;s</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">net.py&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<section id="writing-and-integrating-networks-with-sampled-rates">
-<h2>Writing and Integrating Networks with sampled rates<a class="headerlink" href="#writing-and-integrating-networks-with-sampled-rates" title="Link to this heading">#</a></h2>
+<section id="integrating-networks-with-sampled-rates">
+<h2>Integrating Networks with sampled rates<a class="headerlink" href="#integrating-networks-with-sampled-rates" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -615,7 +629,7 @@
 </div>
 </div>
 </div>
-<p>Having created sampled libraries, we can then explore integrating reaction networks with such sampled libraries and compare obtained results against unsampled <code class="docutils literal notranslate"><span class="pre">StarLiblibrary</span></code> and <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.ReacLibLibrary" title="pynucastro.rates.library.ReacLibLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReacLibLibrary</span></code></a></p>
+<p>We can compare the integration of networks with sampled and median starlib rates against that for ReacLib rates.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
@@ -623,34 +637,11 @@
 </div>
 </div>
 </div>
-<p>To be consistent with previous examples, we look at a basic CNO network.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span>  <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;c13&quot;</span><span class="p">,</span> <span class="s2">&quot;n13&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;n14&quot;</span><span class="p">,</span> <span class="s2">&quot;n15&quot;</span><span class="p">,</span> <span class="s2">&quot;o14&quot;</span><span class="p">,</span> <span class="s2">&quot;o15&quot;</span> <span class="p">]</span>
-
-<span class="n">rr_lib</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
-<span class="n">sm_lib</span> <span class="o">=</span> <span class="n">sl_m</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
-
-<span class="n">sampled_rates_list</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="k">for</span> <span class="n">lib</span> <span class="ow">in</span> <span class="n">sampled_libs</span><span class="p">:</span>
-    <span class="n">sampled_rates_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lib</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rrnet</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">rr_lib</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rrates</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
+<span class="n">rrnet</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">rrates</span><span class="p">)</span>
 <span class="n">rrnet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;rrnet.py&quot;</span><span class="p">)</span>
-
-<span class="n">smnet</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">sm_lib</span><span class="p">)</span>
-<span class="n">smnet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;smnet.py&quot;</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">lib</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sampled_rates_list</span><span class="p">):</span>
-    <span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">lib</span><span class="p">)</span>
-    <span class="n">net</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;s</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">net.py&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -672,7 +663,7 @@
 </div>
 </div>
 </div>
-<p>The thermodynamic conditions and composition are initialized similar to previous examples.</p>
+<p>We initialize thermodynamic conditions and composition similar to previous CNO example.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mi">150</span>
@@ -688,7 +679,7 @@
 </div>
 </div>
 </div>
-<p>We are then ready to integrate.</p>
+<p>Then, we integrate.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e20</span>
@@ -765,7 +756,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/bcaf2e7dad4cfea37451e6f8dfe1efd406345b38465f3464c7363b0dc1185624.png" src="_images/bcaf2e7dad4cfea37451e6f8dfe1efd406345b38465f3464c7363b0dc1185624.png" />
+<img alt="_images/4c628ef6442068a33f31e7b29e46dd22137b574a39909410a3292528c97fbfcf.png" src="_images/4c628ef6442068a33f31e7b29e46dd22137b574a39909410a3292528c97fbfcf.png" />
 </div>
 </div>
 <p>Here the dotted lines depict the evolution of mass fractions over time given ReacLib rates, the solid lines depict that for median StarLib rates and the faint lines depict that for each sampled StarLib rates.</p>
@@ -819,7 +810,7 @@
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#writing-and-integrating-networks-with-sampled-rates">Writing and Integrating Networks with sampled rates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-networks-with-sampled-rates">Integrating Networks with sampled rates</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-solutions">Plotting Solutions</a></li>
 </ul>
   </nav></div>

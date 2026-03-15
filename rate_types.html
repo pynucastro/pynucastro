@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Reaction Rate Types &#8212; pynucastro 2.9.0.post48+g90e398717 documentation</title>
+    <title>Reaction Rate Types &#8212; pynucastro 2.9.0.post49+gb30521b69 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=151e6f05"></script>
+    <script src="_static/documentation_options.js?v=bfa98812"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -173,7 +173,7 @@
 <li class="toctree-l1"><a class="reference internal" href="plot-types.html">Plotting Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="basic_network.html">Basic Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Integrating a Network</a></li>
-<li class="toctree-l1"><a class="reference internal" href="starlib.html">Network Integration with StarLib rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="starlib.html">Networks with StarLib rates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Working with Libraries</span></p>
 <ul class="nav bd-sidenav">
@@ -778,15 +778,18 @@ they are described by two parameters <span class="math notranslate nohighlight">
 \[f(x) = \frac{1}{ \sigma \sqrt{2 \pi}} \frac{1}{x}e^{-( \ln x - \mu)^2 / 2 \sigma^2}\]</div>
 <p>Thus, for each rate at every listed temperature, StarLib provides the
 median rate and the factor uncertainty, i.e., <span class="math notranslate nohighlight">\(e^{\mu}\)</span> and <span class="math notranslate nohighlight">\(e^{\sigma}\)</span> respectively.
-Every rate also has an associated header which provides more relevant
-information for that rate. This includes:</p>
+In pynucastro, rates are sampled as <span class="math notranslate nohighlight">\(\ln (x_i) = \mu_i + p_i \sigma_i\)</span>.
+Where <span class="math notranslate nohighlight">\(x_i\)</span> is a sampled rate and <span class="math notranslate nohighlight">\(p_i\)</span> is a standard normal
+deviate. Note that, once sampled, <span class="math notranslate nohighlight">\(p_i\)</span> is held constant with temperature
+across a rate’s tabulated data. See Section 4 of <a class="reference external" href="https://doi.org/10.1088/0067-0049/207/1/18">Sallaska et al.,</a> for more.</p>
+<p>Every rate also has an associated header which provides:</p>
 <ul class="simple">
 <li><p>An interaction type that classifies reactions based on number of
 reactants and products. Analogous to chapters for ReacLib Rates.</p></li>
 <li><p>Nuclides that are to be interpreted as reactants or products given the
 interaction type.</p></li>
 <li><p>A label that corresponds to the source of a given rate along with an
-“interaction specific label” that is a <code class="docutils literal notranslate"><span class="pre">char</span></code> which is set to “w”
+“interaction specific label” which is a <code class="docutils literal notranslate"><span class="pre">char</span></code> set to “w”
 if a given rate is weak, “v” if a rate is a reverse reaction and
 “g” if a rate describes a gamma-ray transition.</p></li>
 <li><p>Energy released (+) or consumed (-).</p></li>
