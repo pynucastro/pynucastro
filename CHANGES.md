@@ -2,7 +2,14 @@
 
 ## 2.10.0
 
-  * add support for StarLib rates (#1258)
+  * clean-up `TabularRate` (#1278)
+
+  * add a method to pre-determine network NSE compatibility (#1276,
+    #1280)
+
+  * update Zenodo authors (#1272)
+
+  * add support for StarLib rates (#1258, #1273, #1277, #1281)
 
   * clean-up `ReacLibRate` (#1267)
 
@@ -44,7 +51,7 @@
 
   * docs updates: update the derived rates documentation (#1247), fix
     some sphinx API doc warning (#1237), add a temperature evolution
-    integration example (#1223)
+    integration example (#1223), copyright (#1274)
 
   * clean up `SimpleCxxNetwork` (#1246)
 
