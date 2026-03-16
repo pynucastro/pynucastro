@@ -1,16 +1,17 @@
 """Support modules to write a pure python reaction network ODE source."""
 
+import io
 import sys
 import types
-import io
 from pathlib import Path
 
 import numpy as np
+from scipy.integrate import solve_ivp
 
 from pynucastro.constants import constants
-from pynucastro.networks.rate_collection import RateCollection, Composition
+from pynucastro.networks.rate_collection import Composition, RateCollection
 from pynucastro.rates import ApproximateRate, ModifiedRate
-from pynucastro.screening import get_screening_map, get_screening_func
+from pynucastro.screening import get_screening_func, get_screening_map
 
 
 class PythonNetwork(RateCollection):
@@ -527,40 +528,11 @@ class PythonNetwork(RateCollection):
         if close_file:
             of.close()
 
-    def _get_screening_method(self, screen_method):
-        '''Helper function to get the desired screening method'''
-        if screen_method is None:
-            return None
-
-        from pynucastro.screening import (
-            screen5,
-            potekhin_1998,
-            chugunov_2007,
-            chugunov_2009,
-            debye_huckel
-        )
-
-        methods = {
-            "screen5": screen5,
-            "potekhin_1998": potekhin_1998,
-            "chugunov_2007": chugunov_2007,
-            "chugunov_2009": chugunov_2009,
-            "debye_huckel": debye_huckel,
-        }
-
-        try:
-            return methods[screen_method]
-        except KeyError:
-            raise ValueError(
-                f"{screen_method} is not a valid screening method. "
-                f"Choose from: {list(methods)}"
-            )
-
     def integrate_network(self, tmax, rho, T, Y0=None,
                           screen_method=None,
                           initial_comp="uniform",
                           rtol=1e-8, atol=1e-8):
-        '''Integrate the network to tmax given (rho, T, Y0) using
+        """Integrate the network to tmax given (rho, T, Y0) using
         SciPy's solve_ivp() with BDF method.
 
         Parameters
@@ -580,7 +552,7 @@ class PythonNetwork(RateCollection):
             `potekhin_1998`, and `debye_huckel`. If `None`, no screening is applied.
         initial_comp : str
             different modes to use to set up the initial composition if Y0 is None.
-            Valid choices are: `uniform`, `random`, and `solar.
+            Valid choices are: `uniform`, `random`, and `solar`.
         rtol : float
             relative tolerance for SciPy's solve_ivp()
         atol : float
@@ -589,9 +561,7 @@ class PythonNetwork(RateCollection):
         Returns
         -------
         OdeSolution
-        '''
-
-        from scipy.integrate import solve_ivp
+        """
 
         # Write the network module as a string
         f = io.StringIO()
@@ -602,7 +572,11 @@ class PythonNetwork(RateCollection):
         network = types.ModuleType("network")
 
         # Execute the code inside the module namespace
-        exec(network_code, network.__dict__)
+        exec(network_code, network.__dict__) # pylint: disable=exec-used
+
+        # Get RHS and Jacobian. Use getattr to avoid pylint warning.
+        rhs = getattr(network, "rhs")
+        jacobian = getattr(network, "jacobian")
 
         # Get the appropriate screening function
         screen_func = get_screening_func(screen_method)
@@ -616,8 +590,8 @@ class PythonNetwork(RateCollection):
             Y0 = np.array([ys[nuc] for nuc in self.unique_nuclei])
 
         # Integrate using SciPy's solve_ivp() using BDF method -- good for stiff system.
-        sol = solve_ivp(network.rhs, [0, tmax], Y0, method="BDF",
+        sol = solve_ivp(rhs, [0, tmax], Y0, method="BDF",
                         dense_output=True, args=(rho, T, screen_func),
-                        rtol=rtol, atol=atol, jac=network.jacobian)
+                        rtol=rtol, atol=atol, jac=jacobian)
 
         return sol

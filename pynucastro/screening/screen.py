@@ -751,6 +751,7 @@ SCREEN_METHODS = {
     "debye_huckel": debye_huckel
 }
 
+
 def get_screening_func(screen_method):
     """Return the screening function by its name
 
