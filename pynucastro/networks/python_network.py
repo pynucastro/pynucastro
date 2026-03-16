@@ -561,7 +561,8 @@ class PythonNetwork(RateCollection):
 
         Returns
         -------
-        OdeResult
+        sol : object
+            Solution returned by :func:`scipy.integrate.solve_ivp`.
 
         """
 
@@ -598,9 +599,11 @@ class PythonNetwork(RateCollection):
 
         return sol
 
-    def plot_evolution(self, sol, tmin=None, tmax=None,
+    def plot_evolution(self, sol,
+                       tmin=None, tmax=None,
+                       ymin=None, ymax=None,
                        size=(800, 600), dpi=100,
-                       X_cutoff_value=5e-3,
+                       X_cutoff_value=None,
                        label_size=14, legend_size=10,
                        three_level_style=False,
                        outfile=None):
@@ -609,8 +612,8 @@ class PythonNetwork(RateCollection):
 
         Parameters
         ----------
-        sol : OdeResult
-            Solution object returned by `scipy.integrate.solve_ivp`. The
+        sol : object
+            Solution object returned by :func:`scipy.integrate.solve_ivp`. The
             array `sol.y` is assumed to contain the molar abundances, `Y_i`,
             ordered consistently with `unique_nuclei`.
         tmin : float
@@ -619,6 +622,13 @@ class PythonNetwork(RateCollection):
         tmax : float
             Maximum time shown on the x-axis. If `None`, the last value of
             `sol.t` is used.
+        ymin : float
+            Minimum mass fraction shown on the y-axis. If `None`,
+            use the Matplotlib autoscaled value.
+        ymax : float
+            Maximum mass fraction shown on the y-axis. If `None`,
+            use the Matplotlib autoscaled value. The autoscaled value
+            is capped at 1.2
         dpi : int
             dots per inch used with size to set output image size
         size : (tuple, list)
@@ -647,13 +657,14 @@ class PythonNetwork(RateCollection):
 
             X = sol.y[i, :] * nuc.A
             max_X = X.max()
-            if max_X <= X_cutoff_value:
+            if X_cutoff_value is None and ymin is not None:
+                X_cutoff_value = ymin
+            if X_cutoff_value is not None and max_X <= X_cutoff_value:
                 continue
 
             # Set linestyle and linewidth
             lw = 1.5
             ls = "-"
-
             if three_level_style:
                 # Set 3 levels of visual levels depending on maximum mass fraction
                 lw = 1
@@ -674,9 +685,16 @@ class PythonNetwork(RateCollection):
             tmax = sol.t[-1]
 
         # Auto set number of legend column
-        ncol = len(ax.lines)//8
+        ncol = max(1, len(ax.lines) // 8 + 1)
 
         ax.set_xlim(tmin, tmax)
+        ax.set_ylim(ymin, ymax)
+        cur_ymin, cur_ymax = ax.get_ylim()
+        if ymax is None and cur_ymax > 1.2:
+            # Make sure the autoscaled ymax is not greater than 1.2
+            cur_ymax = 1.2
+        ax.set_ylim(cur_ymin, cur_ymax)
+
         ax.set_xlabel("time [s]", fontsize=label_size)
         ax.set_ylabel("X", fontsize=label_size)
         ax.legend(loc="best", fontsize=legend_size, ncol=ncol)
