@@ -560,7 +560,7 @@ class PythonNetwork(RateCollection):
 
         Returns
         -------
-        OdeSolution
+        OdeSolutionD
         """
 
         # Write the network module as a string
