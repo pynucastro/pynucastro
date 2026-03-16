@@ -560,7 +560,8 @@ class PythonNetwork(RateCollection):
 
         Returns
         -------
-        OdeSolutionD
+        OdeResult
+
         """
 
         # Write the network module as a string
@@ -595,3 +596,93 @@ class PythonNetwork(RateCollection):
                         rtol=rtol, atol=atol, jac=jacobian)
 
         return sol
+
+    def plot_evolution(self, sol, tmin=None, tmax=None,
+                       size=(800, 600), dpi=100,
+                       X_cutoff_value=5e-3,
+                       label_size=14, legend_size=10,
+                       three_level_style=False,
+                       outfile=None):
+        """Plot the time evolution of nuclei mass fractions using the
+        solution returned by SciPy's solve_ivp().
+
+        Parameters
+        ----------
+        sol : OdeResult
+            Solution object returned by `scipy.integrate.solve_ivp`. The
+            array `sol.y` is assumed to contain the molar abundances, `Y_i`,
+            ordered consistently with `unique_nuclei`.
+        tmin : float, optional
+            Minimum time shown on the x-axis. If `None`, the first value of
+            `sol.t` is used.
+        tmax : float, optional
+            Maximum time shown on the x-axis. If `None`, the last value of
+            `sol.t` is used.
+        dpi : int
+            dots per inch used with size to set output image size
+        size : (tuple, list)
+            (width, height) of the plot in pixels
+        X_cutoff_value : float
+            Minimum peak mass fraction required for a nucleus to be plotted.
+        label_size : int
+            Font size for axis labels.
+        legend_size : int
+            Font size for the legend.
+        three_level_style : bool
+            If `True`, use three-level linestyle and linewidth based on the peak
+            mass fraction to help distinguish different curves.
+            If `False`, all curves use the same line style and linewidth.
+        outfile : str
+            output name of the plot (extension determines the type)
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+
+        """
+
+        fig, ax = plt.subplots(figsize=(size[0]/dpi, size[1]/dpi))
+        for i, nuc in enumerate(self.unique_nuclei):
+
+            X = sol.y[i, :] * nuc.A
+            max_X = X.max()
+            if max_X <= X_cutoff_value:
+                continue
+
+            # Set linestyle and linewidth
+            lw = 1.5
+            ls = "-"
+
+            if three_level_style:
+                # Set 3 levels of visual levels depending on maximum mass fraction
+                lw = 1
+                ls = "--"
+                if max_X > 0.5:
+                    lw = 2.5
+                    ls = "-"
+                elif max_X > 0.01:
+                    lw = 1.5
+                    ls = "-"
+
+            ax.loglog(sol.t, X, lw=lw, ls=ls,
+                      label=rf"X(${nuc.pretty}$)")
+
+        if tmin is None:
+            tmin = sol.t[0]
+        if tmax is None:
+            tmax = sol.t[-1]
+
+        # Auto set number of legend column
+        ncol = len(ax.lines)//8
+
+        ax.set_xlim(tmin, tmax)
+        ax.set_xlabel(f"time [s]", fontsize=label_size)
+        ax.set_ylabel(f"X", fontsize=label_size)
+        ax.legend(loc="best", fontsize=legend_size, ncol=ncol)
+        ax.grid(ls=":")
+        fig.tight_layout()
+
+        if outfile is not None:
+            fig.savefig(outfile, dpi=dpi)
+
+        return fig
