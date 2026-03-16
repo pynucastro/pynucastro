@@ -770,8 +770,8 @@ def get_screening_func(screen_method):
 
     try:
         return SCREEN_METHODS[screen_method]
-    except KeyError:
+    except KeyError as exc:
         raise ValueError(
             f"{screen_method} is not a valid screening method. "
             f"Choose from {list(SCREEN_METHODS)}"
-        )
+        ) from exc

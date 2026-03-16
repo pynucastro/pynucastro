@@ -5,6 +5,7 @@ import sys
 import types
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import numpy as np
 from scipy.integrate import solve_ivp
 
@@ -543,10 +544,10 @@ class PythonNetwork(RateCollection):
             density used to integrate the network
         T : float
             temperature used to integrate the network
-        Y0 : numpy.ndarray or None
+        Y0 : numpy.ndarray
             initial molar abundance of the nuclei. If not provided,
             the initial composition is initialized according to `initial_comp`
-        screen_method : str or None
+        screen_method : str
             name of the screening function used to evaluate rates when integrating
             the network. Valid choices are: `screen5`, `chugunov_2007`, `chugunov_2009`,
             `potekhin_1998`, and `debye_huckel`. If `None`, no screening is applied.
@@ -573,7 +574,7 @@ class PythonNetwork(RateCollection):
         network = types.ModuleType("network")
 
         # Execute the code inside the module namespace
-        exec(network_code, network.__dict__) # pylint: disable=exec-used
+        exec(network_code, network.__dict__)  # pylint: disable=exec-used
 
         # Get RHS and Jacobian. Use getattr to avoid pylint warning.
         rhs = getattr(network, "rhs")
@@ -612,10 +613,10 @@ class PythonNetwork(RateCollection):
             Solution object returned by `scipy.integrate.solve_ivp`. The
             array `sol.y` is assumed to contain the molar abundances, `Y_i`,
             ordered consistently with `unique_nuclei`.
-        tmin : float, optional
+        tmin : float
             Minimum time shown on the x-axis. If `None`, the first value of
             `sol.t` is used.
-        tmax : float, optional
+        tmax : float
             Maximum time shown on the x-axis. If `None`, the last value of
             `sol.t` is used.
         dpi : int
@@ -676,8 +677,8 @@ class PythonNetwork(RateCollection):
         ncol = len(ax.lines)//8
 
         ax.set_xlim(tmin, tmax)
-        ax.set_xlabel(f"time [s]", fontsize=label_size)
-        ax.set_ylabel(f"X", fontsize=label_size)
+        ax.set_xlabel("time [s]", fontsize=label_size)
+        ax.set_ylabel("X", fontsize=label_size)
         ax.legend(loc="best", fontsize=legend_size, ncol=ncol)
         ax.grid(ls=":")
         fig.tight_layout()

@@ -163,7 +163,7 @@ class Composition(collections.UserDict):
         an iterable of Nucleus objects
     small : float
         a floor for nuclei mass fractions, used as the default value.
-    init : str, None
+    init : str
         Different modes to set up the initial composition. Valid choices
         are [`uniform`, `random`, `solar`]. If "solar" is selected, assume
         we work with metallicity, Z=0.02. If init=None, then no initial composition
