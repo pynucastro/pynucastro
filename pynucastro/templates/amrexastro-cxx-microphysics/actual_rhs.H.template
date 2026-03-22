@@ -100,6 +100,7 @@ void evaluate_rates(const burn_t& state,
 
     // Calculate tabular rates
 
+
     [[maybe_unused]] amrex::Real rate, drate_dt, edot_nu, edot_gamma;
 
     rate_eval.enuc_weak = 0.0_rt;

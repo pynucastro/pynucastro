@@ -90,6 +90,8 @@ void get_partition_function(const int inuc,
                             const part_fun::pf_cache_t& pf_cache,
                             amrex::Real& logpf, amrex::Real& dlogpf_dT9) {
 
+    amrex::ignore_unused(pf_cache);
+
     logpf = 0.0_rt;
     dlogpf_dT9 = 0.0_rt;
 
