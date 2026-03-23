@@ -100,7 +100,7 @@ The ReacLib database lists the source / reference of each rate with a 6 characte
 Weak rates
 ^^^^^^^^^^
 
-Electron capture capture rates are those identified with a label of either ``ec`` or ``bec``.  These
+Electron capture rates are those identified with a label of either ``ec`` or ``bec``.  These
 have ``ReacLibRate.weak_type`` set to ``electron_capture``.  For these rates, and only these rates,
 we include :math:`Y_e` in the overall rate (multiplying density).
 
