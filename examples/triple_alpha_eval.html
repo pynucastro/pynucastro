@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Computing the Screened Triple-alpha rate &#8212; pynucastro 2.9.0.post51+ge826aa3b8 documentation</title>
+    <title>Computing the Screened Triple-alpha rate &#8212; pynucastro 2.9.0.post52+g71516e2f1 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=7781adab"></script>
+    <script src="../_static/documentation_options.js?v=4cc3bc23"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -621,7 +621,7 @@ We’ll do this 2 different ways (but both will get the same answer).</p>
 </div>
 <section id="manual-method">
 <h2>Manual method<a class="headerlink" href="#manual-method" title="Link to this heading">#</a></h2>
-<p>Here well read in this rate and compute the screening factors ourselves and then build up the full form of the rate</p>
+<p>Here we’ll read in this rate and compute the screening factors ourselves and then build up the full form of the rate</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
@@ -680,7 +680,7 @@ We’ll do this 2 different ways (but both will get the same answer).</p>
 <p>Now, the total rate is:</p>
 <div class="math notranslate nohighlight">
 \[r = f \rho^2 [Y({}^4\mathrm{He})]^3 \frac{N_A^2 \langle \sigma v \rangle}{3!}\]</div>
-<p>where <span class="math notranslate nohighlight">\(f\)</span> is the screening factor and the <span class="math notranslate nohighlight">\(3!\)</span> is because there are 3 identical particles appearing in the reation.</p>
+<p>where <span class="math notranslate nohighlight">\(f\)</span> is the screening factor and the <span class="math notranslate nohighlight">\(3!\)</span> is because there are 3 identical particles appearing in the reaction.</p>
 <p>We get <span class="math notranslate nohighlight">\(N_A^2 \langle \sigma v \rangle\)</span> by evaluating the temperature sensitivity of the rate from ReacLib.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
