@@ -224,7 +224,7 @@ void get_ydot_weak(const burn_t& state,
     rate_eval.screened_rates(k_Ne23_to_Na23_weaktab) = rate;
     rate_eval.enuc_weak += C::n_A * Y(Ne23) * (edot_nu + edot_gamma);
 
-    auto screened_rates = rate_eval.screened_rates;
+    const auto& screened_rates = rate_eval.screened_rates;
 
     ydot_nuc(N) =
         -screened_rates(k_n_to_p_reaclib)*Y(N);
