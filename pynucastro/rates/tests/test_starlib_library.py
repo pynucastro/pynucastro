@@ -29,7 +29,7 @@ class TestStarLibLibrary:
         sampled_evals = np.array([r.eval(T) for r in sl_sampled.get_rates()])
 
         nchanged = np.sum(~np.isclose(median_evals, sampled_evals, rtol=1.0e-8, atol=0))
-        #  note: atol=0 forces numpy to use rtol
+        # note: atol=0 forces numpy to use rtol
 
         assert nchanged >= 0.9 * len(median_evals)
 
@@ -37,7 +37,7 @@ class TestStarLibLibrary:
         T = 1.0e9
         s1_evals = np.array([r.eval(T) for r in sl_sampled.get_rates()])
 
-        sl_sampled.resample(seed=142) #same seed as initialization
+        sl_sampled.resample(seed=142) #  same seed as initialization
         s2_evals = np.array([r.eval(T) for r in sl_sampled.get_rates()])
 
         assert np.array_equal(s1_evals, s2_evals)
@@ -45,10 +45,10 @@ class TestStarLibLibrary:
     def test_sampling_gives_diff_rates_for_diff_seeds(self, sl_sampled):
         T = 1.0e9
 
-        sl_sampled.resample(seed=487) #fresh seed
+        sl_sampled.resample(seed=487) #  fresh seed
         s1_evals = [r.eval(T) for r in sl_sampled.get_rates()]
 
-        sl_sampled.resample(seed=932) #fresh seed
+        sl_sampled.resample(seed=932) #  fresh seed
         s2_evals = [r.eval(T) for r in sl_sampled.get_rates()]
 
         nchanged = np.sum(~np.isclose(s1_evals, s2_evals, rtol=1.0e-8, atol=0))
