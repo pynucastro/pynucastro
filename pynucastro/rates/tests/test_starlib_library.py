@@ -55,5 +55,13 @@ class TestStarLibLibrary:
 
         assert nchanged >= 0.9 * len(s1_evals)
 
+    def test_unsample(self, sl_median, sl_sampled):
+        T = 1.0e9
+
+        sl_sampled.unsample()
+        unsamp_evals = [r.eval(T) for r in sl_sampled.get_rates()]
+        med_evals = [r.eval(T) for r in sl_sampled.get_rates()]
+
+        assert np.array_equal(unsamp_evals, med_evals)
 
 
