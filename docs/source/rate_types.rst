@@ -100,7 +100,7 @@ The ReacLib database lists the source / reference of each rate with a 6 characte
 Weak rates
 ^^^^^^^^^^
 
-Electron capture capture rates are those identified with a label of either ``ec`` or ``bec``.  These
+Electron capture rates are those identified with a label of either ``ec`` or ``bec``.  These
 have ``ReacLibRate.weak_type`` set to ``electron_capture``.  For these rates, and only these rates,
 we include :math:`Y_e` in the overall rate (multiplying density).
 
@@ -203,8 +203,12 @@ they are described by two parameters :math:`\mu` and :math:`\sigma` as follows:
 
 Thus, for each rate at every listed temperature, StarLib provides the
 median rate and the factor uncertainty, i.e., :math:`e^{\mu}` and :math:`e^{\sigma}` respectively.
-Every rate also has an associated header which provides more relevant
-information for that rate. This includes:
+In pynucastro, rates are sampled as :math:`\ln (x_i) = \mu_i + p_i \sigma_i`.
+Where :math:`x_i` is a sampled rate and :math:`p_i` is a standard normal
+deviate. Note that, once sampled, :math:`p_i` is held constant with temperature
+across a rate's tabulated data. See Section 4 of `Sallaska et al.,  <https://doi.org/10.1088/0067-0049/207/1/18>`_ for more.
+
+Every rate also has an associated header which provides:
 
 * An interaction type that classifies reactions based on number of
   reactants and products. Analogous to chapters for ReacLib Rates.
@@ -213,7 +217,7 @@ information for that rate. This includes:
   interaction type.
 
 * A label that corresponds to the source of a given rate along with an
-  "interaction specific label" that is a ``char`` which is set to "w"
+  "interaction specific label" which is a ``char`` set to "w"
   if a given rate is weak, "v" if a rate is a reverse reaction and
   "g" if a rate describes a gamma-ray transition.
 
