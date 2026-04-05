@@ -90,11 +90,19 @@ class Rate:
         the energy release (in MeV) for the rate
     weak_type : str
         the type of weak reaction the rate represents.
-        Possible values include "electron_capture", "beta_decay", or
-        may include "_pos_" or "_neg_".
+        Possible values include "electron_capture", "beta_pos", or
+        "beta_neg"
     label : str
         A descriptive label for the rate (usually representative of the
         source
+    stoichiometry : dict(Nucleus)
+        a custom set of coefficients to be used in the evolution
+        equations dY(Nucleus)/dt.  If this is not set, then simply the
+        count of each nucleus in the list of reactants and products
+        will be used.
+    rate_source: str
+        the key to get the source information for the rate
+        from rate_sources.csv
     use_identical_particle_factor : bool
         For a rate that has the same nucleus multiple times as a reactant
         we apply a multiplicity factor, N!, where N is the number of times
@@ -125,16 +133,38 @@ class Rate:
         if self.src is not None:
             self.source = RateSource.source(rate_source)
 
-        self.weak = False
+        # some subclasses might define a stoichmetry as a dict{Nucleus}
+        # that gives the numbers for the dY/dt equations
+        self.stoichiometry = stoichiometry
+
+        # Figure out the weak rate type.
+        # If no weak_type is passed in, try to figure it out via charge conservation
+        # By assuming either beta minus decay or beta plus decay
         self.weak_type = weak_type
+        if not self.weak_type:
+            reactant_Zs = sum(n.Z * self.reactant_count(n) for n in set(self.reactants))
+            product_Zs = sum(n.Z * self.product_count(n) for n in set(self.products))
+            if reactant_Zs == product_Zs + 1:
+                self.weak_type = "beta_pos"
+            elif reactant_Zs + 1 == product_Zs:
+                self.weak_type = "beta_neg"
+
+        # Currently only allow three weak rate types:
+        # 1. electron capture
+        # 2. beta-plus decay
+        # 3. beta-minus decay
+        assert self.weak_type in ("", "electron_capture", "beta_pos", "beta_neg")
+
+        self.weak = False
         if self.weak_type:
             self.weak = True
 
         self.removed = False
         self.modified = False
         self.tabular = False
-        self.derived_from_inverse = False
         self.approx = False
+        self.resonant = False
+        self.derived_from_inverse = False
 
         # the identical particle factor scales the rate to prevent
         # double counting for a rate that has the same nucleus
@@ -142,10 +172,6 @@ class Rate:
         # behavior, but for approximate rates, sometimes we need to
         # disable it.
         self.use_identical_particle_factor = use_identical_particle_factor
-
-        # some subclasses might define a stoichmetry as a dict{Nucleus}
-        # that gives the numbers for the dY/dt equations
-        self.stoichiometry = stoichiometry
 
         # Set Q-value of the reaction rate. Needs to go after stoichiometry.
         if Q is None:
@@ -280,30 +306,23 @@ class Rate:
 
                 # we expect an electron on the left -- let's make sure
                 # the charge on the left should be +1 the charge on the right
-                assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
+                assert reactant_Zs == product_Zs + 1
 
                 lhs_other.append("e-")
                 rhs_other.append("nu")
 
-            elif self.weak_type == "beta_decay":
-                # we expect an electron on the right
-                assert sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products)
-
-                rhs_other.append("e-")
-                rhs_other.append("nubar")
-
-            elif self.weak_type and "_pos_" in self.weak_type:
+            elif self.weak_type == "beta_pos":
 
                 # we expect a positron on the right -- let's make sure
-                assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1
+                assert reactant_Zs == product_Zs + 1
 
                 rhs_other.append("e+")
                 rhs_other.append("nu")
 
-            elif self.weak_type and "_neg_" in self.weak_type:
+            elif self.weak_type == "beta_neg":
 
                 # we expect an electron on the right -- let's make sure
-                assert sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products)
+                assert reactant_Zs + 1 == product_Zs
 
                 rhs_other.append("e-")
                 rhs_other.append("nubar")
@@ -313,12 +332,11 @@ class Rate:
                 # we need to figure out what the rate is.  We'll assume that it is
                 # not an electron capture
 
-                if sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products) + 1:
+                if reactant_Zs == product_Zs + 1:
                     rhs_other.append("e+")
                     rhs_other.append("nu")
 
-                elif sum(n.Z for n in self.reactants) + 1 == sum(n.Z for n in self.products):
-
+                elif reactant_Zs + 1 == product_Zs:
                     rhs_other.append("e-")
                     rhs_other.append("nubar")
 
@@ -884,18 +902,8 @@ class RateSource:
 
     csv_path = _find_rate_file("rate_sources.csv")
 
-    urls = {
-        "debo": "https://doi.org/10.1103/RevModPhys.89.035007",
-        "langanke": "https://doi.org/10.1006/adnd.2001.0865",
-        "suzuki": "https://doi.org/10.3847/0004-637X/817/2/163",
-        "ffn": "https://doi.org/10.1086/190779",
-        "pruet_fuller": "https://doi.org/10.1086/376753",
-        "reaclib": "https://reaclib.jinaweb.org/labels.php?action=viewLabel&label=",
-        "iliadis2022": "https://journals.aps.org/prc/abstract/10.1103/PhysRevC.106.055802"
-    }
-
     @staticmethod
-    def _read_rate_sources(urls: dict[str, str], csv_path: Path) -> dict[str, dict[str, str]]:
+    def _read_rate_sources(csv_path: Path) -> dict[str, dict[str, str]]:
         """Build the labels dictionary from the supplied csv file."""
 
         labels = {}
@@ -905,11 +913,11 @@ class RateSource:
             for line in lines[1:]:
                 cells = [cell.strip() for cell in line.split("|")]
                 label = cells[0]
-                label_data = labels[label.lower()] = dict(zip(column_titles, cells))
-                label_data["URL"] = urls.get(label, urls["reaclib"] + label)
+                labels[label.lower()] = dict(zip(column_titles, cells))
+
         return labels
 
-    labels = _read_rate_sources(urls, csv_path)
+    labels = _read_rate_sources(csv_path)
 
     @classmethod
     def source(cls, label: str) -> dict[str, str] | None:

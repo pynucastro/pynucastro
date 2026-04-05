@@ -3,11 +3,14 @@ multiple sources.
 
 """
 
+import bz2
 import collections
 import io
 import re
 from os import walk
 from pathlib import Path
+
+import numpy as np
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
 from pynucastro.rates.alternate_rates import DeBoerC12agO16
@@ -17,6 +20,7 @@ from pynucastro.rates.known_duplicates import (find_duplicate_rates,
                                                is_allowed_dupe)
 from pynucastro.rates.rate import Rate
 from pynucastro.rates.reaclib_rate import ReacLibRate
+from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.tabular_rate import TabularRate
 
 
@@ -906,7 +910,7 @@ class ReacLibLibrary(Library):
                 sio = io.StringIO('\n'.join([f'{chapter}'] + rlines))
                 try:
                     if rate_type == "reaclib":
-                        r = ReacLibRate(rfile=sio)
+                        r = ReacLibRate.from_file(rfile=sio)
                     else:
                         raise NotImplementedError("rate not implemented")
                 except UnsupportedNucleus:
@@ -986,6 +990,136 @@ class TabularLibrary(Library):
         Library.__init__(self, rates=trates)
 
 
+class StarLibLibrary(Library):
+    """Create a :py:class:`Library` containing tabulated rates (excluding
+    isomers of 'al26') as described in the Starlib Library.
+
+    Parameters
+    ----------
+    seed : int
+        Rates in StarLibLibrary are sampled from a lognormal distribution
+        upon creation. This argument seeds the rng necessary to carry out
+        sampling. If no seed is proved then rates will return median
+        values.
+
+    """
+
+    file_path = Path(__file__).parents[1]/"library/starlib.dat.bz2"
+    INTERACTION_MAP = {1: (1, 1), 2: (1, 2), 3: (1, 3), 4: (2, 1),
+                       5: (2, 2), 6: (2, 3), 7: (2, 4), 8: (3, 1),
+                       9: (3, 2), 10: (4, 2), 11: (1, 4)}
+    NLINES = 60
+
+    def __init__(self, seed=None):
+        rates = []
+
+        #Initialize rng for rate sampling
+        rng = None
+        self.seed = seed
+        if seed is not None:
+            rng = np.random.default_rng(seed=self.seed)
+
+        #Read data
+        with bz2.open(self.file_path, mode="rt") as f:
+            for header in f:
+                # Read header and relevant info
+                rate_info = self.parse_header(header)
+                # Read data columns
+                log_T9, log_rate, sigma = [], [], []
+                for _ in range(self.NLINES):
+                    line = f.readline()
+                    T9, rate, exp_sig = map(float, line.split())
+                    log_T9.append(np.log(T9))
+                    sigma.append(np.log(exp_sig))
+
+                    #handle zero rates
+                    if rate > 0.0:
+                        log_rate.append(np.log(rate))
+                    else:
+                        log_rate.append(-700)
+
+                #Skip unsupported al26 rates
+                unsupported_nuc = ["al-6", "al*6", "al01", "al02", "al03"]
+                if any(nuc in unsupported_nuc for nuc in rate_info["nuclides"]):
+                    continue
+
+                # Convert data to np.array to ensure numpy operations
+                # are valid when sampling rates
+                log_T9 = np.array(log_T9)
+                log_rate = np.array(log_rate)
+                sigma = np.array(sigma)
+
+                #Create rate
+                rate = StarLibRate(log_T9, log_rate, sigma, rng=rng,
+                                   reactants=rate_info["reactants"],
+                                   products=rate_info["products"],
+                                   Q=rate_info["Q"],
+                                   labelprops=rate_info["labelprops"])
+
+                rates.append(rate)
+        super().__init__(rates=rates)
+
+    def parse_header(self, line):
+        """Starlib provides its data in blocks where each block consists of
+        a header followed by a 60 row grid of temperature, median rate and factor
+        uncertainty. This method parses the header and returns a dict containing
+        reactants, products, Q and more.
+
+        Parameters
+        ----------
+        line: str
+            header that is to be parsed
+
+        """
+        interaction_type = int(line[0:2])
+        nreactants, nproducts = self.INTERACTION_MAP[interaction_type]
+        nnuc = nreactants + nproducts
+
+        begin_idx = 5
+        nuclides = []
+        for i in range(nnuc):
+            nuclide = line[begin_idx + i * 5: begin_idx + (i+1) * 5]
+            nuclides.append(nuclide.strip())
+
+        reactants = nuclides[:nreactants]
+        products = nuclides[nreactants:]
+
+        #In accordance with STARLIB documentation
+        labelprops = line[43:48]
+        Q_val = float(line[53:65].strip())
+
+        return {"interaction_type": interaction_type,
+                "reactants": reactants,
+                "products": products,
+                "nuclides": nuclides,
+                "labelprops": labelprops,
+                "Q": Q_val}
+
+    def resample(self, seed=None):
+        """Resample rates
+
+        Parameters
+        ----------
+        seed: int
+            Seed for resampling. If no seed is provided then
+            an arbitrary seed is used.
+        """
+        if seed is None:
+            #arbitrarily chosen upper limit for np.random
+            #since it requires one.
+            seed = np.random.randint(10e5)
+        self.seed = seed
+        rng = np.random.default_rng(seed=self.seed)
+
+        for rate in self._rates.values():
+            rate.sample_rates(rng=rng)
+
+    def unsample(self):
+        """Restore rates to median values."""
+        for rate in self._rates.values():
+            rate.sample_rates()
+
+
 class SuzukiLibrary(TabularLibrary):
     """Create a :py:class:`Library` containing all of the tabular
     rates inside the "suzuki" subdirectory.
@@ -1054,7 +1188,6 @@ def full_library():
     lib += PruetFullerLibrary()
     lib += FFNLibrary()
     lib += OdaLibrary()
-    _r = DeBoerC12agO16()
-    lib.add_rate(_r)
+    lib.add_rate(DeBoerC12agO16())
 
     return lib
