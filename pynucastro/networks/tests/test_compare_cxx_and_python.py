@@ -34,7 +34,7 @@ class TestNetworkCompare:
         cxx_net = pyna.SimpleCxxNetwork(libraries=[lib])
         cxx_net.write_network(odir=test_path)
 
-        subprocess.run("make DISABLE_SCREENING=TRUE", capture_output=False,
+        subprocess.run("make USE_SCREENING=FALSE", capture_output=False,
                        shell=True, check=True, cwd=test_path)
 
         cp = subprocess.run("./main", capture_output=True,
