@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.base_cxx_network module &#8212; pynucastro 2.9.0.post54+g72a317f82 documentation</title>
+    <title>pynucastro.networks.base_cxx_network module &#8212; pynucastro 2.9.0.post55+g70abc8d70 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=0f3e51cb"></script>
+    <script src="_static/documentation_options.js?v=f20039cc"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -568,6 +568,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.base_cxx_network.BaseCxxNetwork.compose_jacobian"><code class="docutils literal notranslate"><span class="pre">BaseCxxNetwork.compose_jacobian()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.base_cxx_network.BaseCxxNetwork.compose_ydot"><code class="docutils literal notranslate"><span class="pre">BaseCxxNetwork.compose_ydot()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.base_cxx_network.BaseCxxNetwork.get_indent_amt"><code class="docutils literal notranslate"><span class="pre">BaseCxxNetwork.get_indent_amt()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.base_cxx_network.BaseCxxNetwork.write_screen_var"><code class="docutils literal notranslate"><span class="pre">BaseCxxNetwork.write_screen_var()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -633,6 +634,14 @@ number that is the amount of indent.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.networks.base_cxx_network.BaseCxxNetwork.write_screen_var">
+<span class="sig-name descname"><span class="pre">write_screen_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_indent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">of</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/base_cxx_network.html#BaseCxxNetwork.write_screen_var"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.base_cxx_network.BaseCxxNetwork.write_screen_var" title="Link to this definition">#</a></dt>
+<dd><p>Return the string that composes the screening variable for a rate
+by finding a list of reactant pairs for screening following the linear
+mixing rule. For example, for 3-alpha, it is [(He4, He4), (He4, Be8)].</p>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -688,6 +697,7 @@ number that is the amount of indent.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.base_cxx_network.BaseCxxNetwork.compose_jacobian"><code class="docutils literal notranslate"><span class="pre">BaseCxxNetwork.compose_jacobian()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.base_cxx_network.BaseCxxNetwork.compose_ydot"><code class="docutils literal notranslate"><span class="pre">BaseCxxNetwork.compose_ydot()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.base_cxx_network.BaseCxxNetwork.get_indent_amt"><code class="docutils literal notranslate"><span class="pre">BaseCxxNetwork.get_indent_amt()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.base_cxx_network.BaseCxxNetwork.write_screen_var"><code class="docutils literal notranslate"><span class="pre">BaseCxxNetwork.write_screen_var()</span></code></a></li>
 </ul>
 </li>
 </ul>

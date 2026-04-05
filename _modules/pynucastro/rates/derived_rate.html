@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.derived_rate &#8212; pynucastro 2.9.0.post54+g72a317f82 documentation</title>
+    <title>pynucastro.rates.derived_rate &#8212; pynucastro 2.9.0.post55+g70abc8d70 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=0f3e51cb"></script>
+    <script src="../../../_static/documentation_options.js?v=f20039cc"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -779,7 +779,9 @@
         <span class="k">if</span> <span class="n">extra_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">extra_args</span> <span class="o">=</span> <span class="p">()</span>
 
-        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;const tf_t&amp; tfactors&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; rate&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; drate_dT&quot;</span><span class="p">,</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;const tf_t&amp; tfactors&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;const </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> log_scor&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;const </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dlog_scor_dT&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; rate&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; drate_dT&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;[[maybe_unused]] const T&amp; rate_eval&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;[[maybe_unused]] part_fun::pf_cache_t&amp; pf_cache&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_args</span><span class="p">]</span>
 
@@ -839,14 +841,14 @@
                 <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">set_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
                     <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="n">t</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    ln_set_rate += net_log_pf;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    ln_set_rate += net_log_pf + log_scor;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">dln_set_string_dT9</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">dln_set_string_dT9_cxx</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;dln_set_rate_dT9&quot;</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">dln_set_string_dT9</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
                     <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        &quot;</span> <span class="o">+</span> <span class="n">t</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        dln_set_rate_dT9 += net_dlog_pf_dT9;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        dln_set_rate_dT9 += net_dlog_pf_dT9 + dlog_scor_dT * 1.0e9_rt;</span><span class="se">\n</span><span class="s2">&quot;</span>
 
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    }</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -870,7 +872,7 @@
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    // Apply Equilibrium Ratio</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    constexpr </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> Q_kBGK = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="si">}</span><span class="s2"> * 1.0e-9_rt / C::k_MeV;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> Q_kBT = Q_kBGK * tfactors.T9i;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    _rate += </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span><span class="si">}</span><span class="s2"> + Q_kBT + net_log_pf;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    _rate += </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span><span class="si">}</span><span class="s2"> + Q_kBT + net_log_pf + log_scor;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    _rate += </span><span class="si">{</span><span class="mf">1.5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span><span class="si">}</span><span class="s2"> * tfactors.lnT9;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
@@ -881,7 +883,7 @@
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    // we found dlog(rate)/dlog(T9)</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        // Convert to dlog(rate)/dT9 first</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        _drate_dT = (_drate_dT + </span><span class="si">{</span><span class="mf">1.5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span><span class="si">}</span><span class="s2"> - Q_kBT) * tfactors.T9i + net_dlog_pf_dT9;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        _drate_dT = (_drate_dT + </span><span class="si">{</span><span class="mf">1.5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span><span class="si">}</span><span class="s2"> - Q_kBT) * tfactors.T9i + net_dlog_pf_dT9 + dlog_scor_dT * 1.0e9_rt;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT = rate * _drate_dT * 1.0e-9_rt;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    }</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
@@ -889,7 +891,7 @@
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    // Evaluate the equilibrium ratio</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    constexpr </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> Q_kBGK = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="si">}</span><span class="s2"> * 1.0e-9_rt / C::k_MeV;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> Q_kBT = Q_kBGK * tfactors.T9i;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> ratio = std::exp(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span><span class="si">}</span><span class="s2"> + Q_kBT + net_log_pf&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> ratio = std::exp(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span><span class="si">}</span><span class="s2"> + Q_kBT + net_log_pf + log_scor&quot;</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    + </span><span class="si">{</span><span class="mf">1.5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span><span class="si">}</span><span class="s2"> * tfactors.lnT9&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;);</span><span class="se">\n\n</span><span class="s2">&quot;</span>
