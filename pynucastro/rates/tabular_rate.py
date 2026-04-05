@@ -215,12 +215,12 @@ class TabularRate(Rate):
     def __init__(self, rfile=None):
 
         self.rfile_path = None
-        self.rfile = None
+        self.rfile_name = None
 
         if isinstance(rfile, (str, Path)):
             rfile = Path(rfile)
+            self.rfile_name = rfile.name
             self.rfile_path = _find_rate_file(rfile)
-            self.rfile = rfile.name
 
         # Some initialization
         # weak_type, reactants and products will be updated in _read_from_file
@@ -279,8 +279,7 @@ class TabularRate(Rate):
 
         """
 
-        # just store the filename as the original source
-        self.original_source = f"{table_file}"
+        self.table_file = table_file
 
         # set weak type
         if "electroncapture" in str(table_file):
@@ -334,9 +333,7 @@ class TabularRate(Rate):
             self.reactants.append(Nucleus.from_cache(reactant.lower()))
             self.products.append(Nucleus.from_cache(product.lower()))
         except UnsupportedNucleus as ex:
-            raise RateFileError(f'Nucleus objects could not be identified in {self.original_source}') from ex
-
-        self.table_file = table_file
+            raise RateFileError(f'Nucleus objects could not be identified in {self.table_file}') from ex
 
         # convert the nested list of string values into a numpy float array
         self.tabular_data_table = np.array(t_data2d, dtype=np.float64)
@@ -347,7 +344,6 @@ class TabularRate(Rate):
         self.table_temp_lines = len(np.unique(self.tabular_data_table[:, 1]))
         self.table_num_vars = 6  # Hard-coded number of variables in tables for now.
         self.table_index_name = f'j_{self.reactants[0]}_{self.products[0]}'
-        self.labelprops = 'tabular'
 
     def _set_rhs_properties(self):
         """Compute statistical prefactor and density exponent from the

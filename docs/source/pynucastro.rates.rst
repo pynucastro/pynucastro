@@ -21,5 +21,6 @@ Submodules
    pynucastro.rates.modified_rate
    pynucastro.rates.rate
    pynucastro.rates.reaclib_rate
+   pynucastro.rates.starlib_rate
    pynucastro.rates.tabular_rate
    pynucastro.rates.temperature_tabular_rate
