@@ -77,6 +77,18 @@ class NetworkSolution:
 
         return self._sol.y
 
+    @property
+    def unique_nuclei(self):
+        """Return a list of nuclei explicitely carried in the network,
+        ordered consistent with molar fraction solution, Y.
+
+        Returns
+        -------
+        List(Nucleus)
+        """
+
+        return self.network.unique_nuclei
+
     def Y_at(self, t):
         """Evaluate the molar abundances for a given time.
 
@@ -92,6 +104,40 @@ class NetworkSolution:
         """
 
         return self._sol.sol(t)
+
+    def ye(self, Y):
+        """Evaluate the electron fraction with a given set of molar fractions
+
+        Parameters
+        ----------
+        Y : numpy.ndarray
+            Molar fraction array
+
+        Returns
+        -------
+        float
+
+        """
+
+        ye = sum(nuc.Z * Y[i] for i, nuc in enumerate(self.unique_nuclei))
+        return ye
+
+    def ye_at(self, t):
+        """Evaluate the electron fraction for a given time
+
+        Parameters
+        ----------
+        t : float
+            time used to evaluate the electron fraction
+
+        Returns
+        -------
+        float
+
+        """
+
+        Y = self.Y_at(t)
+        return self.ye(Y)
 
     def rhs(self, t, Y):
         """Evaluate the RHS of the network with the same thermodynamic
@@ -165,6 +211,42 @@ class NetworkSolution:
         Y = self.Y_at(t)
         return self.jac(t, Y)
 
+    def energy_release(self, dY):
+        """Evaluate the energy release in erg/g (/s if dY is actually dY/dt)
+
+        Parameters
+        ----------
+        dY : numpy.ndarray
+            Finite change or the rate of instataneous change in molar fractions
+
+        Returns
+        -------
+        float
+
+        """
+
+        enuc = sum(nuc.mass * dY[i] for i, nuc in enumerate(self.unique_nuclei))
+        enuc *= -1*constants.N_A*constants.MeV2erg
+        return enuc
+
+    def energy_release_at(self, t):
+        """Evaluate the instantaneous energy release in erg/g/s for a given time
+
+        Parameters
+        ----------
+        t : float
+            time used to evaluate the instantaneous energy release
+
+        Returns
+        -------
+        float
+
+        """
+
+        dYdt = self.rhs_at(t)
+        enuc = self.energy_release(dYdt)
+        return enuc
+
     def plot_evolution(self,
                        tmin=None, tmax=None,
                        ymin=None, ymax=None,
@@ -180,10 +262,10 @@ class NetworkSolution:
         ----------
         tmin : float
             Minimum time shown on the x-axis. If `None`, the first value of
-            `sol.t` is used.
+            `self.t` is used.
         tmax : float
             Maximum time shown on the x-axis. If `None`, the last value of
-            `sol.t` is used.
+            `self.t` is used.
         ymin : float
             Minimum mass fraction shown on the y-axis. If `None`,
             use the Matplotlib autoscaled value.
@@ -215,7 +297,7 @@ class NetworkSolution:
         """
 
         fig, ax = plt.subplots(figsize=(size[0]/dpi, size[1]/dpi))
-        for i, nuc in enumerate(self.network.unique_nuclei):
+        for i, nuc in enumerate(self.unique_nuclei):
 
             X = self.Y[i, :] * nuc.A
             max_X = X.max()

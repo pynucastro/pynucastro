@@ -101,8 +101,7 @@ A ``PythonNetwork`` can be integrated using the SciPy
    ``PythonNetwork`` provides the convenient method
    :func:`integrate_network <pynucastro.networks.python_network.PythonNetwork.integrate_network>`,
    which is a wrapper around :func:`scipy.integrate.solve_ivp` for integrating
-   the reaction network. The resulting time evolution of the mass fractions
-   can then be visualized using
-   :func:`plot_evolution <pynucastro.networks.python_network.PythonNetwork.plot_evolution>`,
-   which takes the solution returned by
-   :func:`integrate_network <pynucastro.networks.python_network.PythonNetwork.integrate_network>`.
+   the reaction network. This method returns a ``NetworkSolution`` object that stores the solution
+   of the system. It also contains convenient methods for post-processing and visualizations,
+   such as :func:`plot_evolution <pynucastro.networks.python_network.PythonNetwork.plot_evolution>`,
+   which plots the time evolution of the mass fractions.
