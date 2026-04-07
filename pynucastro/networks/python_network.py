@@ -39,6 +39,7 @@ class NetworkSolution:
     screen_func: Callable
         screening function used to evaluate rates when integrating
         the network
+
     """
 
     def __init__(self, sol, rhs, jac, network, rho, T, screen_func=None):
@@ -53,30 +54,116 @@ class NetworkSolution:
 
     @property
     def t(self):
+        """Return the time array for integration
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
         return self._sol.t
 
     @property
     def Y(self):
+        """Return the 2D array of molar abundances
+        for all times.
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
         return self._sol.y
 
+    def Y_at(self, t):
+        """Evaluate the molar abundances for a given time.
+
+        Parameters
+        ----------
+        t : float or list or numpy.ndarray
+            time or time array used to evaluate the molar abundances
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        return self._sol.sol(t)
+
     def rhs(self, t, Y):
-        """ Evaluate the RHS of the network with the same thermodynamic
+        """Evaluate the RHS of the network with the same thermodynamic
         condition and screening routine used to integrate the network.
 
         Parameters
         ----------
+        t : float
+            time used to evaluate the RHS
+        Y : numpy.ndarray
+            molar abundances of the species
+
+        Returns
+        -------
+        numpy.ndarray
+
         """
+
         return self._rhs(t, Y, self.rho, self.T, screen_func=self.screen_func)
 
+    def rhs_at(self, t):
+        """Evaluate the RHS of the network for a given time.
+
+        Parameters
+        ----------
+        t : float
+            time used to evaluate the RHS
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        Y = self.Y_at(t)
+        return self.rhs(t, Y)
+
     def jac(self, t, Y):
-        """ Evaluate the Jacobian of the network with the same thermodynamic
+        """Evaluate the Jacobian of the network with the same thermodynamic
         condition and screening routine used to integrate the network.
 
         Parameters
         ----------
+        t : float
+            time used to evaluate the RHS
+        Y : numpy.ndarray
+            molar abundances of the species
+
+        Returns
+        -------
+        numpy.ndarray
+
         """
 
         return self._jac(t, Y, self.rho, self.T, screen_func=self.screen_func)
+
+    def jac_at(self, t):
+        """Evaluate the Jacobian of the network for a given time.
+
+        Parameters
+        ----------
+        t : float
+            time used to evaluate the Jacobian
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        Y = self.Y_at(t)
+        return self.jac(t, Y)
 
     def plot_evolution(self,
                        tmin=None, tmax=None,
@@ -128,9 +215,9 @@ class NetworkSolution:
         """
 
         fig, ax = plt.subplots(figsize=(size[0]/dpi, size[1]/dpi))
-        for i, nuc in enumerate(self.unique_nuclei):
+        for i, nuc in enumerate(self.network.unique_nuclei):
 
-            X = self.sol.y[i, :] * nuc.A
+            X = self.Y[i, :] * nuc.A
             max_X = X.max()
             if X_cutoff_value is None and ymin is not None:
                 X_cutoff_value = ymin
@@ -151,13 +238,13 @@ class NetworkSolution:
                     lw = 1.5
                     ls = "-"
 
-            ax.loglog(self.sol.t, X, lw=lw, ls=ls,
+            ax.loglog(self.t, X, lw=lw, ls=ls,
                       label=rf"X(${nuc.pretty}$)")
 
         if tmin is None:
-            tmin = sol.t[0]
+            tmin = self.t[0]
         if tmax is None:
-            tmax = sol.t[-1]
+            tmax = self.t[-1]
 
         # Auto set number of legend column
         ncol = max(1, len(ax.lines) // 8 + 1)
@@ -764,4 +851,8 @@ class PythonNetwork(RateCollection):
                         dense_output=True, args=(rho, T, screen_func),
                         rtol=rtol, atol=atol, jac=jacobian)
 
-        return sol
+        # Create NetworkSolution
+        network_sol = NetworkSolution(sol, rhs, jacobian, self,
+                                      rho, T, screen_func=screen_func)
+
+        return network_sol
