@@ -1,16 +1,18 @@
 """Support modules to write a pure python reaction network ODE source."""
 
-import shutil
+import io
 import sys
-import warnings
+import types
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import numpy as np
+from scipy.integrate import solve_ivp
 
 from pynucastro.constants import constants
-from pynucastro.networks.rate_collection import RateCollection
+from pynucastro.networks.rate_collection import Composition, RateCollection
 from pynucastro.rates import ApproximateRate, ModifiedRate
-from pynucastro.screening import get_screening_map
+from pynucastro.screening import get_screening_func, get_screening_map
 
 
 class PythonNetwork(RateCollection):
@@ -295,11 +297,18 @@ class PythonNetwork(RateCollection):
 
         """
         # pylint: disable=arguments-differ
+
         if outfile is None:
             of = sys.stdout
+            close_file = False
+        elif hasattr(outfile, "write"):
+            # already a file-like object
+            of = outfile
+            close_file = False
         else:
             outfile = Path(outfile)
             of = outfile.open("w")
+            close_file = True
 
         indent = 4*" "
 
@@ -399,12 +408,13 @@ class PythonNetwork(RateCollection):
             of.write("# note: we cannot make the TableInterpolator global, since numba doesn't like global jitclass\n")
 
         for r in self.tabular_rates:
-
             of.write(f"# load data for {r.rid}\n")
-            of.write(f"{r.fname}_rate = TabularRate(rfile='{r.rfile}')\n")
-            of.write(f"{r.fname}_info = ({r.fname}_rate.table_rhoy_lines,\n")
-            of.write(f"                  {r.fname}_rate.table_temp_lines,\n")
-            of.write(f"                  {r.fname}_rate.tabular_data_table)\n\n")
+            of.write(f"{r.fname}_info = (\n")
+            of.write(f"    {r.table_rhoy_lines},    # table_rhoy_lines\n")
+            of.write(f"    {r.table_temp_lines},    # table_temp_lines\n")
+            of.write("    # tabular_data_table\n")
+            of.write(f"    np.array({r.tabular_data_table.tolist()})\n")
+            of.write(")\n\n")
 
         # temperature tabular rate data
         if self.temperature_tabular_rates:
@@ -516,26 +526,182 @@ class PythonNetwork(RateCollection):
 
         of.write(f"{indent}return jac\n")
 
-        if outfile is not None:
+        if close_file:
             of.close()
 
-        # Copy any tables in the network to the current directory
-        # if the table file cannot be found, print a warning and continue.
-        try:
-            odir = outfile.parent
-        except AttributeError:
-            odir = None
+    def integrate_network(self, tmax, rho, T, Y0=None,
+                          screen_method=None,
+                          initial_comp="uniform",
+                          rtol=1e-8, atol=1e-8):
+        """Integrate the network to tmax given (rho, T, Y0) using
+        SciPy's solve_ivp() with BDF method.
 
-        for tr in self.tabular_rates:
-            tdir = tr.rfile_path.parent
-            if tdir != Path.cwd():
-                tdat_file = tdir/tr.table_file
-                if tdat_file.is_file():
-                    shutil.copy(tdat_file, odir or Path.cwd())
-                else:
-                    warnings.warn(UserWarning(f'Table data file {tr.table_file} not found.'))
-                rtoki_file = tdir/tr.rfile
-                if rtoki_file.is_file():
-                    shutil.copy(rtoki_file, odir or Path.cwd())
-                else:
-                    warnings.warn(UserWarning(f'Table metadata file {tr.rfile} not found.'))
+        Parameters
+        ----------
+        tmax: float
+            final integration time.
+        rho : float
+            density used to integrate the network
+        T : float
+            temperature used to integrate the network
+        Y0 : numpy.ndarray
+            initial molar abundance of the nuclei. If not provided,
+            the initial composition is initialized according to `initial_comp`
+        screen_method : str
+            name of the screening function used to evaluate rates when integrating
+            the network. Valid choices are: `screen5`, `chugunov_2007`, `chugunov_2009`,
+            `potekhin_1998`, and `debye_huckel`. If `None`, no screening is applied.
+        initial_comp : str
+            different modes to use to set up the initial composition if Y0 is None.
+            Valid choices are: `uniform`, `random`, and `solar`.
+        rtol : float
+            relative tolerance for SciPy's solve_ivp()
+        atol : float
+            absolute tolerance for SciPy's solve_ivp()
+
+        Returns
+        -------
+        sol : object
+            Solution returned by :func:`scipy.integrate.solve_ivp`.
+
+        """
+
+        # Write the network module as a string
+        f = io.StringIO()
+        self.write_network(outfile=f)
+        network_code = f.getvalue()
+
+        # Create a new in-memory module called `network`
+        network = types.ModuleType("network")
+
+        # Execute the code inside the module namespace
+        exec(network_code, network.__dict__)  # pylint: disable=exec-used
+
+        # Get RHS and Jacobian. Use getattr to avoid pylint warning.
+        rhs = getattr(network, "rhs")
+        jacobian = getattr(network, "jacobian")
+
+        # Get the appropriate screening function
+        screen_func = get_screening_func(screen_method)
+
+        # Setup the initial molar abundance if Y0 is None
+        if Y0 is None:
+            if initial_comp is None:
+                raise ValueError("Valid initial compositions are ['uniform', 'random', 'solar']")
+            comp = Composition(self.unique_nuclei, init=initial_comp)
+            ys = comp.get_molar()
+            Y0 = np.array([ys[nuc] for nuc in self.unique_nuclei])
+
+        # Integrate using SciPy's solve_ivp() using BDF method -- good for stiff system.
+        sol = solve_ivp(rhs, [0, tmax], Y0, method="BDF",
+                        dense_output=True, args=(rho, T, screen_func),
+                        rtol=rtol, atol=atol, jac=jacobian)
+
+        return sol
+
+    def plot_evolution(self, sol,
+                       tmin=None, tmax=None,
+                       ymin=None, ymax=None,
+                       size=(800, 600), dpi=100,
+                       X_cutoff_value=None,
+                       label_size=14, legend_size=10,
+                       three_level_style=False,
+                       outfile=None):
+        """Plot the time evolution of nuclei mass fractions using the
+        solution returned by SciPy's solve_ivp().
+
+        Parameters
+        ----------
+        sol : object
+            Solution object returned by :func:`scipy.integrate.solve_ivp`. The
+            array `sol.y` is assumed to contain the molar abundances, `Y_i`,
+            ordered consistently with `unique_nuclei`.
+        tmin : float
+            Minimum time shown on the x-axis. If `None`, the first value of
+            `sol.t` is used.
+        tmax : float
+            Maximum time shown on the x-axis. If `None`, the last value of
+            `sol.t` is used.
+        ymin : float
+            Minimum mass fraction shown on the y-axis. If `None`,
+            use the Matplotlib autoscaled value.
+        ymax : float
+            Maximum mass fraction shown on the y-axis. If `None`,
+            use the Matplotlib autoscaled value. The autoscaled value
+            is capped at 1.2
+        dpi : int
+            dots per inch used with size to set output image size
+        size : (tuple, list)
+            (width, height) of the plot in pixels
+        X_cutoff_value : float
+            Minimum peak mass fraction required for a nucleus to be plotted.
+        label_size : int
+            Font size for axis labels.
+        legend_size : int
+            Font size for the legend.
+        three_level_style : bool
+            If `True`, use three-level linestyle and linewidth based on the peak
+            mass fraction to help distinguish different curves.
+            If `False`, all curves use the same line style and linewidth.
+        outfile : str
+            output name of the plot (extension determines the type)
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+
+        """
+
+        fig, ax = plt.subplots(figsize=(size[0]/dpi, size[1]/dpi))
+        for i, nuc in enumerate(self.unique_nuclei):
+
+            X = sol.y[i, :] * nuc.A
+            max_X = X.max()
+            if X_cutoff_value is None and ymin is not None:
+                X_cutoff_value = ymin
+            if X_cutoff_value is not None and max_X <= X_cutoff_value:
+                continue
+
+            # Set linestyle and linewidth
+            lw = 1.5
+            ls = "-"
+            if three_level_style:
+                # Set 3 levels of visual levels depending on maximum mass fraction
+                lw = 1
+                ls = "--"
+                if max_X > 0.5:
+                    lw = 2.5
+                    ls = "-"
+                elif max_X > 0.01:
+                    lw = 1.5
+                    ls = "-"
+
+            ax.loglog(sol.t, X, lw=lw, ls=ls,
+                      label=rf"X(${nuc.pretty}$)")
+
+        if tmin is None:
+            tmin = sol.t[0]
+        if tmax is None:
+            tmax = sol.t[-1]
+
+        # Auto set number of legend column
+        ncol = max(1, len(ax.lines) // 8 + 1)
+
+        ax.set_xlim(tmin, tmax)
+        ax.set_ylim(ymin, ymax)
+        cur_ymin, cur_ymax = ax.get_ylim()
+        if ymax is None and cur_ymax > 1.2:
+            # Make sure the autoscaled ymax is not greater than 1.2
+            cur_ymax = 1.2
+        ax.set_ylim(cur_ymin, cur_ymax)
+
+        ax.set_xlabel("time [s]", fontsize=label_size)
+        ax.set_ylabel("X", fontsize=label_size)
+        ax.legend(loc="best", fontsize=legend_size, ncol=ncol)
+        ax.grid(ls=":")
+        fig.tight_layout()
+
+        if outfile is not None:
+            fig.savefig(outfile, dpi=dpi)
+
+        return fig

@@ -188,7 +188,9 @@ class ModifiedRate(Rate):
 
         """
 
-        args = ["const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+        args = ["const tf_t& tfactors",
+                f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
+                f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
         fstring = "template <int do_T_derivatives>\n"
         fstring += f"{specifiers}\n"
@@ -196,7 +198,7 @@ class ModifiedRate(Rate):
 
         # first we need to get all of the rates that make this up
         fstring += f"    // {self.rid} (calls the underlying rate)\n\n"
-        fstring += f"    rate_{self.original_rate.fname}<do_T_derivatives>(tfactors, rate, drate_dT);\n"
+        fstring += f"    rate_{self.original_rate.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n"
 
         if not leave_open:
             fstring += "}\n\n"
