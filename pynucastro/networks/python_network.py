@@ -79,7 +79,7 @@ class NetworkSolution:
 
     @property
     def unique_nuclei(self):
-        """Return a list of nuclei explicitely carried in the network,
+        """Return a list of nuclei explicitly carried in the network,
         ordered consistent with molar fraction solution, Y.
 
         Returns
