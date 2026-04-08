@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Integrating a Network &#8212; pynucastro 2.9.0.post55+g70abc8d70 documentation</title>
+    <title>Integrating a Network &#8212; pynucastro 2.9.0.post56+gacbcd41d5 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=f20039cc"></script>
+    <script src="_static/documentation_options.js?v=818e8f56"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1376,33 +1376,16 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 </section>
 <section id="plotting-the-results">
 <h2>Plotting the results<a class="headerlink" href="#plotting-the-results" title="Link to this heading">#</a></h2>
+<p>We can plot the time evolution of the mass fractions using the built-in function
+<a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.plot_evolution" title="pynucastro.networks.python_network.PythonNetwork.plot_evolution"><code class="xref py py-func docutils literal notranslate"><span class="pre">plot_evolution</span></code></a></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell tag_nbval-ignore-output docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cno</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">cno</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">cno</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e10</span><span class="p">,</span> <span class="mf">1.e20</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-8</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;t (s)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
-
-<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">plot_evolution</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">tmin</span><span class="o">=</span><span class="mf">1e10</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="mf">1e20</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a62178ce3458ecd6dda2a54a46e4d74127a4a34943445c21a81deb23a57ddc5d.png" src="_images/a62178ce3458ecd6dda2a54a46e4d74127a4a34943445c21a81deb23a57ddc5d.png" />
+<img alt="_images/7c2cea89e927db22efae1ed38d214cef5d1fe3401a9637cc61e82960dbb9a710.png" src="_images/7c2cea89e927db22efae1ed38d214cef5d1fe3401a9637cc61e82960dbb9a710.png" />
 </div>
 </div>
 </section>
@@ -1442,6 +1425,38 @@ the network as <code class="docutils literal notranslate"><span class="pre">mass
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>epsilon =          117.7738358
 </pre></div>
 </div>
+</div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a> class provides the convenient method
+<a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.integrate_network" title="pynucastro.networks.python_network.PythonNetwork.integrate_network"><code class="xref py py-func docutils literal notranslate"><span class="pre">integrate_network</span></code></a>,
+which is a wrapper around <code class="docutils literal notranslate"><span class="pre">scipy.integrate.solve_ivp</span></code> for integrating the reaction network. This approach avoids the need to explicitly write out the Python module file via <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.write_network" title="pynucastro.networks.rate_collection.RateCollection.write_network"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_network</span></code></a>.
+This is useful when you only care about the evolution of species abundances. However, note that using this method means you <strong>cannot</strong> compute the energy release via RHS or the Jacobian RHS for energy release or the Jacobian at arbitrary times.</p>
+</div>
+<p>To demonstrate the use of <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.integrate_network" title="pynucastro.networks.python_network.PythonNetwork.integrate_network"><code class="xref py py-func docutils literal notranslate"><span class="pre">integrate_network</span></code></a>,
+we will integrate the network with a different set of initial thermodynamic conditions.
+If no initial molar abundances are provided, the initial composition can be generated using one of three methods: <code class="docutils literal notranslate"><span class="pre">uniform</span></code>, <code class="docutils literal notranslate"><span class="pre">solar</span></code>, or <code class="docutils literal notranslate"><span class="pre">random</span></code>. In this example, we will use the <code class="docutils literal notranslate"><span class="pre">solar</span></code> composition.
+We can also specify a screening method to use, and we will use the <code class="docutils literal notranslate"><span class="pre">chugunov_2007</span></code> method for demonstration.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mf">3.e7</span>
+<span class="n">tmax</span> <span class="o">=</span> <span class="mf">1e20</span>
+<span class="n">sol</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">integrate_network</span><span class="p">(</span><span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_method</span><span class="o">=</span><span class="s2">&quot;chugunov_2007&quot;</span><span class="p">,</span> <span class="n">initial_comp</span><span class="o">=</span><span class="s2">&quot;solar&quot;</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The solution can be visualized via <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.plot_evolution" title="pynucastro.networks.python_network.PythonNetwork.plot_evolution"><code class="xref py py-func docutils literal notranslate"><span class="pre">plot_evolution</span></code></a> just as shown before.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">plot_evolution</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">tmin</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="mf">1e20</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/503170f45ac2593dbb4e351d3fd3bdd916cd2ef6e117ee892a9ee893b7695a04.png" src="_images/503170f45ac2593dbb4e351d3fd3bdd916cd2ef6e117ee892a9ee893b7695a04.png" />
 </div>
 </div>
 </section>

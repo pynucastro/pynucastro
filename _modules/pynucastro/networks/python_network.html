@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 2.9.0.post55+g70abc8d70 documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 2.9.0.post56+gacbcd41d5 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=f20039cc"></script>
+    <script src="../../../_static/documentation_options.js?v=818e8f56"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -486,15 +486,19 @@
   <h1>Source code for pynucastro.networks.python_network</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Support modules to write a pure python reaction network ODE source.&quot;&quot;&quot;</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">types</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_ivp</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.rate_collection</span><span class="w"> </span><span class="kn">import</span> <span class="n">RateCollection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.rate_collection</span><span class="w"> </span><span class="kn">import</span> <span class="n">Composition</span><span class="p">,</span> <span class="n">RateCollection</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApproximateRate</span><span class="p">,</span> <span class="n">ModifiedRate</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_screening_map</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_screening_func</span><span class="p">,</span> <span class="n">get_screening_map</span>
 
 
 <div class="viewcode-block" id="PythonNetwork">
@@ -793,11 +797,18 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># pylint: disable=arguments-differ</span>
+
         <span class="k">if</span> <span class="n">outfile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">of</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
+            <span class="n">close_file</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="s2">&quot;write&quot;</span><span class="p">):</span>
+            <span class="c1"># already a file-like object</span>
+            <span class="n">of</span> <span class="o">=</span> <span class="n">outfile</span>
+            <span class="n">close_file</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">outfile</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
             <span class="n">of</span> <span class="o">=</span> <span class="n">outfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+            <span class="n">close_file</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="n">indent</span> <span class="o">=</span> <span class="mi">4</span><span class="o">*</span><span class="s2">&quot; &quot;</span>
 
@@ -1015,8 +1026,191 @@
 
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">return jac</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">close_file</span><span class="p">:</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<div class="viewcode-block" id="PythonNetwork.integrate_network">
+<a class="viewcode-back" href="../../../pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.integrate_network">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">integrate_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Y0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                          <span class="n">screen_method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                          <span class="n">initial_comp</span><span class="o">=</span><span class="s2">&quot;uniform&quot;</span><span class="p">,</span>
+                          <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Integrate the network to tmax given (rho, T, Y0) using</span>
+<span class="sd">        SciPy&#39;s solve_ivp() with BDF method.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tmax: float</span>
+<span class="sd">            final integration time.</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            density used to integrate the network</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature used to integrate the network</span>
+<span class="sd">        Y0 : numpy.ndarray</span>
+<span class="sd">            initial molar abundance of the nuclei. If not provided,</span>
+<span class="sd">            the initial composition is initialized according to `initial_comp`</span>
+<span class="sd">        screen_method : str</span>
+<span class="sd">            name of the screening function used to evaluate rates when integrating</span>
+<span class="sd">            the network. Valid choices are: `screen5`, `chugunov_2007`, `chugunov_2009`,</span>
+<span class="sd">            `potekhin_1998`, and `debye_huckel`. If `None`, no screening is applied.</span>
+<span class="sd">        initial_comp : str</span>
+<span class="sd">            different modes to use to set up the initial composition if Y0 is None.</span>
+<span class="sd">            Valid choices are: `uniform`, `random`, and `solar`.</span>
+<span class="sd">        rtol : float</span>
+<span class="sd">            relative tolerance for SciPy&#39;s solve_ivp()</span>
+<span class="sd">        atol : float</span>
+<span class="sd">            absolute tolerance for SciPy&#39;s solve_ivp()</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sol : object</span>
+<span class="sd">            Solution returned by :func:`scipy.integrate.solve_ivp`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Write the network module as a string</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="n">outfile</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">network_code</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+
+        <span class="c1"># Create a new in-memory module called `network`</span>
+        <span class="n">network</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">(</span><span class="s2">&quot;network&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Execute the code inside the module namespace</span>
+        <span class="n">exec</span><span class="p">(</span><span class="n">network_code</span><span class="p">,</span> <span class="n">network</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>  <span class="c1"># pylint: disable=exec-used</span>
+
+        <span class="c1"># Get RHS and Jacobian. Use getattr to avoid pylint warning.</span>
+        <span class="n">rhs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="s2">&quot;rhs&quot;</span><span class="p">)</span>
+        <span class="n">jacobian</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="s2">&quot;jacobian&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Get the appropriate screening function</span>
+        <span class="n">screen_func</span> <span class="o">=</span> <span class="n">get_screening_func</span><span class="p">(</span><span class="n">screen_method</span><span class="p">)</span>
+
+        <span class="c1"># Setup the initial molar abundance if Y0 is None</span>
+        <span class="k">if</span> <span class="n">Y0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">initial_comp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Valid initial compositions are [&#39;uniform&#39;, &#39;random&#39;, &#39;solar&#39;]&quot;</span><span class="p">)</span>
+            <span class="n">comp</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="n">initial_comp</span><span class="p">)</span>
+            <span class="n">ys</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
+            <span class="n">Y0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ys</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">])</span>
+
+        <span class="c1"># Integrate using SciPy&#39;s solve_ivp() using BDF method -- good for stiff system.</span>
+        <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span>
+                        <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">),</span>
+                        <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">jacobian</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">sol</span></div>
+
+
+<div class="viewcode-block" id="PythonNetwork.plot_evolution">
+<a class="viewcode-back" href="../../../pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.plot_evolution">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_evolution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span>
+                       <span class="n">tmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">ymin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                       <span class="n">X_cutoff_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">label_size</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">legend_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                       <span class="n">three_level_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                       <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the time evolution of nuclei mass fractions using the</span>
+<span class="sd">        solution returned by SciPy&#39;s solve_ivp().</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sol : object</span>
+<span class="sd">            Solution object returned by :func:`scipy.integrate.solve_ivp`. The</span>
+<span class="sd">            array `sol.y` is assumed to contain the molar abundances, `Y_i`,</span>
+<span class="sd">            ordered consistently with `unique_nuclei`.</span>
+<span class="sd">        tmin : float</span>
+<span class="sd">            Minimum time shown on the x-axis. If `None`, the first value of</span>
+<span class="sd">            `sol.t` is used.</span>
+<span class="sd">        tmax : float</span>
+<span class="sd">            Maximum time shown on the x-axis. If `None`, the last value of</span>
+<span class="sd">            `sol.t` is used.</span>
+<span class="sd">        ymin : float</span>
+<span class="sd">            Minimum mass fraction shown on the y-axis. If `None`,</span>
+<span class="sd">            use the Matplotlib autoscaled value.</span>
+<span class="sd">        ymax : float</span>
+<span class="sd">            Maximum mass fraction shown on the y-axis. If `None`,</span>
+<span class="sd">            use the Matplotlib autoscaled value. The autoscaled value</span>
+<span class="sd">            is capped at 1.2</span>
+<span class="sd">        dpi : int</span>
+<span class="sd">            dots per inch used with size to set output image size</span>
+<span class="sd">        size : (tuple, list)</span>
+<span class="sd">            (width, height) of the plot in pixels</span>
+<span class="sd">        X_cutoff_value : float</span>
+<span class="sd">            Minimum peak mass fraction required for a nucleus to be plotted.</span>
+<span class="sd">        label_size : int</span>
+<span class="sd">            Font size for axis labels.</span>
+<span class="sd">        legend_size : int</span>
+<span class="sd">            Font size for the legend.</span>
+<span class="sd">        three_level_style : bool</span>
+<span class="sd">            If `True`, use three-level linestyle and linewidth based on the peak</span>
+<span class="sd">            mass fraction to help distinguish different curves.</span>
+<span class="sd">            If `False`, all curves use the same line style and linewidth.</span>
+<span class="sd">        outfile : str</span>
+<span class="sd">            output name of the plot (extension determines the type)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matplotlib.figure.Figure</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">dpi</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">dpi</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+
+            <span class="n">X</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span>
+            <span class="n">max_X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">X_cutoff_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ymin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">X_cutoff_value</span> <span class="o">=</span> <span class="n">ymin</span>
+            <span class="k">if</span> <span class="n">X_cutoff_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_X</span> <span class="o">&lt;=</span> <span class="n">X_cutoff_value</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Set linestyle and linewidth</span>
+            <span class="n">lw</span> <span class="o">=</span> <span class="mf">1.5</span>
+            <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+            <span class="k">if</span> <span class="n">three_level_style</span><span class="p">:</span>
+                <span class="c1"># Set 3 levels of visual levels depending on maximum mass fraction</span>
+                <span class="n">lw</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;--&quot;</span>
+                <span class="k">if</span> <span class="n">max_X</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
+                    <span class="n">lw</span> <span class="o">=</span> <span class="mf">2.5</span>
+                    <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+                <span class="k">elif</span> <span class="n">max_X</span> <span class="o">&gt;</span> <span class="mf">0.01</span><span class="p">:</span>
+                    <span class="n">lw</span> <span class="o">=</span> <span class="mf">1.5</span>
+                    <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="n">ls</span><span class="p">,</span>
+                      <span class="n">label</span><span class="o">=</span><span class="sa">rf</span><span class="s2">&quot;X($</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">$)&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">tmin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tmin</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">tmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tmax</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Auto set number of legend column</span>
+        <span class="n">ncol</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">lines</span><span class="p">)</span> <span class="o">//</span> <span class="mi">8</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">)</span>
+        <span class="n">cur_ymin</span><span class="p">,</span> <span class="n">cur_ymax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">ymax</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cur_ymax</span> <span class="o">&gt;</span> <span class="mf">1.2</span><span class="p">:</span>
+            <span class="c1"># Make sure the autoscaled ymax is not greater than 1.2</span>
+            <span class="n">cur_ymax</span> <span class="o">=</span> <span class="mf">1.2</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">cur_ymin</span><span class="p">,</span> <span class="n">cur_ymax</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;time [s]&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_size</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_size</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">legend_size</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="n">ncol</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
         <span class="k">if</span> <span class="n">outfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+            <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">fig</span></div>
+</div>
 
 </pre></div>
 

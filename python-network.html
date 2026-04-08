@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Python network &#8212; pynucastro 2.9.0.post55+g70abc8d70 documentation</title>
+    <title>Python network &#8212; pynucastro 2.9.0.post56+gacbcd41d5 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=f20039cc"></script>
+    <script src="_static/documentation_options.js?v=818e8f56"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -582,7 +582,7 @@ system.  This is designed to solve the system:</p>
 <p>The functions output when the network is written are marked up with
 Numba JIT decorators for performance.</p>
 </div>
-<p>Using the previous example:</p>
+<p>Consider the following example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
 
 <span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
@@ -646,7 +646,19 @@ as for <code class="docutils literal notranslate"><span class="pre">rhs</span></
 </ul>
 </li>
 </ul>
-<p>A <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> can be integrated using the SciPy <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html">solve_ivp</a> methods.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> can be integrated using the SciPy
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html">solve_ivp</a> methods.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> provides the convenient method
+<a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.integrate_network" title="pynucastro.networks.python_network.PythonNetwork.integrate_network"><code class="xref py py-func docutils literal notranslate"><span class="pre">integrate_network</span></code></a>,
+which is a wrapper around <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html#scipy.integrate.solve_ivp" title="(in SciPy v1.17.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.integrate.solve_ivp()</span></code></a> for integrating
+the reaction network. The resulting time evolution of the mass fractions
+can then be visualized using
+<a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.plot_evolution" title="pynucastro.networks.python_network.PythonNetwork.plot_evolution"><code class="xref py py-func docutils literal notranslate"><span class="pre">plot_evolution</span></code></a>,
+which takes the solution returned by
+<a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.integrate_network" title="pynucastro.networks.python_network.PythonNetwork.integrate_network"><code class="xref py py-func docutils literal notranslate"><span class="pre">integrate_network</span></code></a>.</p>
+</div>
 </section>
 
 

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.screening.screen module &#8212; pynucastro 2.9.0.post55+g70abc8d70 documentation</title>
+    <title>pynucastro.screening.screen module &#8212; pynucastro 2.9.0.post56+gacbcd41d5 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=f20039cc"></script>
+    <script src="_static/documentation_options.js?v=818e8f56"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -595,6 +595,7 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.chugunov_2009"><code class="docutils literal notranslate"><span class="pre">chugunov_2009()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.debye_huckel"><code class="docutils literal notranslate"><span class="pre">debye_huckel()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.f0"><code class="docutils literal notranslate"><span class="pre">f0()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.get_screening_func"><code class="docutils literal notranslate"><span class="pre">get_screening_func()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.make_plasma_state"><code class="docutils literal notranslate"><span class="pre">make_plasma_state()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.make_screen_factors"><code class="docutils literal notranslate"><span class="pre">make_screen_factors()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.potekhin_1998"><code class="docutils literal notranslate"><span class="pre">potekhin_1998()</span></code></a></li>
@@ -643,7 +644,7 @@ screening calculations</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.NseState.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.NseState#7f4b375b1590&lt;temp:float64,dens:float64,ye:float64,gamma_e_fac:float64&gt;</span></span><a class="headerlink" href="#pynucastro.screening.screen.NseState.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.NseState#7f1eaf32d810&lt;temp:float64,dens:float64,ye:float64,gamma_e_fac:float64&gt;</span></span><a class="headerlink" href="#pynucastro.screening.screen.NseState.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -754,7 +755,7 @@ correction factor calculations.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.PlasmaState.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.PlasmaState#7f4b44fcda90&lt;temp:float64,dens:float64,qlam0z:float64,taufac:float64,aa:float64,abar:float64,zbar:float64,z2bar:float64,n_e:float64,gamma_e_fac:float64&gt;</span></span><a class="headerlink" href="#pynucastro.screening.screen.PlasmaState.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.PlasmaState#7f1ec5fe5e80&lt;temp:float64,dens:float64,qlam0z:float64,taufac:float64,aa:float64,abar:float64,zbar:float64,z2bar:float64,n_e:float64,gamma_e_fac:float64&gt;</span></span><a class="headerlink" href="#pynucastro.screening.screen.PlasmaState.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -843,7 +844,7 @@ correction factor for a specific pair of nuclei.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.ScreenFactors.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.ScreenFactors#7f4b375b16d0&lt;z1:int32,z2:int32,a1:int32,a2:int32,zs13:float64,zhat:float64,zhat2:float64,lzav:float64,aznut:float64,ztilde:float64&gt;</span></span><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.ScreenFactors#7f1eaf32fc50&lt;z1:int32,z2:int32,a1:int32,a2:int32,zs13:float64,zhat:float64,zhat2:float64,lzav:float64,aznut:float64,ztilde:float64&gt;</span></span><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -913,6 +914,20 @@ coupling, following the appendix of <span id="id4">Chugunov and DeWitt [<a class
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pynucastro.screening.screen.get_screening_func">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screen.</span></span><span class="sig-name descname"><span class="pre">get_screening_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">screen_method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screen.html#get_screening_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screen.get_screening_func" title="Link to this definition">#</a></dt>
+<dd><p>Return the screening function by its name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>screen_method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – name of the screening function</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Callable</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1113,6 +1128,7 @@ limit.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.chugunov_2009"><code class="docutils literal notranslate"><span class="pre">chugunov_2009()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.debye_huckel"><code class="docutils literal notranslate"><span class="pre">debye_huckel()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.f0"><code class="docutils literal notranslate"><span class="pre">f0()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.get_screening_func"><code class="docutils literal notranslate"><span class="pre">get_screening_func()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.make_plasma_state"><code class="docutils literal notranslate"><span class="pre">make_plasma_state()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.make_screen_factors"><code class="docutils literal notranslate"><span class="pre">make_screen_factors()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.potekhin_1998"><code class="docutils literal notranslate"><span class="pre">potekhin_1998()</span></code></a></li>

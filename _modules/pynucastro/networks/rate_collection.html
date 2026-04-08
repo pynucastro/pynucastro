@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.9.0.post55+g70abc8d70 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.9.0.post56+gacbcd41d5 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=f20039cc"></script>
+    <script src="../../../_static/documentation_options.js?v=818e8f56"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -653,15 +653,30 @@
 <span class="sd">    nuclei : list, tuple</span>
 <span class="sd">        an iterable of Nucleus objects</span>
 <span class="sd">    small : float</span>
-<span class="sd">        a floor for nuclei mass fractions, used as the default value</span>
-
+<span class="sd">        a floor for nuclei mass fractions, used as the default value.</span>
+<span class="sd">    init : str</span>
+<span class="sd">        Different modes to set up the initial composition. Valid choices</span>
+<span class="sd">        are [`uniform`, `random`, `solar`]. If &quot;solar&quot; is selected, assume</span>
+<span class="sd">        we work with metallicity, Z=0.02. If init=None, then no initial composition</span>
+<span class="sd">        will be set.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuclei</span><span class="p">,</span> <span class="n">small</span><span class="o">=</span><span class="mf">1.e-16</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuclei</span><span class="p">,</span> <span class="n">small</span><span class="o">=</span><span class="mf">1.e-16</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">({</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">small</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">nuclei</span><span class="p">})</span>
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;must supply an iterable of Nucleus objects or strings&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">init</span> <span class="o">==</span> <span class="s2">&quot;uniform&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_equal</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">init</span> <span class="o">==</span> <span class="s2">&quot;random&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_random</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">init</span> <span class="o">==</span> <span class="s2">&quot;solar&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_solar_like</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">init</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">init</span><span class="si">}</span><span class="s2"> is not valid. Choose from [&#39;uniform&#39;,&#39;random&#39;,&#39;solar&#39;]&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">X</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

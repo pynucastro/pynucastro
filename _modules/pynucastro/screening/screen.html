@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.screening.screen &#8212; pynucastro 2.9.0.post55+g70abc8d70 documentation</title>
+    <title>pynucastro.screening.screen &#8212; pynucastro 2.9.0.post56+gacbcd41d5 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=f20039cc"></script>
+    <script src="../../../_static/documentation_options.js?v=818e8f56"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -498,7 +498,8 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NseState&quot;</span><span class="p">,</span> <span class="s2">&quot;PlasmaState&quot;</span><span class="p">,</span> <span class="s2">&quot;ScreenFactors&quot;</span><span class="p">,</span>
            <span class="s2">&quot;chugunov_2007&quot;</span><span class="p">,</span> <span class="s2">&quot;chugunov_2009&quot;</span><span class="p">,</span> <span class="s2">&quot;f0&quot;</span><span class="p">,</span> <span class="s2">&quot;debye_huckel&quot;</span><span class="p">,</span>
            <span class="s2">&quot;make_plasma_state&quot;</span><span class="p">,</span> <span class="s2">&quot;make_screen_factors&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;potekhin_1998&quot;</span><span class="p">,</span> <span class="s2">&quot;screen5&quot;</span><span class="p">,</span> <span class="s2">&quot;smooth_clip&quot;</span><span class="p">,</span> <span class="s2">&quot;screening_check&quot;</span><span class="p">]</span>
+           <span class="s2">&quot;potekhin_1998&quot;</span><span class="p">,</span> <span class="s2">&quot;screen5&quot;</span><span class="p">,</span> <span class="s2">&quot;smooth_clip&quot;</span><span class="p">,</span> <span class="s2">&quot;screening_check&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;get_screening_func&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="PlasmaState">
@@ -1263,6 +1264,44 @@
             <span class="k">return</span> <span class="n">screen_func</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">screening_wrapper</span>
     <span class="k">return</span> <span class="n">screening_decorator</span></div>
+
+
+
+<span class="c1"># A list of all different screening functions</span>
+<span class="n">SCREEN_METHODS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;screen5&quot;</span><span class="p">:</span> <span class="n">screen5</span><span class="p">,</span>
+    <span class="s2">&quot;chugunov_2007&quot;</span><span class="p">:</span> <span class="n">chugunov_2007</span><span class="p">,</span>
+    <span class="s2">&quot;chugunov_2009&quot;</span><span class="p">:</span> <span class="n">chugunov_2009</span><span class="p">,</span>
+    <span class="s2">&quot;potekhin_1998&quot;</span><span class="p">:</span> <span class="n">potekhin_1998</span><span class="p">,</span>
+    <span class="s2">&quot;debye_huckel&quot;</span><span class="p">:</span> <span class="n">debye_huckel</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="get_screening_func">
+<a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.get_screening_func">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_screening_func</span><span class="p">(</span><span class="n">screen_method</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the screening function by its name</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    screen_method : str</span>
+<span class="sd">        name of the screening function</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Callable</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">screen_method</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">SCREEN_METHODS</span><span class="p">[</span><span class="n">screen_method</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">screen_method</span><span class="si">}</span><span class="s2"> is not a valid screening method. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Choose from </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">SCREEN_METHODS</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span></div>
 
 </pre></div>
 
