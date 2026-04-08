@@ -128,6 +128,14 @@ namespace Rates
         NumRates = k_p_Co55_to_He4_Fe52_derived
     };
 
+    enum ScreenPairs :
+    std::uint8_t
+    {
+        k_He4_Fe52 = 1,
+        k_p_Co55 = 2,
+        NumScreenPairs = k_p_Co55
+    };
+
     // rate names -- note: the rates are 1-based, not zero-based, so we pad
     // this vector with rate_names[0] = "" so the indices line up with the
     // NetworkRates enum
