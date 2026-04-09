@@ -89,8 +89,11 @@ class TestRateIds:
         for dupe_set in ALLOWED_DUPLICATES:
             dupe_rates = []
             for dupe_entry in dupe_set:
-                rate_id = dupe_entry.split(":", 1)[1].strip()
-                dupe_rates.append(full_library.get_rate(rate_id))
+                rate_type, rate_id = dupe_entry.split(":", maxsplit=1)
+                # only check ReacLib here
+                if rate_type.strip() == "StarLibRate":
+                    continue
+                dupe_rates.append(full_library.get_rate(rate_id.strip()))
 
             fnames = [r.fname for r in dupe_rates]
             rate_ids = [r.id for r in dupe_rates]
