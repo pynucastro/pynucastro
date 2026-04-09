@@ -3,16 +3,13 @@
 # written to a module, and the python network evaluating as a
 # RateCollection.  Note: screening is not considered.
 
-import re
-import subprocess
 import sys
 from pathlib import Path
 
-import numpy as np
 import pytest
 from pytest import approx
 
-import pynucastro as pyna
+import network_compare
 
 
 class TestNetworkCompare:
@@ -28,70 +25,32 @@ class TestNetworkCompare:
 
         test_path = Path("_test_compare/")
 
-        test_path.mkdir(parents=True, exist_ok=True)
-
         # thermodynamic conditions
         # we set the composition to be uniform for all tests
         rho = 2.e8
         T = 1.e9
 
-        # METHOD 1:
-        # python / RateCollection version -- computed via
-        # pynucastro eval methods.  This serves as the baseline
+        nc = network_compare.NetworkCompare(lib, rho=rho, T=T,
+                                            include_simple_cxx=True,
+                                            python_module_name="basic_cxx_py_compare.py",
+                                            cxx_test_path=test_path)
+        nc.evaluate()
 
-        pynet = pyna.PythonNetwork(libraries=[lib])
+        # compare the simple C++ net to the python inline version
 
-        comp = pyna.Composition(pynet.unique_nuclei)
-        comp.set_equal()
+        for nuc in nc.ydots_cxx:
+            assert nc.ydots_cxx[nuc] == approx(nc.ydots_py_inline[nuc],
+                                               rel=1.e-11, abs=1.e-14)
 
-        ydots_py = pynet.evaluate_ydots(rho=rho, T=T, composition=comp)
+        # compare the simple C++ net to the python module version
 
-        # METHOD 2:
-        # simple-C++ network
+        for nuc in nc.ydots_cxx:
+            assert nc.ydots_cxx[nuc] == approx(nc.ydots_py_module[nuc],
+                                               rel=1.e-11, abs=1.e-14)
 
-        cxx_net = pyna.SimpleCxxNetwork(libraries=[lib])
-        cxx_net.write_network(odir=test_path)
+        # compare the python inline and module versions (shouldn't
+        # really be needed)
 
-        # build an run the simple C++ network
-        subprocess.run("make USE_SCREENING=FALSE",
-                       capture_output=False,
-                       shell=True, check=True, cwd=test_path)
-
-        cp = subprocess.run(f"./main {rho} {T}",
-                            capture_output=True,
-                            shell=True, check=True, text=True, cwd=test_path)
-        stdout = cp.stdout
-
-        # the stdout includes lines of the form:
-        #    Ydot(X) = ...
-        # for each nucleus X.  This regex will capture
-        # the nucleus and the ydot value for each of these
-        ydot_re = re.compile(r"(Ydot)\((\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
-                             re.IGNORECASE | re.DOTALL)
-
-        ydots_cxx = {}
-        for line in stdout.split("\n"):
-            if match := ydot_re.search(line.strip()):
-                ydots_cxx[match.group(2)] = float(match.group(6))
-
-        # do the comparison
-
-        for k, v in ydots_cxx.items():
-            nuc = pyna.Nucleus(k)
-            assert v == approx(ydots_py[nuc], rel=1.e-11, abs=1.e-14)
-
-        # METHOD 3:
-        # python module written as a file, with a function written
-        # for computing each rate
-
-        pynet.write_network("compare_net.py")
-
-        import compare_net as cn  # pylint: disable=import-outside-toplevel,import-error
-
-        # we can now compute the ydots via cn.rhs()
-        # do the comparison
-
-        Y = np.asarray(list(comp.get_molar().values()))
-        module_ydots = cn.rhs(0.0, Y, rho, T)
-        for n, k in enumerate(ydots_cxx):
-            assert ydots_cxx[k] == approx(module_ydots[n], rel=1.e-11, abs=1.e-14)
+        for nuc in nc.ydots_py_inline:
+            assert nc.ydots_py_inline[nuc] == approx(nc.ydots_py_module[nuc],
+                                                     rel=1.e-11, abs=1.e-14)

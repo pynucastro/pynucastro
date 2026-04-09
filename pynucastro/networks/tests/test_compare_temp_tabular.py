@@ -2,12 +2,12 @@
 # ensure that both the RateCollection version and the PythonNetwork
 # written to a module give the same ydots
 
-import numpy as np
 import pytest
 from pytest import approx
 
-import pynucastro as pyna
 from pynucastro.rates.alternate_rates import IliadisO16pgF17
+
+import network_compare
 
 
 class TestNetworkCompare:
@@ -22,22 +22,18 @@ class TestNetworkCompare:
 
     def test_compare(self, lib):
 
-        # python
-        pynet = pyna.PythonNetwork(libraries=[lib])
-        pynet.write_network("temptab_net.py")
-
-        import temptab_net as tt  # pylint: disable=import-outside-toplevel,import-error
-
+        # thermodynamic conditions
+        # we set the composition to be uniform for all tests
         rho = 1.e5
         T = 2.e8
-        comp = pyna.Composition(pynet.unique_nuclei)
-        comp.set_equal()
 
-        # compare to the RateCollection version
+        nc = network_compare.NetworkCompare(lib, rho=rho, T=T,
+                                            include_simple_cxx=False,
+                                            python_module_name="net_tt.py")
+        nc.evaluate()
 
-        ydots_py = pynet.evaluate_ydots(rho=rho, T=T, composition=comp)
+        # compare the inline and module python versions
 
-        Y = np.asarray(list(comp.get_molar().values()))
-        module_ydots = tt.rhs(0.0, Y, rho, T)
-        for n, k in enumerate(ydots_py):
-            assert ydots_py[k] == approx(module_ydots[n], rel=1.e-11, abs=1.e-14)
+        for nuc in nc.ydots_py_inline:
+            assert nc.ydots_py_inline[nuc] == approx(nc.ydots_py_module[nuc],
+                                                     rel=1.e-11, abs=1.e-14)
