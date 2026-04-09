@@ -17,6 +17,24 @@ import pynucastro as pyna
 
 
 class NetworkCompare:
+    """A simple class to manage building a network with different
+    backends to facilitate comparisons.
+
+    Parameters
+    ----------
+    lib : Library
+        pynucastro Library containing the rates
+    rho : float
+        density to evaluate rates at (CGS)
+    T : float
+        temperature to evaluate rates at (K)
+    include_simple_cxx : bool
+        do we build and evaluate a SimpleCxxNetwork?
+    python_module_name : str
+        the name of the module file to output the python net to
+    cxx_test_path : Path
+        the Path to output the C++ source files and build in
+    """
 
     def __init__(self, lib, *,
                  rho=2.e8, T=1.e9,
@@ -57,7 +75,9 @@ class NetworkCompare:
 
     def _run_python_inline_version(self):
         """Evaluate the rates using the methods built into
-        RateCollection"""
+        RateCollection
+
+        """
 
         self.ydots_py_inline = self.pynet.evaluate_ydots(rho=self.rho, T=self.T,
                                                          composition=self.comp)
@@ -84,7 +104,9 @@ class NetworkCompare:
 
     def _run_simple_cxx_version(self):
         """Output the simple C++ network code, build it, run, and
-        parse the output to get the rates."""
+        parse the output to get the rates.
+
+        """
 
         cxx_net = pyna.SimpleCxxNetwork(libraries=[self.lib])
         cxx_net.write_network(odir=self.cxx_test_path)
@@ -114,7 +136,10 @@ class NetworkCompare:
                 self.ydots_cxx[pyna.Nucleus(match.group(2))] = float(match.group(6))
 
     def evaluate(self):
-        """Evaluate the ydots from all the backends we are considering"""
+        """Evaluate the ydots from all the backends we are
+        considering
+
+        """
 
         self._run_python_inline_version()
         self._run_python_module_version()
