@@ -26,15 +26,15 @@ class TestNetworkCompare:
         test_path = Path("_test_compare/")
 
         # thermodynamic conditions
-        # we set the composition to be uniform for all tests
         rho = 2.e8
         T = 1.e9
 
-        nc = NetworkCompare(lib, rho=rho, T=T,
+        # we set the composition to be uniform for all tests
+        nc = NetworkCompare(lib,
                             include_simple_cxx=True,
                             python_module_name="basic_cxx_py_compare.py",
                             cxx_test_path=test_path)
-        nc.evaluate()
+        nc.evaluate(rho=rho, T=T)
 
         # compare the simple C++ net to the python inline version
 

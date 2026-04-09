@@ -26,10 +26,10 @@ class TestNetworkCompare:
         rho = 1.e5
         T = 2.e8
 
-        nc = NetworkCompare(lib, rho=rho, T=T,
+        nc = NetworkCompare(lib,
                             include_simple_cxx=False,
                             python_module_name="net_tt.py")
-        nc.evaluate()
+        nc.evaluate(rho=rho, T=T)
 
         # compare the inline and module python versions
 

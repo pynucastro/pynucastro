@@ -25,10 +25,6 @@ class NetworkCompare:
     ----------
     lib : Library
         pynucastro Library containing the rates
-    rho : float
-        density to evaluate rates at (CGS)
-    T : float
-        temperature to evaluate rates at (K)
     use_screening : bool
         do we include screening in the comparison (Chugunov 2007)
     include_simple_cxx : bool
@@ -40,15 +36,12 @@ class NetworkCompare:
     """
 
     def __init__(self, lib, *,
-                 rho=2.e8, T=1.e9,
                  use_screening=False,
                  include_simple_cxx=True,
                  python_module_name="compare_net.py",
                  cxx_test_path=None):
 
         self.lib = lib
-        self.rho = rho
-        self.T = T
 
         if use_screening:
             self.screen_func = chugunov_2007
@@ -82,17 +75,17 @@ class NetworkCompare:
         self.ydots_py_module = None
         self.ydots_cxx = None
 
-    def _run_python_inline_version(self):
+    def _run_python_inline_version(self, rho=2.e8, T=1.e9):
         """Evaluate the rates using the methods built into
         RateCollection
 
         """
 
-        self.ydots_py_inline = self.pynet.evaluate_ydots(rho=self.rho, T=self.T,
+        self.ydots_py_inline = self.pynet.evaluate_ydots(rho=rho, T=T,
                                                          composition=self.comp,
                                                          screen_func=self.screen_func)
 
-    def _run_python_module_version(self):
+    def _run_python_module_version(self, rho=2.e8, T=1.e9):
         """Write the python network to a module and import it, and
         then evaluate the rates from the rate functions in the module.
 
@@ -107,12 +100,12 @@ class NetworkCompare:
 
         # we can now compute the ydots via cn.rhs()
         Y = np.asarray(list(self.comp.get_molar().values()))
-        _tmp = cn.rhs(0.0, Y, self.rho, self.T, screen_func=self.screen_func)
+        _tmp = cn.rhs(0.0, Y, rho, T, screen_func=self.screen_func)
         self.ydots_py_module = {}
         for n, y in zip(self.pynet.unique_nuclei, _tmp):
             self.ydots_py_module[n] = y
 
-    def _run_simple_cxx_version(self):
+    def _run_simple_cxx_version(self, rho=2.e8, T=1.e9):
         """Output the simple C++ network code, build it, run, and
         parse the output to get the rates.
 
@@ -132,7 +125,7 @@ class NetworkCompare:
                        shell=True, check=True,
                        cwd=self.cxx_test_path)
 
-        cp = subprocess.run(f"./main {self.rho} {self.T}",
+        cp = subprocess.run(f"./main {rho} {T}",
                             capture_output=True,
                             shell=True, check=True, text=True,
                             cwd=self.cxx_test_path)
@@ -150,14 +143,21 @@ class NetworkCompare:
             if match := ydot_re.search(line.strip()):
                 self.ydots_cxx[Nucleus(match.group(2))] = float(match.group(6))
 
-    def evaluate(self):
+    def evaluate(self, rho=2.e8, T=1.e9):
         """Evaluate the ydots from all the backends we are
         considering
 
+        Parameters
+        ----------
+        rho : float
+            density to evaluate rates at (CGS)
+        T : float
+            temperature to evaluate rates at (K)
+
         """
 
-        self._run_python_inline_version()
-        self._run_python_module_version()
+        self._run_python_inline_version(rho=rho, T=T)
+        self._run_python_module_version(rho=rho, T=T)
 
         if self.include_simple_cxx:
-            self._run_simple_cxx_version()
+            self._run_simple_cxx_version(rho=rho, T=T)
