@@ -121,4 +121,3 @@ class NetworkCompare:
 
         if self.include_simple_cxx:
             self._run_simple_cxx_version()
-
