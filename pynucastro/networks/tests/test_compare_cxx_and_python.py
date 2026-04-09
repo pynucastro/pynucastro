@@ -20,20 +20,51 @@ class TestNetworkCompare:
         lib = reaclib_library.linking_nuclei(nuc)
         return lib
 
-    @pytest.mark.skipif(sys.platform.startswith("win"), reason="Does not run on Windows")
-    def test_compare(self, lib):
-
+    @pytest.fixture(scope="class")
+    def nc(self, lib):
         test_path = Path("_test_compare/")
+
+        nc = NetworkCompare(lib,
+                            include_simple_cxx=True,
+                            python_module_name="basic_cxx_py_compare.py",
+                            cxx_test_path=test_path)
+        return nc
+
+    @pytest.mark.skipif(sys.platform.startswith("win"), reason="Does not run on Windows")
+    def test_compare(self, nc):
 
         # thermodynamic conditions
         rho = 2.e8
         T = 1.e9
 
-        # we set the composition to be uniform for all tests
-        nc = NetworkCompare(lib,
-                            include_simple_cxx=True,
-                            python_module_name="basic_cxx_py_compare.py",
-                            cxx_test_path=test_path)
+        nc.evaluate(rho=rho, T=T)
+
+        # compare the simple C++ net to the python inline version
+
+        for nuc in nc.ydots_cxx:
+            assert nc.ydots_cxx[nuc] == approx(nc.ydots_py_inline[nuc],
+                                               rel=1.e-11, abs=1.e-14)
+
+        # compare the simple C++ net to the python module version
+
+        for nuc in nc.ydots_cxx:
+            assert nc.ydots_cxx[nuc] == approx(nc.ydots_py_module[nuc],
+                                               rel=1.e-11, abs=1.e-14)
+
+        # compare the python inline and module versions (shouldn't
+        # really be needed)
+
+        for nuc in nc.ydots_py_inline:
+            assert nc.ydots_py_inline[nuc] == approx(nc.ydots_py_module[nuc],
+                                                     rel=1.e-11, abs=1.e-14)
+
+    @pytest.mark.skipif(sys.platform.startswith("win"), reason="Does not run on Windows")
+    def test_compare2(self, nc):
+
+        # thermodynamic conditions
+        rho = 2.e7
+        T = 4.e9
+
         nc.evaluate(rho=rho, T=T)
 
         # compare the simple C++ net to the python inline version
