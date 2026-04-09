@@ -6,9 +6,10 @@
 import sys
 from pathlib import Path
 
-import network_compare
 import pytest
 from pytest import approx
+
+from pynucastro.networks.network_compare import NetworkCompare
 
 
 class TestNetworkCompare:
@@ -29,10 +30,10 @@ class TestNetworkCompare:
         rho = 2.e8
         T = 1.e9
 
-        nc = network_compare.NetworkCompare(lib, rho=rho, T=T,
-                                            include_simple_cxx=True,
-                                            python_module_name="basic_cxx_py_compare.py",
-                                            cxx_test_path=test_path)
+        nc = NetworkCompare(lib, rho=rho, T=T,
+                            include_simple_cxx=True,
+                            python_module_name="basic_cxx_py_compare.py",
+                            cxx_test_path=test_path)
         nc.evaluate()
 
         # compare the simple C++ net to the python inline version

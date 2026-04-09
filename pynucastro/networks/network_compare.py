@@ -13,7 +13,10 @@ from pathlib import Path
 
 import numpy as np
 
-import pynucastro as pyna
+from pynucastro.networks.python_network import PythonNetwork
+from pynucastro.networks.rate_collection import Composition
+from pynucastro.networks.simple_cxx_network import SimpleCxxNetwork
+from pynucastro.nucdata import Nucleus
 
 
 class NetworkCompare:
@@ -62,10 +65,10 @@ class NetworkCompare:
             self.cxx_test_path.mkdir(parents=True, exist_ok=True)
 
         # we will always have the python version
-        self.pynet = pyna.PythonNetwork(libraries=[lib])
+        self.pynet = PythonNetwork(libraries=[lib])
 
         # always use a uniform compostion
-        self.comp = pyna.Composition(self.pynet.unique_nuclei)
+        self.comp = Composition(self.pynet.unique_nuclei)
         self.comp.set_equal()
 
         # storage for the ydots
@@ -108,7 +111,7 @@ class NetworkCompare:
 
         """
 
-        cxx_net = pyna.SimpleCxxNetwork(libraries=[self.lib])
+        cxx_net = SimpleCxxNetwork(libraries=[self.lib])
         cxx_net.write_network(odir=self.cxx_test_path)
 
         # build an run the simple C++ network
@@ -133,7 +136,7 @@ class NetworkCompare:
         self.ydots_cxx = {}
         for line in stdout.split("\n"):
             if match := ydot_re.search(line.strip()):
-                self.ydots_cxx[pyna.Nucleus(match.group(2))] = float(match.group(6))
+                self.ydots_cxx[Nucleus(match.group(2))] = float(match.group(6))
 
     def evaluate(self):
         """Evaluate the ydots from all the backends we are

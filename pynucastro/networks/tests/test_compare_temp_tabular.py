@@ -2,10 +2,10 @@
 # ensure that both the RateCollection version and the PythonNetwork
 # written to a module give the same ydots
 
-import network_compare
 import pytest
 from pytest import approx
 
+from pynucastro.networks.network_compare import NetworkCompare
 from pynucastro.rates.alternate_rates import IliadisO16pgF17
 
 
@@ -26,9 +26,9 @@ class TestNetworkCompare:
         rho = 1.e5
         T = 2.e8
 
-        nc = network_compare.NetworkCompare(lib, rho=rho, T=T,
-                                            include_simple_cxx=False,
-                                            python_module_name="net_tt.py")
+        nc = NetworkCompare(lib, rho=rho, T=T,
+                            include_simple_cxx=False,
+                            python_module_name="net_tt.py")
         nc.evaluate()
 
         # compare the inline and module python versions
