@@ -142,6 +142,7 @@ intersphinx_mapping = {
     'sympy': ('https://docs.sympy.org/latest/', None),
     'yt': ('https://yt-project.org/doc', None),
     'unyt': ('https://unyt.readthedocs.io/en/stable', None),
+    "scipy": ("https://docs.scipy.org/doc/scipy", None),
 }
 
 # Don't include the extra CSS from sphinx-prompt when using the copy button

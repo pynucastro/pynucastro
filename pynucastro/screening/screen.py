@@ -12,7 +12,8 @@ from pynucastro.numba_util import jitclass, njit
 __all__ = ["NseState", "PlasmaState", "ScreenFactors",
            "chugunov_2007", "chugunov_2009", "f0", "debye_huckel",
            "make_plasma_state", "make_screen_factors",
-           "potekhin_1998", "screen5", "smooth_clip", "screening_check"]
+           "potekhin_1998", "screen5", "smooth_clip", "screening_check",
+           "get_screening_func"]
 
 
 @jitclass([
@@ -739,3 +740,38 @@ def screening_check(check_func=debye_huckel, threshold: float = 1e-2):
             return screen_func(state, scn_fac)
         return screening_wrapper
     return screening_decorator
+
+
+# A list of all different screening functions
+SCREEN_METHODS = {
+    "screen5": screen5,
+    "chugunov_2007": chugunov_2007,
+    "chugunov_2009": chugunov_2009,
+    "potekhin_1998": potekhin_1998,
+    "debye_huckel": debye_huckel
+}
+
+
+def get_screening_func(screen_method):
+    """Return the screening function by its name
+
+    Parameters
+    ----------
+    screen_method : str
+        name of the screening function
+
+    Returns
+    -------
+    Callable
+    """
+
+    if screen_method is None:
+        return None
+
+    try:
+        return SCREEN_METHODS[screen_method]
+    except KeyError as exc:
+        raise ValueError(
+            f"{screen_method} is not a valid screening method. "
+            f"Choose from {list(SCREEN_METHODS)}"
+        ) from exc
