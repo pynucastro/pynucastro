@@ -6,10 +6,9 @@
 import sys
 from pathlib import Path
 
+import network_compare
 import pytest
 from pytest import approx
-
-import network_compare
 
 
 class TestNetworkCompare:

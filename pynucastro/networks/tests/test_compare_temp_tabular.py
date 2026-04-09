@@ -2,12 +2,11 @@
 # ensure that both the RateCollection version and the PythonNetwork
 # written to a module give the same ydots
 
+import network_compare
 import pytest
 from pytest import approx
 
 from pynucastro.rates.alternate_rates import IliadisO16pgF17
-
-import network_compare
 
 
 class TestNetworkCompare:
