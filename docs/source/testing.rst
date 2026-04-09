@@ -6,12 +6,12 @@ If we create a network with a set of rates, we should get the same
 "ydots" ($dY_k/dt$) values regardless of the backend (to roundoff, and maybe
 interpolation, error)
 
-To facilitate comparing the backends, we have a ``NetworkCompaare``
+To facilitate comparing the backends, we have a :py:obj:`NetworkCompare <pynucastro.networks.network_compare.NetworkCompare>`
 helper class that takes a library and evaluates the ydots for different backends.
-Currently it can test:
+Currently it can work with:
 
-* inline python networks: this is what we do with a ``RateCollection``
-  using the built-in ``eval`` methods to evaluate each of the rates.
+* ``RateCollection`` / inline python networks: this uses
+  the built-in ``eval`` methods to evaluate each of the rates.
 
 * ``PythonNetwork`` modules: this means writing out the network as a
   ``.py`` file, importing it, and then using the functions in the
@@ -20,6 +20,7 @@ Currently it can test:
 * ``SimpleCxxNetwork`` : we build a simple test driver and parse the output
   to get the ydot values.
 
+It will store the ydots in a ``dict`` keyed by :py:obj:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>`.
 This is used in the following unit tests in ``pynucastro/networks/tests/``:
 
 * ``test_compare_cxx_and_python.py`` : this compares just strong reaction rates
