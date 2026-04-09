@@ -1,9 +1,6 @@
 """Helper functions for comparing the output of different backends
 (python, C++) for the same network.  This will build and run each net
 and return the ydots.
-
-Note: this disables screening.
-
 """
 
 import importlib
@@ -17,6 +14,7 @@ from pynucastro.networks.python_network import PythonNetwork
 from pynucastro.networks.rate_collection import Composition
 from pynucastro.networks.simple_cxx_network import SimpleCxxNetwork
 from pynucastro.nucdata import Nucleus
+from pynucastro.screening import chugunov_2007
 
 
 class NetworkCompare:
@@ -31,6 +29,8 @@ class NetworkCompare:
         density to evaluate rates at (CGS)
     T : float
         temperature to evaluate rates at (K)
+    use_screening : bool
+        do we include screening in the comparison (Chugunov 2007)
     include_simple_cxx : bool
         do we build and evaluate a SimpleCxxNetwork?
     python_module_name : str
@@ -41,6 +41,7 @@ class NetworkCompare:
 
     def __init__(self, lib, *,
                  rho=2.e8, T=1.e9,
+                 use_screening=False,
                  include_simple_cxx=True,
                  python_module_name="compare_net.py",
                  cxx_test_path=None):
@@ -48,6 +49,11 @@ class NetworkCompare:
         self.lib = lib
         self.rho = rho
         self.T = T
+
+        if use_screening:
+            self.screen_func = chugunov_2007
+        else:
+            self.screen_func = None
 
         self.include_simple_cxx = include_simple_cxx
 
@@ -83,7 +89,8 @@ class NetworkCompare:
         """
 
         self.ydots_py_inline = self.pynet.evaluate_ydots(rho=self.rho, T=self.T,
-                                                         composition=self.comp)
+                                                         composition=self.comp,
+                                                         screen_func=self.screen_func)
 
     def _run_python_module_version(self):
         """Write the python network to a module and import it, and
@@ -100,7 +107,7 @@ class NetworkCompare:
 
         # we can now compute the ydots via cn.rhs()
         Y = np.asarray(list(self.comp.get_molar().values()))
-        _tmp = cn.rhs(0.0, Y, self.rho, self.T)
+        _tmp = cn.rhs(0.0, Y, self.rho, self.T, screen_func=self.screen_func)
         self.ydots_py_module = {}
         for n, y in zip(self.pynet.unique_nuclei, _tmp):
             self.ydots_py_module[n] = y
@@ -115,7 +122,12 @@ class NetworkCompare:
         cxx_net.write_network(odir=self.cxx_test_path)
 
         # build an run the simple C++ network
-        subprocess.run("make USE_SCREENING=FALSE",
+        if self.screen_func is not None:
+            opts = "USE_SCREENING=TRUE"
+        else:
+            opts = "USE_SCREENING=FALSE"
+
+        subprocess.run(f"make {opts}",
                        capture_output=False,
                        shell=True, check=True,
                        cwd=self.cxx_test_path)
