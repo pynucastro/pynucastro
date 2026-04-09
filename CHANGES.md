@@ -2,6 +2,12 @@
 
 ## 2.10.0
 
+  * `PythonNetwork` : add a method to integrate the network (#1279),
+    also store the weak rate tables directly in the module (#1282)
+
+  * C++ networks: Group log(screening) and log(rate) together before the
+    exp (#1259)
+
   * clean-up `TabularRate` (#1278)
 
   * add a method to pre-determine network NSE compatibility (#1276,
@@ -9,7 +15,8 @@
 
   * update Zenodo authors (#1272)
 
-  * add support for StarLib rates (#1258, #1273, #1277, #1281)
+  * add support for StarLib rates (#1258, #1273, #1277, #1281, #1287,
+    #1289)
 
   * clean-up `ReacLibRate` (#1267)
 
@@ -40,7 +47,8 @@
 
   * Add `neut` as an alias for neutrons (#1253)
 
-  * `AmrexAstroCxxNetwork` : inline the tabular rate data (#1245)
+  * `AmrexAstroCxxNetwork` : inline the tabular rate data (#1245),
+    eliminate a copy of the rates in the weak ydot eval (#1283)
 
   * CI updates : drop python 3.11 testing (#1252), add a HIP C++
     compilation test (#1251), and a CUDA C++ compilation test (#1250),
@@ -51,7 +59,8 @@
 
   * docs updates: update the derived rates documentation (#1247), fix
     some sphinx API doc warning (#1237), add a temperature evolution
-    integration example (#1223), copyright (#1274)
+    integration example (#1223), copyright (#1274), fix typos (#1284,
+    #1286)
 
   * clean up `SimpleCxxNetwork` (#1246)
 
@@ -86,7 +95,7 @@
 
   * complete a stellar EOS with ideal gas and radiation (#1201)
 
-  * `AmrexAstroCxxNetwork`: check weak label in `ydot_weak` (#1216)
+  * `AmrexAstroCxxNetwork` : check weak label in `ydot_weak` (#1216)
 
   * change how `DerivedRate` works so it can apply to any strong rate
     (#1207, #1217)
