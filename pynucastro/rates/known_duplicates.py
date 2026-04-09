@@ -6,7 +6,9 @@ import collections
 # list them here by class name and then rate id
 ALLOWED_DUPLICATES = [
     {"ReacLibRate: p + p --> d <reaclib_bet+>",
-     "ReacLibRate: p + p --> d <reaclib_ec>"}
+     "ReacLibRate: p + p --> d <reaclib_ec>"},
+    {"StarLibRate: p + p --> d <starlib_nacr>",
+     "StarLibRate: p + p --> d <starlib_ec>"}
 ]
 
 
