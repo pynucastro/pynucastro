@@ -484,7 +484,7 @@ class Rate:
         nucz = [q for q in self.reactants if q.Z != 0]
         if len(nucz) > 1:
             nucz.sort(key=lambda x: (x.Z, x.A))
-            self.ion_screen = nucz.copy()
+            self.ion_screen = nucz
 
         # Find screening_pairs
         self.screening_pairs = []
