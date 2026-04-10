@@ -16,7 +16,7 @@
   * update Zenodo authors (#1272)
 
   * add support for StarLib rates (#1258, #1273, #1277, #1281, #1287,
-    #1289)
+    #1289, #1293)
 
   * clean-up `ReacLibRate` (#1267)
 
@@ -60,7 +60,7 @@
   * docs updates: update the derived rates documentation (#1247), fix
     some sphinx API doc warning (#1237), add a temperature evolution
     integration example (#1223), copyright (#1274), fix typos (#1284,
-    #1286)
+    #1286), linkcheck ignores (#1292)
 
   * clean up `SimpleCxxNetwork` (#1246)
 
