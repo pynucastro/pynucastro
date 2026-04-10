@@ -245,14 +245,8 @@ class Rate:
 
         # from the masses of the nuclei, Q = M_products - M_reactants
 
-        self.Q = 0
-        for n in set(self.reactants):
-            c = self.reactant_count(n)
-            self.Q += c * n.A_nuc
-        for n in set(self.products):
-            c = self.product_count(n)
-            self.Q += -c * n.A_nuc
-
+        self.Q = (sum(self.reactant_count(n) * n.A_nuc for n in set(self.reactants)) -
+                  sum(self.product_count(n) * n.A_nuc for n in set(self.products)))
         self.Q *= constants.m_u_MeV_C18
 
     def _set_print_representation(self):
