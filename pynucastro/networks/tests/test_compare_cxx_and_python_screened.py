@@ -1,7 +1,7 @@
 # this creates the same network as SimpleCxxNetwork and PythonNetwork.
 # we then compare the ydots from the C++ net, the python network
 # written to a module, and the python network evaluating as a
-# RateCollection.  Note: screening is not considered.
+# RateCollection.  Here we use the Chugunov 2007 screening.
 
 import sys
 from pathlib import Path
