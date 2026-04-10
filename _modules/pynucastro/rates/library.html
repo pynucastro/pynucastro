@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.library &#8212; pynucastro 2.9.0.post59+g55764f183 documentation</title>
+    <title>pynucastro.rates.library &#8212; pynucastro 2.9.0.post60+gb0ad510ee documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=d8376c77"></script>
+    <script src="../../../_static/documentation_options.js?v=2391ceba"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -493,6 +493,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">islice</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">walk</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
@@ -1575,54 +1576,55 @@
                        <span class="mi">5</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">6</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">7</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="mi">8</span><span class="p">:</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
                        <span class="mi">9</span><span class="p">:</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">10</span><span class="p">:</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">11</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)}</span>
     <span class="n">NLINES</span> <span class="o">=</span> <span class="mi">60</span>
+    <span class="n">LOG_RATE_FLOOR</span> <span class="o">=</span> <span class="o">-</span><span class="mf">700.0</span>
+    <span class="n">UNSUPPORTED_NUCLIDES</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([</span><span class="s2">&quot;al-6&quot;</span><span class="p">,</span> <span class="s2">&quot;al*6&quot;</span><span class="p">,</span> <span class="s2">&quot;al01&quot;</span><span class="p">,</span> <span class="s2">&quot;al02&quot;</span><span class="p">,</span> <span class="s2">&quot;al03&quot;</span><span class="p">])</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">rates</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="c1">#Initialize rng for rate sampling</span>
+        <span class="c1"># Initialize rng for rate sampling</span>
         <span class="n">rng</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span>
         <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
 
-        <span class="c1">#Read data</span>
+        <span class="c1"># Read data</span>
         <span class="k">with</span> <span class="n">bz2</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">header</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
                 <span class="c1"># Read header and relevant info</span>
                 <span class="n">rate_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_header</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
-                <span class="c1"># Read data columns</span>
-                <span class="n">log_T9</span><span class="p">,</span> <span class="n">log_rate</span><span class="p">,</span> <span class="n">sigma</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
-                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NLINES</span><span class="p">):</span>
-                    <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-                    <span class="n">T9</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">exp_sig</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
-                    <span class="n">log_T9</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T9</span><span class="p">))</span>
-                    <span class="n">sigma</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">exp_sig</span><span class="p">))</span>
 
-                    <span class="c1">#handle zero rates</span>
-                    <span class="k">if</span> <span class="n">rate</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
-                        <span class="n">log_rate</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">rate</span><span class="p">))</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">log_rate</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">-</span><span class="mi">700</span><span class="p">)</span>
-
-                <span class="c1">#Skip unsupported al26 rates</span>
-                <span class="n">unsupported_nuc</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;al-6&quot;</span><span class="p">,</span> <span class="s2">&quot;al*6&quot;</span><span class="p">,</span> <span class="s2">&quot;al01&quot;</span><span class="p">,</span> <span class="s2">&quot;al02&quot;</span><span class="p">,</span> <span class="s2">&quot;al03&quot;</span><span class="p">]</span>
-                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">nuc</span> <span class="ow">in</span> <span class="n">unsupported_nuc</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">rate_info</span><span class="p">[</span><span class="s2">&quot;nuclides&quot;</span><span class="p">]):</span>
+                <span class="c1"># Skip unsupported al26 rates</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">UNSUPPORTED_NUCLIDES</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">rate_info</span><span class="p">[</span><span class="s2">&quot;nuclides&quot;</span><span class="p">]):</span>
+                    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">islice</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">NLINES</span><span class="p">):</span>
+                        <span class="k">pass</span>
                     <span class="k">continue</span>
 
-                <span class="c1"># Convert data to np.array to ensure numpy operations</span>
-                <span class="c1"># are valid when sampling rates</span>
-                <span class="n">log_T9</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">log_T9</span><span class="p">)</span>
-                <span class="n">log_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">log_rate</span><span class="p">)</span>
-                <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+                <span class="c1"># Parse each 60-row numeric block in one numpy call instead of</span>
+                <span class="c1"># splitting and converting every line in Python.</span>
+                <span class="c1"># here islice does a lazy read from the file object</span>
+                <span class="n">block</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">islice</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">NLINES</span><span class="p">)),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">3</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">NLINES</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;incomplete STARLIB data block for header: </span><span class="si">{</span><span class="n">header</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">block</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NLINES</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 
-                <span class="c1">#Create rate</span>
-                <span class="n">rate</span> <span class="o">=</span> <span class="n">StarLibRate</span><span class="p">(</span><span class="n">log_T9</span><span class="p">,</span> <span class="n">log_rate</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">,</span>
+                <span class="n">log_t9</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">block</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+                <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">block</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">])</span>
+
+                <span class="c1"># initialize log_rate to the floor value and fill the non-zero entries</span>
+                <span class="n">log_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NLINES</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">LOG_RATE_FLOOR</span><span class="p">)</span>
+                <span class="n">positive</span> <span class="o">=</span> <span class="n">block</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+                <span class="n">log_rate</span><span class="p">[</span><span class="n">positive</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="n">positive</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+                <span class="c1"># Create rate</span>
+                <span class="n">rate</span> <span class="o">=</span> <span class="n">StarLibRate</span><span class="p">(</span><span class="n">log_t9</span><span class="p">,</span> <span class="n">log_rate</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">rng</span><span class="p">,</span>
                                    <span class="n">reactants</span><span class="o">=</span><span class="n">rate_info</span><span class="p">[</span><span class="s2">&quot;reactants&quot;</span><span class="p">],</span>
                                    <span class="n">products</span><span class="o">=</span><span class="n">rate_info</span><span class="p">[</span><span class="s2">&quot;products&quot;</span><span class="p">],</span>
                                    <span class="n">Q</span><span class="o">=</span><span class="n">rate_info</span><span class="p">[</span><span class="s2">&quot;Q&quot;</span><span class="p">],</span>
                                    <span class="n">labelprops</span><span class="o">=</span><span class="n">rate_info</span><span class="p">[</span><span class="s2">&quot;labelprops&quot;</span><span class="p">])</span>
 
                 <span class="n">rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
+
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">rates</span><span class="p">)</span>
 
 <div class="viewcode-block" id="StarLibLibrary.parse_header">
