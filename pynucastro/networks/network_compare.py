@@ -31,7 +31,7 @@ class NetworkCompare:
         do we build and evaluate a SimpleCxxNetwork?
     python_module_name : str
         the name of the module file to output the python net to
-    cxx_test_path : Path
+    cxx_test_path : pathlib.Path
         the Path to output the C++ source files and build in
     """
 
