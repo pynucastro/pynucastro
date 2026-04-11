@@ -13,6 +13,7 @@ numba
 nbval>=0.9.0
 pytest-cov>=2.6.0
 pytest>=3.6
+pytest-random-order
 
 # docs
 ipykernel
