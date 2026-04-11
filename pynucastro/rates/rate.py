@@ -11,8 +11,7 @@ from pynucastro.nucdata import Nucleus
 from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import _find_rate_file
 from pynucastro.rates.known_duplicates import ALLOWED_DUPLICATES
-from pynucastro.screening import (get_screening_map, make_plasma_state,
-                                  make_screen_factors)
+from pynucastro.screening import make_plasma_state, make_screen_factors
 
 
 class BaryonConservationError(Exception):
@@ -446,23 +445,50 @@ class Rate:
         if self.weak_type == 'electron_capture':
             self.dens_exp = self.dens_exp + 1
 
-    def _set_screening(self):
-        """Determine if this rate is eligible for screening and the
-        nuclei to use.
+    def _set_screening_pairs(self):
+        """Find a list reactant pairs used for screening. For reactions
+        that use more than 2 reactants, intermediate composite nuclei is
+        created for screening. For example, He4 + He4 + He4 → C12 give
+        [(He4, He4), (He4, Be8)]. This assumes that ion_screen is set.
 
         """
-        # Tells if this rate is eligible for screening, and if it is
-        # then Rate.ion_screen is a 2-element (3 for 3-alpha) list of
-        # Nucleus objects for screening; otherwise it is set to none
+
+        if self.ion_screen:
+            scr_reactants = self.ion_screen.copy()
+            He4 = Nucleus("He4")
+            while len(scr_reactants) > 1:
+                He4_idx = [i for i, n in enumerate(scr_reactants) if n == He4]
+                if len(He4_idx) >= 2:
+                    # Check if there are two He4, if so merge them first
+                    n1, n2 = scr_reactants[He4_idx[0]], scr_reactants[He4_idx[1]]
+                    self.screening_pairs.append((n1, n2))
+                    remaining = [n for i, n in enumerate(scr_reactants) if i not in He4_idx[:2]]
+                    scr_reactants = [n1 + n2] + remaining
+                else:
+                    # merge first two reactants to get composite nucleus
+                    n1, n2 = scr_reactants[0], scr_reactants[1]
+                    self.screening_pairs.append((n1, n2))
+                    scr_reactants = [n1 + n2] + scr_reactants[2:]
+
+                scr_reactants.sort(key=lambda x: (x.Z, x.A))
+
+    def _set_screening(self):
+        """Determine if this rate is eligible for screening and the
+        nuclei to use. This determines ion_screen and screening_pairs
+
+        """
+
+        # ion_screen holds the list of reactants eligible for screening
+        # empty list if there is only one eligible reactant
         self.ion_screen = []
         nucz = [q for q in self.reactants if q.Z != 0]
         if len(nucz) > 1:
-            nucz.sort(key=lambda x: x.Z)
-            self.ion_screen = []
-            self.ion_screen.append(nucz[0])
-            self.ion_screen.append(nucz[1])
-            if len(nucz) == 3:
-                self.ion_screen.append(nucz[2])
+            nucz.sort(key=lambda x: (x.Z, x.A))
+            self.ion_screen = nucz
+
+        # Find screening_pairs
+        self.screening_pairs = []
+        self._set_screening_pairs()
 
     def get_rate_id(self):
         """Get an identifying string for this rate.
@@ -631,41 +657,11 @@ class Rate:
 
         ys = composition.get_molar()
         plasma_state = make_plasma_state(T, rho, ys)
+
         log_scor = 0.0
-
-        # We can have three cases:
-        # 3-body reaction, i.e. 3-alpha: 2 ScreeningPair's
-        # 2-body reaction              : 1 ScreeningPair
-        # Photodisintegration (1-body) : 0 ScreeningPair
-
-        screening_map = get_screening_map([self])
-
-        # Handle 0 ScreeningPair case
-        if not screening_map:
-            return log_scor
-
-        # Handle 3-alpha case explicitly
-        if "He4_He4_He4" in [scr.name for scr in screening_map]:
-
-            # We should have two ScreeningPair's in this case
-            # He4_He4_He4 and He4_He4_He4_dummy
-            assert len(screening_map) == 2
-
-            for scr in screening_map:
-                scn_fac = make_screen_factors(scr.n1, scr.n2)
-                log_scor += screen_func(plasma_state, scn_fac)
-
-        # Now handle 2-body reaction
-        else:
-            scr = screening_map[0]
-
-            # Make sure no dummy nuclei exist in this case
-            # Otherwise we have more than 2-body reaction
-            assert not (scr.n1.dummy or scr.n2.dummy)
-            assert len(screening_map) == 1
-
-            scn_fac = make_screen_factors(scr.n1, scr.n2)
-            log_scor = screen_func(plasma_state, scn_fac)
+        for n1, n2 in self.screening_pairs:
+            scn_fac = make_screen_factors(n1, n2)
+            log_scor += screen_func(plasma_state, scn_fac)
 
         return log_scor
 

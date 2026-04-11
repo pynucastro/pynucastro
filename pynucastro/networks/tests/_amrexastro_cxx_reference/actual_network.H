@@ -156,9 +156,9 @@ namespace Rates
     enum ScreenPairs :
     std::uint8_t
     {
-        k_C12_C12 = 1,
-        k_He4_C12 = 2,
-        NumScreenPairs = k_He4_C12
+        k_He4_C12 = 1,
+        k_C12_C12 = 2,
+        NumScreenPairs = k_C12_C12
     };
 
     // rate names -- note: the rates are 1-based, not zero-based, so we pad

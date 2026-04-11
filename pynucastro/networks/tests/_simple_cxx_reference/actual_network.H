@@ -45,11 +45,11 @@ namespace Rates
 
     enum ScreenPairs
     {
-        k_C12_C12 = 1,
+        k_p_Na23 = 1,
         k_He4_C12 = 2,
-        k_He4_Ne20 = 3,
-        k_p_Na23 = 4,
-        NumScreenPairs = k_p_Na23
+        k_C12_C12 = 3,
+        k_He4_Ne20 = 4,
+        NumScreenPairs = k_He4_Ne20
     };
 
     // rate names -- note: the rates are 1-based, not zero-based, so we pad

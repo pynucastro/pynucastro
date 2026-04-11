@@ -18,7 +18,7 @@ from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
 from pynucastro.rates.tabular_rate import TableIndex
-from pynucastro.screening import get_screening_map
+from pynucastro.screening import get_screening_pair_set
 from pynucastro.utils import pynucastro_version
 
 
@@ -247,16 +247,16 @@ class BaseCxxNetwork(ABC, RateCollection):
         and stores them to rate_eval.log_screen.
 
         """
-        screening_map = get_screening_map(self.get_rates())
-        for scr in screening_map:
-            nuc1_info = f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt'
-            nuc2_info = f'{float(scr.n2.Z)}_rt, {float(scr.n2.A)}_rt'
+        screening_pair_set = get_screening_pair_set(self.get_rates())
+        for n1, n2 in screening_pair_set:
+            nuc1_info = f'{float(n1.Z)}_rt, {float(n1.A)}_rt'
+            nuc2_info = f'{float(n2.Z)}_rt, {float(n2.A)}_rt'
 
             if not self.do_screening:
                 # Set log_scor terms to be 0 if not doing screening
-                of.write(f'{self.indent*(n_indent)}rate_eval.log_screen(k_{scr.n1}_{scr.n2}) = 0.0_rt;\n')
+                of.write(f'{self.indent*(n_indent)}rate_eval.log_screen(k_{n1}_{n2}) = 0.0_rt;\n')
                 of.write(f'{self.indent*(n_indent)}if constexpr (do_T_derivatives) {{\n')
-                of.write(f'{self.indent*(n_indent+1)}rate_eval.dlog_screen_dT(k_{scr.n1}_{scr.n2}) = 0.0_rt;\n')
+                of.write(f'{self.indent*(n_indent+1)}rate_eval.dlog_screen_dT(k_{n1}_{n2}) = 0.0_rt;\n')
                 of.write(f'{self.indent*(n_indent)}}}\n\n')
             else:
                 # Scope the screening calculation to avoid multiple definitions of scn_fac.
@@ -265,11 +265,11 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                 # Insert a static assert (which will always pass) to require the
                 # compiler to evaluate the screen factor at compile time.
-                of.write(f'{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(scr.n1.Z)}_rt);\n')
+                of.write(f'{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(n1.Z)}_rt);\n')
                 of.write(f'{self.indent*(n_indent+1)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);\n')
-                of.write(f'{self.indent*(n_indent+1)}rate_eval.log_screen(k_{scr.n1}_{scr.n2}) = log_scor;\n')
+                of.write(f'{self.indent*(n_indent+1)}rate_eval.log_screen(k_{n1}_{n2}) = log_scor;\n')
                 of.write(f'{self.indent*(n_indent+1)}if constexpr (do_T_derivatives) {{\n')
-                of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dT(k_{scr.n1}_{scr.n2}) = dlog_scor_dT;\n')
+                of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dT(k_{n1}_{n2}) = dlog_scor_dT;\n')
                 of.write(f'{self.indent*(n_indent+1)}}}\n')
                 of.write(f'{self.indent*n_indent}' + '}\n\n')
 
@@ -284,15 +284,16 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f'{self.indent*n_indent}{dtype}\n')
 
     def _screen_pair(self, n_indent, of):
-        screening_map = get_screening_map(self.get_rates())
-        for i, scr in enumerate(screening_map):
-            of.write(f"{self.indent*n_indent}k_{scr.n1}_{scr.n2} = {i+1},\n")
-        last_scr = screening_map[-1]
-        of.write(f'{self.indent*n_indent}NumScreenPairs = k_{last_scr.n1}_{last_scr.n2}\n')
+        screening_pair_set = get_screening_pair_set(self.get_rates())
+        NumScreenPairs = len(screening_pair_set)
+        for i, (n1, n2) in enumerate(screening_pair_set, start=1):
+            of.write(f"{self.indent*n_indent}k_{n1}_{n2} = {i},\n")
+            if i == NumScreenPairs:
+                of.write(f'{self.indent*n_indent}NumScreenPairs = k_{n1}_{n2}\n')
 
     def _screen_pair_enum_type(self, n_indent, of):
-        screening_map = get_screening_map(self.get_rates())
-        NumScreenPairs = len(screening_map)
+        screening_pair_set = get_screening_pair_set(self.get_rates())
+        NumScreenPairs = len(screening_pair_set)
         dtype = _rate_dtype(NumScreenPairs)
         of.write(f'{self.indent*n_indent}{dtype}\n')
 
@@ -566,31 +567,16 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
 
     def write_screen_var(self, n_indent, of, rate):
-        """Return the string that composes the screening variable for a rate
-        by finding a list of reactant pairs for screening following the linear
-        mixing rule. For example, for 3-alpha, it is [(He4, He4), (He4, Be8)].
-
-        """
-        reactant_pairs = []
-        if rate.ion_screen:
-            scr_reactants = rate.ion_screen.copy()
-            while len(scr_reactants) > 1:
-                r1, r2 = scr_reactants[0], scr_reactants[1]
-                reactant_pair = (r1, r2)
-                reactant_pairs.append(reactant_pair)
-
-                # merge reactants to get compound nucleus
-                scr_reactants = [r1 + r2] + scr_reactants[2:]
-                scr_reactants.sort(key=lambda x: x.Z)
+        """Return the string that composes the screening variable for a rate."""
 
         # Set default log screening to be 0
         of.write(f"{self.indent*n_indent}{self.dtype} log_scor {{0.0_rt}};\n")
         of.write(f"{self.indent*n_indent}{self.dtype} dlog_scor_dT {{0.0_rt}};\n")
 
         # Use precomputed screening term if there are reactant pairs
-        if reactant_pairs:
-            log_screen_term = " + ".join(f"rate_eval.log_screen(k_{r1}_{r2})" for r1, r2 in reactant_pairs)
-            dlog_screen_dT_term = " + ".join(f"rate_eval.dlog_screen_dT(k_{r1}_{r2})" for r1, r2 in reactant_pairs)
+        if rate.screening_pairs:
+            log_screen_term = " + ".join(f"rate_eval.log_screen(k_{r1}_{r2})" for r1, r2 in rate.screening_pairs)
+            dlog_screen_dT_term = " + ".join(f"rate_eval.dlog_screen_dT(k_{r1}_{r2})" for r1, r2 in rate.screening_pairs)
 
             of.write("#ifdef SCREENING\n")
             of.write(f"{self.indent*n_indent}log_scor = " + log_screen_term + ";\n")

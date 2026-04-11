@@ -136,8 +136,8 @@ namespace Rates
     std::uint8_t
     {
         k_He4_Mg24 = 1,
-        k_p_Al27 = 2,
-        k_He4_Si28 = 3,
+        k_He4_Si28 = 2,
+        k_p_Al27 = 3,
         k_p_P31 = 4,
         NumScreenPairs = k_p_P31
     };
