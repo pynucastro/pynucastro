@@ -519,9 +519,10 @@ class TestModifiedRate:
                           new_reactants=["he4", "c12"],
                           new_products=["o16"], update_screening=True)
 
-        # Sync ion_screen between the ModifiedRate and the original rate
-        # then the results should match.
+        # Sync ion_screen and screening_pair between the ModifiedRate
+        # and the original rate then the results should match.
         rate.ion_screen = r2.ion_screen
+        rate.screening_pairs = r2.screening_pairs
 
         assert (r2.eval(2e9, rho=1e8, comp=comp, screen_func=chugunov_2007) ==
                 rate.eval(2e9, rho=1e8, comp=comp, screen_func=chugunov_2007))

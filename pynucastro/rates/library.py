@@ -7,6 +7,7 @@ import bz2
 import collections
 import io
 import re
+from itertools import islice
 from os import walk
 from pathlib import Path
 
@@ -1009,54 +1010,55 @@ class StarLibLibrary(Library):
                        5: (2, 2), 6: (2, 3), 7: (2, 4), 8: (3, 1),
                        9: (3, 2), 10: (4, 2), 11: (1, 4)}
     NLINES = 60
+    LOG_RATE_FLOOR = -700.0
+    UNSUPPORTED_NUCLIDES = frozenset(["al-6", "al*6", "al01", "al02", "al03"])
 
     def __init__(self, seed=None):
         rates = []
 
-        #Initialize rng for rate sampling
+        # Initialize rng for rate sampling
         rng = None
         self.seed = seed
         if seed is not None:
             rng = np.random.default_rng(seed=self.seed)
 
-        #Read data
+        # Read data
         with bz2.open(self.file_path, mode="rt") as f:
             for header in f:
                 # Read header and relevant info
                 rate_info = self.parse_header(header)
-                # Read data columns
-                log_T9, log_rate, sigma = [], [], []
-                for _ in range(self.NLINES):
-                    line = f.readline()
-                    T9, rate, exp_sig = map(float, line.split())
-                    log_T9.append(np.log(T9))
-                    sigma.append(np.log(exp_sig))
 
-                    #handle zero rates
-                    if rate > 0.0:
-                        log_rate.append(np.log(rate))
-                    else:
-                        log_rate.append(-700)
-
-                #Skip unsupported al26 rates
-                unsupported_nuc = ["al-6", "al*6", "al01", "al02", "al03"]
-                if any(nuc in unsupported_nuc for nuc in rate_info["nuclides"]):
+                # Skip unsupported al26 rates
+                if any(nuc in self.UNSUPPORTED_NUCLIDES for nuc in rate_info["nuclides"]):
+                    for _ in islice(f, self.NLINES):
+                        pass
                     continue
 
-                # Convert data to np.array to ensure numpy operations
-                # are valid when sampling rates
-                log_T9 = np.array(log_T9)
-                log_rate = np.array(log_rate)
-                sigma = np.array(sigma)
+                # Parse each 60-row numeric block in one numpy call instead of
+                # splitting and converting every line in Python.
+                # here islice does a lazy read from the file object
+                block = np.fromstring("".join(islice(f, self.NLINES)), sep=" ")
+                if block.size != 3 * self.NLINES:
+                    raise ValueError(f"incomplete STARLIB data block for header: {header!r}")
+                block = block.reshape(self.NLINES, 3)
 
-                #Create rate
-                rate = StarLibRate(log_T9, log_rate, sigma, rng=rng,
+                log_t9 = np.log(block[:, 0])
+                sigma = np.log(block[:, 2])
+
+                # initialize log_rate to the floor value and fill the non-zero entries
+                log_rate = np.full(self.NLINES, self.LOG_RATE_FLOOR)
+                positive = block[:, 1] > 0.0
+                log_rate[positive] = np.log(block[positive, 1])
+
+                # Create rate
+                rate = StarLibRate(log_t9, log_rate, sigma, rng=rng,
                                    reactants=rate_info["reactants"],
                                    products=rate_info["products"],
                                    Q=rate_info["Q"],
                                    labelprops=rate_info["labelprops"])
 
                 rates.append(rate)
+
         super().__init__(rates=rates)
 
     def parse_header(self, line):

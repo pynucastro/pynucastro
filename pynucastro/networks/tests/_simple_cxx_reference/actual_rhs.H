@@ -47,9 +47,9 @@ void evaluate_screening(const burn_t& state,
     Real log_scor;
 
     {
-        auto scn_fac = scrn::calculate_screen_factor(6.0_rt, 12.0_rt, 6.0_rt, 12.0_rt);
+        auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 11.0_rt, 23.0_rt);
         actual_log_screen(pstate, scn_fac, log_scor);
-        rate_eval.log_screen(k_C12_C12) = log_scor;
+        rate_eval.log_screen(k_p_Na23) = log_scor;
     }
 
     {
@@ -59,15 +59,15 @@ void evaluate_screening(const burn_t& state,
     }
 
     {
-        auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 10.0_rt, 20.0_rt);
+        auto scn_fac = scrn::calculate_screen_factor(6.0_rt, 12.0_rt, 6.0_rt, 12.0_rt);
         actual_log_screen(pstate, scn_fac, log_scor);
-        rate_eval.log_screen(k_He4_Ne20) = log_scor;
+        rate_eval.log_screen(k_C12_C12) = log_scor;
     }
 
     {
-        auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 11.0_rt, 23.0_rt);
+        auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 10.0_rt, 20.0_rt);
         actual_log_screen(pstate, scn_fac, log_scor);
-        rate_eval.log_screen(k_p_Na23) = log_scor;
+        rate_eval.log_screen(k_He4_Ne20) = log_scor;
     }
 
 }
