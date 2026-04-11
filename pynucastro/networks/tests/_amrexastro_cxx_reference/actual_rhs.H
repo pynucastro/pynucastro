@@ -70,22 +70,22 @@ void evaluate_screening(const burn_t& state,
     amrex::Real log_scor, dlog_scor_dT;
 
     {
-        constexpr auto scn_fac = scrn::calculate_screen_factor(6.0_rt, 12.0_rt, 6.0_rt, 12.0_rt);
-        static_assert(scn_fac.z1 == 6.0_rt);
-        actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
-        rate_eval.log_screen(k_C12_C12) = log_scor;
-        if constexpr (do_T_derivatives) {
-            rate_eval.dlog_screen_dT(k_C12_C12) = dlog_scor_dT;
-        }
-    }
-
-    {
         constexpr auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 6.0_rt, 12.0_rt);
         static_assert(scn_fac.z1 == 2.0_rt);
         actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
         rate_eval.log_screen(k_He4_C12) = log_scor;
         if constexpr (do_T_derivatives) {
             rate_eval.dlog_screen_dT(k_He4_C12) = dlog_scor_dT;
+        }
+    }
+
+    {
+        constexpr auto scn_fac = scrn::calculate_screen_factor(6.0_rt, 12.0_rt, 6.0_rt, 12.0_rt);
+        static_assert(scn_fac.z1 == 6.0_rt);
+        actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+        rate_eval.log_screen(k_C12_C12) = log_scor;
+        if constexpr (do_T_derivatives) {
+            rate_eval.dlog_screen_dT(k_C12_C12) = dlog_scor_dT;
         }
     }
 

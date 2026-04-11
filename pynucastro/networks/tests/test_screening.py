@@ -4,7 +4,7 @@ from pytest import approx
 
 from pynucastro import networks
 from pynucastro.screening import (chugunov_2007, chugunov_2009,
-                                  get_screening_map)
+                                  get_screening_pair_set)
 
 
 class TestScreening:
@@ -19,17 +19,10 @@ class TestScreening:
 
         return networks.RateCollection(rates=rates)
 
-    def test_screening_map(self, rc):
+    def test_screening_pair_set(self, rc):
 
-        screening_map = get_screening_map(rc.get_rates())
-
-        assert len(screening_map) == 4
-        assert len(screening_map[0].rates) == 1
-        assert len(screening_map[1].rates) == 3
-        assert len(screening_map[2].rates) == 1
-        assert len(screening_map[3].rates) == 1
-        # two triple-alpha screening steps
-        assert screening_map[2].rates[0] == screening_map[3].rates[0] == rc.rates[4]
+        screening_pair_set = get_screening_pair_set(rc.get_rates())
+        assert len(screening_pair_set) == 4
 
     def test_screening_chugunov_2007(self, rc):
         c = networks.Composition(rc.unique_nuclei)
