@@ -1,4 +1,5 @@
 # unit tests for rates
+import copy
 import math
 
 import pytest
@@ -314,55 +315,55 @@ class TestRate:
         assert repr(self.rate4) == "C12 + He4 ⟶ O16 + 𝛾"
 
         # create a separate version since rates are mutable
-        c12ag = reaclib_library.get_rate_by_name("c12(a,g)o16")
+        _c12ag = reaclib_library.get_rate_by_name("c12(a,g)o16")
+        c12ag = copy.deepcopy(_c12ag)
+
         c12ag.stoichiometry = {Nucleus("he4"): 1.5,
                                Nucleus("c12"): 1,
-                               Nucleus("o16"): 1}
+                               Nucleus("o16"): 1.125}
         c12ag._set_print_representation()  # pylint: disable=protected-access
 
-        assert repr(c12ag) == "C12 + 1.5 He4 ⟶ O16 + e⁺ + 𝜈"
-        assert c12ag.rid == "C12 + 1.5 He4 --> O16"
+        assert repr(c12ag) == "C12 + 1.5 He4 ⟶ 1.125 O16 + 𝛾"
+        assert c12ag.rid == "C12 + 1.5 He4 --> 1.125 O16"
 
         assert c12ag.reactant_count(Nucleus("he4")) == 1.5
 
-        # restore it so the library is unchanged
-        c12ag.stoichiometry = None
-
     def test_stoichiometry_3alpha(self, reaclib_library):
 
-        three_alpha = reaclib_library.get_rate_by_name("he4(aa,g)c12")
+        _three_alpha = reaclib_library.get_rate_by_name("he4(aa,g)c12")
+        three_alpha = copy.deepcopy(_three_alpha)
+
         assert repr(three_alpha) == "3 He4 ⟶ C12 + 𝛾"
         assert three_alpha.rid == "3 He4 --> C12"
 
         three_alpha.stoichiometry = {Nucleus("he4"): 4,
-                                     Nucleus("c12"): 1}
+                                     Nucleus("c12"): 4/3}
         three_alpha._set_print_representation()  # pylint: disable=protected-access
 
-        assert repr(three_alpha) == "4 He4 ⟶ C12"
-        assert three_alpha.rid == "4 He4 --> C12"
+        assert repr(three_alpha) == "4 He4 ⟶ 1.3333333333333333 C12 + 𝛾"
+        assert three_alpha.rid == "4 He4 --> 1.3333333333333333 C12"
 
         assert three_alpha.reactant_count(Nucleus("he4")) == 4
 
-        three_alpha.stoichiometry = None
-
     def test_stoichiometry_dict(self, reaclib_library):
 
-        c12c12 = reaclib_library.get_rate_by_name("c12(c12,a)ne20")
+        _c12c12 = reaclib_library.get_rate_by_name("c12(c12,a)ne20")
+        c12c12 = copy.deepcopy(_c12c12)
 
-        c12c12.stoichiometry = {Nucleus("he4"): 4}
+        c12c12.stoichiometry = {Nucleus("he4"): 4,
+                                Nucleus("ne20"): 0.4}
+
         c12c12._set_print_representation()  # pylint: disable=protected-access
 
-        assert repr(c12c12) == "C12 + C12 ⟶ 4 He4 + Ne20"
-        assert c12c12.rid == "C12 + C12 --> 4 He4 + Ne20"
+        assert repr(c12c12) == "C12 + C12 ⟶ 4 He4 + 0.4 Ne20"
+        assert c12c12.rid == "C12 + C12 --> 4 He4 + 0.4 Ne20"
 
         assert c12c12.reactant_count(Nucleus("he4")) == 0
         assert c12c12.product_count(Nucleus("he4")) == 4
 
         assert c12c12.reactant_count(Nucleus("c12")) == 2
 
-        assert c12c12.product_count(Nucleus("ne20")) == 1
-
-        c12c12.stoichiometry = None
+        assert c12c12.product_count(Nucleus("ne20")) ==0.4
 
     def test_baryon_conservation(self):
 
