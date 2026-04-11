@@ -1,4 +1,4 @@
-name: pytest-all
+name: pytest-random
 
 on:
   # Trigger the workflow on push or pull request,
@@ -17,7 +17,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.12", "3.13", "3.14"]
+        python-version: ["3.14"]
 
     steps:
       - uses: actions/checkout@v6
@@ -50,7 +50,7 @@ jobs:
           echo '::endgroup::'
 
       - name: Run tests with pytest
-        run: pytest -v -s --nbval --cov=pynucastro --color=yes
+        run: pytest -v -s --color=yes --random-order
 
       - name: Upload output from failed write_network tests
         uses: actions/upload-artifact@v7
