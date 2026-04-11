@@ -80,22 +80,22 @@ void evaluate_screening(const burn_t& state,
     }
 
     {
-        constexpr auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 13.0_rt, 27.0_rt);
-        static_assert(scn_fac.z1 == 1.0_rt);
-        actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
-        rate_eval.log_screen(k_p_Al27) = log_scor;
-        if constexpr (do_T_derivatives) {
-            rate_eval.dlog_screen_dT(k_p_Al27) = dlog_scor_dT;
-        }
-    }
-
-    {
         constexpr auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 14.0_rt, 28.0_rt);
         static_assert(scn_fac.z1 == 2.0_rt);
         actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
         rate_eval.log_screen(k_He4_Si28) = log_scor;
         if constexpr (do_T_derivatives) {
             rate_eval.dlog_screen_dT(k_He4_Si28) = dlog_scor_dT;
+        }
+    }
+
+    {
+        constexpr auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 13.0_rt, 27.0_rt);
+        static_assert(scn_fac.z1 == 1.0_rt);
+        actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+        rate_eval.log_screen(k_p_Al27) = log_scor;
+        if constexpr (do_T_derivatives) {
+            rate_eval.dlog_screen_dT(k_p_Al27) = dlog_scor_dT;
         }
     }
 

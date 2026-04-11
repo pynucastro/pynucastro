@@ -265,22 +265,22 @@ def rhs_eq(t, Y, rho, T, screen_func):
     tf = Tfactors(T)
     rate_eval = RateEval()
 
-    log_scor_C12_C12 = 0.0
-    log_scor_He4_C12 = 0.0
     log_scor_He4_He4 = 0.0
+    log_scor_He4_C12 = 0.0
     log_scor_He4_Be8 = 0.0
+    log_scor_C12_C12 = 0.0
 
     if screen_func is not None:
         plasma_state = PlasmaState(T, rho, Y, Z)
 
-        scn_fac = ScreenFactors(6, 12, 6, 12)
-        log_scor_C12_C12 = screen_func(plasma_state, scn_fac)
-        scn_fac = ScreenFactors(2, 4, 6, 12)
-        log_scor_He4_C12 = screen_func(plasma_state, scn_fac)
         scn_fac = ScreenFactors(2, 4, 2, 4)
         log_scor_He4_He4 = screen_func(plasma_state, scn_fac)
+        scn_fac = ScreenFactors(2, 4, 6, 12)
+        log_scor_He4_C12 = screen_func(plasma_state, scn_fac)
         scn_fac = ScreenFactors(2, 4, 4, 8)
         log_scor_He4_Be8 = screen_func(plasma_state, scn_fac)
+        scn_fac = ScreenFactors(6, 12, 6, 12)
+        log_scor_C12_C12 = screen_func(plasma_state, scn_fac)
 
     # reaclib rates
     C12_C12_to_He4_Ne20_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
@@ -288,7 +288,7 @@ def rhs_eq(t, Y, rho, T, screen_func):
     C12_C12_to_p_Na23_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
     He4_C12_to_O16_reaclib(rate_eval, tf, log_scor=log_scor_He4_C12)
     n_to_p_reaclib(rate_eval, tf)
-    He4_He4_He4_to_C12_reaclib(rate_eval, tf, log_scor=log_scor_He4_He4+log_scor_He4_Be8)
+    He4_He4_He4_to_C12_reaclib(rate_eval, tf, log_scor=log_scor_He4_He4 + log_scor_He4_Be8)
 
     # tabular rates
     Na23_to_Ne23_weaktab(rate_eval, T, rho=rho, Y=Y)
@@ -352,22 +352,22 @@ def jacobian_eq(t, Y, rho, T, screen_func):
     tf = Tfactors(T)
     rate_eval = RateEval()
 
-    log_scor_C12_C12 = 0.0
-    log_scor_He4_C12 = 0.0
     log_scor_He4_He4 = 0.0
+    log_scor_He4_C12 = 0.0
     log_scor_He4_Be8 = 0.0
+    log_scor_C12_C12 = 0.0
 
     if screen_func is not None:
         plasma_state = PlasmaState(T, rho, Y, Z)
 
-        scn_fac = ScreenFactors(6, 12, 6, 12)
-        log_scor_C12_C12 = screen_func(plasma_state, scn_fac)
-        scn_fac = ScreenFactors(2, 4, 6, 12)
-        log_scor_He4_C12 = screen_func(plasma_state, scn_fac)
         scn_fac = ScreenFactors(2, 4, 2, 4)
         log_scor_He4_He4 = screen_func(plasma_state, scn_fac)
+        scn_fac = ScreenFactors(2, 4, 6, 12)
+        log_scor_He4_C12 = screen_func(plasma_state, scn_fac)
         scn_fac = ScreenFactors(2, 4, 4, 8)
         log_scor_He4_Be8 = screen_func(plasma_state, scn_fac)
+        scn_fac = ScreenFactors(6, 12, 6, 12)
+        log_scor_C12_C12 = screen_func(plasma_state, scn_fac)
 
     # reaclib rates
     C12_C12_to_He4_Ne20_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
@@ -375,7 +375,7 @@ def jacobian_eq(t, Y, rho, T, screen_func):
     C12_C12_to_p_Na23_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
     He4_C12_to_O16_reaclib(rate_eval, tf, log_scor=log_scor_He4_C12)
     n_to_p_reaclib(rate_eval, tf)
-    He4_He4_He4_to_C12_reaclib(rate_eval, tf, log_scor=log_scor_He4_He4+log_scor_He4_Be8)
+    He4_He4_He4_to_C12_reaclib(rate_eval, tf, log_scor=log_scor_He4_He4 + log_scor_He4_Be8)
 
     # tabular rates
     Na23_to_Ne23_weaktab(rate_eval, T, rho=rho, Y=Y)
