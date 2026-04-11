@@ -363,7 +363,7 @@ class TestRate:
 
         assert c12c12.reactant_count(Nucleus("c12")) == 2
 
-        assert c12c12.product_count(Nucleus("ne20")) ==0.4
+        assert c12c12.product_count(Nucleus("ne20")) == 0.4
 
     def test_baryon_conservation(self):
 
