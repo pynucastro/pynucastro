@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 2.9.0.post60+gb0ad510ee documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 2.9.0.post61+g664465360 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=2391ceba"></script>
+    <script src="../../../_static/documentation_options.js?v=ab9bc355"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -498,7 +498,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.rate_collection</span><span class="w"> </span><span class="kn">import</span> <span class="n">Composition</span><span class="p">,</span> <span class="n">RateCollection</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApproximateRate</span><span class="p">,</span> <span class="n">ModifiedRate</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_screening_func</span><span class="p">,</span> <span class="n">get_screening_map</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_screening_func</span><span class="p">,</span> <span class="n">get_screening_pair_set</span>
 
 
 <div class="viewcode-block" id="PythonNetwork">
@@ -661,11 +661,11 @@
 
         <span class="n">ostr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
-        <span class="n">screening_map</span> <span class="o">=</span> <span class="n">get_screening_map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">())</span>
+        <span class="n">screening_pair_set</span> <span class="o">=</span> <span class="n">get_screening_pair_set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_rates</span><span class="p">())</span>
 
         <span class="c1"># Initialize log_scor to 0.0</span>
-        <span class="k">for</span> <span class="n">scr</span> <span class="ow">in</span> <span class="n">screening_map</span><span class="p">:</span>
-            <span class="n">screen_var</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;log_scor_</span><span class="si">{</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span> <span class="ow">in</span> <span class="n">screening_pair_set</span><span class="p">:</span>
+            <span class="n">screen_var</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;log_scor_</span><span class="si">{</span><span class="n">n1</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">n2</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}{</span><span class="n">screen_var</span><span class="si">}</span><span class="s2"> = 0.0</span><span class="se">\n</span><span class="s2">&quot;</span>
 
         <span class="c1"># Check if we&#39;re doing screening, return early if not screening</span>
@@ -676,9 +676,9 @@
         <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">if screen_func is not None:</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">indent</span> <span class="o">+=</span> <span class="s2">&quot;    &quot;</span>
         <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">plasma_state = PlasmaState(T, rho, Y, Z)</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="k">for</span> <span class="n">scr</span> <span class="ow">in</span> <span class="n">screening_map</span><span class="p">:</span>
-            <span class="n">screen_var</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;log_scor_</span><span class="si">{</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">scn_fac = ScreenFactors(</span><span class="si">{</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">Z</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">scr</span><span class="o">.</span><span class="n">n1</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">Z</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">scr</span><span class="o">.</span><span class="n">n2</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span> <span class="ow">in</span> <span class="n">screening_pair_set</span><span class="p">:</span>
+            <span class="n">screen_var</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;log_scor_</span><span class="si">{</span><span class="n">n1</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">n2</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">scn_fac = ScreenFactors(</span><span class="si">{</span><span class="n">n1</span><span class="o">.</span><span class="n">Z</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">n1</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">n2</span><span class="o">.</span><span class="n">Z</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">n2</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}{</span><span class="n">screen_var</span><span class="si">}</span><span class="s2"> = screen_func(plasma_state, scn_fac)</span><span class="se">\n</span><span class="s2">&quot;</span>
 
         <span class="k">return</span> <span class="n">ostr</span></div>
@@ -717,18 +717,9 @@
                 <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;rho=rho&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span><span class="p">:</span>
                 <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Y=Y&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="p">:</span>
-                <span class="n">scr_reactants</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">ion_screen</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-                <span class="n">screen_terms</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">scr_reactants</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">scr_reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">scr_reactants</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-                    <span class="n">screen_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;log_scor_</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-                    <span class="c1"># merge reactants to get compound nucleus</span>
-                    <span class="n">scr_reactants</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">]</span> <span class="o">+</span> <span class="n">scr_reactants</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
-                    <span class="n">scr_reactants</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span>
-
-                <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;log_scor=&quot;</span> <span class="o">+</span> <span class="s2">&quot;+&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">screen_terms</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">:</span>
+                <span class="n">screen_terms</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;log_scor_</span><span class="si">{</span><span class="n">r1</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">r2</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">]</span>
+                <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;log_scor=&quot;</span> <span class="o">+</span> <span class="s2">&quot; + &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">screen_terms</span><span class="p">))</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span>
 
         <span class="n">ostr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>

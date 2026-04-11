@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.modified_rate &#8212; pynucastro 2.9.0.post60+gb0ad510ee documentation</title>
+    <title>pynucastro.rates.modified_rate &#8212; pynucastro 2.9.0.post61+g664465360 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=2391ceba"></script>
+    <script src="../../../_static/documentation_options.js?v=ab9bc355"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -568,9 +568,8 @@
 <span class="sd">        update_screening.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Tells if this rate is eligible for screening, and if it is</span>
-        <span class="c1"># then Rate.ion_screen is a 2-element (3 for 3-alpha) list of</span>
-        <span class="c1"># Nucleus objects for screening; otherwise it is set to none</span>
+        <span class="c1"># ion_screen holds the list of reactants eligible for screening</span>
+        <span class="c1"># empty list if there is only one eligible reactant</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_screening</span><span class="p">:</span>
             <span class="n">_reac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span>
@@ -578,12 +577,12 @@
             <span class="n">_reac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">reactants</span>
         <span class="n">nucz</span> <span class="o">=</span> <span class="p">[</span><span class="n">q</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">_reac</span> <span class="k">if</span> <span class="n">q</span><span class="o">.</span><span class="n">Z</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nucz</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">nucz</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nucz</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nucz</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nucz</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nucz</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">nucz</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">A</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span> <span class="o">=</span> <span class="n">nucz</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Find screening_pairs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">screening_pairs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_screening_pairs</span><span class="p">()</span>
 
 <div class="viewcode-block" id="ModifiedRate.log_eval">
 <a class="viewcode-back" href="../../../pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate.log_eval">[docs]</a>

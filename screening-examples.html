@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Screening Rates &#8212; pynucastro 2.9.0.post60+gb0ad510ee documentation</title>
+    <title>Screening Rates &#8212; pynucastro 2.9.0.post61+g664465360 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=2391ceba"></script>
+    <script src="_static/documentation_options.js?v=ab9bc355"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -568,8 +568,9 @@
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#screening-implementations">Screening implementations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#n-body-reaction">N-body Reaction</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-screening">Using screening</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#screening-map">Screening map</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#screening-pair-set">Screening pair set</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#screening-and-a-python-network">Screening and a python network</a></li>
 </ul>
             </nav>
@@ -584,14 +585,19 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="screening-rates">
 <h1>Screening Rates<a class="headerlink" href="#screening-rates" title="Link to this heading">#</a></h1>
-<p>Consider nuclear fusion between two ions surrounded by a sea of electrons. The electron screening effect reduces the effective Coulomb potential barrier that the ions must overcome for fusion to take place, causing an enhancement to the nuclear reaction rates.
-Suppose the unscreened rate is represented by <span class="math notranslate nohighlight">\(R_\mathrm{uns}\)</span>, then screened rate is</p>
+<p>Consider a nuclear fusion between two ions characterized by their atomic number, <span class="math notranslate nohighlight">\(Z\)</span>, and atomic weight number, <span class="math notranslate nohighlight">\(A\)</span>,
+surrounded by a sea of electrons.</p>
+<div class="math notranslate nohighlight">
+\[(Z_1, A_1) + (Z_2, A_2) \rightarrow (Z_1 + Z_2, A_1 + A_2)\]</div>
+<p>The electron screening effect reduces the effective Coulomb potential barrier that the ions must overcome for fusion to take place, causing an enhancement to the nuclear reaction rates. Suppose the unscreened rate is represented by <span class="math notranslate nohighlight">\(R_\mathrm{uns}\)</span>, then screened rate is</p>
 <div class="math notranslate nohighlight">
 \[R_\mathrm{scn} = R_\mathrm{uns} \exp{(h)}\]</div>
-<p>where <span class="math notranslate nohighlight">\(h\)</span> characterizes the screening magnitude. pynucastro has various screening implementations that computes screening magnitude, <span class="math notranslate nohighlight">\(h\)</span>.</p>
+<p>where <span class="math notranslate nohighlight">\(h\)</span> characterizes the screening magnitude. <span class="math notranslate nohighlight">\(h\)</span> generally depends on the density, temperature, composition, as well as <span class="math notranslate nohighlight">\(Z\)</span> and <span class="math notranslate nohighlight">\(A\)</span> of the two nuclei of the entrance channel, i.e.</p>
+<div class="math notranslate nohighlight">
+\[h = h(\rho, T, X_k, Z_1, A_1, Z_2, A_2)\]</div>
 <section id="screening-implementations">
 <h2>Screening implementations<a class="headerlink" href="#screening-implementations" title="Link to this heading">#</a></h2>
-<p>pynucastro currently has 4 screening implementations:</p>
+<p>pynucastro currently has 4 screening implementations that computes <span class="math notranslate nohighlight">\(h\)</span> for the fusion process between two ions:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.screen5" title="pynucastro.screening.screen.screen5"><code class="xref py py-func docutils literal notranslate"><span class="pre">screen5</span></code></a> based on <span id="id1">Wallace <em>et al.</em> [<a class="reference internal" href="zreferences.html#id29" title="R. K. Wallace, S. E. Woosley, and T. A. Weaver. The thermonuclear model for X-ray transients. \apj , 258:696-715, July 1982. doi:10.1086/160119.">1982</a>]</span></p></li>
 <li><p><a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.potekhin_1998" title="pynucastro.screening.screen.potekhin_1998"><code class="xref py py-func docutils literal notranslate"><span class="pre">potekhin_1998</span></code></a> based on <span id="id2">Chabrier and Potekhin [<a class="reference internal" href="zreferences.html#id8" title="Gilles Chabrier and Alexander Y. Potekhin. Equation of state of fully ionized electron-ion plasmas. Physical Review E, 58(4):4941–4949, October 1998. doi:10.1103/PhysRevE.58.4941.">1998</a>]</span></p></li>
@@ -599,6 +605,57 @@ Suppose the unscreened rate is represented by <span class="math notranslate nohi
 <li><p><a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.chugunov_2009" title="pynucastro.screening.screen.chugunov_2009"><code class="xref py py-func docutils literal notranslate"><span class="pre">chugunov_2009</span></code></a> based on <span id="id4">Chugunov and DeWitt [<a class="reference internal" href="zreferences.html#id6" title="A. I. Chugunov and H. E. DeWitt. Nuclear fusion reaction rates for strongly coupled ionic mixtures. Physical Review C, 80(1):014611, July 2009. arXiv:0905.3844, doi:10.1103/PhysRevC.80.014611.">2009</a>]</span></p></li>
 </ul>
 <p>Each of these use various approximations to account for the influence of the plasma on screening the electric charge of the nuclei that are fusing.</p>
+</section>
+<section id="n-body-reaction">
+<h2>N-body Reaction<a class="headerlink" href="#n-body-reaction" title="Link to this heading">#</a></h2>
+<p>Now consider a general reaction of the from:</p>
+<div class="math notranslate nohighlight">
+\[ R_1 + R_2 + R_3 + ... + R_N \rightarrow P_1 + P_2 + P_3 + ... + P_M\]</div>
+<p>In order to extend the screening routine for a binary nuclear reaction to a general N-body reaction, consider the formation of an intermediate composite nuclei, <span class="math notranslate nohighlight">\(O\)</span>, i.e.</p>
+<div class="math notranslate nohighlight">
+\[ R_1 + R_2 + R_3 + ... + R_N \rightarrow O_{R_1 + R_2} + R_3 + ... + R_N \rightarrow P_1 + P_2 + P_3 + ... + P_M\]</div>
+<p>By breaking up the N-body reaction into N-1 sub-reaction with the formation of intermedite composite nuclei, the overall screening magnitude is then</p>
+<div class="math notranslate nohighlight">
+\[h(R_1, R_2, R_3, ..., R_N) = h(R_1, R_2) + h(R_1 + R_2, R_3) + ... + h(R_1 + R_2 + ... + R_{N-1}, R_N)\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the screening routine for a binary reaction takes the form:</p>
+<div class="math notranslate nohighlight">
+\[ h = \frac{\mu^c(Z_1) + \mu^c(Z_2) - \mu^(Z_1 + Z_2)}{k_B T} \]</div>
+<p>then it is straight forward to see that with the consideration of the formation of intermediate composite nuclei,
+<span class="math notranslate nohighlight">\(h\)</span> for a N-body reaction takes the form</p>
+<div class="math notranslate nohighlight">
+\[ h = \frac{\mu^c(Z_1) + \mu^c(Z_2) + \mu^c(Z_3) + ... - \mu^(Z_1 + Z_2 + Z_3 + ... + Z_N)}{k_B T} \]</div>
+<p>The only screening routine in pynucastro that takes this form is <code class="docutils literal notranslate"><span class="pre">potekhin_1998</span></code></p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>For each rate, the reactant ion pairs needed to compute the overall screening factor is stored in the attribute <code class="docutils literal notranslate"><span class="pre">screening_pairs</span></code>.
+A simple demonstration with the triple alpha rate is the following</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reaclib_library</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
+<span class="n">triple_alpha</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;a(aa,g)c12&quot;</span><span class="p">)</span>
+<span class="n">triple_alpha</span><span class="o">.</span><span class="n">screening_pairs</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[(He4, He4), (He4, Be8)]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here we see that there are two screening pairs for the triple alpha rate. The first step involves two <span class="math notranslate nohighlight">\({}^4\mathrm{He}\)</span> producing <span class="math notranslate nohighlight">\({}^8\mathrm{Be}\)</span>, and the second step involves fusing <span class="math notranslate nohighlight">\({}^4\mathrm{He}\)</span> and <span class="math notranslate nohighlight">\({}^8\mathrm{Be}\)</span> giving the final product <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}\)</span>,
+i.e.</p>
+<div class="math notranslate nohighlight">
+\[ {}^4\mathrm{He} + {}^4\mathrm{He} + {}^4\mathrm{He} \rightarrow {}^4\mathrm{He} + {}^8\mathrm{Be} \rightarrow {}^{12}\mathrm{C} \]</div>
 </section>
 <section id="using-screening">
 <h2>Using screening<a class="headerlink" href="#using-screening" title="Link to this heading">#</a></h2>
@@ -610,14 +667,6 @@ Suppose the unscreened rate is represented by <span class="math notranslate nohi
 <p>We create these objects separate before we call the screening routine since there are some computational expensive calculations here that don’t change with repeated calls.</p>
 <p>Here we create a <code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> that knows about the conditions where the screening is taking place and then we use that to compute the screening factor for a rate.  The helper function
 <a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.make_plasma_state" title="pynucastro.screening.screen.make_plasma_state"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_plasma_state</span></code></a> can create the <code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> object</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
-</pre></div>
-</div>
-</div>
-</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;h1&quot;</span><span class="p">),</span>
@@ -641,8 +690,7 @@ Suppose the unscreened rate is represented by <span class="math notranslate nohi
 <p>Now let’s get the <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha,\gamma){}^{16}\mathrm{O}\)</span> rate and compute the screening factor</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reaclib_library</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
-<span class="n">rfilter</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">],</span> <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;o16&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rfilter</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">],</span> <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;o16&quot;</span><span class="p">])</span>
 <span class="n">r</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">rfilter</span><span class="p">)</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">r</span>
 </pre></div>
@@ -691,11 +739,10 @@ reaction rate information is contained in the <code class="docutils literal notr
 </div>
 <p>In this case, we see that screening enhances the rate by over 4 times!</p>
 </section>
-<section id="screening-map">
-<h2>Screening map<a class="headerlink" href="#screening-map" title="Link to this heading">#</a></h2>
-<p>For a <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateCollection</span></code></a> or a network derived from it, there are a lot of rates that will need to be screened, and some might have the same nuclei that need to be screened.  A “screening map” keeps track of all of the rates that need to be screened for the same set of reactants.</p>
-<p>The screening map is a <code class="docutils literal notranslate"><span class="pre">list</span></code> of <a class="reference internal" href="pynucastro.screening.screening_util.html#pynucastro.screening.screening_util.ScreeningPair" title="pynucastro.screening.screening_util.ScreeningPair"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ScreeningPair</span></code></a> objects which contain the pair of nuclei that need a screening factor computed as well as the list of all
-the rates that screening factor applies to.</p>
+<section id="screening-pair-set">
+<h2>Screening pair set<a class="headerlink" href="#screening-pair-set" title="Link to this heading">#</a></h2>
+<p>For a <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateCollection</span></code></a> or a network derived from it, there are a lot of rates that will need to be screened, and some might have the same nuclei that need to be screened.  A “screening pair set” keeps track of all the unique pairs of reactants used for screening the rates.</p>
+<p>The screening pair set is a <code class="docutils literal notranslate"><span class="pre">set</span></code> of tuples that contain pairs of nuclei that need a screening factor computed.</p>
 <p>Here’s an example: let’s build a helium and carbon burning network.</p>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
@@ -706,68 +753,36 @@ the rates that screening factor applies to.</p>
 </div>
 </div>
 </div>
-<p>From the <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code>, we can get the screening map using the <a class="reference internal" href="pynucastro.screening.screening_util.html#pynucastro.screening.screening_util.get_screening_map" title="pynucastro.screening.screening_util.get_screening_map"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_screening_map</span></code></a> function:</p>
+<p>From the <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code>, we can get the screening pair set using the <a class="reference internal" href="pynucastro.screening.screening_util.html#pynucastro.screening.screening_util.get_screening_pair_set" title="pynucastro.screening.screening_util.get_screening_pair_set"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_screening_pair_set</span></code></a> function:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_screening_map</span>
-<span class="n">screen_map</span> <span class="o">=</span> <span class="n">get_screening_map</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">get_rates</span><span class="p">())</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_screening_pair_set</span>
+<span class="n">screening_pair_set</span> <span class="o">=</span> <span class="n">get_screening_pair_set</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">get_rates</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">screen_map</span><span class="p">:</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">screening_pair_set</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>screening for He4 + C12
-rates:
-  C12 + He4 ⟶ O16 + 𝛾
-
-screening for He4 + O16
-rates:
-  O16 + He4 ⟶ Ne20 + 𝛾
-
-screening for He4 + Ne20
-rates:
-  Ne20 + He4 ⟶ Mg24 + 𝛾
-  Ne20 + He4 ⟶ p + Na23
-  Ne20 + He4 ⟶ C12 + C12
-
-screening for p + Na23
-rates:
-  Na23 + p ⟶ Mg24 + 𝛾
-  Na23 + p ⟶ He4 + Ne20
-  Na23 + p ⟶ C12 + C12
-
-screening for C12 + C12
-rates:
-  C12 + C12 ⟶ p + Na23
-  C12 + C12 ⟶ He4 + Ne20
-
-screening for C12 + O16
-rates:
-  O16 + C12 ⟶ He4 + Mg24
-
-screening for He4 + Mg24
-rates:
-  Mg24 + He4 ⟶ C12 + O16
-
-screening for He4 + He4
-rates:
-  3 He4 ⟶ C12 + 𝛾
-
-screening for He4 + Be8
-rates:
-  3 He4 ⟶ C12 + 𝛾
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(He4, C12)
+(C12, C12)
+(He4, He4)
+(He4, O16)
+(He4, Ne20)
+(p, Na23)
+(C12, O16)
+(He4, Mg24)
+(He4, Be8)
 </pre></div>
 </div>
 </div>
 </div>
-<p>Here we see that the screening for some pairs of nuclei (like <span class="math notranslate nohighlight">\(p + {}^{23}\mathrm{Na}\)</span>) apply to several rates.</p>
 </section>
 <section id="screening-and-a-python-network">
 <h2>Screening and a python network<a class="headerlink" href="#screening-and-a-python-network" title="Link to this heading">#</a></h2>
@@ -903,8 +918,9 @@ rates:
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#screening-implementations">Screening implementations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#n-body-reaction">N-body Reaction</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-screening">Using screening</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#screening-map">Screening map</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#screening-pair-set">Screening pair set</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#screening-and-a-python-network">Screening and a python network</a></li>
 </ul>
   </nav></div>
