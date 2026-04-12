@@ -6,6 +6,7 @@ hydrodynamics codes
 
 import itertools
 import re
+import shutil
 from pathlib import Path
 
 from pynucastro.constants import constants
@@ -124,7 +125,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         amrex_powi_replacement = r"amrex::Math::powi<\2>(\1)"
         return re.sub(std_pow_pattern, amrex_powi_replacement, cxx_code)
 
-    def _write_network(self, odir=None):
+    def _write_network(self, odir=None, standalone_build=False):
         """Output the RHS, jacobian and ancillary files for the system
         of ODEs that this network describes, using the template files.
 
@@ -134,6 +135,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
         if odir is None:
             odir = Path.cwd()
+
         # create a .net file with the nuclei properties
         with open(Path(odir, "pynucastro.net"), "w") as of:
             for nuc in self.unique_nuclei:
@@ -154,6 +156,17 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             if self.disable_rate_params:
                 for r in self.disable_rate_params:
                     of.write(f"disable_{r.fname}    int     0\n")
+
+        # copy the standalone build files if requested
+        if standalone_build:
+            path = self.pynucastro_dir / "templates" / "amrexastro-cxx-microphysics" / "standalone"
+
+            for sf in path.glob("*"):
+                if sf.is_file():
+                    try:
+                        shutil.copy(sf, odir)
+                    except IOError:
+                        print(f"Error copying {sf}\n")
 
     def _get_nse_rate_pairs(self):
         """Return a list of RatePairs eligible for NSE_NET grouping.
