@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.9.0.post64+gbbb752dd6 documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.9.0.post65+g12a3b97d2 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=59598049"></script>
+    <script src="../../../_static/documentation_options.js?v=b3003804"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -677,15 +677,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_screening</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span>
 
-        <span class="c1"># ensure that baryon number is conserved</span>
-        <span class="n">test</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="nb">sum</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactant_count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))</span> <span class="o">==</span>
-            <span class="nb">sum</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">product_count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">))</span>
-        <span class="p">)</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">test</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">BaryonConservationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;baryon number not conserved in rate </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_rho</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -785,6 +776,10 @@
 
         <span class="n">reactant_As</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactant_count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">))</span>
         <span class="n">product_As</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">product_count</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">))</span>
+
+        <span class="c1"># ensure that baryon number is conserved</span>
+        <span class="k">if</span> <span class="n">reactant_As</span> <span class="o">!=</span> <span class="n">product_As</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">BaryonConservationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;baryon number not conserved in rate </span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="n">strong_test</span> <span class="o">=</span> <span class="n">reactant_Zs</span> <span class="o">==</span> <span class="n">product_Zs</span> <span class="ow">and</span> <span class="n">reactant_As</span> <span class="o">==</span> <span class="n">product_As</span>
 
