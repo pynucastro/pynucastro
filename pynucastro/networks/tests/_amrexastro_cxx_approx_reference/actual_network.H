@@ -132,6 +132,16 @@ namespace Rates
         NumRates = k_S32_to_Si28_He4_approx
     };
 
+    enum ScreenPairs :
+    std::uint8_t
+    {
+        k_He4_Mg24 = 1,
+        k_He4_Si28 = 2,
+        k_p_Al27 = 3,
+        k_p_P31 = 4,
+        NumScreenPairs = k_p_P31
+    };
+
     // rate names -- note: the rates are 1-based, not zero-based, so we pad
     // this vector with rate_names[0] = "" so the indices line up with the
     // NetworkRates enum

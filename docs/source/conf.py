@@ -57,7 +57,8 @@ bibtex_reference_style = 'author_year'
 linkcheck_ignore = [r"https://doi.org",
                     r"https://link.aps.org",
                     r"https://www-nds.iaea.org",
-                    r"https://www.sciencedirect.com"]
+                    r"https://www.sciencedirect.com",
+                    r"https://oxfordre.com/planetaryscience/view/10.1093/acrefore/9780190647926.001.0001/acrefore-9780190647926-e-145"]
 
 linkcheck_retries = 3
 linkcheck_timeout = 100
@@ -142,6 +143,7 @@ intersphinx_mapping = {
     'sympy': ('https://docs.sympy.org/latest/', None),
     'yt': ('https://yt-project.org/doc', None),
     'unyt': ('https://unyt.readthedocs.io/en/stable', None),
+    "scipy": ("https://docs.scipy.org/doc/scipy", None),
 }
 
 # Don't include the extra CSS from sphinx-prompt when using the copy button

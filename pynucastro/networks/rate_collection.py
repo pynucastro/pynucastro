@@ -162,15 +162,30 @@ class Composition(collections.UserDict):
     nuclei : list, tuple
         an iterable of Nucleus objects
     small : float
-        a floor for nuclei mass fractions, used as the default value
-
+        a floor for nuclei mass fractions, used as the default value.
+    init : str
+        Different modes to set up the initial composition. Valid choices
+        are [`uniform`, `random`, `solar`]. If "solar" is selected, assume
+        we work with metallicity, Z=0.02. If init=None, then no initial composition
+        will be set.
     """
 
-    def __init__(self, nuclei, small=1.e-16):
+    def __init__(self, nuclei, small=1.e-16, init=None):
         try:
             super().__init__({Nucleus.cast(k): small for k in nuclei})
         except TypeError:
             raise ValueError("must supply an iterable of Nucleus objects or strings") from None
+
+        if init == "uniform":
+            self.set_equal()
+        elif init == "random":
+            self.set_random()
+        elif init == "solar":
+            self.set_solar_like(Z=0.02)
+        elif init is None:
+            pass
+        else:
+            raise ValueError(f"{init} is not valid. Choose from ['uniform','random','solar']")
 
     @property
     def X(self):

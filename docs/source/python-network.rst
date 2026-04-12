@@ -16,7 +16,7 @@ where $Y_i$ is the molar fraction of species $i$.
    The functions output when the network is written are marked up with
    Numba JIT decorators for performance.
 
-Using the previous example:
+Consider the following example:
 
 .. code:: python
 
@@ -89,9 +89,20 @@ The following information is provided:
     It returns the array of $dY/dt$.
 
   * ``jacobian(t, Y, rho, T, screen_func=None``) : the Jacobian routine.  The arguments are the same
-    as for ``rhs``. 
+    as for ``rhs``.
 
     This returns the Jacobian array, $J_{i,j} = \partial \dot{Y}_i/\partial Y_j$.
 
-A ``PythonNetwork`` can be integrated using the SciPy `solve_ivp <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html>`_ methods.
+A ``PythonNetwork`` can be integrated using the SciPy
+`solve_ivp <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html>`_ methods.
 
+.. tip::
+
+   ``PythonNetwork`` provides the convenient method
+   :func:`integrate_network <pynucastro.networks.python_network.PythonNetwork.integrate_network>`,
+   which is a wrapper around :func:`scipy.integrate.solve_ivp` for integrating
+   the reaction network. The resulting time evolution of the mass fractions
+   can then be visualized using
+   :func:`plot_evolution <pynucastro.networks.python_network.PythonNetwork.plot_evolution>`,
+   which takes the solution returned by
+   :func:`integrate_network <pynucastro.networks.python_network.PythonNetwork.integrate_network>`.

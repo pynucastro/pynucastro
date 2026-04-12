@@ -80,9 +80,8 @@ class ModifiedRate(Rate):
         update_screening.
 
         """
-        # Tells if this rate is eligible for screening, and if it is
-        # then Rate.ion_screen is a 2-element (3 for 3-alpha) list of
-        # Nucleus objects for screening; otherwise it is set to none
+        # ion_screen holds the list of reactants eligible for screening
+        # empty list if there is only one eligible reactant
         self.ion_screen = []
         if self.update_screening:
             _reac = self.reactants
@@ -90,12 +89,12 @@ class ModifiedRate(Rate):
             _reac = self.original_rate.reactants
         nucz = [q for q in _reac if q.Z != 0]
         if len(nucz) > 1:
-            nucz.sort(key=lambda x: x.Z)
-            self.ion_screen = []
-            self.ion_screen.append(nucz[0])
-            self.ion_screen.append(nucz[1])
-            if len(nucz) == 3:
-                self.ion_screen.append(nucz[2])
+            nucz.sort(key=lambda x: (x.Z, x.A))
+            self.ion_screen = nucz.copy()
+
+        # Find screening_pairs
+        self.screening_pairs = []
+        self._set_screening_pairs()
 
     def log_eval(self, T, *, rho=None, comp=None,
                  screen_func=None):
@@ -188,7 +187,9 @@ class ModifiedRate(Rate):
 
         """
 
-        args = ["const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+        args = ["const tf_t& tfactors",
+                f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
+                f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
         fstring = "template <int do_T_derivatives>\n"
         fstring += f"{specifiers}\n"
@@ -196,7 +197,7 @@ class ModifiedRate(Rate):
 
         # first we need to get all of the rates that make this up
         fstring += f"    // {self.rid} (calls the underlying rate)\n\n"
-        fstring += f"    rate_{self.original_rate.fname}<do_T_derivatives>(tfactors, rate, drate_dT);\n"
+        fstring += f"    rate_{self.original_rate.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n"
 
         if not leave_open:
             fstring += "}\n\n"

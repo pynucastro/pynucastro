@@ -667,15 +667,20 @@ class ReacLibRate(Rate):
 
         """
 
+        # pylint: disable=duplicate-code
         if extra_args is None:
             extra_args = ()
 
-        args = ["const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+        args = ["const tf_t& tfactors",
+                f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
+                f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
         fstring += "template <int do_T_derivatives>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
+        # pylint: enable=duplicate-code
+
         fstring += "    rate = 0.0;\n"
         fstring += "    drate_dT = 0.0;\n\n"
         fstring += f"    {dtype} ln_set_rate{{0.0}};\n"
@@ -688,11 +693,15 @@ class ReacLibRate(Rate):
             for t in set_string.split("\n"):
                 fstring += "    " + t + "\n"
             fstring += "\n"
+            fstring += "    ln_set_rate += log_scor;\n\n"
 
             fstring += "    if constexpr (do_T_derivatives) {\n"
             dln_set_string_dT9 = s.dln_set_string_dT9_cxx(prefix="dln_set_rate_dT9", plus_equal=False)
             for t in dln_set_string_dT9.split("\n"):
                 fstring += "        " + t + "\n"
+            fstring += "\n"
+            fstring += "        dln_set_rate_dT9 += dlog_scor_dT * 1.0e9_rt;\n"
+
             fstring += "    }\n"
             fstring += "\n"
 

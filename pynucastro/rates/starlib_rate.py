@@ -89,3 +89,6 @@ class StarLibRate(TemperatureTabularRate):
             return False
 
         return self.reactants == other.reactants and self.products == other.products
+
+    def __hash__(self):
+        return hash(self.__repr__())
