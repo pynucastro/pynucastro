@@ -309,6 +309,7 @@ class ApproximateRate(Rate):
     def _set_screening(self):
         # the individual rates are screened -- we don't screen the combination of them
         self.ion_screen = []
+        self.screening_pairs = []
 
     def log_eval(self, T, *, rho=None, comp=None,
                  screen_func=None):

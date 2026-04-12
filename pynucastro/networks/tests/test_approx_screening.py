@@ -3,7 +3,7 @@
 import pytest
 
 import pynucastro as pyna
-from pynucastro.screening import get_screening_map
+from pynucastro.screening import get_screening_pair_set
 
 
 class TestApproxScreening:
@@ -20,7 +20,7 @@ class TestApproxScreening:
         return pynet
 
     def test_screening(self, pynet):
-        screening_map = get_screening_map(pynet.get_rates())
+        screening_pair_set = get_screening_pair_set(pynet.get_rates())
 
         # all of the reaclib rates that are 2 body (and not "n") should have
         # be in the screening map
@@ -30,5 +30,5 @@ class TestApproxScreening:
             if len(nucs) == 1:
                 continue
             assert nucs[0] in r.ion_screen and nucs[1] in r.ion_screen
-            r_scn = [q for q in screening_map if q.n1 in r.ion_screen and q.n2 in r.ion_screen]
+            r_scn = [q for q in screening_pair_set if q[0] in r.ion_screen and q[1] in r.ion_screen]
             assert len(r_scn) == 1
