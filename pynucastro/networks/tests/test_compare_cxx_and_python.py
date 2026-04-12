@@ -1,17 +1,15 @@
-# this creates the same network as SimpleCxxNetwork and PythonNetwork
-# and have them both compute dY/dt and compares to make sure that they
-# agree.  Note: screening is not considered.
+# this creates the same network as SimpleCxxNetwork and PythonNetwork.
+# we then compare the ydots from the C++ net, the python network
+# written to a module, and the python network evaluating as a
+# RateCollection.  Note: screening is not considered.
 
-import re
-import subprocess
 import sys
 from pathlib import Path
 
-import numpy as np
 import pytest
 from pytest import approx
 
-import pynucastro as pyna
+from pynucastro.networks.network_compare import NetworkCompare
 
 
 class TestNetworkCompare:
@@ -22,55 +20,68 @@ class TestNetworkCompare:
         lib = reaclib_library.linking_nuclei(nuc)
         return lib
 
-    @pytest.mark.skipif(sys.platform.startswith("win"), reason="Does not run on Windows")
-    def test_compare(self, lib):
-
+    @pytest.fixture(scope="class")
+    def nc(self, lib):
         test_path = Path("_test_compare/")
 
-        test_path.mkdir(parents=True, exist_ok=True)
+        nc = NetworkCompare(lib,
+                            include_simple_cxx=True,
+                            python_module_name="basic_cxx_py_compare.py",
+                            cxx_test_path=test_path)
+        return nc
 
-        # C++
+    @pytest.mark.skipif(sys.platform.startswith("win"), reason="Does not run on Windows")
+    def test_compare(self, nc):
 
-        cxx_net = pyna.SimpleCxxNetwork(libraries=[lib])
-        cxx_net.write_network(odir=test_path)
-
-        subprocess.run("make USE_SCREENING=FALSE", capture_output=False,
-                       shell=True, check=True, cwd=test_path)
-
-        cp = subprocess.run("./main", capture_output=True,
-                            shell=True, check=True, text=True, cwd=test_path)
-        stdout = cp.stdout
-
-        ydot_re = re.compile(r"(Ydot)\((\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
-                             re.IGNORECASE | re.DOTALL)
-
-        ydots_cxx = {}
-        for line in stdout.split("\n"):
-            if match := ydot_re.search(line.strip()):
-                ydots_cxx[match.group(2)] = float(match.group(6))
-
-        # python
-        pynet = pyna.PythonNetwork(libraries=[lib])
-        pynet.write_network("compare_net.py")
-
-        import compare_net as cn  # pylint: disable=import-outside-toplevel,import-error
-
+        # thermodynamic conditions
         rho = 2.e8
         T = 1.e9
-        comp = pyna.Composition(pynet.unique_nuclei)
-        comp.set_equal()
 
-        # compare to the RateCollection version
+        nc.evaluate(rho=rho, T=T)
 
-        ydots_py = pynet.evaluate_ydots(rho=rho, T=T, composition=comp)
+        # compare the simple C++ net to the python inline version
 
-        for k, v in ydots_cxx.items():
-            nuc = pyna.Nucleus(k)
-            assert v == approx(ydots_py[nuc], rel=1.e-11, abs=1.e-14)
+        for nuc in nc.ydots_cxx:
+            assert nc.ydots_cxx[nuc] == approx(nc.ydots_py_inline[nuc],
+                                               rel=1.e-11, abs=1.e-14)
 
-        # compare to the module version
+        # compare the simple C++ net to the python module version
 
-        Y = np.asarray(list(comp.get_molar().values()))
-        module_ydots = cn.rhs(0.0, Y, rho, T)
-        for n, k in enumerate(ydots_cxx):
-            assert ydots_cxx[k] == approx(module_ydots[n], rel=1.e-11, abs=1.e-14)
+        for nuc in nc.ydots_cxx:
+            assert nc.ydots_cxx[nuc] == approx(nc.ydots_py_module[nuc],
+                                               rel=1.e-11, abs=1.e-14)
+
+        # compare the python inline and module versions (shouldn't
+        # really be needed)
+
+        for nuc in nc.ydots_py_inline:
+            assert nc.ydots_py_inline[nuc] == approx(nc.ydots_py_module[nuc],
+                                                     rel=1.e-11, abs=1.e-14)
+
+    @pytest.mark.skipif(sys.platform.startswith("win"), reason="Does not run on Windows")
+    def test_compare2(self, nc):
+
+        # thermodynamic conditions
+        rho = 2.e7
+        T = 4.e9
+
+        nc.evaluate(rho=rho, T=T)
+
+        # compare the simple C++ net to the python inline version
+
+        for nuc in nc.ydots_cxx:
+            assert nc.ydots_cxx[nuc] == approx(nc.ydots_py_inline[nuc],
+                                               rel=1.e-11, abs=1.e-14)
+
+        # compare the simple C++ net to the python module version
+
+        for nuc in nc.ydots_cxx:
+            assert nc.ydots_cxx[nuc] == approx(nc.ydots_py_module[nuc],
+                                               rel=1.e-11, abs=1.e-14)
+
+        # compare the python inline and module versions (shouldn't
+        # really be needed)
+
+        for nuc in nc.ydots_py_inline:
+            assert nc.ydots_py_inline[nuc] == approx(nc.ydots_py_module[nuc],
+                                                     rel=1.e-11, abs=1.e-14)

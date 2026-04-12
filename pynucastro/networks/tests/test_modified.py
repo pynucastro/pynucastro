@@ -3,6 +3,8 @@
 # The second will create a proper ModifiedRate.  We test to make sure
 # that these give the same values for the rates.
 
+import copy
+
 import numpy as np
 import pytest
 from pytest import approx
@@ -12,42 +14,31 @@ import pynucastro as pyna
 
 class TestModifiedRate:
     @pytest.fixture(scope="class")
-    def original_net(self):
+    def original_net(self, reaclib_library):
         # create a network and use the rate .modify_products()
         # to change the endpoints
 
-        # note: because we are modifying a rate from ReacLibLibrary
-        # directly, we cannot use the reaclib_library fixture,
-        # since that change will propagate to the other test
+        lib = reaclib_library.linking_nuclei(["he4", "c12", "o16",
+                                              "ne20", "mg24"],
+                                             with_reverse=False)
 
-        rl = pyna.ReacLibLibrary()
-
-        lib = rl.linking_nuclei(["he4", "c12", "o16",
-                                 "ne20", "mg24"],
-                                with_reverse=False)
-
-        c12c12_other = rl.get_rate_by_name("c12(c12,n)mg23")
+        _c12c12_other = reaclib_library.get_rate_by_name("c12(c12,n)mg23")
+        c12c12_other = copy.deepcopy(_c12c12_other)
         c12c12_other.modify_products(["mg24"])
         lib.add_rate(c12c12_other)
 
         return pyna.PythonNetwork(libraries=[lib])
 
     @pytest.fixture(scope="class")
-    def new_net(self):
+    def new_net(self, reaclib_library):
         # create a network that uses a ModifiedRate
 
-        # note: because we are modifying a rate from ReacLibLibrary
-        # (in this case, the underlying rate in the ModifiedRate will
-        # get the "removed" label), we cannot use the reaclib_library
-        # fixture, since that change will propagate to the other test
+        lib = reaclib_library.linking_nuclei(["he4", "c12", "o16",
+                                              "ne20", "mg24"],
+                                             with_reverse=False)
 
-        rl = pyna.ReacLibLibrary()
-
-        lib = rl.linking_nuclei(["he4", "c12", "o16",
-                                 "ne20", "mg24"],
-                                with_reverse=False)
-
-        c12c12_other = rl.get_rate_by_name("c12(c12,n)mg23")
+        _c12c12_other = reaclib_library.get_rate_by_name("c12(c12,n)mg23")
+        c12c12_other = copy.deepcopy(_c12c12_other)
         c12c12_new = pyna.ModifiedRate(c12c12_other,
                                        new_products=["mg24"])
         lib.add_rate(c12c12_new)

@@ -183,15 +183,6 @@ class Rate:
         self._set_screening()
         self._set_print_representation()
 
-        # ensure that baryon number is conserved
-        test = (
-            sum(n.A * self.reactant_count(n) for n in set(self.reactants)) ==
-            sum(n.A * self.product_count(n) for n in set(self.products))
-        )
-
-        if not test:
-            raise BaryonConservationError(f"baryon number not conserved in rate {self}")
-
         self.rate_eval_needs_rho = False
         self.rate_eval_needs_comp = False
 
@@ -291,6 +282,10 @@ class Rate:
 
         reactant_As = sum(n.A * self.reactant_count(n) for n in set(self.reactants))
         product_As = sum(n.A * self.product_count(n) for n in set(self.products))
+
+        # ensure that baryon number is conserved
+        if reactant_As != product_As:
+            raise BaryonConservationError(f"baryon number not conserved in rate {self}")
 
         strong_test = reactant_Zs == product_Zs and reactant_As == product_As
 
