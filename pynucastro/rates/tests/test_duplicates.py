@@ -13,13 +13,11 @@ class TestDuplicates:
         return nuclei
 
     @pytest.fixture(scope="class")
-    def all_lib(self):
+    def all_lib(self, reaclib_library, tabular_library):
         # we need to be careful about mutating the reaclib_library or
         # tabular_library fixtures, so we'l create our own private
         # copies here
-        rl = pyna.ReacLibLibrary()
-        tl = pyna.TabularLibrary()
-        return rl + tl
+        return reaclib_library + tabular_library
 
     @pytest.fixture(scope="class")
     def pp_reaclib(self, reaclib_library):
