@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; pynucastro 2.9.0.post65+g12a3b97d2 documentation</title>
+    <title>Index &#8212; pynucastro 2.9.0.post66+gb43d10d71 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=b3003804"></script>
+    <script src="_static/documentation_options.js?v=d25f3d9b"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -250,6 +250,10 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/he-burning.html">Ratio of C/O from He burning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples/supernova-lightcurve.html">A Supernova Lightcurve</a></li>
 </ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing and Comparing Backends</a></li>
+</ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
@@ -275,6 +279,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.base_cxx_network.html">pynucastro.networks.base_cxx_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.fortran_network.html">pynucastro.networks.fortran_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.helper.html">pynucastro.networks.helper module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.network_compare.html">pynucastro.networks.network_compare module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.nse_network.html">pynucastro.networks.nse_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.python_network.html">pynucastro.networks.python_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.rate_collection.html">pynucastro.networks.rate_collection module</a></li>
@@ -692,14 +697,18 @@
         <li><a href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval">(pynucastro.rates.rate.Rate method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.eval_deriv">eval_deriv() (pynucastro.rates.reaclib_rate.ReacLibRate method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval_jacobian_term">eval_jacobian_term() (pynucastro.rates.rate.Rate method)</a>
 </li>
       <li><a href="pynucastro.eos.fermi_integrals.html#pynucastro.eos.fermi_integrals.FermiIntegral.evaluate">evaluate() (pynucastro.eos.fermi_integrals.FermiIntegral method)</a>
+
+      <ul>
+        <li><a href="pynucastro.networks.network_compare.html#pynucastro.networks.network_compare.NetworkCompare.evaluate">(pynucastro.networks.network_compare.NetworkCompare method)</a>
 </li>
+      </ul></li>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_activity">evaluate_activity() (pynucastro.networks.rate_collection.RateCollection method)</a>
 </li>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_energy_generation">evaluate_energy_generation() (pynucastro.networks.rate_collection.RateCollection method)</a>
@@ -1144,6 +1153,8 @@
 </li>
         <li><a href="pynucastro.networks.helper.html#module-pynucastro.networks.helper">pynucastro.networks.helper</a>
 </li>
+        <li><a href="pynucastro.networks.network_compare.html#module-pynucastro.networks.network_compare">pynucastro.networks.network_compare</a>
+</li>
         <li><a href="pynucastro.networks.nse_network.html#module-pynucastro.networks.nse_network">pynucastro.networks.nse_network</a>
 </li>
         <li><a href="pynucastro.networks.python_network.html#module-pynucastro.networks.python_network">pynucastro.networks.python_network</a>
@@ -1244,6 +1255,8 @@
       <li><a href="pynucastro.networks.helper.html#pynucastro.networks.helper.network_helper">network_helper() (in module pynucastro.networks.helper)</a>
 </li>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.network_overview">network_overview() (pynucastro.networks.rate_collection.RateCollection method)</a>
+</li>
+      <li><a href="pynucastro.networks.network_compare.html#pynucastro.networks.network_compare.NetworkCompare">NetworkCompare (class in pynucastro.networks.network_compare)</a>
 </li>
       <li><a href="pynucastro.neutrino_cooling.sneut5_mod.html#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents">NeutrinoComponents (class in pynucastro.neutrino_cooling.sneut5_mod)</a>
 </li>
@@ -1459,6 +1472,13 @@
 </li>
       </ul></li>
       <li>
+    pynucastro.networks.network_compare
+
+      <ul>
+        <li><a href="pynucastro.networks.network_compare.html#module-pynucastro.networks.network_compare">module</a>
+</li>
+      </ul></li>
+      <li>
     pynucastro.networks.nse_network
 
       <ul>
@@ -1486,6 +1506,8 @@
         <li><a href="pynucastro.networks.simple_cxx_network.html#module-pynucastro.networks.simple_cxx_network">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pynucastro.networks.sympy_network_support
 
@@ -1493,8 +1515,6 @@
         <li><a href="pynucastro.networks.sympy_network_support.html#module-pynucastro.networks.sympy_network_support">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pynucastro.neutrino_cooling
 

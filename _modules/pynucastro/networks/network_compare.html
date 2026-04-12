@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.nucdata.spin_table &#8212; pynucastro 2.9.0.post66+gb43d10d71 documentation</title>
+    <title>pynucastro.networks.network_compare &#8212; pynucastro 2.9.0.post66+gb43d10d71 documentation</title>
   
   
   
@@ -48,7 +48,7 @@
     <script src="../../../_static/copybutton.js?v=eaa7b67c"></script>
     <script src="../../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pynucastro/nucdata/spin_table';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pynucastro/networks/network_compare';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -418,7 +418,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2F_modules/pynucastro/nucdata/spin_table.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2F_modules/pynucastro/networks/network_compare.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -488,97 +488,174 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for pynucastro.nucdata.spin_table</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Classes and methods for dealing with nuclear spin data.&quot;&quot;&quot;</span>
+  <h1>Source code for pynucastro.networks.network_compare</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Helper functions for comparing the output of different backends</span>
+<span class="sd">(python, C++) for the same network.  This will build and run each net</span>
+<span class="sd">and return the ydots.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<div class="viewcode-block" id="SpinTable">
-<a class="viewcode-back" href="../../../pynucastro.nucdata.spin_table.html#pynucastro.nucdata.spin_table.SpinTable">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">SpinTable</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manage the nuclear spin data in a dictionary data structure</span>
-<span class="sd">    that maps nuclides to their number of nuclear spin states.</span>
-<span class="sd">    Therefore, after setting an SpinTable class in rates.py, we can</span>
-<span class="sd">    retrieve the spin states for a designated Nucleus class.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.python_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">PythonNetwork</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.rate_collection</span><span class="w"> </span><span class="kn">import</span> <span class="n">Composition</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.simple_cxx_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleCxxNetwork</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">chugunov_2007</span>
 
-<span class="sd">    The variable reliable switch between using all the values of the</span>
-<span class="sd">    tables, excluding the nuclei where only intervals are given and</span>
-<span class="sd">    the values measured by strong experimental arguments.</span>
 
+<div class="viewcode-block" id="NetworkCompare">
+<a class="viewcode-back" href="../../../pynucastro.networks.network_compare.html#pynucastro.networks.network_compare.NetworkCompare">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NetworkCompare</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple class to manage building a network with different</span>
+<span class="sd">    backends to facilitate comparisons.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lib : Library</span>
+<span class="sd">        pynucastro Library containing the rates</span>
+<span class="sd">    use_screening : bool</span>
+<span class="sd">        do we include screening in the comparison (Chugunov 2007)</span>
+<span class="sd">    include_simple_cxx : bool</span>
+<span class="sd">        do we build and evaluate a SimpleCxxNetwork?</span>
+<span class="sd">    python_module_name : str</span>
+<span class="sd">        the name of the module file to output the python net to</span>
+<span class="sd">    cxx_test_path : pathlib.Path</span>
+<span class="sd">        the Path to output the C++ source files and build in</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datafile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lib</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                 <span class="n">use_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">include_simple_cxx</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">python_module_name</span><span class="o">=</span><span class="s2">&quot;compare_net.py&quot;</span><span class="p">,</span>
+                 <span class="n">cxx_test_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_spin_states</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reliability_table</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lib</span> <span class="o">=</span> <span class="n">lib</span>
 
-        <span class="k">if</span> <span class="n">datafile</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">datafile</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">datafile</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">use_screening</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span> <span class="o">=</span> <span class="n">chugunov_2007</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">nucdata_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
-            <span class="n">datafile_name</span> <span class="o">=</span> <span class="s1">&#39;spins2020.txt&#39;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">datafile</span> <span class="o">=</span> <span class="n">nucdata_dir</span><span class="o">/</span><span class="s1">&#39;AtomicMassEvaluation&#39;</span><span class="o">/</span><span class="n">datafile_name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_read_table</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">include_simple_cxx</span> <span class="o">=</span> <span class="n">include_simple_cxx</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_read_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">python_module_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid python_module_name&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">python_module_name</span> <span class="o">=</span> <span class="n">python_module_name</span>
 
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">datafile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_simple_cxx</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cxx_test_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">cxx_test_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;_test_compare/&quot;</span><span class="p">)</span>
 
-            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()[</span><span class="mi">4</span><span class="p">:]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cxx_test_path</span> <span class="o">=</span> <span class="n">cxx_test_path</span>
 
-                <span class="n">A</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">spin_states</span><span class="p">,</span> <span class="n">experimental</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[:</span><span class="mi">5</span><span class="p">]</span>
-                <span class="n">A</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">spin_states</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">A</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">Z</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">spin_states</span><span class="p">)</span>
+            <span class="c1"># make the directory where the C++ output will go</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cxx_test_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">_spin_states</span><span class="p">[</span><span class="n">A</span><span class="p">,</span> <span class="n">Z</span><span class="p">]</span> <span class="o">=</span> <span class="n">spin_states</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_reliability_table</span><span class="p">[</span><span class="n">A</span><span class="p">,</span> <span class="n">Z</span><span class="p">]</span> <span class="o">=</span> <span class="n">experimental</span> <span class="o">==</span> <span class="s1">&#39;s&#39;</span>
+        <span class="c1"># we will always have the python version</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pynet</span> <span class="o">=</span> <span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">])</span>
 
-<div class="viewcode-block" id="SpinTable.get_spin_reliability">
-<a class="viewcode-back" href="../../../pynucastro.nucdata.spin_table.html#pynucastro.nucdata.spin_table.SpinTable.get_spin_reliability">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_spin_reliability</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return whether the spin for a nucleus is reliable.</span>
+        <span class="c1"># always use a uniform compostion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comp</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="o">.</span><span class="n">set_equal</span><span class="p">()</span>
+
+        <span class="c1"># storage for the ydots</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_inline</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_module</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ydots_cxx</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run_python_inline_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">2.e8</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the rates using the methods built into</span>
+<span class="sd">        RateCollection</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_inline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">evaluate_ydots</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span>
+                                                         <span class="n">composition</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="p">,</span>
+                                                         <span class="n">screen_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run_python_module_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">2.e8</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the python network to a module and import it, and</span>
+<span class="sd">        then evaluate the rates from the rate functions in the module.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">python_module_name</span><span class="p">)</span>
+
+        <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">spec_from_file_location</span><span class="p">(</span><span class="s2">&quot;cn&quot;</span><span class="p">,</span>
+                                                      <span class="bp">self</span><span class="o">.</span><span class="n">python_module_name</span><span class="p">)</span>
+        <span class="n">cn</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">module_from_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+        <span class="n">spec</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">exec_module</span><span class="p">(</span><span class="n">cn</span><span class="p">)</span>
+
+        <span class="c1"># we can now compute the ydots via cn.rhs()</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="n">_tmp</span> <span class="o">=</span> <span class="n">cn</span><span class="o">.</span><span class="n">rhs</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_module</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span> <span class="n">_tmp</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_module</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run_simple_cxx_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">2.e8</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Output the simple C++ network code, build it, run, and</span>
+<span class="sd">        parse the output to get the rates.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">cxx_net</span> <span class="o">=</span> <span class="n">SimpleCxxNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">lib</span><span class="p">])</span>
+        <span class="n">cxx_net</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="n">odir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cxx_test_path</span><span class="p">)</span>
+
+        <span class="c1"># build an run the simple C++ network</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">opts</span> <span class="o">=</span> <span class="s2">&quot;USE_SCREENING=TRUE&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">opts</span> <span class="o">=</span> <span class="s2">&quot;USE_SCREENING=FALSE&quot;</span>
+
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;make </span><span class="si">{</span><span class="n">opts</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                       <span class="n">capture_output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                       <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cxx_test_path</span><span class="p">)</span>
+
+        <span class="n">cp</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;./main </span><span class="si">{</span><span class="n">rho</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cxx_test_path</span><span class="p">)</span>
+        <span class="n">stdout</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">stdout</span>
+
+        <span class="c1"># the stdout includes lines of the form:</span>
+        <span class="c1">#    Ydot(X) = ...</span>
+        <span class="c1"># for each nucleus X.  This regex will capture</span>
+        <span class="c1"># the nucleus and the ydot value for each of these</span>
+        <span class="n">ydot_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(Ydot)\((\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)&quot;</span><span class="p">,</span>
+                             <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ydots_cxx</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">ydot_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ydots_cxx</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
+
+<div class="viewcode-block" id="NetworkCompare.evaluate">
+<a class="viewcode-back" href="../../../pynucastro.networks.network_compare.html#pynucastro.networks.network_compare.NetworkCompare.evaluate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">2.e8</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the ydots from all the backends we are</span>
+<span class="sd">        considering</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        a : int</span>
-<span class="sd">            Atomic weight</span>
-<span class="sd">        z : int</span>
-<span class="sd">            Atomic number</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        bool</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            density to evaluate rates at (CGS)</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature to evaluate rates at (K)</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reliability_table</span><span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">z</span><span class="p">]</span>
 
-        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;nuclear spin data for A=</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2"> and Z=</span><span class="si">{</span><span class="n">z</span><span class="si">}</span><span class="s2"> not available&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_python_inline_version</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_python_module_version</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="SpinTable.get_spin_states">
-<a class="viewcode-back" href="../../../pynucastro.nucdata.spin_table.html#pynucastro.nucdata.spin_table.SpinTable.get_spin_states">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_spin_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the spin for a nucleus.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        a : int</span>
-<span class="sd">            Atomic weight</span>
-<span class="sd">        z : int</span>
-<span class="sd">            Atomic number</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        float</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spin_states</span><span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">z</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;nuclear spin data for A=</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2"> and Z=</span><span class="si">{</span><span class="n">z</span><span class="si">}</span><span class="s2"> not available&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_simple_cxx</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_simple_cxx_version</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">)</span></div>
 </div>
 
 </pre></div>
