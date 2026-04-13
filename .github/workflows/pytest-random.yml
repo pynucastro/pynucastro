@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  test-random:
     runs-on: ubuntu-latest
 
     strategy:
