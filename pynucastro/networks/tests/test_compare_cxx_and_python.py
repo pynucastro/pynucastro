@@ -33,7 +33,8 @@ class TestNetworkCompare:
                             cxx_test_path=cxx_test_path)
         return nc
 
-    @pytest.mark.skipif(sys.platform.startswith("win"), reason="Does not run on Windows")
+    @pytest.mark.skipif(sys.platform == "darwin" or sys.platform.startswith("win"),
+                        reason="We do not build C++ on Mac or Windows")
     def test_compare(self, nc):
 
         # thermodynamic conditions
@@ -75,7 +76,8 @@ class TestNetworkCompare:
             assert nc.ydots_cxx[nuc] == approx(nc.ydots_amrex[nuc],
                                                rel=1.e-11, abs=1.e-14)
 
-    @pytest.mark.skipif(sys.platform.startswith("win"), reason="Does not run on Windows")
+    @pytest.mark.skipif(sys.platform == "darwin" or sys.platform.startswith("win"),
+                        reason="We do not build C++ on Mac or Windows")
     def test_compare2(self, nc):
 
         # thermodynamic conditions
