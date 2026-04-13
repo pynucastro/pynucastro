@@ -22,6 +22,12 @@ def reaclib_library():
 
 
 @pytest.fixture(scope="package")
+def starlib_library():
+    """Return the StarLibLibrary"""
+    return pyna.StarLibLibrary()
+
+
+@pytest.fixture(scope="package")
 def tabular_library():
     """Return the TabularLibrary"""
     return pyna.TabularLibrary()
