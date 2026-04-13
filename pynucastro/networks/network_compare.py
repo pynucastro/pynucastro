@@ -138,12 +138,13 @@ class NetworkCompare:
         else:
             opts = "SCREEN_METHOD=null"
 
-        subprocess.run(f"make -j 4 {opts}",
-                       capture_output=False,
+        # to reduce compilation time, we'll build in debug mode
+        subprocess.run(f"make DEBUG=TRUE -j 4 {opts}",
+                       capture_output=True,
                        shell=True, check=True,
                        cwd=self.amrex_test_path)
 
-        cp = subprocess.run(f"./main testing.density={rho} testing.temperature={T}",
+        cp = subprocess.run(f"./main3d.gnu.DEBUG.ex testing.density={rho} testing.temperature={T}",
                             capture_output=True,
                             shell=True, check=True, text=True,
                             cwd=self.amrex_test_path)
