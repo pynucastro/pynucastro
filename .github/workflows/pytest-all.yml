@@ -72,6 +72,11 @@ jobs:
           if [[ -n "${MICROPHYSICS_HOME}" ]]; then exit 1; fi
           cd ../..
 
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -y -qq
+          sudo apt-get -qq -y install curl cmake jq clang g++
+
       - name: Run tests with pytest
         run: pytest -v -s --nbval --cov=pynucastro --color=yes
 
