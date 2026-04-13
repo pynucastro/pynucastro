@@ -43,38 +43,13 @@ class TestNetworkCompare:
 
         nc.evaluate(rho=rho, T=T)
 
-        # compare the simple C++ net to the python inline version
+        # compare the simple C++, AMReX, and python module nets to the
+        # python inline version
 
-        for nuc in nc.ydots_cxx:
-            assert nc.ydots_cxx[nuc] == approx(nc.ydots_py_inline[nuc],
-                                               rel=1.e-11, abs=1.e-14)
-
-        # compare the AMReX C++ net to the python inline version
-
-        for nuc in nc.ydots_amrex:
-            assert nc.ydots_amrex[nuc] == approx(nc.ydots_py_inline[nuc],
-                                                 rel=1.e-11, abs=1.e-14)
-
-        # compare the python module version to the python inline version
-
-        for nuc in nc.ydots_py_module:
-            assert nc.ydots_py_module[nuc] == approx(nc.ydots_py_inline[nuc],
-                                                     rel=1.e-11, abs=1.e-14)
-
-        # other comparisons -- these should not be needed, since we already
-        # compared everything to the python inline version
-
-        # compare the simple C++ net to the python module version
-
-        for nuc in nc.ydots_cxx:
-            assert nc.ydots_cxx[nuc] == approx(nc.ydots_py_module[nuc],
-                                               rel=1.e-11, abs=1.e-14)
-
-        # compare the simple C++ net to the AMReX C++ net
-
-        for nuc in nc.ydots_cxx:
-            assert nc.ydots_cxx[nuc] == approx(nc.ydots_amrex[nuc],
-                                               rel=1.e-11, abs=1.e-14)
+        for other in [nc.ydots_cxx, nc.ydots_amrex, nc.ydots_py_module]:
+            for nuc in nc.ydots_py_inline:
+                assert other[nuc] == approx(nc.ydots_py_inline[nuc],
+                                            rel=1.e-11, abs=1.e-30)
 
     @pytest.mark.skipif(sys.platform == "darwin" or sys.platform.startswith("win"),
                         reason="We do not build C++ on Mac or Windows")
@@ -86,21 +61,10 @@ class TestNetworkCompare:
 
         nc.evaluate(rho=rho, T=T)
 
-        # compare the simple C++ net to the python inline version
+        # compare the simple C++, AMReX, and python module nets to the
+        # python inline version
 
-        for nuc in nc.ydots_cxx:
-            assert nc.ydots_cxx[nuc] == approx(nc.ydots_py_inline[nuc],
-                                               rel=1.e-11, abs=1.e-14)
-
-        # compare the simple C++ net to the python module version
-
-        for nuc in nc.ydots_cxx:
-            assert nc.ydots_cxx[nuc] == approx(nc.ydots_py_module[nuc],
-                                               rel=1.e-11, abs=1.e-14)
-
-        # compare the python inline and module versions (shouldn't
-        # really be needed)
-
-        for nuc in nc.ydots_py_inline:
-            assert nc.ydots_py_inline[nuc] == approx(nc.ydots_py_module[nuc],
-                                                     rel=1.e-11, abs=1.e-14)
+        for other in [nc.ydots_cxx, nc.ydots_amrex, nc.ydots_py_module]:
+            for nuc in nc.ydots_py_inline:
+                assert other[nuc] == approx(nc.ydots_py_inline[nuc],
+                                            rel=1.e-11, abs=1.e-30)
