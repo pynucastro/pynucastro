@@ -7,5 +7,6 @@ from pynucastro.networks.tests.conftest import full_library  # noqa: F401
 from pynucastro.networks.tests.conftest import langanke_library  # noqa: F401
 from pynucastro.networks.tests.conftest import oda_library  # noqa: F401
 from pynucastro.networks.tests.conftest import reaclib_library  # noqa: F401
+from pynucastro.networks.tests.conftest import starlib_library  # noqa: F401
 from pynucastro.networks.tests.conftest import suzuki_library  # noqa: F401
 from pynucastro.networks.tests.conftest import tabular_library  # noqa: F401

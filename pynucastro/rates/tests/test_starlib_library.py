@@ -6,8 +6,8 @@ import pynucastro as pyna
 
 class TestStarLibLibrary:
     @pytest.fixture(scope="class")
-    def sl_median(self):
-        return pyna.StarLibLibrary()
+    def sl_median(self, starlib_library):
+        return starlib_library
 
     @pytest.fixture(scope="class")
     def sl_sampled(self):
@@ -64,3 +64,10 @@ class TestStarLibLibrary:
         med_evals = [r.eval(T) for r in sl_median.get_rates()]
 
         assert np.array_equal(unsamp_evals, med_evals)
+
+    def test_pp_d(self, sl_median):
+        # p + p -> d and p + e + p -> d should be distinguishable
+        lib = sl_median.linking_nuclei(["p", "d"])
+        rr = lib.get_rates()
+        assert len(rr) == 2
+        assert rr[0] != rr[1]
