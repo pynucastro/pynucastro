@@ -1,3 +1,4 @@
+import copy
 import io
 
 import pytest
@@ -13,7 +14,8 @@ class TestStoichiometry:
     def lib(self, reaclib_library):
         nuclei = ["he4", "c12", "o16"]
         lib = reaclib_library.linking_nuclei(nuclei, with_reverse=False)
-        c12ag = lib.get_rate_by_name("c12(a,g)o16")
+        _c12ag = lib.get_rate_by_name("c12(a,g)o16")
+        c12ag = copy.deepcopy(_c12ag)
         c12ag.stoichiometry = {pyna.Nucleus("he4"): 10,
                                pyna.Nucleus("c12"): 20,
                                pyna.Nucleus("o16"): 40}
