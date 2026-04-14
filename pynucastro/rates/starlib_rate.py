@@ -88,7 +88,9 @@ class StarLibRate(TemperatureTabularRate):
         if not isinstance(other, StarLibRate):
             return False
 
-        return self.reactants == other.reactants and self.products == other.products
+        return (self.reactants == other.reactants and
+                self.products == other.products and
+                self.weak_type == other.weak_type)
 
     def __hash__(self):
         return hash(self.__repr__())
