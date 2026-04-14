@@ -3,19 +3,12 @@ import pynucastro as pyna
 
 class TestNseProtons:
 
-    def test_nse_protons(self, capsys):
+    def test_nse_protons(self, capsys, reaclib_library):
 
         nuc = ["p", "he4", "ti44", "v47", "cr48", "mn51",
                "fe52", "co55", "ni56"]
 
-        # note: we can't use the reaclib_library fixture we've
-        # setup in pytest because we will be modifying rates,
-        # which will be reflected in the fixture and affect
-        # later tests
-        rl = pyna.ReacLibLibrary()
-
-        lib = rl.linking_nuclei(nuc)
-
+        lib = reaclib_library.linking_nuclei(nuc)
         rc = pyna.RateCollection(libraries=lib, verbose=True)
 
         rc.make_nse_protons(51)
