@@ -151,6 +151,7 @@ and interactively exploring nuclear reaction networks.
    :caption: Developer Documentation
    :hidden:
 
+   rates-devel
    testing
 
 .. toctree::

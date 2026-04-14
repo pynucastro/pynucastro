@@ -193,8 +193,11 @@ class Rate:
         return hash(self.__repr__())
 
     def __copy__(self):
-        """the copy to be done via copy.copy().  This is mostly shallow
-        except for a few attributes to address some mutability issues"""
+        """The copy to be done via copy.copy().  This is mostly
+        shallow except for a few attributes to address some mutability
+        issues
+
+        """
 
         cls = type(self)
         new = cls.__new__(cls)

@@ -4,6 +4,7 @@ rates that together make up a network.
 """
 
 import collections
+import copy
 import functools
 import math
 import warnings
@@ -1255,12 +1256,12 @@ class RateCollection:
 
         if isinstance(rates, Rate):
             if rates not in self.rates:
-                self.rates.append(rates)
+                self.rates.append(copy.copy(rates))
 
         else:
             for r in rates:
                 if r not in self.rates:
-                    self.rates.append(r)
+                    self.rates.append(copy.copy(r))
 
         self._build_collection()
 
