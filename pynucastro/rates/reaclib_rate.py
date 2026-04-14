@@ -316,9 +316,8 @@ class ReacLibRate(Rate):
             return False
 
         x = ((self.chapter == other.chapter) and
-             (self.products == other.products) and \
+             (self.products == other.products) and
              (self.reactants == other.reactants))
-
         if not x:
             return x
 
