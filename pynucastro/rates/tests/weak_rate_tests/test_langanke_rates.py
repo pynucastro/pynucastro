@@ -4,7 +4,7 @@ import sys
 import warnings
 
 import pytest
-from pytest import approx, raises
+from pytest import approx
 
 import pynucastro as pyna
 

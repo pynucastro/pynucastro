@@ -1,6 +1,5 @@
 # unit tests for rates
 
-import sys
 import warnings
 
 import pytest
