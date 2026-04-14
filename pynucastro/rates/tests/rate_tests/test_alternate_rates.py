@@ -1,4 +1,4 @@
-# unit tests for rates
+# unit tests for the alternate_rates module
 
 from pytest import approx
 

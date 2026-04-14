@@ -1,4 +1,4 @@
-# unit tests for rates
+# unit tests for approximate rates
 
 import pytest
 from pytest import approx
