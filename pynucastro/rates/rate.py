@@ -193,7 +193,7 @@ class Rate:
         return hash(self.__repr__())
 
     def __copy__(self):
-        """The copy to be done via copy.copy().  This is mostly
+        """Make a copy of the rate via copy.copy().  This is mostly
         shallow except for a few attributes to address some mutability
         issues
 
