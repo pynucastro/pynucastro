@@ -171,6 +171,7 @@ class Library:
             rates = []
             for r in self._rates.values():
                 rates.append(copy.copy(r))
+            return rates
 
         return list(self._rates.values())
 
