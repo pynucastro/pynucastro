@@ -723,7 +723,7 @@ class RateCollection:
 
         self.verbose = verbose
 
-        # grop all the rates into a single library and then we will
+        # group all the rates into a single library and then we will
         # copy the rates from that library to the network
 
         if rate_files:
