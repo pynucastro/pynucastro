@@ -170,7 +170,7 @@ class Library:
         if as_copies:
             rates = []
             for r in self._rates.values():
-                rates.append(copy.deepcopy(r))
+                rates.append(copy.copy(r))
             return rates
 
         return list(self._rates.values())

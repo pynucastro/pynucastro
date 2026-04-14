@@ -192,6 +192,24 @@ class Rate:
     def __hash__(self):
         return hash(self.__repr__())
 
+    def __copy__(self):
+        """the copy to be done via copy.copy().  This is mostly shallow
+        except for a few attributes to address some mutability issues"""
+
+        cls = type(self)
+        new = cls.__new__(cls)
+
+        # shallow copy everything
+        new.__dict__ = self.__dict__.copy()
+
+        # override some shallow copies
+        new.reactants = list(self.reactants)
+        new.products = list(self.products)
+        if self.stoichiometry:
+            new.stoichiometry = dict(self.stoichiometry)
+
+        return new
+
     def __eq__(self, other):
         """Determine whether two Rate objects are equal.  They are
         equal if they contain identical reactants and products
