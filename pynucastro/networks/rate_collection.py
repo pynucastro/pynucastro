@@ -715,7 +715,6 @@ class RateCollection:
                  do_screening=True,
                  verbose=False):
 
-        self.rates = []
         combined_library = Library()
 
         self.inert_nuclei = Nucleus.cast_list(inert_nuclei, allow_None=True)
@@ -723,6 +722,9 @@ class RateCollection:
         self.do_screening = do_screening
 
         self.verbose = verbose
+
+        # grop all the rates into a single library and then we will
+        # copy the rates from that library to the network
 
         if rate_files:
             if isinstance(rate_files, str):
@@ -732,9 +734,8 @@ class RateCollection:
         if rates:
             if isinstance(rates, Rate):
                 rates = [rates]
-            for r in rates:
-                if not isinstance(r, Rate):
-                    raise ValueError('Expected Rate object or list of Rate objects passed as the rates argument.')
+            if not all(isinstance(r, Rate) for r in rates):
+                raise ValueError('Expected Rate object or list of Rate objects passed as the rates argument.')
             rlib = Library(rates=rates)
             combined_library += rlib
 
@@ -744,10 +745,9 @@ class RateCollection:
             for lib in libraries:
                 if not isinstance(lib, Library):
                     raise ValueError('Expected Library object or list of Library objects passed as the libraries argument.')
-            for lib in libraries:
                 combined_library += lib
 
-        self.rates = self.rates + combined_library.get_rates()
+        self.rates = combined_library.get_rates(as_copies=True)
 
         self._build_collection()
 

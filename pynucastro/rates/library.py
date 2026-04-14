@@ -5,6 +5,7 @@ multiple sources.
 
 import bz2
 import collections
+import copy
 import io
 import re
 from itertools import islice
@@ -150,14 +151,27 @@ class Library:
             else:
                 raise TypeError("rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.id")
 
-    def get_rates(self):
+    def get_rates(self, *, as_copies=False):
         """Return a list of the rates in this library.
+
+        Parameters
+        ----------
+        as_copies : bool
+            Do we return a copy of the rate?  This is useful since it
+            will no longer be a reference to a rate in the underlying
+            library.
 
         Returns
         -------
         list
 
         """
+
+        if as_copies:
+            rates = []
+            for r in self._rates.values():
+                rates.append(copy.copy(r))
+
         return list(self._rates.values())
 
     def get_rate(self, rate_id):
