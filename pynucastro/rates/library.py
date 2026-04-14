@@ -241,6 +241,38 @@ class Library:
         for rate in ratelist:
             self.add_rate(rate)
 
+    def swap_rate(self, rate_old, rate_new):
+        """Remove rate_old and add rate_new.  Note, the new rate
+        will not be in the same order in the library.
+
+        Parameters
+        ----------
+        rate_old : Rate
+            The rate to remove
+        rate_new : Rate
+            The rate to add
+
+        """
+
+        if not isinstance(rate_old, Rate):
+            raise TypeError(f"invalid Rate object {rate_old}")
+        rid_old = rate_old.id
+
+        if not isinstance(rate_new, Rate):
+            raise TypeError(f"invalid Rate object {rate_new}")
+        rid_new = rate_new.id
+
+        # the old rate should be in the library and the new rate
+        # should not be
+        if rid_old not in self._rates:
+            raise ValueError(f"Rate {rate_old} is not the Library")
+
+        if rid_new in self._rates:
+            raise ValueError(f"Rate {rate_new} is already in the Library")
+
+        del self._rates[rid_old]
+        self._rates[rid_new] = rate_new
+
     def get_rate_by_name(self, name):
         """Given a string representing a rate in the form 'A(x,y)B'
         (or a list of strings for multiple rates) return the Rate
