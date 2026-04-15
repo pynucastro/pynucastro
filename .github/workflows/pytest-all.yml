@@ -49,6 +49,34 @@ jobs:
           pip list --format=freeze
           echo '::endgroup::'
 
+      - name: Get AMReX
+        run: |
+          mkdir external
+          cd external
+          git clone https://github.com/AMReX-Codes/amrex.git
+          cd amrex
+          git checkout development
+          echo 'AMREX_HOME=$(GITHUB_WORKSPACE)/external/amrex' >> $GITHUB_ENV
+          echo $AMREX_HOME
+          if [[ -n "${AMREX_HOME}" ]]; then exit 1; fi
+          cd ../..
+
+      - name: Get Microphysics
+        run: |
+          cd external
+          git clone https://github.com/AMReX-Astro/Microphysics.git
+          cd Microphysics
+          git checkout development
+          echo 'MICROPHYSICS_HOME=$(GITHUB_WORKSPACE)/external/Microphysics' >> $GITHUB_ENV
+          echo $MICROPHYSICS_HOME
+          if [[ -n "${MICROPHYSICS_HOME}" ]]; then exit 1; fi
+          cd ../..
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -y -qq
+          sudo apt-get -qq -y install curl cmake jq clang g++
+
       - name: Run tests with pytest
         run: pytest -v -s --nbval --cov=pynucastro --color=yes
 
