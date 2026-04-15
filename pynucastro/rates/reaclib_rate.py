@@ -315,10 +315,12 @@ class ReacLibRate(Rate):
         if not isinstance(other, ReacLibRate):
             return False
 
-        x = (self.chapter == other.chapter) and (self.products == other.products) and \
-                (self.reactants == other.reactants)
+        x = ((self.chapter == other.chapter) and
+             (self.products == other.products) and
+             (self.reactants == other.reactants))
         if not x:
             return x
+
         x = len(self.sets) == len(other.sets)
         if not x:
             return x
