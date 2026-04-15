@@ -56,6 +56,20 @@ and source files.  These are:
   factors, compute the tabular rates, and build the ydot and Jacobian,
   and include any plasma neutrino losses.
 
+* ``derived_rates.H``
+
+  This computes any rates that are derived via detailed balance,
+  with a function provided for each rate.
+
+* ``interp_tools.H``
+
+  This contains interpolation functions used by tabulated rates.
+
+* ``partition_functions.H``
+
+  This holds the partition function data (inline) and the functions
+  to interpolate it.
+
 * ``reaclib_rates.H``
 
   This computes the ReacLib reaction rates, with a function provided
@@ -63,9 +77,8 @@ and source files.  These are:
 
 * ``table_rates.H``
 
-  This manages reading in tabular rates and interpolating the data.
-  It has function tags to define how many tables
-  there are as well as declare the memory for storing the tables.
+  This manages ``TabularRate`` rates and interpolating the
+  data.  The rate data itself is stored inline in the header file.
 
   .. warning::
 
@@ -74,16 +87,16 @@ and source files.  These are:
      from the edge of the table.  See :ref:`tabulated_rate_sources` for
      the bounds of the data.
 
+* ``temperature_table_rates``
+
+  This manages ``TemperatureTabularRate`` rates and interpolating
+  their data.  The rate data itself is stored inline in the header
+  file.
+
 * ``tfactors.H``
 
   This stores the ``struct`` that holds the different temperature factors
   used in the reaction rates.
-
-There are 2 C++ files that are essentially used to define the global arrays.
-
-* ``actual_network_data.cpp``
-
-* ``table_rates_data.cpp``
 
 Finally, there are a few meta-data files:
 
@@ -101,7 +114,34 @@ Finally, there are a few meta-data files:
 
   This lists the runtime parameters that affect the network.
 
-To test the library, you can use the unit tests in ``Microphysics/unit_test/``, for example,
-``test_react``.
+Using the network
+=================
 
+To use the network, there are 2 options.
 
+* You can use the unit tests in ``Microphysics/unit_test/``, for example,
+  ``burn_cell`` will do a single-zone burn.
+
+* You can add the argument ``standalone_build=True`` to the
+  ``write_network()`` function to output a basic ``main.cpp`` and ``GNUmakefile``.
+  This still requires a copy of ``Microphysics``, and expect the environment
+  variable ``MICROPHYSICS_HOME`` to point to its root directory.  You can then
+  build simply as:
+
+  .. prompt:: bash
+
+     make
+
+  and run as:
+
+  .. prompt:: bash
+
+     ./main3d.gnu.ex testing.density=1.e6 testing.temperature=1.e9
+
+  where the density and temperature are set via runtime parameters as shown.
+  To control the screening, use the ``SCREEN_METHOD`` build parameter from
+  Microphysics.  For example, to disable screening, we can do:
+
+  .. prompt:: bash
+
+     make SCREEN_METHOD=null

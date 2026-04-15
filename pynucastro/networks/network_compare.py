@@ -10,6 +10,7 @@ from pathlib import Path
 
 import numpy as np
 
+from pynucastro.networks.amrexastro_cxx_network import AmrexAstroCxxNetwork
 from pynucastro.networks.python_network import PythonNetwork
 from pynucastro.networks.rate_collection import Composition
 from pynucastro.networks.simple_cxx_network import SimpleCxxNetwork
@@ -27,18 +28,24 @@ class NetworkCompare:
         pynucastro Library containing the rates
     use_screening : bool
         do we include screening in the comparison (Chugunov 2007)
+    include_amrex : bool
+        do we build and evaluate an AmrexAstroCxxNetwork?
     include_simple_cxx : bool
         do we build and evaluate a SimpleCxxNetwork?
     python_module_name : str
         the name of the module file to output the python net to
+    amrex_test_path : pathlib.Path
+        the Path to output the AMReX C++ source files and build in
     cxx_test_path : pathlib.Path
         the Path to output the C++ source files and build in
     """
 
     def __init__(self, lib, *,
                  use_screening=False,
+                 include_amrex=False,
                  include_simple_cxx=True,
                  python_module_name="compare_net.py",
+                 amrex_test_path=None,
                  cxx_test_path=None):
 
         self.lib = lib
@@ -48,11 +55,21 @@ class NetworkCompare:
         else:
             self.screen_func = None
 
+        self.include_amrex = include_amrex
         self.include_simple_cxx = include_simple_cxx
 
         if not python_module_name.endswith(".py"):
             raise ValueError("invalid python_module_name")
         self.python_module_name = python_module_name
+
+        if self.include_amrex:
+            if amrex_test_path is None:
+                amrex_test_path = Path("_test_amrex_compare/")
+
+            self.amrex_test_path = amrex_test_path
+
+            # make the directory where the C++ output will go
+            self.amrex_test_path.mkdir(parents=True, exist_ok=True)
 
         if self.include_simple_cxx:
             if cxx_test_path is None:
@@ -73,6 +90,7 @@ class NetworkCompare:
         # storage for the ydots
         self.ydots_py_inline = None
         self.ydots_py_module = None
+        self.ydots_amrex = None
         self.ydots_cxx = None
 
     def _run_python_inline_version(self, rho=2.e8, T=1.e9):
@@ -105,6 +123,45 @@ class NetworkCompare:
         for n, y in zip(self.pynet.unique_nuclei, _tmp):
             self.ydots_py_module[n] = y
 
+    def _run_amrex_version(self, rho=2.e8, T=1.e9):
+        """Output the AMReX C++ network code, build it, run, and
+        parse the output to get the rates.
+
+        """
+
+        cxx_net = AmrexAstroCxxNetwork(libraries=[self.lib])
+        cxx_net.write_network(odir=self.amrex_test_path, standalone_build=True)
+
+        # build an run the simple C++ network
+        if self.screen_func is not None:
+            opts = "SCREEN_METHOD=chugunov2007"
+        else:
+            opts = "SCREEN_METHOD=null"
+
+        # to reduce compilation time, we'll build in debug mode
+        subprocess.run(f"make DEBUG=TRUE -j 4 {opts}",
+                       capture_output=True,
+                       shell=True, check=True,
+                       cwd=self.amrex_test_path)
+
+        cp = subprocess.run(f"./main3d.gnu.DEBUG.ex testing.density={rho} testing.temperature={T}",
+                            capture_output=True,
+                            shell=True, check=True, text=True,
+                            cwd=self.amrex_test_path)
+        stdout = cp.stdout
+
+        # the stdout includes lines of the form:
+        #    Ydot(X) = ...
+        # for each nucleus X.  This regex will capture
+        # the nucleus and the ydot value for each of these
+        ydot_re = re.compile(r"(Ydot)\((\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
+                             re.IGNORECASE | re.DOTALL)
+
+        self.ydots_amrex = {}
+        for line in stdout.split("\n"):
+            if match := ydot_re.search(line.strip()):
+                self.ydots_amrex[Nucleus(match.group(2))] = float(match.group(6))
+
     def _run_simple_cxx_version(self, rho=2.e8, T=1.e9):
         """Output the simple C++ network code, build it, run, and
         parse the output to get the rates.
@@ -120,7 +177,7 @@ class NetworkCompare:
         else:
             opts = "USE_SCREENING=FALSE"
 
-        subprocess.run(f"make {opts}",
+        subprocess.run(f"make -j 4 {opts}",
                        capture_output=False,
                        shell=True, check=True,
                        cwd=self.cxx_test_path)
@@ -158,6 +215,9 @@ class NetworkCompare:
 
         self._run_python_inline_version(rho=rho, T=T)
         self._run_python_module_version(rho=rho, T=T)
+
+        if self.include_amrex:
+            self._run_amrex_version(rho=rho, T=T)
 
         if self.include_simple_cxx:
             self._run_simple_cxx_version(rho=rho, T=T)
