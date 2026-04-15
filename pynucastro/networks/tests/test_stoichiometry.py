@@ -21,8 +21,8 @@ class TestStoichiometry:
                                pyna.Nucleus("o16"): 40}
         # reset the rate to our new version.  Since it is a copy
         # it won't be referenced to reaclib_library
-        del lib._rates[_c12ag.id]  # pylint: disable=protected-access
-        lib._rates[c12ag.id] = c12ag  # pylint: disable=protected-access
+        lib.remove_rate(_c12ag)
+        lib.add_rate(c12ag)
         return lib
 
     def test_python_ydot(self, lib):
