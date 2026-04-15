@@ -1,4 +1,5 @@
-# unit tests for rates
+# unit tests for different types of rates
+
 import copy
 import math
 

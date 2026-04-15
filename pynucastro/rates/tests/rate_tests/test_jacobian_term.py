@@ -1,4 +1,5 @@
-# unit tests for rates
+# unit tests for the Jacobian term evaluated by a rate object
+
 import pytest
 from pytest import approx
 
