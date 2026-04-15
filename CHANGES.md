@@ -2,6 +2,22 @@
 
 ## 2.10.0
 
+  * Add a new helper function that allows for testing of python and
+    C++ network results in a single unit test (#1291)
+
+  * Move the baryon conservation check to `_set_print_representation`.
+    This will catch more issues. (#1295)
+
+  * pytest suite optimizations (#1299)
+
+  * Some optimizations of the `nucleus` module (#1297)
+
+  * Optimizations of the Fermi integrals (#1298)
+
+  * Add a general N-body screening prescription (#1260)
+
+  * Optimizations to reading `StarLibLibrary` (#1294)
+
   * `PythonNetwork` : add a method to integrate the network (#1279),
     also store the weak rate tables directly in the module (#1282)
 
