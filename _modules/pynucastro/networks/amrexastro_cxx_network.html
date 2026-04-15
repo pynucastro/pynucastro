@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.amrexastro_cxx_network &#8212; pynucastro 2.9.0.post68+g5b30fa4f3 documentation</title>
+    <title>pynucastro.networks.amrexastro_cxx_network &#8212; pynucastro 2.9.0.post69+g10d2faed0 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=f1ea5391"></script>
+    <script src="../../../_static/documentation_options.js?v=3a50e487"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -502,6 +502,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
@@ -622,7 +623,7 @@
         <span class="n">amrex_powi_replacement</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;amrex::Math::powi&lt;\2&gt;(\1)&quot;</span>
         <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">std_pow_pattern</span><span class="p">,</span> <span class="n">amrex_powi_replacement</span><span class="p">,</span> <span class="n">cxx_code</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">odir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">odir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">standalone_build</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Output the RHS, jacobian and ancillary files for the system</span>
 <span class="sd">        of ODEs that this network describes, using the template files.</span>
 
@@ -632,6 +633,7 @@
 
         <span class="k">if</span> <span class="n">odir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">odir</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
+
         <span class="c1"># create a .net file with the nuclei properties</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">odir</span><span class="p">,</span> <span class="s2">&quot;pynucastro.net&quot;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">of</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
@@ -652,6 +654,17 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_rate_params</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_rate_params</span><span class="p">:</span>
                     <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;disable_</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">    int     0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># copy the standalone build files if requested</span>
+        <span class="k">if</span> <span class="n">standalone_build</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynucastro_dir</span> <span class="o">/</span> <span class="s2">&quot;templates&quot;</span> <span class="o">/</span> <span class="s2">&quot;amrexastro-cxx-microphysics&quot;</span> <span class="o">/</span> <span class="s2">&quot;standalone&quot;</span>
+
+            <span class="k">for</span> <span class="n">sf</span> <span class="ow">in</span> <span class="n">path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">sf</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">sf</span><span class="p">,</span> <span class="n">odir</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error copying </span><span class="si">{</span><span class="n">sf</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_nse_rate_pairs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of RatePairs eligible for NSE_NET grouping.</span>

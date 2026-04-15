@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.network_compare &#8212; pynucastro 2.9.0.post68+g5b30fa4f3 documentation</title>
+    <title>pynucastro.networks.network_compare &#8212; pynucastro 2.9.0.post69+g10d2faed0 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=f1ea5391"></script>
+    <script src="../../../_static/documentation_options.js?v=3a50e487"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -506,6 +506,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.amrexastro_cxx_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">AmrexAstroCxxNetwork</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.python_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">PythonNetwork</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.rate_collection</span><span class="w"> </span><span class="kn">import</span> <span class="n">Composition</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.simple_cxx_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleCxxNetwork</span>
@@ -525,18 +526,24 @@
 <span class="sd">        pynucastro Library containing the rates</span>
 <span class="sd">    use_screening : bool</span>
 <span class="sd">        do we include screening in the comparison (Chugunov 2007)</span>
+<span class="sd">    include_amrex : bool</span>
+<span class="sd">        do we build and evaluate an AmrexAstroCxxNetwork?</span>
 <span class="sd">    include_simple_cxx : bool</span>
 <span class="sd">        do we build and evaluate a SimpleCxxNetwork?</span>
 <span class="sd">    python_module_name : str</span>
 <span class="sd">        the name of the module file to output the python net to</span>
+<span class="sd">    amrex_test_path : pathlib.Path</span>
+<span class="sd">        the Path to output the AMReX C++ source files and build in</span>
 <span class="sd">    cxx_test_path : pathlib.Path</span>
 <span class="sd">        the Path to output the C++ source files and build in</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lib</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                  <span class="n">use_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">include_amrex</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">include_simple_cxx</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                  <span class="n">python_module_name</span><span class="o">=</span><span class="s2">&quot;compare_net.py&quot;</span><span class="p">,</span>
+                 <span class="n">amrex_test_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">cxx_test_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">lib</span> <span class="o">=</span> <span class="n">lib</span>
@@ -546,11 +553,21 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span> <span class="o">=</span> <span class="kc">None</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">include_amrex</span> <span class="o">=</span> <span class="n">include_amrex</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">include_simple_cxx</span> <span class="o">=</span> <span class="n">include_simple_cxx</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">python_module_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid python_module_name&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">python_module_name</span> <span class="o">=</span> <span class="n">python_module_name</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_amrex</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">amrex_test_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">amrex_test_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;_test_amrex_compare/&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">amrex_test_path</span> <span class="o">=</span> <span class="n">amrex_test_path</span>
+
+            <span class="c1"># make the directory where the C++ output will go</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">amrex_test_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_simple_cxx</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">cxx_test_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -571,6 +588,7 @@
         <span class="c1"># storage for the ydots</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_inline</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_module</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ydots_amrex</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ydots_cxx</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_run_python_inline_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">2.e8</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">):</span>
@@ -603,6 +621,45 @@
         <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span> <span class="n">_tmp</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_module</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run_amrex_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">2.e8</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Output the AMReX C++ network code, build it, run, and</span>
+<span class="sd">        parse the output to get the rates.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">cxx_net</span> <span class="o">=</span> <span class="n">AmrexAstroCxxNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">lib</span><span class="p">])</span>
+        <span class="n">cxx_net</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="n">odir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">amrex_test_path</span><span class="p">,</span> <span class="n">standalone_build</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># build an run the simple C++ network</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">opts</span> <span class="o">=</span> <span class="s2">&quot;SCREEN_METHOD=chugunov2007&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">opts</span> <span class="o">=</span> <span class="s2">&quot;SCREEN_METHOD=null&quot;</span>
+
+        <span class="c1"># to reduce compilation time, we&#39;ll build in debug mode</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;make DEBUG=TRUE -j 4 </span><span class="si">{</span><span class="n">opts</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                       <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">amrex_test_path</span><span class="p">)</span>
+
+        <span class="n">cp</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;./main3d.gnu.DEBUG.ex testing.density=</span><span class="si">{</span><span class="n">rho</span><span class="si">}</span><span class="s2"> testing.temperature=</span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">amrex_test_path</span><span class="p">)</span>
+        <span class="n">stdout</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">stdout</span>
+
+        <span class="c1"># the stdout includes lines of the form:</span>
+        <span class="c1">#    Ydot(X) = ...</span>
+        <span class="c1"># for each nucleus X.  This regex will capture</span>
+        <span class="c1"># the nucleus and the ydot value for each of these</span>
+        <span class="n">ydot_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(Ydot)\((\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)&quot;</span><span class="p">,</span>
+                             <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ydots_amrex</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">ydot_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ydots_amrex</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_run_simple_cxx_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">2.e8</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Output the simple C++ network code, build it, run, and</span>
 <span class="sd">        parse the output to get the rates.</span>
@@ -618,7 +675,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">opts</span> <span class="o">=</span> <span class="s2">&quot;USE_SCREENING=FALSE&quot;</span>
 
-        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;make </span><span class="si">{</span><span class="n">opts</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;make -j 4 </span><span class="si">{</span><span class="n">opts</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                        <span class="n">capture_output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                        <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                        <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cxx_test_path</span><span class="p">)</span>
@@ -658,6 +715,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_python_inline_version</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_python_module_version</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_amrex</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_amrex_version</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_simple_cxx</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_run_simple_cxx_version</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">)</span></div>

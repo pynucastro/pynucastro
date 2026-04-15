@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>AMReX Astro Microphysics Networks &#8212; pynucastro 2.9.0.post68+g5b30fa4f3 documentation</title>
+    <title>AMReX Astro Microphysics Networks &#8212; pynucastro 2.9.0.post69+g10d2faed0 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=f1ea5391"></script>
+    <script src="_static/documentation_options.js?v=3a50e487"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -551,7 +551,9 @@
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
 </button>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -567,6 +569,14 @@
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-network">Using the network</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -622,14 +632,24 @@ Jacobian terms.  Function tags are used to compute the screening
 factors, compute the tabular rates, and build the ydot and Jacobian,
 and include any plasma neutrino losses.</p>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">derived_rates.H</span></code></p>
+<p>This computes any rates that are derived via detailed balance,
+with a function provided for each rate.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">interp_tools.H</span></code></p>
+<p>This contains interpolation functions used by tabulated rates.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">partition_functions.H</span></code></p>
+<p>This holds the partition function data (inline) and the functions
+to interpolate it.</p>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">reaclib_rates.H</span></code></p>
 <p>This computes the ReacLib reaction rates, with a function provided
 for each rate.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">table_rates.H</span></code></p>
-<p>This manages reading in tabular rates and interpolating the data.
-It has function tags to define how many tables
-there are as well as declare the memory for storing the tables.</p>
+<p>This manages <code class="docutils literal notranslate"><span class="pre">TabularRate</span></code> rates and interpolating the
+data.  The rate data itself is stored inline in the header file.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>We do not check if the thermodynamic conditions for evaluating the
@@ -638,15 +658,15 @@ from the edge of the table.  See <a class="reference internal" href="sources.htm
 the bounds of the data.</p>
 </div>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">temperature_table_rates</span></code></p>
+<p>This manages <code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code> rates and interpolating
+their data.  The rate data itself is stored inline in the header
+file.</p>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">tfactors.H</span></code></p>
 <p>This stores the <code class="docutils literal notranslate"><span class="pre">struct</span></code> that holds the different temperature factors
 used in the reaction rates.</p>
 </li>
-</ul>
-<p>There are 2 C++ files that are essentially used to define the global arrays.</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">actual_network_data.cpp</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">table_rates_data.cpp</span></code></p></li>
 </ul>
 <p>Finally, there are a few meta-data files:</p>
 <ul>
@@ -662,8 +682,31 @@ the network.</p>
 <p>This lists the runtime parameters that affect the network.</p>
 </li>
 </ul>
-<p>To test the library, you can use the unit tests in <code class="docutils literal notranslate"><span class="pre">Microphysics/unit_test/</span></code>, for example,
-<code class="docutils literal notranslate"><span class="pre">test_react</span></code>.</p>
+<section id="using-the-network">
+<h2>Using the network<a class="headerlink" href="#using-the-network" title="Link to this heading">#</a></h2>
+<p>To use the network, there are 2 options.</p>
+<ul>
+<li><p>You can use the unit tests in <code class="docutils literal notranslate"><span class="pre">Microphysics/unit_test/</span></code>, for example,
+<code class="docutils literal notranslate"><span class="pre">burn_cell</span></code> will do a single-zone burn.</p></li>
+<li><p>You can add the argument <code class="docutils literal notranslate"><span class="pre">standalone_build=True</span></code> to the
+<code class="docutils literal notranslate"><span class="pre">write_network()</span></code> function to output a basic <code class="docutils literal notranslate"><span class="pre">main.cpp</span></code> and <code class="docutils literal notranslate"><span class="pre">GNUmakefile</span></code>.
+This still requires a copy of <code class="docutils literal notranslate"><span class="pre">Microphysics</span></code>, and expect the environment
+variable <code class="docutils literal notranslate"><span class="pre">MICROPHYSICS_HOME</span></code> to point to its root directory.  You can then
+build simply as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
+span.prompt1:before {
+  content: "$ ";
+}
+</style><span class="prompt1">make</span>
+</pre></div></div><p>and run as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">./main3d.gnu.ex<span class="w"> </span>testing.density<span class="o">=</span><span class="m">1</span>.e6<span class="w"> </span>testing.temperature<span class="o">=</span><span class="m">1</span>.e9</span>
+</pre></div></div><p>where the density and temperature are set via runtime parameters as shown.
+To control the screening, use the <code class="docutils literal notranslate"><span class="pre">SCREEN_METHOD</span></code> build parameter from
+Microphysics.  For example, to disable screening, we can do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">make<span class="w"> </span><span class="nv">SCREEN_METHOD</span><span class="o">=</span>null</span>
+</pre></div></div></li>
+</ul>
+</section>
 </section>
 
 
@@ -701,6 +744,23 @@ the network.</p>
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-network">Using the network</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

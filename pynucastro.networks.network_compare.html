@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.network_compare module &#8212; pynucastro 2.9.0.post68+g5b30fa4f3 documentation</title>
+    <title>pynucastro.networks.network_compare module &#8212; pynucastro 2.9.0.post69+g10d2faed0 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=f1ea5391"></script>
+    <script src="_static/documentation_options.js?v=3a50e487"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -596,7 +596,7 @@
 and return the ydots.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.networks.network_compare.</span></span><span class="sig-name descname"><span class="pre">NetworkCompare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lib</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_screening</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_simple_cxx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">python_module_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'compare_net.py'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cxx_test_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/network_compare.html#NetworkCompare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.networks.network_compare.</span></span><span class="sig-name descname"><span class="pre">NetworkCompare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lib</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_screening</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_amrex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_simple_cxx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">python_module_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'compare_net.py'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amrex_test_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cxx_test_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/network_compare.html#NetworkCompare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A simple class to manage building a network with different
 backends to facilitate comparisons.</p>
@@ -605,8 +605,10 @@ backends to facilitate comparisons.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>lib</strong> (<a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><em>Library</em></a>) – pynucastro Library containing the rates</p></li>
 <li><p><strong>use_screening</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – do we include screening in the comparison (Chugunov 2007)</p></li>
+<li><p><strong>include_amrex</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – do we build and evaluate an AmrexAstroCxxNetwork?</p></li>
 <li><p><strong>include_simple_cxx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – do we build and evaluate a SimpleCxxNetwork?</p></li>
 <li><p><strong>python_module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – the name of the module file to output the python net to</p></li>
+<li><p><strong>amrex_test_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><em>pathlib.Path</em></a>) – the Path to output the AMReX C++ source files and build in</p></li>
 <li><p><strong>cxx_test_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><em>pathlib.Path</em></a>) – the Path to output the C++ source files and build in</p></li>
 </ul>
 </dd>
