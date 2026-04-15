@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.neutrino_cooling.neutrino_cooling module &#8212; pynucastro 2.9.0.post71+g149a0fc4d documentation</title>
+    <title>Notes on Working with Rate Objects &#8212; pynucastro 2.9.0.post71+g149a0fc4d documentation</title>
   
   
   
@@ -49,12 +49,12 @@
     <script src="_static/copybutton.js?v=eaa7b67c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'pynucastro.neutrino_cooling.neutrino_cooling';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'rates-devel';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pynucastro.neutrino_cooling.sneut5_mod module" href="pynucastro.neutrino_cooling.sneut5_mod.html" />
-    <link rel="prev" title="pynucastro.neutrino_cooling package" href="pynucastro.neutrino_cooling.html" />
+    <link rel="next" title="Testing and Comparing Backends" href="testing.html" />
+    <link rel="prev" title="A Supernova Lightcurve" href="examples/supernova-lightcurve.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="2.9" />
@@ -259,16 +259,16 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/supernova-lightcurve.html">A Supernova Lightcurve</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="rates-devel.html">Notes on Working with <code class="docutils literal notranslate"><span class="pre">Rate</span></code> Objects</a></li>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Notes on Working with <code class="docutils literal notranslate"><span class="pre">Rate</span></code> Objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing and Comparing Backends</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="modules.html">API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.constants.html">pynucastro.constants package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.constants.constants.html">pynucastro.constants.constants module</a></li>
 </ul>
@@ -296,8 +296,8 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.sympy_network_support.html">pynucastro.networks.sympy_network_support module</a></li>
 </ul>
 </details></li>
-<li class="toctree-l3 current active has-children"><a class="reference internal" href="pynucastro.neutrino_cooling.html">pynucastro.neutrino_cooling package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l4 current active"><a class="current reference internal" href="#">pynucastro.neutrino_cooling.neutrino_cooling module</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.neutrino_cooling.html">pynucastro.neutrino_cooling package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.neutrino_cooling.neutrino_cooling.html">pynucastro.neutrino_cooling.neutrino_cooling module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.neutrino_cooling.sneut5_mod.html">pynucastro.neutrino_cooling.sneut5_mod module</a></li>
 </ul>
 </details></li>
@@ -425,7 +425,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/pynucastro.neutrino_cooling.neutrino_cooling.rst?plain=1" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/rates-devel.rst?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -442,7 +442,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/pynucastro.neutrino_cooling.neutrino_cooling.rst" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/rates-devel.rst" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -459,7 +459,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fpynucastro.neutrino_cooling.neutrino_cooling.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Frates-devel.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -489,7 +489,7 @@
       
       
       
-      <li><a href="_sources/pynucastro.neutrino_cooling.neutrino_cooling.rst" target="_blank"
+      <li><a href="_sources/rates-devel.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -565,7 +565,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>pynucastro.neutrino_cooling.neutrino_cooling module</h1>
+    <h1>Notes on Working with Rate Objects</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -575,10 +575,7 @@
             </div>
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling"><code class="docutils literal notranslate"><span class="pre">NeutrinoCooling</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling.plot"><code class="docutils literal notranslate"><span class="pre">NeutrinoCooling.plot()</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#copying">Copying</a></li>
 </ul>
             </nav>
         </div>
@@ -590,43 +587,38 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-pynucastro.neutrino_cooling.neutrino_cooling">
-<span id="pynucastro-neutrino-cooling-neutrino-cooling-module"></span><h1>pynucastro.neutrino_cooling.neutrino_cooling module<a class="headerlink" href="#module-pynucastro.neutrino_cooling.neutrino_cooling" title="Link to this heading">#</a></h1>
-<p>Classes and methods for exploring thermal neutrinos.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.neutrino_cooling.neutrino_cooling.</span></span><span class="sig-name descname"><span class="pre">NeutrinoCooling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">neutrino_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">sneut5&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/neutrino_cooling/neutrino_cooling.html#NeutrinoCooling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>A class to provide an interface to explore neutrino cooling.
-This calls a specific implementation of the cooling that includes
-contributions from pairs, plasma, recombination, bremsstrahlung,
-and photoneutrinos.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhomin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhomax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npts_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npts_rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/neutrino_cooling/neutrino_cooling.html#NeutrinoCooling.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling.plot" title="Link to this definition">#</a></dt>
-<dd><p>Plot the cooling term in as a function of density and
-temperature given a fixed abar/zbar.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>Tmin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Minimum temperature to plot</p></li>
-<li><p><strong>Tmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Maximum temperature to plot</p></li>
-<li><p><strong>rhomin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Minimum density to plot</p></li>
-<li><p><strong>rhomax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Maximum density to plot</p></li>
-<li><p><strong>abar</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Mean molecular weight of composition</p></li>
-<li><p><strong>zbar</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Average charge of composition</p></li>
-<li><p><strong>npts_temp</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of temperature samples to use</p></li>
-<li><p><strong>npts_rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of density samples to use</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.10.8)">matplotlib.figure.Figure</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+  <section id="notes-on-working-with-rate-objects">
+<h1>Notes on Working with <code class="docutils literal notranslate"><span class="pre">Rate</span></code> Objects<a class="headerlink" href="#notes-on-working-with-rate-objects" title="Link to this heading">#</a></h1>
+<section id="copying">
+<h2>Copying<a class="headerlink" href="#copying" title="Link to this heading">#</a></h2>
+<p>A <code class="docutils literal notranslate"><span class="pre">Rate</span></code> is not immutable.  When we do:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
+<span class="n">c12ag</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;c12(a,g)o16&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>the rate <code class="docutils literal notranslate"><span class="pre">c12ag</span></code> is actually a reference to the version stored
+internally in the <code class="docutils literal notranslate"><span class="pre">Library</span></code> that <code class="docutils literal notranslate"><span class="pre">ReacLibLibrary</span></code> creates.</p>
+<p>This means if we modify the rate, e.g, as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">c12ag</span><span class="o">.</span><span class="n">removed</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>then our library <code class="docutils literal notranslate"><span class="pre">rl</span></code> is also updated.  If we reuse this library,
+this can have unintended consequences.</p>
+<p>As a result, when working with rates that you think may be modified,
+it is best to work with a copy.  The recommended copy is to use
+the python <code class="docutils literal notranslate"><span class="pre">copy</span></code> module’s shallow copy:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">c12ag_copy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">c12ag</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will invoke a custom <code class="docutils literal notranslate"><span class="pre">__copy__</span></code> method in the rate that does a
+shallow copy for most rate attributes, but explicitly recreates the
+<code class="docutils literal notranslate"><span class="pre">reactants</span></code>, <code class="docutils literal notranslate"><span class="pre">products</span></code> and <code class="docutils literal notranslate"><span class="pre">stoichiometry</span></code> data.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>When we create a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> or other network, we explicitly
+copy the rates into the network.</p>
+</div>
+</section>
 </section>
 
 
@@ -641,20 +633,20 @@ temperature given a fixed abar/zbar.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="pynucastro.neutrino_cooling.html"
+       href="examples/supernova-lightcurve.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">pynucastro.neutrino_cooling package</p>
+        <p class="prev-next-title">A Supernova Lightcurve</p>
       </div>
     </a>
     <a class="right-next"
-       href="pynucastro.neutrino_cooling.sneut5_mod.html"
+       href="testing.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pynucastro.neutrino_cooling.sneut5_mod module</p>
+        <p class="prev-next-title">Testing and Comparing Backends</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -676,10 +668,7 @@ temperature given a fixed abar/zbar.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling"><code class="docutils literal notranslate"><span class="pre">NeutrinoCooling</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling.plot"><code class="docutils literal notranslate"><span class="pre">NeutrinoCooling.plot()</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#copying">Copying</a></li>
 </ul>
   </nav></div>
 
