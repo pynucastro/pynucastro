@@ -2,19 +2,18 @@
 # inline, module, and AMReX ydots.  No screening is used.  At the moment,
 # SimpleCxxNetwork is not included.
 
-import warnings
-
 import sys
+import warnings
 from pathlib import Path
 
 import pytest
 from pytest import approx
 
 from pynucastro.networks.network_compare import NetworkCompare
-from pynucastro.rates.modified_rate import ModifiedRate
 from pynucastro.rates.derived_rate import DerivedRate
-from pynucastro.rates.library import TabularLibrary
-from pynucastro.rates.library import Library
+from pynucastro.rates.library import Library, TabularLibrary
+from pynucastro.rates.modified_rate import ModifiedRate
+
 
 class TestNetworkCompare:
 
