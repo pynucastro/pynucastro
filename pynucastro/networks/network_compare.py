@@ -229,6 +229,10 @@ class NetworkCompare:
         self.rho_eval = rho
 
     def print_summary(self):
+        """Print a summary of the dY/dt comparison and errors for each
+        network type run.
+
+        """
 
         # we need to have run previously
         if self.ydots_py_inline is None:
