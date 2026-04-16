@@ -102,8 +102,6 @@ def _skip_xp(n, p, r):
     return False
 
 
-
-
 class RateCollection:
     """A collection of rates that together define a network.
     There are several arguments to the constructor -- any combination

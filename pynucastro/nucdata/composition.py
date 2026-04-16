@@ -65,6 +65,7 @@ LODDERS_DATA = {'h1': 0.7462, 'h2': 0.0, 'he3': 7.677e-05, 'he4': 0.2388, 'li6':
             'tl203': 2.578e-10, 'tl205': 6.188e-10, 'pb204': 3.226e-10, 'pb206': 3.079e-09, 'pb207': 3.401e-09, 'pb208': 9.743e-09,
             'bi209': 7.08e-10, 'th232': 2.341e-10, 'u234': 2.725e-15, 'u235': 3.638e-13, 'u238': 5.076e-11}
 
+
 class Composition(collections.UserDict):
     """A composition holds the mass fractions of the nuclei in a
     network.
