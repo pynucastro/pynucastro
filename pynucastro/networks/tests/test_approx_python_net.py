@@ -121,21 +121,21 @@ def He4_Mg24_to_Si28_removed(rate_eval, tf, log_scor=0.0):
         del sys.modules["app"]
 
     def test_to_composition(self, pynet):
-        pynet.write_network("app.py")
-        app = importlib.import_module("app")
+        pynet.write_network("app2.py")
+        app2 = importlib.import_module("app2")
 
         comp_orig = pyna.Composition(pynet.unique_nuclei)
         comp_orig.set_solar_like()
 
-        Y = np.zeros(app.nnuc)
+        Y = np.zeros(app2.nnuc)
         for nuc, molar_fraction in comp_orig.get_molar().items():
-            Y[app.names.index(nuc.caps_name)] = molar_fraction
-        comp_new = app.to_composition(Y)
+            Y[app2.names.index(nuc.caps_name)] = molar_fraction
+        comp_new = app2.to_composition(Y)
 
         assert comp_new.X == comp_orig.X
 
         # clean up generated files if the test passed
-        Path("app.py").unlink()
+        Path("app2.py").unlink()
         # remove imported module from cache
-        del app
-        del sys.modules["app"]
+        del app2
+        del sys.modules["app2"]
