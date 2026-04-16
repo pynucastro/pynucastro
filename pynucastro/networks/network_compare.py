@@ -259,8 +259,8 @@ class NetworkCompare:
 
         for nuc in self.ydots_py_inline:
             line = f" {nuc!s:5} "
-            for key in data_headers:
-                val = data_headers[key][nuc]
+            for key, ydots in data_headers.items():
+                val = ydots[nuc]
                 ref = self.ydots_py_inline[nuc]
                 if key == "py (inline)":
                     line += f"| {val:13.6g} "
