@@ -78,7 +78,7 @@ jobs:
           sudo apt-get -qq -y install curl cmake jq clang g++
 
       - name: Run tests with pytest
-        run: pytest -v -s --nbval --cov=pynucastro --color=yes
+        run: pytest -v -s --nbval --cov=pynucastro --color=yes -n 4 --dist loadscope
 
       - name: Upload output from failed write_network tests
         uses: actions/upload-artifact@v7
