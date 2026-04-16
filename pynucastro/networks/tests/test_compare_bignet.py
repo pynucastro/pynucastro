@@ -131,6 +131,9 @@ class TestNetworkCompare:
             warnings.filterwarnings("ignore", category=UserWarning)
             nc.evaluate(rho=rho, T=T)
 
+        # for debugging -- if you run with -s you'll see the comparison
+        nc.print_summary()
+
         # compare the AMReX and python module nets to the python
         # inline version
 
@@ -151,6 +154,9 @@ class TestNetworkCompare:
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore", category=UserWarning)
             nc.evaluate(rho=rho, T=T)
+
+        # for debugging -- if you run with -s you'll see the comparison
+        nc.print_summary()
 
         # compare the AMReX and python module nets to the python
         # inline version
