@@ -2,8 +2,8 @@ Overview of pynucastro
 ======================
 
 pynucastro is a python library for nuclear astrophysics.  It provides
-access to nuclear data and reaction rates, and tools for building
-and interactively exploring nuclear reaction networks.
+access to nuclear data, reaction rates, equations of state, and tools
+for building and interactively exploring nuclear reaction networks.
 
 The preferred way of importing pynucastro is as follows:
 
@@ -14,12 +14,12 @@ The preferred way of importing pynucastro is as follows:
 
 The main classes are:
 
-* :func:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>`: This is a single
+* :py:obj:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>`: This is a single
   nucleus.  It knows its proton number, ``Z``, neutron number, ``N``,
   weight, ``A``, and binding energy, ``nucbind``, as well as
   T-dependent partition function and ground state spin.
 
-* :func:`Rate <pynucastro.rates.rate.Rate>`: This is a single rate.
+* :py:obj:`Rate <pynucastro.rates.rate.Rate>`: This is a single rate.
   It knows the reactants and products and has methods that allow you
   to evaluate it at a specified temperature and plot its temperature
   dependence.  A `Rate` also knows how to the generate code (C++ and
@@ -27,20 +27,28 @@ The main classes are:
 
   There are a few special rates derived from `Rate`:
 
-  * :func:`ReacLibRate <pynucastro.rates.reaclib_rate.ReacLibRate>`: This is a rate in the
-    JINA ReacLib format, with the temperature dependence specified by an interpolant
-    with 7 different coefficients.
+  * :py:obj:`ReacLibRate <pynucastro.rates.reaclib_rate.ReacLibRate>`:
+    This is a rate in the JINA ReacLib format, with the temperature
+    dependence specified by an interpolant with 7 different
+    coefficients.
 
-  * :func:`TabularRate <pynucastro.rates.tabular_rate.TabularRate>`: This is a
-    rate that is tabulated in terms of :math:`(T, \rho Y_e)`.  This is
-    how the weak rates (electron captures and beta-decays) are stored.
-    Interpolation is used to find the rate at any thermodynamic state.
+  * :py:obj:`StarLibRate <pynucastro.rates.starlib_rate.StarLibRate>`:
+    This is a rate in the StarLib, with median rate and uncertainty
+    tabulated in terms of temperature.
 
-  * :func:`TemperatureTabularRate <pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate>`: This supports
-    a strong rate where the temperature dependent part ($N_A \langle\sigma v\rangle$)
-    is given as a tabulation in terms of temperature.
+  * :py:obj:`TabularRate <pynucastro.rates.tabular_rate.TabularRate>`:
+    This is a rate that is tabulated in terms of :math:`(T, \rho
+    Y_e)`.  This is how the weak rates (electron captures and
+    beta-decays) are stored.  Interpolation is used to find the rate
+    at any thermodynamic state.
 
-  * :func:`ApproximateRate <pynucastro.rates.approximate_rates.ApproximateRate>`:
+  * :py:obj:`TemperatureTabularRate
+    <pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate>`:
+    This supports a strong rate where the temperature dependent part
+    ($N_A \langle\sigma v\rangle$) is given as a tabulation in terms
+    of temperature.
+
+  * :py:obj:`ApproximateRate <pynucastro.rates.approximate_rates.ApproximateRate>`:
     An approximate rate assumes equilibration of intermediate nuclei to create
     an approximation for a rate sequence.  Currently, there are two
     approximations that can be made:
@@ -51,37 +59,46 @@ The main classes are:
     * converting $A(n,\gamma)X(n,\gamma)B$ into $A(nn,\gamma)B$
       by assuming equilibrium of $X$.
 
-  * :func:`ModifiedRate <pynucastro.rates.modified_rate.ModifiedRate>`:
+  * :py:obj:`ModifiedRate <pynucastro.rates.modified_rate.ModifiedRate>`:
     A container for a single rate that allows for different stoichiometry
     or products.
 
-  * :func:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>`: A
-    derived rate uses detailed balance to recompute a reverse rate from the forward rate.
+  * :py:obj:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>`:
+    A derived rate uses detailed balance to recompute a reverse rate
+    from the forward rate.
 
-* :func:`RatePair <pynucastro.rates.rate.RatePair>`: For a single nuclear process,
-  this holds the corresponding forward and reverse rates.
+* :py:obj:`RatePair <pynucastro.rates.rate.RatePair>`: For a single
+  nuclear process, this holds the corresponding forward and reverse
+  rates.
 
-* :func:`Library <pynucastro.rates.library.Library>`: This is a collection of
-  rates (for example, the entire ReacLib library).  It provides methods
-  for filtering out rates based on different sets of rules.
+* :py:obj:`Library <pynucastro.rates.library.Library>`: This is a
+  collection of rates (for example, the entire ReacLib library).  It
+  provides methods for filtering out rates based on different sets of
+  rules.
 
-  There are two important subclasses:
+  There are a few important subclasses:
 
-  * :func:`ReacLibLibrary <pynucastro.rates.library.ReacLibLibrary>`: The
-    entire ReacLib rate library (> 80,000 rates).
+  * :py:obj:`ReacLibLibrary <pynucastro.rates.library.ReacLibLibrary>`: The
+    entire ReacLib rate library, which provides simple 7-parameter fits
+    to rates.
 
-  * :func:`TabularLibrary <pynucastro.rates.library.TabularLibrary>`: A
+  * :py:obj:`StarLibLibrary <pynucastro.rates.library.StarLibLibrary>`: The
+    entire StarLib reaction rate library, which provides uncertainties
+    on rates.
+
+  * :py:obj:`TabularLibrary <pynucastro.rates.library.TabularLibrary>`: A
     `Library` providing tabulated weak rate coverage of nuclei.
 
-  additionally, the helper function, :func:`full_library <pynucastro.rates.library.full_library>`
-  will return a ``Library`` with every rate known to pynucastro.
+  additionally, the helper function, :func:`full_library
+  <pynucastro.rates.library.full_library>` will return a ``Library``
+  with every rate known to pynucastro.
 
-* :func:`Composition
+* :py:obj:`Composition
   <pynucastro.networks.rate_collection.Composition>`: This is a
   collection of nuclei and their mass fractions.  A ``Composition`` is
   used when evaluating the full rates in a network.
 
-* :func:`RateCollection
+* :py:obj:`RateCollection
   <pynucastro.networks.rate_collection.RateCollection>`: This is the
   most basic form of a network.  It is a collection of rates and
   nuclei, that knows about the connectivity of the nuclei through
@@ -91,38 +108,41 @@ The main classes are:
 
   There are a few important subclasses:
 
-  * :func:`NSENetwork
+  * :py:obj:`NSENetwork
     <pynucastro.networks.nse_network.NSENetwork>`: This allows
     a user to find the nuclear statistical equilibrium state
     of a collection of nuclei.
 
-  * :func:`PythonNetwork
+  * :py:obj:`PythonNetwork
     <pynucastro.networks.python_network.PythonNetwork>`: This is a
     collection of rates with functions that know how to write python
     code to express the righthand side of the system of ODEs.
 
-  * :func:`SimpleCxxNetwork
+  * :py:obj:`SimpleCxxNetwork
     <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`:
     This is a simple C++ network that provides functions for
     computing the righthand side and Jacobian of a network.
     Not all pynucastro features are supported in this network.
 
-  * :func:`FortranNetwork
+  * :py:obj:`FortranNetwork
     <pynucastro.networks.fortran_network.FortranNetwork>`:
     A network that provides Fortran wrappers to ``SimpleCxxNetwork``.
 
-  * :func:`AmrexAstroCxxNetwork
+  * :py:obj:`AmrexAstroCxxNetwork
     <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`:
     This is a C++ network of the form needed by the `AMReX
     Astrophysics Microphysics
     <https://github.com/AMReX-Astro/Microphysics>`_ library used by
     the Castro and MAESTROeX simulation codes.
 
+* :py:obj:`StellarEOS <pynucastro.eos.stellar_eos.StellarEOS>`:
+  An equation of state with ions (ideal gas), radiation, and
+  electrons / positrons (with arbitrary degree of degeneracy).
 
 Usage
 -----
 
-There are two modes of usage for pynucastro.  
+There are two modes of usage for pynucastro.
 
 * Within a Jupyter notebook, one can evaluate the rates and
   interactively visualize a network and see the flow between nuclei as
