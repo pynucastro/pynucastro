@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Contributing &#8212; pynucastro 2.9.0.post76+gfef12f875 documentation</title>
+    <title>Contributing &#8212; pynucastro 2.9.0.post77+g51982db43 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=3109477f"></script>
+    <script src="_static/documentation_options.js?v=b648b262"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -637,7 +637,7 @@ build as:</p>
 <p>We use pytest to do unit and regression tests. All commands should be
 run from the repository root.</p>
 <ul>
-<li><p>To run all the tests:</p>
+<li><p>To run all the tests (including notebooks):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pytest</span> <span class="o">-</span><span class="n">v</span> <span class="o">--</span><span class="n">nbval</span>
 </pre></div>
 </div>
@@ -651,8 +651,15 @@ run from the repository root.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pytest</span> <span class="o">-</span><span class="n">v</span> <span class="o">--</span><span class="n">nbval</span> <span class="o">-</span><span class="n">p</span> <span class="n">no</span><span class="p">:</span><span class="n">python</span>
 </pre></div>
 </div>
-<p>This executes each of the notebooks under <code class="docutils literal notranslate"><span class="pre">examples/</span></code> and <code class="docutils literal notranslate"><span class="pre">docs/source/</span></code>
-and compares against the stored outputs from each cell.</p>
+<p>This executes each of the notebooks under <code class="docutils literal notranslate"><span class="pre">examples/</span></code> and
+<code class="docutils literal notranslate"><span class="pre">docs/source/</span></code> and compares against the stored outputs from each
+cell.</p>
+</li>
+<li><p>To run the tests in parallel, install the <code class="docutils literal notranslate"><span class="pre">pytest-xdist</span></code> package and
+then:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pytest</span> <span class="o">-</span><span class="n">v</span> <span class="o">--</span><span class="n">nbval</span> <span class="o">-</span><span class="n">n</span> <span class="mi">4</span> <span class="o">--</span><span class="n">dist</span> <span class="n">loadscope</span>
+</pre></div>
+</div>
 </li>
 <li><p>To check code coverage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pytest</span> <span class="o">--</span><span class="n">cov</span><span class="o">=</span><span class="n">pynucastro</span> <span class="o">--</span><span class="n">nbval</span>
