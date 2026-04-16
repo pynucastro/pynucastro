@@ -76,25 +76,6 @@ class SingleSet:
         x = x and (self.derived_from_inverse == other.derived_from_inverse)
         return x
 
-    def __copy__(self):
-        """Make a copy of the rate via copy.copy().  This is mostly
-        shallow except for a few attributes to address some mutability
-        issues
-
-        """
-
-        cls = type(self)
-        new = cls.__new__(cls)
-
-        # shallow copy everything
-        new.__dict__ = self.__dict__.copy()
-
-        # override some shallow copies
-        if self.a:
-            new.a = list(self.a)
-
-        return new
-
     def log_f(self):
         """Return a function for ``log_rate(tf)`` where ``tf`` is a
         :py:class:`Tfactors <pynucastro.rates.rate.Tfactors>` object
