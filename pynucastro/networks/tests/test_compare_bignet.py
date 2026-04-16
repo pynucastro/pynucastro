@@ -10,6 +10,7 @@ import pytest
 from pytest import approx
 
 from pynucastro.networks.network_compare import NetworkCompare
+from pynucastro.networks.python_network import PythonNetwork
 from pynucastro.rates.derived_rate import DerivedRate
 from pynucastro.rates.library import Library, TabularLibrary
 from pynucastro.rates.modified_rate import ModifiedRate
@@ -62,7 +63,8 @@ class TestNetworkCompare:
                      "fe52", "fe53", "fe54", "fe55", "fe56",
                      "co55", "co56", "co57",
                      "ni56", "ni57", "ni58"]
-        lib += reaclib_library.linking_nuclei(iron_peak, print_warning=False)
+        lib += reaclib_library.linking_nuclei(iron_peak,
+                                              print_warning=False)
         weak_lib = TabularLibrary(ordering=["ffn", "langanke", "oda"])
         iron_weak_lib = weak_lib.linking_nuclei(set(iron_peak + all_reactants),
                                                 print_warning=False)
@@ -88,7 +90,17 @@ class TestNetworkCompare:
 
         lib.eliminate_duplicates(rate_type_preference="tabular")
 
-        return lib
+        # we want to do rate approximations, so make a net,
+        # do the approximations and then export the rates
+        # into a library
+        net = PythonNetwork(libraries=[lib])
+        net.make_ap_pg_approx(intermediate_nuclei=["cl35", "k39", "sc43", "v47"])
+        net.remove_nuclei(["cl35", "k39", "sc43", "v47"])
+
+        net.make_nn_g_approx(intermediate_nuclei=["fe53", "fe55", "ni57"])
+        net.remove_nuclei(["fe53", "fe55", "ni57"])
+
+        return Library(rates=net.get_rates())
 
     def check_lib(self, lib):
         assert lib.num_rates == 156
