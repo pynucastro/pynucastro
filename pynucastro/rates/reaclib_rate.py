@@ -28,6 +28,17 @@ class SingleSet:
     labelprops : str
         a collection of flags that classify a ReacLib rate
 
+    Attributes
+    ----------
+    label : str
+        the ReacLib label for this set
+    resonant : bool
+        whether this set is for a resonance
+    weak : bool
+        whether this set represents a weak interaction
+    derived_from_inverse : bool
+        has this set be recomputed via detailed balance?
+
     """
 
     def __init__(self, a, labelprops):
@@ -64,6 +75,25 @@ class SingleSet:
         x = x and (self.weak == other.weak)
         x = x and (self.derived_from_inverse == other.derived_from_inverse)
         return x
+
+    def __copy__(self):
+        """Make a copy of the rate via copy.copy().  This is mostly
+        shallow except for a few attributes to address some mutability
+        issues
+
+        """
+
+        cls = type(self)
+        new = cls.__new__(cls)
+
+        # shallow copy everything
+        new.__dict__ = self.__dict__.copy()
+
+        # override some shallow copies
+        if self.a:
+            new.a = list(self.a)
+
+        return new
 
     def log_f(self):
         """Return a function for ``log_rate(tf)`` where ``tf`` is a

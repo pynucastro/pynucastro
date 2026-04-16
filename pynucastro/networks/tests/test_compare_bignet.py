@@ -2,6 +2,7 @@
 # inline, module, and AMReX ydots.  No screening is used.  At the moment,
 # SimpleCxxNetwork is not included.
 
+import copy
 import sys
 import warnings
 from pathlib import Path
@@ -34,7 +35,7 @@ class TestNetworkCompare:
                        ("o16(c12,n)si27", "si28")]
 
         for r, mp in other_rates:
-            _r = reaclib_library.get_rate_by_name(r)
+            _r = copy.copy(reaclib_library.get_rate_by_name(r))
             forward_rate = ModifiedRate(_r, new_products=[mp])
             derived_rate = DerivedRate(forward_rate, use_pf=True)
             lib += Library(rates=[forward_rate, derived_rate])
