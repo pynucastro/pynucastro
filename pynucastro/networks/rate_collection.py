@@ -786,10 +786,9 @@ class RateCollection:
     def _build_collection(self):
 
         # get the unique nuclei
-        u = []
+        u = set()
         for r in self.rates:
-            t = set(r.reactants + r.products)
-            u = set(list(u) + list(t))
+            u.update(r.reactants + r.products)
 
         self.unique_nuclei = sorted(u)
 
