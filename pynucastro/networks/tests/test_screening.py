@@ -3,6 +3,7 @@ import pytest
 from pytest import approx
 
 from pynucastro import networks
+from pynucastro.nucdata import Composition
 from pynucastro.screening import (chugunov_2007, chugunov_2009,
                                   get_screening_pair_set)
 
@@ -25,7 +26,7 @@ class TestScreening:
         assert len(screening_pair_set) == 4
 
     def test_screening_chugunov_2007(self, rc):
-        c = networks.Composition(rc.unique_nuclei)
+        c = Composition(rc.unique_nuclei)
         c.set_solar_like()
 
         rates = {"C12 + He4 --> O16 <reaclib_nac2>": 5.794539791829924,
@@ -42,7 +43,7 @@ class TestScreening:
             assert factor == approx(rates[r.id])
 
     def test_screening_chugunov_2009(self, rc):
-        c = networks.Composition(rc.unique_nuclei)
+        c = Composition(rc.unique_nuclei)
         c.set_solar_like()
 
         rates = {"C12 + He4 --> O16 <reaclib_nac2>": 4.405674333522246,

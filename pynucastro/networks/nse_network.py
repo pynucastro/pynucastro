@@ -10,7 +10,8 @@ from scipy.optimize import fsolve
 
 from pynucastro._version import version
 from pynucastro.constants import constants
-from pynucastro.networks.rate_collection import Composition, RateCollection
+from pynucastro.networks.rate_collection import RateCollection
+from pynucastro.nucdata import Composition
 from pynucastro.rates import TabularRate
 from pynucastro.screening import NseState, potekhin_1998
 
