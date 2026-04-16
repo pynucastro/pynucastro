@@ -24,6 +24,7 @@ class TestNetworkCompare:
                          "ar36", "ca40", "ti44", "cr48", "fe52", "ni56",
                          "al27", "p31", "cl35", "k39", "sc43", "v47", "mn51", "co55",
                          "n13", "na23"]
+
         lib = reaclib_library.linking_nuclei(all_reactants, print_warning=False)
 
         # in this list, we have the reactants, the actual reactants,
@@ -67,9 +68,16 @@ class TestNetworkCompare:
                                                 print_warning=False)
         lib += iron_weak_lib
 
+        # create a new library now, since we will be rederiving rates
+        # and we don't want to work on references back to the fixture
+        # reaclib_library.
+
+        lib = Library(rates=lib.get_rates(as_copies=True))
+
         rates_to_derive = lib.backward().get_rates()
 
-        # now for each of those derived rates, look to see if the pair exists
+        # now for each of those derived rates, look to see if the pair
+        # exists
 
         for r in rates_to_derive:
             fr = lib.get_rate_by_nuclei(r.products, r.reactants)
