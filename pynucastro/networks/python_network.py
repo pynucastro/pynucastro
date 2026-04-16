@@ -15,6 +15,342 @@ from pynucastro.rates import ApproximateRate, ModifiedRate
 from pynucastro.screening import get_screening_func, get_screening_pair_set
 
 
+class NetworkSolution:
+    """A class to hold the solution from integrating PythonNetwork.
+    The member functions provide common visualization and
+    analysis routines.
+
+    Parameters
+    ----------
+    sol : object
+        Solution object returned by :func:`scipy.integrate.solve_ivp`. The
+        array `sol.y` is assumed to contain the molar abundances, `Y_i`,
+        ordered consistently with `unique_nuclei`
+    rhs : Callable
+        Function that computes the RHS of the PythonNetwork
+    jac : Callable
+        Function that computes the Jacobian of the PythonNetwork
+    network : PythonNetwork
+        PythonNetwork used for integration
+    rho : float
+        density used to integrate the network
+    T : float
+        temperature used to integrate the network
+    screen_func: Callable
+        screening function used to evaluate rates when integrating
+        the network
+
+    """
+
+    def __init__(self, sol, rhs, jac, network, rho, T, screen_func=None):
+
+        self._sol = sol
+        self._rhs = rhs
+        self._jac = jac
+        self.network = network
+        self.rho = rho
+        self.T = T
+        self.screen_func = screen_func
+
+    @property
+    def t(self):
+        """Return the time array for integration
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        return self._sol.t
+
+    @property
+    def Y(self):
+        """Return the 2D array of molar abundances
+        for all times.
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        return self._sol.y
+
+    @property
+    def unique_nuclei(self):
+        """Return a list of nuclei explicitly carried in the network,
+        ordered consistent with molar fraction solution, Y.
+
+        Returns
+        -------
+        List(Nucleus)
+        """
+
+        return self.network.unique_nuclei
+
+    def Y_at(self, t):
+        """Evaluate the molar abundances for a given time.
+
+        Parameters
+        ----------
+        t : float or list or numpy.ndarray
+            time or time array used to evaluate the molar abundances
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        return self._sol.sol(t)
+
+    def ye(self, Y):
+        """Evaluate the electron fraction with a given set of molar fractions
+
+        Parameters
+        ----------
+        Y : numpy.ndarray
+            Molar fraction array
+
+        Returns
+        -------
+        float
+
+        """
+
+        ye = sum(nuc.Z * Y[i] for i, nuc in enumerate(self.unique_nuclei))
+        return ye
+
+    def ye_at(self, t):
+        """Evaluate the electron fraction for a given time
+
+        Parameters
+        ----------
+        t : float
+            time used to evaluate the electron fraction
+
+        Returns
+        -------
+        float
+
+        """
+
+        Y = self.Y_at(t)
+        return self.ye(Y)
+
+    def rhs(self, t, Y):
+        """Evaluate the RHS of the network with the same thermodynamic
+        condition and screening routine used to integrate the network.
+
+        Parameters
+        ----------
+        t : float
+            time used to evaluate the RHS
+        Y : numpy.ndarray
+            molar abundances of the species
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        return self._rhs(t, Y, self.rho, self.T, screen_func=self.screen_func)
+
+    def rhs_at(self, t):
+        """Evaluate the RHS of the network for a given time.
+
+        Parameters
+        ----------
+        t : float
+            time used to evaluate the RHS
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        Y = self.Y_at(t)
+        return self.rhs(t, Y)
+
+    def jac(self, t, Y):
+        """Evaluate the Jacobian of the network with the same thermodynamic
+        condition and screening routine used to integrate the network.
+
+        Parameters
+        ----------
+        t : float
+            time used to evaluate the RHS
+        Y : numpy.ndarray
+            molar abundances of the species
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        return self._jac(t, Y, self.rho, self.T, screen_func=self.screen_func)
+
+    def jac_at(self, t):
+        """Evaluate the Jacobian of the network for a given time.
+
+        Parameters
+        ----------
+        t : float
+            time used to evaluate the Jacobian
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        Y = self.Y_at(t)
+        return self.jac(t, Y)
+
+    def energy_release(self, dY):
+        """Evaluate the energy release in erg/g (/s if dY is actually dY/dt)
+
+        Parameters
+        ----------
+        dY : numpy.ndarray
+            Finite change or the rate of instataneous change in molar fractions
+
+        Returns
+        -------
+        float
+
+        """
+
+        enuc = sum(nuc.mass * dY[i] for i, nuc in enumerate(self.unique_nuclei))
+        enuc *= -1*constants.N_A*constants.MeV2erg
+        return enuc
+
+    def energy_release_at(self, t):
+        """Evaluate the instantaneous energy release in erg/g/s for a given time
+
+        Parameters
+        ----------
+        t : float
+            time used to evaluate the instantaneous energy release
+
+        Returns
+        -------
+        float
+
+        """
+
+        dYdt = self.rhs_at(t)
+        enuc = self.energy_release(dYdt)
+        return enuc
+
+    def plot_evolution(self,
+                       tmin=None, tmax=None,
+                       ymin=None, ymax=None,
+                       size=(800, 600), dpi=100,
+                       X_cutoff_value=None,
+                       label_size=14, legend_size=10,
+                       three_level_style=False,
+                       outfile=None):
+        """Plot the time evolution of nuclei mass fractions using the
+        solution returned by SciPy's solve_ivp().
+
+        Parameters
+        ----------
+        tmin : float
+            Minimum time shown on the x-axis. If `None`, the first value of
+            `self.t` is used.
+        tmax : float
+            Maximum time shown on the x-axis. If `None`, the last value of
+            `self.t` is used.
+        ymin : float
+            Minimum mass fraction shown on the y-axis. If `None`,
+            use the Matplotlib autoscaled value.
+        ymax : float
+            Maximum mass fraction shown on the y-axis. If `None`,
+            use the Matplotlib autoscaled value. The autoscaled value
+            is capped at 1.2
+        dpi : int
+            dots per inch used with size to set output image size
+        size : (tuple, list)
+            (width, height) of the plot in pixels
+        X_cutoff_value : float
+            Minimum peak mass fraction required for a nucleus to be plotted.
+        label_size : int
+            Font size for axis labels.
+        legend_size : int
+            Font size for the legend.
+        three_level_style : bool
+            If `True`, use three-level linestyle and linewidth based on the peak
+            mass fraction to help distinguish different curves.
+            If `False`, all curves use the same line style and linewidth.
+        outfile : str
+            output name of the plot (extension determines the type)
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+
+        """
+
+        fig, ax = plt.subplots(figsize=(size[0]/dpi, size[1]/dpi))
+        for i, nuc in enumerate(self.unique_nuclei):
+
+            X = self.Y[i, :] * nuc.A
+            max_X = X.max()
+            if X_cutoff_value is None and ymin is not None:
+                X_cutoff_value = ymin
+            if X_cutoff_value is not None and max_X <= X_cutoff_value:
+                continue
+
+            # Set linestyle and linewidth
+            lw = 1.5
+            ls = "-"
+            if three_level_style:
+                # Set 3 levels of visual levels depending on maximum mass fraction
+                lw = 1
+                ls = "--"
+                if max_X > 0.5:
+                    lw = 2.5
+                    ls = "-"
+                elif max_X > 0.01:
+                    lw = 1.5
+                    ls = "-"
+
+            ax.loglog(self.t, X, lw=lw, ls=ls,
+                      label=rf"X(${nuc.pretty}$)")
+
+        if tmin is None:
+            tmin = self.t[0]
+        if tmax is None:
+            tmax = self.t[-1]
+
+        # Auto set number of legend column
+        ncol = max(1, len(ax.lines) // 8 + 1)
+
+        ax.set_xlim(tmin, tmax)
+        ax.set_ylim(ymin, ymax)
+        cur_ymin, cur_ymax = ax.get_ylim()
+        if ymax is None and cur_ymax > 1.2:
+            # Make sure the autoscaled ymax is not greater than 1.2
+            cur_ymax = 1.2
+        ax.set_ylim(cur_ymin, cur_ymax)
+
+        ax.set_xlabel("time [s]", fontsize=label_size)
+        ax.set_ylabel("X", fontsize=label_size)
+        ax.legend(loc="best", fontsize=legend_size, ncol=ncol)
+        ax.grid(ls=":")
+        fig.tight_layout()
+
+        if outfile is not None:
+            fig.savefig(outfile, dpi=dpi)
+
+        return fig
+
+
 class PythonNetwork(RateCollection):
     """A pure python reaction network.  This can create a python
     module as a file that contains everything needed to evaluate the
@@ -588,111 +924,8 @@ class PythonNetwork(RateCollection):
                         dense_output=True, args=(rho, T, screen_func),
                         rtol=rtol, atol=atol, jac=jacobian)
 
-        return sol
+        # Create NetworkSolution
+        network_sol = NetworkSolution(sol, rhs, jacobian, self,
+                                      rho, T, screen_func=screen_func)
 
-    def plot_evolution(self, sol,
-                       tmin=None, tmax=None,
-                       ymin=None, ymax=None,
-                       size=(800, 600), dpi=100,
-                       X_cutoff_value=None,
-                       label_size=14, legend_size=10,
-                       three_level_style=False,
-                       outfile=None):
-        """Plot the time evolution of nuclei mass fractions using the
-        solution returned by SciPy's solve_ivp().
-
-        Parameters
-        ----------
-        sol : object
-            Solution object returned by :func:`scipy.integrate.solve_ivp`. The
-            array `sol.y` is assumed to contain the molar abundances, `Y_i`,
-            ordered consistently with `unique_nuclei`.
-        tmin : float
-            Minimum time shown on the x-axis. If `None`, the first value of
-            `sol.t` is used.
-        tmax : float
-            Maximum time shown on the x-axis. If `None`, the last value of
-            `sol.t` is used.
-        ymin : float
-            Minimum mass fraction shown on the y-axis. If `None`,
-            use the Matplotlib autoscaled value.
-        ymax : float
-            Maximum mass fraction shown on the y-axis. If `None`,
-            use the Matplotlib autoscaled value. The autoscaled value
-            is capped at 1.2
-        dpi : int
-            dots per inch used with size to set output image size
-        size : (tuple, list)
-            (width, height) of the plot in pixels
-        X_cutoff_value : float
-            Minimum peak mass fraction required for a nucleus to be plotted.
-        label_size : int
-            Font size for axis labels.
-        legend_size : int
-            Font size for the legend.
-        three_level_style : bool
-            If `True`, use three-level linestyle and linewidth based on the peak
-            mass fraction to help distinguish different curves.
-            If `False`, all curves use the same line style and linewidth.
-        outfile : str
-            output name of the plot (extension determines the type)
-
-        Returns
-        -------
-        matplotlib.figure.Figure
-
-        """
-
-        fig, ax = plt.subplots(figsize=(size[0]/dpi, size[1]/dpi))
-        for i, nuc in enumerate(self.unique_nuclei):
-
-            X = sol.y[i, :] * nuc.A
-            max_X = X.max()
-            if X_cutoff_value is None and ymin is not None:
-                X_cutoff_value = ymin
-            if X_cutoff_value is not None and max_X <= X_cutoff_value:
-                continue
-
-            # Set linestyle and linewidth
-            lw = 1.5
-            ls = "-"
-            if three_level_style:
-                # Set 3 levels of visual levels depending on maximum mass fraction
-                lw = 1
-                ls = "--"
-                if max_X > 0.5:
-                    lw = 2.5
-                    ls = "-"
-                elif max_X > 0.01:
-                    lw = 1.5
-                    ls = "-"
-
-            ax.loglog(sol.t, X, lw=lw, ls=ls,
-                      label=rf"X(${nuc.pretty}$)")
-
-        if tmin is None:
-            tmin = sol.t[0]
-        if tmax is None:
-            tmax = sol.t[-1]
-
-        # Auto set number of legend column
-        ncol = max(1, len(ax.lines) // 8 + 1)
-
-        ax.set_xlim(tmin, tmax)
-        ax.set_ylim(ymin, ymax)
-        cur_ymin, cur_ymax = ax.get_ylim()
-        if ymax is None and cur_ymax > 1.2:
-            # Make sure the autoscaled ymax is not greater than 1.2
-            cur_ymax = 1.2
-        ax.set_ylim(cur_ymin, cur_ymax)
-
-        ax.set_xlabel("time [s]", fontsize=label_size)
-        ax.set_ylabel("X", fontsize=label_size)
-        ax.legend(loc="best", fontsize=legend_size, ncol=ncol)
-        ax.grid(ls=":")
-        fig.tight_layout()
-
-        if outfile is not None:
-            fig.savefig(outfile, dpi=dpi)
-
-        return fig
+        return network_sol
