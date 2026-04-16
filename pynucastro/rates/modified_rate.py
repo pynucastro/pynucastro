@@ -46,7 +46,7 @@ class ModifiedRate(Rate):
                  new_reactants=None, new_products=None,
                  update_screening=False):
 
-        self.original_rate = copy.copy(original_rate)
+        self.original_rate = original_rate
         self.update_screening = update_screening
 
         # at the moment, this is only tested with ReacLibRate
@@ -74,6 +74,30 @@ class ModifiedRate(Rate):
         self.modified = True
 
         self._set_print_representation()
+
+    def __copy__(self):
+        """Make a copy of the rate via copy.copy().  This is mostly
+        shallow except for a few attributes to address some mutability
+        issues
+
+        """
+
+        cls = type(self)
+        new = cls.__new__(cls)
+
+        # shallow copy everything
+        new.__dict__ = self.__dict__.copy()
+
+        # override some shallow copies
+        new.reactants = list(self.reactants)
+        new.products = list(self.products)
+        if self.stoichiometry:
+            new.stoichiometry = dict(self.stoichiometry)
+
+        # copy the original rate
+        new.original_rate = copy.copy(self.original_rate)
+
+        return new
 
     def _set_screening(self):
         """Determine if this rate is eligible for screening and the
