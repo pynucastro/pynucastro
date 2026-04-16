@@ -4,6 +4,7 @@ properties have been modified from the original source.
 """
 
 import copy
+
 import numpy as np
 
 from pynucastro.rates.rate import Rate
