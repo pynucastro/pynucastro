@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.9.0.post72+g2a871e9c0 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.9.0.post73+g1663ee67e documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=52f1f576"></script>
+    <script src="../../../_static/documentation_options.js?v=66edb7bb"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1330,10 +1330,9 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_build_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="c1"># get the unique nuclei</span>
-        <span class="n">u</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
-            <span class="n">t</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
-            <span class="n">u</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+            <span class="n">u</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
 
