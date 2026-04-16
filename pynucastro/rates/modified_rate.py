@@ -3,6 +3,7 @@ properties have been modified from the original source.
 
 """
 
+import copy
 import numpy as np
 
 from pynucastro.rates.rate import Rate
@@ -44,7 +45,7 @@ class ModifiedRate(Rate):
                  new_reactants=None, new_products=None,
                  update_screening=False):
 
-        self.original_rate = original_rate
+        self.original_rate = copy.copy(original_rate)
         self.update_screening = update_screening
 
         # at the moment, this is only tested with ReacLibRate
@@ -57,15 +58,15 @@ class ModifiedRate(Rate):
         if new_reactants is not None:
             reactants = new_reactants
         else:
-            reactants = original_rate.reactants
+            reactants = self.original_rate.reactants
 
         if new_products is not None:
             products = new_products
         else:
-            products = original_rate.products
+            products = self.original_rate.products
 
         super().__init__(reactants=reactants, products=products,
-                         weak_type=original_rate.weak_type,
+                         weak_type=self.original_rate.weak_type,
                          label="modified",
                          stoichiometry=stoichiometry)
 
