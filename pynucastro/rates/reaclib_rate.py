@@ -28,6 +28,17 @@ class SingleSet:
     labelprops : str
         a collection of flags that classify a ReacLib rate
 
+    Attributes
+    ----------
+    label : str
+        the ReacLib label for this set
+    resonant : bool
+        whether this set is for a resonance
+    weak : bool
+        whether this set represents a weak interaction
+    derived_from_inverse : bool
+        has this set be recomputed via detailed balance?
+
     """
 
     def __init__(self, a, labelprops):

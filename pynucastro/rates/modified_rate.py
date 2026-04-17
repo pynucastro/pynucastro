@@ -3,6 +3,8 @@ properties have been modified from the original source.
 
 """
 
+import copy
+
 import numpy as np
 
 from pynucastro.rates.rate import Rate
@@ -57,21 +59,45 @@ class ModifiedRate(Rate):
         if new_reactants is not None:
             reactants = new_reactants
         else:
-            reactants = original_rate.reactants
+            reactants = self.original_rate.reactants
 
         if new_products is not None:
             products = new_products
         else:
-            products = original_rate.products
+            products = self.original_rate.products
 
         super().__init__(reactants=reactants, products=products,
-                         weak_type=original_rate.weak_type,
+                         weak_type=self.original_rate.weak_type,
                          label="modified",
                          stoichiometry=stoichiometry)
 
         self.modified = True
 
         self._set_print_representation()
+
+    def __copy__(self):
+        """Make a copy of the rate via copy.copy().  This is mostly
+        shallow except for a few attributes to address some mutability
+        issues
+
+        """
+
+        cls = type(self)
+        new = cls.__new__(cls)
+
+        # shallow copy everything
+        new.__dict__ = self.__dict__.copy()
+
+        # override some shallow copies
+        new.reactants = list(self.reactants)
+        new.products = list(self.products)
+        if self.stoichiometry:
+            new.stoichiometry = dict(self.stoichiometry)
+
+        # copy the original rate
+        new.original_rate = copy.copy(self.original_rate)
+
+        return new
 
     def _set_screening(self):
         """Determine if this rate is eligible for screening and the
