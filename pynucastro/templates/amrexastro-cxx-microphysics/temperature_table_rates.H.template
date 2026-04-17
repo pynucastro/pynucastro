@@ -31,6 +31,8 @@ namespace temp_tabular {
 
         <fill_temp_tabular_rates>(2)
 
+        <fill_starlib_rates>(2)
+
     }
 
 

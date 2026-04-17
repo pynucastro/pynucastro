@@ -104,6 +104,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<rate_struct>'] = self._rate_struct
         self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
         self.ftags['<fill_temp_tabular_rates>'] = self._fill_temp_tabular_rates
+        self.ftags['<fill_starlib_rates>'] = self._fill_starlib_rates
         self.ftags['<derived_rate_functions>'] = self._derived_rate_functions
         self.ftags['<fill_derived_rates>'] = self._fill_derived_rates
         self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
@@ -419,7 +420,10 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write("}\n\n")
 
     def _temp_tabular_rate_functions(self, n_indent, of):
-        for r in self.temperature_tabular_rates:
+        # the TemperatureTabularRate and StarLibRate functions are in
+        # the same header, so we can just do them together here
+
+        for r in self.temperature_tabular_rates + self.starlib_rates:
             fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
             for line in fstr.split("\n"):
                 if line:
@@ -609,6 +613,19 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _fill_temp_tabular_rates(self, n_indent, of):
         for r in self.temperature_tabular_rates:
             of.write(f"{self.indent*n_indent}" + "{\n")
+            of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n\n")
+            self.write_screen_var(n_indent+1, of, r)
+            of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n")
+            of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
+            of.write(f"{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
+            of.write(f"{self.indent*(n_indent+1)}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n")
+            of.write(f"{self.indent*(n_indent+1)}}}\n")
+            of.write(f"{self.indent*n_indent}" + "}\n\n")
+
+    def _fill_starlib_rates(self, n_indent, of):
+        for r in self.starlib_rates:
+            of.write(f"{self.indent*n_indent}" + "{\n")
+            of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n\n")
             self.write_screen_var(n_indent+1, of, r)
             of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n")
             of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
