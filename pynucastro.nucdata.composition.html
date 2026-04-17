@@ -1,0 +1,1024 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>pynucastro.nucdata.composition module &#8212; pynucastro 2.9.0.post78+g1aa300427 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="_static/myfile.css?v=15ab05d9" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
+
+    <script src="_static/documentation_options.js?v=30e952bd"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=eaa7b67c"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pynucastro.nucdata.composition';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pynucastro.nucdata.elements module" href="pynucastro.nucdata.elements.html" />
+    <link rel="prev" title="pynucastro.nucdata package" href="pynucastro.nucdata.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.9" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt=""/>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">pynucastro 2.9</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rate_types.html">Reaction Rate Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Properties</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nucleus.html">Nuclear Properties</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lodders_composition.html">Solar Composition</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">pynucastro Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro Usage Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plot-types.html">Plotting Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic_network.html">Basic Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Integrating a Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="starlib.html">Networks with StarLib rates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Working with Libraries</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="finding-rates.html">Finding Available Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tabulated-weak-rates.html">Tabulated Weak Rate Sources</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="duplicate-rates.html">Dealing with Duplicate Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking Your Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="electron-capture-example.html">Tabulated Weak Rate Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alternate-rates.html"><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="inert-nuclei.html">Inert Nuclei</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Rate Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="screening-examples.html">Screening Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modify-example.html">Modifying Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom-rates.html">Creating a Custom Rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="derived-rates.html">Derived Rates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="approximate-rates.html">Approximate and Modified Rates</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="alpha-gamma-approx.html">Approximating alpha-capture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="double-n-capture.html">Approximating double n-capture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modified-rates.html">Modified Rates</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unimportant-rates.html">Removing Unimportant Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="network-cycles.html">Finding Cycles (with NetworkX)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stiffness.html">Assessing the Stiffness of a Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reduction.html">Network Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sens_analysis_example.html">Sensitivity Analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="nse-intro.html">NSE Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">NSE Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NSE-direct-integration.html">NSE vs. Direct Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nse_table.html">Creating an NSE table</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Thermodynamics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="fermi-integrals.html">Fermi-Dirac Integrals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="electron-eos.html">The Electron-Positron EOS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stellar-eos.html">Stellar EOS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="temperature-evolution.html">Integrating Networks with Temperature Evolution</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="neutrino-cooling.html">Neutrino Cooling</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Exporting Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="networks.html">Exporting Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-network.html">Python network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simple-cxx-network.html">Simple C++ network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fortran-network.html">Fortran Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="amrex-astro-cxx-networks.html">AMReX Astro Microphysics Networks</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="julia.html">Integrating using DifferentialEquations.jl</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="installing-diffeqpy-julia.html">Installing <code class="docutils literal notranslate"><span class="pre">diffeqpy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="Example-Integrating-Network-diffeqpy.html">Example of Integrating a Network</a></li>
+
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="he-burning-example.html">A He-burning Network</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/binding-energy.html">Binding Energy per Nucleon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/pp-cno.html">p-p chain vs. CNO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/hot-CNO-breakout-example.html">hot-CNO and breakout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/triple_alpha_eval.html">Computing the Screened Triple-alpha rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/he-burning.html">Ratio of C/O from He burning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/supernova-lightcurve.html">A Supernova Lightcurve</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="rates-devel.html">Notes on Working with <code class="docutils literal notranslate"><span class="pre">Rate</span></code> Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing and Comparing Backends</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="modules.html">API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.constants.html">pynucastro.constants package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.constants.constants.html">pynucastro.constants.constants module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.eos.html">pynucastro.eos package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.degeneracy_parameter_bounds.html">pynucastro.eos.degeneracy_parameter_bounds module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.difference_utils.html">pynucastro.eos.difference_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.electron_eos.html">pynucastro.eos.electron_eos module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.eos_components.html">pynucastro.eos.eos_components module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.fermi_integrals.html">pynucastro.eos.fermi_integrals module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.quadrature_weights.html">pynucastro.eos.quadrature_weights module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.stellar_eos.html">pynucastro.eos.stellar_eos module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html">pynucastro.networks.amrexastro_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.base_cxx_network.html">pynucastro.networks.base_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.fortran_network.html">pynucastro.networks.fortran_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.helper.html">pynucastro.networks.helper module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.network_compare.html">pynucastro.networks.network_compare module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.nse_network.html">pynucastro.networks.nse_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.python_network.html">pynucastro.networks.python_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.rate_collection.html">pynucastro.networks.rate_collection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.simple_cxx_network.html">pynucastro.networks.simple_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.sympy_network_support.html">pynucastro.networks.sympy_network_support module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.neutrino_cooling.html">pynucastro.neutrino_cooling package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.neutrino_cooling.neutrino_cooling.html">pynucastro.neutrino_cooling.neutrino_cooling module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.neutrino_cooling.sneut5_mod.html">pynucastro.neutrino_cooling.sneut5_mod module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 current active has-children"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l4 current active"><a class="current reference internal" href="#">pynucastro.nucdata.composition module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.elements.html">pynucastro.nucdata.elements module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.halflife_table.html">pynucastro.nucdata.halflife_table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.mass_table.html">pynucastro.nucdata.mass_table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.nucleus.html">pynucastro.nucdata.nucleus module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.partition_function.html">pynucastro.nucdata.partition_function module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.spin_table.html">pynucastro.nucdata.spin_table module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.library.html">pynucastro.rates.library module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.modified_rate.html">pynucastro.rates.modified_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.rate.html">pynucastro.rates.rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.reaclib_rate.html">pynucastro.rates.reaclib_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.starlib_rate.html">pynucastro.rates.starlib_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.tabular_rate.html">pynucastro.rates.tabular_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.temperature_tabular_rate.html">pynucastro.rates.temperature_tabular_rate module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep_module.html">pynucastro.reduction.drgep_module module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.sensitivity_analysis.html">pynucastro.reduction.sensitivity_analysis module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.screening.html">pynucastro.screening package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.screen.html">pynucastro.screening.screen module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.screening_util.html">pynucastro.screening.screening_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.mpi_utils.html">pynucastro.mpi_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.numba_util.html">pynucastro.numba_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.utils.html">pynucastro.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.yt_utils.html">pynucastro.yt_utils module</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="zreferences.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Index</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="py-modindex.html">Module Index</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/pynucastro.nucdata.composition.rst?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/pynucastro.nucdata.composition.rst" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fpynucastro.nucdata.composition.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/pynucastro.nucdata.composition.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>pynucastro.nucdata.composition module</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition"><code class="docutils literal notranslate"><span class="pre">Composition</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.A"><code class="docutils literal notranslate"><span class="pre">Composition.A</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.X"><code class="docutils literal notranslate"><span class="pre">Composition.X</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.Z"><code class="docutils literal notranslate"><span class="pre">Composition.Z</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.abar"><code class="docutils literal notranslate"><span class="pre">Composition.abar</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.bin_as"><code class="docutils literal notranslate"><span class="pre">Composition.bin_as()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.get_molar"><code class="docutils literal notranslate"><span class="pre">Composition.get_molar()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.get_nuclei"><code class="docutils literal notranslate"><span class="pre">Composition.get_nuclei()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.get_sum_X"><code class="docutils literal notranslate"><span class="pre">Composition.get_sum_X()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.normalize"><code class="docutils literal notranslate"><span class="pre">Composition.normalize()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.plot"><code class="docutils literal notranslate"><span class="pre">Composition.plot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_all"><code class="docutils literal notranslate"><span class="pre">Composition.set_all()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_array"><code class="docutils literal notranslate"><span class="pre">Composition.set_array()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_equal"><code class="docutils literal notranslate"><span class="pre">Composition.set_equal()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_nuc"><code class="docutils literal notranslate"><span class="pre">Composition.set_nuc()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_random"><code class="docutils literal notranslate"><span class="pre">Composition.set_random()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_solar_like"><code class="docutils literal notranslate"><span class="pre">Composition.set_solar_like()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.ye"><code class="docutils literal notranslate"><span class="pre">Composition.ye</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.zbar"><code class="docutils literal notranslate"><span class="pre">Composition.zbar</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.LoddersComposition"><code class="docutils literal notranslate"><span class="pre">LoddersComposition</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-pynucastro.nucdata.composition">
+<span id="pynucastro-nucdata-composition-module"></span><h1>pynucastro.nucdata.composition module<a class="headerlink" href="#module-pynucastro.nucdata.composition" title="Link to this heading">#</a></h1>
+<p>Classes and methods for describing a collection of nuclei and their
+abundances.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.composition.</span></span><span class="sig-name descname"><span class="pre">Composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuclei</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">small</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#Composition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.Composition" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.UserDict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserDict</span></code></a></p>
+<p>A composition holds the mass fractions of the nuclei in a
+network.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nuclei</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – an iterable of Nucleus objects</p></li>
+<li><p><strong>small</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – a floor for nuclei mass fractions, used as the default value.</p></li>
+<li><p><strong>init</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Different modes to set up the initial composition. Valid choices
+are [<cite>uniform</cite>, <cite>random</cite>, <cite>solar</cite>]. If “solar” is selected, assume
+we work with metallicity, Z=0.02. If init=None, then no initial composition
+will be set.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.A">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">A</span></span><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.A" title="Link to this definition">#</a></dt>
+<dd><p>Nucleus molar masses</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>A</strong> – {Nucleus : A} pairs</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.X">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">X</span></span><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.X" title="Link to this definition">#</a></dt>
+<dd><p>backwards-compatible getter for self.X</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.Z">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Z</span></span><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.Z" title="Link to this definition">#</a></dt>
+<dd><p>Nucleus charge</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Z</strong> – {Nucleus : Z} pairs</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.abar">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">abar</span></span><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.abar" title="Link to this definition">#</a></dt>
+<dd><p>Return the mean molecular weight</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.bin_as">
+<span class="sig-name descname"><span class="pre">bin_as</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuclei</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#Composition.bin_as"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.bin_as" title="Link to this definition">#</a></dt>
+<dd><p>Given a list of nuclei, return a new Composition object
+with the current composition mass fractions binned into the
+new nuclei.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nuclei</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – Input nuclei (either as string names or
+Nucleus objects) defining the new composition.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Output more information</p></li>
+<li><p><strong>exclude</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – List of nuclei in <cite>nuclei</cite> that only
+exact matches from the original composition can
+map into</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>new_composition</strong> – The new binned composition</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition">Composition</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.get_molar">
+<span class="sig-name descname"><span class="pre">get_molar</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#Composition.get_molar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.get_molar" title="Link to this definition">#</a></dt>
+<dd><p>Return a dictionary of molar fractions, Y = X/A.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>molar</strong> – {Nucleus : Y}</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.get_nuclei">
+<span class="sig-name descname"><span class="pre">get_nuclei</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#Composition.get_nuclei"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.get_nuclei" title="Link to this definition">#</a></dt>
+<dd><p>Return a list of Nuclei objects that make up this
+composition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.get_sum_X">
+<span class="sig-name descname"><span class="pre">get_sum_X</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#Composition.get_sum_X"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.get_sum_X" title="Link to this definition">#</a></dt>
+<dd><p>Return the sum of the mass fractions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.normalize">
+<span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">half_life_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#Composition.normalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.normalize" title="Link to this definition">#</a></dt>
+<dd><p>Normalize the mass fractions to sum to 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>half_life_thresh</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The half life value below which to zero the mass fraction
+of a nucleus.  This prevents us from making a composition
+that is not really stable.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trace_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hard_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(9,</span> <span class="pre">5)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#Composition.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.plot" title="Link to this definition">#</a></dt>
+<dd><p>Make a pie chart of Composition. group trace nuclei
+together and explode into bar chart</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trace_threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the threshold to consider a component to be trace.</p></li>
+<li><p><strong>hard_limit</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – limit below which an abundance will not be included
+in the trace nuclei wedget of the plot.</p></li>
+<li><p><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – width, height of the plot in inches</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.10.8)">matplotlib.figure.Figure</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.set_all">
+<span class="sig-name descname"><span class="pre">set_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xval</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#Composition.set_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.set_all" title="Link to this definition">#</a></dt>
+<dd><p>Set all species to the same scalar value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>xval</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – mass fraction value for all species</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.set_array">
+<span class="sig-name descname"><span class="pre">set_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#Composition.set_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.set_array" title="Link to this definition">#</a></dt>
+<dd><p>Set the mass fractions of all species to the values
+in arr, <cite>get_nuclei()</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>arr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>, </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – input values of mass fractions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.set_equal">
+<span class="sig-name descname"><span class="pre">set_equal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#Composition.set_equal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.set_equal" title="Link to this definition">#</a></dt>
+<dd><p>Set all species to be equal</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.set_nuc">
+<span class="sig-name descname"><span class="pre">set_nuc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xval</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#Composition.set_nuc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.set_nuc" title="Link to this definition">#</a></dt>
+<dd><p>Set nuclei name to the mass fraction xval.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a>) – the nucleus to set</p></li>
+<li><p><strong>xval</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.set_random">
+<span class="sig-name descname"><span class="pre">set_random</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#Composition.set_random"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.set_random" title="Link to this definition">#</a></dt>
+<dd><p>Set all species using a Dirichlet distribution with
+parameters alpha and specified rng seed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>, </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – distribution length for the Dirichlet distribution</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – seed for the random number generator</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.set_solar_like">
+<span class="sig-name descname"><span class="pre">set_solar_like</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">half_life_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#Composition.set_solar_like"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.set_solar_like" title="Link to this definition">#</a></dt>
+<dd><p>Approximate a solar abundance, setting p to 0.7, He4 to 0.3
+- Z and the remainder evenly distributed with Z.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The desired metalicity</p></li>
+<li><p><strong>half_life_thresh</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The half life value below which to zero the mass fraction
+of a nucleus.  This prevents us from making a composition
+that is not really stable.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.ye">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ye</span></span><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.ye" title="Link to this definition">#</a></dt>
+<dd><p>Return the electron fraction of the composition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.zbar">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">zbar</span></span><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.zbar" title="Link to this definition">#</a></dt>
+<dd><p>Return the mean charge, Zbar</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.LoddersComposition">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.composition.</span></span><span class="sig-name descname"><span class="pre">LoddersComposition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">half_life_thresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#LoddersComposition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.LoddersComposition" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Composition</span></code></a></p>
+<p>A class to use present day solar abundances from Lodders et al. 2020 &amp; 2021.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Target metallicity <span class="math notranslate nohighlight">\(Z\)</span> to scale the Lodders solar
+mixture to. If <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default), the unscaled Lodders
+abundances are used.</p></li>
+<li><p><strong>half_life_thresh</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The half life value below which to zero the mass fraction
+of a nucleus.  This prevents us from making a composition
+that is not really stable.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The Lodders abundances are stored in <code class="docutils literal notranslate"><span class="pre">LODDERS_DATA</span></code> as mass
+fractions for individual isotopes.</p>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="pynucastro.nucdata.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">pynucastro.nucdata package</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="pynucastro.nucdata.elements.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">pynucastro.nucdata.elements module</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition"><code class="docutils literal notranslate"><span class="pre">Composition</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.A"><code class="docutils literal notranslate"><span class="pre">Composition.A</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.X"><code class="docutils literal notranslate"><span class="pre">Composition.X</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.Z"><code class="docutils literal notranslate"><span class="pre">Composition.Z</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.abar"><code class="docutils literal notranslate"><span class="pre">Composition.abar</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.bin_as"><code class="docutils literal notranslate"><span class="pre">Composition.bin_as()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.get_molar"><code class="docutils literal notranslate"><span class="pre">Composition.get_molar()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.get_nuclei"><code class="docutils literal notranslate"><span class="pre">Composition.get_nuclei()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.get_sum_X"><code class="docutils literal notranslate"><span class="pre">Composition.get_sum_X()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.normalize"><code class="docutils literal notranslate"><span class="pre">Composition.normalize()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.plot"><code class="docutils literal notranslate"><span class="pre">Composition.plot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_all"><code class="docutils literal notranslate"><span class="pre">Composition.set_all()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_array"><code class="docutils literal notranslate"><span class="pre">Composition.set_array()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_equal"><code class="docutils literal notranslate"><span class="pre">Composition.set_equal()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_nuc"><code class="docutils literal notranslate"><span class="pre">Composition.set_nuc()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_random"><code class="docutils literal notranslate"><span class="pre">Composition.set_random()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_solar_like"><code class="docutils literal notranslate"><span class="pre">Composition.set_solar_like()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.ye"><code class="docutils literal notranslate"><span class="pre">Composition.ye</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.zbar"><code class="docutils literal notranslate"><span class="pre">Composition.zbar</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.LoddersComposition"><code class="docutils literal notranslate"><span class="pre">LoddersComposition</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By pynucastro development team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, pynucastro development team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

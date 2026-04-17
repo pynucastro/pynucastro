@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro package &#8212; pynucastro 2.9.0.post77+g51982db43 documentation</title>
+    <title>pynucastro package &#8212; pynucastro 2.9.0.post78+g1aa300427 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=b648b262"></script>
+    <script src="_static/documentation_options.js?v=30e952bd"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -302,6 +302,7 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.composition.html">pynucastro.nucdata.composition module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.elements.html">pynucastro.nucdata.elements module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.halflife_table.html">pynucastro.nucdata.halflife_table module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.mass_table.html">pynucastro.nucdata.mass_table module</a></li>
@@ -620,10 +621,6 @@ an equation of state describing stellar matter.</p>
 <p><a class="reference internal" href="pynucastro.networks.html#module-pynucastro.networks" title="pynucastro.networks"><code class="xref py py-mod docutils literal notranslate"><span class="pre">networks</span></code></a> provides classes and
 functions for organizing collection of rates, including:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Composition</span></code></a> : this is a
-container of <a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Nucleus</span></code></a>
-objects along with associated mass fractions.  This is used for
-evaluating rates when doing interactive exploration with pynucastro.</p></li>
 <li><p><a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateCollection</span></code></a> : this is
 a collection of nuclei and the reaction rates that link them
 together.  It serves as the most basic network and provides
@@ -846,9 +843,7 @@ routines for modifying the reaction rates.</p>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.networks.rate_collection.html">pynucastro.networks.rate_collection module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition"><code class="docutils literal notranslate"><span class="pre">Composition</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Explorer"><code class="docutils literal notranslate"><span class="pre">Explorer</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.LoddersComposition"><code class="docutils literal notranslate"><span class="pre">LoddersComposition</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection"><code class="docutils literal notranslate"><span class="pre">RateCollection</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateDuplicationError"><code class="docutils literal notranslate"><span class="pre">RateDuplicationError</span></code></a></li>
 </ul>
@@ -883,6 +878,11 @@ routines for modifying the reaction rates.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.nucdata.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.nucdata.composition.html">pynucastro.nucdata.composition module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition"><code class="docutils literal notranslate"><span class="pre">Composition</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.LoddersComposition"><code class="docutils literal notranslate"><span class="pre">LoddersComposition</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.nucdata.elements.html">pynucastro.nucdata.elements module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.elements.html#pynucastro.nucdata.elements.Element"><code class="docutils literal notranslate"><span class="pre">Element</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.elements.html#pynucastro.nucdata.elements.PeriodicTable"><code class="docutils literal notranslate"><span class="pre">PeriodicTable</span></code></a></li>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.rate module &#8212; pynucastro 2.9.0.post77+g51982db43 documentation</title>
+    <title>pynucastro.rates.rate module &#8212; pynucastro 2.9.0.post78+g1aa300427 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=b648b262"></script>
+    <script src="_static/documentation_options.js?v=30e952bd"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -302,6 +302,7 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.composition.html">pynucastro.nucdata.composition module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.elements.html">pynucastro.nucdata.elements module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.halflife_table.html">pynucastro.nucdata.halflife_table module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.mass_table.html">pynucastro.nucdata.mass_table module</a></li>
@@ -673,7 +674,7 @@ use_identical_particle_factor = False</p></li>
 <li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the temperature to evaluate the rate at</p></li>
 <li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the density to evaluate the rate and screening effects at.</p></li>
 <li><p><strong>comp</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the composition (of type
-<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Composition</span></code></a>)
+<a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Composition</span></code></a>)
 to evaluate the rate and screening effects with.</p></li>
 <li><p><strong>screen_func</strong> (<em>Callable</em>) – one of the screening functions from <a class="reference internal" href="pynucastro.screening.html#module-pynucastro.screening" title="pynucastro.screening"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pynucastro.screening</span></code></a>
 – if provided, then the rate will include the screening correction</p></li>
@@ -699,7 +700,7 @@ nucleus <code class="docutils literal notranslate"><span class="pre">y_i</span><
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the temperature to evaluate the rate with</p></li>
 <li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the density to evaluate the rate with</p></li>
-<li><p><strong>comp</strong> (<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><em>Composition</em></a>) – the composition to use in the rate evaluation</p></li>
+<li><p><strong>comp</strong> (<a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition"><em>Composition</em></a>) – the composition to use in the rate evaluation</p></li>
 <li><p><strong>y_i</strong> (<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a>) – the nucleus we are differentiating with respect to</p></li>
 <li><p><strong>screen_func</strong> (<em>Callable</em>) – one of the screening functions from <a class="reference internal" href="pynucastro.screening.html#module-pynucastro.screening" title="pynucastro.screening"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pynucastro.screening</span></code></a>
 – if provided, then the jacobian_term will include the
@@ -722,7 +723,7 @@ Note this returns log(screening).</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – density used to evaluate screening</p></li>
 <li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – temperature used to evaluate screening</p></li>
-<li><p><strong>composition</strong> (<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><em>Composition</em></a>) – composition used to evaluate screening</p></li>
+<li><p><strong>composition</strong> (<a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition"><em>Composition</em></a>) – composition used to evaluate screening</p></li>
 <li><p><strong>screen_func</strong> (<em>Callable</em>) – one of the screening functions from <a class="reference internal" href="pynucastro.screening.html#module-pynucastro.screening" title="pynucastro.screening"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pynucastro.screening</span></code></a></p></li>
 </ul>
 </dd>
@@ -819,7 +820,7 @@ This is a stub and should be implemented by the derived class.</p>
 <li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the temperature to evaluate the rate at</p></li>
 <li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the density to evaluate the rate and screening effects at.</p></li>
 <li><p><strong>comp</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the composition (of type
-<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Composition</span></code></a>)
+<a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Composition</span></code></a>)
 to evaluate the rate and screening effects with.</p></li>
 <li><p><strong>screen_func</strong> (<em>Callable</em>) – one of the screening functions from <a class="reference internal" href="pynucastro.screening.html#module-pynucastro.screening" title="pynucastro.screening"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pynucastro.screening</span></code></a>
 – if provided, then the rate will include the screening correction</p></li>
@@ -1018,7 +1019,7 @@ not found.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Tfactors.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.Tfactors#7fc74251f820&lt;T9:float64,T9i:float64,T913:float64,T913i:float64,T953:float64,lnT9:float64&gt;</span></span><a class="headerlink" href="#pynucastro.rates.rate.Tfactors.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.Tfactors#7f182513b820&lt;T9:float64,T9i:float64,T913:float64,T913i:float64,T953:float64,lnT9:float64&gt;</span></span><a class="headerlink" href="#pynucastro.rates.rate.Tfactors.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

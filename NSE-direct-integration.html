@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>NSE vs. Direct Integration &#8212; pynucastro 2.9.0.post77+g51982db43 documentation</title>
+    <title>NSE vs. Direct Integration &#8212; pynucastro 2.9.0.post78+g1aa300427 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=b648b262"></script>
+    <script src="_static/documentation_options.js?v=30e952bd"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -305,6 +305,7 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.composition.html">pynucastro.nucdata.composition module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.elements.html">pynucastro.nucdata.elements module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.halflife_table.html">pynucastro.nucdata.halflife_table module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.mass_table.html">pynucastro.nucdata.mass_table module</a></li>
@@ -909,7 +910,7 @@ Since we will compare to NSE, we want to use the same screening that NSE uses �
 graphically using the network <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.plot" title="pynucastro.networks.rate_collection.RateCollection.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plot</span></code></a> function,
 and plotting the difference between the forward and reverse rates (<code class="docutils literal notranslate"><span class="pre">use_net_rate=True</span></code>).  We will also normalize
 by the total activity of the rate (forward + reverse) by doing <code class="docutils literal notranslate"><span class="pre">normalize_net_rate=True</span></code>.</p>
-<p>First we’ll convert the final composition from the integration into a pynucastro <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Composition</span></code></a>, keeping in mind that the network evolved molar fractions (<span class="math notranslate nohighlight">\(Y = X / A\)</span>).</p>
+<p>First we’ll convert the final composition from the integration into a pynucastro <a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Composition</span></code></a>, keeping in mind that the network evolved molar fractions (<span class="math notranslate nohighlight">\(Y = X / A\)</span>).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">potekhin_1998</span> 

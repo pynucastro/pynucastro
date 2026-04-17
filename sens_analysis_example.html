@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Sensitivity Analysis &#8212; pynucastro 2.9.0.post77+g51982db43 documentation</title>
+    <title>Sensitivity Analysis &#8212; pynucastro 2.9.0.post78+g1aa300427 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=b648b262"></script>
+    <script src="_static/documentation_options.js?v=30e952bd"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -305,6 +305,7 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.composition.html">pynucastro.nucdata.composition module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.elements.html">pynucastro.nucdata.elements module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.halflife_table.html">pynucastro.nucdata.halflife_table module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.mass_table.html">pynucastro.nucdata.mass_table module</a></li>
@@ -704,7 +705,7 @@ to create the energy release.</p>
 <p class="admonition-title">Warning</p>
 <p>Some of the nuclei are incredibly shortlived, and if we have any abundance there, it will dominate the rate evaluation.</p>
 </div>
-<p>When we initialize the <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition" title="pynucastro.networks.rate_collection.Composition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Composition</span></code></a>, we’ll use the <code class="docutils literal notranslate"><span class="pre">half_life_thresh</span></code> option to zero out the abundance of any species that should immediately decay.</p>
+<p>When we initialize the <a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Composition</span></code></a>, we’ll use the <code class="docutils literal notranslate"><span class="pre">half_life_thresh</span></code> option to zero out the abundance of any species that should immediately decay.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>

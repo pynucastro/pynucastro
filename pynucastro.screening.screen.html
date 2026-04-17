@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.screening.screen module &#8212; pynucastro 2.9.0.post77+g51982db43 documentation</title>
+    <title>pynucastro.screening.screen module &#8212; pynucastro 2.9.0.post78+g1aa300427 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=b648b262"></script>
+    <script src="_static/documentation_options.js?v=30e952bd"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -302,6 +302,7 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.composition.html">pynucastro.nucdata.composition module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.elements.html">pynucastro.nucdata.elements module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.halflife_table.html">pynucastro.nucdata.halflife_table module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.mass_table.html">pynucastro.nucdata.mass_table module</a></li>
@@ -655,7 +656,7 @@ screening calculations</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.NseState.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.NseState#7fc7683f1bd0&lt;temp:float64,dens:float64,ye:float64,gamma_e_fac:float64&gt;</span></span><a class="headerlink" href="#pynucastro.screening.screen.NseState.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.NseState#7f183bfe5bd0&lt;temp:float64,dens:float64,ye:float64,gamma_e_fac:float64&gt;</span></span><a class="headerlink" href="#pynucastro.screening.screen.NseState.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -766,7 +767,7 @@ correction factor calculations.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.PlasmaState.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.PlasmaState#7fc7683d23c0&lt;temp:float64,dens:float64,qlam0z:float64,taufac:float64,aa:float64,abar:float64,zbar:float64,z2bar:float64,n_e:float64,gamma_e_fac:float64&gt;</span></span><a class="headerlink" href="#pynucastro.screening.screen.PlasmaState.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.PlasmaState#7f183bfca7b0&lt;temp:float64,dens:float64,qlam0z:float64,taufac:float64,aa:float64,abar:float64,zbar:float64,z2bar:float64,n_e:float64,gamma_e_fac:float64&gt;</span></span><a class="headerlink" href="#pynucastro.screening.screen.PlasmaState.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -855,7 +856,7 @@ correction factor for a specific pair of nuclei.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.ScreenFactors.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.ScreenFactors#7fc7683f2e90&lt;z1:int32,z2:int32,a1:int32,a2:int32,zs13:float64,zhat:float64,zhat2:float64,lzav:float64,aznut:float64,ztilde:float64&gt;</span></span><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.ScreenFactors#7f183bfe6fd0&lt;z1:int32,z2:int32,a1:int32,a2:int32,zs13:float64,zhat:float64,zhat2:float64,lzav:float64,aznut:float64,ztilde:float64&gt;</span></span><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -953,7 +954,7 @@ coupling, following the appendix of <span id="id4">Chugunov and DeWitt [<a class
 <li><p><strong>temp</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – temperature in K</p></li>
 <li><p><strong>dens</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – density in g/cm^3</p></li>
 <li><p><strong>molar_fractions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>(</em><a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a><em>)</em>) – dictionary of molar abundances for each ion,
-as returned by <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Composition.get_molar" title="pynucastro.networks.rate_collection.Composition.get_molar"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Composition.get_molar()</span></code></a></p></li>
+as returned by <a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition.get_molar" title="pynucastro.nucdata.composition.Composition.get_molar"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Composition.get_molar()</span></code></a></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
