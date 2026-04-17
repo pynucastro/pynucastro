@@ -19,6 +19,7 @@ constexpr std::string_view network_name = "pynucastro-cxx";
 namespace network
 {
 
+
     template<int spec>
     AMREX_GPU_HOST_DEVICE AMREX_INLINE
     constexpr amrex::Real bion () {

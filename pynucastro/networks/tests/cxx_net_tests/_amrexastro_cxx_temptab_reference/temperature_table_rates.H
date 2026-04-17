@@ -14,6 +14,7 @@ using namespace Rates;
 // temperature / rate tabulation for O16 + p --> F17
 
 namespace O16_p_to_F17_iliadis_data {
+
     inline AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 1, 51> log_t9 = {
      -5.809142990314028  , -5.521460917862246  , -5.298317366548036  ,
      -5.115995809754082  , -4.961845129926823  , -4.8283137373023015 ,
@@ -53,6 +54,7 @@ namespace O16_p_to_F17_iliadis_data {
      3.2703291064571163,   3.872450230308323 ,   4.364753306003425 ,
      5.127529045567755 ,   5.694068782468562 ,   6.129268051255177
     };
+
 }
 
 
