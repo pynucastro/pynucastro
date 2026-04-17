@@ -32,7 +32,7 @@ class TestSimpleCxxNetwork:
         """ test the write_network function"""
         test_path = "_test_simple_cxx/"
         # subdirectory of pynucastro/networks/tests/
-        reference_path = "_simple_cxx_reference/"
+        reference_path = "cxx_net_tests/_simple_cxx_reference/"
         # files that will be ignored if present in the generated directory
         skip_files = ["pynucastro-info.txt"]
 

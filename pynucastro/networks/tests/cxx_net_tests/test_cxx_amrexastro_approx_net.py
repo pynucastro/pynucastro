@@ -21,7 +21,7 @@ class TestAmrexAstroCxxNetwork:
         """ test the write_network function"""
         test_path = "_test_cxx_approx/"
         # subdirectory of pynucastro/networks/tests/
-        reference_path = "_amrexastro_cxx_approx_reference/"
+        reference_path = "cxx_net_tests/_amrexastro_cxx_approx_reference/"
         # files that will be ignored if present in the generated directory
         skip_files = ["pynucastro-info.txt"]
 

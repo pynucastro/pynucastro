@@ -34,7 +34,7 @@ class TestFortranNetwork:
         """ test the write_network function"""
         test_path = "_test_fortran/"
         # subdirectory of pynucastro/networks/tests/
-        reference_path = "_fortran_reference/"
+        reference_path = "fortran_net_tests/_fortran_reference/"
         # files that will be ignored if present in the generated directory
         skip_files = []
 
