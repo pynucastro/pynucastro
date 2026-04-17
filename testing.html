@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Testing and Comparing Backends &#8212; pynucastro 2.9.0.post78+g1aa300427 documentation</title>
+    <title>Testing and Comparing Backends &#8212; pynucastro 2.9.0.post79+ge33bc4d2c documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="_static/documentation_options.js?v=30e952bd"></script>
+    <script src="_static/documentation_options.js?v=5ea17f38"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -595,13 +595,19 @@ the built-in <code class="docutils literal notranslate"><span class="pre">eval</
 <li><p><code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> modules: this means writing out the network as a
 <code class="docutils literal notranslate"><span class="pre">.py</span></code> file, importing it, and then using the functions in the
 module to evaluate the rates.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code> : this uses the <code class="docutils literal notranslate"><span class="pre">standalone_build</span></code> option
+to <code class="docutils literal notranslate"><span class="pre">write_network()</span></code> to output a driver and makefile.  The output
+is then parsed to get the ydot values.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> : we build a simple test driver and parse the output
 to get the ydot values.</p></li>
 </ul>
+<p>Tests can be run with or without screening.</p>
 <p>It will store the ydots in a <code class="docutils literal notranslate"><span class="pre">dict</span></code> keyed by <a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Nucleus</span></code></a>.
 This is used in the following unit tests in <code class="docutils literal notranslate"><span class="pre">pynucastro/networks/tests/</span></code>:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">test_compare_cxx_and_python.py</span></code> : this compares just strong reaction rates</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_compare_cxx_and_python_screened.py</span></code> : like
+<code class="docutils literal notranslate"><span class="pre">test_compare_cxx_and_python.py</span></code>, but with screening enabled.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">test_compare_temperature_tabular.py</span></code> : this compares the evaluation of
 a <code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code> between the inline and module python nets.</p></li>
 </ul>

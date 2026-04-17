@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.network_compare &#8212; pynucastro 2.9.0.post78+g1aa300427 documentation</title>
+    <title>pynucastro.networks.network_compare &#8212; pynucastro 2.9.0.post79+ge33bc4d2c documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=30e952bd"></script>
+    <script src="../../../_static/documentation_options.js?v=5ea17f38"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -592,6 +592,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ydots_amrex</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ydots_cxx</span> <span class="o">=</span> <span class="kc">None</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">T_eval</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho_eval</span> <span class="o">=</span> <span class="kc">None</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_run_python_inline_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">2.e8</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the rates using the methods built into</span>
 <span class="sd">        RateCollection</span>
@@ -721,7 +724,54 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_run_amrex_version</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_simple_cxx</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run_simple_cxx_version</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_simple_cxx_version</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">T_eval</span> <span class="o">=</span> <span class="n">T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho_eval</span> <span class="o">=</span> <span class="n">rho</span></div>
+
+
+<div class="viewcode-block" id="NetworkCompare.print_summary">
+<a class="viewcode-back" href="../../../pynucastro.networks.network_compare.html#pynucastro.networks.network_compare.NetworkCompare.print_summary">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print a summary of the dY/dt comparison and errors for each</span>
+<span class="sd">        network type run.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># we need to have run previously</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_inline</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;no ydots stored.  evaluate() must be run first&quot;</span><span class="p">)</span>
+
+        <span class="n">data_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;py (inline)&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_inline</span><span class="p">,</span>
+                        <span class="s2">&quot;py (module)&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_module</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_amrex</span><span class="p">:</span>
+            <span class="n">data_headers</span><span class="p">[</span><span class="s2">&quot;AMReX C++&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_amrex</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_cxx</span><span class="p">:</span>
+            <span class="n">data_headers</span><span class="p">[</span><span class="s2">&quot;simple C++&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_cxx</span>
+
+        <span class="n">header</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="s1">&#39;nuc&#39;</span><span class="si">:</span><span class="s2">5</span><span class="si">}</span><span class="s2"> &quot;</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_headers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;py (inline)&quot;</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">13</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">13</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;error&#39;</span><span class="si">:</span><span class="s2">11</span><span class="si">}</span><span class="s2"> &quot;</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_inline</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">nuc</span><span class="si">!s:</span><span class="s2">5</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">ydots</span> <span class="ow">in</span> <span class="n">data_headers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">ydots</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span>
+                <span class="n">ref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_inline</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;py (inline)&quot;</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">13.6g</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">err</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">((</span><span class="n">val</span> <span class="o">-</span> <span class="n">ref</span><span class="p">)</span> <span class="o">/</span> <span class="n">ref</span><span class="p">)</span>
+                    <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">13.6g</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">err</span><span class="si">:</span><span class="s2">11.5g</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
 </div>
 
 </pre></div>
