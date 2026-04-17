@@ -102,9 +102,6 @@ class TestNetworkCompare:
 
         return Library(rates=net.get_rates())
 
-    def check_lib(self, lib):
-        assert lib.num_rates == 156
-
     @pytest.fixture(scope="class")
     def nc(self, lib):
         cxx_test_path = Path("_test_compare_bignet_cxx/")
