@@ -3,8 +3,7 @@ import pytest
 from pytest import approx
 
 import pynucastro as pyna
-from pynucastro import networks
-from pynucastro.nucdata import Nucleus
+from pynucastro.nucdata import Composition, Nucleus
 
 
 class TestComposition:
@@ -19,7 +18,7 @@ class TestComposition:
 
     @pytest.fixture(scope="class")
     def comp(self, nuclei):
-        return networks.Composition(nuclei)
+        return Composition(nuclei)
 
     def test_getitem(self, comp):
         n = Nucleus("he4")
@@ -116,7 +115,7 @@ class TestCompositionVars:
 
     @pytest.fixture(scope="class")
     def comp(self, nuclei):
-        c = networks.Composition(nuclei)
+        c = Composition(nuclei)
         c.set_equal()
         return c
 
@@ -161,7 +160,7 @@ class TestCompBinning:
 
     @pytest.fixture(scope="class")
     def comp(self, nuclei):
-        c = networks.Composition(nuclei)
+        c = Composition(nuclei)
         c.set_equal()
         return c
 
@@ -231,7 +230,7 @@ class TestCompBinning2:
 
     @pytest.fixture(scope="class")
     def comp(self, nuclei):
-        c = networks.Composition(nuclei)
+        c = Composition(nuclei)
         c.set_equal()
         return c
 
@@ -264,7 +263,7 @@ class TestCompBinning3:
 
     @pytest.fixture(scope="class")
     def comp(self, nuclei):
-        c = networks.Composition(nuclei)
+        c = Composition(nuclei)
         c.set_equal()
         return c
 
