@@ -10,7 +10,8 @@ import numpy as np
 from scipy.integrate import solve_ivp
 
 from pynucastro.constants import constants
-from pynucastro.networks.rate_collection import Composition, RateCollection
+from pynucastro.networks.rate_collection import RateCollection
+from pynucastro.nucdata import Composition
 from pynucastro.rates import ApproximateRate, ModifiedRate
 from pynucastro.screening import get_screening_func, get_screening_pair_set
 

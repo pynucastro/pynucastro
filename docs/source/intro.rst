@@ -77,7 +77,7 @@ The main classes are:
   will return a ``Library`` with every rate known to pynucastro.
 
 * :func:`Composition
-  <pynucastro.networks.rate_collection.Composition>`: This is a
+  <pynucastro.nucdata.composition.Composition>`: This is a
   collection of nuclei and their mass fractions.  A ``Composition`` is
   used when evaluating the full rates in a network.
 
