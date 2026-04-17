@@ -33,7 +33,7 @@ class TestFullPythonNetwork:
         test_file = "network.py"
 
         # subdirectory of pynucastro/networks/tests/
-        reference_path = Path("_python_reference/")
+        reference_path = Path("python_net_tests/_python_reference/")
         # files that will be ignored if present in the generated directory
         skip_files = []
 
