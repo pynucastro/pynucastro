@@ -244,6 +244,11 @@ class PythonNetwork(RateCollection):
         for r in self.temperature_tabular_rates:
             ostr += format_rate_call(r, use_tf=False)
 
+        if self.starlib_rates:
+            ostr += f"\n{indent}# starlib rates\n"
+        for r in self.starlib_rates:
+            ostr += format_rate_call(r, use_tf=False)
+
         if self.custom_rates:
             ostr += f"\n{indent}# custom rates\n"
         for r in self.custom_rates:

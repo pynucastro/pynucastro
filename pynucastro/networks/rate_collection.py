@@ -27,7 +27,7 @@ from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library,
                               ModifiedRate, Rate, RateFileError, RatePair,
-                              ReacLibRate, TabularRate, TemperatureTabularRate,
+                              ReacLibRate, StarLibRate, TabularRate, TemperatureTabularRate,
                               find_duplicate_rates, is_allowed_dupe, load_rate)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_id
 
@@ -250,6 +250,7 @@ class RateCollection:
         self.tabular_rates = []
         self.temperature_tabular_rates = []
         self.reaclib_rates = []
+        self.starlib_rates = []
         self.custom_rates = []
         self.approx_rates = []
         self.derived_rates = []
@@ -273,6 +274,8 @@ class RateCollection:
                 self.tabular_rates.append(r)
             elif isinstance(r, TemperatureTabularRate):
                 self.temperature_tabular_rates.append(r)
+            elif isinstance(r, StarLibRate):
+                self.starlib_rates.append(r)
             elif isinstance(r, DerivedRate):
                 if r not in self.derived_rates:
                     self.derived_rates.append(r)
