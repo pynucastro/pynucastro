@@ -190,8 +190,8 @@ class RateCollection:
         # pylint: disable-next=protected-access
         cr._set_print_representation()
 
-        # child rates may be ReacLibRates, ModifiedRates,
-        # or DerivedRates.  Make sure we don't double
+        # child rates may be ReacLibRates, StarLibRates,
+        # ModifiedRates, or DerivedRates.  Make sure we don't double
         # count
         if isinstance(cr, DerivedRate):
             if cr not in self.derived_rates:
@@ -199,6 +199,9 @@ class RateCollection:
         elif isinstance(cr, ModifiedRate):
             if cr not in self.modified_rates:
                 self.modified_rates.append(cr)
+        elif isinstance(cr, StarLibRate):
+            if cr not in self.starlib_rates:
+                self.starlib_rates.append(cr)
         else:
             if cr not in self.reaclib_rates:
                 self.reaclib_rates.append(cr)
@@ -239,7 +242,7 @@ class RateCollection:
         for n in self.unique_nuclei:
             self.nuclei_rate_pairs[n] = \
                 [rp for rp in _rp if rp.forward is not None and n in rp.forward.reactants + rp.forward.products or
-                                     rp.reverse is not None and n in rp.reverse.reactants + rp.reverse.products]
+                 rp.reverse is not None and n in rp.reverse.reactants + rp.reverse.products]
 
         # Re-order self.rates so Reaclib rates come first, followed by
         # Tabular rates. This is needed if reaclib coefficients are
@@ -273,10 +276,10 @@ class RateCollection:
 
             elif isinstance(r, TabularRate):
                 self.tabular_rates.append(r)
-            elif isinstance(r, TemperatureTabularRate):
-                self.temperature_tabular_rates.append(r)
             elif isinstance(r, StarLibRate):
                 self.starlib_rates.append(r)
+            elif isinstance(r, TemperatureTabularRate):
+                self.temperature_tabular_rates.append(r)
             elif isinstance(r, DerivedRate):
                 if r not in self.derived_rates:
                     self.derived_rates.append(r)
@@ -297,9 +300,9 @@ class RateCollection:
         # (from approximations)
 
         self.all_rates = (self.reaclib_rates + self.custom_rates +
-                          self.tabular_rates + self.temperature_tabular_rates +
-                          self.approx_rates + self.modified_rates +
-                          self.derived_rates)
+                          self.tabular_rates + self.starlib_rates +
+                          self.temperature_tabular_rates + self.approx_rates +
+                          self.modified_rates + self.derived_rates)
 
         # finally check for duplicate rates -- these are not
         # allowed
@@ -1037,8 +1040,9 @@ class RateCollection:
         print("")
 
         print(f"  reaclib rates: {len(self.reaclib_rates)}")
-        print(f"  weak tabular rates: {len(self.tabular_rates)}")
+        print(f"  starlib rates: {len(self.starlib_rates)}")
         print(f"  temperature tabular rates: {len(self.temperature_tabular_rates)}")
+        print(f"  weak tabular rates: {len(self.tabular_rates)}")
         print(f"  approximate rates: {len(self.approx_rates)}")
         print(f"  derived rates: {len(self.derived_rates)}")
         print(f"  modified rates: {len(self.modified_rates)}")
