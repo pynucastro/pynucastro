@@ -22,6 +22,12 @@ class StarLibRate(TemperatureTabularRate):
         The tabulated log(uncertainty) data
     rng : numpy.random.Generator
         An rng for rate sampling
+
+    Attributes
+    ----------
+    log_median_rate : numpy.ndarray
+        A backup of the median rate, stored so we can resample
+
     """
 
     def __init__(self, log_t9_data, log_rate_data, sigma_data,

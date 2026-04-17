@@ -18,6 +18,7 @@ from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
 from pynucastro.rates.tabular_rate import TableIndex
+from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.screening import get_screening_pair_set
 from pynucastro.utils import pynucastro_version
 
@@ -377,23 +378,42 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         idnt = self.indent * n_indent
 
-        for r in self.temperature_tabular_rates:
+        for r in self.temperature_tabular_rates + self.starlib_rates:
 
             of.write(f"// temperature / rate tabulation for {r.rid}\n\n")
-            of.write(f"namespace {r.fname}_data {{\n")
+            of.write(f"namespace {r.fname}_data {{\n\n")
+
             log_temp_str = np.array2string(r.log_t9_data,
                                            max_line_width=70, precision=17, separator=", ")
+            # remove the [ ]
+            log_temp_str = " " + log_temp_str[1:-1]
+
             of.write(f'{idnt}    inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_t9 = {{\n')
             for line in log_temp_str.split("\n"):
-                of.write(f"     {line.replace('[', ' ').replace(']', ' ').strip()}\n")
+                of.write(f"     {line.strip()}\n")
             of.write("    };\n\n")
 
             log_rate_str = np.array2string(r.log_rate_data,
                                            max_line_width=70, precision=17, separator=", ")
+            # remove the [ ]
+            log_rate_str = " " + log_rate_str[1:-1]
+
             of.write(f'{idnt}    inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_rate = {{\n')
             for line in log_rate_str.split("\n"):
-                of.write(f"     {line.replace('[', ' ').replace(']', ' ').strip()}\n")
-            of.write("    };\n")
+                of.write(f"     {line.strip()}\n")
+            of.write("    };\n\n")
+
+            if isinstance(r, StarLibRate):
+                of.write("    // sigma uncertainty\\n")
+                sigma_str = np.array2string(r.sigma_data,
+                                        max_line_width=70, precision=17, separator=", ")
+                # remove the [ ]
+                sigma_str = " " + sigma_str[1:-1]
+
+                of.write(f'{idnt}    inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> sigma_rate = {{\n')
+                for line in sigma_str.split("\n"):
+                    of.write(f"     {line.strip()}\n")
+                of.write("    };\n\n")
 
             of.write("}\n\n")
 
