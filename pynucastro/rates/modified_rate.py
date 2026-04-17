@@ -109,7 +109,7 @@ class ModifiedRate(Rate):
             the density to evaluate screening effects at.
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate screening effects with.
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`

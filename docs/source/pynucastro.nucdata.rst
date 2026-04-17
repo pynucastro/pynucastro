@@ -12,6 +12,7 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   pynucastro.nucdata.composition
    pynucastro.nucdata.elements
    pynucastro.nucdata.halflife_table
    pynucastro.nucdata.mass_table

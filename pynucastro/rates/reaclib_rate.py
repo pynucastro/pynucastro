@@ -736,7 +736,7 @@ class ReacLibRate(Rate):
             rates), but needed for evaluating screening effects.
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate the rate with (not needed for ReacLib rates),
             but needed for evaluating screening effects.
         screen_func : Callable
@@ -777,7 +777,7 @@ class ReacLibRate(Rate):
             rates).
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate the rate with (not needed for ReacLib rates).
 
         Returns
@@ -812,7 +812,7 @@ class ReacLibRate(Rate):
             rates), but needed for evaluating screening effects.
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate the rate with (not needed for ReacLib rates),
             but needed for evaluating screening effects.
         screen_func : Callable
@@ -853,7 +853,7 @@ class ReacLibRate(Rate):
             the density to evaluate the screening effect.
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate the screening effect.
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`

@@ -3,7 +3,7 @@ import pytest
 from pytest import approx
 
 from pynucastro import networks
-from pynucastro.nucdata import Nucleus
+from pynucastro.nucdata import Composition, Nucleus
 
 
 class TestRateCollection:
@@ -33,7 +33,7 @@ class TestRateCollection:
                        Nucleus("o15")]
 
     def test_eval(self, rc):
-        c = networks.Composition(rc.unique_nuclei)
+        c = Composition(rc.unique_nuclei)
         c.set_solar_like()
 
         rates = {"C12 + p --> N13 <reaclib_ls09>": 4.3825344233265815e-05,

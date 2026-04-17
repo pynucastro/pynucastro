@@ -12,9 +12,8 @@ import numpy as np
 
 from pynucastro.networks.amrexastro_cxx_network import AmrexAstroCxxNetwork
 from pynucastro.networks.python_network import PythonNetwork
-from pynucastro.networks.rate_collection import Composition
 from pynucastro.networks.simple_cxx_network import SimpleCxxNetwork
-from pynucastro.nucdata import Nucleus
+from pynucastro.nucdata import Composition, Nucleus
 from pynucastro.screening import chugunov_2007
 
 
