@@ -40,7 +40,9 @@ int main(int argc, char *argv[]) {
 
     std::cout << std::setprecision(12);
 
+    std::cout << std::endl;
     std::cout << "rho, T = " << burn_state.rho << " " << burn_state.T << std::endl;
+    std::cout << std::endl;
 
     for (int n = 1; n <= NumSpec; ++n) {
         std::cout << "Ydot(" << short_spec_names_cxx[n-1] << ") = " << ydot(n) << std::endl;

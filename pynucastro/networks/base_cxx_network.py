@@ -115,6 +115,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<spin_state_cases>'] = self._fill_spin_state_cases
         self.ftags['<pynucastro_version>'] = self._fill_pynucastro_version
         self.ftags['<num_starlib>'] = self._fill_num_starlib
+        self.ftags['<starlib_random>'] = self._fill_starlib_random
         self.indent = '    '
 
     @abstractmethod
@@ -780,5 +781,12 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _fill_num_starlib(self, n_indent, of):
         num_sl = len(self.starlib_rates)
+        sl_str = f"""
+namespace starlib {{
+
+    constexpr std::uint8_t NumStarLibRates = {num_sl};
+    inline AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 1, NumStarLibRates> prand{{}};
+}}"""
+
         if num_sl > 0:
-            of.write(f"{self.indent*n_indent}constexpr {_rate_dtype(num_sl)} NumStarLibRates = {num_sl};\n")
+            of.write(sl_str)

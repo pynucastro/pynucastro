@@ -1,6 +1,7 @@
 #ifndef actual_network_H
 #define actual_network_H
 
+#include <random>
 #include <string_view>
 
 #include <AMReX_REAL.H>
@@ -12,14 +13,19 @@
 
 using namespace amrex::literals;
 
-void actual_network_init();
+<num_starlib>(0)
+
+inline
+void actual_network_init() {
+
+   <starlib_random>(1)
+
+}
 
 constexpr std::string_view network_name = "pynucastro-cxx";
 
 namespace network
 {
-
-    <num_starlib>(1)
 
     template<int spec>
     AMREX_GPU_HOST_DEVICE AMREX_INLINE
