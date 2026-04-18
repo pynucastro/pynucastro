@@ -3,8 +3,7 @@
 import pytest
 from pytest import approx
 
-from pynucastro.networks import Composition
-from pynucastro.nucdata import Nucleus
+from pynucastro.nucdata import Composition, Nucleus
 
 
 class TestJacTerm:

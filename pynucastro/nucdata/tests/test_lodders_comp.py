@@ -1,7 +1,7 @@
 import pytest
 from pytest import approx
 
-from pynucastro import networks
+from pynucastro.nucdata.composition import LoddersComposition
 
 
 class TestLoddersComposition:
@@ -9,12 +9,12 @@ class TestLoddersComposition:
     @pytest.fixture(scope="class")
     def solar(self):
         """Default Lodders solar comp, without scaling"""
-        return networks.LoddersComposition()
+        return LoddersComposition()
 
     @pytest.fixture(scope="class")
     def scaled(self):
         """Scale Lodders to desired metallicity"""
-        return networks.LoddersComposition(Z=0.04)
+        return LoddersComposition(Z=0.04)
 
     def test_sum_to_one(self, solar, scaled):
         """All mass fractions should add up to 1"""

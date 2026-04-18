@@ -12,9 +12,8 @@ import numpy as np
 
 from pynucastro.networks.amrexastro_cxx_network import AmrexAstroCxxNetwork
 from pynucastro.networks.python_network import PythonNetwork
-from pynucastro.networks.rate_collection import Composition
 from pynucastro.networks.simple_cxx_network import SimpleCxxNetwork
-from pynucastro.nucdata import Nucleus
+from pynucastro.nucdata import Composition, Nucleus
 from pynucastro.screening import chugunov_2007
 
 
@@ -92,6 +91,9 @@ class NetworkCompare:
         self.ydots_py_module = None
         self.ydots_amrex = None
         self.ydots_cxx = None
+
+        self.T_eval = None
+        self.rho_eval = None
 
     def _run_python_inline_version(self, rho=2.e8, T=1.e9):
         """Evaluate the rates using the methods built into
@@ -221,3 +223,47 @@ class NetworkCompare:
 
         if self.include_simple_cxx:
             self._run_simple_cxx_version(rho=rho, T=T)
+
+        self.T_eval = T
+        self.rho_eval = rho
+
+    def print_summary(self):
+        """Print a summary of the dY/dt comparison and errors for each
+        network type run.
+
+        """
+
+        # we need to have run previously
+        if self.ydots_py_inline is None:
+            raise ValueError("no ydots stored.  evaluate() must be run first")
+
+        data_headers = {"py (inline)": self.ydots_py_inline,
+                        "py (module)": self.ydots_py_module}
+
+        if self.ydots_amrex:
+            data_headers["AMReX C++"] = self.ydots_amrex
+
+        if self.ydots_cxx:
+            data_headers["simple C++"] = self.ydots_cxx
+
+        header = f" {'nuc':5} "
+        for key in data_headers:
+            if key == "py (inline)":
+                header += f"| {key:13} "
+            else:
+                header += f"| {key:13} {'error':11} "
+
+        print(header)
+        print("-" * len(header))
+
+        for nuc in self.ydots_py_inline:
+            line = f" {nuc!s:5} "
+            for key, ydots in data_headers.items():
+                val = ydots[nuc]
+                ref = self.ydots_py_inline[nuc]
+                if key == "py (inline)":
+                    line += f"| {val:13.6g} "
+                else:
+                    err = abs((val - ref) / ref)
+                    line += f"| {val:13.6g} {err:11.5g} "
+            print(line)
