@@ -116,6 +116,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<pynucastro_version>'] = self._fill_pynucastro_version
         self.ftags['<num_starlib>'] = self._fill_num_starlib
         self.ftags['<starlib_random>'] = self._fill_starlib_random
+        self.ftags['<starlib_func>'] = self._fill_starlib_func
         self.indent = '    '
 
     @abstractmethod
@@ -790,3 +791,40 @@ namespace starlib {{
 
         if num_sl > 0:
             of.write(sl_str)
+
+    def _fill_starlib_random(self, n_indent, of):
+        sl_random_str = """
+    // generate Gaussian random numbers
+    const int seed = 1234;
+    std::mt19937 generator(seed);
+
+    // normal distribution centered on 0 with a width of 1
+    std::normal_distribution rn(0.0, 1.0);
+
+    // generate the random numbers -- every process will
+    // get the same numbers here, since we are using the
+    // same seed.
+    for (int n = 1; n <= starlib::NumStarLibRates; ++n) {
+        starlib::prand(n) = rn(generator);
+    }"""
+
+        num_sl = len(self.starlib_rates)
+        if num_sl > 0:
+            of.write(sl_random_str)
+
+    def _fill_starlib_func(self, n_indent, of):
+
+        header = [f"template<{_rate_dtype(len(self.starlib_rates))} rate>",
+                  "AMREX_GPU_HOST_DEVICE AMREX_INLINE",
+                  "constexpr amrex::Real get_p_random() {"]
+
+        for line in header:
+            of.write(f"{self.indent * n_indent}{line}\n")
+
+        for n, rate in enumerate(self.starlib_rates):
+            of.write(f"{self.indent * (n_indent+1)}if constexpr (rate == k_{rate.fname}) {{\n")
+            of.write(f"{self.indent * (n_indent+2)}return starlib::prand({n+1});\n")
+            of.write(f"{self.indent * (n_indent+1)}}}\n\n")
+
+        of.write(f"{self.indent * (n_indent+1)}return 0.0_rt;\n")
+        of.write(f"{self.indent * n_indent}}}\n")
