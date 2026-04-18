@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 2.9.0.post82+geb9b1a2dd documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 2.9.0.post83+g78eab1d6c documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=09fe8fdc"></script>
+    <script src="../../../_static/documentation_options.js?v=16dfa96d"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -755,6 +755,11 @@
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature_tabular_rates</span><span class="p">:</span>
             <span class="n">ostr</span> <span class="o">+=</span> <span class="n">format_rate_call</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">use_tf</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">starlib_rates</span><span class="p">:</span>
+            <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2"># starlib rates</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">starlib_rates</span><span class="p">:</span>
+            <span class="n">ostr</span> <span class="o">+=</span> <span class="n">format_rate_call</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">use_tf</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_rates</span><span class="p">:</span>
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2"># custom rates</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_rates</span><span class="p">:</span>
@@ -920,11 +925,11 @@
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    np.array(</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">tabular_data_table</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;)</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="c1"># temperature tabular rate data</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature_tabular_rates</span><span class="p">:</span>
+        <span class="c1"># temperature tabular / starlib rate data</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature_tabular_rates</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">starlib_rates</span><span class="p">:</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# note: we cannot make the TempTableInterpolator global, since numba doesn&#39;t like global jitclass</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature_tabular_rates</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature_tabular_rates</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">starlib_rates</span><span class="p">:</span>
 
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# temperature / rate tabulation for </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
