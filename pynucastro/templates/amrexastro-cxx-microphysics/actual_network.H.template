@@ -117,6 +117,8 @@ namespace Rates
         <rate_names>(2)
     };
 
+    <starlib_func>(1)
+
 }
 
 #ifdef NSE_NET
