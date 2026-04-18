@@ -2,7 +2,6 @@ PYNUCASTRO_NETWORK = TRUE
 CEXE_headers += network_properties.H
 
 ifeq ($(USE_REACT),TRUE)
-  CEXE_sources += actual_network_data.cpp
   CEXE_headers += actual_network.H
   CEXE_headers += tfactors.H
   CEXE_headers += interp_tools.H
