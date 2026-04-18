@@ -780,7 +780,7 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _fill_pynucastro_version(self, n_indent, of):
         of.write(f"{self.indent*n_indent}pynucastro version: {pynucastro_version()}\n")
 
-    def _fill_num_starlib(self, n_indent, of):
+    def _fill_num_starlib(self, _, of):
         num_sl = len(self.starlib_rates)
         sl_str = f"""
 namespace starlib {{
@@ -792,7 +792,7 @@ namespace starlib {{
         if num_sl > 0:
             of.write(sl_str)
 
-    def _fill_starlib_random(self, n_indent, of):
+    def _fill_starlib_random(self, _, of):
         sl_random_str = """
     // generate Gaussian random numbers
     const int seed = 1234;
