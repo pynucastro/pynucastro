@@ -156,6 +156,8 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             if self.disable_rate_params:
                 for r in self.disable_rate_params:
                     of.write(f"disable_{r.fname}    int     0\n")
+            if self.starlib_rates:
+                of.write("starlib_seed      int       -1\n")
 
         # copy the standalone build files if requested
         if standalone_build:

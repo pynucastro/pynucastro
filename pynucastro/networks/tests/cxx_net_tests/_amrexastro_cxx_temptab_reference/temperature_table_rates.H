@@ -14,6 +14,7 @@ using namespace Rates;
 // temperature / rate tabulation for O16 + p --> F17
 
 namespace O16_p_to_F17_iliadis_data {
+
     inline AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 1, 51> log_t9 = {
      -5.809142990314028  , -5.521460917862246  , -5.298317366548036  ,
      -5.115995809754082  , -4.961845129926823  , -4.8283137373023015 ,
@@ -53,6 +54,7 @@ namespace O16_p_to_F17_iliadis_data {
      3.2703291064571163,   3.872450230308323 ,   4.364753306003425 ,
      5.127529045567755 ,   5.694068782468562 ,   6.129268051255177
     };
+
 }
 
 
@@ -64,14 +66,15 @@ namespace temp_tabular {
 
         // O16 + p --> F17
 
-        auto [_rate, _drate_dT] = interp_net::cubic_interp_uneven<do_T_derivatives>(
+        auto [_log_rate, _dlog_rate_dlogT9] = interp_net::cubic_interp_uneven<do_T_derivatives>(
                                                    tfactors.lnT9,
                                                    O16_p_to_F17_iliadis_data::log_t9,
                                                    O16_p_to_F17_iliadis_data::log_rate);
-        rate = std::exp(_rate + log_scor);
+        rate = std::exp(_log_rate + log_scor);
         // we found dlog(rate)/dlog(T9)
         if constexpr (do_T_derivatives) {
-            amrex::Real dlog_rate_dT = tfactors.T9i * _drate_dT * 1.0e-9_rt + dlog_scor_dT;        drate_dT = rate * dlog_rate_dT;
+            amrex::Real dlog_rate_dT = tfactors.T9i * _dlog_rate_dlogT9 * 1.0e-9_rt + dlog_scor_dT
+    ;        drate_dT = rate * dlog_rate_dT;
         }
     }
 
@@ -90,6 +93,8 @@ namespace temp_tabular {
         [[maybe_unused]] amrex::Real drate_dT;
 
         {
+            // O16_p_to_F17_iliadis
+
             amrex::Real log_scor {0.0_rt};
             amrex::Real dlog_scor_dT {0.0_rt};
 #ifdef SCREENING
@@ -104,6 +109,7 @@ namespace temp_tabular {
                 rate_eval.dscreened_rates_dT(k_O16_p_to_F17_iliadis) = drate_dT;
             }
         }
+
 
 
     }

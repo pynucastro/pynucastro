@@ -17,6 +17,7 @@ import sympy
 from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
+from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.tabular_rate import TableIndex
 from pynucastro.screening import get_screening_pair_set
 from pynucastro.utils import pynucastro_version
@@ -103,6 +104,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<rate_struct>'] = self._rate_struct
         self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
         self.ftags['<fill_temp_tabular_rates>'] = self._fill_temp_tabular_rates
+        self.ftags['<fill_starlib_rates>'] = self._fill_starlib_rates
         self.ftags['<derived_rate_functions>'] = self._derived_rate_functions
         self.ftags['<fill_derived_rates>'] = self._fill_derived_rates
         self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
@@ -112,6 +114,9 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<declare_pf_cache_temp_index>'] = self._declare_pf_cache_temp_index
         self.ftags['<spin_state_cases>'] = self._fill_spin_state_cases
         self.ftags['<pynucastro_version>'] = self._fill_pynucastro_version
+        self.ftags['<num_starlib>'] = self._fill_num_starlib
+        self.ftags['<starlib_random>'] = self._fill_starlib_random
+        self.ftags['<starlib_func>'] = self._fill_starlib_func
         self.indent = '    '
 
     @abstractmethod
@@ -377,28 +382,50 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         idnt = self.indent * n_indent
 
-        for r in self.temperature_tabular_rates:
+        for r in self.temperature_tabular_rates + self.starlib_rates:
 
             of.write(f"// temperature / rate tabulation for {r.rid}\n\n")
-            of.write(f"namespace {r.fname}_data {{\n")
+            of.write(f"namespace {r.fname}_data {{\n\n")
+
             log_temp_str = np.array2string(r.log_t9_data,
                                            max_line_width=70, precision=17, separator=", ")
+            # remove the [ ]
+            log_temp_str = " " + log_temp_str[1:-1]
+
             of.write(f'{idnt}    inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_t9 = {{\n')
             for line in log_temp_str.split("\n"):
-                of.write(f"     {line.replace('[', ' ').replace(']', ' ').strip()}\n")
+                of.write(f"     {line.strip()}\n")
             of.write("    };\n\n")
 
             log_rate_str = np.array2string(r.log_rate_data,
                                            max_line_width=70, precision=17, separator=", ")
+            # remove the [ ]
+            log_rate_str = " " + log_rate_str[1:-1]
+
             of.write(f'{idnt}    inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_rate = {{\n')
             for line in log_rate_str.split("\n"):
-                of.write(f"     {line.replace('[', ' ').replace(']', ' ').strip()}\n")
-            of.write("    };\n")
+                of.write(f"     {line.strip()}\n")
+            of.write("    };\n\n")
+
+            if isinstance(r, StarLibRate):
+                of.write("    // sigma uncertainty\n")
+                sigma_str = np.array2string(r.sigma_data,
+                                        max_line_width=70, precision=17, separator=", ")
+                # remove the [ ]
+                sigma_str = " " + sigma_str[1:-1]
+
+                of.write(f'{idnt}    inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> sigma_rate = {{\n')
+                for line in sigma_str.split("\n"):
+                    of.write(f"     {line.strip()}\n")
+                of.write("    };\n\n")
 
             of.write("}\n\n")
 
     def _temp_tabular_rate_functions(self, n_indent, of):
-        for r in self.temperature_tabular_rates:
+        # the TemperatureTabularRate and StarLibRate functions are in
+        # the same header, so we can just do them together here
+
+        for r in self.temperature_tabular_rates + self.starlib_rates:
             fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
             for line in fstr.split("\n"):
                 if line:
@@ -588,6 +615,19 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _fill_temp_tabular_rates(self, n_indent, of):
         for r in self.temperature_tabular_rates:
             of.write(f"{self.indent*n_indent}" + "{\n")
+            of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n\n")
+            self.write_screen_var(n_indent+1, of, r)
+            of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n")
+            of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
+            of.write(f"{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
+            of.write(f"{self.indent*(n_indent+1)}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n")
+            of.write(f"{self.indent*(n_indent+1)}}}\n")
+            of.write(f"{self.indent*n_indent}" + "}\n\n")
+
+    def _fill_starlib_rates(self, n_indent, of):
+        for r in self.starlib_rates:
+            of.write(f"{self.indent*n_indent}" + "{\n")
+            of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n\n")
             self.write_screen_var(n_indent+1, of, r)
             of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n")
             of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
@@ -739,3 +779,54 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _fill_pynucastro_version(self, n_indent, of):
         of.write(f"{self.indent*n_indent}pynucastro version: {pynucastro_version()}\n")
+
+    def _fill_num_starlib(self, _, of):
+        num_sl = len(self.starlib_rates)
+        sl_str = f"""
+namespace starlib {{
+
+    constexpr std::uint8_t NumStarLibRates = {num_sl};
+    inline AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 1, NumStarLibRates> prand{{}};
+}}"""
+
+        if num_sl > 0:
+            of.write(sl_str)
+
+    def _fill_starlib_random(self, _, of):
+        sl_random_str = """
+    if (network_rp::starlib_seed > 0) {
+        // generate Gaussian random numbers
+        const int seed = 1234;
+        std::mt19937 generator(network_rp::starlib_seed);
+
+        // normal distribution centered on 0 with a width of 1
+        std::normal_distribution rn(0.0, 1.0);
+
+        // generate the random numbers -- every process will
+        // get the same numbers here, since we are using the
+        // same seed.
+        for (int n = 1; n <= starlib::NumStarLibRates; ++n) {
+            starlib::prand(n) = rn(generator);
+        }
+    }"""
+
+        num_sl = len(self.starlib_rates)
+        if num_sl > 0:
+            of.write(sl_random_str)
+
+    def _fill_starlib_func(self, n_indent, of):
+
+        header = [f"template<{_rate_dtype(len(self.starlib_rates))} rate>",
+                  "AMREX_GPU_HOST_DEVICE AMREX_INLINE",
+                  "constexpr amrex::Real get_p_random() {"]
+
+        for line in header:
+            of.write(f"{self.indent * n_indent}{line}\n")
+
+        for n, rate in enumerate(self.starlib_rates):
+            of.write(f"{self.indent * (n_indent+1)}if constexpr (rate == k_{rate.fname}) {{\n")
+            of.write(f"{self.indent * (n_indent+2)}return starlib::prand({n+1});\n")
+            of.write(f"{self.indent * (n_indent+1)}}}\n\n")
+
+        of.write(f"{self.indent * (n_indent+1)}return 0.0_rt;\n")
+        of.write(f"{self.indent * n_indent}}}\n")

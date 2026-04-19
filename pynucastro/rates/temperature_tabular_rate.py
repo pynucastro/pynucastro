@@ -211,14 +211,14 @@ class TemperatureTabularRate(Rate):
         fstring += f"    // {self.rid}\n\n"
         # pylint: enable=duplicate-code
 
-        fstring += "    auto [_rate, _drate_dT] = interp_net::cubic_interp_uneven<do_T_derivatives>(\n"
+        fstring += "    auto [_log_rate, _dlog_rate_dlogT9] = interp_net::cubic_interp_uneven<do_T_derivatives>(\n"
         fstring += "                                               tfactors.lnT9,\n"
         fstring += f"                                               {self.fname}_data::log_t9,\n"
         fstring += f"                                               {self.fname}_data::log_rate);\n"
-        fstring += "    rate = std::exp(_rate + log_scor);\n"
+        fstring += "    rate = std::exp(_log_rate + log_scor);\n"
         fstring += "    // we found dlog(rate)/dlog(T9)\n"
         fstring += "    if constexpr (do_T_derivatives) {\n"
-        fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * _drate_dT * 1.0e-9_rt + dlog_scor_dT;"
+        fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * _dlog_rate_dlogT9 * 1.0e-9_rt + dlog_scor_dT\n;"
         fstring += "        drate_dT = rate * dlog_rate_dT;\n"
         fstring += "    }\n"
 
