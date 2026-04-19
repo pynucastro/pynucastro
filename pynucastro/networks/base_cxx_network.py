@@ -794,18 +794,20 @@ namespace starlib {{
 
     def _fill_starlib_random(self, _, of):
         sl_random_str = """
-    // generate Gaussian random numbers
-    const int seed = 1234;
-    std::mt19937 generator(seed);
+    if (network_rp::starlib_seed > 0) {
+        // generate Gaussian random numbers
+        const int seed = 1234;
+        std::mt19937 generator(seed);
 
-    // normal distribution centered on 0 with a width of 1
-    std::normal_distribution rn(0.0, 1.0);
+        // normal distribution centered on 0 with a width of 1
+        std::normal_distribution rn(0.0, 1.0);
 
-    // generate the random numbers -- every process will
-    // get the same numbers here, since we are using the
-    // same seed.
-    for (int n = 1; n <= starlib::NumStarLibRates; ++n) {
-        starlib::prand(n) = rn(generator);
+        // generate the random numbers -- every process will
+        // get the same numbers here, since we are using the
+        // same seed.
+        for (int n = 1; n <= starlib::NumStarLibRates; ++n) {
+            starlib::prand(n) = rn(generator);
+        }
     }"""
 
         num_sl = len(self.starlib_rates)
