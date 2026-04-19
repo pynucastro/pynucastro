@@ -797,7 +797,7 @@ namespace starlib {{
     if (network_rp::starlib_seed > 0) {
         // generate Gaussian random numbers
         const int seed = 1234;
-        std::mt19937 generator(seed);
+        std::mt19937 generator(network_rp::starlib_seed);
 
         // normal distribution centered on 0 with a width of 1
         std::normal_distribution rn(0.0, 1.0);
