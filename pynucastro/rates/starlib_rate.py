@@ -100,3 +100,67 @@ class StarLibRate(TemperatureTabularRate):
 
     def __hash__(self):
         return hash(self.__repr__())
+
+    def function_string_cxx(self, dtype="double", specifiers="inline",
+                            leave_open=False, extra_args=None):
+        """Return a string containing the C++ function that computes
+        the rate, taking into account the uncertainty.
+
+        Parameters
+        ----------
+        dtype : str
+            The C++ datatype to use for all declarations
+        specifiers : str
+            C++ specifiers to add before each function declaration
+            (i.e. "inline")
+        leave_open : bool
+            If ``true``, then we leave the function unclosed (no "}"
+            at the end).  This can allow additional functions to add
+            to this output.
+        extra_args : list, tuple
+            A list of strings representing additional arguments that
+            should be appended to the argument list when defining the
+            function interface.
+
+        Returns
+        -------
+        str
+
+        """
+
+        # pylint: disable=duplicate-code
+        if extra_args is None:
+            extra_args = ()
+
+        args = ["const tf_t& tfactors",
+                f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
+                f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+        fstring = ""
+        fstring += "template <int do_T_derivatives>\n"
+        fstring += f"{specifiers}\n"
+        fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
+        fstring += f"    // {self.rid}\n\n"
+        # pylint: enable=duplicate-code
+        fstring += "    // our rate is exp(μ + pσ + h)\n"
+        fstring += "    // where μ = median rate, p = Gaussian random #,\n"
+        fstring += "    //       σ = uncertainty, h = screening potential\n"
+        fstring += "    auto [_mu, _dmu_dlogT9] = interp_net::cubic_interp_uneven<do_T_derivatives>(\n"
+        fstring += "                                          tfactors.lnT9,\n"
+        fstring += f"                                          {self.fname}_data::log_t9,\n"
+        fstring += f"                                          {self.fname}_data::log_rate);\n"
+        fstring += f"   auto p = Rates::get_p_random<k_{self.fname}>();\n"
+        fstring += "    auto [_sigma, _dsigma_dlogT9] = interp_net::cubic_interp_uneven<do_T_derivatives>(\n"
+        fstring += "                                                 tfactors.lnT9,\n"
+        fstring += f"                                                 {self.fname}_data::log_t9,\n"
+        fstring += f"                                                 {self.fname}_data::sigma_rate);\n"
+        fstring += "    rate = std::exp(_mu + p * _sigma + log_scor);\n"
+        fstring += "    // we found dlog(rate)/dlog(T9)\n"
+        fstring += "    if constexpr (do_T_derivatives) {\n"
+        fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * 1.e-9_rt * (_dmu_dlogT9 + p * _dsigma_dlogT9) + dlog_scor_dT\n;"
+        fstring += "        drate_dT = rate * dlog_rate_dT;\n"
+        fstring += "    }\n"
+
+        if not leave_open:
+            fstring += "}\n\n"
+
+        return fstring
