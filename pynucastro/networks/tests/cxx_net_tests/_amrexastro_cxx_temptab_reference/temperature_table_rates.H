@@ -66,14 +66,15 @@ namespace temp_tabular {
 
         // O16 + p --> F17
 
-        auto [_rate, _drate_dT] = interp_net::cubic_interp_uneven<do_T_derivatives>(
+        auto [_log_rate, _dlog_rate_dlogT9] = interp_net::cubic_interp_uneven<do_T_derivatives>(
                                                    tfactors.lnT9,
                                                    O16_p_to_F17_iliadis_data::log_t9,
                                                    O16_p_to_F17_iliadis_data::log_rate);
-        rate = std::exp(_rate + log_scor);
+        rate = std::exp(_log_rate + log_scor);
         // we found dlog(rate)/dlog(T9)
         if constexpr (do_T_derivatives) {
-            amrex::Real dlog_rate_dT = tfactors.T9i * _drate_dT * 1.0e-9_rt + dlog_scor_dT;        drate_dT = rate * dlog_rate_dT;
+            amrex::Real dlog_rate_dT = tfactors.T9i * _dlog_rate_dlogT9 * 1.0e-9_rt + dlog_scor_dT
+    ;        drate_dT = rate * dlog_rate_dT;
         }
     }
 
