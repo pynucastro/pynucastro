@@ -356,8 +356,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             idnt = self.indent*n_indent
 
-            of.write(f'{idnt}amrex::Real log_temp = std::log10(state.T);\n')
-            of.write(f'{idnt}amrex::Real log_rhoy = std::log10(rhoy);\n\n')
+            of.write(f'{idnt}{self.dtype} log_temp = std::log10(state.T);\n')
+            of.write(f'{idnt}{self.dtype} log_rhoy = std::log10(rhoy);\n\n')
 
             for r in self.tabular_rates:
 
@@ -471,8 +471,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         if len(self.tabular_rates) > 0:
 
-            of.write(f'{idnt}amrex::Real log_temp = std::log10(state.T);\n')
-            of.write(f'{idnt}amrex::Real log_rhoy = std::log10(rhoy);\n\n')
+            of.write(f'{idnt}{self.dtype} log_temp = std::log10(state.T);\n')
+            of.write(f'{idnt}{self.dtype} log_rhoy = std::log10(rhoy);\n\n')
 
             for r in self.tabular_rates:
 
