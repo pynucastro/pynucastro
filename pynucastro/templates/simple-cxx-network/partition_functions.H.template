@@ -1,0 +1,184 @@
+#ifndef PARTITION_FUNCTIONS_H
+#define PARTITION_FUNCTIONS_H
+
+#include <numbers>
+
+#include <amrex_bridge.H>
+
+#include <tfactors.H>
+#include <fundamental_constants.H>
+#include <network_properties.H>
+#include <interp_tools.H>
+
+using namespace literals;
+using namespace Species;
+
+namespace part_fun {
+
+    <part_fun_data>(1)
+
+    // interpolation routine
+
+    template <typename T>
+    inline
+    void interpolate_pf(const Real t9, int idx,
+                        const T& temp_array, const T& pf_array,
+                        Real& logpf, Real& dlogpf_dT9) {
+
+        // if the index is -1, we are either outside of the bounds or
+        // we never computed it.  try recomputing here
+        if (idx == -1) {
+            idx = interp_net::find_index(t9, temp_array);
+        }
+
+        // if the index is still -1, then we are out-of-bounds, so
+        // just skip the interpolation
+
+        if (idx != -1) {
+
+            // we have idx such that:
+            // temp_array[idx] <= t9 < temp_array[idx+1]
+            AMREX_ASSERT(t9 >= temp_array(idx) && t9 < temp_array(idx+1));
+
+            // find the derivative: dlog(pf)/dT9 -- this is
+            // (log(pf_{i+1}) - log(pf_i)) / (T_{i+1} - T_i)
+
+            dlogpf_dT9 = (pf_array(idx+1) - pf_array(idx)) /
+                           (temp_array(idx+1) - temp_array(idx));
+
+            // find log(PF)
+
+            logpf = pf_array(idx) + dlogpf_dT9 * (t9 - temp_array(idx));
+
+        } else {
+
+            // T < the smallest T or >= the largest T in the partition function table
+            logpf = 0.0;
+            dlogpf_dT9 = 0.0;
+
+        }
+
+    }
+
+    struct pf_cache_t {
+        // Store the coefficient and derivative adjacent in memory, as they're
+        // always accessed at the same time.
+        amrex::Array2D<Real, 1, NumSpecTotal, 1, 2, amrex::Order::C> data;
+        <declare_pf_cache_temp_index>(2)
+        inline
+        pf_cache_t() {
+            // The entries will be default-initialized to -900,
+            // log(partition_function) should never be -900.
+            for (int i = 1; i <= NumSpecTotal; ++i) {
+                    data(i, 1) = -900.0_rt;
+                    data(i, 2) = -900.0_rt;
+            }
+        }
+    };
+
+}
+
+// get the partition function for nucleus inuc.  Here pf_cache
+// should already contain the index into the temp / pf arrays
+
+inline
+void get_partition_function(const int inuc,
+                            [[maybe_unused]] const Real T9,
+                            const part_fun::pf_cache_t& pf_cache,
+                            Real& logpf, Real& dlogpf_dT9) {
+
+    logpf = 0.0_rt;
+    dlogpf_dT9 = 0.0_rt;
+
+    // inuc is the 1-based index for the species
+
+    switch (inuc) {
+
+    <part_fun_cases>(1)
+
+    default:
+
+        logpf = 0.0_rt;
+        dlogpf_dT9 = 0.0_rt;
+
+    }
+
+}
+
+
+// a version of get_partition_function where we have not cached the
+// index into the arrays. Uses tfactors instead of T9 as argument,
+// and returns pf and dpf_dT instead of logpf and dlogpf_dT9
+
+inline
+void get_partition_function(const int inuc,
+                            [[maybe_unused]] const tf_t& tfactors,
+                            Real& pf, Real& dpf_dT) {
+
+    // create a dummy cache.  This will initialize the indices
+    // to -1 and we will force a search for the correct index
+    // when we do the interpolation.
+
+    part_fun::pf_cache_t pf_cache;
+
+    Real logpf, dlogpf_dT9;
+    get_partition_function(inuc, tfactors.T9, pf_cache, logpf, dlogpf_dT9);
+
+    // Convert logpf to pf and dlogpf_dT9 to dpf_dT
+    pf = std::exp(logpf);
+    dpf_dT = pf * dlogpf_dT9 * 1.e-9_rt;
+}
+
+
+inline
+void get_partition_function_cached(const int inuc, const Real T9,
+                                   part_fun::pf_cache_t& pf_cache,
+                                   Real& logpf, Real& dlogpf_dT9) {
+    if (pf_cache.data(inuc, 1) != -900.0_rt) {
+        // present in cache
+        amrex::ignore_unused(T9);
+        logpf = pf_cache.data(inuc, 1);
+        dlogpf_dT9 = pf_cache.data(inuc, 2);
+    } else {
+        get_partition_function(inuc, T9, pf_cache, logpf, dlogpf_dT9);
+        pf_cache.data(inuc, 1) = logpf;
+        pf_cache.data(inuc, 2) = dlogpf_dT9;
+    }
+}
+
+
+template <int spec>
+inline
+constexpr Real get_spin_state() {
+
+    static_assert(spec >= 1 && spec <= NumSpec);
+
+    // Set the spin states (2J + 1) of the element
+
+    <spin_state_cases>(1)
+
+    // Return -1 if we don't recognize the species.
+    return -1.0_rt;
+}
+
+
+// Legacy (non-templated) interface
+
+inline
+Real get_spin_state (int spec) {
+
+    Real s = -1.0_rt;
+
+    // Set the spin states (2J + 1) of the element
+
+    amrex::constexpr_for<1, NumSpec+1>([&] (auto n) {
+        if (n == spec) {
+            s = get_spin_state<n>();
+        }
+    });
+
+    return s;
+}
+
+
+#endif

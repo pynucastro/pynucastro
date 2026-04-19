@@ -16,6 +16,7 @@ class SimpleCxxNetwork(BaseCxxNetwork):
         super().__init__(*args, **kwargs)
 
         self.function_specifier = "inline"
+        self.gpu_data_specifier = ""
         self.dtype = "Real"
         self.array_namespace = ""
 
