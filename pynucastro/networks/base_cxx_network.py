@@ -666,7 +666,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             # number of points
             of.write(f"{self.indent*n_indent}constexpr int npts_{i+1} = {len(temp)};\n\n")
 
-            decl = f"inline {self.gpu_data_specifier} amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
+            decl = f"inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 0, npts_{i+1}-1>"
 
             # write the temperature out, but for readability, split it to 5 values per line
 
@@ -689,7 +689,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}// {n}\n\n")
             of.write(f"{self.indent*n_indent}// this is log(partition function)\n\n")
 
-            decl = f"inline {self.gpu_data_specifier} amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
+            decl = f"inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 0, npts_{i+1}-1>"
             of.write(f"{self.indent*n_indent}{decl} {n}_pf_array = {{\n")
 
             for data in batched(n.partition_function.log_pf_data, 5):
@@ -722,7 +722,6 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}int index_temp_array_{i+1}{{-1}};\n\n")
 
     def _fill_spin_state_cases(self, n_indent, of):
-
         def key_func(nuc):
             if nuc.spin_states is None:
                 return -1
@@ -730,13 +729,35 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         # group identical cases together to satisfy clang-tidy
         nuclei = sorted(self.unique_nuclei + self.approx_nuclei, key=key_func)
+
+        FIRST_ENCOUNTER = True
         for spin_state, group in itertools.groupby(nuclei, key=key_func):
             if spin_state == -1:
                 continue
-            for n in group:
-                of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
-            of.write(f"{self.indent*(n_indent+1)}spin = {spin_state};\n")
-            of.write(f"{self.indent*(n_indent+1)}break;\n\n")
+
+            if FIRST_ENCOUNTER:
+                of.write(f"{self.indent*n_indent}if constexpr (\n")
+                parenthesis_indent = f"{self.indent*(n_indent+1)}          "
+                FIRST_ENCOUNTER = False
+            else:
+                of.write(f"{self.indent*n_indent}else if constexpr (\n")
+                parenthesis_indent = f"{self.indent*(n_indent+1)}               "
+
+            # Divide group of spec into subgroups of 3 for better formatting
+            group = list(group)
+            subgroups = [group[n:n+3] for n in range(0, len(group), 3)]
+            for i, subgroup in enumerate(subgroups):
+                spec_string = " || ".join([f"spec == {n.cindex()}" for n in subgroup])
+
+                # If it is not the last subgroup, add || in the end
+                if i != len(subgroups) - 1:
+                    spec_string += " ||"
+                of.write(f"{self.indent*(n_indent+1)}{spec_string}\n")
+
+            of.write(f"{parenthesis_indent})\n")
+            of.write(f"{self.indent*n_indent}{{\n")
+            of.write(f"{self.indent*(n_indent+1)}return {spin_state}.0_rt;\n")
+            of.write(f"{self.indent*n_indent}}}\n")
 
     def _fill_pynucastro_version(self, n_indent, of):
         of.write(f"{self.indent*n_indent}pynucastro version: {pynucastro_version()}\n")

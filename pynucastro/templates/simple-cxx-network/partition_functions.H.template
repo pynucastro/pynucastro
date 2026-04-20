@@ -61,9 +61,8 @@ namespace part_fun {
     }
 
     struct pf_cache_t {
-        // Store the coefficient and derivative adjacent in memory, as they're
-        // always accessed at the same time.
-        amrex::Array2D<Real, 1, NumSpecTotal, 1, 2, amrex::Order::C> data;
+        // Note: we are using C-ordering here
+        Array2D<Real, 1, NumSpecTotal, 1, 2> data;
         <declare_pf_cache_temp_index>(2)
         inline
         pf_cache_t() {
