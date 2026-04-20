@@ -64,7 +64,8 @@ int main(int argc, char *argv[]) {
     evaluate_rates<do_T_derivatives>(burn_state, Y, rate_eval);
 
     for (int n = 1; n <= Rates::NumRates; ++n) {
-        std::cout << "rate(" << Rates::rate_names[n] << ") = " << rate_eval.screened_rates(n) << std::endl;
+        std::cout << "rate(" << std::setw(35) << Rates::rate_names[n] << ") = "
+                  << rate_eval.screened_rates(n) << std::endl;
     }
 
     std::cout << std::endl;

@@ -111,7 +111,9 @@ class NetworkCompare:
         self.ydots_py_inline = self.pynet.evaluate_ydots(rho=rho, T=T,
                                                          composition=self.comp,
                                                          screen_func=self.screen_func)
-        self.rates_py_inline = {r: r.eval(T, rho=rho, comp=self.comp) for r in self.pynet.all_rates}
+        self.rates_py_inline = {r: r.eval(T, rho=rho, comp=self.comp,
+                                          screen_func=self.screen_func)
+                                for r in self.pynet.all_rates}
 
     def _run_python_module_version(self, rho=2.e8, T=1.e9):
         """Write the python network to a module and import it, and
@@ -228,6 +230,16 @@ class NetworkCompare:
             if match := ydot_re.search(line.strip()):
                 nuc = Nucleus(match.group(2).strip())
                 self.ydots_cxx[nuc] = float(match.group(6))
+
+        rate_re = re.compile(r"(rate)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
+                             re.IGNORECASE | re.DOTALL)
+
+        self.rates_cxx = {}
+        for line in stdout.split("\n"):
+            if match := rate_re.search(line.strip()):
+                rate_fname = match.group(2).strip()
+                rr = [r for r in self.pynet.all_rates if r.fname == rate_fname][0]
+                self.rates_cxx[rr] = float(match.group(6))
 
     def evaluate(self, rho=2.e8, T=1.e9):
         """Evaluate the ydots from all the backends we are
