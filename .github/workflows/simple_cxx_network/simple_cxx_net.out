@@ -1,40 +1,52 @@
 (rho, T) = 2e+08 1e+09
 
 ODE righthand side values
-Ydot(  He4) = -3187.33914112
-Ydot(  C12) = 636.726877973
-Ydot(  O16) = -1265.14889575
-Ydot( Ne20) = 1267.56629007
-Ydot( Na20) = -0.0154720365022
+Ydot(  He4) = -3187.3391411153
+Ydot(  C12) = 636.7268779735
+Ydot(  O16) = -1265.1488957467
+Ydot( Ne20) = 1267.5662900728
+Ydot( Na20) = -0.015472036502203
 
 Jacobian values
-jac(  He4,  He4) = -140442.301654
-jac(  C12,  He4) = 38299.6900027
-jac(  O16,  He4) = -25303.0399579
-jac( Ne20,  He4) = 25351.0782955
+jac(  He4,  He4) = -140442.30165407
+jac(  C12,  He4) = 38299.690002684
+jac(  O16,  He4) = -25303.039957913
+jac( Ne20,  He4) = 25351.078295534
 jac( Na20,  He4) = 0
-jac(  He4,  C12) = -144.114363828
-jac(  C12,  C12) = -144.116310928
-jac(  O16,  C12) = 144.115012861
-jac( Ne20,  C12) = 0.00064903321652
+jac(  He4,  C12) = -144.11436382818
+jac(  C12,  C12) = -144.11631092783
+jac(  O16,  C12) = 144.1150128614
+jac( Ne20,  C12) = 0.00064903321652034
 jac( Na20,  C12) = 0
-jac(  He4,  O16) = -101404.313182
-jac(  C12,  O16) = 2.66903728092e-31
-jac(  O16,  O16) = -101404.313182
-jac( Ne20,  O16) = 101404.313182
+jac(  He4,  O16) = -101404.31318213
+jac(  C12,  O16) = 2.6690372809249e-31
+jac(  O16,  O16) = -101404.31318213
+jac( Ne20,  O16) = 101404.31318213
 jac( Na20,  O16) = 0
-jac(  He4, Ne20) = 2.93841348757e-16
-jac(  C12, Ne20) = 9.67611226303e-27
-jac(  O16, Ne20) = 2.93841348761e-16
-jac( Ne20, Ne20) = -2.93841348766e-16
+jac(  He4, Ne20) = 2.9384134875655e-16
+jac(  C12, Ne20) = 9.6761122630306e-27
+jac(  O16, Ne20) = 2.9384134876138e-16
+jac( Ne20, Ne20) = -2.9384134876622e-16
 jac( Na20, Ne20) = 0
-jac(  He4, Na20) = 0.310214898718
+jac(  He4, Na20) = 0.31021489871773
 jac(  C12, Na20) = 0
-jac(  O16, Na20) = 0.310214898718
-jac( Ne20, Na20) = 1.2369887515
-jac( Na20, Na20) = -1.54720365022
+jac(  O16, Na20) = 0.31021489871773
+jac( Ne20, Na20) = 1.2369887515025
+jac( Na20, Na20) = -1.5472036502203
 
-Instantaneous energy generation rate (erg/g/s) = 1.02874968013e+22
+Instantaneous energy generation rate (erg/g/s) = 1.0287496801262e+22
+
+Reaction rate values
+rate(               Na20_to_Ne20_reaclib) = 1.2369887515025
+rate(            Na20_to_He4_O16_reaclib) = 0.31021489871773
+rate(             He4_C12_to_O16_reaclib) = 1.441150128614e-05
+rate(            He4_O16_to_Ne20_reaclib) = 0.010140431318213
+rate(        C12_C12_to_He4_Ne20_reaclib) = 1.947099649561e-10
+rate(         He4_He4_He4_to_C12_reaclib) = 7.6695456680609e-10
+rate(             O16_to_He4_C12_derived) = 2.6690372809249e-31
+rate(            Ne20_to_He4_O16_derived) = 2.9384134876138e-16
+rate(         C12_to_He4_He4_He4_derived) = 1.4854348056623e-26
+rate(        He4_Ne20_to_C12_C12_derived) = 4.8380561315153e-34
 
 Partition function values
 pf(  He4) = 1
