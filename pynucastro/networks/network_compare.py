@@ -163,7 +163,8 @@ class NetworkCompare:
         self.ydots_amrex = {}
         for line in stdout.split("\n"):
             if match := ydot_re.search(line.strip()):
-                self.ydots_amrex[Nucleus(match.group(2))] = float(match.group(6))
+                nuc = Nucleus(match.group(2).strip())
+                self.ydots_amrex[nuc] = float(match.group(6))
 
     def _run_simple_cxx_version(self, rho=2.e8, T=1.e9):
         """Output the simple C++ network code, build it, run, and
@@ -202,7 +203,8 @@ class NetworkCompare:
         self.ydots_cxx = {}
         for line in stdout.split("\n"):
             if match := ydot_re.search(line.strip()):
-                self.ydots_cxx[Nucleus(match.group(2))] = float(match.group(6))
+                nuc = Nucleus(match.group(2).strip())
+                self.ydots_cxx[nuc] = float(match.group(6))
 
     def evaluate(self, rho=2.e8, T=1.e9):
         """Evaluate the ydots from all the backends we are
