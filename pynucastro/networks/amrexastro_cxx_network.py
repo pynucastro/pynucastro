@@ -4,7 +4,6 @@ hydrodynamics codes
 
 """
 
-import itertools
 import re
 import shutil
 from pathlib import Path
