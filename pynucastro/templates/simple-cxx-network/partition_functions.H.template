@@ -1,6 +1,7 @@
 #ifndef PARTITION_FUNCTIONS_H
 #define PARTITION_FUNCTIONS_H
 
+#include <cassert>
 #include <numbers>
 
 #include <amrex_bridge.H>
@@ -38,7 +39,7 @@ namespace part_fun {
 
             // we have idx such that:
             // temp_array[idx] <= t9 < temp_array[idx+1]
-            AMREX_ASSERT(t9 >= temp_array(idx) && t9 < temp_array(idx+1));
+            assert(t9 >= temp_array(idx) && t9 < temp_array(idx+1));
 
             // find the derivative: dlog(pf)/dT9 -- this is
             // (log(pf_{i+1}) - log(pf_i)) / (T_{i+1} - T_i)

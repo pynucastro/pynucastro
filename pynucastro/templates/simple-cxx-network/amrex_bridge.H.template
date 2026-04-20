@@ -36,6 +36,12 @@ template <class T, int XLO, int XHI>
 struct Array1D
 {
 
+    [[nodiscard]] inline
+    static constexpr int lo () noexcept { return XLO; }
+
+    [[nodiscard]] inline
+    static constexpr int hi () noexcept { return XHI; }
+
     // Returns the number of elements in the Array1D object as an unsigned
     // integer.
     [[nodiscard]] inline
