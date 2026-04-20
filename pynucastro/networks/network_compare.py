@@ -154,9 +154,10 @@ class NetworkCompare:
 
         # the stdout includes lines of the form:
         #    Ydot(X) = ...
-        # for each nucleus X.  This regex will capture
-        # the nucleus and the ydot value for each of these
-        ydot_re = re.compile(r"(Ydot)\((\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
+        # for each nucleus X.  Note: there can be 0-2 spaces before X.
+        # This regex will capture the nucleus and the ydot value for
+        # each of these
+        ydot_re = re.compile(r"(Ydot)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
                              re.IGNORECASE | re.DOTALL)
 
         self.ydots_amrex = {}
@@ -192,9 +193,10 @@ class NetworkCompare:
 
         # the stdout includes lines of the form:
         #    Ydot(X) = ...
-        # for each nucleus X.  This regex will capture
-        # the nucleus and the ydot value for each of these
-        ydot_re = re.compile(r"(Ydot)\((\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
+        # for each nucleus X.  Note: there can be 0-2 spaces before X.
+        # This regex will capture the nucleus and the ydot value for
+        # each of these
+        ydot_re = re.compile(r"(Ydot)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
                              re.IGNORECASE | re.DOTALL)
 
         self.ydots_cxx = {}
