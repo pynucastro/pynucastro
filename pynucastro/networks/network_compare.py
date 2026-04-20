@@ -92,6 +92,13 @@ class NetworkCompare:
         self.ydots_amrex = None
         self.ydots_cxx = None
 
+        # storage for the rates -- without the
+        # density or composition factors
+        self.rates_py_inline = None
+        self.rates_py_module = None
+        self.rates_amrex = None
+        self.rates_cxx = None
+
         self.T_eval = None
         self.rho_eval = None
 
@@ -104,6 +111,7 @@ class NetworkCompare:
         self.ydots_py_inline = self.pynet.evaluate_ydots(rho=rho, T=T,
                                                          composition=self.comp,
                                                          screen_func=self.screen_func)
+        self.rates_py_inline = {r: r.eval(T, rho=rho, comp=self.comp) for r in self.pynet.all_rates}
 
     def _run_python_module_version(self, rho=2.e8, T=1.e9):
         """Write the python network to a module and import it, and
@@ -124,6 +132,9 @@ class NetworkCompare:
         self.ydots_py_module = {}
         for n, y in zip(self.pynet.unique_nuclei, _tmp):
             self.ydots_py_module[n] = y
+
+        rate_eval = cn.do_rate_eval(0.0, Y, rho, T, screen_func=self.screen_func)
+        self.rates_py_module = {r: getattr(rate_eval, r.fname, None) for r in self.pynet.all_rates}
 
     def _run_amrex_version(self, rho=2.e8, T=1.e9):
         """Output the AMReX C++ network code, build it, run, and
@@ -201,6 +212,8 @@ class NetworkCompare:
                              re.IGNORECASE | re.DOTALL)
 
         self.ydots_cxx = {}
+        self.rates_cxx = {}
+
         for line in stdout.split("\n"):
             if match := ydot_re.search(line.strip()):
                 nuc = Nucleus(match.group(2).strip())
