@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
 
     actual_rhs(burn_state, ydot);
 
-    std::cout << std::setprecision(12);
+    std::cout << std::setprecision(14);
 
     std::cout << std::endl;
     std::cout << "rho, T = " << burn_state.rho << " " << burn_state.T << std::endl;

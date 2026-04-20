@@ -177,6 +177,16 @@ class NetworkCompare:
                 nuc = Nucleus(match.group(2).strip())
                 self.ydots_amrex[nuc] = float(match.group(6))
 
+        rate_re = re.compile(r"(rate)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
+                             re.IGNORECASE | re.DOTALL)
+
+        self.rates_amrex = {}
+        for line in stdout.split("\n"):
+            if match := rate_re.search(line.strip()):
+                rate_fname = match.group(2).strip()
+                rr = [r for r in self.pynet.all_rates if r.fname == rate_fname][0]
+                self.rates_amrex[rr] = float(match.group(6))
+
     def _run_simple_cxx_version(self, rho=2.e8, T=1.e9):
         """Output the simple C++ network code, build it, run, and
         parse the output to get the rates.
