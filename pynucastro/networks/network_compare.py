@@ -313,6 +313,10 @@ class NetworkCompare:
         if self.ydots_py_inline is None:
             raise ValueError("no ydots stored.  evaluate() must be run first")
 
+        print("dYdt")
+        print("====")
+        print()
+
         data_headers = {"py (inline)": self.ydots_py_inline,
                         "py (module)": self.ydots_py_module}
 
@@ -337,6 +341,44 @@ class NetworkCompare:
             for key, ydots in data_headers.items():
                 val = ydots[nuc]
                 ref = self.ydots_py_inline[nuc]
+                if key == "py (inline)":
+                    line += f"| {val:13.6g} "
+                else:
+                    err = abs((val - ref) / ref)
+                    line += f"| {val:13.6g} {err:11.5g} "
+            print(line)
+
+        print()
+        print()
+
+        print("rates")
+        print("=====")
+        print()
+
+        data_headers = {"py (inline)": self.rates_py_inline,
+                        "py (module)": self.rates_py_module}
+
+        if self.rates_amrex:
+            data_headers["AMReX C++"] = self.rates_amrex
+
+        if self.rates_cxx:
+            data_headers["simple C++"] = self.rates_cxx
+
+        header = f" {'rate':25} "
+        for key in data_headers:
+            if key == "py (inline)":
+                header += f"| {key:13} "
+            else:
+                header += f"| {key:13} {'error':11} "
+
+        print(header)
+        print("-" * len(header))
+
+        for rate in self.rates_py_inline:
+            line = f" {rate!s:25} "
+            for key, source in data_headers.items():
+                val = source[rate]
+                ref = self.rates_py_inline[rate]
                 if key == "py (inline)":
                     line += f"| {val:13.6g} "
                 else:

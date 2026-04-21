@@ -34,6 +34,8 @@ class TestNetworkCompare:
                             cxx_test_path=cxx_test_path)
         return nc
 
+    @pytest.mark.skipif(sys.platform == "darwin" or sys.platform.startswith("win"),
+                        reason="We do not build C++ on Mac or Windows")
     @pytest.fixture(scope="class")
     def eval_cond(self, nc):
         # thermodynamic conditions
