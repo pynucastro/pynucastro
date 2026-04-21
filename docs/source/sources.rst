@@ -8,11 +8,17 @@ relevant publications are as follows.
 Reaction rates
 --------------
 
-Nuclear reaction rates from JINA Reaclib
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+JINA Reaclib Library
+^^^^^^^^^^^^^^^^^^^^
 
 The reaction rate parameterizations in `pynucastro/library <https://github.com/pynucastro/pynucastro/tree/main/pynucastro/library>`_
 were obtained from the `JINA Reaclib database <https://reaclib.jinaweb.org/>`_, :cite:t:`ReacLib`.
+
+StarLib Library
+^^^^^^^^^^^^^^^
+
+The StarLib library was download from their github page: https://github.com/Starlib/Rate-Library
+
 
 .. _tabulated_rate_sources:
 
