@@ -4,12 +4,17 @@
 # RateCollection.  Here we use the Chugunov 2007 screening.
 
 import sys
+import warnings
 from pathlib import Path
 
 import pytest
 from pytest import approx
 
 from pynucastro.networks.network_compare import NetworkCompare
+
+
+def _skip_build():
+    return sys.platform == "darwin" or sys.platform.startswith("win")
 
 
 class TestNetworkCompare:
@@ -34,8 +39,6 @@ class TestNetworkCompare:
                             cxx_test_path=cxx_test_path)
         return nc
 
-    @pytest.mark.skipif(sys.platform == "darwin" or sys.platform.startswith("win"),
-                        reason="We do not build C++ on Mac or Windows")
     @pytest.fixture(scope="class")
     def eval_cond(self, nc):
         # thermodynamic conditions
@@ -43,10 +46,14 @@ class TestNetworkCompare:
         rho = 2.e8
         T = 1.e9
 
-        nc.evaluate(rho=rho, T=T)
+        if not _skip_build():
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore", category=UserWarning)
+                nc.evaluate(rho=rho, T=T)
+
         return nc
 
-    @pytest.mark.skipif(sys.platform == "darwin" or sys.platform.startswith("win"),
+    @pytest.mark.skipif(_skip_build(),
                         reason="We do not build C++ on Mac or Windows")
     def test_compare_ydots(self, eval_cond):
 
@@ -58,7 +65,7 @@ class TestNetworkCompare:
                 assert other[nuc] == approx(eval_cond.ydots_py_inline[nuc],
                                             rel=1.e-6, abs=1.e-30)
 
-    @pytest.mark.skipif(sys.platform == "darwin" or sys.platform.startswith("win"),
+    @pytest.mark.skipif(_skip_build(),
                         reason="We do not build C++ on Mac or Windows")
     def test_compare_rates(self, eval_cond):
 

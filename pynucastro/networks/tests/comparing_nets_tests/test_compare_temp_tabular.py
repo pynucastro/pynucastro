@@ -13,6 +13,10 @@ from pynucastro.networks.network_compare import NetworkCompare
 from pynucastro.rates.alternate_rates import IliadisO16pgF17
 
 
+def _skip_build():
+    return sys.platform == "darwin" or sys.platform.startswith("win")
+
+
 class TestNetworkCompare:
 
     @pytest.fixture(scope="class")
@@ -34,35 +38,33 @@ class TestNetworkCompare:
                             amrex_test_path=amrex_test_path)
         return nc
 
-    @pytest.mark.skipif(sys.platform == "darwin" or sys.platform.startswith("win"),
-                        reason="We do not build C++ on Mac or Windows")
     @pytest.fixture(scope="class")
     def eval_cond1(self, nc):
         # thermodynamic conditions
         rho = 2.e8
         T = 1.e9
 
-        with warnings.catch_warnings():
-            warnings.filterwarnings("ignore", category=UserWarning)
-            nc.evaluate(rho=rho, T=T)
+        if not _skip_build():
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore", category=UserWarning)
+                nc.evaluate(rho=rho, T=T)
 
         return nc
 
-    @pytest.mark.skipif(sys.platform == "darwin" or sys.platform.startswith("win"),
-                        reason="We do not build C++ on Mac or Windows")
     @pytest.fixture(scope="class")
     def eval_cond2(self, nc):
         # thermodynamic conditions
         rho = 2.1e6
         T = 3.95e8
 
-        with warnings.catch_warnings():
-            warnings.filterwarnings("ignore", category=UserWarning)
-            nc.evaluate(rho=rho, T=T)
+        if not _skip_build():
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore", category=UserWarning)
+                nc.evaluate(rho=rho, T=T)
 
         return nc
 
-    @pytest.mark.skipif(sys.platform == "darwin" or sys.platform.startswith("win"),
+    @pytest.mark.skipif(_skip_build(),
                         reason="We do not build C++ on Mac or Windows")
     def test_compare_ydots(self, eval_cond1):
 
@@ -74,7 +76,7 @@ class TestNetworkCompare:
                 assert other[nuc] == approx(eval_cond1.ydots_py_inline[nuc],
                                             rel=1.e-11, abs=1.e-30)
 
-    @pytest.mark.skipif(sys.platform == "darwin" or sys.platform.startswith("win"),
+    @pytest.mark.skipif(_skip_build(),
                         reason="We do not build C++ on Mac or Windows")
     def test_compare_rates(self, eval_cond1):
 
@@ -86,7 +88,7 @@ class TestNetworkCompare:
                 assert other[nuc] == approx(eval_cond1.rates_py_inline[nuc],
                                             rel=1.e-11, abs=1.e-30)
 
-    @pytest.mark.skipif(sys.platform == "darwin" or sys.platform.startswith("win"),
+    @pytest.mark.skipif(_skip_build(),
                         reason="We do not build C++ on Mac or Windows")
     def test_compare_ydots2(self, eval_cond2):
 
@@ -98,7 +100,7 @@ class TestNetworkCompare:
                 assert other[nuc] == approx(eval_cond2.ydots_py_inline[nuc],
                                             rel=1.e-11, abs=1.e-30)
 
-    @pytest.mark.skipif(sys.platform == "darwin" or sys.platform.startswith("win"),
+    @pytest.mark.skipif(_skip_build(),
                         reason="We do not build C++ on Mac or Windows")
     def test_compare_rates2(self, eval_cond2):
 
