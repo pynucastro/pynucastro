@@ -37,6 +37,43 @@ class NetworkCompare:
         the Path to output the AMReX C++ source files and build in
     cxx_test_path : pathlib.Path
         the Path to output the C++ source files and build in
+
+    Attributes
+    ----------
+    ydots_py_inline : dict(Nucleus)
+        The dY/dt terms from the python inline network
+        (:py:func:`RateCollection.evaluate_ydots
+        <pynucastro.networks.rate_collection.RateCollection.evaluate_ydots>`).
+    ydots_py_module : dict(Nucleus)
+        The dYdt terms from a :py:class:`PythonNetwork
+        <pynucastro.networks.python_network.PythonNetwork>` module.
+    ydots_amrex : dict(Nucleus)
+        The dYdt terms from parsed from a build of an
+        :py:class:`AmrexAstroCxxNetwork
+        <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`.
+    ydots_cxx : dict(Nucleus)
+        The dYdt terms from parsed from a build of a
+        :py:class:`SimpleCxxNetwork
+        <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`.
+    rates_py_inline : dict(Rate)
+        The raw rates (e.g. N_A <σv>) from the python inline network
+        (computed via :py:func:`Rate.eval <pynucastro.rates.rate.Rate.eval>`).
+    rates_py_module : dict(Rate)
+        The raw rates (e.g. N_A <σv>) from a :py:class:`PythonNetwork
+        <pynucastro.networks.python_network.PythonNetwork>` module.
+    rates_amrex : dict(Rate)
+        The raw rates (e.g. N_A <σv>) parsed from a build of an
+        :py:class:`AmrexAstroCxxNetwork
+        <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`.
+    rates_cxx : dict(Rate)
+        The raw rates (e.g. N_A <σv>) parsed from a build of a
+        :py:class:`SimpleCxxNetwork
+        <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`.
+    T_eval : float
+        The temperature used in the evaluation.
+    rho_eval : float
+        The density used in the evaluation.
+
     """
 
     def __init__(self, lib, *,
