@@ -36,5 +36,5 @@ jobs:
       - name: Run and compare
         run: |
           cd work
-          ./main > test.out
+          ./main 2.e8 4.e9 > test.out
           diff test.out simple_cxx_net.out

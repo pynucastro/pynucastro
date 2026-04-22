@@ -27,6 +27,7 @@ int main(int argc, char* argv[]) {
     }
 
     std::cout << "(rho, T) = " << rho << " " << T << std::endl;
+    std::cout << std::endl;
 
     actual_network_init();
 
@@ -40,10 +41,14 @@ int main(int argc, char* argv[]) {
     Array1D<Real, 1, NumSpec> ydot;
     actual_rhs(state, ydot);
 
+    std::cout << "ODE righthand side values" << std::endl;
+
     std::cout << std::setprecision(12);
 
     for (int n = 1; n <= NumSpec; ++n) {
-        std::cout << "Ydot(" << spec_names[n-1] << ") = " << ydot(n) << std::endl;
+        std::cout << "Ydot("
+                  << std::setw(5) << spec_names[n-1] << ") = "
+                  << ydot(n) << std::endl;
     }
 
     std::cout << std::endl;
@@ -51,9 +56,13 @@ int main(int argc, char* argv[]) {
     MathArray2D<1, NumSpec, 1, NumSpec> jac;
     actual_jac(state, jac);
 
+    std::cout << "Jacobian values" << std::endl;
+
     for (int jcol = 1; jcol <= NumSpec; ++jcol) {
         for (int irow = 1; irow <= NumSpec; ++irow) {
-            std::cout << "jac(" << irow << "," << jcol << ") = "
+            std::cout << "jac("
+                      << std::setw(5) << spec_names[irow-1] << ","
+                      << std::setw(5) << spec_names[jcol-1] << ") = "
                       << jac(irow,jcol) << std::endl;
         }
     }
@@ -62,6 +71,19 @@ int main(int argc, char* argv[]) {
 
     Real enuc;
     ener_gener_rate(ydot, enuc);
-    std::cout << "instantaneous energy generation rate (erg/g/s) = " << enuc << std::endl;
+    std::cout << "Instantaneous energy generation rate (erg/g/s) = " << enuc << std::endl;
+    std::cout << std::endl;
+
+    tf_t tfactors = evaluate_tfactors(state.T);
+    Real pf{};
+    Real dpf_dT{};
+
+    std::cout << "Partition function values" << std::endl;
+    for (int n = 1; n <= NumSpecTotal; ++n) {
+        get_partition_function(n, tfactors, pf, dpf_dT);
+        std::cout << "pf("
+                  << std::setw(5) << spec_names[n-1] << ") = "
+                  << pf << std::endl;
+    }
 
 }
