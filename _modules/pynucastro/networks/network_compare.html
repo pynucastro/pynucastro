@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.network_compare &#8212; pynucastro 2.9.0.post87+ga17d5c403 documentation</title>
+    <title>pynucastro.networks.network_compare &#8212; pynucastro 2.9.0.post88+g7f261a491 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
-    <script src="../../../_static/documentation_options.js?v=da9d10c4"></script>
+    <script src="../../../_static/documentation_options.js?v=8afa681c"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -654,15 +654,17 @@
 
         <span class="c1"># the stdout includes lines of the form:</span>
         <span class="c1">#    Ydot(X) = ...</span>
-        <span class="c1"># for each nucleus X.  This regex will capture</span>
-        <span class="c1"># the nucleus and the ydot value for each of these</span>
-        <span class="n">ydot_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(Ydot)\((\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)&quot;</span><span class="p">,</span>
+        <span class="c1"># for each nucleus X.  Note: there can be 0-2 spaces before X.</span>
+        <span class="c1"># This regex will capture the nucleus and the ydot value for</span>
+        <span class="c1"># each of these</span>
+        <span class="n">ydot_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(Ydot)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)&quot;</span><span class="p">,</span>
                              <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">ydots_amrex</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">ydot_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ydots_amrex</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
+                <span class="n">nuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ydots_amrex</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_run_simple_cxx_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">2.e8</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Output the simple C++ network code, build it, run, and</span>
@@ -692,15 +694,17 @@
 
         <span class="c1"># the stdout includes lines of the form:</span>
         <span class="c1">#    Ydot(X) = ...</span>
-        <span class="c1"># for each nucleus X.  This regex will capture</span>
-        <span class="c1"># the nucleus and the ydot value for each of these</span>
-        <span class="n">ydot_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(Ydot)\((\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)&quot;</span><span class="p">,</span>
+        <span class="c1"># for each nucleus X.  Note: there can be 0-2 spaces before X.</span>
+        <span class="c1"># This regex will capture the nucleus and the ydot value for</span>
+        <span class="c1"># each of these</span>
+        <span class="n">ydot_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(Ydot)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)&quot;</span><span class="p">,</span>
                              <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">ydots_cxx</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">ydot_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ydots_cxx</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
+                <span class="n">nuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ydots_cxx</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
 
 <div class="viewcode-block" id="NetworkCompare.evaluate">
 <a class="viewcode-back" href="../../../pynucastro.networks.network_compare.html#pynucastro.networks.network_compare.NetworkCompare.evaluate">[docs]</a>
