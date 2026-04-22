@@ -76,6 +76,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.solved_jacobian = False
 
         self.function_specifier = "inline"
+        self.gpu_data_specifier = ""
         self.dtype = "double"
         self.array_namespace = ""
 
@@ -324,12 +325,12 @@ class BaseCxxNetwork(ABC, RateCollection):
             comps = [TableIndex.RATE, TableIndex.NU, TableIndex.GAMMA]
 
             of.write(f'{idnt}// {r.rid}\n')
-            of.write(f'{idnt}inline AMREX_GPU_MANAGED table_t {r.table_index_name}_meta{{.ntemp={r.table_temp_lines}, .nrhoy={r.table_rhoy_lines}, .nvars={len(comps)}, .nheader={r.table_header_lines}}};\n')
+            of.write(f'{idnt}inline {self.gpu_data_specifier} table_t {r.table_index_name}_meta{{.ntemp={r.table_temp_lines}, .nrhoy={r.table_rhoy_lines}, .nvars={len(comps)}, .nheader={r.table_header_lines}}};\n')
 
-            of.write(f'{idnt}inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy{{{", ".join(str(v) for v in r.interpolator.rhoy)}}};\n')
-            of.write(f'{idnt}inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_temp_lines}> {r.table_index_name}_temp{{{", ".join(str(v) for v in r.interpolator.temp)}}};\n')
+            of.write(f'{idnt}inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy{{{", ".join(str(v) for v in r.interpolator.rhoy)}}};\n')
+            of.write(f'{idnt}inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_temp_lines}> {r.table_index_name}_temp{{{", ".join(str(v) for v in r.interpolator.temp)}}};\n')
             of.write(f'{idnt}// Array3D is column-major (Fortran-ordering).  T varies fastest, then rho Ye, then the component\n')
-            of.write(f'{idnt}inline AMREX_GPU_MANAGED {self.array_namespace}Array3D<{self.dtype}, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, num_vars>\n')
+            of.write(f'{idnt}inline {self.gpu_data_specifier} {self.array_namespace}Array3D<{self.dtype}, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, num_vars>\n')
             of.write(f'{idnt}     {r.table_index_name}_data{{\n')
             for ncomp in comps:
                 for jrho in range(len(r.interpolator.rhoy)):
@@ -355,8 +356,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             idnt = self.indent*n_indent
 
-            of.write(f'{idnt}amrex::Real log_temp = std::log10(state.T);\n')
-            of.write(f'{idnt}amrex::Real log_rhoy = std::log10(rhoy);\n\n')
+            of.write(f'{idnt}{self.dtype} log_temp = std::log10(state.T);\n')
+            of.write(f'{idnt}{self.dtype} log_rhoy = std::log10(rhoy);\n\n')
 
             for r in self.tabular_rates:
 
@@ -383,14 +384,14 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"namespace {r.fname}_data {{\n")
             log_temp_str = np.array2string(r.log_t9_data,
                                            max_line_width=70, precision=17, separator=", ")
-            of.write(f'{idnt}    inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_t9 = {{\n')
+            of.write(f'{idnt}    inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_t9 = {{\n')
             for line in log_temp_str.split("\n"):
                 of.write(f"     {line.replace('[', ' ').replace(']', ' ').strip()}\n")
             of.write("    };\n\n")
 
             log_rate_str = np.array2string(r.log_rate_data,
                                            max_line_width=70, precision=17, separator=", ")
-            of.write(f'{idnt}    inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_rate = {{\n')
+            of.write(f'{idnt}    inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_rate = {{\n')
             for line in log_rate_str.split("\n"):
                 of.write(f"     {line.replace('[', ' ').replace(']', ' ').strip()}\n")
             of.write("    };\n")
@@ -470,8 +471,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         if len(self.tabular_rates) > 0:
 
-            of.write(f'{idnt}amrex::Real log_temp = std::log10(state.T);\n')
-            of.write(f'{idnt}amrex::Real log_rhoy = std::log10(rhoy);\n\n')
+            of.write(f'{idnt}{self.dtype} log_temp = std::log10(state.T);\n')
+            of.write(f'{idnt}{self.dtype} log_rhoy = std::log10(rhoy);\n\n')
 
             for r in self.tabular_rates:
 
@@ -665,7 +666,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             # number of points
             of.write(f"{self.indent*n_indent}constexpr int npts_{i+1} = {len(temp)};\n\n")
 
-            decl = f"inline AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
+            decl = f"inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 0, npts_{i+1}-1>"
 
             # write the temperature out, but for readability, split it to 5 values per line
 
@@ -688,7 +689,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}// {n}\n\n")
             of.write(f"{self.indent*n_indent}// this is log(partition function)\n\n")
 
-            decl = f"inline AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
+            decl = f"inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 0, npts_{i+1}-1>"
             of.write(f"{self.indent*n_indent}{decl} {n}_pf_array = {{\n")
 
             for data in batched(n.partition_function.log_pf_data, 5):
@@ -721,7 +722,6 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}int index_temp_array_{i+1}{{-1}};\n\n")
 
     def _fill_spin_state_cases(self, n_indent, of):
-
         def key_func(nuc):
             if nuc.spin_states is None:
                 return -1
@@ -729,13 +729,35 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         # group identical cases together to satisfy clang-tidy
         nuclei = sorted(self.unique_nuclei + self.approx_nuclei, key=key_func)
+
+        FIRST_ENCOUNTER = True
         for spin_state, group in itertools.groupby(nuclei, key=key_func):
             if spin_state == -1:
                 continue
-            for n in group:
-                of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
-            of.write(f"{self.indent*(n_indent+1)}spin = {spin_state};\n")
-            of.write(f"{self.indent*(n_indent+1)}break;\n\n")
+
+            if FIRST_ENCOUNTER:
+                of.write(f"{self.indent*n_indent}if constexpr (\n")
+                parenthesis_indent = f"{self.indent*(n_indent+1)}          "
+                FIRST_ENCOUNTER = False
+            else:
+                of.write(f"{self.indent*n_indent}else if constexpr (\n")
+                parenthesis_indent = f"{self.indent*(n_indent+1)}               "
+
+            # Divide group of spec into subgroups of 3 for better formatting
+            group = list(group)
+            subgroups = [group[n:n+3] for n in range(0, len(group), 3)]
+            for i, subgroup in enumerate(subgroups):
+                spec_string = " || ".join([f"spec == {n.cindex()}" for n in subgroup])
+
+                # If it is not the last subgroup, add || in the end
+                if i != len(subgroups) - 1:
+                    spec_string += " ||"
+                of.write(f"{self.indent*(n_indent+1)}{spec_string}\n")
+
+            of.write(f"{parenthesis_indent})\n")
+            of.write(f"{self.indent*n_indent}{{\n")
+            of.write(f"{self.indent*(n_indent+1)}return {spin_state}.0_rt;\n")
+            of.write(f"{self.indent*n_indent}}}\n")
 
     def _fill_pynucastro_version(self, n_indent, of):
         of.write(f"{self.indent*n_indent}pynucastro version: {pynucastro_version()}\n")

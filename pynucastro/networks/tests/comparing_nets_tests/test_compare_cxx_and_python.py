@@ -1,15 +1,16 @@
-# this creates the same network as SimpleCxxNetwork and PythonNetwork.
-# we then compare the ydots from the C++ net, the python network
-# written to a module, and the python network evaluating as a
-# RateCollection.  Note: screening is not considered.
+# this creates the same network as in Python (inline / module) and C++
+# (AMReX and simple-C++).  We then compare the ydots across each.
+# Note: screening is not considered.
 
 import sys
+import warnings
 from pathlib import Path
 
 import pytest
 from pytest import approx
 
 from pynucastro.networks.network_compare import NetworkCompare
+from pynucastro.rates.derived_rate import DerivedRate
 
 
 class TestNetworkCompare:
@@ -18,6 +19,13 @@ class TestNetworkCompare:
     def lib(self, reaclib_library):
         nuc = ["p", "he4", "c12", "o16", "ne20", "na23", "mg24"]
         lib = reaclib_library.linking_nuclei(nuc)
+        rates_to_derive = lib.backward().get_rates()
+        for r in rates_to_derive:
+            fr = lib.get_rate_by_nuclei(r.products, r.reactants)
+            if fr:
+                lib.remove_rate(r)
+                d = DerivedRate(source_rate=fr, use_pf=True, use_unreliable_spins=True)
+                lib.add_rate(d)
         return lib
 
     @pytest.fixture(scope="class")
@@ -41,7 +49,9 @@ class TestNetworkCompare:
         rho = 2.e8
         T = 1.e9
 
-        nc.evaluate(rho=rho, T=T)
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=UserWarning)
+            nc.evaluate(rho=rho, T=T)
 
         # compare the simple C++, AMReX, and python module nets to the
         # python inline version
@@ -59,7 +69,9 @@ class TestNetworkCompare:
         rho = 2.e7
         T = 4.e9
 
-        nc.evaluate(rho=rho, T=T)
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=UserWarning)
+            nc.evaluate(rho=rho, T=T)
 
         # compare the simple C++, AMReX, and python module nets to the
         # python inline version

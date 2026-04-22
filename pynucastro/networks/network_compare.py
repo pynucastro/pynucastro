@@ -154,15 +154,17 @@ class NetworkCompare:
 
         # the stdout includes lines of the form:
         #    Ydot(X) = ...
-        # for each nucleus X.  This regex will capture
-        # the nucleus and the ydot value for each of these
-        ydot_re = re.compile(r"(Ydot)\((\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
+        # for each nucleus X.  Note: there can be 0-2 spaces before X.
+        # This regex will capture the nucleus and the ydot value for
+        # each of these
+        ydot_re = re.compile(r"(Ydot)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
                              re.IGNORECASE | re.DOTALL)
 
         self.ydots_amrex = {}
         for line in stdout.split("\n"):
             if match := ydot_re.search(line.strip()):
-                self.ydots_amrex[Nucleus(match.group(2))] = float(match.group(6))
+                nuc = Nucleus(match.group(2).strip())
+                self.ydots_amrex[nuc] = float(match.group(6))
 
     def _run_simple_cxx_version(self, rho=2.e8, T=1.e9):
         """Output the simple C++ network code, build it, run, and
@@ -192,15 +194,17 @@ class NetworkCompare:
 
         # the stdout includes lines of the form:
         #    Ydot(X) = ...
-        # for each nucleus X.  This regex will capture
-        # the nucleus and the ydot value for each of these
-        ydot_re = re.compile(r"(Ydot)\((\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
+        # for each nucleus X.  Note: there can be 0-2 spaces before X.
+        # This regex will capture the nucleus and the ydot value for
+        # each of these
+        ydot_re = re.compile(r"(Ydot)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
                              re.IGNORECASE | re.DOTALL)
 
         self.ydots_cxx = {}
         for line in stdout.split("\n"):
             if match := ydot_re.search(line.strip()):
-                self.ydots_cxx[Nucleus(match.group(2))] = float(match.group(6))
+                nuc = Nucleus(match.group(2).strip())
+                self.ydots_cxx[nuc] = float(match.group(6))
 
     def evaluate(self, rho=2.e8, T=1.e9):
         """Evaluate the ydots from all the backends we are

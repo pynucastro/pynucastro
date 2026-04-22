@@ -1,27 +1,29 @@
 # unit tests for rates
 import shutil
+import sys
 
 import pytest
 
 import pynucastro as pyna
+from pynucastro.rates.alternate_rates import IliadisO16pgF17
 
 
+@pytest.mark.skipif(sys.platform == "darwin" or sys.platform.startswith("win"),
+                    reason="we get roundoff diffs on Macs and Windows")
 class TestAmrexAstroCxxNetwork:
     @pytest.fixture(scope="class")
-    def fn(self, reaclib_library):
+    def fn(self):
 
-        mylib = reaclib_library.linking_nuclei(["mg24", "al27", "si28", "p31", "s32", "he4", "p"])
-        net = pyna.AmrexAstroCxxNetwork(libraries=[mylib])
-        net.make_ap_pg_approx()
-        net.remove_nuclei(["al27", "p31"])
-        fn = net
+        iliadis = IliadisO16pgF17()
+        iliadis_derived = pyna.DerivedRate(iliadis, use_pf=True)
+        fn = pyna.AmrexAstroCxxNetwork(rates=[iliadis, iliadis_derived])
         return fn
 
     def test_write_network(self, fn, compare_network_files):
         """ test the write_network function"""
-        test_path = "_test_cxx_approx/"
+        test_path = "_test_cxx_temptab/"
         # subdirectory of pynucastro/networks/tests/
-        reference_path = "_amrexastro_cxx_approx_reference/"
+        reference_path = "cxx_net_tests/_amrexastro_cxx_temptab_reference/"
         # files that will be ignored if present in the generated directory
         skip_files = ["pynucastro-info.txt"]
 

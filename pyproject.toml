@@ -68,8 +68,8 @@ version_file = "pynucastro/_version.py"
 # development tools
 
 [tool.pylint.main]
-ignore-paths = ['pynucastro/networks/tests/_python_reference/network.py',
-                'pynucastro/networks/tests/test_full_python_net.py']
+ignore-paths = ['pynucastro/networks/tests/python_net_tests/_python_reference/network.py',
+                'pynucastro/networks/tests/python_net_tests/test_full_python_net.py']
 
 extension-pkg-allow-list = ['mpi4py']
 
@@ -123,7 +123,7 @@ skip = ".git,*docs/build,*.bib"
 
 [tool.isort]
 known_first_party = ["pynucastro"]
-skip = ["pynucastro/networks/tests/_python_reference/network.py",
+skip = ["pynucastro/networks/tests/python_net_tests/_python_reference/network.py",
         "pynucastro/_version.py"]
 
 
@@ -155,7 +155,7 @@ line-length = 132
 exclude = [
   "docs/",
   "examples/",
-  "pynucastro/networks/tests/_python_reference/",
+  "pynucastro/networks/tests/python_net_tests/_python_reference/",
   "pynucastro/nucdata/AtomicMassEvaluation/",
 ]
 
