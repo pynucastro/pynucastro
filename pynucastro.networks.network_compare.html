@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.network_compare module &#8212; pynucastro 2.9.0.post89+gfc7c8753b documentation</title>
+    <title>pynucastro.networks.network_compare module &#8212; pynucastro 2.9.0.post90+gc858295eb documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=4d670743"></script>
+    <script src="_static/documentation_options.js?v=19beac83"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -572,6 +572,16 @@
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare"><code class="docutils literal notranslate"><span class="pre">NetworkCompare</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_py_inline"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.ydots_py_inline</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_py_module"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.ydots_py_module</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_amrex"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.ydots_amrex</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_cxx"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.ydots_cxx</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.rates_py_inline"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.rates_py_inline</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.rates_py_module"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.rates_py_module</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.rates_amrex"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.rates_amrex</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.rates_cxx"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.rates_cxx</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.T_eval"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.T_eval</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.rho_eval"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.rho_eval</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.evaluate"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.evaluate()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.print_summary"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.print_summary()</span></code></a></li>
 </ul>
@@ -611,6 +621,122 @@ backends to facilitate comparisons.</p>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.ydots_py_inline">
+<span class="sig-name descname"><span class="pre">ydots_py_inline</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_py_inline" title="Link to this definition">#</a></dt>
+<dd><p>The dY/dt terms from the python inline network
+(<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_ydots" title="pynucastro.networks.rate_collection.RateCollection.evaluate_ydots"><code class="xref py py-func docutils literal notranslate"><span class="pre">RateCollection.evaluate_ydots</span></code></a>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>(<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus">Nucleus</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.ydots_py_module">
+<span class="sig-name descname"><span class="pre">ydots_py_module</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_py_module" title="Link to this definition">#</a></dt>
+<dd><p>The dYdt terms from a <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a> module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>(<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus">Nucleus</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.ydots_amrex">
+<span class="sig-name descname"><span class="pre">ydots_amrex</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_amrex" title="Link to this definition">#</a></dt>
+<dd><p>The dYdt terms parsed from a build of an
+<a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html#pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork" title="pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>(<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus">Nucleus</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.ydots_cxx">
+<span class="sig-name descname"><span class="pre">ydots_cxx</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_cxx" title="Link to this definition">#</a></dt>
+<dd><p>The dYdt terms parsed from a build of a
+<a class="reference internal" href="pynucastro.networks.simple_cxx_network.html#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork" title="pynucastro.networks.simple_cxx_network.SimpleCxxNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>(<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus">Nucleus</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.rates_py_inline">
+<span class="sig-name descname"><span class="pre">rates_py_inline</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.rates_py_inline" title="Link to this definition">#</a></dt>
+<dd><p>The raw rates (e.g. N_A &lt;σv&gt;) from the python inline network
+(computed via <a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval" title="pynucastro.rates.rate.Rate.eval"><code class="xref py py-func docutils literal notranslate"><span class="pre">Rate.eval</span></code></a>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>(<a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate">Rate</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.rates_py_module">
+<span class="sig-name descname"><span class="pre">rates_py_module</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.rates_py_module" title="Link to this definition">#</a></dt>
+<dd><p>The raw rates (e.g. N_A &lt;σv&gt;) from a <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a> module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>(<a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate">Rate</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.rates_amrex">
+<span class="sig-name descname"><span class="pre">rates_amrex</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.rates_amrex" title="Link to this definition">#</a></dt>
+<dd><p>The raw rates (e.g. N_A &lt;σv&gt;) parsed from a build of an
+<a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html#pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork" title="pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>(<a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate">Rate</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.rates_cxx">
+<span class="sig-name descname"><span class="pre">rates_cxx</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.rates_cxx" title="Link to this definition">#</a></dt>
+<dd><p>The raw rates (e.g. N_A &lt;σv&gt;) parsed from a build of a
+<a class="reference internal" href="pynucastro.networks.simple_cxx_network.html#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork" title="pynucastro.networks.simple_cxx_network.SimpleCxxNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>(<a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate">Rate</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.T_eval">
+<span class="sig-name descname"><span class="pre">T_eval</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.T_eval" title="Link to this definition">#</a></dt>
+<dd><p>The temperature used in the evaluation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.rho_eval">
+<span class="sig-name descname"><span class="pre">rho_eval</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.rho_eval" title="Link to this definition">#</a></dt>
+<dd><p>The density used in the evaluation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.evaluate">
 <span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000000.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/network_compare.html#NetworkCompare.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.evaluate" title="Link to this definition">#</a></dt>
@@ -685,6 +811,16 @@ network type run.</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare"><code class="docutils literal notranslate"><span class="pre">NetworkCompare</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_py_inline"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.ydots_py_inline</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_py_module"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.ydots_py_module</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_amrex"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.ydots_amrex</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_cxx"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.ydots_cxx</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.rates_py_inline"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.rates_py_inline</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.rates_py_module"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.rates_py_module</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.rates_amrex"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.rates_amrex</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.rates_cxx"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.rates_cxx</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.T_eval"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.T_eval</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.rho_eval"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.rho_eval</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.evaluate"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.evaluate()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.print_summary"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.print_summary()</span></code></a></li>
 </ul>

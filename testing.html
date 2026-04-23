@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Testing and Comparing Backends &#8212; pynucastro 2.9.0.post89+gfc7c8753b documentation</title>
+    <title>Testing and Comparing Backends &#8212; pynucastro 2.9.0.post90+gc858295eb documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=4d670743"></script>
+    <script src="_static/documentation_options.js?v=19beac83"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -551,7 +551,9 @@
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
 </button>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -567,6 +569,15 @@
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#accessing-comparison-data">Accessing comparison data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#current-unit-tests-comparing-networks">Current unit tests comparing networks</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -596,18 +607,43 @@ is then parsed to get the ydot values.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> : we build a simple test driver and parse the output
 to get the ydot values.</p></li>
 </ul>
-<p>Tests can be run with or without screening.</p>
-<p>It will store the ydots in a <code class="docutils literal notranslate"><span class="pre">dict</span></code> keyed by <a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Nucleus</span></code></a>.
-This is used in the following unit tests in <code class="docutils literal notranslate"><span class="pre">pynucastro/networks/tests/</span></code>:</p>
+<p>Tests can be run with or without screening.  Once the <code class="docutils literal notranslate"><span class="pre">NetworkCompare</span></code>
+object is setup, the comparison can be run for a single density and temperature
+using the <a class="reference internal" href="pynucastro.networks.network_compare.html#pynucastro.networks.network_compare.NetworkCompare.evaluate" title="pynucastro.networks.network_compare.NetworkCompare.evaluate"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate</span></code></a> method.  The data are then stored in the object.</p>
+<section id="accessing-comparison-data">
+<h2>Accessing comparison data<a class="headerlink" href="#accessing-comparison-data" title="Link to this heading">#</a></h2>
+<p>The <span class="math notranslate nohighlight">\(dY/dt\)</span> data for each network is stored as a <code class="docutils literal notranslate"><span class="pre">dict</span></code> keyed by
+<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><code class="xref py py-class docutils literal notranslate"><span class="pre">Nucleus</span></code></a> as
+<code class="docutils literal notranslate"><span class="pre">ydots_py_inline</span></code>, <code class="docutils literal notranslate"><span class="pre">ydots_py_module</span></code>, <code class="docutils literal notranslate"><span class="pre">ydots_amrex</span></code>, and <code class="docutils literal notranslate"><span class="pre">ydots_cxx</span></code>.</p>
+<p>The individual rate data (just the <span class="math notranslate nohighlight">\(N_A\langle \sigma v \rangle\)</span> or
+equivalent) is stored as a <code class="docutils literal notranslate"><span class="pre">dict</span></code> keyed by <a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rate</span></code></a> as <code class="docutils literal notranslate"><span class="pre">rates_py_inline</span></code>,
+<code class="docutils literal notranslate"><span class="pre">rates_py_module</span></code>, <code class="docutils literal notranslate"><span class="pre">rates_amrex</span></code>, and <code class="docutils literal notranslate"><span class="pre">rates_cxx</span></code>.</p>
+<p>A summary of the comparison (including errors) can be printed using
+<a class="reference internal" href="pynucastro.networks.network_compare.html#pynucastro.networks.network_compare.NetworkCompare.print_summary" title="pynucastro.networks.network_compare.NetworkCompare.print_summary"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_summary</span></code></a>.</p>
+</section>
+<section id="current-unit-tests-comparing-networks">
+<h2>Current unit tests comparing networks<a class="headerlink" href="#current-unit-tests-comparing-networks" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">NetworkCompare</span></code> is used in the following unit tests in
+<code class="docutils literal notranslate"><span class="pre">pynucastro/networks/tests/comparing_nets_tests</span></code>:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">test_compare_cxx_and_python.py</span></code> : this compares just strong reaction rates</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">test_compare_cxx_and_python_screened.py</span></code> : like
-<code class="docutils literal notranslate"><span class="pre">test_compare_cxx_and_python.py</span></code>, but with screening enabled.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">test_compare_temperature_tabular.py</span></code> : this compares the evaluation of
-a <code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code> between the inline and module python nets.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_compare_big_net.py</span></code> : this creates a network consisting of
+an <span class="math notranslate nohighlight">\(\alpha\)</span>-chain and an iron-group, with <span class="math notranslate nohighlight">\((\alpha,p)(p,\gamma)\)</span> and
+<span class="math notranslate nohighlight">\((nn,\gamma)\)</span> rate approximations, derived reverse rates, modified
+rates, and tabular weak rates.  It is modeled off of the <a class="reference external" href="https://amrex-astro.github.io/Microphysics/docs/networks.html#ase-iron">AMReX
+Astro Microphysics ase-iron network</a>.
+Note that simple-C++ networks are not currently included.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_compare_cxx_and_python.py</span></code> : this compares just strong
+reaction rates, but includes derived reverse rates.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_compare_cxx_and_python_screened.py</span></code> : a simpler version of
+<code class="docutils literal notranslate"><span class="pre">test_compare_cxx_and_python.py</span></code> (no derived reverse rates), but
+with screening enabled.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_compare_temperature_tabular.py</span></code> : this compares the
+evaluation of a <code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code>.  Note that simple-C++
+networks are not currently included.</p></li>
 </ul>
-<p>As more features are ported to <code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code>, we should extend the
-testing to compare with python rates.</p>
+<p>As more features are ported to <code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code>, we should extend
+the testing to compare with python rates.</p>
+</section>
 </section>
 
 
@@ -645,6 +681,24 @@ testing to compare with python rates.</p>
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#accessing-comparison-data">Accessing comparison data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#current-unit-tests-comparing-networks">Current unit tests comparing networks</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

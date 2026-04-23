@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Integrating a Network &#8212; pynucastro 2.9.0.post89+gfc7c8753b documentation</title>
+    <title>Integrating a Network &#8212; pynucastro 2.9.0.post90+gc858295eb documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=4d670743"></script>
+    <script src="_static/documentation_options.js?v=19beac83"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1068,7 +1068,7 @@ def rhs(t, Y, rho, T, screen_func=None):
     return rhs_eq(t, Y, rho, T, screen_func)
 
 @numba.njit()
-def rhs_eq(t, Y, rho, T, screen_func):
+def do_rate_eval(t, Y, rho, T, screen_func):
 
     tf = Tfactors(T)
     rate_eval = RateEval()
@@ -1103,6 +1103,12 @@ def rhs_eq(t, Y, rho, T, screen_func):
     O14_to_N14_reaclib(rate_eval, tf)
     O15_to_N15_reaclib(rate_eval, tf)
 
+    return rate_eval
+
+@numba.njit()
+def rhs_eq(t, Y, rho, T, screen_func):
+
+    rate_eval = do_rate_eval(t, Y, rho, T, screen_func)
     dYdt = np.zeros((nnuc), dtype=np.float64)
 
     dYdt[jp] = (
