@@ -206,10 +206,13 @@ To build the documentation or run the unit tests, `sphinx` and
 `pytest` are additionally required along with some supporting
 packages. See the included `requirements.txt` and
 `requirements-docs.txt` files for a list of these packages and
-versions. To install the packages from the requirements file, do: ```
-pip install -r requirements.txt ``` Is important to stress out that
-all the dependencies should be installed before `pynucastro`,
-otherwise the installation should be repeated.
+versions. To install the packages from the requirements file, do:
+```
+pip install -r requirements.txt -r requirements-docs.txt
+```
+It is important to stress out that all the dependencies should be
+installed before `pynucastro`, otherwise the installation should be
+repeated.
 
 
 ## Contributing
