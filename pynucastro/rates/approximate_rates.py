@@ -130,6 +130,7 @@ class ApproximateRate(Rate):
                 assert Nucleus("he4") in primary_rate.reactants
                 assert len(primary_rate.products) == 1
             except KeyError:
+                print("primary rate not found")
                 raise
 
             # we are going to define the product A and reactant B from
@@ -146,6 +147,7 @@ class ApproximateRate(Rate):
                 assert Nucleus("he4") in secondary_rate_1.reactants
                 assert Nucleus("p") in secondary_rate_1.products
             except KeyError:
+                print("first secondary rate not found")
                 raise
 
             # get the intermediate nucleus (X) from this rate
@@ -159,6 +161,7 @@ class ApproximateRate(Rate):
                 assert Nucleus("p") in secondary_rate_2.reactants
                 assert self.primary_product in secondary_rate_2.products
             except KeyError:
+                print("second secondary rate not found")
                 raise
 
             # now ensure that the reverse rate makes sense
@@ -170,6 +173,7 @@ class ApproximateRate(Rate):
                 assert self.primary_product in primary_reverse
                 assert self.primary_reactant in primary_reverse.products
             except KeyError:
+                print("primary reverse rate not found")
                 raise
 
             try:
@@ -180,6 +184,7 @@ class ApproximateRate(Rate):
                 assert self.intermediate_nucleus in secondary_reverse_1.products
                 assert Nucleus("p") in secondary_reverse_1.products
             except KeyError:
+                print("first secondary reverse rate not found")
                 raise
 
 
@@ -192,6 +197,7 @@ class ApproximateRate(Rate):
                 assert self.primary_reactant in secondary_reverse_2.products
                 assert Nucleus("he4") in secondary_reverse_2.products
             except KeyError:
+                print("second secondary reverse rate not found")
                 raise
 
             # now initialize the super class with these reactants and products
@@ -227,6 +233,7 @@ class ApproximateRate(Rate):
                 assert Nucleus("n") in forward1.reactants
                 assert len(forward1.products) == 1
             except KeyError:
+                print("first forward rate not found")
                 raise
 
             try:
@@ -235,6 +242,7 @@ class ApproximateRate(Rate):
                 assert Nucleus("n") in forward2.reactants
                 assert len(forward2.products) == 1
             except KeyError:
+                print("second forward rate not found")
                 raise
 
             # make sure that the intermediate nucleus matches
@@ -260,6 +268,7 @@ class ApproximateRate(Rate):
                 assert self.intermediate_nucleus in reverse1.products
                 assert Nucleus("n") in reverse1.products
             except KeyError:
+                print("first reverse rate not found")
                 raise
 
             try:
@@ -270,6 +279,7 @@ class ApproximateRate(Rate):
                 assert self.primary_reactant in reverse2.products
                 assert Nucleus("n") in reverse2.products
             except KeyError:
+                print("second reverse rate not found")
                 raise
 
             # now initialize the super class with these reactants and products
