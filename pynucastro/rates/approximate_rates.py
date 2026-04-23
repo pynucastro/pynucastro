@@ -37,20 +37,17 @@ def create_double_neutron_capture(lib, reactant, product):
 
     intermediate = reactant + Nucleus("n")
 
-    forward_1 = lib.get_rate_by_name(f"{reactant.raw}(n,){intermediate.raw}")
-    forward_2 = lib.get_rate_by_name(f"{intermediate.raw}(n,){product.raw}")
+    rates = {}
+    rates["A(n,g)X"] = lib.get_rate_by_name(f"{reactant.raw}(n,){intermediate.raw}")
+    rates["X(n,g,B"] = lib.get_rate_by_name(f"{intermediate.raw}(n,){product.raw}")
 
-    reverse_1 = lib.get_rate_by_name(f"{product.raw}(,n){intermediate.raw}")
-    reverse_2 = lib.get_rate_by_name(f"{intermediate.raw}(,n){reactant.raw}")
+    rates["B(g,n)X"] = lib.get_rate_by_name(f"{product.raw}(,n){intermediate.raw}")
+    rates["X(g,n)A"] = lib.get_rate_by_name(f"{intermediate.raw}(,n){reactant.raw}")
 
-    forward = ApproximateRate(None, [forward_1, forward_2],
-                              None, [reverse_1, reverse_2],
-                              approx_type="nn_g",
+    forward = ApproximateRate(rates, approx_type="nn_g",
                               use_identical_particle_factor=False)
 
-    reverse = ApproximateRate(None, [forward_1, forward_2],
-                              None, [reverse_1, reverse_2],
-                              approx_type="nn_g", is_reverse=True,
+    reverse = ApproximateRate(rates, approx_type="nn_g", is_reverse=True,
                               use_identical_particle_factor=False)
 
     return forward, reverse
@@ -71,24 +68,12 @@ class ApproximateRate(Rate):
 
     Parameters
     ----------
-    primary_rate : Rate
-        An existing rate that represents the same sequence as the
-        approximation we are creating.  For "ap_pg", this would be
-        A(a, g)B.  For "nn_g", there is no unapproximated counterpart
-        so we would pass in ``None``.
-    secondary_rates : list(Rate)
-        A list of :py:class:`Rate <pynucastro.rates.rate.Rate>` objects
-        containing all of the other forward rates needed to make the
-        approximation.
-    primary_reverse : Rate
-        An existing rate that represents the reverse of the same
-        approximation we are creating.  For "ap_pg", this would be
-        B(g, a)A.  For "nn_g", there is no unapproximated counterpart,
-        so we would pass in ``None``.
-    secondary_reverse : list(Rate)
-        A list of :py:class:`Rate <pynucastro.rates.rate.Rate>` objects
-        containing all of the other reverse rates needed to make the
-        approximation.
+    rates : dict(str)
+        A dictionary keyed by the generic form of the rate, e.g.,
+        "A(a,p)X", that provides the ``Rate`` object for that rate.
+        Each approximation has a different set of keys that is
+        expected.
+
     is_reverse : bool
         Are we creating the effective A(x,y)B or B(y, x)A?
     approx_type : str
@@ -104,8 +89,7 @@ class ApproximateRate(Rate):
 
     """
 
-    def __init__(self, primary_rate, secondary_rates,
-                 primary_reverse, secondary_reverse, *,
+    def __init__(self, rates, *,
                  is_reverse=False, approx_type="ap_pg",
                  use_identical_particle_factor=True):
 
@@ -128,70 +112,87 @@ class ApproximateRate(Rate):
 
         if self.approx_type == "ap_pg":
 
-            # an ap_pg approximate rate combines A(a,g)B and A(a,p)X(p,g)B into a
-            # single effective rate by assuming proton equilibrium.
+            # an ap_pg approximate rate combines A(a,g)B and
+            # A(a,p)X(p,g)B into a single effective rate by assuming
+            # proton equilibrium.
 
-            assert len(secondary_rates) == 2
+            assert len(rates) == 6
 
-            # make sure that the primary forward rate makes sense
-            # this should be A(a,g)B
+            # make sure the keys we expect are valid in the rates dict
 
-            assert Nucleus("he4") in primary_rate.reactants and len(primary_rate.products) == 1
+            try:
+                # this primary rate is the forward rate that connects
+                # the nucleus endpoints directly
+                primary_rate = rates["A(a,g)B"]
 
-            self.rates["A(a,g)B"] = primary_rate
+                # make sure that the primary forward rate makes sense
+                # this should be A(a,g)B
+                assert Nucleus("he4") in primary_rate.reactants
+                assert len(primary_rate.products) == 1
+            except KeyError:
+                raise
 
-            # we are going to define the product A and reactant B from this reaction
-
+            # we are going to define the product A and reactant B from
+            # this reaction
             self.primary_reactant = max(primary_rate.reactants)
             self.primary_product = max(primary_rate.products)
 
-            # the first secondary rate should be A(a,p)X, where X is the
-            # intermediate nucleus
+            try:
+                # the first secondary rate should be A(a,p)X, where X
+                # is the intermediate nucleus
+                secondary_rate_1 = rates["A(a,p)X"]
 
-            assert (self.primary_reactant in secondary_rates[0].reactants and
-                    Nucleus("he4") in secondary_rates[0].reactants and
-                    Nucleus("p") in secondary_rates[0].products)
+                assert self.primary_reactant in secondary_rate_1.reactants
+                assert Nucleus("he4") in secondary_rate_1.reactants
+                assert Nucleus("p") in secondary_rate_1.products
+            except KeyError:
+                raise
 
-            self.rates["A(a,p)X"] = secondary_rates[0]
+            # get the intermediate nucleus (X) from this rate
+            self.intermediate_nucleus = max(secondary_rate_1.products)
 
-            # the intermediate nucleus is not in our network, so make it
-            # dummy
+            try:
+                # now the second secondary rate show be X(p,g)B
+                secondary_rate_2 = rates["X(p,g)B"]
 
-            self.intermediate_nucleus = max(secondary_rates[0].products)
-
-            # now the second secondary rate show be X(p,g)B
-
-            assert (self.intermediate_nucleus in secondary_rates[1].reactants and
-                    Nucleus("p") in secondary_rates[1].reactants and
-                    self.primary_product in secondary_rates[1].products)
-
-            self.rates["X(p,g)B"] = secondary_rates[1]
+                assert self.intermediate_nucleus in secondary_rate_2.reactants
+                assert Nucleus("p") in secondary_rate_2.reactants
+                assert self.primary_product in secondary_rate_2.products
+            except KeyError:
+                raise
 
             # now ensure that the reverse rate makes sense
 
-            # the primary reverse rate is B(g,a)A
+            try:
+                # the primary reverse rate is B(g,a)A
+                primary_reverse = rates["B(g,a)A"]
 
-            assert (self.primary_product in primary_reverse.reactants and
-                    self.primary_reactant in primary_reverse.products)
+                assert self.primary_product in primary_reverse
+                assert self.primary_reactant in primary_reverse.products
+            except KeyError:
+                raise
 
-            self.rates["B(g,a)A"] = primary_reverse
+            try:
+                # the first secondary reverse rate should be B(g,p)X
+                secondary_reverse_1 = rates["B(g,p)X"]
 
-            # now the first secondary reverse rate should be B(g,p)X
+                assert self.primary_product in secondary_reverse_1.reactants
+                assert self.intermediate_nucleus in secondary_reverse_1.products
+                assert Nucleus("p") in secondary_reverse_1.products
+            except KeyError:
+                raise
 
-            assert (self.primary_product in secondary_reverse[0].reactants and
-                    self.intermediate_nucleus in secondary_reverse[0].products and
-                    Nucleus("p") in secondary_reverse[0].products)
 
-            self.rates["B(g,p)X"] = secondary_reverse[0]
+            try:
+                # the second secondary reverse rate should be X(p,a)A
+                secondary_reverse_2 = rates["X(p,a)A"]
 
-            # and the second secondary reverse rate should be X(p,a)A
-
-            assert (self.intermediate_nucleus in secondary_reverse[1].reactants and
-                    Nucleus("p") in secondary_reverse[1].reactants and
-                    self.primary_reactant in secondary_reverse[1].products and
-                    Nucleus("he4") in secondary_reverse[1].products)
-
-            self.rates["X(p,a)A"] = secondary_reverse[1]
+                assert self.intermediate_nucleus in secondary_reverse_2.reactants
+                assert Nucleus("p") in secondary_reverse_2.reactants
+                assert self.primary_reactant in secondary_reverse_2.products
+                assert Nucleus("he4") in secondary_reverse_2.products
+            except KeyError:
+                raise
 
             # now initialize the super class with these reactants and products
 
@@ -216,57 +217,60 @@ class ApproximateRate(Rate):
             # a nn_g approximate rate combines A(n,g)X(n,g)B into a
             # single effective rate by assuming equilibrium of X.
 
-            assert primary_rate is None
-            assert len(secondary_rates) == 2
+            assert len(rates) == 4
 
-            # make sure that the pair of forward secondary makes sense
+            # make sure that the pair of forward rates makes sense
 
-            # the first secondary rate should be A(n,g)X and the
-            # second should be X(n,g)B
+            try:
+                # the first forward rate should be A(n,g)X
+                forward1 = rates["A(n,g)X"]
+                assert Nucleus("n") in forward1.reactants
+                assert len(forward1.products) == 1
+            except KeyError:
+                raise
 
-            for rr in secondary_rates:
-                assert Nucleus("n") in rr.reactants and len(rr.products) == 1
+            try:
+                # the second forward rate should be X(n,g)B
+                forward2 = rates["X(n,g)B"]
+                assert Nucleus("n") in forward2.reactants
+                assert len(forward2.products) == 1
+            except KeyError:
+                raise
 
             # make sure that the intermediate nucleus matches
-            assert secondary_rates[0].products[0] == max(secondary_rates[1].reactants)
+            assert forward1.products[0] == max(forward2.reactants)
 
             # we are going to define the product A and reactant B from
-            # these forward secondary rates
+            # these forward rates
 
-            self.primary_reactant = max(secondary_rates[0].reactants)
-            self.primary_product = max(secondary_rates[1].products)
+            self.primary_reactant = max(forward1.reactants)
+            self.primary_product = max(forward2.products)
 
-            self.rates["A(n,g)X"] = secondary_rates[0]
-            self.rates["X(n,g)B"] = secondary_rates[1]
+            # also get the intermediate nucleus
 
-            # the intermediate nucleus is not in our network, so make it
-            # dummy
-
-            self.intermediate_nucleus = max(secondary_rates[0].products)
+            self.intermediate_nucleus = max(forward1.products)
 
             # now ensure that the reverse rates makes sense
 
-            assert primary_reverse is None
-            assert len(secondary_reverse) == 2
+            try:
+                # the first reverse rate should be B(g,n)X
+                reverse1 = rates["B(g,n)X"]
+                assert self.primary_product in reverse1.reactants
+                assert len(reverse1.reactants) == 1
+                assert self.intermediate_nucleus in reverse1.products
+                assert Nucleus("n") in reverse1.products
+            except KeyError:
+                raise
 
-            for rr in secondary_reverse:
-                assert len(rr.reactants) == 1
-
-            # now the first secondary reverse rate should be B(g,n)X
-
-            assert (self.primary_product in secondary_reverse[0].reactants and
-                    self.intermediate_nucleus in secondary_reverse[0].products and
-                    Nucleus("n") in secondary_reverse[0].products)
-
-            self.rates["B(g,n)X"] = secondary_reverse[0]
-
-            # and the second secondary reverse rate should be X(g,n)A
-
-            assert (self.intermediate_nucleus in secondary_reverse[1].reactants and
-                    self.primary_reactant in secondary_reverse[1].products and
-                    Nucleus("n") in secondary_reverse[1].products)
-
-            self.rates["X(g,n)A"] = secondary_reverse[1]
+            try:
+                # the second reverse rate should be X(g,n)A
+                reverse2 = rates["X(g,n)A"]
+                assert self.intermediate_nucleus in reverse2.reactants
+                assert len(reverse2.reactants) == 1
+                assert self.primary_reactant in reverse2.products
+                assert Nucleus("n") in reverse2.products
+            except KeyError:
+                raise
 
             # now initialize the super class with these reactants and products
 
