@@ -39,7 +39,7 @@ def create_double_neutron_capture(lib, reactant, product):
 
     rates = {}
     rates["A(n,g)X"] = lib.get_rate_by_name(f"{reactant.raw}(n,){intermediate.raw}")
-    rates["X(n,g,B"] = lib.get_rate_by_name(f"{intermediate.raw}(n,){product.raw}")
+    rates["X(n,g)B"] = lib.get_rate_by_name(f"{intermediate.raw}(n,){product.raw}")
 
     rates["B(g,n)X"] = lib.get_rate_by_name(f"{product.raw}(,n){intermediate.raw}")
     rates["X(g,n)A"] = lib.get_rate_by_name(f"{intermediate.raw}(,n){reactant.raw}")
@@ -94,7 +94,7 @@ class ApproximateRate(Rate):
                  use_identical_particle_factor=True):
 
         # this will hold all of the rates
-        self.rates = {}
+        self.rates = rates
 
         # this will hold only those rates that are approximated out.  This is
         # used primarily for the RateCollection plot()
@@ -116,14 +116,14 @@ class ApproximateRate(Rate):
             # A(a,p)X(p,g)B into a single effective rate by assuming
             # proton equilibrium.
 
-            assert len(rates) == 6
+            assert len(self.rates) == 6
 
             # make sure the keys we expect are valid in the rates dict
 
             try:
                 # this primary rate is the forward rate that connects
                 # the nucleus endpoints directly
-                primary_rate = rates["A(a,g)B"]
+                primary_rate = self.rates["A(a,g)B"]
 
                 # make sure that the primary forward rate makes sense
                 # this should be A(a,g)B
@@ -141,7 +141,7 @@ class ApproximateRate(Rate):
             try:
                 # the first secondary rate should be A(a,p)X, where X
                 # is the intermediate nucleus
-                secondary_rate_1 = rates["A(a,p)X"]
+                secondary_rate_1 = self.rates["A(a,p)X"]
 
                 assert self.primary_reactant in secondary_rate_1.reactants
                 assert Nucleus("he4") in secondary_rate_1.reactants
@@ -155,7 +155,7 @@ class ApproximateRate(Rate):
 
             try:
                 # now the second secondary rate show be X(p,g)B
-                secondary_rate_2 = rates["X(p,g)B"]
+                secondary_rate_2 = self.rates["X(p,g)B"]
 
                 assert self.intermediate_nucleus in secondary_rate_2.reactants
                 assert Nucleus("p") in secondary_rate_2.reactants
@@ -168,9 +168,9 @@ class ApproximateRate(Rate):
 
             try:
                 # the primary reverse rate is B(g,a)A
-                primary_reverse = rates["B(g,a)A"]
+                primary_reverse = self.rates["B(g,a)A"]
 
-                assert self.primary_product in primary_reverse
+                assert self.primary_product in primary_reverse.reactants
                 assert self.primary_reactant in primary_reverse.products
             except KeyError:
                 print("primary reverse rate not found")
@@ -178,7 +178,7 @@ class ApproximateRate(Rate):
 
             try:
                 # the first secondary reverse rate should be B(g,p)X
-                secondary_reverse_1 = rates["B(g,p)X"]
+                secondary_reverse_1 = self.rates["B(g,p)X"]
 
                 assert self.primary_product in secondary_reverse_1.reactants
                 assert self.intermediate_nucleus in secondary_reverse_1.products
@@ -190,7 +190,7 @@ class ApproximateRate(Rate):
 
             try:
                 # the second secondary reverse rate should be X(p,a)A
-                secondary_reverse_2 = rates["X(p,a)A"]
+                secondary_reverse_2 = self.rates["X(p,a)A"]
 
                 assert self.intermediate_nucleus in secondary_reverse_2.reactants
                 assert Nucleus("p") in secondary_reverse_2.reactants
@@ -223,13 +223,13 @@ class ApproximateRate(Rate):
             # a nn_g approximate rate combines A(n,g)X(n,g)B into a
             # single effective rate by assuming equilibrium of X.
 
-            assert len(rates) == 4
+            assert len(self.rates) == 4
 
             # make sure that the pair of forward rates makes sense
 
             try:
                 # the first forward rate should be A(n,g)X
-                forward1 = rates["A(n,g)X"]
+                forward1 = self.rates["A(n,g)X"]
                 assert Nucleus("n") in forward1.reactants
                 assert len(forward1.products) == 1
             except KeyError:
@@ -238,7 +238,7 @@ class ApproximateRate(Rate):
 
             try:
                 # the second forward rate should be X(n,g)B
-                forward2 = rates["X(n,g)B"]
+                forward2 = self.rates["X(n,g)B"]
                 assert Nucleus("n") in forward2.reactants
                 assert len(forward2.products) == 1
             except KeyError:
@@ -262,7 +262,7 @@ class ApproximateRate(Rate):
 
             try:
                 # the first reverse rate should be B(g,n)X
-                reverse1 = rates["B(g,n)X"]
+                reverse1 = self.rates["B(g,n)X"]
                 assert self.primary_product in reverse1.reactants
                 assert len(reverse1.reactants) == 1
                 assert self.intermediate_nucleus in reverse1.products
@@ -273,7 +273,7 @@ class ApproximateRate(Rate):
 
             try:
                 # the second reverse rate should be X(g,n)A
-                reverse2 = rates["X(g,n)A"]
+                reverse2 = self.rates["X(g,n)A"]
                 assert self.intermediate_nucleus in reverse2.reactants
                 assert len(reverse2.reactants) == 1
                 assert self.primary_reactant in reverse2.products
