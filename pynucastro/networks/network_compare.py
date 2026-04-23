@@ -48,11 +48,11 @@ class NetworkCompare:
         The dYdt terms from a :py:class:`PythonNetwork
         <pynucastro.networks.python_network.PythonNetwork>` module.
     ydots_amrex : dict(Nucleus)
-        The dYdt terms from parsed from a build of an
+        The dYdt terms parsed from a build of an
         :py:class:`AmrexAstroCxxNetwork
         <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`.
     ydots_cxx : dict(Nucleus)
-        The dYdt terms from parsed from a build of a
+        The dYdt terms parsed from a build of a
         :py:class:`SimpleCxxNetwork
         <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`.
     rates_py_inline : dict(Rate)

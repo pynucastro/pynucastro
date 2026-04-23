@@ -76,12 +76,6 @@ int main(int argc, char* argv[]) {
 
     // get the rates -- this is just the N_A<σv>
 
-    // create molar fractions
-    Array1D<Real, 1, NumSpec> Y;
-    for (int n = 1; n <= NumSpec; ++n) {
-        Y(n) = state.xn[n-1] * aion_inv[n-1];
-    }
-
     std::cout << "Reaction rate values" << std::endl;
     rate_t rate_eval;
 
