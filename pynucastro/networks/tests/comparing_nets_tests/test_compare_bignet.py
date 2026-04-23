@@ -148,6 +148,8 @@ class TestNetworkCompare:
                 nc.evaluate(rho=rho, T=T)
         # pylint: enable=duplicate-code
 
+        return nc
+
     @pytest.mark.skipif(_skip_build(),
                         reason="We do not build C++ on Mac or Windows")
     def test_compare_ydots(self, eval_cond):
