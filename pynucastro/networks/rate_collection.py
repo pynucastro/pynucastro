@@ -753,8 +753,11 @@ class RateCollection:
                 continue
 
             # build the approximate rates
-            ar = ApproximateRate(r_ag, [r_ap, r_pg], r_ga, [r_gp, r_pa], approx_type="ap_pg")
-            ar_reverse = ApproximateRate(r_ag, [r_ap, r_pg], r_ga, [r_gp, r_pa], is_reverse=True, approx_type="ap_pg")
+            rates = {"A(a,g)B": r_ag, "A(a,p)X": r_ap, "X(p,g)B": r_pg,
+                     "B(g,a)A": r_ga, "B(g,p)X": r_gp, "X(p,a)A": r_pa}
+
+            ar = ApproximateRate(rates, approx_type="ap_pg")
+            ar_reverse = ApproximateRate(rates, is_reverse=True, approx_type="ap_pg")
 
             if self.verbose:
                 print(f"using approximate rate {ar}")
@@ -841,14 +844,13 @@ class RateCollection:
                 continue
 
             # build the approximate rates
-            ar = ApproximateRate(None, [rf1, rf2],
-                                 None, [rr1, rr2],
-                                 approx_type="nn_g",
+            rates = {"A(n,g)X": rf1, "X(n,g)B": rf2,
+                     "B(g,n)X": rr1, "X(g,n)A": rr2}
+
+            ar = ApproximateRate(rates, approx_type="nn_g",
                                  use_identical_particle_factor=False)
 
-            ar_reverse = ApproximateRate(None, [rf1, rf2],
-                                         None, [rr1, rr2],
-                                         is_reverse=True, approx_type="nn_g",
+            ar_reverse = ApproximateRate(rates, is_reverse=True, approx_type="nn_g",
                                          use_identical_particle_factor=False)
 
             nuclei_approximated_out.append(inter_nuc)
