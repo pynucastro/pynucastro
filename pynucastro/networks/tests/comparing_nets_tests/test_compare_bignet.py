@@ -125,10 +125,12 @@ class TestNetworkCompare:
         rho = 2.e8
         T = 1.e9
 
+        # pylint: disable=duplicate-code
         if not _skip_build():
             with warnings.catch_warnings():
                 warnings.filterwarnings("ignore", category=UserWarning)
                 nc.evaluate(rho=rho, T=T)
+        # pylint: enable=duplicate-code
 
         return nc
 
@@ -138,11 +140,13 @@ class TestNetworkCompare:
         rho = 2.e7
         T = 4.e9
 
+        # pylint: disable=duplicate-code
         # filter the partition function warnings
         if not _skip_build():
             with warnings.catch_warnings():
                 warnings.filterwarnings("ignore", category=UserWarning)
                 nc.evaluate(rho=rho, T=T)
+        # pylint: enable=duplicate-code
 
     @pytest.mark.skipif(_skip_build(),
                         reason="We do not build C++ on Mac or Windows")

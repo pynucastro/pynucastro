@@ -32,6 +32,9 @@ int main(int argc, char *argv[]) {
         burn_state.xn[n] = 1.0 / NumSpec;
     }
 
+    // fill the composition variables
+    composition(burn_state);
+
     // get the Ydots
 
     amrex::Array1D<amrex::Real, 1, neqs> ydot{};
