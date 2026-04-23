@@ -2,13 +2,25 @@
 
 ## 2.10.0
 
-  * Reorganize the rate unit tests (#1306)
+  * `RateCollection` : simplify the construction of `unique_nuclei`
 
-  * When we make a network, make a copy of the rates.  This implements
-    a custom `__copy__` function to `Rate` (#1307)
+  * Move `Composition` to its own module under `nucdata` (#1316)
 
-  * Add a new helper function that allows for testing of python and
-    C++ network results in a single unit test (#1291, #1302)
+  * `SimpleCxxNetwork` and `FortranNetwork` now support partition
+    functions and `DerivedRate`
+
+  * Fix an issue in `network_helper` if there are no reverse rates
+    (#1323)
+
+  * Reorganize the rate unit tests (#1306) and the network unit tests
+    (#1319, #1322)
+
+  * When we make a network, make a copy of the rates and implements a
+    custom `__copy__` function to `Rate` (#1307)
+
+  * Add a new helper class, `NetworkCompare` that allows for testing
+    of python and C++ network results in a single unit test (#1291,
+    #1302, #1315) and update / add to some of the comparison tests (#1313)
 
   * Move the baryon conservation check to `_set_print_representation`.
     This will catch more issues. (#1295)
@@ -36,7 +48,7 @@
   * update Zenodo authors (#1272)
 
   * add support for StarLib rates (#1258, #1273, #1277, #1281, #1287,
-    #1289, #1293, #1294, #1303)
+    #1289, #1293, #1294, #1303, #1318, #1327)
 
   * clean-up `ReacLibRate` (#1267)
 
@@ -72,7 +84,8 @@
 
   * CI updates : drop python 3.11 testing (#1252), add a HIP C++
     compilation test (#1251), and a CUDA C++ compilation test (#1250),
-    bump actions (#1270)
+    bump actions (#1270), use concurrency groups (#1320), run tests
+    in parallel (#1312), eliminate duplicate temporary dir names (#1311)
 
   * `AmrexAstroCxxNetwork` : switch partition function data to inline
     (#1243) and work on "T9" directly (#1241)
@@ -80,7 +93,8 @@
   * docs updates: update the derived rates documentation (#1247), fix
     some sphinx API doc warning (#1237), add a temperature evolution
     integration example (#1223), copyright (#1274), fix typos (#1284,
-    #1286), linkcheck ignores (#1292)
+    #1286), linkcheck ignores (#1292), intro overview (#1317), parallel
+    unit tests (#1314), remove unused examples (#1310)
 
   * clean up `SimpleCxxNetwork` (#1246)
 
