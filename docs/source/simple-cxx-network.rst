@@ -10,9 +10,9 @@ the method of :cite:`chugunov:2007`).
    Currently, the following features are not supported:
 
    * tabular rates
-   * partition functions
    * NSE
    * plasma neutrino losses
+   * StarLib rates
 
 A simple C++ network can be created as:
 

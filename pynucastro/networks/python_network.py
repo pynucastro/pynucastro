@@ -10,7 +10,8 @@ import numpy as np
 from scipy.integrate import solve_ivp
 
 from pynucastro.constants import constants
-from pynucastro.networks.rate_collection import Composition, RateCollection
+from pynucastro.networks.rate_collection import RateCollection
+from pynucastro.nucdata import Composition
 from pynucastro.rates import ApproximateRate, ModifiedRate
 from pynucastro.screening import get_screening_func, get_screening_pair_set
 
@@ -243,6 +244,11 @@ class PythonNetwork(RateCollection):
         for r in self.temperature_tabular_rates:
             ostr += format_rate_call(r, use_tf=False)
 
+        if self.starlib_rates:
+            ostr += f"\n{indent}# starlib rates\n"
+        for r in self.starlib_rates:
+            ostr += format_rate_call(r, use_tf=False)
+
         if self.custom_rates:
             ostr += f"\n{indent}# custom rates\n"
         for r in self.custom_rates:
@@ -407,11 +413,11 @@ class PythonNetwork(RateCollection):
             of.write(f"    np.array({r.tabular_data_table.tolist()})\n")
             of.write(")\n\n")
 
-        # temperature tabular rate data
-        if self.temperature_tabular_rates:
+        # temperature tabular / starlib rate data
+        if self.temperature_tabular_rates + self.starlib_rates:
             of.write("# note: we cannot make the TempTableInterpolator global, since numba doesn't like global jitclass\n")
 
-        for r in self.temperature_tabular_rates:
+        for r in self.temperature_tabular_rates + self.starlib_rates:
 
             of.write(f"# temperature / rate tabulation for {r.rid}\n")
 

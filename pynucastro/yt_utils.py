@@ -5,7 +5,7 @@ yt and putting it in a form that pynucastro can use.
 
 import re
 
-from pynucastro.networks import Composition
+from pynucastro.nucdata import Composition
 
 
 def get_point(ds, pos):
