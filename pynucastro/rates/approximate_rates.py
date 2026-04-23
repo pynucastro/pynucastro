@@ -187,7 +187,6 @@ class ApproximateRate(Rate):
                 print("first secondary reverse rate not found")
                 raise
 
-
             try:
                 # the second secondary reverse rate should be X(p,a)A
                 secondary_reverse_2 = self.rates["X(p,a)A"]

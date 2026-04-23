@@ -23,9 +23,6 @@ class TestAlphaGammaTfactors:
 
     @pytest.fixture(scope="class")
     def ar(self, rc, rp, rs):
-        rp_reverse = rc.get_rate("si28_to_he4_mg24")
-        rs_reverse = [rc.get_rate("si28_to_p_al27"), rc.get_rate("p_al27_to_he4_mg24")]
-
         # approximate Mg24(a,g)Si28 together with Mg24(a,p)Al27(p,g)Si28
         rates = {"A(a,g)B": rp,
                  "A(a,p)X": rs[0],
