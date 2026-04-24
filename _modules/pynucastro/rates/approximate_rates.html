@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.approximate_rates &#8212; pynucastro 2.9.0.post91+g4242b08e9 documentation</title>
+    <title>pynucastro.rates.approximate_rates &#8212; pynucastro 2.9.0.post92+g864ffc786 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=e94b61e2"></script>
+    <script src="../../../_static/documentation_options.js?v=6aa7babd"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -532,20 +532,17 @@
 
     <span class="n">intermediate</span> <span class="o">=</span> <span class="n">reactant</span> <span class="o">+</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span>
 
-    <span class="n">forward_1</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">reactant</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">(n,)</span><span class="si">{</span><span class="n">intermediate</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">forward_2</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">intermediate</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">(n,)</span><span class="si">{</span><span class="n">product</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">rates</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(n,g)X&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">reactant</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">(n,)</span><span class="si">{</span><span class="n">intermediate</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(n,g)B&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">intermediate</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">(n,)</span><span class="si">{</span><span class="n">product</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="n">reverse_1</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">product</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">(,n)</span><span class="si">{</span><span class="n">intermediate</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">reverse_2</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">intermediate</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">(,n)</span><span class="si">{</span><span class="n">reactant</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(g,n)X&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">product</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">(,n)</span><span class="si">{</span><span class="n">intermediate</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(g,n)A&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">intermediate</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">(,n)</span><span class="si">{</span><span class="n">reactant</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="n">forward</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">forward_1</span><span class="p">,</span> <span class="n">forward_2</span><span class="p">],</span>
-                              <span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">reverse_1</span><span class="p">,</span> <span class="n">reverse_2</span><span class="p">],</span>
-                              <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;nn_g&quot;</span><span class="p">,</span>
+    <span class="n">forward</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;nn_g&quot;</span><span class="p">,</span>
                               <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="n">reverse</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">forward_1</span><span class="p">,</span> <span class="n">forward_2</span><span class="p">],</span>
-                              <span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">reverse_1</span><span class="p">,</span> <span class="n">reverse_2</span><span class="p">],</span>
-                              <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;nn_g&quot;</span><span class="p">,</span> <span class="n">is_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">reverse</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;nn_g&quot;</span><span class="p">,</span> <span class="n">is_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                               <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">forward</span><span class="p">,</span> <span class="n">reverse</span></div>
@@ -569,24 +566,12 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    primary_rate : Rate</span>
-<span class="sd">        An existing rate that represents the same sequence as the</span>
-<span class="sd">        approximation we are creating.  For &quot;ap_pg&quot;, this would be</span>
-<span class="sd">        A(a, g)B.  For &quot;nn_g&quot;, there is no unapproximated counterpart</span>
-<span class="sd">        so we would pass in ``None``.</span>
-<span class="sd">    secondary_rates : list(Rate)</span>
-<span class="sd">        A list of :py:class:`Rate &lt;pynucastro.rates.rate.Rate&gt;` objects</span>
-<span class="sd">        containing all of the other forward rates needed to make the</span>
-<span class="sd">        approximation.</span>
-<span class="sd">    primary_reverse : Rate</span>
-<span class="sd">        An existing rate that represents the reverse of the same</span>
-<span class="sd">        approximation we are creating.  For &quot;ap_pg&quot;, this would be</span>
-<span class="sd">        B(g, a)A.  For &quot;nn_g&quot;, there is no unapproximated counterpart,</span>
-<span class="sd">        so we would pass in ``None``.</span>
-<span class="sd">    secondary_reverse : list(Rate)</span>
-<span class="sd">        A list of :py:class:`Rate &lt;pynucastro.rates.rate.Rate&gt;` objects</span>
-<span class="sd">        containing all of the other reverse rates needed to make the</span>
-<span class="sd">        approximation.</span>
+<span class="sd">    rates : dict(str)</span>
+<span class="sd">        A dictionary keyed by the generic form of the rate, e.g.,</span>
+<span class="sd">        &quot;A(a,p)X&quot;, that provides the ``Rate`` object for that rate.</span>
+<span class="sd">        Each approximation has a different set of keys that is</span>
+<span class="sd">        expected.</span>
+
 <span class="sd">    is_reverse : bool</span>
 <span class="sd">        Are we creating the effective A(x,y)B or B(y, x)A?</span>
 <span class="sd">    approx_type : str</span>
@@ -602,13 +587,12 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">primary_rate</span><span class="p">,</span> <span class="n">secondary_rates</span><span class="p">,</span>
-                 <span class="n">primary_reverse</span><span class="p">,</span> <span class="n">secondary_reverse</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rates</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                  <span class="n">is_reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;ap_pg&quot;</span><span class="p">,</span>
                  <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 
         <span class="c1"># this will hold all of the rates</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="n">rates</span>
 
         <span class="c1"># this will hold only those rates that are approximated out.  This is</span>
         <span class="c1"># used primarily for the RateCollection plot()</span>
@@ -626,70 +610,92 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">==</span> <span class="s2">&quot;ap_pg&quot;</span><span class="p">:</span>
 
-            <span class="c1"># an ap_pg approximate rate combines A(a,g)B and A(a,p)X(p,g)B into a</span>
-            <span class="c1"># single effective rate by assuming proton equilibrium.</span>
+            <span class="c1"># an ap_pg approximate rate combines A(a,g)B and</span>
+            <span class="c1"># A(a,p)X(p,g)B into a single effective rate by assuming</span>
+            <span class="c1"># proton equilibrium.</span>
 
-            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">secondary_rates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span>
 
-            <span class="c1"># make sure that the primary forward rate makes sense</span>
-            <span class="c1"># this should be A(a,g)B</span>
+            <span class="c1"># make sure the keys we expect are valid in the rates dict</span>
 
-            <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">primary_rate</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">primary_rate</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># this primary rate is the forward rate that connects</span>
+                <span class="c1"># the nucleus endpoints directly</span>
+                <span class="n">primary_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(a,g)B&quot;</span><span class="p">]</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(a,g)B&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">primary_rate</span>
+                <span class="c1"># make sure that the primary forward rate makes sense</span>
+                <span class="c1"># this should be A(a,g)B</span>
+                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">primary_rate</span><span class="o">.</span><span class="n">reactants</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">primary_rate</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;primary rate not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
 
-            <span class="c1"># we are going to define the product A and reactant B from this reaction</span>
-
+            <span class="c1"># we are going to define the product A and reactant B from</span>
+            <span class="c1"># this reaction</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">primary_rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">primary_rate</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
 
-            <span class="c1"># the first secondary rate should be A(a,p)X, where X is the</span>
-            <span class="c1"># intermediate nucleus</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># the first secondary rate should be A(a,p)X, where X</span>
+                <span class="c1"># is the intermediate nucleus</span>
+                <span class="n">secondary_rate_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(a,p)X&quot;</span><span class="p">]</span>
 
-            <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="ow">in</span> <span class="n">secondary_rates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span>
-                    <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_rates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span>
-                    <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_rates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="ow">in</span> <span class="n">secondary_rate_1</span><span class="o">.</span><span class="n">reactants</span>
+                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_rate_1</span><span class="o">.</span><span class="n">reactants</span>
+                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_rate_1</span><span class="o">.</span><span class="n">products</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;first secondary rate not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(a,p)X&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">secondary_rates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># get the intermediate nucleus (X) from this rate</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">secondary_rate_1</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
 
-            <span class="c1"># the intermediate nucleus is not in our network, so make it</span>
-            <span class="c1"># dummy</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># now the second secondary rate show be X(p,g)B</span>
+                <span class="n">secondary_rate_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,g)B&quot;</span><span class="p">]</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">secondary_rates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
-
-            <span class="c1"># now the second secondary rate show be X(p,g)B</span>
-
-            <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="ow">in</span> <span class="n">secondary_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span>
-                    <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="ow">in</span> <span class="n">secondary_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,g)B&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">secondary_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="ow">in</span> <span class="n">secondary_rate_2</span><span class="o">.</span><span class="n">reactants</span>
+                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_rate_2</span><span class="o">.</span><span class="n">reactants</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="ow">in</span> <span class="n">secondary_rate_2</span><span class="o">.</span><span class="n">products</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;second secondary rate not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
 
             <span class="c1"># now ensure that the reverse rate makes sense</span>
 
-            <span class="c1"># the primary reverse rate is B(g,a)A</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># the primary reverse rate is B(g,a)A</span>
+                <span class="n">primary_reverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(g,a)A&quot;</span><span class="p">]</span>
 
-            <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="ow">in</span> <span class="n">primary_reverse</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="ow">in</span> <span class="n">primary_reverse</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="ow">in</span> <span class="n">primary_reverse</span><span class="o">.</span><span class="n">reactants</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="ow">in</span> <span class="n">primary_reverse</span><span class="o">.</span><span class="n">products</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;primary reverse rate not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(g,a)A&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">primary_reverse</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># the first secondary reverse rate should be B(g,p)X</span>
+                <span class="n">secondary_reverse_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(g,p)X&quot;</span><span class="p">]</span>
 
-            <span class="c1"># now the first secondary reverse rate should be B(g,p)X</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="ow">in</span> <span class="n">secondary_reverse_1</span><span class="o">.</span><span class="n">reactants</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="ow">in</span> <span class="n">secondary_reverse_1</span><span class="o">.</span><span class="n">products</span>
+                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_reverse_1</span><span class="o">.</span><span class="n">products</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;first secondary reverse rate not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
 
-            <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="ow">in</span> <span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="ow">in</span> <span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">products</span> <span class="ow">and</span>
-                    <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># the second secondary reverse rate should be X(p,a)A</span>
+                <span class="n">secondary_reverse_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,a)A&quot;</span><span class="p">]</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(g,p)X&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-            <span class="c1"># and the second secondary reverse rate should be X(p,a)A</span>
-
-            <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="ow">in</span> <span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span>
-                    <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="ow">in</span> <span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">products</span> <span class="ow">and</span>
-                    <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,a)A&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="ow">in</span> <span class="n">secondary_reverse_2</span><span class="o">.</span><span class="n">reactants</span>
+                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_reverse_2</span><span class="o">.</span><span class="n">reactants</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="ow">in</span> <span class="n">secondary_reverse_2</span><span class="o">.</span><span class="n">products</span>
+                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_reverse_2</span><span class="o">.</span><span class="n">products</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;second secondary reverse rate not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
 
             <span class="c1"># now initialize the super class with these reactants and products</span>
 
@@ -714,57 +720,64 @@
             <span class="c1"># a nn_g approximate rate combines A(n,g)X(n,g)B into a</span>
             <span class="c1"># single effective rate by assuming equilibrium of X.</span>
 
-            <span class="k">assert</span> <span class="n">primary_rate</span> <span class="ow">is</span> <span class="kc">None</span>
-            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">secondary_rates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span>
 
-            <span class="c1"># make sure that the pair of forward secondary makes sense</span>
+            <span class="c1"># make sure that the pair of forward rates makes sense</span>
 
-            <span class="c1"># the first secondary rate should be A(n,g)X and the</span>
-            <span class="c1"># second should be X(n,g)B</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># the first forward rate should be A(n,g)X</span>
+                <span class="n">forward1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(n,g)X&quot;</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">forward1</span><span class="o">.</span><span class="n">reactants</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">forward1</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;first forward rate not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
 
-            <span class="k">for</span> <span class="n">rr</span> <span class="ow">in</span> <span class="n">secondary_rates</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">rr</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">rr</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># the second forward rate should be X(n,g)B</span>
+                <span class="n">forward2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(n,g)B&quot;</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">forward2</span><span class="o">.</span><span class="n">reactants</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">forward2</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;second forward rate not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
 
             <span class="c1"># make sure that the intermediate nucleus matches</span>
-            <span class="k">assert</span> <span class="n">secondary_rates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">max</span><span class="p">(</span><span class="n">secondary_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">forward1</span><span class="o">.</span><span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">max</span><span class="p">(</span><span class="n">forward2</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
 
             <span class="c1"># we are going to define the product A and reactant B from</span>
-            <span class="c1"># these forward secondary rates</span>
+            <span class="c1"># these forward rates</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">secondary_rates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">secondary_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">forward1</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">forward2</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(n,g)X&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">secondary_rates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(n,g)B&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">secondary_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># also get the intermediate nucleus</span>
 
-            <span class="c1"># the intermediate nucleus is not in our network, so make it</span>
-            <span class="c1"># dummy</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">secondary_rates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">forward1</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
 
             <span class="c1"># now ensure that the reverse rates makes sense</span>
 
-            <span class="k">assert</span> <span class="n">primary_reverse</span> <span class="ow">is</span> <span class="kc">None</span>
-            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">secondary_reverse</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># the first reverse rate should be B(g,n)X</span>
+                <span class="n">reverse1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(g,n)X&quot;</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="ow">in</span> <span class="n">reverse1</span><span class="o">.</span><span class="n">reactants</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">reverse1</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="ow">in</span> <span class="n">reverse1</span><span class="o">.</span><span class="n">products</span>
+                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">reverse1</span><span class="o">.</span><span class="n">products</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;first reverse rate not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
 
-            <span class="k">for</span> <span class="n">rr</span> <span class="ow">in</span> <span class="n">secondary_reverse</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">rr</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-
-            <span class="c1"># now the first secondary reverse rate should be B(g,n)X</span>
-
-            <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="ow">in</span> <span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="ow">in</span> <span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">products</span> <span class="ow">and</span>
-                    <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(g,n)X&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-            <span class="c1"># and the second secondary reverse rate should be X(g,n)A</span>
-
-            <span class="k">assert</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="ow">in</span> <span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="ow">in</span> <span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">products</span> <span class="ow">and</span>
-                    <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(g,n)A&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">secondary_reverse</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># the second reverse rate should be X(g,n)A</span>
+                <span class="n">reverse2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(g,n)A&quot;</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="ow">in</span> <span class="n">reverse2</span><span class="o">.</span><span class="n">reactants</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">reverse2</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="ow">in</span> <span class="n">reverse2</span><span class="o">.</span><span class="n">products</span>
+                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">reverse2</span><span class="o">.</span><span class="n">products</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;second reverse rate not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
 
             <span class="c1"># now initialize the super class with these reactants and products</span>
 

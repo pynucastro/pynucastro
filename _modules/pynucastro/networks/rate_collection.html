@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.9.0.post91+g4242b08e9 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.9.0.post92+g864ffc786 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=e94b61e2"></script>
+    <script src="../../../_static/documentation_options.js?v=6aa7babd"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1301,8 +1301,11 @@
                 <span class="k">continue</span>
 
             <span class="c1"># build the approximate rates</span>
-            <span class="n">ar</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">r_ag</span><span class="p">,</span> <span class="p">[</span><span class="n">r_ap</span><span class="p">,</span> <span class="n">r_pg</span><span class="p">],</span> <span class="n">r_ga</span><span class="p">,</span> <span class="p">[</span><span class="n">r_gp</span><span class="p">,</span> <span class="n">r_pa</span><span class="p">],</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;ap_pg&quot;</span><span class="p">)</span>
-            <span class="n">ar_reverse</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">r_ag</span><span class="p">,</span> <span class="p">[</span><span class="n">r_ap</span><span class="p">,</span> <span class="n">r_pg</span><span class="p">],</span> <span class="n">r_ga</span><span class="p">,</span> <span class="p">[</span><span class="n">r_gp</span><span class="p">,</span> <span class="n">r_pa</span><span class="p">],</span> <span class="n">is_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;ap_pg&quot;</span><span class="p">)</span>
+            <span class="n">rates</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;A(a,g)B&quot;</span><span class="p">:</span> <span class="n">r_ag</span><span class="p">,</span> <span class="s2">&quot;A(a,p)X&quot;</span><span class="p">:</span> <span class="n">r_ap</span><span class="p">,</span> <span class="s2">&quot;X(p,g)B&quot;</span><span class="p">:</span> <span class="n">r_pg</span><span class="p">,</span>
+                     <span class="s2">&quot;B(g,a)A&quot;</span><span class="p">:</span> <span class="n">r_ga</span><span class="p">,</span> <span class="s2">&quot;B(g,p)X&quot;</span><span class="p">:</span> <span class="n">r_gp</span><span class="p">,</span> <span class="s2">&quot;X(p,a)A&quot;</span><span class="p">:</span> <span class="n">r_pa</span><span class="p">}</span>
+
+            <span class="n">ar</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;ap_pg&quot;</span><span class="p">)</span>
+            <span class="n">ar_reverse</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">is_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;ap_pg&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;using approximate rate </span><span class="si">{</span><span class="n">ar</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -1392,14 +1395,13 @@
                 <span class="k">continue</span>
 
             <span class="c1"># build the approximate rates</span>
-            <span class="n">ar</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">rf1</span><span class="p">,</span> <span class="n">rf2</span><span class="p">],</span>
-                                 <span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">rr1</span><span class="p">,</span> <span class="n">rr2</span><span class="p">],</span>
-                                 <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;nn_g&quot;</span><span class="p">,</span>
+            <span class="n">rates</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;A(n,g)X&quot;</span><span class="p">:</span> <span class="n">rf1</span><span class="p">,</span> <span class="s2">&quot;X(n,g)B&quot;</span><span class="p">:</span> <span class="n">rf2</span><span class="p">,</span>
+                     <span class="s2">&quot;B(g,n)X&quot;</span><span class="p">:</span> <span class="n">rr1</span><span class="p">,</span> <span class="s2">&quot;X(g,n)A&quot;</span><span class="p">:</span> <span class="n">rr2</span><span class="p">}</span>
+
+            <span class="n">ar</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;nn_g&quot;</span><span class="p">,</span>
                                  <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-            <span class="n">ar_reverse</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">rf1</span><span class="p">,</span> <span class="n">rf2</span><span class="p">],</span>
-                                         <span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">rr1</span><span class="p">,</span> <span class="n">rr2</span><span class="p">],</span>
-                                         <span class="n">is_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;nn_g&quot;</span><span class="p">,</span>
+            <span class="n">ar_reverse</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">is_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;nn_g&quot;</span><span class="p">,</span>
                                          <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
             <span class="n">nuclei_approximated_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inter_nuc</span><span class="p">)</span>
