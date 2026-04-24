@@ -8,6 +8,7 @@
 #include <screen.H>
 #include <reaclib_rates.H>
 #include <derived_rates.H>
+#include <table_rates.H>
 
 using namespace Species;
 using namespace Rates;
@@ -62,6 +63,10 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
         Y(n) = state.xn[n-1] * aion_inv[n-1];
     }
 
+    assert(state.y_e != 0.0);
+
+    [[maybe_unused]] amrex::Real rhoy = state.rho * state.y_e;
+
     // Precompute screening terms
 
 #ifdef SCREENING
@@ -81,6 +86,14 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
     // Fill approximate rates
 
     fill_approx_rates<do_T_derivatives, T>(tfactors, state.rho, Y, rate_eval);
+
+    // Calculate tabular rates
+
+    [[maybe_unused]] amrex::Real rate, drate_dt, edot_nu, edot_gamma;
+
+    rate_eval.enuc_weak = 0.0_rt;
+
+    <compute_tabular_rates>(1)
 
 }
 

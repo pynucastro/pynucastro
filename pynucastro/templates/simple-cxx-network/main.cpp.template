@@ -38,6 +38,13 @@ int main(int argc, char* argv[]) {
         state.xn[n] = 1.0 / static_cast<Real>(NumSpec);
     }
 
+    // fill Ye -- this is needed for weak rates
+    state.y_e = 0.0;
+    for (int n = 0; n < NumSpec; ++n) {
+        state.y_e += zion[n] * state.xn[n] / aion[n];
+    }
+
+    // get the Ydots
     Array1D<Real, 1, NumSpec> ydot;
     actual_rhs(state, ydot);
 
