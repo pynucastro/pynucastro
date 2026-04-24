@@ -32,13 +32,16 @@ int main(int argc, char *argv[]) {
         burn_state.xn[n] = 1.0 / NumSpec;
     }
 
+    // fill the composition variables
+    composition(burn_state);
+
     // get the Ydots
 
     amrex::Array1D<amrex::Real, 1, neqs> ydot{};
 
     actual_rhs(burn_state, ydot);
 
-    std::cout << std::setprecision(12);
+    std::cout << std::setprecision(14);
 
     std::cout << std::endl;
     std::cout << "rho, T = " << burn_state.rho << " " << burn_state.T << std::endl;
@@ -64,7 +67,8 @@ int main(int argc, char *argv[]) {
     evaluate_rates<do_T_derivatives>(burn_state, Y, rate_eval);
 
     for (int n = 1; n <= Rates::NumRates; ++n) {
-        std::cout << "rate(" << Rates::rate_names[n] << ") = " << rate_eval.screened_rates(n) << std::endl;
+        std::cout << "rate(" << std::setw(35) << Rates::rate_names[n] << ") = "
+                  << rate_eval.screened_rates(n) << std::endl;
     }
 
     std::cout << std::endl;
