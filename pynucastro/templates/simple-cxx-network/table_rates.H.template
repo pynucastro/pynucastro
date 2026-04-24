@@ -2,6 +2,7 @@
 #define TABLE_RATES_H
 
 #include <iostream>
+#include <cstdint>
 #include <sstream>
 #include <fstream>
 #include <string>

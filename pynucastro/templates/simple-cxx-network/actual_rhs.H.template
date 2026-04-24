@@ -13,6 +13,7 @@
 using namespace Species;
 using namespace Rates;
 
+using namespace rate_tables;
 
 template<class T>
 inline
@@ -65,7 +66,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     assert(state.y_e != 0.0);
 
-    [[maybe_unused]] amrex::Real rhoy = state.rho * state.y_e;
+    [[maybe_unused]] Real rhoy = state.rho * state.y_e;
 
     // Precompute screening terms
 
@@ -89,7 +90,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     // Calculate tabular rates
 
-    [[maybe_unused]] amrex::Real rate, drate_dt, edot_nu, edot_gamma;
+    [[maybe_unused]] Real rate, drate_dt, edot_nu, edot_gamma;
 
     rate_eval.enuc_weak = 0.0_rt;
 
