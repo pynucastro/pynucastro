@@ -9,30 +9,30 @@ def make_CO_approximation(all_rates, root_nuclei):
               ....  .
           ...      .   .
       ...          .     .
-    A ............ B ..... C
+    S ............E ..... F
 
     This comes up in a few cases:
 
-    * C + C: A = C12, B = Ne20, C = Ng24, X = Na23
-    * C + O: A = C12 + O16, B = Mg24, C = Si28, X = Al27
-    * O + O: A = O16, B = Si28, C = S32, X = P31
+    * C + C: S = C12, E = Ne20, F = Ng24, X = Na23
+    * C + O: S = C12 + O16, E = Mg24, F = Si28, X = Al27
+    * O + O: S = O16, E = Si28, F = S32, X = P31
 
     We start with 5 rates (+ their inverses):
 
-    * λ1 = A(A,p)X
-    * λ2 = A(A,α)B
-    * λ3 = X(p,α)B
-    * λ4 = X(p,γ)C
-    * λ5 = B(α,γ)C
+    * λ1 = S(S,p)X
+    * λ2 = S(S,α)E
+    * λ3 = X(p,α)E
+    * λ4 = X(p,γ)F
+    * λ5 = E(α,γ)F
 
     and we want to combine these into 3 effective rates (and their inverses)
     by eliminating X assuming equilibrium.
 
     The resulting effective rates are:
 
-    * A(A,p)X(p,γ)C
-    * A(A,α)B + A(A,p)X(p,α)B
-    * B(α,γ) + B(α,p)X(p,γ)C
+    * S(S,p)X(p,γ)F
+    * S(S,α)E + S(S,p)X(p,α)E
+    * E(α,γ)F + E(α,p)X(p,γ)F
 
     Parameters
     ----------
@@ -55,54 +55,54 @@ def make_CO_approximation(all_rates, root_nuclei):
 
     # create the nuclei
     if root_nuclei == "C":
-        A1 = Nucleus("c12")
-        A2 = Nucleus("c12")
+        S1 = Nucleus("c12")
+        S2 = Nucleus("c12")
     elif root_nuclei == "CO":
-        A1 = Nucleus("c12")
-        A2 = Nucleus("o16")
+        S1 = Nucleus("c12")
+        S2 = Nucleus("o16")
     else:
-        A1 = Nucleus("o16")
-        A2 = Nucleus("o16")
+        S1 = Nucleus("o16")
+        S2 = Nucleus("o16")
 
-    # C is the heaviest nucleus we get, from direct A + A fusion
-    C = A1 + A2
+    # F is the heaviest nucleus we get, from direct S + S fusion
+    F = S1 + S2
 
-    # B is an alpha lighter
-    B = C - Nucleus("he4")
+    # E is an alpha lighter
+    E = F - Nucleus("he4")
 
     # X is a proton lighter than C
-    X = C - Nucleus("p")
+    X = F - Nucleus("p")
 
-    print(A1, A2, B, C, X)
+    print(S1, S2, E, F, X)
 
     # now get the rates
     rates = {}
 
-    lambda1 = f"{A1}({A2},p){X}"
+    lambda1 = f"{S1}({S2},p){X}"
     reactants, products = _rate_name_to_nuc(lambda1)
     rates["A(A,p)X"] = [r for r in all_rates
                         if sorted(r.reactants) == sorted(reactants) and
                            sorted(r.products) == sorted(products)][0]
 
-    lambda2 = f"{A1}({A2},a){B}"
+    lambda2 = f"{S1}({S2},a){E}"
     reactants, products = _rate_name_to_nuc(lambda2)
     rates["A(A,a)B"] = [r for r in all_rates
                         if sorted(r.reactants) == sorted(reactants) and
                            sorted(r.products) == sorted(products)][0]
 
-    lambda3 = f"{X}(p,a){B}"
+    lambda3 = f"{X}(p,a){E}"
     reactants, products = _rate_name_to_nuc(lambda3)
     rates["X(p,a)B"] = [r for r in all_rates
                         if sorted(r.reactants) == sorted(reactants) and
                            sorted(r.products) == sorted(products)][0]
 
-    lambda4 = f"{X}(p,g){C}"
+    lambda4 = f"{X}(p,g){F}"
     reactants, products = _rate_name_to_nuc(lambda4)
     rates["X(p,g)C"] = [r for r in all_rates
                         if sorted(r.reactants) == sorted(reactants) and
                            sorted(r.products) == sorted(products)][0]
 
-    lambda5 = f"{B}(a,g){C}"
+    lambda5 = f"{E}(a,g){F}"
     reactants, products = _rate_name_to_nuc(lambda5)
     rates["B(a,g)C"] = [r for r in all_rates
                         if sorted(r.reactants) == sorted(reactants) and
