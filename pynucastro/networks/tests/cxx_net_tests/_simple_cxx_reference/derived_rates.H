@@ -5,7 +5,7 @@
 
 #include <tfactors.H>
 #include <actual_network.H>
-#include <partition_function.H>
+#include <partition_functions.H>
 
 using namespace Rates;
 

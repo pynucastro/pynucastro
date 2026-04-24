@@ -6,6 +6,10 @@
 
 constexpr int NumSpec = 8;
 
+constexpr int NumSpecExtra = 0;
+
+constexpr int NumSpecTotal = NumSpec + NumSpecExtra;
+
 // Note: these are 0-based
 constexpr Real aion[NumSpec] = {
        1.0, // 0 : n

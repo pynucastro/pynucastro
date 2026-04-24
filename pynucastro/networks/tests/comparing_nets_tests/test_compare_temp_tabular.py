@@ -3,6 +3,7 @@
 # written to a module give the same ydots
 
 import sys
+import warnings
 from pathlib import Path
 
 import pytest
@@ -10,6 +11,10 @@ from pytest import approx
 
 from pynucastro.networks.network_compare import NetworkCompare
 from pynucastro.rates.alternate_rates import IliadisO16pgF17
+
+
+def _skip_build():
+    return sys.platform == "darwin" or sys.platform.startswith("win")
 
 
 class TestNetworkCompare:
@@ -33,44 +38,76 @@ class TestNetworkCompare:
                             amrex_test_path=amrex_test_path)
         return nc
 
-    @pytest.mark.skipif(sys.platform == "darwin" or sys.platform.startswith("win"),
-                        reason="We do not build C++ on Mac or Windows")
-    def test_compare(self, nc):
-
+    @pytest.fixture(scope="class")
+    def eval_cond1(self, nc):
         # thermodynamic conditions
-        # we set the composition to be uniform for all tests
-        rho = 1.e5
-        T = 2.e8
+        rho = 2.e8
+        T = 1.e9
 
-        nc.evaluate(rho=rho, T=T)
+        if not _skip_build():
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore", category=UserWarning)
+                nc.evaluate(rho=rho, T=T)
 
-        # compare the inline and module python versions
+        return nc
 
-        # compare the AMReX and python module nets to the python
-        # inline version
-
-        for other in [nc.ydots_amrex, nc.ydots_py_module]:
-            for nuc in nc.ydots_py_inline:
-                assert other[nuc] == approx(nc.ydots_py_inline[nuc],
-                                            rel=1.e-11, abs=1.e-30)
-
-    @pytest.mark.skipif(sys.platform == "darwin" or sys.platform.startswith("win"),
-                        reason="We do not build C++ on Mac or Windows")
-    def test_compare2(self, nc):
-
+    @pytest.fixture(scope="class")
+    def eval_cond2(self, nc):
         # thermodynamic conditions
-        # we set the composition to be uniform for all tests
         rho = 2.1e6
         T = 3.95e8
 
-        nc.evaluate(rho=rho, T=T)
+        if not _skip_build():
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore", category=UserWarning)
+                nc.evaluate(rho=rho, T=T)
 
-        # compare the inline and module python versions
+        return nc
+
+    @pytest.mark.skipif(_skip_build(),
+                        reason="We do not build C++ on Mac or Windows")
+    def test_compare_ydots(self, eval_cond1):
 
         # compare the AMReX and python module nets to the python
         # inline version
 
-        for other in [nc.ydots_amrex, nc.ydots_py_module]:
-            for nuc in nc.ydots_py_inline:
-                assert other[nuc] == approx(nc.ydots_py_inline[nuc],
+        for other in [eval_cond1.ydots_amrex, eval_cond1.ydots_py_module]:
+            for nuc in eval_cond1.ydots_py_inline:
+                assert other[nuc] == approx(eval_cond1.ydots_py_inline[nuc],
+                                            rel=1.e-11, abs=1.e-30)
+
+    @pytest.mark.skipif(_skip_build(),
+                        reason="We do not build C++ on Mac or Windows")
+    def test_compare_rates(self, eval_cond1):
+
+        # compare the AMReX and python module nets to the python
+        # inline version
+
+        for other in [eval_cond1.rates_amrex, eval_cond1.rates_py_module]:
+            for nuc in eval_cond1.rates_py_inline:
+                assert other[nuc] == approx(eval_cond1.rates_py_inline[nuc],
+                                            rel=1.e-11, abs=1.e-30)
+
+    @pytest.mark.skipif(_skip_build(),
+                        reason="We do not build C++ on Mac or Windows")
+    def test_compare_ydots2(self, eval_cond2):
+
+        # compare the AMReX and python module nets to the python
+        # inline version
+
+        for other in [eval_cond2.ydots_amrex, eval_cond2.ydots_py_module]:
+            for nuc in eval_cond2.ydots_py_inline:
+                assert other[nuc] == approx(eval_cond2.ydots_py_inline[nuc],
+                                            rel=1.e-11, abs=1.e-30)
+
+    @pytest.mark.skipif(_skip_build(),
+                        reason="We do not build C++ on Mac or Windows")
+    def test_compare_rates2(self, eval_cond2):
+
+        # compare the AMReX and python module nets to the python
+        # inline version
+
+        for other in [eval_cond2.rates_amrex, eval_cond2.rates_py_module]:
+            for nuc in eval_cond2.rates_py_inline:
+                assert other[nuc] == approx(eval_cond2.rates_py_inline[nuc],
                                             rel=1.e-11, abs=1.e-30)

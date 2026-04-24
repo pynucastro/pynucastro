@@ -23,13 +23,15 @@ class TestAlphaGammaTfactors:
 
     @pytest.fixture(scope="class")
     def ar(self, rc, rp, rs):
-        rp_reverse = rc.get_rate("si28_to_he4_mg24")
-        rs_reverse = [rc.get_rate("si28_to_p_al27"), rc.get_rate("p_al27_to_he4_mg24")]
-
         # approximate Mg24(a,g)Si28 together with Mg24(a,p)Al27(p,g)Si28
+        rates = {"A(a,g)B": rp,
+                 "A(a,p)X": rs[0],
+                 "X(p,g)B": rs[1],
+                 "B(g,a)A": rc.get_rate("si28_to_he4_mg24"),
+                 "B(g,p)X": rc.get_rate("si28_to_p_al27"),
+                 "X(p,a)A": rc.get_rate("p_al27_to_he4_mg24")}
 
-        return pyna.ApproximateRate(primary_rate=rp, secondary_rates=rs,
-                                    primary_reverse=rp_reverse, secondary_reverse=rs_reverse)
+        return pyna.ApproximateRate(rates)
 
     def test_label(self, ar):
         assert ar.fname == "Mg24_He4_to_Si28_approx"

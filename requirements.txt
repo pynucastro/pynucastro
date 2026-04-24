@@ -14,20 +14,3 @@ nbval>=0.9.0
 pytest-cov>=2.6.0
 pytest>=3.6
 pytest-xdist
-
-# docs
-ipykernel
-jinja2
-nbsphinx>=0.3.1
-numpydoc
-Sphinx
-sphinx-copybutton
-sphinx-math-dollar
-sphinx-mdinclude
-sphinx-prompt
-sphinxcontrib-bibtex
-git+https://github.com/executablebooks/sphinx-book-theme.git
-myst-nb
-jupyterlab-myst
-nbclient!=0.10.3
-
