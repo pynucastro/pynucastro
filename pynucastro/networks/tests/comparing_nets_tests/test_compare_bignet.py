@@ -113,7 +113,7 @@ class TestNetworkCompare:
 
         nc = NetworkCompare(lib,
                             include_amrex=True,
-                            include_simple_cxx=False,
+                            include_simple_cxx=True,
                             python_module_name="basic_cxx_py_bignet_compare.py",
                             amrex_test_path=amrex_test_path,
                             cxx_test_path=cxx_test_path)
@@ -157,7 +157,7 @@ class TestNetworkCompare:
         # compare the AMReX and python module nets to the python
         # inline version
 
-        for other in [eval_cond.ydots_amrex, eval_cond.ydots_py_module]:
+        for other in [eval_cond.ydots_cxx, eval_cond.ydots_amrex, eval_cond.ydots_py_module]:
             for nuc in eval_cond.ydots_py_inline:
                 assert other[nuc] == approx(eval_cond.ydots_py_inline[nuc],
                                             rel=1.e-11, abs=1.e-30)
@@ -169,7 +169,7 @@ class TestNetworkCompare:
         # compare the AMReX and python module nets to the python
         # inline version
 
-        for other in [eval_cond.rates_amrex, eval_cond.rates_py_module]:
+        for other in [eval_cond.rates_cxx, eval_cond.rates_amrex, eval_cond.rates_py_module]:
             for nuc in eval_cond.rates_py_inline:
                 assert other[nuc] == approx(eval_cond.rates_py_inline[nuc],
                                             rel=1.e-11, abs=1.e-30)
@@ -181,7 +181,7 @@ class TestNetworkCompare:
         # compare the AMReX and python module nets to the python
         # inline version
 
-        for other in [eval_cond2.ydots_amrex, eval_cond2.ydots_py_module]:
+        for other in [eval_cond2.ydots_cxx, eval_cond2.ydots_amrex, eval_cond2.ydots_py_module]:
             for nuc in eval_cond2.ydots_py_inline:
                 assert other[nuc] == approx(eval_cond2.ydots_py_inline[nuc],
                                             rel=1.e-11, abs=1.e-30)
@@ -193,7 +193,7 @@ class TestNetworkCompare:
         # compare the AMReX and python module nets to the python
         # inline version
 
-        for other in [eval_cond2.rates_amrex, eval_cond2.rates_py_module]:
+        for other in [eval_cond2.rates_cxx, eval_cond2.rates_amrex, eval_cond2.rates_py_module]:
             for nuc in eval_cond2.rates_py_inline:
                 assert other[nuc] == approx(eval_cond2.rates_py_inline[nuc],
                                             rel=1.e-11, abs=1.e-30)
