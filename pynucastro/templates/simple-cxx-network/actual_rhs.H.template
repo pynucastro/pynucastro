@@ -111,7 +111,7 @@ void rhs_nuc(const burn_t& state,
 
 
 inline
-void actual_rhs (burn_t& state, Array1D<Real, 1, NumSpec>& ydot)
+void actual_rhs (burn_t& state, Array1D<Real, 1, NumSpec>& ydot, Real& enu_weak)
 {
 
     compute_ye(state);
@@ -135,6 +135,11 @@ void actual_rhs (burn_t& state, Array1D<Real, 1, NumSpec>& ydot)
     evaluate_rates<do_T_derivatives, rate_t>(state, rate_eval);
 
     rhs_nuc(state, ydot, Y, rate_eval.screened_rates);
+
+    // enu_weak is the neutrino losses from the weak rates.  it is
+    // already negative, so it should just be added to the energy from
+    // the mass difference / composition changes.
+    enu_weak = rate_eval.enuc_weak;
 
 }
 
