@@ -332,9 +332,10 @@ class ApproximateRate(Rate):
                 print("rate A(Y,p)X not found")
                 raise
 
-            # get the primary reactant and intermediate nucleus (X).  We really
-            # don't care what nucleus Y is.
+            # get the primary reactant, other reactant (Y), and
+            # intermediate nucleus (X).
             self.primary_reactant = max(first_forward.reactants)
+            self.other_reactant = min(first_forward.reactant)
             self.intermediate_nucleus = max(first_forward.products)
 
             try:
@@ -363,7 +364,17 @@ class ApproximateRate(Rate):
                 print("rate B(g,p)X not found")
                 raise
 
-            self.rates["X(p,Y)A"]
+            try:
+                # this is the second reverse rate
+                second_reverse = self.rates["X(p,Y)A"]
+
+                assert self.intermediate_nucleus in second_reverse.reactants
+                assert Nucleus("p") in second_reverse.reactants
+                assert self.primary_reactant in second_reverse.products
+                assert self.other_reactant in second_reverse.products
+            except KeyError:
+                print("rate X(p,Y)A not found")
+                raise
 
             try:
                 # This is the direct rate that may optionally be present
@@ -378,7 +389,23 @@ class ApproximateRate(Rate):
             except KeyError:
                 direct_reverse = None
 
+            assert (direct_rate and direct_reverse) or (not direct_rate and not direct_reverse)
 
+            if not self.is_reverse:
+                super().__init__(reactants=[self.primary_reactant, self.other_reactant],
+                                 products=[self.primary_product],
+                                 label="approx",
+                                 use_identical_particle_factor=use_identical_particle_factor)
+            else:
+                super().__init__(reactants=[self.primary_product],
+                                 products=[self.primary_reactant, self.other_reactant],
+                                 label="approx",
+                                 use_identical_particle_factor=use_identical_particle_factor)
+
+            self.hidden_rates = [self.rates["A(Y,p)X"],
+                                 self.rates["X(p,g)B"],
+                                 self.rates["B(g,p)X"],
+                                 self.rates["X(p,Y)A"]]
 
         else:
             raise NotImplementedError(f"approximation type {self.approx_type} not supported")
