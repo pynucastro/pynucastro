@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.simple_cxx_network &#8212; pynucastro 2.9.0.post90+gc858295eb documentation</title>
+    <title>pynucastro.networks.simple_cxx_network &#8212; pynucastro 2.9.0.post91+g4242b08e9 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=19beac83"></script>
+    <script src="../../../_static/documentation_options.js?v=e94b61e2"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -551,6 +551,8 @@
 
         <span class="c1"># at the moment, we don&#39;t support TabularRates</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_rates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;SimpleCxxNetwork does not support tabular rates&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature_tabular_rates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;SimpleCxxNetwork does not support TemperatureTabular rates&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starlib_rates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;SimpleCxxNetwork does not support StarLib rates&quot;</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_write_network</span><span class="p">(</span><span class="n">odir</span><span class="o">=</span><span class="n">odir</span><span class="p">)</span>
 
