@@ -27,12 +27,13 @@ module pynet
     integer, parameter :: mg24_ = 9
 
     interface
-       subroutine rhs_f(rho, T, X, dYdt) bind(C, name="rhs_f")
+       subroutine rhs_f(rho, T, X, dYdt, enu_weak) bind(C, name="rhs_f")
          use, intrinsic :: iso_c_binding, only: c_double
          import nspec
          real(kind=c_double), intent(in), value :: rho, T
          real(kind=c_double), intent(in), dimension(nspec) :: X
          real(kind=c_double), intent(inout), dimension(nspec) :: dYdt
+         real(kind=c_double), intent(inout) :: enu_weak
        end subroutine rhs_f
 
        subroutine jac_f(rho, T, X, J) bind(C, name="jac_f")
