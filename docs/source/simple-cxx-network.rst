@@ -9,7 +9,6 @@ the method of :cite:`chugunov:2007`).
 
    Currently, the following features are not supported:
 
-   * tabular rates
    * NSE
    * plasma neutrino losses
    * StarLib rates
