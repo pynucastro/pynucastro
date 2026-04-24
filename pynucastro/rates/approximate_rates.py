@@ -57,11 +57,27 @@ class ApproximateRate(Rate):
     """An approximation to a rate sequence.  Two approximations are
     currently supported:
 
-    * "ap_pg" : combine the A(a, g)B and A(a, p)X(p, g)B sequences
-      into a single, effective A(a, g)B rate.
+    * "ap_pg" : combine the A(α,γ)B and A(α,p)X(p,γ)B sequences
+      into a single, effective A(α,γ)B rate.
 
-    * "nn_g" : replace the sequence A(n, g)X(n, g)B with an
-      effective A(nn, g)B rate.
+      An example of this is combining S32(α,γ)Ar36 and
+      S32(α,p)Cl35(p,γ)Ar36.
+
+    * "nn_g" : replace the sequence A(n,γ)X(n,γ)B with an
+      effective A(nn,γ)B rate.
+
+      An example of this is combining Fe52(n,γ)Fe53(n,γ)Fe54
+
+    * "Yp_pg" : combine A(Y,γ)B and A(Y,p)X(p,γ)B sequences into a
+      single, effective A(Y,γ)B rate.  Note: the original A(Y,γ)B does
+      not need to be included, in which case just A(Y,p)X(p,γ)B is
+      approximated.
+
+      Here Y is another nucleus, and we assume that mass_number(A) >=
+      mass_number(Y)
+
+      An example of this is combining O16(O16,p)P31(p,γ)S32 and
+      optionally (a modified rate version of) O16(O16,γ)S32.
 
     This class stores all of the rates needed to implement these
     approximations.
@@ -75,10 +91,10 @@ class ApproximateRate(Rate):
         expected.
 
     is_reverse : bool
-        Are we creating the effective A(x,y)B or B(y, x)A?
+        Are we creating the effective A(x,y)B or B(y,x)A?
     approx_type : str
         The type of approximation to do.  Currently supported are
-        "ap_pg" and "nn_g"
+        "ap_pg", "nn_g", and "Yp_pg"
     use_identical_particle_factor : bool
         Usually if a rate has 2 reactants of the same type, we
         divide by 2, since the order doesn't matter.  However, for
@@ -283,6 +299,9 @@ class ApproximateRate(Rate):
 
             # now initialize the super class with these reactants and products
 
+            # this only makes sense with the use_identical_particle_factor = False
+            assert not use_identical_particle_factor
+
             if not self.is_reverse:
                 super().__init__(reactants=[self.primary_reactant, Nucleus("n"), Nucleus("n")],
                                  products=[self.primary_product],
@@ -301,6 +320,65 @@ class ApproximateRate(Rate):
 
             self.rate_eval_needs_rho = True
             self.rate_eval_needs_comp = True
+
+        elif self.approx_type == "Yp_pg":
+
+            try:
+                # this is the first forward rate
+                first_forward = self.rates["A(Y,p)X"]
+
+                assert Nucleus("p") in first_forward.products
+            except KeyError:
+                print("rate A(Y,p)X not found")
+                raise
+
+            # get the primary reactant and intermediate nucleus (X).  We really
+            # don't care what nucleus Y is.
+            self.primary_reactant = max(first_forward.reactants)
+            self.intermediate_nucleus = max(first_forward.products)
+
+            try:
+                # this is the second forward rate
+                second_forward = self.rates["X(p,g)B"]
+
+                assert self.intermediate_nucleus in second_forward.reactants
+                assert Nucleus("p") in second_forward.reactants
+                assert len(second_forward.products) == 1
+            except KeyError:
+                print("rate X(p,g)B not found")
+                raise
+
+            # get the primary product from this rate
+            self.primary_product = max(second_forward.products)
+
+            try:
+                # this is the first reverse rate
+                first_reverse = self.rates["B(g,p)X"]
+
+                assert self.primary_product in first_reverse.reactants
+                assert len(first_reverse.reactants) == 1
+                assert self.intermediate_nucleus in first_reverse.products
+                assert Nucleus("p") in first_reverse.products
+            except KeyError:
+                print("rate B(g,p)X not found")
+                raise
+
+            self.rates["X(p,Y)A"]
+
+            try:
+                # This is the direct rate that may optionally be present
+                # it connects the nucleus endpoints
+                direct_rate = self.rates["A(Y,g)B"]
+            except KeyError:
+                direct_rate = None
+
+            try:
+                # This is the direct reverse rate that may be optionally present
+                direct_reverse = self.rates["B(g,Y)A"]
+            except KeyError:
+                direct_reverse = None
+
+
 
         else:
             raise NotImplementedError(f"approximation type {self.approx_type} not supported")
