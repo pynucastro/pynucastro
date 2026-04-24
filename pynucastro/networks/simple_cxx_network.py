@@ -54,6 +54,9 @@ class SimpleCxxNetwork(BaseCxxNetwork):
 
         """
 
+        assert len(self.temperature_tabular_rates) == 0, "SimpleCxxNetwork does not support TemperatureTabular rates"
+        assert len(self.starlib_rates) == 0, "SimpleCxxNetwork does not support StarLib rates"
+
         super()._write_network(odir=odir)
 
         if odir is None:
