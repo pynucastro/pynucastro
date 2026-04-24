@@ -840,7 +840,7 @@ namespace starlib {{
 
         header = [f"template<{_rate_dtype(len(self.starlib_rates))} rate>",
                   f"{self.function_specifier}",
-                  f"constexpr {self.dtype} get_p_random() {"]
+                  f"constexpr {self.dtype} get_p_random() {{"]
 
         for line in header:
             of.write(f"{self.indent * n_indent}{line}\n")
