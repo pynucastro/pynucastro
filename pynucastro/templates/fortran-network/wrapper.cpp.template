@@ -13,7 +13,7 @@ extern "C" {
     }
 
     void
-    rhs_f(Real rho, Real T, Real* X, Real* dYdt) {
+    rhs_f(Real rho, Real T, Real* X, Real* dYdt, Real* enu_weak) {
 
         burn_t state;
         state.rho = rho;
@@ -24,13 +24,16 @@ extern "C" {
 
         Array1D<Real, 1, NumSpec> ydot;
 
-        actual_rhs(state, ydot);
+        Real enu_weak_pass = 0.0;
+        actual_rhs(state, ydot, enu_weak_pass);
 
         // copy back to 0-index dydt
         for (int n = 0; n < NumSpec; ++n) {
             dYdt[n] = ydot(n+1);
         }
 
+        // pass back the weak-rate neutrino energy
+        *enu_weak = enu_weak_pass;
     }
 
 
