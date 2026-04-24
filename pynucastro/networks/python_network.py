@@ -480,7 +480,7 @@ class PythonNetwork(RateCollection):
         of.write(f"{indent}return rhs_eq(t, Y, rho, T, screen_func)\n\n")
 
         of.write("@numba.njit()\n")
-        of.write("def rhs_eq(t, Y, rho, T, screen_func):\n\n")
+        of.write("def do_rate_eval(t, Y, rho, T, screen_func):\n\n")
 
         # get the rates
         of.write(f"{indent}tf = Tfactors(T)\n")
@@ -489,6 +489,13 @@ class PythonNetwork(RateCollection):
         of.write(self.rates_string(indent=indent))
 
         of.write("\n")
+        of.write(f"{indent}return rate_eval\n")
+        of.write("\n")
+
+        of.write("@numba.njit()\n")
+        of.write("def rhs_eq(t, Y, rho, T, screen_func):\n\n")
+
+        of.write(f"{indent}rate_eval = do_rate_eval(t, Y, rho, T, screen_func)\n")
 
         of.write(f"{indent}dYdt = np.zeros((nnuc), dtype=np.float64)\n\n")
 

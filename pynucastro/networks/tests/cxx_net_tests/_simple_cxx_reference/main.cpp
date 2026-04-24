@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
 
     std::cout << "ODE righthand side values" << std::endl;
 
-    std::cout << std::setprecision(12);
+    std::cout << std::setprecision(14);
 
     for (int n = 1; n <= NumSpec; ++n) {
         std::cout << "Ydot("
@@ -72,6 +72,20 @@ int main(int argc, char* argv[]) {
     Real enuc;
     ener_gener_rate(ydot, enuc);
     std::cout << "Instantaneous energy generation rate (erg/g/s) = " << enuc << std::endl;
+    std::cout << std::endl;
+
+    // get the rates -- this is just the N_A<σv>
+
+    std::cout << "Reaction rate values" << std::endl;
+    rate_t rate_eval;
+
+    constexpr int do_T_derivatives{0};
+    evaluate_rates<do_T_derivatives>(state, rate_eval);
+
+    for (int n = 1; n <= Rates::NumRates; ++n) {
+        std::cout << "rate(" << std::setw(35) << Rates::rate_names[n] << ") = "
+                  << rate_eval.screened_rates(n) << std::endl;
+    }
     std::cout << std::endl;
 
     tf_t tfactors = evaluate_tfactors(state.T);
