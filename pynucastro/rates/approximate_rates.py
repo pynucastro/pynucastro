@@ -89,7 +89,6 @@ class ApproximateRate(Rate):
         "A(a,p)X", that provides the ``Rate`` object for that rate.
         Each approximation has a different set of keys that is
         expected.
-
     is_reverse : bool
         Are we creating the effective A(x,y)B or B(y,x)A?
     approx_type : str

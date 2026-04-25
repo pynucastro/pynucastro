@@ -1,5 +1,6 @@
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.library import _rate_name_to_nuc
+from pynucastro.rates.approximate_rates import ApproximateRate
 
 
 def make_CO_approximation(all_rates, root_nuclei):
@@ -75,38 +76,61 @@ def make_CO_approximation(all_rates, root_nuclei):
 
     print(S1, S2, E, F, X)
 
-    # now get the rates
+    # now get the rates (including inverses)
     rates = {}
 
     lambda1 = f"{S1}({S2},p){X}"
     reactants, products = _rate_name_to_nuc(lambda1)
-    rates["A(A,p)X"] = [r for r in all_rates
+    rates["S(S,p)X"] = [r for r in all_rates
                         if sorted(r.reactants) == sorted(reactants) and
                            sorted(r.products) == sorted(products)][0]
+    rates["X(p,S)S"] = [r for r in all_rates
+                        if sorted(r.reactants) == sorted(products) and
+                           sorted(r.products) == sorted(reactants)][0]
 
     lambda2 = f"{S1}({S2},a){E}"
     reactants, products = _rate_name_to_nuc(lambda2)
-    rates["A(A,a)B"] = [r for r in all_rates
+    rates["S(S,a)E"] = [r for r in all_rates
                         if sorted(r.reactants) == sorted(reactants) and
                            sorted(r.products) == sorted(products)][0]
+    rates["E(a,S)S"] = [r for r in all_rates
+                        if sorted(r.reactants) == sorted(products) and
+                           sorted(r.products) == sorted(reactants)][0]
 
     lambda3 = f"{X}(p,a){E}"
     reactants, products = _rate_name_to_nuc(lambda3)
-    rates["X(p,a)B"] = [r for r in all_rates
+    rates["X(p,a)E"] = [r for r in all_rates
                         if sorted(r.reactants) == sorted(reactants) and
                            sorted(r.products) == sorted(products)][0]
+    rates["E(a,p)X"] = [r for r in all_rates
+                        if sorted(r.reactants) == sorted(products) and
+                           sorted(r.products) == sorted(reactants)][0]
 
     lambda4 = f"{X}(p,g){F}"
     reactants, products = _rate_name_to_nuc(lambda4)
-    rates["X(p,g)C"] = [r for r in all_rates
+    rates["X(p,g)F"] = [r for r in all_rates
                         if sorted(r.reactants) == sorted(reactants) and
                            sorted(r.products) == sorted(products)][0]
+    rates["F(g,p)X"] = [r for r in all_rates
+                        if sorted(r.reactants) == sorted(products) and
+                           sorted(r.products) == sorted(reactants)][0]
 
     lambda5 = f"{E}(a,g){F}"
     reactants, products = _rate_name_to_nuc(lambda5)
-    rates["B(a,g)C"] = [r for r in all_rates
+    rates["E(a,g)F"] = [r for r in all_rates
                         if sorted(r.reactants) == sorted(reactants) and
                            sorted(r.products) == sorted(products)][0]
+    rates["F(g,a)E"] = [r for r in all_rates
+                        if sorted(r.reactants) == sorted(products) and
+                           sorted(r.products) == sorted(reactants)][0]
+
+    new_rates = []
+
+    # S(S,p)X(p,γ)F
+    child_rates = [rates["S(S,p)X"], rates["X(p,g)F"],
+                   rates["X(p,S)S"], rates["F(g,p)X"]]
+    new_rates.append(ApproximateRate(child_rates, is_reverse=False, approx_type="Yp_pg"))
+    new_rates.append(ApproximateRate(child_rates, is_reverse=True, approx_type="Yp_pg"))
 
     for k, v in rates.items():
         print(k, v)
