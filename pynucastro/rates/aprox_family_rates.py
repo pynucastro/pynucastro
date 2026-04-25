@@ -126,11 +126,50 @@ def make_CO_approximation(all_rates, root_nuclei):
 
     new_rates = []
 
-    # S(S,p)X(p,γ)F
-    child_rates = [rates["S(S,p)X"], rates["X(p,g)F"],
-                   rates["X(p,S)S"], rates["F(g,p)X"]]
-    new_rates.append(ApproximateRate(child_rates, is_reverse=False, approx_type="Yp_pg"))
-    new_rates.append(ApproximateRate(child_rates, is_reverse=True, approx_type="Yp_pg"))
+    # S(S,p)X(p,γ)F (e.g., C12(C12,p)Na23(p,γ)Mg24)
+    # this also needs X(p,α)E (e.g. Na23(p,α)Ne20) as an alternate
+    # branching for normalization
 
-    for k, v in rates.items():
-        print(k, v)
+    # for ApproximateRate, we write these in the form A <--> B
+    # where A = S, B = F, C = E
+    child_rates = {}
+
+    child_rates["A(Y,p)X"] = rates["S(S,p)X"]
+    child_rates["X(p,Y)A"] = rates["X(p,S)S"]
+
+    child_rates["X(p,g)B"] = rates["X(p,g)F"]
+    child_rates["B(g,p)X"] = rates["F(g,p)X"]
+
+    child_rates["X(p,a)C"] = rates["X(p,a)E"]
+
+    new_rates.append(ApproximateRate(child_rates,
+                                     is_reverse=False, approx_type="Yp_pg"))
+    new_rates.append(ApproximateRate(child_rates,
+                                     is_reverse=True, approx_type="Yp_pg"))
+
+    # S(S,α)E + S(S,p)X(p,α)E (e.g. C12(C12,α)Ne20 + C12(C12,p)Na23(p,α)Ne20)
+    # this also needs X(p,g)F (e.g. Na23(p,γ)Mg24) as an alternate
+    # branching for normalization
+
+    # for ApproximateRate, we write these in the form A <--> B
+    # where A = S, B = E, C = F
+    child_rates = {}
+
+    child_rates["A(Y,a)B"] = rates["S(S,a)E"]
+    child_rates["B(a,Y)A"] = rates["E(a,S)S"]
+
+    child_rates["A(Y,p)X"] = rates["S(S,p)X"]
+    child_rates["X(p,Y)A"] = rates["X(p,S)S"]
+
+    child_rates["X(p,a)B"] = rates["X(p,a)E"]
+    child_rates["B(a,p)X"] = rates["E(a,p)X"]
+
+    child_rates["X(p,g)C"] = rates["X(p,g)F"]
+
+    new_rates.append(ApproximateRate(child_rates,
+                                     is_reverse=False, approx_type="Yp_pa"))
+    new_rates.append(ApproximateRate(child_rates,
+                                     is_reverse=True, approx_type="Yp_pa"))
+
+    return new_rates
+

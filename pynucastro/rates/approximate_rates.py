@@ -10,6 +10,23 @@ from pynucastro.nucdata import Nucleus
 from pynucastro.rates.rate import Rate
 
 
+def _assert_rate_prop(rate, *,
+                      reactants=None, products=None,
+                      num_reactants=None, num_products=None):
+
+    if reactants:
+        for nuc in reactants:
+            assert nuc in rate.reactants
+    if num_reactants:
+        assert len(rate.reactants) == num_reactants
+
+    if products:
+        for nuc in products:
+            assert nuc in rate.products
+    if num_products:
+        assert len(rate.products) == num_products
+
+
 def create_double_neutron_capture(lib, reactant, product):
     """Return a pair of :py:class:`ApproximateRate` objects for the
     A(n,g)X(n,g)B -> A(nn,g)B approximation
@@ -54,8 +71,8 @@ def create_double_neutron_capture(lib, reactant, product):
 
 
 class ApproximateRate(Rate):
-    """An approximation to a rate sequence.  Two approximations are
-    currently supported:
+    """An approximation to a rate sequence A <--> B.  The following
+    approximations are currently supported:
 
     * "ap_pg" : combine the A(α,γ)B and A(α,p)X(p,γ)B sequences
       into a single, effective A(α,γ)B rate.
@@ -71,13 +88,20 @@ class ApproximateRate(Rate):
     * "Yp_pg" : combine A(Y,γ)B and A(Y,p)X(p,γ)B sequences into a
       single, effective A(Y,γ)B rate.  Note: the original A(Y,γ)B does
       not need to be included, in which case just A(Y,p)X(p,γ)B is
-      approximated.
+      approximated.  We also include another pathway from X connecting
+      to a different nucleus C, X(p,α)C.  This affects the branching
+      from X that serves as the normalization.
 
       Here Y is another nucleus, and we assume that mass_number(A) >=
       mass_number(Y)
 
       An example of this is combining O16(O16,p)P31(p,γ)S32 and
       optionally (a modified rate version of) O16(O16,γ)S32.
+
+    * "Yp_pa" : combine the A(Y,α)B and A(Y,p)X(p,α)B sequences into a
+      single, effective A(Y,α)B rate.  We also include another pathway
+      from X connecting to a different nucleus C, X(p,γ)C. This affects
+      the branching from X that serves as the normalization.
 
     This class stores all of the rates needed to implement these
     approximations.
@@ -93,7 +117,7 @@ class ApproximateRate(Rate):
         Are we creating the effective A(x,y)B or B(y,x)A?
     approx_type : str
         The type of approximation to do.  Currently supported are
-        "ap_pg", "nn_g", and "Yp_pg"
+        "ap_pg", "nn_g", "Yp_pg", and "Yp_pa"
     use_identical_particle_factor : bool
         Usually if a rate has 2 reactants of the same type, we
         divide by 2, since the order doesn't matter.  However, for
@@ -137,16 +161,14 @@ class ApproximateRate(Rate):
 
             try:
                 # this primary rate is the forward rate that connects
-                # the nucleus endpoints directly
+                # the nucleus endpoints directly. This should be A(a,g)B
                 primary_rate = self.rates["A(a,g)B"]
-
-                # make sure that the primary forward rate makes sense
-                # this should be A(a,g)B
-                assert Nucleus("he4") in primary_rate.reactants
-                assert len(primary_rate.products) == 1
             except KeyError:
                 print("primary rate not found")
                 raise
+
+            _assert_rate_prop(primary_rate,
+                              reactants=[Nucleus("he4")], num_products=1)
 
             # we are going to define the product A and reactant B from
             # this reaction
@@ -157,13 +179,13 @@ class ApproximateRate(Rate):
                 # the first secondary rate should be A(a,p)X, where X
                 # is the intermediate nucleus
                 secondary_rate_1 = self.rates["A(a,p)X"]
-
-                assert self.primary_reactant in secondary_rate_1.reactants
-                assert Nucleus("he4") in secondary_rate_1.reactants
-                assert Nucleus("p") in secondary_rate_1.products
             except KeyError:
                 print("first secondary rate not found")
                 raise
+
+            _assert_rate_prop(secondary_rate_1,
+                              reactants=[self.primary_reactant, Nucleus("he4")],
+                              products=[Nucleus("p")])
 
             # get the intermediate nucleus (X) from this rate
             self.intermediate_nucleus = max(secondary_rate_1.products)
@@ -171,48 +193,48 @@ class ApproximateRate(Rate):
             try:
                 # now the second secondary rate show be X(p,g)B
                 secondary_rate_2 = self.rates["X(p,g)B"]
-
-                assert self.intermediate_nucleus in secondary_rate_2.reactants
-                assert Nucleus("p") in secondary_rate_2.reactants
-                assert self.primary_product in secondary_rate_2.products
             except KeyError:
                 print("second secondary rate not found")
                 raise
+
+            _assert_rate_prop(secondary_rate_2,
+                              reactants=[self.intermediate_nucleus, Nucleus("p")],
+                              products=[self.primary_product], num_products=1)
 
             # now ensure that the reverse rate makes sense
 
             try:
                 # the primary reverse rate is B(g,a)A
                 primary_reverse = self.rates["B(g,a)A"]
-
-                assert self.primary_product in primary_reverse.reactants
-                assert self.primary_reactant in primary_reverse.products
             except KeyError:
                 print("primary reverse rate not found")
                 raise
 
+            _assert_rate_prop(primary_reverse,
+                              reactants=[self.primary_product],
+                              products=[self.primary_reactant])
+
             try:
                 # the first secondary reverse rate should be B(g,p)X
                 secondary_reverse_1 = self.rates["B(g,p)X"]
-
-                assert self.primary_product in secondary_reverse_1.reactants
-                assert self.intermediate_nucleus in secondary_reverse_1.products
-                assert Nucleus("p") in secondary_reverse_1.products
             except KeyError:
                 print("first secondary reverse rate not found")
                 raise
 
+            _assert_rate_prop(secondary_reverse_1,
+                              reactants=[self.primary_product],
+                              products=[self.intermediate_nucleus, Nucleus("p")])
+
             try:
                 # the second secondary reverse rate should be X(p,a)A
                 secondary_reverse_2 = self.rates["X(p,a)A"]
-
-                assert self.intermediate_nucleus in secondary_reverse_2.reactants
-                assert Nucleus("p") in secondary_reverse_2.reactants
-                assert self.primary_reactant in secondary_reverse_2.products
-                assert Nucleus("he4") in secondary_reverse_2.products
             except KeyError:
                 print("second secondary reverse rate not found")
                 raise
+
+            _assert_rate_prop(secondary_reverse_2,
+                              reactants=[self.intermediate_nucleus, Nucleus("p")],
+                              products=[self.primary_reactant, Nucleus("he4")])
 
             # now initialize the super class with these reactants and products
 
@@ -244,20 +266,22 @@ class ApproximateRate(Rate):
             try:
                 # the first forward rate should be A(n,g)X
                 forward1 = self.rates["A(n,g)X"]
-                assert Nucleus("n") in forward1.reactants
-                assert len(forward1.products) == 1
             except KeyError:
                 print("first forward rate not found")
                 raise
 
+            _assert_rate_prop(forward1,
+                              reactants=[Nucleus("n")], num_products=1)
+
             try:
                 # the second forward rate should be X(n,g)B
                 forward2 = self.rates["X(n,g)B"]
-                assert Nucleus("n") in forward2.reactants
-                assert len(forward2.products) == 1
             except KeyError:
                 print("second forward rate not found")
                 raise
+
+            _assert_rate_prop(forward2,
+                              reactants=[Nucleus("n")], num_products=1)
 
             # make sure that the intermediate nucleus matches
             assert forward1.products[0] == max(forward2.reactants)
@@ -277,24 +301,24 @@ class ApproximateRate(Rate):
             try:
                 # the first reverse rate should be B(g,n)X
                 reverse1 = self.rates["B(g,n)X"]
-                assert self.primary_product in reverse1.reactants
-                assert len(reverse1.reactants) == 1
-                assert self.intermediate_nucleus in reverse1.products
-                assert Nucleus("n") in reverse1.products
             except KeyError:
                 print("first reverse rate not found")
                 raise
 
+            _assert_rate_prop(reverse1,
+                              reactants=[self.primary_product], num_reactants=1,
+                              products=[self.intermediate_nucleus, Nucleus("n")])
+
             try:
                 # the second reverse rate should be X(g,n)A
                 reverse2 = self.rates["X(g,n)A"]
-                assert self.intermediate_nucleus in reverse2.reactants
-                assert len(reverse2.reactants) == 1
-                assert self.primary_reactant in reverse2.products
-                assert Nucleus("n") in reverse2.products
             except KeyError:
                 print("second reverse rate not found")
                 raise
+
+            _assert_rate_prop(reverse2,
+                              reactants=[self.intermediate_nucleus], num_reactants=1,
+                              products=[self.primary_reactant, Nucleus("n")])
 
             # now initialize the super class with these reactants and products
 
@@ -325,31 +349,157 @@ class ApproximateRate(Rate):
             try:
                 # this is the first forward rate
                 first_forward = self.rates["A(Y,p)X"]
-
-                assert Nucleus("p") in first_forward.products
             except KeyError:
                 print("rate A(Y,p)X not found")
                 raise
 
+            _assert_rate_prop(first_forward, products=[Nucleus("p")])
+
             # get the primary reactant, other reactant (Y), and
             # intermediate nucleus (X).
             self.primary_reactant = max(first_forward.reactants)
-            self.other_reactant = min(first_forward.reactant)
+            self.other_reactant = min(first_forward.reactants)
             self.intermediate_nucleus = max(first_forward.products)
 
             try:
                 # this is the second forward rate
                 second_forward = self.rates["X(p,g)B"]
-
-                assert self.intermediate_nucleus in second_forward.reactants
-                assert Nucleus("p") in second_forward.reactants
-                assert len(second_forward.products) == 1
             except KeyError:
                 print("rate X(p,g)B not found")
                 raise
 
+            _assert_rate_prop(second_forward,
+                              reactants=[self.intermediate_nucleus, Nucleus("p")],
+                              num_products=1)
+
             # get the primary product from this rate
             self.primary_product = max(second_forward.products)
+
+            try:
+                # this is the first reverse rate
+                first_reverse = self.rates["B(g,p)X"]
+            except KeyError:
+                print("rate B(g,p)X not found")
+                raise
+
+            _assert_rate_prop(first_reverse,
+                              reactants=[self.primary_product], num_reactants=1,
+                              products=[self.intermediate_nucleus, Nucleus("p")])
+
+            try:
+                # this is the second reverse rate
+                second_reverse = self.rates["X(p,Y)A"]
+            except KeyError:
+                print("rate X(p,Y)A not found")
+                raise
+
+            _assert_rate_prop(second_reverse,
+                              reactants=[self.intermediate_nucleus, Nucleus("p")],
+                              products=[self.primary_reactant, self.other_reactant])
+
+            try:
+                # This is the direct rate that may optionally be present
+                # it connects the nucleus endpoints
+                direct_rate = self.rates["A(Y,g)B"]
+            except KeyError:
+                direct_rate = None
+
+            if direct_rate:
+                _assert_rate_prop(direct_rate,
+                                  reactants=[self.primary_reactant, self.other_reactant],
+                                  products=[self.primary_product], num_products=1)
+
+            try:
+                # This is the direct reverse rate that may be optionally present
+                direct_reverse = self.rates["B(g,Y)A"]
+            except KeyError:
+                direct_reverse = None
+
+            if direct_reverse:
+                _assert_rate_prop(direct_reverse,
+                                  reactants=[self.primary_product], num_reactants=1,
+                                  products=[self.primary_reactant, self.other_reactant])
+
+            assert (direct_rate and direct_reverse) or (not direct_rate and not direct_reverse)
+
+            try:
+                # The alternate branching rate
+                alternate_branch = self.rates["X(p,a)C"]
+            except KeyError:
+                print("rate X(p,a)C not found")
+                raise
+
+            _assert_rate_prop(alternate_branch,
+                              reactants=[self.intermediate_nucleus, Nucleus("p")],
+                              products=[Nucleus("he4")])
+
+            if not self.is_reverse:
+                super().__init__(reactants=[self.primary_reactant, self.other_reactant],
+                                 products=[self.primary_product],
+                                 label="approx",
+                                 use_identical_particle_factor=use_identical_particle_factor)
+                self.hidden_rates = [self.rates["A(Y,p)X"],
+                                     self.rates["X(p,g)B"],
+                                     self.rates["X(p,Y)A"],
+                                     self.rates["X(p,a)C"]]
+                if direct_rate:
+                    self.hidden_rates.append(direct_rate)
+
+            else:
+                super().__init__(reactants=[self.primary_product],
+                                 products=[self.primary_reactant, self.other_reactant],
+                                 label="approx",
+                                 use_identical_particle_factor=use_identical_particle_factor)
+
+                self.hidden_rates = [self.rates["X(p,g)B"],
+                                     self.rates["B(g,p)X"],
+                                     self.rates["X(p,Y)A"],
+                                     self.rates["X(p,a)C"]]
+                if direct_reverse:
+                    self.hidden_rates.append(direct_reverse)
+
+        elif self.approx_type == "Yp_pa":
+
+            try:
+                # this is the primary forward rate
+                primary_forward = self.rates["A(Y,a)B"]
+
+                assert Nucleus("he4") in primary_forward.products
+            except KeyError:
+                print("rate A(Y,a)B not found")
+                raise
+
+            # get the primary reactant, other reactant (Y), and
+            # primary product
+            self.primary_reactant = max(primary_forward.reactants)
+            self.other_reactant = min(primary_forward.reactants)
+            self.primary_product = max(primary_forward.products)
+
+            try:
+                # this is the forward rate 1 for the 2-rate sequence
+                first_forward = self.rates["A(Y,p)X"]
+
+                assert self.primary_reactant in first_forward.reactants
+                assert self.other_reactant in first_forward.reactants
+                assert Nucleus("p") in first_forward.products
+            except KeyError:
+                print("rate A(Y,p)X not found")
+                raise
+
+            # get the intermediate nucleus
+            self.intermediate_nucleus = max(first_forward.products)
+
+            try:
+                # this is the forward rate 2 for the 2-rate sequence
+                second_forward = self.rates["X(p,a)B"]
+
+                assert self.intermediate_nucleus in second_forward.reactants
+                assert Nucleus("p") in second_forward.reactants
+                assert Nucleus("he4") in second_forward.products
+                assert self.primary_product in second_forward.products
+            except KeyError:
+                print("rate X(p,g)B not found")
+                raise
 
             try:
                 # this is the first reverse rate
@@ -390,21 +540,41 @@ class ApproximateRate(Rate):
 
             assert (direct_rate and direct_reverse) or (not direct_rate and not direct_reverse)
 
+            try:
+                # The alternate branching rate
+                alternate_branch = self.rates["X(p,a)C"]
+
+                assert self.intermediate_nucleus in alternate_branch.reactants
+                assert Nucleus("p") in alternate_branch.reactants
+                assert Nucleus("he4") in alternate_branch.products
+            except KeyError:
+                print("rate X(p,a)C not found")
+                raise
+
             if not self.is_reverse:
                 super().__init__(reactants=[self.primary_reactant, self.other_reactant],
                                  products=[self.primary_product],
                                  label="approx",
                                  use_identical_particle_factor=use_identical_particle_factor)
+                self.hidden_rates = [self.rates["A(Y,p)X"],
+                                     self.rates["X(p,g)B"],
+                                     self.rates["X(p,Y)A"],
+                                     self.rates["X(p,a)C"]]
+                if direct_rate:
+                    self.hidden_rates.append(direct_rate)
+
             else:
                 super().__init__(reactants=[self.primary_product],
                                  products=[self.primary_reactant, self.other_reactant],
                                  label="approx",
                                  use_identical_particle_factor=use_identical_particle_factor)
 
-            self.hidden_rates = [self.rates["A(Y,p)X"],
-                                 self.rates["X(p,g)B"],
-                                 self.rates["B(g,p)X"],
-                                 self.rates["X(p,Y)A"]]
+                self.hidden_rates = [self.rates["X(p,g)B"],
+                                     self.rates["B(g,p)X"],
+                                     self.rates["X(p,Y)A"],
+                                     self.rates["X(p,a)C"]]
+                if direct_reverse:
+                    self.hidden_rates.append(direct_reverse)
 
         else:
             raise NotImplementedError(f"approximation type {self.approx_type} not supported")
@@ -477,19 +647,20 @@ class ApproximateRate(Rate):
         """
 
         if self.approx_type == "ap_pg":
+
+            r_pg = self.rates["X(p,g)B"].eval(T, rho=rho, comp=comp,
+                                              screen_func=screen_func)
+            r_pa = self.rates["X(p,a)A"].eval(T, rho=rho, comp=comp,
+                                              screen_func=screen_func)
+            denom = r_pg + r_pa
+
             if not self.is_reverse:  # pylint: disable=no-else-return
                 # the approximate forward rate is r_ag + r_ap r_pg / (r_pg + r_pa)
                 r_ag = self.rates["A(a,g)B"].eval(T, rho=rho, comp=comp,
                                                   screen_func=screen_func)
                 r_ap = self.rates["A(a,p)X"].eval(T, rho=rho, comp=comp,
                                                   screen_func=screen_func)
-                r_pg = self.rates["X(p,g)B"].eval(T, rho=rho, comp=comp,
-                                                  screen_func=screen_func)
-
-                r_pa = self.rates["X(p,a)A"].eval(T, rho=rho, comp=comp,
-                                                  screen_func=screen_func)
-
-                return r_ag + r_ap * r_pg / (r_pg + r_pa)
+                return r_ag + r_ap * r_pg / denom
 
             else:
                 # the approximate reverse rate is r_ga + r_pa r_gp / (r_pg + r_pa)
@@ -498,43 +669,74 @@ class ApproximateRate(Rate):
                                                   screen_func=screen_func)
                 r_gp = self.rates["B(g,p)X"].eval(T, rho=rho, comp=comp,
                                                   screen_func=screen_func)
-                r_pa = self.rates["X(p,a)A"].eval(T, rho=rho, comp=comp,
-                                                  screen_func=screen_func)
-
-                r_pg = self.rates["X(p,g)B"].eval(T, rho=rho, comp=comp,
-                                                  screen_func=screen_func)
-
-                return r_ga + r_pa * r_gp / (r_pg + r_pa)
+                return r_ga + r_pa * r_gp / denom
 
         elif self.approx_type == "nn_g":
 
             # we are approximating A(n,g)X(n,g)B
 
             Yn = comp.get_molar()[Nucleus("n")]
+            X_ng_B = self.rates["X(n,g)B"].eval(T, rho=rho, comp=comp,
+                                                screen_func=screen_func)
+            X_gn_A = self.rates["X(g,n)A"].eval(T, rho=rho, comp=comp,
+                                                screen_func=screen_func)
+            denom = rho * Yn * X_ng_B + X_gn_A
 
             if not self.is_reverse:  # pylint: disable=no-else-return
                 # the forward rate
                 A_ng_X = self.rates["A(n,g)X"].eval(T, rho=rho, comp=comp,
                                                     screen_func=screen_func)
-                X_ng_B = self.rates["X(n,g)B"].eval(T, rho=rho, comp=comp,
-                                                    screen_func=screen_func)
-
-                X_gn_A = self.rates["X(g,n)A"].eval(T, rho=rho, comp=comp,
-                                                    screen_func=screen_func)
-
-                return A_ng_X * X_ng_B / (rho * Yn * X_ng_B + X_gn_A)
+                return A_ng_X * X_ng_B / denom
 
             else:
                 # the reverse rate
                 B_gn_X = self.rates["B(g,n)X"].eval(T, rho=rho, comp=comp,
                                                     screen_func=screen_func)
-                X_gn_A = self.rates["X(g,n)A"].eval(T, rho=rho, comp=comp,
-                                                    screen_func=screen_func)
+                return B_gn_X * X_gn_A / denom
 
-                X_ng_B = self.rates["X(n,g)B"].eval(T, rho=rho, comp=comp,
-                                                    screen_func=screen_func)
+        elif self.approx_type == "Yp_pg":
 
-                return B_gn_X * X_gn_A / (rho * Yn * X_ng_B + X_gn_A)
+            # we are approximating A(Y,p)X(p,g)B with an alternate
+            # branch from X, X(p,a)C, and possibly a direct path
+            # between A and B, A(Y,g)B
+
+            r_pY = self.rates["X(p,Y)A"].eval(T, rho=rho, comp=comp,
+                                              screen_func=screen_func)
+            r_pa = self.rates["X(p,a)C"].eval(T, rho=rho, comp=comp,
+                                              screen_func=screen_func)
+            r_pg = self.rates["X(p,g)B"].eval(T, rho=rho, comp=comp,
+                                              screen_func=screen_func)
+            denom = r_pY + r_pa + r_pg
+
+            if not self.is_reverse:  # pylint: disable=no-else-return
+                # optional direct forward rate
+                r_Yg = 0.0
+                try:
+                    rr = self.rates["A(Y,g)B"]
+                    r_Yg = rr.eval(T, rho=rho, comp=comp,
+                                   screen_func=screen_func)
+                except KeyError:
+                    pass
+
+                # forward rates
+                r_Yp = self.rates["A(Y,p)X"].eval(T, rho=rho, comp=comp,
+                                                  screen_func=screen_func)
+                return r_Yg + r_Yp * r_pg / denom
+
+            else:
+                # optional direct reverse rate
+                r_gY = 0.0
+                try:
+                    rr = self.rates["B(g,Y)A"]
+                    r_gY = rr.eval(T, rho=rho, comp=comp,
+                                   screen_func=screen_func)
+                except KeyError:
+                    pass
+
+                # reverse
+                r_gp = self.rates["B(g,p)X"].eval(T, rho=rho, comp=comp,
+                                                  screen_func=screen_func)
+                return r_gY + r_pY * r_gp / denom
 
         raise NotImplementedError(f"approximation type {self.approx_type} not supported")
 
