@@ -542,7 +542,7 @@ class ApproximateRate(Rate):
 
             if not self.is_reverse:
                 super().__init__(reactants=[self.primary_reactant, self.other_reactant],
-                                 products=[self.primary_product],
+                                 products=[self.primary_product, Nucleus("he4")],
                                  label="approx",
                                  use_identical_particle_factor=use_identical_particle_factor)
                 self.hidden_rates = [self.rates["A(Y,p)X"],
@@ -551,7 +551,7 @@ class ApproximateRate(Rate):
                                      self.rates["X(p,Y)A"]]
 
             else:
-                super().__init__(reactants=[self.primary_product],
+                super().__init__(reactants=[self.primary_product, Nucleus("he4")],
                                  products=[self.primary_reactant, self.other_reactant],
                                  label="approx",
                                  use_identical_particle_factor=use_identical_particle_factor)
