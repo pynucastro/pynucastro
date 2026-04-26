@@ -9,3 +9,4 @@ from .electron_eos import ElectronEOS
 from .eos_components import EOSComponentState
 from .fermi_integrals import FermiIntegral
 from .stellar_eos import EOSState, StellarEOS
+from .tabular_electron_eos import TabularElectronEOS
