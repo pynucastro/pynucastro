@@ -905,7 +905,39 @@ class ApproximateRate(Rate):
             return string
 
         if self.approx_type == "Yp_pa":
-            raise NotImplementedError("we haven't implemented Yp_pa yet")
+
+            # we are approximating A(Y,a)B + A(Y,p)X(p,a)B with an alternate
+            # branch from X, X(p,g)C
+
+            string = ""
+            string += "@numba.njit()\n"
+            string += f"def {self.fname}(rate_eval, tf):\n"
+
+            string += f"    r_pY = rate_eval.{self.rates['X(p,Y)A'].fname}\n"
+            string += f"    r_pa = rate_eval.{self.rates['X(p,a)B'].fname}\n"
+            string += f"    r_pg = rate_eval.{self.rates['X(p,g)C'].fname}\n"
+            string += "    demon = r_pY + r_pa + r_pg\n"
+
+            if not self.is_reverse:
+
+                # first we need to get all of the rates that make this up
+                string += f"    r_Ya = rate_eval.{self.rates['A(Y,a)B'].fname}\n"
+                string += f"    r_Yp = rate_eval.{self.rates['A(Y,p)X'].fname}\n"
+
+                # now the approximation
+                string += "    rate = r_Ya + r_Yp * r_pa / denom\n"
+
+            else:
+
+                # first we need to get all of the rates that make this up
+                string += f"    r_aY = rate_eval.{self.rates['B(a,Y)A'].fname}\n"
+                string += f"    r_ap = rate_eval.{self.rates['B(a,p)X'].fname}\n"
+
+                # now the approximation
+                string += "    rate = r_aY + r_pY * r_ap / denom\n"
+
+            string += f"    rate_eval.{self.fname} = rate\n\n"
+            return string
 
         raise NotImplementedError("don't know how to work with this approximation")
 
