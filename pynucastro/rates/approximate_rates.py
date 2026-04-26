@@ -793,7 +793,7 @@ class ApproximateRate(Rate):
         if self.approx_type == "ap_pg":
 
             # we are approximating A(a,p)X(p,g)B
-            # with the possibiliy of X(p,Y)C as another branching
+            # with the possibility of X(p,Y)C as another branching
 
             string = ""
             string += "@numba.njit()\n"
