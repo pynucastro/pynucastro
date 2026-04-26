@@ -873,7 +873,7 @@ class ApproximateRate(Rate):
             string += f"    r_pY = rate_eval.{self.rates['X(p,Y)A'].fname}\n"
             string += f"    r_pa = rate_eval.{self.rates['X(p,a)C'].fname}\n"
             string += f"    r_pg = rate_eval.{self.rates['X(p,g)B'].fname}\n"
-            string += "    demon = r_pY + r_pa + r_pg\n"
+            string += "    denom = r_pY + r_pa + r_pg\n"
 
             if not self.is_reverse:
 
@@ -916,7 +916,7 @@ class ApproximateRate(Rate):
             string += f"    r_pY = rate_eval.{self.rates['X(p,Y)A'].fname}\n"
             string += f"    r_pa = rate_eval.{self.rates['X(p,a)B'].fname}\n"
             string += f"    r_pg = rate_eval.{self.rates['X(p,g)C'].fname}\n"
-            string += "    demon = r_pY + r_pa + r_pg\n"
+            string += "    denom = r_pY + r_pa + r_pg\n"
 
             if not self.is_reverse:
 
