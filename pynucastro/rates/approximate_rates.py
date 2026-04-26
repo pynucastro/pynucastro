@@ -238,6 +238,7 @@ class ApproximateRate(Rate):
                               products=[self.primary_reactant, Nucleus("he4")])
 
             # finally, check to see if we have the additional branching rate
+            alternate_rate = None
             try:
                 # the alternate branching rate should be X(p,Y)C
                 alternate_rate = self.rates["X(p,Y)C"]
@@ -246,9 +247,10 @@ class ApproximateRate(Rate):
                     print("alternate branching rate X(p,Y)C missing")
                     raise
 
-            _assert_rate_prop(alternate_rate,
-                              reactants=[self.intermediate_nucleus, Nucleus("p")],
-                              num_products=2)
+            if alternate_rate:
+                _assert_rate_prop(alternate_rate,
+                                  reactants=[self.intermediate_nucleus, Nucleus("p")],
+                                  num_products=2)
 
             # now initialize the super class with these reactants and products
 
