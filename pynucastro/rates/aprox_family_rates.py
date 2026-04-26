@@ -176,4 +176,28 @@ def make_CO_approximation(all_rates, root_nuclei):
     new_rates.append(ApproximateRate(child_rates,
                                      is_reverse=True, approx_type="Yp_pa"))
 
+    # E(α,γ)F + E(α,p)X(p,γ)F (e.g. Ne20(α,γ)Mg24 + Ne20(α,p)Na23(p,γ)Mg24)
+    # with X(p,S)S (e.g. Na23(p,C12)C12) as an alternate branch for
+    # normalization.
+
+    # for ApproximateRate, we write these in the form A <--> B
+    # where A = E, B = F, and C = S
+    child_rates = {}
+
+    child_rates["A(a,g)B"] = rates["E(a,g)F"]
+    child_rates["B(g,a)A"] = rates["F(g,a)E"]
+
+    child_rates["A(a,p)X"] = rates["E(a,p)X"]
+    child_rates["X(p,a)A"] = rates["X(p,a)E"]
+
+    child_rates["X(p,g)B"] = rates["X(p,g)F"]
+    child_rates["B(g,p)X"] = rates["F(g,p)X"]
+
+    child_rates["X(p,Y)C"] = rates["X(p,S)S"]
+
+    new_rates.append(ApproximateRate(child_rates,
+                                     is_reverse=False, approx_type="ap_pg"))
+    new_rates.append(ApproximateRate(child_rates,
+                                     is_reverse=True, approx_type="ap_pg"))
+
     return new_rates
