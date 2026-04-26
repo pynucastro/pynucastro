@@ -1,6 +1,11 @@
+"""Functions to help construct rate approximations used in the
+aprox13, aprox19, aprox21 family of reaction networks
+
+"""
+
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates.library import _rate_name_to_nuc
 from pynucastro.rates.approximate_rates import ApproximateRate
+from pynucastro.rates.library import _rate_name_to_nuc
 
 
 def make_CO_approximation(all_rates, root_nuclei):
@@ -172,4 +177,3 @@ def make_CO_approximation(all_rates, root_nuclei):
                                      is_reverse=True, approx_type="Yp_pa"))
 
     return new_rates
-

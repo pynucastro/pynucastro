@@ -608,7 +608,7 @@ class ApproximateRate(Rate):
 
         return math.log(self.eval(T, rho=rho, comp=comp, screen_func=screen_func))
 
-    def eval(self, T, *, rho=None, comp=None,
+    def eval(self, T, *, rho=None, comp=None,  # pylint: disable=too-many-return-statements
              screen_func=None):
         """Evaluate the approximate rate.
 
