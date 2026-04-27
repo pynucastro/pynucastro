@@ -184,12 +184,6 @@ class RateCollection:
         else:
             cr.removed = False
 
-        # update fname -- _set_print_representation will add
-        # "_removed" to the name
-
-        # pylint: disable-next=protected-access
-        cr._set_print_representation()
-
         # child rates may be ReacLibRates, StarLibRates,
         # ModifiedRates, or DerivedRates.  Make sure we don't double
         # count

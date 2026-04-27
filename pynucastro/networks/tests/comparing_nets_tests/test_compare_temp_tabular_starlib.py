@@ -1,6 +1,6 @@
-# this creates a network with a TemperatureTabularRate and compares to
-# ensure that both the RateCollection version and the PythonNetwork
-# written to a module give the same ydots
+# this creates a network with a TemperatureTabularRate and several
+# StarLib rates compares to ensure that the RateCollection
+# PythonNetwork, and C++ versions all give the same ydots
 
 import sys
 import warnings
@@ -20,11 +20,22 @@ def _skip_build():
 class TestNetworkCompare:
 
     @pytest.fixture(scope="class")
-    def lib(self, reaclib_library):
+    def lib(self, reaclib_library, starlib_library):
         nuc = ["p", "n15", "o16"]
         lib = reaclib_library.linking_nuclei(nuc, with_reverse=False)
+
         r = IliadisO16pgF17()
         lib.add_rate(r)
+
+        r2 = starlib_library.get_rate_by_name("c12(a,g)o16")
+        lib.add_rate(r2)
+
+        r3 = starlib_library.get_rate_by_name("c12(p,g)n13")
+        lib.add_rate(r3)
+
+        r4 = starlib_library.get_rate_by_name("n13(a,p)o16")
+        lib.add_rate(r4)
+
         return lib
 
     @pytest.fixture(scope="class")
