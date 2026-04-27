@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Approximating alpha-capture &#8212; pynucastro 2.9.0.post93+g20a107581 documentation</title>
+    <title>Approximating alpha-capture &#8212; pynucastro 2.9.0.post94+gbf4880f1a documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=a00f5615"></script>
+    <script src="_static/documentation_options.js?v=8c331894"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -847,10 +847,10 @@ S32
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@numba.njit()
 def Mg24_He4_to_Si28_approx(rate_eval, tf):
-    r_ag = rate_eval.He4_Mg24_to_Si28_removed
-    r_ap = rate_eval.He4_Mg24_to_p_Al27_removed
-    r_pg = rate_eval.p_Al27_to_Si28_removed
-    r_pa = rate_eval.p_Al27_to_He4_Mg24_removed
+    r_ag = rate_eval.He4_Mg24_to_Si28_reaclib
+    r_ap = rate_eval.He4_Mg24_to_p_Al27_reaclib
+    r_pg = rate_eval.p_Al27_to_Si28_reaclib
+    r_pa = rate_eval.p_Al27_to_He4_Mg24_reaclib
     rate = r_ag + r_ap * r_pg / (r_pg + r_pa)
     rate_eval.Mg24_He4_to_Si28_approx = rate
 </pre></div>

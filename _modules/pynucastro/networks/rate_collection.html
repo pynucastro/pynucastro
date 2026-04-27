@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.9.0.post93+g20a107581 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.9.0.post94+gbf4880f1a documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=a00f5615"></script>
+    <script src="../../../_static/documentation_options.js?v=8c331894"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -681,12 +681,6 @@
             <span class="n">cr</span><span class="o">.</span><span class="n">removed</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">cr</span><span class="o">.</span><span class="n">removed</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="c1"># update fname -- _set_print_representation will add</span>
-        <span class="c1"># &quot;_removed&quot; to the name</span>
-
-        <span class="c1"># pylint: disable-next=protected-access</span>
-        <span class="n">cr</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span>
 
         <span class="c1"># child rates may be ReacLibRates, StarLibRates,</span>
         <span class="c1"># ModifiedRates, or DerivedRates.  Make sure we don&#39;t double</span>
