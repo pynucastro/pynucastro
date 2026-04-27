@@ -1161,6 +1161,60 @@ class ApproximateRate(Rate):
             return fstring
 
         if self.approx_type == "Yp_pa":
-            raise NotImplementedError("we haven't implemented Yp_pa in C++ yet")
+
+            # we are approximating A(Y,a)B + A(Y,p)X(p,a)B with an alternate
+            # branch from X, X(p,g)C
+
+            args = ["const T& rate_eval", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+            fstring = ""
+            fstring = "template <typename T>\n"
+            fstring += f"{specifiers}\n"
+            fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
+
+            fstring += f"    {dtype} r_pY = rate_eval.screened_rates(k_{self.rates['X(p,Y)A'].fname});\n"
+            fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.rates['X(p,a)B'].fname});\n"
+            fstring += f"    {dtype} r_pg = rate_eval.screened_rates(k_{self.rates['X(p,g)C'].fname});\n"
+
+            fstring += f"    {dtype} dd = 1.0_rt / (r_pY + r_pa + r_pg);\n"
+
+            if not self.is_reverse:
+
+                # first we need to get all of the rates that make this up
+                fstring += f"    {dtype} r_Ya = rate_eval.screened_rates(k_{self.rates['A(Y,a)B'].fname});\n"
+                fstring += f"    {dtype} r_Yp = rate_eval.screened_rates(k_{self.rates['A(Y,p)X'].fname});\n"
+
+                # now the approximation
+                fstring += "    rate = r_Ya + r_Yp * r_pa * dd;\n"
+                fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+                fstring += f"        {dtype} drdT_pY = rate_eval.dscreened_rates_dT(k_{self.rates['X(p,Y)A'].fname});\n"
+                fstring += f"        {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.rates['X(p,a)B'].fname});\n"
+                fstring += f"        {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.rates['X(p,g)C'].fname});\n"
+                fstring += f"        {dtype} drdT_Ya = rate_eval.dscreened_rates_dT(k_{self.rates['A(Y,a)B'].fname});\n"
+                fstring += f"        {dtype} drdT_Yp = rate_eval.dscreened_rates_dT(k_{self.rates['A(Y,p)X'].fname});\n"
+
+                fstring += "        drate_dT = drdT_Ya + drdT_Yp * r_pa * dd + r_Ya * drdT_pa * dd - r_Yp * r_pa * dd * dd * (drdT_pY + drdT_pa + drdT_pg);\n"
+                fstring += "    }\n"
+            else:
+
+                # first we need to get all of the rates that make this up
+                fstring += f"    {dtype} r_aY = rate_eval.screened_rates(k_{self.rates['B(a,Y)A'].fname});\n"
+                fstring += f"    {dtype} r_ap = rate_eval.screened_rates(k_{self.rates['B(a,p)X'].fname});\n"
+
+                # now the approximation
+                fstring += "    rate = r_aY + r_pY * r_ap * dd;\n"
+                fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+                fstring += f"        {dtype} drdT_pY = rate_eval.dscreened_rates_dT(k_{self.rates['X(p,Y)A'].fname});\n"
+                fstring += f"        {dtype} drdT_pa = rate_eval.dscreened_rates_dT(k_{self.rates['X(p,a)B'].fname});\n"
+                fstring += f"        {dtype} drdT_pg = rate_eval.dscreened_rates_dT(k_{self.rates['X(p,g)C'].fname});\n"
+                fstring += f"        {dtype} drdT_aY = rate_eval.dscreened_rates_dT(k_{self.rates['B(a,Y)A'].fname});\n"
+                fstring += f"        {dtype} drdT_ap = rate_eval.dscreened_rates_dT(k_{self.rates['B(a,p)X'].fname});\n"
+
+                fstring += "        drate_dT = drdT_aY + drdT_pY * r_ap * dd + r_pY * drdT_ap * dd - r_pY * r_ap * dd * dd * (drdT_pY + drdT_pa + drdT_pg);\n"
+                fstring += "    }\n"
+
+            if not leave_open:
+                fstring += "}\n\n"
+
+            return fstring
 
         raise NotImplementedError("don't know how to work with this approximation")
