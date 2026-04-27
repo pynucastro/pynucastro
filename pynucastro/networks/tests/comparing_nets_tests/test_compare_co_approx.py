@@ -12,6 +12,7 @@ from pynucastro.networks.network_compare import NetworkCompare
 from pynucastro.rates.aprox_family_rates import make_CO_approximation
 from pynucastro.rates.library import Library
 
+
 def _skip_build():
     return sys.platform == "darwin" or sys.platform.startswith("win")
 
@@ -52,10 +53,12 @@ class TestNetworkCompare:
         rho = 2.e6
         T = 1.e9
 
+        # pylint: disable=duplicate-code
         if not _skip_build():
             with warnings.catch_warnings():
                 warnings.filterwarnings("ignore", category=UserWarning)
                 nc.evaluate(rho=rho, T=T)
+        # pylint: enable=duplicate-code
 
         return nc
 
@@ -65,10 +68,12 @@ class TestNetworkCompare:
         rho = 2.e9
         T = 4.e9
 
+        # pylint: disable=duplicate-code
         if not _skip_build():
             with warnings.catch_warnings():
                 warnings.filterwarnings("ignore", category=UserWarning)
                 nc.evaluate(rho=rho, T=T)
+        # pylint: enable=duplicate-code
 
         return nc
 
