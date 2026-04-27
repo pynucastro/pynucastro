@@ -1,7 +1,7 @@
 # dependencies needed for building the docs
 ipykernel
 jinja2
-nbsphinx>=0.3.1
+nbsphinx>=0.9.8
 numpydoc
 Sphinx
 sphinx-copybutton
