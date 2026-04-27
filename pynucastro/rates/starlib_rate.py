@@ -148,7 +148,7 @@ class StarLibRate(TemperatureTabularRate):
         fstring += "                                          tfactors.lnT9,\n"
         fstring += f"                                          {self.fname}_data::log_t9,\n"
         fstring += f"                                          {self.fname}_data::log_rate);\n"
-        fstring += f"   auto p = Rates::get_p_random<k_{self.fname}>();\n"
+        fstring += f"    auto p = Rates::get_p_random<k_{self.fname}>();\n"
         fstring += "    auto [_sigma, _dsigma_dlogT9] = interp_net::cubic_interp_uneven<do_T_derivatives>(\n"
         fstring += "                                                 tfactors.lnT9,\n"
         fstring += f"                                                 {self.fname}_data::log_t9,\n"
@@ -156,7 +156,7 @@ class StarLibRate(TemperatureTabularRate):
         fstring += "    rate = std::exp(_mu + p * _sigma + log_scor);\n"
         fstring += "    // we found dlog(rate)/dlog(T9)\n"
         fstring += "    if constexpr (do_T_derivatives) {\n"
-        fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * 1.e-9_rt * (_dmu_dlogT9 + p * _dsigma_dlogT9) + dlog_scor_dT\n;"
+        fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * 1.e-9_rt * (_dmu_dlogT9 + p * _dsigma_dlogT9) + dlog_scor_dT;\n"
         fstring += "        drate_dT = rate * dlog_rate_dT;\n"
         fstring += "    }\n"
 

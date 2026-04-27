@@ -818,7 +818,6 @@ namespace starlib {{
         sl_random_str = """
     if (network_rp::starlib_seed > 0) {
         // generate Gaussian random numbers
-        const int seed = 1234;
         std::mt19937 generator(network_rp::starlib_seed);
 
         // normal distribution centered on 0 with a width of 1
