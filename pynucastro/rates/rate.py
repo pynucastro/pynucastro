@@ -428,11 +428,6 @@ class Rate:
 
         self.pretty_string += r"$"
 
-        # If rate is removed, i.e. a child rate for an ApproximateRate,
-        # change label to removed
-        if self.removed:
-            self.label = "removed"
-
         # Set fname last
         reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
         products_str = '_'.join([repr(nuc) for nuc in self.products])

@@ -80,8 +80,8 @@ class TestRateIds:
         cr = ra.get_child_rates()[1]
 
         assert cr.rid == "Mg24 + He4 --> p + Al27"
-        assert cr.id == "Mg24 + He4 --> p + Al27 <removed_il10>"
-        assert cr.fname == "He4_Mg24_to_p_Al27_removed"
+        assert cr.id == "Mg24 + He4 --> p + Al27 <reaclib_il10>"
+        assert cr.fname == "He4_Mg24_to_p_Al27_reaclib"
 
     def test_duplicate_rates(self, full_library):
         # Make sure duplicate sets in ALLOWED_DUPLICATES have different fname and id
