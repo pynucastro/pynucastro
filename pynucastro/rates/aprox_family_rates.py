@@ -53,7 +53,7 @@ def make_CO_approximation(all_rates, root_nuclei):
          the collection of rates that we will use for finding λ1 through λ5 and
          their inverses.  This could be via
          :py:func:`Library.get_rates <pynucastro.rates.library.Library.get_rates>`
-         or :py:func:`RateCollection.get_rates <pynucastro.rates.rate_collection.RateCollection.get_rates>`.
+         or :py:func:`RateCollection.get_rates <pynucastro.networks.rate_collection.RateCollection.get_rates>`.
     root_nuclei : str
          the identity of nucleus A in this approximation.  This can be
          "C", "CO" or "O"
