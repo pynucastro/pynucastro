@@ -56,15 +56,24 @@ This will output the following files:
   thermodynamic data.  An application code can add more members to the
   struct, as needed, to store additional data.
 
+* ``derived_rates.H`` : the functions that evaluate rates recomputed via
+  detailed balance.
+
 * ``fundamental_constants.H`` : this provides the fundamental constants
   needed throughout the network.
 
 * ``GNUmakefile`` : a GNU makefile to build the test program.
 
+* ``interp_tools.H`` : functions used for interpolating partition functions
+  and rates.
+
 * ``main.cpp`` : a simple driver that simply evaluates the righthand side and Jacobian
   for a single thermodynamic state and compute the energy release.
 
 * ``network_properties.H`` : a header providing the properties of the nuclei.
+
+* ``partition_functions.H`` : data and functions used for interpolating
+  partition functions.
 
 * ``reaclib_rates.H`` : the functions that evaluate the ReacLib reaction rates.
 
@@ -72,6 +81,8 @@ This will output the following files:
   screening factors.
 
 * ``screen.H`` : the actual implementation of the Chugunov 2007 screening.
+
+* ``table_rates.H`` : the data and functions for interpolating tabular rates.
 
 * ``tfactors.H`` : a struct that stores the various temperature powers needed
   to compute reaction rates.
