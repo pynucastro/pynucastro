@@ -11,11 +11,18 @@ from pynucastro.rates.library import _rate_name_to_nuc
 def make_CO_approximation(all_rates, root_nuclei):
     """We want to model a sequence like:
 
-                     X
-              ....  .
-          ...      .   .
-      ...          .     .
-    S ............E ..... F
+    ::
+
+       N - Z
+       ^
+       |                      X
+       |                 ... . .
+       |            ...     .   .
+       |       ...         .     .
+       |    S ............E ..... F
+       |
+       +------------------------------> Z
+
 
     This comes up in a few cases:
 
