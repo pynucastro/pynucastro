@@ -19,6 +19,7 @@ def _skip_build():
 
 class TestNetworkCompare:
 
+    # pylint: disable=duplicate-code
     @pytest.fixture(scope="class")
     def lib(self, reaclib_library):
         nuc = ["p", "he4", "c12", "o16", "ne20", "na23", "mg24"]
@@ -118,3 +119,5 @@ class TestNetworkCompare:
             for nuc in eval_cond2.rates_py_inline:
                 assert other[nuc] == approx(eval_cond2.rates_py_inline[nuc],
                                             rel=1.e-11, abs=1.e-30)
+
+    # pylint: enable=duplicate-code

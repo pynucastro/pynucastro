@@ -22,6 +22,7 @@ def _skip_build():
 
 class TestNetworkCompare:
 
+    # pylint: disable=duplicate-code
     @pytest.fixture(scope="class")
     def lib(self, reaclib_library):
         all_reactants = ["p",
@@ -125,12 +126,10 @@ class TestNetworkCompare:
         rho = 2.e8
         T = 1.e9
 
-        # pylint: disable=duplicate-code
         if not _skip_build():
             with warnings.catch_warnings():
                 warnings.filterwarnings("ignore", category=UserWarning)
                 nc.evaluate(rho=rho, T=T)
-        # pylint: enable=duplicate-code
 
         return nc
 
@@ -140,13 +139,11 @@ class TestNetworkCompare:
         rho = 2.e7
         T = 4.e9
 
-        # pylint: disable=duplicate-code
         # filter the partition function warnings
         if not _skip_build():
             with warnings.catch_warnings():
                 warnings.filterwarnings("ignore", category=UserWarning)
                 nc.evaluate(rho=rho, T=T)
-        # pylint: enable=duplicate-code
 
         return nc
 
@@ -197,3 +194,5 @@ class TestNetworkCompare:
             for nuc in eval_cond2.rates_py_inline:
                 assert other[nuc] == approx(eval_cond2.rates_py_inline[nuc],
                                             rel=1.e-11, abs=1.e-30)
+
+    # pylint: enable=duplicate-code
