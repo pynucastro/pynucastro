@@ -47,10 +47,10 @@ class TestPythonNetwork:
         ostr = \
 """@numba.njit()
 def Mg24_He4_to_Si28_approx(rate_eval, tf):
-    r_ag = rate_eval.He4_Mg24_to_Si28_removed
-    r_ap = rate_eval.He4_Mg24_to_p_Al27_removed
-    r_pg = rate_eval.p_Al27_to_Si28_removed
-    r_pa = rate_eval.p_Al27_to_He4_Mg24_removed
+    r_ag = rate_eval.He4_Mg24_to_Si28_reaclib
+    r_ap = rate_eval.He4_Mg24_to_p_Al27_reaclib
+    r_pg = rate_eval.p_Al27_to_Si28_reaclib
+    r_pa = rate_eval.p_Al27_to_He4_Mg24_reaclib
     rate = r_ag + r_ap * r_pg / (r_pg + r_pa)
     rate_eval.Mg24_He4_to_Si28_approx = rate
 
@@ -62,7 +62,7 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 
         ostr = \
 """@numba.njit()
-def He4_Mg24_to_Si28_removed(rate_eval, tf, log_scor=0.0):
+def He4_Mg24_to_Si28_reaclib(rate_eval, tf, log_scor=0.0):
     # Mg24 + He4 --> Si28
     rate = 0.0
 
@@ -82,7 +82,7 @@ def He4_Mg24_to_Si28_removed(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.He4_Mg24_to_Si28_removed = rate
+    rate_eval.He4_Mg24_to_Si28_reaclib = rate
 
 """
 
