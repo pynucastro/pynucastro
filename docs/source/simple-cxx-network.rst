@@ -9,10 +9,9 @@ the method of :cite:`chugunov:2007`).
 
    Currently, the following features are not supported:
 
-   * tabular rates
-   * NSE
-   * plasma neutrino losses
-   * StarLib rates
+   * an NSE solver
+   * thermal / plasma neutrino losses
+   * StarLib and ``TemperatureTabular`` rates
 
 A simple C++ network can be created as:
 
@@ -29,10 +28,12 @@ A simple C++ network can be created as:
 .. note::
 
    The ``SimpleCxxNetwork`` outputs the righthand side function
-   ($dY/dt$) and Jacobian.  It is meant to be used in an application
-   code that provides its own time integrator.  Furthermore, there
-   is no energy/temperature evolution, but the application code can
-   augment the set of equations being integrated with an energy
+   (providing $dY/dt$ and the energy loss due to weak rate neutrinos)
+   and Jacobian.  It is meant to be used in an application code that
+   provides its own time integrator.
+
+   There is no energy/temperature evolution, but the application code
+   can augment the set of equations being integrated with an energy
    equation as needed.
 
 .. note::
@@ -104,8 +105,11 @@ and run as:
    ./main
 
 This will simply evaluate the righthand side and Jacobian at a single
-thermodynamic state and print out the output.  It is intended to show
-how to work with the interfaces provided by pynucastro.
+thermodynamic state and print out the output, including the $dY/dt$
+terms, the individual rates evaluations (without density or
+composition terms) and the weak-rate neutrino energy loss term.  It is
+intended to show how to work with the interfaces provided by
+pynucastro.
 
 To change the density and temperature, you can pass values as arguments
 (both must be specified if you are overriding the defaults), e.g.:
