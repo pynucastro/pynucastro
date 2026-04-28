@@ -1,5 +1,5 @@
-#ifndef REACLIB_RATES_H
-#define REACLIB_RATES_H
+#ifndef MODIFIED_RATES_H
+#define MODIFIED_RATES_H
 
 #include <AMReX.H>
 #include <AMReX_Print.H>
@@ -11,18 +11,16 @@
 using namespace Rates;
 using namespace Species;
 
-<reaclib_rate_functions>(0)
 
 template <int do_T_derivatives, typename T>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void
-fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
+fill_modified_rates(const tf_t& tfactors, T& rate_eval)
 {
 
     amrex::Real rate;
     amrex::Real drate_dT;
 
-    <fill_reaclib_rates>(1)
 
 }
 

@@ -102,8 +102,10 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<ydot_weak>'] = self._ydot_weak
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
+        self.ftags['<modified_rate_functions>'] = self._modified_rate_functions
         self.ftags['<rate_struct>'] = self._rate_struct
         self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
+        self.ftags['<fill_modified_rates>'] = self._fill_modified_rates
         self.ftags['<fill_temp_tabular_rates>'] = self._fill_temp_tabular_rates
         self.ftags['<fill_starlib_rates>'] = self._fill_starlib_rates
         self.ftags['<derived_rate_functions>'] = self._derived_rate_functions
@@ -561,7 +563,12 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _reaclib_rate_functions(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"
-        for r in self.reaclib_rates + self.modified_rates:
+        for r in self.reaclib_rates:
+            of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
+
+    def _modified_rate_functions(self, n_indent, of):
+        assert n_indent == 0, "function definitions must be at top level"
+        for r in self.modified_rates:
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
 
     def _derived_rate_functions(self, n_indent, of):
@@ -573,18 +580,18 @@ class BaseCxxNetwork(ABC, RateCollection):
         assert n_indent == 0, "function definitions must be at top level"
 
         of.write("struct rate_t {\n")
-        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumRates>  screened_rates;\n")
+        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumRates>  screened_rates;\n")
         of.write("#ifdef SCREENING\n")
-        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumScreenPairs>  log_screen;\n")
+        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  log_screen;\n")
         of.write("#endif\n")
         of.write(f"    {self.dtype} enuc_weak;\n")
         of.write("};\n\n")
         of.write("struct rate_derivs_t {\n")
-        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumRates>  screened_rates;\n")
-        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumRates>  dscreened_rates_dT;\n")
+        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumRates>  screened_rates;\n")
+        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumRates>  dscreened_rates_dT;\n")
         of.write("#ifdef SCREENING\n")
-        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumScreenPairs>  log_screen;\n")
-        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumScreenPairs>  dlog_screen_dT;\n")
+        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  log_screen;\n")
+        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  dlog_screen_dT;\n")
         of.write("#endif\n")
         of.write(f"    {self.dtype} enuc_weak;\n")
         of.write("};\n\n")
@@ -638,10 +645,18 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}" + "}\n\n")
 
     def _fill_reaclib_rates(self, n_indent, of):
-        # note: modified_rates needs to be on the end here, since they
-        # likely will call the underlying reaclib rate for the actual
-        # rate evaluation
-        for r in self.reaclib_rates + self.modified_rates:
+        for r in self.reaclib_rates:
+            of.write(f"{self.indent*n_indent}" + "{\n")
+            self.write_screen_var(n_indent+1, of, r)
+            of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n")
+            of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
+            of.write(f"{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
+            of.write(f"{self.indent*(n_indent+1)}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n")
+            of.write(f"{self.indent*(n_indent+1)}}}\n")
+            of.write(f"{self.indent*n_indent}" + "}\n\n")
+
+    def _fill_modified_rates(self, n_indent, of):
+        for r in self.modified_rates:
             of.write(f"{self.indent*n_indent}" + "{\n")
             self.write_screen_var(n_indent+1, of, r)
             of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n")
