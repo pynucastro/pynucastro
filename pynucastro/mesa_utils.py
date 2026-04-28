@@ -63,7 +63,9 @@ def get_zone_data(model, i, *, nuclei=None):
     rho = 10.0**model.bulk_data[i]["logRho"]
     T = 10.0**model.bulk_data[i]["logT"]
     comp = Composition(nuclei)
-
+    for n in nuclei:
+        val = 10.0**model.bulk_data[i][f"log_{str(n).lower()}"]
+        comp[n] = val
     return (rho, T, comp)
 
 
@@ -92,3 +94,5 @@ def get_all_data(model):
     for i in range(model.header_data["num_zones"]):
         rho, T, comp = get_zone_data(model, i, nuclei=nuclei)
         mesa_zones[i] = (rho, T, comp)
+
+    return mesa_zones
