@@ -19,7 +19,7 @@ def get_nuclei(model):
 
     Returns
     -------
-    list(Nuclei)
+    list(Nucleus)
 
     """
 
