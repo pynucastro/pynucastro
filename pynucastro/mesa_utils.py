@@ -14,8 +14,8 @@ def get_nuclei(model):
 
     Parameters
     ----------
-    model : MesaData
-        The MESA model as read bt mesa_reader.MesaData
+    model : ``mesa_reader.MesaData``
+        The MESA model as read by ``mesa_reader.MesaData``
 
     Returns
     -------
@@ -42,8 +42,8 @@ def get_zone_data(model, i, *, nuclei=None):
 
     Parameters
     ----------
-    model : MesaData
-        The MESA model as read bt mesa_reader.MesaData
+    model : ``mesa_reader.MesaData``
+        The MESA model as read by ``mesa_reader.MesaData``
     i : int
         The MESA zone index
     nuclei : list(Nucleus)
@@ -77,8 +77,8 @@ def get_all_data(model):
 
     Parameters
     ----------
-    model : MesaData
-        The MESA model as read bt mesa_reader.MesaData
+    model : ``mesa_reader.MesaData``
+        The MESA model as read by ``mesa_reader.MesaData``
 
     Returns
     -------
