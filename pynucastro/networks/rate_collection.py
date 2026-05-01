@@ -29,7 +29,7 @@ from pynucastro.rates import (ApproximateRate, DerivedRate, Library,
                               ModifiedRate, Rate, RateFileError, RatePair,
                               ReacLibRate, StarLibRate, TabularRate,
                               TemperatureTabularRate, find_duplicate_rates,
-                              is_allowed_dupe, load_rate)
+                              is_allowed_dupe, load_rate, make_CO_approx_rates)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_id
 
 mpl.rcParams['figure.dpi'] = 100
@@ -871,6 +871,34 @@ class RateCollection:
 
         # regenerate the links
         self._build_collection()
+
+    def make_CO_burning_approx(self, root_nuclei="C"):
+        """Approximate C+C, C+O, or O+O burning by removing the
+        intermediate nucleus from the proton emission channel.  Note:
+        the intermediate nucleus is not removed by this function, but
+        it can be removed manually after this call.
+
+        Parameters
+        ----------
+        root_nuclei : str
+            The nuclei for the process we are approximating.  It can
+            be "C" for C+C, "CO" for C+O, or "O" for O+O
+
+        """
+
+        assert root_nuclei in ["C", "CO", "O"]
+
+        new_rates, old_rate_str = make_CO_approx_rates(self.rates,
+                                                       root_nuclei,
+                                                       return_obsolete_rate_names=True)
+
+        # get the rates we are approximating out and remove them
+        rr = [self.get_rate_by_name(r) for r in old_rate_str]
+        self.remove_rates(rr)
+
+        # add the new rates
+        self.add_rates(new_rates)
+
 
     def make_nse_protons(self, A):
         """Replace protons in rates involving nuclei with mass number
