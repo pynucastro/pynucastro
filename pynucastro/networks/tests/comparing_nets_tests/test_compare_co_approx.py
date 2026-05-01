@@ -9,7 +9,7 @@ import pytest
 from pytest import approx
 
 from pynucastro.networks.network_compare import NetworkCompare
-from pynucastro.rates.aprox_family_rates import make_CO_approximation
+from pynucastro.rates.aprox_family_rates import make_CO_approx_rates
 from pynucastro.rates.library import Library
 
 
@@ -22,9 +22,9 @@ class TestNetworkCompare:
     # pylint: disable=duplicate-code
     @pytest.fixture(scope="class")
     def lib(self, reaclib_library):
-        crates = make_CO_approximation(reaclib_library.get_rates(), "C")
-        corates = make_CO_approximation(reaclib_library.get_rates(), "CO")
-        orates = make_CO_approximation(reaclib_library.get_rates(), "O")
+        crates = make_CO_approx_rates(reaclib_library.get_rates(), "C")
+        corates = make_CO_approx_rates(reaclib_library.get_rates(), "CO")
+        orates = make_CO_approx_rates(reaclib_library.get_rates(), "O")
 
         c12ag = reaclib_library.get_rate_by_name("c12(a,g)o16")
         c12ag_reverse = reaclib_library.get_rate_by_name("o16(g,a)c12")

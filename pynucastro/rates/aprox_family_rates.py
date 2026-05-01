@@ -8,7 +8,8 @@ from pynucastro.rates.approximate_rates import ApproximateRate
 from pynucastro.rates.library import _rate_name_to_nuc
 
 
-def make_CO_approximation(all_rates, root_nuclei):
+def make_CO_approx_rates(all_rates, root_nuclei,
+                         return_obsolete_rate_names=False):
     """We want to model a sequence like:
 
     ::
@@ -57,12 +58,15 @@ def make_CO_approximation(all_rates, root_nuclei):
     root_nuclei : str
          the identity of nucleus A in this approximation.  This can be
          "C", "CO" or "O"
+    return_obsolete_rate_names : bool
+         Do we return a list of rates names that can be removed if we use
+         these approximate rates?
 
     Returns
     -------
     approximate_rates : list(ApproximateRate)
         A list of the approximated rates
-    obsolete_rates : list(str)
+    obsolete_rates : list(str), optional
         A list of the rate names, in the form "A(x,y)B" that are
         obsoleted by the new approximate rates.
 
@@ -219,4 +223,6 @@ def make_CO_approximation(all_rates, root_nuclei):
     obsolete_rates = [lambda1, lambda2, lambda3, lambda4, lambda5,
                       lambda1_r, lambda2_r, lambda3_r, lambda4_r, lambda5_r]
 
-    return new_rates, obsolete_rates
+    if return_obsolete_rate_names:
+        return new_rates, obsolete_rates
+    return new_rates
