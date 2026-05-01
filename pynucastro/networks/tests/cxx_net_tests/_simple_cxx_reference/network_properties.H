@@ -11,7 +11,7 @@ constexpr int NumSpecExtra = 0;
 constexpr int NumSpecTotal = NumSpec + NumSpecExtra;
 
 // Note: these are 0-based
-constexpr Real aion[NumSpec] = {
+constexpr Real aion[NumSpecTotal] = {
        1.0, // 0 : n
        1.0, // 1 : p
        4.0, // 2 : He4
@@ -22,7 +22,7 @@ constexpr Real aion[NumSpec] = {
       23.0, // 7 : Mg23
  };
 
-constexpr Real aion_inv[NumSpec] = {
+constexpr Real aion_inv[NumSpecTotal] = {
     1.0/   1.0, // 0 : n
     1.0/   1.0, // 1 : p
     1.0/   4.0, // 2 : He4
@@ -33,7 +33,7 @@ constexpr Real aion_inv[NumSpec] = {
     1.0/  23.0, // 7 : Mg23
  };
 
-constexpr Real zion[NumSpec] = {
+constexpr Real zion[NumSpecTotal] = {
        0.0, // 0 : n
        1.0, // 1 : p
        2.0, // 2 : He4

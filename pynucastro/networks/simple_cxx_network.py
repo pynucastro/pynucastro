@@ -77,17 +77,17 @@ class SimpleCxxNetwork(BaseCxxNetwork):
 
             of.write("// Note: these are 0-based\n")
 
-            of.write("constexpr Real aion[NumSpec] = {\n")
+            of.write("constexpr Real aion[NumSpecTotal] = {\n")
             for n, nuc in enumerate(self.unique_nuclei + self.approx_nuclei):
                 of.write(f"    {nuc.A:6.1f}, // {n} : {nuc}\n")
             of.write(" };\n\n")
 
-            of.write("constexpr Real aion_inv[NumSpec] = {\n")
+            of.write("constexpr Real aion_inv[NumSpecTotal] = {\n")
             for n, nuc in enumerate(self.unique_nuclei + self.approx_nuclei):
                 of.write(f"    1.0/{nuc.A:6.1f}, // {n} : {nuc}\n")
             of.write(" };\n\n")
 
-            of.write("constexpr Real zion[NumSpec] = {\n")
+            of.write("constexpr Real zion[NumSpecTotal] = {\n")
             for n, nuc in enumerate(self.unique_nuclei + self.approx_nuclei):
                 of.write(f"    {nuc.Z:6.1f}, // {n} : {nuc}\n")
             of.write(" };\n\n")
