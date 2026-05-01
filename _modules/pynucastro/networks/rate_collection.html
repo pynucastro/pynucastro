@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.9.0.post95+gd187bd844 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.9.0.post96+g05bc7fd4f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=f38dfc36"></script>
+    <script src="../../../_static/documentation_options.js?v=4d5e5dd1"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -2772,30 +2772,33 @@
         <span class="n">real_edges</span> <span class="o">=</span> <span class="p">[(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">sorted_edges</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="s2">&quot;real&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
         <span class="n">real_weights</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="s2">&quot;weight&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">sorted_edges</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="s2">&quot;real&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">real_weights</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">real_weights</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">show_small_ydot</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No rates to show below ydot_cutoff_value.&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">rate_ydots</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">edge_color</span> <span class="o">=</span> <span class="s2">&quot;C0&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">edge_color</span> <span class="o">=</span> <span class="n">real_weights</span>
-        <span class="n">ww</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">real_weights</span><span class="p">)</span>
-        <span class="n">min_weight</span> <span class="o">=</span> <span class="n">ww</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-        <span class="n">max_weight</span> <span class="o">=</span> <span class="n">ww</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-        <span class="n">dw</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_weight</span> <span class="o">-</span> <span class="n">min_weight</span><span class="p">)</span><span class="o">/</span><span class="mi">4</span>
-        <span class="n">widths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">ww</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">dw</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">widths</span><span class="p">[</span><span class="n">ww</span> <span class="o">&gt;</span> <span class="n">min_weight</span> <span class="o">+</span> <span class="n">dw</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.5</span>
-            <span class="n">widths</span><span class="p">[</span><span class="n">ww</span> <span class="o">&gt;</span> <span class="n">min_weight</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">dw</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.5</span>
-            <span class="n">widths</span><span class="p">[</span><span class="n">ww</span> <span class="o">&gt;</span> <span class="n">min_weight</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">dw</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">widths</span> <span class="o">*=</span> <span class="mi">2</span>
 
-        <span class="n">real_edges_lc</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">widths</span><span class="p">),</span>
-                                               <span class="n">edgelist</span><span class="o">=</span><span class="n">real_edges</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="n">edge_color</span><span class="p">,</span>
-                                               <span class="n">connectionstyle</span><span class="o">=</span><span class="n">connectionstyle</span><span class="p">,</span>
-                                               <span class="n">node_size</span><span class="o">=</span><span class="n">node_size</span><span class="p">,</span>
-                                               <span class="n">edge_cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+        <span class="n">real_edges_lc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">real_weights</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ww</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">real_weights</span><span class="p">)</span>
+            <span class="n">min_weight</span> <span class="o">=</span> <span class="n">ww</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+            <span class="n">max_weight</span> <span class="o">=</span> <span class="n">ww</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="n">dw</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_weight</span> <span class="o">-</span> <span class="n">min_weight</span><span class="p">)</span><span class="o">/</span><span class="mi">4</span>
+            <span class="n">widths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">ww</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">dw</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">widths</span><span class="p">[</span><span class="n">ww</span> <span class="o">&gt;</span> <span class="n">min_weight</span> <span class="o">+</span> <span class="n">dw</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.5</span>
+                <span class="n">widths</span><span class="p">[</span><span class="n">ww</span> <span class="o">&gt;</span> <span class="n">min_weight</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">dw</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.5</span>
+                <span class="n">widths</span><span class="p">[</span><span class="n">ww</span> <span class="o">&gt;</span> <span class="n">min_weight</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">dw</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">widths</span> <span class="o">*=</span> <span class="mi">2</span>
+
+            <span class="n">real_edges_lc</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">widths</span><span class="p">),</span>
+                                                   <span class="n">edgelist</span><span class="o">=</span><span class="n">real_edges</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="n">edge_color</span><span class="p">,</span>
+                                                   <span class="n">connectionstyle</span><span class="o">=</span><span class="n">connectionstyle</span><span class="p">,</span>
+                                                   <span class="n">node_size</span><span class="o">=</span><span class="n">node_size</span><span class="p">,</span>
+                                                   <span class="n">edge_cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 
         <span class="c1"># highlight edges -- this is basically overplotting the edges we already drew</span>
 
@@ -2846,7 +2849,7 @@
         <span class="k">if</span> <span class="n">rotated</span><span class="p">:</span>
             <span class="n">orientation</span> <span class="o">=</span> <span class="s2">&quot;horizontal&quot;</span>
 
-        <span class="k">if</span> <span class="n">rate_ydots</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">rate_ydots</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">real_edges_lc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">pc</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">collections</span><span class="o">.</span><span class="n">PatchCollection</span><span class="p">(</span><span class="n">real_edges_lc</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span><span class="p">)</span>
             <span class="n">pc</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="n">real_weights</span><span class="p">)</span>
             <span class="n">label</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(\mathrm</span><span class="si">{rate}</span><span class="s2">)$&quot;</span>
