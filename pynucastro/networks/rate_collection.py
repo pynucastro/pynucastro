@@ -899,7 +899,6 @@ class RateCollection:
         # add the new rates
         self.add_rates(new_rates)
 
-
     def make_nse_protons(self, A):
         """Replace protons in rates involving nuclei with mass number
         >= A with NSE protons.  This will decouple these rates from
