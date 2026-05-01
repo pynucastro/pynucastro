@@ -60,7 +60,11 @@ def make_CO_approximation(all_rates, root_nuclei):
 
     Returns
     -------
-    list(ApproximateRate)
+    approximate_rates : list(ApproximateRate)
+        A list of the approximated rates
+    obsolete_rates : list(str)
+        A list of the rate names, in the form "A(x,y)B" that are
+        obsoleted by the new approximate rates.
 
     """
 
@@ -92,6 +96,7 @@ def make_CO_approximation(all_rates, root_nuclei):
     rates = {}
 
     lambda1 = f"{S1}({S2},p){X}"
+    lambda1_r = f"{X}(p,{S2}){S1}"
     reactants, products = _rate_name_to_nuc(lambda1)
     rates["S(S,p)X"] = [r for r in all_rates
                         if sorted(r.reactants) == sorted(reactants) and
@@ -101,6 +106,7 @@ def make_CO_approximation(all_rates, root_nuclei):
                            sorted(r.products) == sorted(reactants)][0]
 
     lambda2 = f"{S1}({S2},a){E}"
+    lambda2_r = f"{E}(a,{S2}){S1}"
     reactants, products = _rate_name_to_nuc(lambda2)
     rates["S(S,a)E"] = [r for r in all_rates
                         if sorted(r.reactants) == sorted(reactants) and
@@ -110,6 +116,7 @@ def make_CO_approximation(all_rates, root_nuclei):
                            sorted(r.products) == sorted(reactants)][0]
 
     lambda3 = f"{X}(p,a){E}"
+    lambda3_r = f"{E}(a,p){X}"
     reactants, products = _rate_name_to_nuc(lambda3)
     rates["X(p,a)E"] = [r for r in all_rates
                         if sorted(r.reactants) == sorted(reactants) and
@@ -119,6 +126,7 @@ def make_CO_approximation(all_rates, root_nuclei):
                            sorted(r.products) == sorted(reactants)][0]
 
     lambda4 = f"{X}(p,g){F}"
+    lambda4_r = f"{F}(g,p){X}"
     reactants, products = _rate_name_to_nuc(lambda4)
     rates["X(p,g)F"] = [r for r in all_rates
                         if sorted(r.reactants) == sorted(reactants) and
@@ -128,6 +136,7 @@ def make_CO_approximation(all_rates, root_nuclei):
                            sorted(r.products) == sorted(reactants)][0]
 
     lambda5 = f"{E}(a,g){F}"
+    lambda5_r = f"{F}(g,a){E}"
     reactants, products = _rate_name_to_nuc(lambda5)
     rates["E(a,g)F"] = [r for r in all_rates
                         if sorted(r.reactants) == sorted(reactants) and
@@ -207,4 +216,7 @@ def make_CO_approximation(all_rates, root_nuclei):
     new_rates.append(ApproximateRate(child_rates,
                                      is_reverse=True, approx_type="ap_pg"))
 
-    return new_rates
+    obsolete_rates = [lambda1, lambda2, lambda3, lambda4, lambda5,
+                      lambda1_r, lambda2_r, lambda3_r, lambda4_r, lambda5_r]
+
+    return new_rates, obsolete_rates
