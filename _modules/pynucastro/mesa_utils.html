@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.mpi_utils &#8212; pynucastro 2.9.0.post95+gd187bd844 documentation</title>
+    <title>pynucastro.mesa_utils &#8212; pynucastro 2.9.0.post95+gd187bd844 documentation</title>
   
   
   
@@ -48,7 +48,7 @@
     <script src="../../_static/copybutton.js?v=eaa7b67c"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pynucastro/mpi_utils';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pynucastro/mesa_utils';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -421,7 +421,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2F_modules/pynucastro/mpi_utils.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2F_modules/pynucastro/mesa_utils.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -491,131 +491,114 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for pynucastro.mpi_utils</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;MPI utilities used in the reduction algorithm.&quot;&quot;&quot;</span>
+  <h1>Source code for pynucastro.mesa_utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;A collection of methods for accessing data from a MESA models</span>
+<span class="sd">as read by py_mesa_reader, and putting them into a form that</span>
+<span class="sd">pynucastro can use.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Composition</span><span class="p">,</span> <span class="n">Nucleus</span>
 
 
-<div class="viewcode-block" id="MPIImportError">
-<a class="viewcode-back" href="../../pynucastro.mpi_utils.html#pynucastro.mpi_utils.MPIImportError">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">MPIImportError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception for MPI errors&quot;&quot;&quot;</span></div>
+<div class="viewcode-block" id="get_nuclei">
+<a class="viewcode-back" href="../../pynucastro.mesa_utils.html#pynucastro.mesa_utils.get_nuclei">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_nuclei</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a list of nuclei contained in the MESA model.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model : ``mesa_reader.MesaData``</span>
+<span class="sd">        The MESA model as read by ``mesa_reader.MesaData``</span>
 
-
-<div class="viewcode-block" id="FailedMPIImport">
-<a class="viewcode-back" href="../../pynucastro.mpi_utils.html#pynucastro.mpi_utils.FailedMPIImport">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">FailedMPIImport</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Replacement for mpi4py.MPI import that will throw an error if used.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">error_obj</span> <span class="o">=</span> <span class="n">error</span>
-
-        <span class="k">if</span> <span class="n">msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Failed to import MPI from mpi4py. Check your mpi4py installation if you&quot;</span>
-                   <span class="s2">&quot; want to run with MPI.&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">MPIImportError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">self.error_obj</span>
-        <span class="k">raise</span> <span class="n">MPIImportError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="mpi_importer">
-<a class="viewcode-back" href="../../pynucastro.mpi_utils.html#pynucastro.mpi_utils.mpi_importer">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">mpi_importer</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Import MPI (lazily), where we only throw an error if the import</span>
-<span class="sd">    failed and then we attempt to use the object.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list(Nucleus)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">mpi4py</span><span class="w"> </span><span class="kn">import</span> <span class="n">MPI</span>  <span class="c1"># pylint: disable=import-outside-toplevel</span>
-    <span class="k">except</span> <span class="p">(</span><span class="ne">ModuleNotFoundError</span><span class="p">,</span> <span class="ne">ImportError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">MPI</span> <span class="o">=</span> <span class="n">FailedMPIImport</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="c1"># the species are written as log_he4, etc. in the</span>
+    <span class="c1"># &quot;bulk names&quot; section of the header</span>
+    <span class="n">species_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;log_([a-z]+[\d]+)&quot;</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">MPI</span></div>
+    <span class="n">nuclei</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">bulk_names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">g</span> <span class="o">:=</span> <span class="n">species_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+            <span class="n">nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">nuclei</span></div>
 
 
 
-<div class="viewcode-block" id="mpi_numpy_decomp">
-<a class="viewcode-back" href="../../pynucastro.mpi_utils.html#pynucastro.mpi_utils.mpi_numpy_decomp">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">mpi_numpy_decomp</span><span class="p">(</span><span class="n">MPI_N</span><span class="p">,</span> <span class="n">MPI_rank</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decompose a set of conditions for *MPI_N* MPI processes, where</span>
-<span class="sd">    the conditions are a sequence of 3 sequences with ordering</span>
-<span class="sd">    (composition_sequence, density_sequence,</span>
-<span class="sd">    temperature_sequence). This structure for the dataset is necessary</span>
-<span class="sd">    for the vectorized reduction algorithms.</span>
+<div class="viewcode-block" id="get_zone_data">
+<a class="viewcode-back" href="../../pynucastro.mesa_utils.html#pynucastro.mesa_utils.get_zone_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_zone_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">nuclei</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a tuple of (rho, T, composition) for a single zone from</span>
+<span class="sd">    the MESA model.  These are the thermodynamic conditions needed to</span>
+<span class="sd">    evaluate a pynucastro network&#39;s rates.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model : ``mesa_reader.MesaData``</span>
+<span class="sd">        The MESA model as read by ``mesa_reader.MesaData``</span>
+<span class="sd">    i : int</span>
+<span class="sd">        The MESA zone index</span>
+<span class="sd">    nuclei : list(Nucleus)</span>
+<span class="sd">        The list of nuclei in the MESA model.  This will be</span>
+<span class="sd">        read from the model if not provided, but if you are</span>
+<span class="sd">        looping over multiple zones in succession, passing</span>
+<span class="sd">        a cached list in can speed up the reading.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple(float, float, Composition)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="n">MPI_N</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">nuclei</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">nuclei</span> <span class="o">=</span> <span class="n">get_nuclei</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 
-        <span class="n">comp_idx</span> <span class="o">=</span> <span class="n">MPI_rank</span>
-        <span class="n">comp_step</span> <span class="o">=</span> <span class="n">MPI_N</span>
-        <span class="n">rho_idx</span> <span class="o">=</span> <span class="n">T_idx</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">rho_step</span> <span class="o">=</span> <span class="n">T_step</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">rho</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">model</span><span class="o">.</span><span class="n">bulk_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;logRho&quot;</span><span class="p">]</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">model</span><span class="o">.</span><span class="n">bulk_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;logT&quot;</span><span class="p">]</span>
+    <span class="n">comp</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nuclei</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">model</span><span class="o">.</span><span class="n">bulk_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="sa">f</span><span class="s2">&quot;log_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+        <span class="n">comp</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span></div>
 
-    <span class="k">elif</span> <span class="n">MPI_N</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
 
-        <span class="n">m</span> <span class="o">=</span> <span class="n">MPI_N</span> <span class="o">//</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="n">MPI_rank</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">m</span><span class="p">:</span>
-            <span class="n">comp_idx</span> <span class="o">=</span> <span class="n">MPI_rank</span> <span class="o">%</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">comp_step</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">rho_idx</span> <span class="o">=</span> <span class="n">MPI_rank</span> <span class="o">//</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">rho_step</span> <span class="o">=</span> <span class="n">m</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">comp_idx</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">comp_step</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="n">rho_idx</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">rho_step</span> <span class="o">=</span> <span class="mi">1</span>
+<div class="viewcode-block" id="get_all_data">
+<a class="viewcode-back" href="../../pynucastro.mesa_utils.html#pynucastro.mesa_utils.get_all_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_all_data</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a dictionary keyed by MESA zone index containing the</span>
+<span class="sd">    thermodynamic information (rho, T, composition) for all the</span>
+<span class="sd">    zones in the model.</span>
 
-        <span class="n">T_idx</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">T_step</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model : ``mesa_reader.MesaData``</span>
+<span class="sd">        The MESA model as read by ``mesa_reader.MesaData``</span>
 
-    <span class="k">elif</span> <span class="n">MPI_N</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">n</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict[int, tuple(float, float, Composition)]</span>
 
-        <span class="n">m</span> <span class="o">=</span> <span class="n">MPI_N</span> <span class="o">//</span> <span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">MPI_rank</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">m</span><span class="p">:</span>
-            <span class="n">comp_idx</span> <span class="o">=</span> <span class="n">MPI_rank</span> <span class="o">%</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">comp_step</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">rho_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">MPI_rank</span> <span class="o">//</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">%</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">rho_step</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">T_idx</span> <span class="o">=</span> <span class="n">MPI_rank</span> <span class="o">//</span> <span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-            <span class="n">T_step</span> <span class="o">=</span> <span class="n">m</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">comp_idx</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">comp_step</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="n">rho_idx</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">rho_step</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="n">T_idx</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-            <span class="n">T_step</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">mesa_zones</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">else</span><span class="p">:</span>
+    <span class="c1"># get the list of nuclei objects once, so we don&#39;t</span>
+    <span class="c1"># need to repeat the construction.</span>
+    <span class="n">nuclei</span> <span class="o">=</span> <span class="n">get_nuclei</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 
-        <span class="n">m</span> <span class="o">=</span> <span class="n">MPI_N</span> <span class="o">//</span> <span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">header_data</span><span class="p">[</span><span class="s2">&quot;num_zones&quot;</span><span class="p">]):</span>
+        <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span> <span class="o">=</span> <span class="n">get_zone_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuclei</span><span class="o">=</span><span class="n">nuclei</span><span class="p">)</span>
+        <span class="n">mesa_zones</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">MPI_rank</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">n</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
-            <span class="n">comp_idx</span> <span class="o">=</span> <span class="n">MPI_rank</span> <span class="o">%</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">comp_step</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">rho_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">MPI_rank</span> <span class="o">//</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">%</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">rho_step</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">T_idx</span> <span class="o">=</span> <span class="n">MPI_rank</span> <span class="o">//</span> <span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-            <span class="n">T_step</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">comp_idx</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">comp_step</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="n">rho_idx</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">rho_step</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="n">T_idx</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-            <span class="n">T_step</span> <span class="o">=</span> <span class="mi">1</span>
-
-    <span class="k">return</span> <span class="n">comp_idx</span><span class="p">,</span> <span class="n">comp_step</span><span class="p">,</span> <span class="n">rho_idx</span><span class="p">,</span> <span class="n">rho_step</span><span class="p">,</span> <span class="n">T_idx</span><span class="p">,</span> <span class="n">T_step</span></div>
+    <span class="k">return</span> <span class="n">mesa_zones</span></div>
 
 </pre></div>
 
