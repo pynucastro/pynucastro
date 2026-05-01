@@ -821,7 +821,8 @@ void rate_p_P31_to_He4_Si28_reaclib(const tf_t& tfactors, const amrex::Real log_
 template <int do_T_derivatives, typename T>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void
-fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
+fill_reaclib_rates([[maybe_unused]] const tf_t& tfactors,
+                   [[maybe_unused]] T& rate_eval)
 {
 
     [[maybe_unused]] amrex::Real rate;
