@@ -6,28 +6,10 @@
 
 #include <tfactors.H>
 #include <actual_network.H>
+#include <rate_type.H>
 
 using namespace Rates;
 using namespace Species;
-
-struct rate_t {
-    amrex::Array1D<amrex::Real, 1, NumRates>  screened_rates;
-#ifdef SCREENING
-    amrex::Array1D<amrex::Real, 1, NumScreenPairs>  log_screen;
-#endif
-    amrex::Real enuc_weak;
-};
-
-struct rate_derivs_t {
-    amrex::Array1D<amrex::Real, 1, NumRates>  screened_rates;
-    amrex::Array1D<amrex::Real, 1, NumRates>  dscreened_rates_dT;
-#ifdef SCREENING
-    amrex::Array1D<amrex::Real, 1, NumScreenPairs>  log_screen;
-    amrex::Array1D<amrex::Real, 1, NumScreenPairs>  dlog_screen_dT;
-#endif
-    amrex::Real enuc_weak;
-};
-
 
 template <int do_T_derivatives>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
@@ -230,15 +212,15 @@ void rate_n_to_p_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const
 }
 
 
-
 template <int do_T_derivatives, typename T>
 AMREX_GPU_HOST_DEVICE AMREX_INLINE
 void
-fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
+fill_reaclib_rates([[maybe_unused]] const tf_t& tfactors,
+                   [[maybe_unused]] T& rate_eval)
 {
 
-    amrex::Real rate;
-    amrex::Real drate_dT;
+    [[maybe_unused]] amrex::Real rate;
+    [[maybe_unused]] amrex::Real drate_dT;
 
     {
         amrex::Real log_scor {0.0_rt};
@@ -313,21 +295,6 @@ fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
             rate_eval.dscreened_rates_dT(k_n_to_p_reaclib) = drate_dT;
         }
     }
-
-
-}
-
-template <int do_T_derivatives, typename T>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void
-fill_approx_rates([[maybe_unused]] const tf_t& tfactors,
-                  [[maybe_unused]] const amrex::Real rho,
-                  [[maybe_unused]] const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
-                  [[maybe_unused]] T& rate_eval)
-{
-
-    [[maybe_unused]] amrex::Real rate{};
-    [[maybe_unused]] amrex::Real drate_dT{};
 
 
 }

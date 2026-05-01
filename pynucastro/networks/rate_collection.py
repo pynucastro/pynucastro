@@ -2187,30 +2187,33 @@ class RateCollection:
         real_edges = [(u, v) for u, v, e in sorted_edges if e["real"] == 1]
         real_weights = [e["weight"] for u, v, e in sorted_edges if e["real"] == 1]
 
-        if len(real_weights) == 0:
+        if len(real_weights) == 0 and not show_small_ydot:
             raise ValueError("No rates to show below ydot_cutoff_value.")
 
         if rate_ydots is None:
             edge_color = "C0"
         else:
             edge_color = real_weights
-        ww = np.array(real_weights)
-        min_weight = ww.min()
-        max_weight = ww.max()
-        dw = (max_weight - min_weight)/4
-        widths = np.ones_like(ww)
-        if dw > 0:
-            widths[ww > min_weight + dw] = 1.5
-            widths[ww > min_weight + 2*dw] = 2.5
-            widths[ww > min_weight + 3*dw] = 4
-        else:
-            widths *= 2
 
-        real_edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
-                                               edgelist=real_edges, edge_color=edge_color,
-                                               connectionstyle=connectionstyle,
-                                               node_size=node_size,
-                                               edge_cmap=plt.cm.viridis, ax=ax)
+        real_edges_lc = None
+        if len(real_weights) > 0:
+            ww = np.array(real_weights)
+            min_weight = ww.min()
+            max_weight = ww.max()
+            dw = (max_weight - min_weight)/4
+            widths = np.ones_like(ww)
+            if dw > 0:
+                widths[ww > min_weight + dw] = 1.5
+                widths[ww > min_weight + 2*dw] = 2.5
+                widths[ww > min_weight + 3*dw] = 4
+            else:
+                widths *= 2
+
+            real_edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
+                                                   edgelist=real_edges, edge_color=edge_color,
+                                                   connectionstyle=connectionstyle,
+                                                   node_size=node_size,
+                                                   edge_cmap=plt.cm.viridis, ax=ax)
 
         # highlight edges -- this is basically overplotting the edges we already drew
 
@@ -2261,7 +2264,7 @@ class RateCollection:
         if rotated:
             orientation = "horizontal"
 
-        if rate_ydots is not None:
+        if rate_ydots is not None and real_edges_lc is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
             pc.set_array(real_weights)
             label = r"$\log_{10}(\mathrm{rate})$"
