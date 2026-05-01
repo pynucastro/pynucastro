@@ -9,6 +9,8 @@ import numpy as np
 
 from pynucastro.rates.rate import Rate
 from pynucastro.rates.reaclib_rate import ReacLibRate
+from pynucastro.rates.starlib_rate import StarLibRate
+from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
 
 
 class ModifiedRate(Rate):
@@ -49,12 +51,12 @@ class ModifiedRate(Rate):
         self.original_rate = original_rate
         self.update_screening = update_screening
 
-        # at the moment, this is only tested with ReacLibRate
-        # a potential issue is in the C++ code generation where
-        # we output modified rates only after ReacLib rates,
-        # so we need to make sure other rate types are computed
-        # first, before any modified rates
-        assert isinstance(original_rate, ReacLibRate)
+        # at the moment, this is only tested with ReacLibRate,
+        # TemperatureTabularRate, and StarLibRate rates.  It is
+        # important in the C++ code generation the we fill modified
+        # rates only after the original rate is filled.
+        assert isinstance(original_rate,
+                          (ReacLibRate, StarLibRate, TemperatureTabularRate))
 
         if new_reactants is not None:
             reactants = new_reactants
