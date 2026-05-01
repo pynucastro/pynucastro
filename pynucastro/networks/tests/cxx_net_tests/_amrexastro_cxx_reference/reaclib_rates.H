@@ -218,8 +218,8 @@ void
 fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
 {
 
-    amrex::Real rate;
-    amrex::Real drate_dT;
+    [[maybe_unused]] amrex::Real rate;
+    [[maybe_unused]] amrex::Real drate_dT;
 
     {
         amrex::Real log_scor {0.0_rt};
