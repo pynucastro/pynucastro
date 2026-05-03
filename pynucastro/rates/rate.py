@@ -428,11 +428,6 @@ class Rate:
 
         self.pretty_string += r"$"
 
-        # If rate is removed, i.e. a child rate for an ApproximateRate,
-        # change label to removed
-        if self.removed:
-            self.label = "removed"
-
         # Set fname last
         reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
         products_str = '_'.join([repr(nuc) for nuc in self.products])
@@ -733,7 +728,7 @@ class Rate:
             the density to evaluate the rate and screening effects at.
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate the rate and screening effects with.
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
@@ -759,7 +754,7 @@ class Rate:
             the density to evaluate the rate and screening effects at.
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate the rate and screening effects with.
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`

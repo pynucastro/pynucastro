@@ -5,6 +5,7 @@ particular, the binding energies)
 
 #__all__ = [elements, partition_function]
 
+from .composition import Composition, LoddersComposition
 from .elements import Element, PeriodicTable, UnidentifiedElement
 from .mass_table import MassTable
 from .nucleus import (Nucleus, UnsupportedNucleus, get_all_nuclei,

@@ -25,12 +25,6 @@ an equation of state describing stellar matter.
 :py:mod:`networks <pynucastro.networks>` provides classes and
 functions for organizing collection of rates, including:
 
-* :py:obj:`Composition
-  <pynucastro.networks.rate_collection.Composition>` : this is a
-  container of :py:obj:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>`
-  objects along with associated mass fractions.  This is used for
-  evaluating rates when doing interactive exploration with pynucastro.
-
 * :py:obj:`RateCollection
   <pynucastro.networks.rate_collection.RateCollection>` : this is
   a collection of nuclei and the reaction rates that link them
@@ -178,11 +172,12 @@ __version__ = version
 import pynucastro.screening
 from pynucastro.eos import FermiIntegral, StellarEOS
 from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
-                                 Composition, Explorer, FortranNetwork,
-                                 NSENetwork, PythonNetwork, RateCollection,
+                                 Explorer, FortranNetwork, NSENetwork,
+                                 PythonNetwork, RateCollection,
                                  SimpleCxxNetwork, StarKillerCxxNetwork,
                                  SympyRates, network_helper)
-from pynucastro.nucdata import Nucleus, get_all_nuclei, get_nuclei_in_range
+from pynucastro.nucdata import (Composition, Nucleus, get_all_nuclei,
+                                get_nuclei_in_range)
 from pynucastro.rates import (ApproximateRate, DerivedRate, FFNLibrary,
                               LangankeLibrary, Library, ModifiedRate,
                               OdaLibrary, PruetFullerLibrary, Rate, RateFilter,

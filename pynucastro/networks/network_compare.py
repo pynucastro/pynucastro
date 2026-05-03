@@ -12,9 +12,8 @@ import numpy as np
 
 from pynucastro.networks.amrexastro_cxx_network import AmrexAstroCxxNetwork
 from pynucastro.networks.python_network import PythonNetwork
-from pynucastro.networks.rate_collection import Composition
 from pynucastro.networks.simple_cxx_network import SimpleCxxNetwork
-from pynucastro.nucdata import Nucleus
+from pynucastro.nucdata import Composition, Nucleus
 from pynucastro.screening import chugunov_2007
 
 
@@ -38,6 +37,43 @@ class NetworkCompare:
         the Path to output the AMReX C++ source files and build in
     cxx_test_path : pathlib.Path
         the Path to output the C++ source files and build in
+
+    Attributes
+    ----------
+    ydots_py_inline : dict(Nucleus)
+        The dY/dt terms from the python inline network
+        (:py:func:`RateCollection.evaluate_ydots
+        <pynucastro.networks.rate_collection.RateCollection.evaluate_ydots>`).
+    ydots_py_module : dict(Nucleus)
+        The dYdt terms from a :py:class:`PythonNetwork
+        <pynucastro.networks.python_network.PythonNetwork>` module.
+    ydots_amrex : dict(Nucleus)
+        The dYdt terms parsed from a build of an
+        :py:class:`AmrexAstroCxxNetwork
+        <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`.
+    ydots_cxx : dict(Nucleus)
+        The dYdt terms parsed from a build of a
+        :py:class:`SimpleCxxNetwork
+        <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`.
+    rates_py_inline : dict(Rate)
+        The raw rates (e.g. N_A <σv>) from the python inline network
+        (computed via :py:func:`Rate.eval <pynucastro.rates.rate.Rate.eval>`).
+    rates_py_module : dict(Rate)
+        The raw rates (e.g. N_A <σv>) from a :py:class:`PythonNetwork
+        <pynucastro.networks.python_network.PythonNetwork>` module.
+    rates_amrex : dict(Rate)
+        The raw rates (e.g. N_A <σv>) parsed from a build of an
+        :py:class:`AmrexAstroCxxNetwork
+        <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`.
+    rates_cxx : dict(Rate)
+        The raw rates (e.g. N_A <σv>) parsed from a build of a
+        :py:class:`SimpleCxxNetwork
+        <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`.
+    T_eval : float
+        The temperature used in the evaluation.
+    rho_eval : float
+        The density used in the evaluation.
+
     """
 
     def __init__(self, lib, *,
@@ -93,6 +129,16 @@ class NetworkCompare:
         self.ydots_amrex = None
         self.ydots_cxx = None
 
+        # storage for the rates -- without the
+        # density or composition factors
+        self.rates_py_inline = None
+        self.rates_py_module = None
+        self.rates_amrex = None
+        self.rates_cxx = None
+
+        self.T_eval = None
+        self.rho_eval = None
+
     def _run_python_inline_version(self, rho=2.e8, T=1.e9):
         """Evaluate the rates using the methods built into
         RateCollection
@@ -102,6 +148,9 @@ class NetworkCompare:
         self.ydots_py_inline = self.pynet.evaluate_ydots(rho=rho, T=T,
                                                          composition=self.comp,
                                                          screen_func=self.screen_func)
+        self.rates_py_inline = {r: r.eval(T, rho=rho, comp=self.comp,
+                                          screen_func=self.screen_func)
+                                for r in self.pynet.all_rates}
 
     def _run_python_module_version(self, rho=2.e8, T=1.e9):
         """Write the python network to a module and import it, and
@@ -122,6 +171,9 @@ class NetworkCompare:
         self.ydots_py_module = {}
         for n, y in zip(self.pynet.unique_nuclei, _tmp):
             self.ydots_py_module[n] = y
+
+        rate_eval = cn.do_rate_eval(0.0, Y, rho, T, screen_func=self.screen_func)
+        self.rates_py_module = {r: getattr(rate_eval, r.fname, None) for r in self.pynet.all_rates}
 
     def _run_amrex_version(self, rho=2.e8, T=1.e9):
         """Output the AMReX C++ network code, build it, run, and
@@ -152,15 +204,27 @@ class NetworkCompare:
 
         # the stdout includes lines of the form:
         #    Ydot(X) = ...
-        # for each nucleus X.  This regex will capture
-        # the nucleus and the ydot value for each of these
-        ydot_re = re.compile(r"(Ydot)\((\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
+        # for each nucleus X.  Note: there can be 0-2 spaces before X.
+        # This regex will capture the nucleus and the ydot value for
+        # each of these
+        ydot_re = re.compile(r"(Ydot)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
                              re.IGNORECASE | re.DOTALL)
 
         self.ydots_amrex = {}
         for line in stdout.split("\n"):
             if match := ydot_re.search(line.strip()):
-                self.ydots_amrex[Nucleus(match.group(2))] = float(match.group(6))
+                nuc = Nucleus(match.group(2).strip())
+                self.ydots_amrex[nuc] = float(match.group(6))
+
+        rate_re = re.compile(r"(rate)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
+                             re.IGNORECASE | re.DOTALL)
+
+        self.rates_amrex = {}
+        for line in stdout.split("\n"):
+            if match := rate_re.search(line.strip()):
+                rate_fname = match.group(2).strip()
+                rr = [r for r in self.pynet.all_rates if r.fname == rate_fname][0]
+                self.rates_amrex[rr] = float(match.group(6))
 
     def _run_simple_cxx_version(self, rho=2.e8, T=1.e9):
         """Output the simple C++ network code, build it, run, and
@@ -190,15 +254,29 @@ class NetworkCompare:
 
         # the stdout includes lines of the form:
         #    Ydot(X) = ...
-        # for each nucleus X.  This regex will capture
-        # the nucleus and the ydot value for each of these
-        ydot_re = re.compile(r"(Ydot)\((\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
+        # for each nucleus X.  Note: there can be 0-2 spaces before X.
+        # This regex will capture the nucleus and the ydot value for
+        # each of these
+        ydot_re = re.compile(r"(Ydot)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
                              re.IGNORECASE | re.DOTALL)
 
         self.ydots_cxx = {}
+        self.rates_cxx = {}
+
         for line in stdout.split("\n"):
             if match := ydot_re.search(line.strip()):
-                self.ydots_cxx[Nucleus(match.group(2))] = float(match.group(6))
+                nuc = Nucleus(match.group(2).strip())
+                self.ydots_cxx[nuc] = float(match.group(6))
+
+        rate_re = re.compile(r"(rate)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
+                             re.IGNORECASE | re.DOTALL)
+
+        self.rates_cxx = {}
+        for line in stdout.split("\n"):
+            if match := rate_re.search(line.strip()):
+                rate_fname = match.group(2).strip()
+                rr = [r for r in self.pynet.all_rates if r.fname == rate_fname][0]
+                self.rates_cxx[rr] = float(match.group(6))
 
     def evaluate(self, rho=2.e8, T=1.e9):
         """Evaluate the ydots from all the backends we are
@@ -221,3 +299,89 @@ class NetworkCompare:
 
         if self.include_simple_cxx:
             self._run_simple_cxx_version(rho=rho, T=T)
+
+        self.T_eval = T
+        self.rho_eval = rho
+
+    def print_summary(self):
+        """Print a summary of the dY/dt comparison and errors for each
+        network type run.
+
+        """
+
+        # we need to have run previously
+        if self.ydots_py_inline is None:
+            raise ValueError("no ydots stored.  evaluate() must be run first")
+
+        print("dYdt")
+        print("====")
+        print()
+
+        data_headers = {"py (inline)": self.ydots_py_inline,
+                        "py (module)": self.ydots_py_module}
+
+        if self.ydots_amrex:
+            data_headers["AMReX C++"] = self.ydots_amrex
+
+        if self.ydots_cxx:
+            data_headers["simple C++"] = self.ydots_cxx
+
+        header = f" {'nuc':5} "
+        for key in data_headers:
+            if key == "py (inline)":
+                header += f"| {key:13} "
+            else:
+                header += f"| {key:13} {'error':11} "
+
+        print(header)
+        print("-" * len(header))
+
+        for nuc in self.ydots_py_inline:
+            line = f" {nuc!s:5} "
+            for key, ydots in data_headers.items():
+                val = ydots[nuc]
+                ref = self.ydots_py_inline[nuc]
+                if key == "py (inline)":
+                    line += f"| {val:13.6g} "
+                else:
+                    err = abs((val - ref) / ref)
+                    line += f"| {val:13.6g} {err:11.5g} "
+            print(line)
+
+        print()
+        print()
+
+        print("rates")
+        print("=====")
+        print()
+
+        data_headers = {"py (inline)": self.rates_py_inline,
+                        "py (module)": self.rates_py_module}
+
+        if self.rates_amrex:
+            data_headers["AMReX C++"] = self.rates_amrex
+
+        if self.rates_cxx:
+            data_headers["simple C++"] = self.rates_cxx
+
+        header = f" {'rate':25} "
+        for key in data_headers:
+            if key == "py (inline)":
+                header += f"| {key:13} "
+            else:
+                header += f"| {key:13} {'error':11} "
+
+        print(header)
+        print("-" * len(header))
+
+        for rate in self.rates_py_inline:
+            line = f" {rate!s:25} "
+            for key, source in data_headers.items():
+                val = source[rate]
+                ref = self.rates_py_inline[rate]
+                if key == "py (inline)":
+                    line += f"| {val:13.6g} "
+                else:
+                    err = abs((val - ref) / ref)
+                    line += f"| {val:13.6g} {err:11.5g} "
+            print(line)

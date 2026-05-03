@@ -36,5 +36,5 @@ jobs:
       - name: Run and compare
         run: |
           cd work
-          ./test > test.out
+          ./test 2.e8 4.e9 > test.out
           diff test.out fortran_net.out

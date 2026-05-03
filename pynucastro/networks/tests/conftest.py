@@ -1,5 +1,7 @@
 """A collection of fixtures for testing networks."""
 
+# pylint: disable=duplicate-code
+
 import filecmp
 import shutil
 from pathlib import Path
