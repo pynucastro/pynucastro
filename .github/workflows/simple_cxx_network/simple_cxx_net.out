@@ -35,6 +35,7 @@ jac( Ne20, Na20) = 1.2369887515025
 jac( Na20, Na20) = -1.5472036502203
 
 Instantaneous energy generation rate (erg/g/s) = 1.2702975384976e+25
+(that includes weak rate neutrino losses of 0 (erg/g/s))
 
 Reaction rate values
 rate(               Na20_to_Ne20_reaclib) = 1.2369887515025

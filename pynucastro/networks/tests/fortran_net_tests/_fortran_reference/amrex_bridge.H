@@ -92,6 +92,7 @@ struct Array2D
 
 
 // a 2D array from Microphysics used for Jacobians
+
 template <int XLO, int XHI, int YLO, int YHI>
 struct MathArray2D
 {
@@ -127,6 +128,34 @@ struct MathArray2D
     }
 
     Real arr[(XHI-XLO+1)*(YHI-YLO+1)];
+};
+
+// A stripped-down version of the AMReX Array3D
+// This has Fortran (column-major) ordering
+
+template <class T, int XLO, int XHI, int YLO, int YHI, int ZLO, int ZHI>
+struct Array3D
+{
+    [[nodiscard]] inline
+    static constexpr unsigned int size () noexcept {
+        return (XHI-XLO+1)*(YHI-YLO+1)*(ZHI-ZLO+1);
+    }
+
+    [[nodiscard]] inline
+    const T& operator() (int i, int j, int k) const noexcept {
+        assert(i >= XLO && i <= XHI && j >= YLO && j <= YHI && k >= ZLO && k <= ZHI);
+        return arr[i+j*(XHI-XLO+1)+k*((XHI-XLO+1)*(YHI-YLO+1))
+                   -(ZLO*((XHI-XLO+1)*(YHI-YLO+1))+YLO*(XHI-XLO+1)+XLO)];
+    }
+
+    [[nodiscard]] inline
+    T& operator() (int i, int j, int k) noexcept {
+        assert(i >= XLO && i <= XHI && j >= YLO && j <= YHI && k >= ZLO && k <= ZHI);
+        return arr[i+j*(XHI-XLO+1)+k*((XHI-XLO+1)*(YHI-YLO+1))
+                   -(ZLO*((XHI-XLO+1)*(YHI-YLO+1))+YLO*(XHI-XLO+1)+XLO)];
+    }
+
+    T arr[(XHI-XLO+1)*(YHI-YLO+1)*(ZHI-ZLO+1)];
 };
 
 
