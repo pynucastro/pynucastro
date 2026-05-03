@@ -53,6 +53,8 @@ This will output the following files:
   since we reuse some of the ``AmrexAstroCxxNetwork`` code to create a
   ``SimpleNetwork``.
 
+* ``approximate_rates.H`` : the functions that evaluate ``AproximateRate`` rates.
+
 * ``burn_type.H`` : this is a simple struct, ``burn_t``, that holds
   thermodynamic data.  An application code can add more members to the
   struct, as needed, to store additional data.
@@ -71,10 +73,14 @@ This will output the following files:
 * ``main.cpp`` : a simple driver that simply evaluates the righthand side and Jacobian
   for a single thermodynamic state and compute the energy release.
 
+* ``modified_rates.H`` : the functions that evaluate ``ModifiedRate`` rates.
+
 * ``network_properties.H`` : a header providing the properties of the nuclei.
 
 * ``partition_functions.H`` : data and functions used for interpolating
   partition functions.
+
+* ``rate_type.H`` : the core ``struct`` used for holding rate evaluations
 
 * ``reaclib_rates.H`` : the functions that evaluate the ReacLib reaction rates.
 

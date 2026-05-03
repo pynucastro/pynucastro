@@ -6,6 +6,9 @@
 #include <actual_network.H>
 #include <burn_type.H>
 #include <screen.H>
+#include <rate_type.H>
+#include <approximate_rates.H>
+#include <modified_rates.H>
 #include <reaclib_rates.H>
 #include <derived_rates.H>
 #include <table_rates.H>
@@ -102,6 +105,10 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
     // Calculate Reaclib rates
 
     fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
+
+    // fill modified rates next -- these can have ReacLib or
+    // TemperatureTabular/StarLib rates as the original rate
+    modified_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
     // Calculate Derived Rates. This should go last but before approx rates.
 
