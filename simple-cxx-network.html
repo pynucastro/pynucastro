@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Simple C++ network &#8212; pynucastro 2.9.0.post98+g868073716 documentation</title>
+    <title>Simple C++ network &#8212; pynucastro 2.9.0.post99+g40e5f47dd documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=8414d4d6"></script>
+    <script src="_static/documentation_options.js?v=efe2954e"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -634,6 +634,7 @@ index the rates, and a vector of strings that give the rate names.</p></li>
 use to store information.  It is derived from the AMReX library
 since we reuse some of the <code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code> code to create a
 <code class="docutils literal notranslate"><span class="pre">SimpleNetwork</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">approximate_rates.H</span></code> : the functions that evaluate <code class="docutils literal notranslate"><span class="pre">AproximateRate</span></code> rates.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">burn_type.H</span></code> : this is a simple struct, <code class="docutils literal notranslate"><span class="pre">burn_t</span></code>, that holds
 thermodynamic data.  An application code can add more members to the
 struct, as needed, to store additional data.</p></li>
@@ -642,7 +643,9 @@ needed throughout the network.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">GNUmakefile</span></code> : a GNU makefile to build the test program.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">main.cpp</span></code> : a simple driver that simply evaluates the righthand side and Jacobian
 for a single thermodynamic state and compute the energy release.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">modified_rates.H</span></code> : the functions that evaluate <code class="docutils literal notranslate"><span class="pre">ModifiedRate</span></code> rates.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">network_properties.H</span></code> : a header providing the properties of the nuclei.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rate_type.H</span></code> : the core <code class="docutils literal notranslate"><span class="pre">struct</span></code> used for holding rate evaluations</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">reaclib_rates.H</span></code> : the functions that evaluate the ReacLib reaction rates.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">screen_data.H</span></code> : this defines some functions used in precomputing common
 screening factors.</p></li>
