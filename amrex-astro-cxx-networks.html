@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>AMReX Astro Microphysics Networks &#8212; pynucastro 2.9.0.post97+gc7ebb82f4 documentation</title>
+    <title>AMReX Astro Microphysics Networks &#8212; pynucastro 2.9.0.post98+g868073716 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=dcef0fc0"></script>
+    <script src="_static/documentation_options.js?v=8414d4d6"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -573,6 +573,7 @@
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-network">Using the network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#runtime-parameters">Runtime parameters</a></li>
 </ul>
             </nav>
         </div>
@@ -630,6 +631,11 @@ Jacobian terms.  Function tags are used to compute the screening
 factors, compute the tabular rates, and build the ydot and Jacobian,
 and include any plasma neutrino losses.</p>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">approximate_rates.H</span></code></p>
+<p>The manages the <code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code> rates, with functions
+for each approximate rate that build off of previously
+computed rates.</p>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">derived_rates.H</span></code></p>
 <p>This computes any rates that are derived via detailed balance,
 with a function provided for each rate.</p>
@@ -637,9 +643,17 @@ with a function provided for each rate.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">interp_tools.H</span></code></p>
 <p>This contains interpolation functions used by tabulated rates.</p>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">modified_rates.H</span></code></p>
+<p>This manages the <code class="docutils literal notranslate"><span class="pre">ModifiedRate</span></code> rates, with functions
+that compute the effective rate from the previously-computed
+underlying rate.</p>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">partition_functions.H</span></code></p>
 <p>This holds the partition function data (inline) and the functions
 to interpolate it.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rate_type.H</span></code></p>
+<p>This defines a <code class="docutils literal notranslate"><span class="pre">struct</span></code> that will hold the rate evaluations.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">reaclib_rates.H</span></code></p>
 <p>This computes the ReacLib reaction rates, with a function provided
@@ -656,7 +670,7 @@ from the edge of the table.  See <a class="reference internal" href="sources.htm
 the bounds of the data.</p>
 </div>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">temperature_table_rates</span></code></p>
+<li><p><code class="docutils literal notranslate"><span class="pre">temperature_table_rates.H</span></code></p>
 <p>This manages <code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code> rates and interpolating
 their data.  The rate data itself is stored inline in the header
 file.</p>
@@ -704,6 +718,13 @@ Microphysics.  For example, to disable screening, we can do:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">make<span class="w"> </span><span class="nv">SCREEN_METHOD</span><span class="o">=</span>null</span>
 </pre></div></div></li>
 </ul>
+</section>
+<section id="runtime-parameters">
+<h2>Runtime parameters<a class="headerlink" href="#runtime-parameters" title="Link to this heading">#</a></h2>
+<p>If any <code class="docutils literal notranslate"><span class="pre">StarLibRate</span></code> rates are included in the network,
+the the runtime parameter <code class="docutils literal notranslate"><span class="pre">network.starlib_seed</span></code> and be
+used to seed the random numbers used for sampling the rate
+uncertainty.</p>
 </section>
 </section>
 
@@ -755,6 +776,7 @@ Microphysics.  For example, to disable screening, we can do:</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-the-network">Using the network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#runtime-parameters">Runtime parameters</a></li>
 </ul>
   </nav></div>
 
