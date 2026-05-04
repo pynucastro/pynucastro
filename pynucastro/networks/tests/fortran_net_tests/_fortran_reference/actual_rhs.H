@@ -6,12 +6,17 @@
 #include <actual_network.H>
 #include <burn_type.H>
 #include <screen.H>
+#include <rate_type.H>
+#include <approximate_rates.H>
+#include <modified_rates.H>
 #include <reaclib_rates.H>
 #include <derived_rates.H>
+#include <table_rates.H>
 
 using namespace Species;
 using namespace Rates;
 
+using namespace rate_tables;
 
 template<class T>
 inline
@@ -85,6 +90,10 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
         Y(n) = state.xn[n-1] * aion_inv[n-1];
     }
 
+    assert(state.y_e != 0.0);
+
+    [[maybe_unused]] Real rhoy = state.rho * state.y_e;
+
     // Precompute screening terms
 
 #ifdef SCREENING
@@ -97,6 +106,10 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
+    // fill modified rates next -- these can have ReacLib or
+    // TemperatureTabular/StarLib rates as the original rate
+    modified_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
+
     // Calculate Derived Rates. This should go last but before approx rates.
 
     fill_derived_rates<do_T_derivatives, T>(tfactors, rate_eval);
@@ -104,6 +117,13 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
     // Fill approximate rates
 
     fill_approx_rates<do_T_derivatives, T>(tfactors, state.rho, Y, rate_eval);
+
+    // Calculate tabular rates
+
+    [[maybe_unused]] Real rate, drate_dt, edot_nu, edot_gamma;
+
+    rate_eval.enuc_weak = 0.0_rt;
+
 
 }
 
@@ -157,7 +177,7 @@ void rhs_nuc(const burn_t& state,
 
 
 inline
-void actual_rhs (burn_t& state, Array1D<Real, 1, NumSpec>& ydot)
+void actual_rhs (burn_t& state, Array1D<Real, 1, NumSpec>& ydot, Real& enu_weak)
 {
 
     compute_ye(state);
@@ -181,6 +201,11 @@ void actual_rhs (burn_t& state, Array1D<Real, 1, NumSpec>& ydot)
     evaluate_rates<do_T_derivatives, rate_t>(state, rate_eval);
 
     rhs_nuc(state, ydot, Y, rate_eval.screened_rates);
+
+    // enu_weak is the neutrino losses from the weak rates.  it is
+    // already negative, so it should just be added to the energy from
+    // the mass difference / composition changes.
+    enu_weak = rate_eval.enuc_weak;
 
 }
 

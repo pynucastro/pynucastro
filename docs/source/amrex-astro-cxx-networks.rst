@@ -56,6 +56,12 @@ and source files.  These are:
   factors, compute the tabular rates, and build the ydot and Jacobian,
   and include any plasma neutrino losses.
 
+* ``approximate_rates.H``
+
+  The manages the ``ApproximateRate`` rates, with functions
+  for each approximate rate that build off of previously
+  computed rates.
+
 * ``derived_rates.H``
 
   This computes any rates that are derived via detailed balance,
@@ -65,10 +71,20 @@ and source files.  These are:
 
   This contains interpolation functions used by tabulated rates.
 
+* ``modified_rates.H``
+
+  This manages the ``ModifiedRate`` rates, with functions
+  that compute the effective rate from the previously-computed
+  underlying rate.
+
 * ``partition_functions.H``
 
   This holds the partition function data (inline) and the functions
   to interpolate it.
+
+* ``rate_type.H``
+
+  This defines a ``struct`` that will hold the rate evaluations.
 
 * ``reaclib_rates.H``
 
@@ -87,7 +103,7 @@ and source files.  These are:
      from the edge of the table.  See :ref:`tabulated_rate_sources` for
      the bounds of the data.
 
-* ``temperature_table_rates``
+* ``temperature_table_rates.H``
 
   This manages ``TemperatureTabularRate`` rates and interpolating
   their data.  The rate data itself is stored inline in the header
@@ -145,3 +161,13 @@ To use the network, there are 2 options.
   .. prompt:: bash
 
      make SCREEN_METHOD=null
+
+
+Runtime parameters
+==================
+
+If any ``StarLibRate`` rates are included in the network,
+the the runtime parameter ``network.starlib_seed`` and be
+used to seed the random numbers used for sampling the rate
+uncertainty.
+

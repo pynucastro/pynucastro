@@ -7,7 +7,7 @@ program test
   double precision :: rho, T
   double precision :: X(nspec), dYdt(nspec)
   double precision :: Jac(nspec, nspec)
-  double precision :: enuc
+  double precision :: enuc, enu_weak
 
   integer :: i, j, nargs, ios
   character(len=128) :: arg
@@ -42,7 +42,7 @@ program test
 
   call network_init()
 
-  call rhs_f(rho, T, X, dYdt)
+  call rhs_f(rho, T, X, dYdt, enu_weak)
   call jac_f(rho, T, X, Jac)
 
   do i = 1, nspec

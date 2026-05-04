@@ -5,28 +5,10 @@
 
 #include <tfactors.H>
 #include <actual_network.H>
+#include <rate_type.H>
 
 using namespace Rates;
 using namespace Species;
-
-struct rate_t {
-    Array1D<Real, 1, Rates::NumRates>  screened_rates;
-#ifdef SCREENING
-    Array1D<Real, 1, Rates::NumScreenPairs>  log_screen;
-#endif
-    Real enuc_weak;
-};
-
-struct rate_derivs_t {
-    Array1D<Real, 1, Rates::NumRates>  screened_rates;
-    Array1D<Real, 1, Rates::NumRates>  dscreened_rates_dT;
-#ifdef SCREENING
-    Array1D<Real, 1, Rates::NumScreenPairs>  log_screen;
-    Array1D<Real, 1, Rates::NumScreenPairs>  dlog_screen_dT;
-#endif
-    Real enuc_weak;
-};
-
 
 template <int do_T_derivatives>
 inline
@@ -364,7 +346,6 @@ void rate_n_to_p_reaclib(const tf_t& tfactors, const Real log_scor, const Real d
 }
 
 
-
 template <int do_T_derivatives, typename T>
 inline
 void
@@ -473,21 +454,6 @@ fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
             rate_eval.dscreened_rates_dT(k_n_to_p_reaclib) = drate_dT;
         }
     }
-
-
-}
-
-template <int do_T_derivatives, typename T>
-inline
-void
-fill_approx_rates([[maybe_unused]] const tf_t& tfactors,
-                  [[maybe_unused]] const Real rho,
-                  [[maybe_unused]] const Array1D<Real, 1, NumSpec>& Y,
-                  [[maybe_unused]] T& rate_eval)
-{
-
-    [[maybe_unused]] Real rate{};
-    [[maybe_unused]] Real drate_dT{};
 
 
 }

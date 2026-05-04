@@ -38,8 +38,16 @@ int main(int argc, char* argv[]) {
         state.xn[n] = 1.0 / static_cast<Real>(NumSpec);
     }
 
+    // fill Ye -- this is needed for weak rates
+    state.y_e = 0.0;
+    for (int n = 0; n < NumSpec; ++n) {
+        state.y_e += zion[n] * state.xn[n] / aion[n];
+    }
+
+    // get the Ydots
     Array1D<Real, 1, NumSpec> ydot;
-    actual_rhs(state, ydot);
+    Real enu_weak{};
+    actual_rhs(state, ydot, enu_weak);
 
     std::cout << "ODE righthand side values" << std::endl;
 
@@ -71,7 +79,12 @@ int main(int argc, char* argv[]) {
 
     Real enuc;
     ener_gener_rate(ydot, enuc);
+
+    // correct for neutrino energy losses
+    enuc += enu_weak;
+
     std::cout << "Instantaneous energy generation rate (erg/g/s) = " << enuc << std::endl;
+    std::cout << "(that includes weak rate neutrino losses of " << enu_weak << " (erg/g/s))" << std::endl;
     std::cout << std::endl;
 
     // get the rates -- this is just the N_A<σv>
