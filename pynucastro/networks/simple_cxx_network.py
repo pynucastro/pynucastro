@@ -54,8 +54,8 @@ class SimpleCxxNetwork(BaseCxxNetwork):
 
         """
 
-        # at the moment, we don't support TabularRates
-        assert len(self.tabular_rates) == 0, "SimpleCxxNetwork does not support tabular rates"
+        assert len(self.temperature_tabular_rates) == 0, "SimpleCxxNetwork does not support TemperatureTabular rates"
+        assert len(self.starlib_rates) == 0, "SimpleCxxNetwork does not support StarLib rates"
 
         super()._write_network(odir=odir)
 
@@ -75,17 +75,17 @@ class SimpleCxxNetwork(BaseCxxNetwork):
 
             of.write("// Note: these are 0-based\n")
 
-            of.write("constexpr Real aion[NumSpec] = {\n")
+            of.write("constexpr Real aion[NumSpecTotal] = {\n")
             for n, nuc in enumerate(self.unique_nuclei + self.approx_nuclei):
                 of.write(f"    {nuc.A:6.1f}, // {n} : {nuc}\n")
             of.write(" };\n\n")
 
-            of.write("constexpr Real aion_inv[NumSpec] = {\n")
+            of.write("constexpr Real aion_inv[NumSpecTotal] = {\n")
             for n, nuc in enumerate(self.unique_nuclei + self.approx_nuclei):
                 of.write(f"    1.0/{nuc.A:6.1f}, // {n} : {nuc}\n")
             of.write(" };\n\n")
 
-            of.write("constexpr Real zion[NumSpec] = {\n")
+            of.write("constexpr Real zion[NumSpecTotal] = {\n")
             for n, nuc in enumerate(self.unique_nuclei + self.approx_nuclei):
                 of.write(f"    {nuc.Z:6.1f}, // {n} : {nuc}\n")
             of.write(" };\n\n")
