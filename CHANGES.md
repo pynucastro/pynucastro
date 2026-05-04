@@ -30,7 +30,7 @@
     * group log(screening) and log(rate) together before the
       exp (#1259)
     * support partition functions and `DerivedRate` (#1324)
-    * tabulated weak rates (via`TabularRate`) (#1332)
+    * tabulated weak rates (via `TabularRate`) (#1332)
     * cleaning / reorg of headers (#1246, #1331, #1345)
 
   * `PythonNetwork` / `RateCollection` :
@@ -49,7 +49,7 @@
     * Network plots now work if ``show_small_ydot=True`` even if
       no rates are above the threshold. (#1341)
 
-  * general rate changes
+  * general rate changes:
 
     * have `TemperatureTabularRate` work in natural log space (#1228)
     * allow `TemperatureTabularRate` to extrapolate (#1233)
@@ -68,7 +68,7 @@
     * do log term addition for deriving from `TemperatureTabularRate`
       (#1230)
 
-  * nuclei / screening / partition functions
+  * nuclei / screening / partition functions:
 
     * store partition function data in log space and temperature in T9
       (#1231)
@@ -77,7 +77,7 @@
     * some optimizations of the `nucleus` module (#1297)
     * move `Composition` to its own module under `nucdata` (#1316)
 
-  * testing
+  * testing:
 
     * add C++ `TemperatureTabularRate` unit tests (#1225)
     * sync CI benchmarks due to AMReX-Astro Microphysics changes (#1234,
@@ -100,12 +100,12 @@
     * update / add to some of the comparison tests (#1313)
     * split up pip requirements to speed up CI setup (#1330)
 
-  * git / project infrastructure
+  * git / project infrastructure:
 
     * add a pull request template (#1264)
     * update Zenodo authors (#1272)
 
-  * documentation
+  * documentation:
 
     * add a temperature evolution integration example (#1223)
     * fix some sphinx API doc warning (#1237)
