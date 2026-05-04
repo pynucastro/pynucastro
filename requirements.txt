@@ -4,7 +4,7 @@ matplotlib
 networkx>=3.4
 numpy>=2.0,<3.0
 scipy>=1.0.0
-sympy>=1.1.1
+sympy>=1.14.0
 
 # optional dependencies
 numba
