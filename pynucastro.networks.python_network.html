@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.python_network module &#8212; pynucastro 2.9.0.post101+g710526960 documentation</title>
+    <title>pynucastro.networks.python_network module &#8212; pynucastro 2.9.0.post102+g3150a7161 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=9cc80bfb"></script>
+    <script src="_static/documentation_options.js?v=3550c5cb"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -573,6 +573,8 @@
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution"><code class="docutils literal notranslate"><span class="pre">NetworkSolution</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.X"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.X</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.X_at"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.X_at()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.Y"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.Y</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.Y_at"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.Y_at()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.energy_release"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.energy_release()</span></code></a></li>
@@ -582,6 +584,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.plot_evolution"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.plot_evolution()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.rhs"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.rhs()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.rhs_at"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.rhs_at()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.success"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.success</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.t"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.t</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.unique_nuclei"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.unique_nuclei</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.ye"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.ye()</span></code></a></li>
@@ -633,6 +636,32 @@ the network</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="pynucastro.networks.python_network.NetworkSolution.X">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">X</span></span><a class="headerlink" href="#pynucastro.networks.python_network.NetworkSolution.X" title="Link to this definition">#</a></dt>
+<dd><p>Return the 2D array of mass fractions abundances
+for all times.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.networks.python_network.NetworkSolution.X_at">
+<span class="sig-name descname"><span class="pre">X_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/python_network.html#NetworkSolution.X_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.python_network.NetworkSolution.X_at" title="Link to this definition">#</a></dt>
+<dd><p>Evaluate the mass fractions for a given time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> or </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – time or time array used to evaluate the molar abundances</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="pynucastro.networks.python_network.NetworkSolution.Y">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Y</span></span><a class="headerlink" href="#pynucastro.networks.python_network.NetworkSolution.Y" title="Link to this definition">#</a></dt>
@@ -781,6 +810,17 @@ condition and screening routine used to integrate the network.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pynucastro.networks.python_network.NetworkSolution.success">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">success</span></span><a class="headerlink" href="#pynucastro.networks.python_network.NetworkSolution.success" title="Link to this definition">#</a></dt>
+<dd><p>Return whether the integration was successful</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1015,6 +1055,8 @@ of indent desired.</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution"><code class="docutils literal notranslate"><span class="pre">NetworkSolution</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.X"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.X</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.X_at"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.X_at()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.Y"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.Y</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.Y_at"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.Y_at()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.energy_release"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.energy_release()</span></code></a></li>
@@ -1024,6 +1066,7 @@ of indent desired.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.plot_evolution"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.plot_evolution()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.rhs"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.rhs()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.rhs_at"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.rhs_at()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.success"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.success</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.t"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.t</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.unique_nuclei"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.unique_nuclei</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.python_network.NetworkSolution.ye"><code class="docutils literal notranslate"><span class="pre">NetworkSolution.ye()</span></code></a></li>
