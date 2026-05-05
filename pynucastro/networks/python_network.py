@@ -3,6 +3,7 @@
 import io
 import sys
 import types
+import warnings
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -979,6 +980,9 @@ class PythonNetwork(RateCollection):
         sol = solve_ivp(rhs, [0, tmax], Y0, method="BDF",
                         dense_output=True, args=(rho, T, screen_func),
                         rtol=rtol, atol=atol, jac=jacobian)
+
+        if not sol.success:
+            warnings.warn(f"Warning, integration failed, final integration time = {sol.t[-1]}")
 
         # Create NetworkSolution
         network_sol = NetworkSolution(sol, rhs, jacobian, self,
