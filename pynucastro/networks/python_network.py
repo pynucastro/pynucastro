@@ -54,6 +54,18 @@ class NetworkSolution:
         self.screen_func = screen_func
 
     @property
+    def success(self):
+        """Return whether the integration was successful
+
+        Returns
+        -------
+        bool
+
+        """
+
+        return self._sol.success
+
+    @property
     def t(self):
         """Return the time array for integration
 
@@ -64,6 +76,20 @@ class NetworkSolution:
         """
 
         return self._sol.t
+
+    @property
+    def X(self):
+        """Return the 2D array of mass fractions abundances
+        for all times.
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        As = np.array([n.A for n in self.unique_nuclei])
+        return self._sol.y * As[:, None]
 
     @property
     def Y(self):
@@ -89,6 +115,23 @@ class NetworkSolution:
         """
 
         return self.network.unique_nuclei
+
+    def X_at(self, t):
+        """Evaluate the mass fractions for a given time.
+
+        Parameters
+        ----------
+        t : float or list or numpy.ndarray
+            time or time array used to evaluate the molar abundances
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        As = np.array([n.A for n in self.unique_nuclei])
+        return self._sol.sol(t) * As
 
     def Y_at(self, t):
         """Evaluate the molar abundances for a given time.
