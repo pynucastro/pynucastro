@@ -41,6 +41,8 @@
       #1280)
     * add a method to integrate the network (#1279)
     * store the weak rate tables directly in the module (#1282)
+    * add `NetworkSolution` to manage working with integration solutions
+      (#1288, #1352, #1353)
     * Move the baryon conservation check to `_set_print_representation`.
       This will catch more issues. (#1295)
     * When we make a network, make a copy of the rates + implement a
