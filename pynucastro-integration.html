@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Integrating a Network &#8212; pynucastro 2.9.0.post100+gd5ccbde34 documentation</title>
+    <title>Integrating a Network &#8212; pynucastro 2.9.0.post101+g710526960 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=003c5e3b"></script>
+    <script src="_static/documentation_options.js?v=9cc80bfb"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -578,7 +578,7 @@
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-the-network">Integrating the network</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-the-results">Plotting the results</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analyzing-the-results">Analyzing the results</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#energy-release">Energy release</a></li>
 </ul>
             </nav>
@@ -1388,13 +1388,33 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 <p>You may need to change the relative (<code class="docutils literal notranslate"><span class="pre">rtol</span></code>) or absolute (<code class="docutils literal notranslate"><span class="pre">atol</span></code>) tolerances if you want to more accurately capture trace nuclei.  Making them smaller will make the integrator work harder.</p>
 </div>
 </section>
-<section id="plotting-the-results">
-<h2>Plotting the results<a class="headerlink" href="#plotting-the-results" title="Link to this heading">#</a></h2>
-<p>We can plot the time evolution of the mass fractions using the built-in function
-<a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.plot_evolution" title="pynucastro.networks.python_network.PythonNetwork.plot_evolution"><code class="xref py py-func docutils literal notranslate"><span class="pre">plot_evolution</span></code></a></p>
+<section id="analyzing-the-results">
+<h2>Analyzing the results<a class="headerlink" href="#analyzing-the-results" title="Link to this heading">#</a></h2>
+<p>The evolution of the massfractions can be visualized using standard plotting tools like Matplotlib.
+However, the <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.NetworkSolution" title="pynucastro.networks.python_network.NetworkSolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NetworkSolution</span></code></a> class
+provides convenient built-in methods for post-processing and visualizations.
+To create a <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.NetworkSolution" title="pynucastro.networks.python_network.NetworkSolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NetworkSolution</span></code></a> object,
+you need to provide the solution returned by <code class="docutils literal notranslate"><span class="pre">solve_ivp</span></code>, along with the <code class="docutils literal notranslate"><span class="pre">rhs</span></code> and <code class="docutils literal notranslate"><span class="pre">jacobian</span></code> functions
+from the network module, the corresponding <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> object, and the density and temperature used for integration.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">plot_evolution</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">tmin</span><span class="o">=</span><span class="mf">1e10</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="mf">1e20</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks</span><span class="w"> </span><span class="kn">import</span> <span class="n">NetworkSolution</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">network_sol</span> <span class="o">=</span> <span class="n">NetworkSolution</span><span class="p">(</span><span class="n">sol</span><span class="o">=</span><span class="n">sol</span><span class="p">,</span> <span class="n">rhs</span><span class="o">=</span><span class="n">cno</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">cno</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span> <span class="n">network</span><span class="o">=</span><span class="n">pynet</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can then plot the evolution of the massfractions via a built-in method
+<a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.NetworkSolution.plot_evolution" title="pynucastro.networks.python_network.NetworkSolution.plot_evolution"><code class="xref py py-func docutils literal notranslate"><span class="pre">plot_evolution</span></code></a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">network_sol</span><span class="o">.</span><span class="n">plot_evolution</span><span class="p">(</span><span class="n">tmin</span><span class="o">=</span><span class="mf">1e10</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="mf">1e20</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1405,15 +1425,16 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 </section>
 <section id="energy-release">
 <h2>Energy release<a class="headerlink" href="#energy-release" title="Link to this heading">#</a></h2>
-<p>We can get the energy release from the change in molar abundances, <span class="math notranslate nohighlight">\(\Delta Y\)</span>.
-This will be computed as:</p>
+<p>We can get the energy release from the change in molar abundances, <span class="math notranslate nohighlight">\(\Delta Y\)</span>,
+via <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.NetworkSolution.energy_release" title="pynucastro.networks.python_network.NetworkSolution.energy_release"><code class="xref py py-func docutils literal notranslate"><span class="pre">energy_release</span></code></a>.</p>
+<p>This will be computed as:</p>
 <div class="math notranslate nohighlight">
 \[\Delta E = -N_A \sum_i \Delta Y_i M_i\]</div>
 <p>Here <span class="math notranslate nohighlight">\(M_i\)</span> is the mass of the nucleus <span class="math notranslate nohighlight">\(i\)</span> (this is tabulated in
 the network as <code class="docutils literal notranslate"><span class="pre">mass[]</span></code>).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">E</span> <span class="o">=</span> <span class="n">cno</span><span class="o">.</span><span class="n">energy_release</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">Y0</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">E</span> <span class="o">=</span> <span class="n">network_sol</span><span class="o">.</span><span class="n">energy_release</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">Y0</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;E = </span><span class="si">{</span><span class="n">E</span><span class="si">:</span><span class="s2">20.10g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1425,18 +1446,28 @@ the network as <code class="docutils literal notranslate"><span class="pre">mass
 </div>
 </div>
 <p>This result is in erg/g</p>
-<p>We can compute the instantaneous energy generation rate as well,</p>
+<p>We can compute the instantaneous energy generation rate,</p>
 <div class="math notranslate nohighlight">
 \[\epsilon = -N_A \sum_i \frac{dY_i}{dt} M_i\]</div>
+<p>at any given time using <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.NetworkSolution.energy_release_at" title="pynucastro.networks.python_network.NetworkSolution.energy_release_at"><code class="xref py py-func docutils literal notranslate"><span class="pre">energy_release_at</span></code></a></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">cno</span><span class="o">.</span><span class="n">energy_release</span><span class="p">(</span><span class="n">cno</span><span class="o">.</span><span class="n">rhs</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;epsilon = </span><span class="si">{</span><span class="n">epsilon</span><span class="si">:</span><span class="s2">20.10g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">initial_epsilon</span> <span class="o">=</span> <span class="n">network_sol</span><span class="o">.</span><span class="n">energy_release_at</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">fr</span><span class="s2">&quot;epsilon(t=</span><span class="si">{</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">10.10g</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">initial_epsilon</span><span class="si">:</span><span class="s2">20.10g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="mf">2.55e14</span>
+<span class="n">mid_epsilon</span> <span class="o">=</span> <span class="n">network_sol</span><span class="o">.</span><span class="n">energy_release_at</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;epsilon(t=</span><span class="si">{</span><span class="n">t</span><span class="si">:</span><span class="s2">10.10g</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">mid_epsilon</span><span class="si">:</span><span class="s2">20.10g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">final_epsilon</span> <span class="o">=</span> <span class="n">network_sol</span><span class="o">.</span><span class="n">energy_release_at</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;epsilon(t=</span><span class="si">{</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">10.10g</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">final_epsilon</span><span class="si">:</span><span class="s2">20.10g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>epsilon =          117.7738358
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>epsilon(t=         0) =          117.7738358
+epsilon(t=  2.55e+14) =          2.990307739
+epsilon(t=     1e+20) =      4.503996655e-10
 </pre></div>
 </div>
 </div>
@@ -1446,7 +1477,8 @@ the network as <code class="docutils literal notranslate"><span class="pre">mass
 <p><a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a> class provides the convenient method
 <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.integrate_network" title="pynucastro.networks.python_network.PythonNetwork.integrate_network"><code class="xref py py-func docutils literal notranslate"><span class="pre">integrate_network</span></code></a>,
 which is a wrapper around <code class="docutils literal notranslate"><span class="pre">scipy.integrate.solve_ivp</span></code> for integrating the reaction network. This approach avoids the need to explicitly write out the Python module file via <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.write_network" title="pynucastro.networks.rate_collection.RateCollection.write_network"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_network</span></code></a>.
-This is useful when you only care about the evolution of species abundances. However, note that using this method means you <strong>cannot</strong> compute the energy release via RHS or the Jacobian RHS for energy release or the Jacobian at arbitrary times.</p>
+This method natively returns a <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.NetworkSolution" title="pynucastro.networks.python_network.NetworkSolution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NetworkSolution</span></code></a> object for easy analysis
+and visualization.</p>
 </div>
 <p>To demonstrate the use of <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.integrate_network" title="pynucastro.networks.python_network.PythonNetwork.integrate_network"><code class="xref py py-func docutils literal notranslate"><span class="pre">integrate_network</span></code></a>,
 we will integrate the network with a different set of initial thermodynamic conditions.
@@ -1457,15 +1489,15 @@ We can also specify a screening method to use, and we will use the <code class="
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mi">200</span>
 <span class="n">T</span> <span class="o">=</span> <span class="mf">3.e7</span>
 <span class="n">tmax</span> <span class="o">=</span> <span class="mf">1e20</span>
-<span class="n">sol</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">integrate_network</span><span class="p">(</span><span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_method</span><span class="o">=</span><span class="s2">&quot;chugunov_2007&quot;</span><span class="p">,</span> <span class="n">initial_comp</span><span class="o">=</span><span class="s2">&quot;solar&quot;</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span>
+<span class="n">network_sol2</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">integrate_network</span><span class="p">(</span><span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_method</span><span class="o">=</span><span class="s2">&quot;chugunov_2007&quot;</span><span class="p">,</span> <span class="n">initial_comp</span><span class="o">=</span><span class="s2">&quot;solar&quot;</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>The solution can be visualized via <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.plot_evolution" title="pynucastro.networks.python_network.PythonNetwork.plot_evolution"><code class="xref py py-func docutils literal notranslate"><span class="pre">plot_evolution</span></code></a> just as shown before.</p>
+<p>The time evolution of the mass fractions can be visualized via built-in method <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.NetworkSolution.plot_evolution" title="pynucastro.networks.python_network.NetworkSolution.plot_evolution"><code class="xref py py-func docutils literal notranslate"><span class="pre">plot_evolution</span></code></a> just like before.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">plot_evolution</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">tmin</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="mf">1e20</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">network_sol2</span><span class="o">.</span><span class="n">plot_evolution</span><span class="p">(</span><span class="n">tmin</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="mf">1e20</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1524,7 +1556,7 @@ We can also specify a screening method to use, and we will use the <code class="
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-the-network">Integrating the network</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-the-results">Plotting the results</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analyzing-the-results">Analyzing the results</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#energy-release">Energy release</a></li>
 </ul>
   </nav></div>
