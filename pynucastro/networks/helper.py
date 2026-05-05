@@ -69,7 +69,11 @@ def network_helper(nuclei, *,
         lib.eliminate_duplicates(rate_type_preference="tabular")
 
     if use_detailed_balance:
-        rates_to_derive = lib.backward().get_rates()
+        try:
+            rates_to_derive = lib.backward().get_rates()
+        except AttributeError:
+            # we land here is lib.backward() is None
+            rates_to_derive = []
 
         # now for each of those derived rates, look to see if the pair exists
         for r in rates_to_derive:

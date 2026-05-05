@@ -4,7 +4,7 @@
 from pathlib import Path
 
 from pynucastro.networks.base_cxx_network import BaseCxxNetwork
-from pynucastro.screening import get_screening_map
+from pynucastro.screening import get_screening_pair_set
 
 
 class SimpleCxxNetwork(BaseCxxNetwork):
@@ -16,6 +16,7 @@ class SimpleCxxNetwork(BaseCxxNetwork):
         super().__init__(*args, **kwargs)
 
         self.function_specifier = "inline"
+        self.gpu_data_specifier = ""
         self.dtype = "Real"
         self.array_namespace = ""
 
@@ -30,20 +31,20 @@ class SimpleCxxNetwork(BaseCxxNetwork):
         and stores them to rate_eval.log_screen.
 
         """
-        screening_map = get_screening_map(self.get_rates())
-        for scr in screening_map:
-            nuc1_info = f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt'
-            nuc2_info = f'{float(scr.n2.Z)}_rt, {float(scr.n2.A)}_rt'
+        screening_pair_set = get_screening_pair_set(self.get_rates())
+        for n1, n2 in screening_pair_set:
+            nuc1_info = f'{float(n1.Z)}_rt, {float(n1.A)}_rt'
+            nuc2_info = f'{float(n2.Z)}_rt, {float(n2.A)}_rt'
 
             if not self.do_screening:
                 # Set log_scor terms to be 0 if not doing screening
-                of.write(f'{self.indent*(n_indent)}rate_eval.log_screen(k_{scr.n1}_{scr.n2}) = 0.0_rt;\n')
+                of.write(f'{self.indent*(n_indent)}rate_eval.log_screen(k_{n1}_{n2}) = 0.0_rt;\n')
             else:
                 # Scope the screening calculation to avoid multiple definitions of scn_fac.
                 of.write(f'{self.indent*n_indent}' + '{\n')
                 of.write(f'{self.indent*(n_indent+1)}auto scn_fac = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n')
                 of.write(f'{self.indent*(n_indent+1)}actual_log_screen(pstate, scn_fac, log_scor);\n')
-                of.write(f'{self.indent*(n_indent+1)}rate_eval.log_screen(k_{scr.n1}_{scr.n2}) = log_scor;\n')
+                of.write(f'{self.indent*(n_indent+1)}rate_eval.log_screen(k_{n1}_{n2}) = log_scor;\n')
                 of.write(f'{self.indent*n_indent}' + '}\n\n')
 
     def _write_network(self, odir=None):
@@ -53,8 +54,8 @@ class SimpleCxxNetwork(BaseCxxNetwork):
 
         """
 
-        # at the moment, we don't support TabularRates
-        assert len(self.tabular_rates) == 0, "SimpleCxxNetwork does not support tabular rates"
+        assert len(self.temperature_tabular_rates) == 0, "SimpleCxxNetwork does not support TemperatureTabular rates"
+        assert len(self.starlib_rates) == 0, "SimpleCxxNetwork does not support StarLib rates"
 
         super()._write_network(odir=odir)
 
@@ -69,32 +70,34 @@ class SimpleCxxNetwork(BaseCxxNetwork):
             of.write("#include <amrex_bridge.H>\n\n")
 
             of.write(f"constexpr int NumSpec = {len(self.unique_nuclei)};\n\n")
+            of.write(f"constexpr int NumSpecExtra = {len(self.approx_nuclei)};\n\n")
+            of.write("constexpr int NumSpecTotal = NumSpec + NumSpecExtra;\n\n")
 
             of.write("// Note: these are 0-based\n")
 
-            of.write("constexpr Real aion[NumSpec] = {\n")
-            for n, nuc in enumerate(self.unique_nuclei):
+            of.write("constexpr Real aion[NumSpecTotal] = {\n")
+            for n, nuc in enumerate(self.unique_nuclei + self.approx_nuclei):
                 of.write(f"    {nuc.A:6.1f}, // {n} : {nuc}\n")
             of.write(" };\n\n")
 
-            of.write("constexpr Real aion_inv[NumSpec] = {\n")
-            for n, nuc in enumerate(self.unique_nuclei):
+            of.write("constexpr Real aion_inv[NumSpecTotal] = {\n")
+            for n, nuc in enumerate(self.unique_nuclei + self.approx_nuclei):
                 of.write(f"    1.0/{nuc.A:6.1f}, // {n} : {nuc}\n")
             of.write(" };\n\n")
 
-            of.write("constexpr Real zion[NumSpec] = {\n")
-            for n, nuc in enumerate(self.unique_nuclei):
+            of.write("constexpr Real zion[NumSpecTotal] = {\n")
+            for n, nuc in enumerate(self.unique_nuclei + self.approx_nuclei):
                 of.write(f"    {nuc.Z:6.1f}, // {n} : {nuc}\n")
             of.write(" };\n\n")
 
             of.write("static const std::vector<std::string> spec_names = {\n")
-            for n, nuc in enumerate(self.unique_nuclei):
+            for n, nuc in enumerate(self.unique_nuclei + self.approx_nuclei):
                 of.write(f"    \"{nuc.short_spec_name.capitalize()}\", // {n}\n")
             of.write(" };\n\n")
 
             of.write("namespace Species {\n")
             of.write("  enum NetworkSpecies {\n")
-            for n, nuc in enumerate(self.unique_nuclei):
+            for n, nuc in enumerate(self.unique_nuclei + self.approx_nuclei):
                 if n == 0:
                     of.write(f"    {nuc.short_spec_name.capitalize()}=1,\n")
                 else:

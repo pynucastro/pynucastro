@@ -364,6 +364,7 @@ class TabularRate(Rate):
 
         """
         self.ion_screen = []
+        self.screening_pairs = []
 
     def function_string_py(self):
         """Construct the python function that computes the rate.
@@ -399,7 +400,7 @@ class TabularRate(Rate):
             the density to evaluate the rate at.
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate the rate with.
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
@@ -431,7 +432,7 @@ class TabularRate(Rate):
             the density to evaluate the rate at.
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate the rate with.
 
         Returns

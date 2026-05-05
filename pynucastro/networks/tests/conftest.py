@@ -1,5 +1,7 @@
 """A collection of fixtures for testing networks."""
 
+# pylint: disable=duplicate-code
+
 import filecmp
 import shutil
 from pathlib import Path
@@ -19,6 +21,12 @@ def full_library():
 def reaclib_library():
     """Return the ReacLibLibrary"""
     return pyna.ReacLibLibrary()
+
+
+@pytest.fixture(scope="package")
+def starlib_library():
+    """Return the StarLibLibrary"""
+    return pyna.StarLibLibrary()
 
 
 @pytest.fixture(scope="package")

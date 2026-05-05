@@ -10,9 +10,10 @@ import numpy as np
 from scipy.integrate import solve_ivp
 
 from pynucastro.constants import constants
-from pynucastro.networks.rate_collection import Composition, RateCollection
+from pynucastro.networks.rate_collection import RateCollection
+from pynucastro.nucdata import Composition
 from pynucastro.rates import ApproximateRate, ModifiedRate
-from pynucastro.screening import get_screening_func, get_screening_map
+from pynucastro.screening import get_screening_func, get_screening_pair_set
 
 
 class NetworkSolution:
@@ -501,11 +502,11 @@ class PythonNetwork(RateCollection):
 
         ostr = ""
 
-        screening_map = get_screening_map(self.get_rates())
+        screening_pair_set = get_screening_pair_set(self.get_rates())
 
         # Initialize log_scor to 0.0
-        for scr in screening_map:
-            screen_var = f"log_scor_{scr.n1}_{scr.n2}"
+        for n1, n2 in screening_pair_set:
+            screen_var = f"log_scor_{n1}_{n2}"
             ostr += f"{indent}{screen_var} = 0.0\n"
 
         # Check if we're doing screening, return early if not screening
@@ -516,9 +517,9 @@ class PythonNetwork(RateCollection):
         ostr += f"{indent}if screen_func is not None:\n"
         indent += "    "
         ostr += f"{indent}plasma_state = PlasmaState(T, rho, Y, Z)\n\n"
-        for scr in screening_map:
-            screen_var = f"log_scor_{scr.n1}_{scr.n2}"
-            ostr += f"{indent}scn_fac = ScreenFactors({scr.n1.Z}, {scr.n1.A}, {scr.n2.Z}, {scr.n2.A})\n"
+        for n1, n2 in screening_pair_set:
+            screen_var = f"log_scor_{n1}_{n2}"
+            ostr += f"{indent}scn_fac = ScreenFactors({n1.Z}, {n1.A}, {n2.Z}, {n2.A})\n"
             ostr += f"{indent}{screen_var} = screen_func(plasma_state, scn_fac)\n"
 
         return ostr
@@ -554,18 +555,9 @@ class PythonNetwork(RateCollection):
                 args.append("rho=rho")
             if r.rate_eval_needs_comp:
                 args.append("Y=Y")
-            if r.ion_screen:
-                scr_reactants = r.ion_screen.copy()
-                screen_terms = []
-                while len(scr_reactants) > 1:
-                    a, b = scr_reactants[0], scr_reactants[1]
-                    screen_terms.append(f"log_scor_{a}_{b}")
-
-                    # merge reactants to get compound nucleus
-                    scr_reactants = [a + b] + scr_reactants[2:]
-                    scr_reactants.sort(key=lambda x: x.Z)
-
-                args.append("log_scor=" + "+".join(screen_terms))
+            if r.screening_pairs:
+                screen_terms = [f"log_scor_{r1}_{r2}" for r1, r2 in r.screening_pairs]
+                args.append("log_scor=" + " + ".join(screen_terms))
             return f"{indent}{r.fname}({', '.join(args)})\n"
 
         ostr = ""
@@ -586,6 +578,11 @@ class PythonNetwork(RateCollection):
         if self.temperature_tabular_rates:
             ostr += f"\n{indent}# temperature tabular rates\n"
         for r in self.temperature_tabular_rates:
+            ostr += format_rate_call(r, use_tf=False)
+
+        if self.starlib_rates:
+            ostr += f"\n{indent}# starlib rates\n"
+        for r in self.starlib_rates:
             ostr += format_rate_call(r, use_tf=False)
 
         if self.custom_rates:
@@ -752,11 +749,11 @@ class PythonNetwork(RateCollection):
             of.write(f"    np.array({r.tabular_data_table.tolist()})\n")
             of.write(")\n\n")
 
-        # temperature tabular rate data
-        if self.temperature_tabular_rates:
+        # temperature tabular / starlib rate data
+        if self.temperature_tabular_rates + self.starlib_rates:
             of.write("# note: we cannot make the TempTableInterpolator global, since numba doesn't like global jitclass\n")
 
-        for r in self.temperature_tabular_rates:
+        for r in self.temperature_tabular_rates + self.starlib_rates:
 
             of.write(f"# temperature / rate tabulation for {r.rid}\n")
 
@@ -819,7 +816,7 @@ class PythonNetwork(RateCollection):
         of.write(f"{indent}return rhs_eq(t, Y, rho, T, screen_func)\n\n")
 
         of.write("@numba.njit()\n")
-        of.write("def rhs_eq(t, Y, rho, T, screen_func):\n\n")
+        of.write("def do_rate_eval(t, Y, rho, T, screen_func):\n\n")
 
         # get the rates
         of.write(f"{indent}tf = Tfactors(T)\n")
@@ -828,6 +825,13 @@ class PythonNetwork(RateCollection):
         of.write(self.rates_string(indent=indent))
 
         of.write("\n")
+        of.write(f"{indent}return rate_eval\n")
+        of.write("\n")
+
+        of.write("@numba.njit()\n")
+        of.write("def rhs_eq(t, Y, rho, T, screen_func):\n\n")
+
+        of.write(f"{indent}rate_eval = do_rate_eval(t, Y, rho, T, screen_func)\n")
 
         of.write(f"{indent}dYdt = np.zeros((nnuc), dtype=np.float64)\n\n")
 

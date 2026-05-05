@@ -1,0 +1,28 @@
+#ifndef REACLIB_RATES_H
+#define REACLIB_RATES_H
+
+#include <AMReX.H>
+#include <AMReX_Print.H>
+
+#include <tfactors.H>
+#include <actual_network.H>
+#include <rate_type.H>
+
+using namespace Rates;
+using namespace Species;
+
+
+template <int do_T_derivatives, typename T>
+AMREX_GPU_HOST_DEVICE AMREX_INLINE
+void
+fill_reaclib_rates([[maybe_unused]] const tf_t& tfactors,
+                   [[maybe_unused]] T& rate_eval)
+{
+
+    [[maybe_unused]] amrex::Real rate;
+    [[maybe_unused]] amrex::Real drate_dT;
+
+
+}
+
+#endif

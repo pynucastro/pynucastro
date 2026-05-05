@@ -1,0 +1,5 @@
+@namespace: testing
+
+density       real       1.e7
+
+temperature   real       3.e9

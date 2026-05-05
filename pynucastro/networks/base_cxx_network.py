@@ -8,6 +8,7 @@ comprised of the rates that are passed in.
 import itertools
 import re
 import sys
+import textwrap
 from abc import ABC, abstractmethod
 from pathlib import Path
 
@@ -17,8 +18,9 @@ import sympy
 from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
+from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.tabular_rate import TableIndex
-from pynucastro.screening import get_screening_map
+from pynucastro.screening import get_screening_pair_set
 from pynucastro.utils import pynucastro_version
 
 
@@ -76,6 +78,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.solved_jacobian = False
 
         self.function_specifier = "inline"
+        self.gpu_data_specifier = ""
         self.dtype = "double"
         self.array_namespace = ""
 
@@ -100,9 +103,12 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<ydot_weak>'] = self._ydot_weak
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
+        self.ftags['<modified_rate_functions>'] = self._modified_rate_functions
         self.ftags['<rate_struct>'] = self._rate_struct
         self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
+        self.ftags['<fill_modified_rates>'] = self._fill_modified_rates
         self.ftags['<fill_temp_tabular_rates>'] = self._fill_temp_tabular_rates
+        self.ftags['<fill_starlib_rates>'] = self._fill_starlib_rates
         self.ftags['<derived_rate_functions>'] = self._derived_rate_functions
         self.ftags['<fill_derived_rates>'] = self._fill_derived_rates
         self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
@@ -112,6 +118,9 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<declare_pf_cache_temp_index>'] = self._declare_pf_cache_temp_index
         self.ftags['<spin_state_cases>'] = self._fill_spin_state_cases
         self.ftags['<pynucastro_version>'] = self._fill_pynucastro_version
+        self.ftags['<num_starlib>'] = self._fill_num_starlib
+        self.ftags['<starlib_random>'] = self._fill_starlib_random
+        self.ftags['<starlib_func>'] = self._fill_starlib_func
         self.indent = '    '
 
     @abstractmethod
@@ -247,16 +256,16 @@ class BaseCxxNetwork(ABC, RateCollection):
         and stores them to rate_eval.log_screen.
 
         """
-        screening_map = get_screening_map(self.get_rates())
-        for scr in screening_map:
-            nuc1_info = f'{float(scr.n1.Z)}_rt, {float(scr.n1.A)}_rt'
-            nuc2_info = f'{float(scr.n2.Z)}_rt, {float(scr.n2.A)}_rt'
+        screening_pair_set = get_screening_pair_set(self.get_rates())
+        for n1, n2 in screening_pair_set:
+            nuc1_info = f'{float(n1.Z)}_rt, {float(n1.A)}_rt'
+            nuc2_info = f'{float(n2.Z)}_rt, {float(n2.A)}_rt'
 
             if not self.do_screening:
                 # Set log_scor terms to be 0 if not doing screening
-                of.write(f'{self.indent*(n_indent)}rate_eval.log_screen(k_{scr.n1}_{scr.n2}) = 0.0_rt;\n')
+                of.write(f'{self.indent*(n_indent)}rate_eval.log_screen(k_{n1}_{n2}) = 0.0_rt;\n')
                 of.write(f'{self.indent*(n_indent)}if constexpr (do_T_derivatives) {{\n')
-                of.write(f'{self.indent*(n_indent+1)}rate_eval.dlog_screen_dT(k_{scr.n1}_{scr.n2}) = 0.0_rt;\n')
+                of.write(f'{self.indent*(n_indent+1)}rate_eval.dlog_screen_dT(k_{n1}_{n2}) = 0.0_rt;\n')
                 of.write(f'{self.indent*(n_indent)}}}\n\n')
             else:
                 # Scope the screening calculation to avoid multiple definitions of scn_fac.
@@ -265,11 +274,11 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                 # Insert a static assert (which will always pass) to require the
                 # compiler to evaluate the screen factor at compile time.
-                of.write(f'{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(scr.n1.Z)}_rt);\n')
+                of.write(f'{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(n1.Z)}_rt);\n')
                 of.write(f'{self.indent*(n_indent+1)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);\n')
-                of.write(f'{self.indent*(n_indent+1)}rate_eval.log_screen(k_{scr.n1}_{scr.n2}) = log_scor;\n')
+                of.write(f'{self.indent*(n_indent+1)}rate_eval.log_screen(k_{n1}_{n2}) = log_scor;\n')
                 of.write(f'{self.indent*(n_indent+1)}if constexpr (do_T_derivatives) {{\n')
-                of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dT(k_{scr.n1}_{scr.n2}) = dlog_scor_dT;\n')
+                of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dT(k_{n1}_{n2}) = dlog_scor_dT;\n')
                 of.write(f'{self.indent*(n_indent+1)}}}\n')
                 of.write(f'{self.indent*n_indent}' + '}\n\n')
 
@@ -284,15 +293,16 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f'{self.indent*n_indent}{dtype}\n')
 
     def _screen_pair(self, n_indent, of):
-        screening_map = get_screening_map(self.get_rates())
-        for i, scr in enumerate(screening_map):
-            of.write(f"{self.indent*n_indent}k_{scr.n1}_{scr.n2} = {i+1},\n")
-        last_scr = screening_map[-1]
-        of.write(f'{self.indent*n_indent}NumScreenPairs = k_{last_scr.n1}_{last_scr.n2}\n')
+        screening_pair_set = get_screening_pair_set(self.get_rates())
+        NumScreenPairs = len(screening_pair_set)
+        for i, (n1, n2) in enumerate(screening_pair_set, start=1):
+            of.write(f"{self.indent*n_indent}k_{n1}_{n2} = {i},\n")
+            if i == NumScreenPairs:
+                of.write(f'{self.indent*n_indent}NumScreenPairs = k_{n1}_{n2}\n')
 
     def _screen_pair_enum_type(self, n_indent, of):
-        screening_map = get_screening_map(self.get_rates())
-        NumScreenPairs = len(screening_map)
+        screening_pair_set = get_screening_pair_set(self.get_rates())
+        NumScreenPairs = len(screening_pair_set)
         dtype = _rate_dtype(NumScreenPairs)
         of.write(f'{self.indent*n_indent}{dtype}\n')
 
@@ -323,12 +333,12 @@ class BaseCxxNetwork(ABC, RateCollection):
             comps = [TableIndex.RATE, TableIndex.NU, TableIndex.GAMMA]
 
             of.write(f'{idnt}// {r.rid}\n')
-            of.write(f'{idnt}inline AMREX_GPU_MANAGED table_t {r.table_index_name}_meta{{.ntemp={r.table_temp_lines}, .nrhoy={r.table_rhoy_lines}, .nvars={len(comps)}, .nheader={r.table_header_lines}}};\n')
+            of.write(f'{idnt}inline {self.gpu_data_specifier} table_t {r.table_index_name}_meta{{.ntemp={r.table_temp_lines}, .nrhoy={r.table_rhoy_lines}, .nvars={len(comps)}, .nheader={r.table_header_lines}}};\n')
 
-            of.write(f'{idnt}inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy{{{", ".join(str(v) for v in r.interpolator.rhoy)}}};\n')
-            of.write(f'{idnt}inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_temp_lines}> {r.table_index_name}_temp{{{", ".join(str(v) for v in r.interpolator.temp)}}};\n')
+            of.write(f'{idnt}inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy{{{", ".join(str(v) for v in r.interpolator.rhoy)}}};\n')
+            of.write(f'{idnt}inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_temp_lines}> {r.table_index_name}_temp{{{", ".join(str(v) for v in r.interpolator.temp)}}};\n')
             of.write(f'{idnt}// Array3D is column-major (Fortran-ordering).  T varies fastest, then rho Ye, then the component\n')
-            of.write(f'{idnt}inline AMREX_GPU_MANAGED {self.array_namespace}Array3D<{self.dtype}, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, num_vars>\n')
+            of.write(f'{idnt}inline {self.gpu_data_specifier} {self.array_namespace}Array3D<{self.dtype}, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, num_vars>\n')
             of.write(f'{idnt}     {r.table_index_name}_data{{\n')
             for ncomp in comps:
                 for jrho in range(len(r.interpolator.rhoy)):
@@ -354,8 +364,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             idnt = self.indent*n_indent
 
-            of.write(f'{idnt}amrex::Real log_temp = std::log10(state.T);\n')
-            of.write(f'{idnt}amrex::Real log_rhoy = std::log10(rhoy);\n\n')
+            of.write(f'{idnt}{self.dtype} log_temp = std::log10(state.T);\n')
+            of.write(f'{idnt}{self.dtype} log_rhoy = std::log10(rhoy);\n\n')
 
             for r in self.tabular_rates:
 
@@ -376,28 +386,50 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         idnt = self.indent * n_indent
 
-        for r in self.temperature_tabular_rates:
+        for r in self.temperature_tabular_rates + self.starlib_rates:
 
             of.write(f"// temperature / rate tabulation for {r.rid}\n\n")
-            of.write(f"namespace {r.fname}_data {{\n")
+            of.write(f"namespace {r.fname}_data {{\n\n")
+
             log_temp_str = np.array2string(r.log_t9_data,
                                            max_line_width=70, precision=17, separator=", ")
-            of.write(f'{idnt}    inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_t9 = {{\n')
+            # remove the [ ]
+            log_temp_str = " " + log_temp_str[1:-1]
+
+            of.write(f'{idnt}    inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_t9 = {{\n')
             for line in log_temp_str.split("\n"):
-                of.write(f"     {line.replace('[', ' ').replace(']', ' ').strip()}\n")
+                of.write(f"     {line.strip()}\n")
             of.write("    };\n\n")
 
             log_rate_str = np.array2string(r.log_rate_data,
                                            max_line_width=70, precision=17, separator=", ")
-            of.write(f'{idnt}    inline AMREX_GPU_MANAGED {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_rate = {{\n')
+            # remove the [ ]
+            log_rate_str = " " + log_rate_str[1:-1]
+
+            of.write(f'{idnt}    inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_rate = {{\n')
             for line in log_rate_str.split("\n"):
-                of.write(f"     {line.replace('[', ' ').replace(']', ' ').strip()}\n")
-            of.write("    };\n")
+                of.write(f"     {line.strip()}\n")
+            of.write("    };\n\n")
+
+            if isinstance(r, StarLibRate):
+                of.write("    // sigma uncertainty\n")
+                sigma_str = np.array2string(r.sigma_data,
+                                        max_line_width=70, precision=17, separator=", ")
+                # remove the [ ]
+                sigma_str = " " + sigma_str[1:-1]
+
+                of.write(f'{idnt}    inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> sigma_rate = {{\n')
+                for line in sigma_str.split("\n"):
+                    of.write(f"     {line.strip()}\n")
+                of.write("    };\n\n")
 
             of.write("}\n\n")
 
     def _temp_tabular_rate_functions(self, n_indent, of):
-        for r in self.temperature_tabular_rates:
+        # the TemperatureTabularRate and StarLibRate functions are in
+        # the same header, so we can just do them together here
+
+        for r in self.temperature_tabular_rates + self.starlib_rates:
             fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
             for line in fstr.split("\n"):
                 if line:
@@ -469,8 +501,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         if len(self.tabular_rates) > 0:
 
-            of.write(f'{idnt}amrex::Real log_temp = std::log10(state.T);\n')
-            of.write(f'{idnt}amrex::Real log_rhoy = std::log10(rhoy);\n\n')
+            of.write(f'{idnt}{self.dtype} log_temp = std::log10(state.T);\n')
+            of.write(f'{idnt}{self.dtype} log_rhoy = std::log10(rhoy);\n\n')
 
             for r in self.tabular_rates:
 
@@ -532,8 +564,15 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _reaclib_rate_functions(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"
-        for r in self.reaclib_rates + self.modified_rates:
+        for r in self.reaclib_rates:
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
+
+    def _modified_rate_functions(self, n_indent, of):
+        for r in self.modified_rates:
+            fstr = r.function_string_cxx(dtype=self.dtype,
+                                         specifiers=self.function_specifier)
+            indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
+            of.write(indented_fstr)
 
     def _derived_rate_functions(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"
@@ -544,18 +583,18 @@ class BaseCxxNetwork(ABC, RateCollection):
         assert n_indent == 0, "function definitions must be at top level"
 
         of.write("struct rate_t {\n")
-        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumRates>  screened_rates;\n")
+        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumRates>  screened_rates;\n")
         of.write("#ifdef SCREENING\n")
-        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumScreenPairs>  log_screen;\n")
+        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  log_screen;\n")
         of.write("#endif\n")
         of.write(f"    {self.dtype} enuc_weak;\n")
         of.write("};\n\n")
         of.write("struct rate_derivs_t {\n")
-        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumRates>  screened_rates;\n")
-        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumRates>  dscreened_rates_dT;\n")
+        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumRates>  screened_rates;\n")
+        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumRates>  dscreened_rates_dT;\n")
         of.write("#ifdef SCREENING\n")
-        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumScreenPairs>  log_screen;\n")
-        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumScreenPairs>  dlog_screen_dT;\n")
+        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  log_screen;\n")
+        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  dlog_screen_dT;\n")
         of.write("#endif\n")
         of.write(f"    {self.dtype} enuc_weak;\n")
         of.write("};\n\n")
@@ -566,31 +605,16 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
 
     def write_screen_var(self, n_indent, of, rate):
-        """Return the string that composes the screening variable for a rate
-        by finding a list of reactant pairs for screening following the linear
-        mixing rule. For example, for 3-alpha, it is [(He4, He4), (He4, Be8)].
-
-        """
-        reactant_pairs = []
-        if rate.ion_screen:
-            scr_reactants = rate.ion_screen.copy()
-            while len(scr_reactants) > 1:
-                r1, r2 = scr_reactants[0], scr_reactants[1]
-                reactant_pair = (r1, r2)
-                reactant_pairs.append(reactant_pair)
-
-                # merge reactants to get compound nucleus
-                scr_reactants = [r1 + r2] + scr_reactants[2:]
-                scr_reactants.sort(key=lambda x: x.Z)
+        """Return the string that composes the screening variable for a rate."""
 
         # Set default log screening to be 0
         of.write(f"{self.indent*n_indent}{self.dtype} log_scor {{0.0_rt}};\n")
         of.write(f"{self.indent*n_indent}{self.dtype} dlog_scor_dT {{0.0_rt}};\n")
 
         # Use precomputed screening term if there are reactant pairs
-        if reactant_pairs:
-            log_screen_term = " + ".join(f"rate_eval.log_screen(k_{r1}_{r2})" for r1, r2 in reactant_pairs)
-            dlog_screen_dT_term = " + ".join(f"rate_eval.dlog_screen_dT(k_{r1}_{r2})" for r1, r2 in reactant_pairs)
+        if rate.screening_pairs:
+            log_screen_term = " + ".join(f"rate_eval.log_screen(k_{r1}_{r2})" for r1, r2 in rate.screening_pairs)
+            dlog_screen_dT_term = " + ".join(f"rate_eval.dlog_screen_dT(k_{r1}_{r2})" for r1, r2 in rate.screening_pairs)
 
             of.write("#ifdef SCREENING\n")
             of.write(f"{self.indent*n_indent}log_scor = " + log_screen_term + ";\n")
@@ -602,6 +626,19 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _fill_temp_tabular_rates(self, n_indent, of):
         for r in self.temperature_tabular_rates:
             of.write(f"{self.indent*n_indent}" + "{\n")
+            of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n\n")
+            self.write_screen_var(n_indent+1, of, r)
+            of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n")
+            of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
+            of.write(f"{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
+            of.write(f"{self.indent*(n_indent+1)}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n")
+            of.write(f"{self.indent*(n_indent+1)}}}\n")
+            of.write(f"{self.indent*n_indent}" + "}\n\n")
+
+    def _fill_starlib_rates(self, n_indent, of):
+        for r in self.starlib_rates:
+            of.write(f"{self.indent*n_indent}" + "{\n")
+            of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n\n")
             self.write_screen_var(n_indent+1, of, r)
             of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n")
             of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
@@ -611,10 +648,18 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}" + "}\n\n")
 
     def _fill_reaclib_rates(self, n_indent, of):
-        # note: modified_rates needs to be on the end here, since they
-        # likely will call the underlying reaclib rate for the actual
-        # rate evaluation
-        for r in self.reaclib_rates + self.modified_rates:
+        for r in self.reaclib_rates:
+            of.write(f"{self.indent*n_indent}" + "{\n")
+            self.write_screen_var(n_indent+1, of, r)
+            of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n")
+            of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
+            of.write(f"{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
+            of.write(f"{self.indent*(n_indent+1)}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n")
+            of.write(f"{self.indent*(n_indent+1)}}}\n")
+            of.write(f"{self.indent*n_indent}" + "}\n\n")
+
+    def _fill_modified_rates(self, n_indent, of):
+        for r in self.modified_rates:
             of.write(f"{self.indent*n_indent}" + "{\n")
             self.write_screen_var(n_indent+1, of, r)
             of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n")
@@ -679,7 +724,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             # number of points
             of.write(f"{self.indent*n_indent}constexpr int npts_{i+1} = {len(temp)};\n\n")
 
-            decl = f"inline AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
+            decl = f"inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 0, npts_{i+1}-1>"
 
             # write the temperature out, but for readability, split it to 5 values per line
 
@@ -702,7 +747,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}// {n}\n\n")
             of.write(f"{self.indent*n_indent}// this is log(partition function)\n\n")
 
-            decl = f"inline AMREX_GPU_MANAGED amrex::Array1D<{self.dtype}, 0, npts_{i+1}-1>"
+            decl = f"inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 0, npts_{i+1}-1>"
             of.write(f"{self.indent*n_indent}{decl} {n}_pf_array = {{\n")
 
             for data in batched(n.partition_function.log_pf_data, 5):
@@ -735,7 +780,6 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}int index_temp_array_{i+1}{{-1}};\n\n")
 
     def _fill_spin_state_cases(self, n_indent, of):
-
         def key_func(nuc):
             if nuc.spin_states is None:
                 return -1
@@ -743,13 +787,85 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         # group identical cases together to satisfy clang-tidy
         nuclei = sorted(self.unique_nuclei + self.approx_nuclei, key=key_func)
+
+        FIRST_ENCOUNTER = True
         for spin_state, group in itertools.groupby(nuclei, key=key_func):
             if spin_state == -1:
                 continue
-            for n in group:
-                of.write(f"{self.indent*n_indent}case {n.cindex()}:\n")
-            of.write(f"{self.indent*(n_indent+1)}spin = {spin_state};\n")
-            of.write(f"{self.indent*(n_indent+1)}break;\n\n")
+
+            if FIRST_ENCOUNTER:
+                of.write(f"{self.indent*n_indent}if constexpr (\n")
+                parenthesis_indent = f"{self.indent*(n_indent+1)}          "
+                FIRST_ENCOUNTER = False
+            else:
+                of.write(f"{self.indent*n_indent}else if constexpr (\n")
+                parenthesis_indent = f"{self.indent*(n_indent+1)}               "
+
+            # Divide group of spec into subgroups of 3 for better formatting
+            group = list(group)
+            subgroups = [group[n:n+3] for n in range(0, len(group), 3)]
+            for i, subgroup in enumerate(subgroups):
+                spec_string = " || ".join([f"spec == {n.cindex()}" for n in subgroup])
+
+                # If it is not the last subgroup, add || in the end
+                if i != len(subgroups) - 1:
+                    spec_string += " ||"
+                of.write(f"{self.indent*(n_indent+1)}{spec_string}\n")
+
+            of.write(f"{parenthesis_indent})\n")
+            of.write(f"{self.indent*n_indent}{{\n")
+            of.write(f"{self.indent*(n_indent+1)}return {spin_state}.0_rt;\n")
+            of.write(f"{self.indent*n_indent}}}\n")
 
     def _fill_pynucastro_version(self, n_indent, of):
         of.write(f"{self.indent*n_indent}pynucastro version: {pynucastro_version()}\n")
+
+    def _fill_num_starlib(self, _, of):
+        num_sl = len(self.starlib_rates)
+        sl_str = f"""
+namespace starlib {{
+
+    constexpr std::uint8_t NumStarLibRates = {num_sl};
+    inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, NumStarLibRates> prand{{}};
+}}"""
+
+        if num_sl > 0:
+            of.write(sl_str)
+
+    def _fill_starlib_random(self, _, of):
+        sl_random_str = """
+    if (network_rp::starlib_seed > 0) {
+        // generate Gaussian random numbers
+        std::mt19937 generator(network_rp::starlib_seed);
+
+        // normal distribution centered on 0 with a width of 1
+        std::normal_distribution rn(0.0, 1.0);
+
+        // generate the random numbers -- every process will
+        // get the same numbers here, since we are using the
+        // same seed.
+        for (int n = 1; n <= starlib::NumStarLibRates; ++n) {
+            starlib::prand(n) = rn(generator);
+        }
+    }"""
+
+        num_sl = len(self.starlib_rates)
+        if num_sl > 0:
+            of.write(sl_random_str)
+
+    def _fill_starlib_func(self, n_indent, of):
+
+        header = [f"template<{_rate_dtype(len(self.starlib_rates))} rate>",
+                  f"{self.function_specifier}",
+                  f"constexpr {self.dtype} get_p_random() {{"]
+
+        for line in header:
+            of.write(f"{self.indent * n_indent}{line}\n")
+
+        for n, rate in enumerate(self.starlib_rates):
+            of.write(f"{self.indent * (n_indent+1)}if constexpr (rate == k_{rate.fname}) {{\n")
+            of.write(f"{self.indent * (n_indent+2)}return starlib::prand({n+1});\n")
+            of.write(f"{self.indent * (n_indent+1)}}}\n\n")
+
+        of.write(f"{self.indent * (n_indent+1)}return 0.0_rt;\n")
+        of.write(f"{self.indent * n_indent}}}\n")

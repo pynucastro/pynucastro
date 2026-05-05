@@ -54,7 +54,7 @@ The following information is provided:
 * some helper functions:
 
   * ``to_composition(Y)`` : convert an array of molar fractions to a :func:`Composition
-    <pynucastro.networks.rate_collection.Composition>` object
+    <pynucastro.nucdata.composition.Composition>` object
 
   * ``energy_release(dY)`` : computes the energy release (in erg/g) given the change
     in molar fractions ``dY``.

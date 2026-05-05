@@ -3,10 +3,14 @@ properties have been modified from the original source.
 
 """
 
+import copy
+
 import numpy as np
 
 from pynucastro.rates.rate import Rate
 from pynucastro.rates.reaclib_rate import ReacLibRate
+from pynucastro.rates.starlib_rate import StarLibRate
+from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
 
 
 class ModifiedRate(Rate):
@@ -47,31 +51,55 @@ class ModifiedRate(Rate):
         self.original_rate = original_rate
         self.update_screening = update_screening
 
-        # at the moment, this is only tested with ReacLibRate
-        # a potential issue is in the C++ code generation where
-        # we output modified rates only after ReacLib rates,
-        # so we need to make sure other rate types are computed
-        # first, before any modified rates
-        assert isinstance(original_rate, ReacLibRate)
+        # at the moment, this is only tested with ReacLibRate,
+        # TemperatureTabularRate, and StarLibRate rates.  It is
+        # important in the C++ code generation the we fill modified
+        # rates only after the original rate is filled.
+        assert isinstance(original_rate,
+                          (ReacLibRate, StarLibRate, TemperatureTabularRate))
 
         if new_reactants is not None:
             reactants = new_reactants
         else:
-            reactants = original_rate.reactants
+            reactants = self.original_rate.reactants
 
         if new_products is not None:
             products = new_products
         else:
-            products = original_rate.products
+            products = self.original_rate.products
 
         super().__init__(reactants=reactants, products=products,
-                         weak_type=original_rate.weak_type,
+                         weak_type=self.original_rate.weak_type,
                          label="modified",
                          stoichiometry=stoichiometry)
 
         self.modified = True
 
         self._set_print_representation()
+
+    def __copy__(self):
+        """Make a copy of the rate via copy.copy().  This is mostly
+        shallow except for a few attributes to address some mutability
+        issues
+
+        """
+
+        cls = type(self)
+        new = cls.__new__(cls)
+
+        # shallow copy everything
+        new.__dict__ = self.__dict__.copy()
+
+        # override some shallow copies
+        new.reactants = list(self.reactants)
+        new.products = list(self.products)
+        if self.stoichiometry:
+            new.stoichiometry = dict(self.stoichiometry)
+
+        # copy the original rate
+        new.original_rate = copy.copy(self.original_rate)
+
+        return new
 
     def _set_screening(self):
         """Determine if this rate is eligible for screening and the
@@ -80,9 +108,8 @@ class ModifiedRate(Rate):
         update_screening.
 
         """
-        # Tells if this rate is eligible for screening, and if it is
-        # then Rate.ion_screen is a 2-element (3 for 3-alpha) list of
-        # Nucleus objects for screening; otherwise it is set to none
+        # ion_screen holds the list of reactants eligible for screening
+        # empty list if there is only one eligible reactant
         self.ion_screen = []
         if self.update_screening:
             _reac = self.reactants
@@ -90,12 +117,12 @@ class ModifiedRate(Rate):
             _reac = self.original_rate.reactants
         nucz = [q for q in _reac if q.Z != 0]
         if len(nucz) > 1:
-            nucz.sort(key=lambda x: x.Z)
-            self.ion_screen = []
-            self.ion_screen.append(nucz[0])
-            self.ion_screen.append(nucz[1])
-            if len(nucz) == 3:
-                self.ion_screen.append(nucz[2])
+            nucz.sort(key=lambda x: (x.Z, x.A))
+            self.ion_screen = nucz.copy()
+
+        # Find screening_pairs
+        self.screening_pairs = []
+        self._set_screening_pairs()
 
     def log_eval(self, T, *, rho=None, comp=None,
                  screen_func=None):
@@ -110,7 +137,7 @@ class ModifiedRate(Rate):
             the density to evaluate screening effects at.
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate screening effects with.
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`

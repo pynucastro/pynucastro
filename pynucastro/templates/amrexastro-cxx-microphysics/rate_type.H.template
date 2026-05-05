@@ -1,0 +1,8 @@
+#ifndef NET_RATE_TYPE_H
+#define NET_RATE_TYPE_H
+
+#include <actual_network.H>
+
+<rate_struct>(0)
+
+#endif
