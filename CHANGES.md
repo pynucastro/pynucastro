@@ -23,6 +23,7 @@
 
     * reorganize the constructor to make it easier to add other
       approximations (#1329)
+    * add C+C, C+O, O+O approximate rates (#1328)
 
   * `SimpleCxxNetwork` / `FortranNetwork` / `BaseCxxNetwork` :
 
