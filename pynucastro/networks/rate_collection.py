@@ -29,7 +29,7 @@ from pynucastro.rates import (ApproximateRate, DerivedRate, Library,
                               ModifiedRate, Rate, RateFileError, RatePair,
                               ReacLibRate, StarLibRate, TabularRate,
                               TemperatureTabularRate, find_duplicate_rates,
-                              is_allowed_dupe, load_rate)
+                              is_allowed_dupe, load_rate, make_CO_approx_rates)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_id
 
 mpl.rcParams['figure.dpi'] = 100
@@ -183,12 +183,6 @@ class RateCollection:
             cr.removed = True
         else:
             cr.removed = False
-
-        # update fname -- _set_print_representation will add
-        # "_removed" to the name
-
-        # pylint: disable-next=protected-access
-        cr._set_print_representation()
 
         # child rates may be ReacLibRates, StarLibRates,
         # ModifiedRates, or DerivedRates.  Make sure we don't double
@@ -753,8 +747,11 @@ class RateCollection:
                 continue
 
             # build the approximate rates
-            ar = ApproximateRate(r_ag, [r_ap, r_pg], r_ga, [r_gp, r_pa], approx_type="ap_pg")
-            ar_reverse = ApproximateRate(r_ag, [r_ap, r_pg], r_ga, [r_gp, r_pa], is_reverse=True, approx_type="ap_pg")
+            rates = {"A(a,g)B": r_ag, "A(a,p)X": r_ap, "X(p,g)B": r_pg,
+                     "B(g,a)A": r_ga, "B(g,p)X": r_gp, "X(p,a)A": r_pa}
+
+            ar = ApproximateRate(rates, approx_type="ap_pg")
+            ar_reverse = ApproximateRate(rates, is_reverse=True, approx_type="ap_pg")
 
             if self.verbose:
                 print(f"using approximate rate {ar}")
@@ -841,14 +838,13 @@ class RateCollection:
                 continue
 
             # build the approximate rates
-            ar = ApproximateRate(None, [rf1, rf2],
-                                 None, [rr1, rr2],
-                                 approx_type="nn_g",
+            rates = {"A(n,g)X": rf1, "X(n,g)B": rf2,
+                     "B(g,n)X": rr1, "X(g,n)A": rr2}
+
+            ar = ApproximateRate(rates, approx_type="nn_g",
                                  use_identical_particle_factor=False)
 
-            ar_reverse = ApproximateRate(None, [rf1, rf2],
-                                         None, [rr1, rr2],
-                                         is_reverse=True, approx_type="nn_g",
+            ar_reverse = ApproximateRate(rates, is_reverse=True, approx_type="nn_g",
                                          use_identical_particle_factor=False)
 
             nuclei_approximated_out.append(inter_nuc)
@@ -875,6 +871,33 @@ class RateCollection:
 
         # regenerate the links
         self._build_collection()
+
+    def make_CO_burning_approx(self, root_nuclei="C"):
+        """Approximate C+C, C+O, or O+O burning by removing the
+        intermediate nucleus from the proton emission channel.  Note:
+        the intermediate nucleus is not removed by this function, but
+        it can be removed manually after this call.
+
+        Parameters
+        ----------
+        root_nuclei : str
+            The nuclei for the process we are approximating.  It can
+            be "C" for C+C, "CO" for C+O, or "O" for O+O
+
+        """
+
+        assert root_nuclei in ["C", "CO", "O"]
+
+        new_rates, old_rate_str = make_CO_approx_rates(self.rates,
+                                                       root_nuclei,
+                                                       return_obsolete_rate_names=True)
+
+        # get the rates we are approximating out and remove them
+        rr = [self.get_rate_by_name(r) for r in old_rate_str]
+        self.remove_rates(rr)
+
+        # add the new rates
+        self.add_rates(new_rates)
 
     def make_nse_protons(self, A):
         """Replace protons in rates involving nuclei with mass number
@@ -2164,30 +2187,33 @@ class RateCollection:
         real_edges = [(u, v) for u, v, e in sorted_edges if e["real"] == 1]
         real_weights = [e["weight"] for u, v, e in sorted_edges if e["real"] == 1]
 
-        if len(real_weights) == 0:
+        if len(real_weights) == 0 and not show_small_ydot:
             raise ValueError("No rates to show below ydot_cutoff_value.")
 
         if rate_ydots is None:
             edge_color = "C0"
         else:
             edge_color = real_weights
-        ww = np.array(real_weights)
-        min_weight = ww.min()
-        max_weight = ww.max()
-        dw = (max_weight - min_weight)/4
-        widths = np.ones_like(ww)
-        if dw > 0:
-            widths[ww > min_weight + dw] = 1.5
-            widths[ww > min_weight + 2*dw] = 2.5
-            widths[ww > min_weight + 3*dw] = 4
-        else:
-            widths *= 2
 
-        real_edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
-                                               edgelist=real_edges, edge_color=edge_color,
-                                               connectionstyle=connectionstyle,
-                                               node_size=node_size,
-                                               edge_cmap=plt.cm.viridis, ax=ax)
+        real_edges_lc = None
+        if len(real_weights) > 0:
+            ww = np.array(real_weights)
+            min_weight = ww.min()
+            max_weight = ww.max()
+            dw = (max_weight - min_weight)/4
+            widths = np.ones_like(ww)
+            if dw > 0:
+                widths[ww > min_weight + dw] = 1.5
+                widths[ww > min_weight + 2*dw] = 2.5
+                widths[ww > min_weight + 3*dw] = 4
+            else:
+                widths *= 2
+
+            real_edges_lc = nx.draw_networkx_edges(G, G.position, width=list(widths),
+                                                   edgelist=real_edges, edge_color=edge_color,
+                                                   connectionstyle=connectionstyle,
+                                                   node_size=node_size,
+                                                   edge_cmap=plt.cm.viridis, ax=ax)
 
         # highlight edges -- this is basically overplotting the edges we already drew
 
@@ -2238,7 +2264,7 @@ class RateCollection:
         if rotated:
             orientation = "horizontal"
 
-        if rate_ydots is not None:
+        if rate_ydots is not None and real_edges_lc is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
             pc.set_array(real_weights)
             label = r"$\log_{10}(\mathrm{rate})$"

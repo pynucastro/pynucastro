@@ -1,18 +1,25 @@
 #ifndef actual_network_H
 #define actual_network_H
 
+#include <random>
 #include <string_view>
 
 #include <AMReX_REAL.H>
 #include <AMReX_Array.H>
 #include <AMReX_Loop.H>
 
+#include <extern_parameters.H>
 #include <fundamental_constants.H>
 #include <network_properties.H>
 
 using namespace amrex::literals;
 
-void actual_network_init();
+
+inline
+void actual_network_init() {
+
+
+}
 
 constexpr std::string_view network_name = "pynucastro-cxx";
 
@@ -113,18 +120,18 @@ namespace Rates
     enum NetworkRates :
     std::uint8_t
     {
-        k_He4_Mg24_to_Si28_removed = 1,
-        k_He4_Mg24_to_p_Al27_removed = 2,
-        k_p_Al27_to_Si28_removed = 3,
-        k_Si28_to_He4_Mg24_removed = 4,
-        k_Si28_to_p_Al27_removed = 5,
-        k_p_Al27_to_He4_Mg24_removed = 6,
-        k_He4_Si28_to_S32_removed = 7,
-        k_He4_Si28_to_p_P31_removed = 8,
-        k_p_P31_to_S32_removed = 9,
-        k_S32_to_He4_Si28_removed = 10,
-        k_S32_to_p_P31_removed = 11,
-        k_p_P31_to_He4_Si28_removed = 12,
+        k_He4_Mg24_to_Si28_reaclib = 1,
+        k_He4_Mg24_to_p_Al27_reaclib = 2,
+        k_p_Al27_to_Si28_reaclib = 3,
+        k_Si28_to_He4_Mg24_reaclib = 4,
+        k_Si28_to_p_Al27_reaclib = 5,
+        k_p_Al27_to_He4_Mg24_reaclib = 6,
+        k_He4_Si28_to_S32_reaclib = 7,
+        k_He4_Si28_to_p_P31_reaclib = 8,
+        k_p_P31_to_S32_reaclib = 9,
+        k_S32_to_He4_Si28_reaclib = 10,
+        k_S32_to_p_P31_reaclib = 11,
+        k_p_P31_to_He4_Si28_reaclib = 12,
         k_Mg24_He4_to_Si28_approx = 13,
         k_Si28_to_Mg24_He4_approx = 14,
         k_Si28_He4_to_S32_approx = 15,
@@ -148,23 +155,29 @@ namespace Rates
 
     static const std::vector<std::string> rate_names = {
         "",   // 0
-        "He4_Mg24_to_Si28_removed",  // 1,
-        "He4_Mg24_to_p_Al27_removed",  // 2,
-        "p_Al27_to_Si28_removed",  // 3,
-        "Si28_to_He4_Mg24_removed",  // 4,
-        "Si28_to_p_Al27_removed",  // 5,
-        "p_Al27_to_He4_Mg24_removed",  // 6,
-        "He4_Si28_to_S32_removed",  // 7,
-        "He4_Si28_to_p_P31_removed",  // 8,
-        "p_P31_to_S32_removed",  // 9,
-        "S32_to_He4_Si28_removed",  // 10,
-        "S32_to_p_P31_removed",  // 11,
-        "p_P31_to_He4_Si28_removed",  // 12,
+        "He4_Mg24_to_Si28_reaclib",  // 1,
+        "He4_Mg24_to_p_Al27_reaclib",  // 2,
+        "p_Al27_to_Si28_reaclib",  // 3,
+        "Si28_to_He4_Mg24_reaclib",  // 4,
+        "Si28_to_p_Al27_reaclib",  // 5,
+        "p_Al27_to_He4_Mg24_reaclib",  // 6,
+        "He4_Si28_to_S32_reaclib",  // 7,
+        "He4_Si28_to_p_P31_reaclib",  // 8,
+        "p_P31_to_S32_reaclib",  // 9,
+        "S32_to_He4_Si28_reaclib",  // 10,
+        "S32_to_p_P31_reaclib",  // 11,
+        "p_P31_to_He4_Si28_reaclib",  // 12,
         "Mg24_He4_to_Si28_approx",  // 13,
         "Si28_to_Mg24_He4_approx",  // 14,
         "Si28_He4_to_S32_approx",  // 15,
         "S32_to_Si28_He4_approx"  // 16,
     };
+
+    template<std::uint8_t rate>
+    AMREX_GPU_HOST_DEVICE AMREX_INLINE
+    constexpr amrex::Real get_p_random() {
+        return 0.0_rt;
+    }
 
 }
 

@@ -1,5 +1,5 @@
-#ifndef actual_rhs_H
-#define actual_rhs_H
+#ifndef ACTUAL_RHS_H
+#define ACTUAL_RHS_H
 
 #include <AMReX_REAL.H>
 #include <AMReX_Array.H>
@@ -15,7 +15,10 @@
 #ifdef NEUTRINOS
 #include <neutrino.H>
 #endif
+#include <rate_type.H>
 #include <reaclib_rates.H>
+#include <approximate_rates.H>
+#include <modified_rates.H>
 #include <table_rates.H>
 #include <temperature_table_rates.H>
 #include <derived_rates.H>
@@ -117,7 +120,14 @@ void evaluate_rates(const burn_t& state,
 
     temp_tabular::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
-    // Calculate Derived Rates. This should go last but before approx rates.
+    // fill modified rates next -- these can have ReacLib or
+    // TemperatureTabular/StarLib rates as the original rate
+    modified_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
+
+    // Calculate Derived Rates next. This should go last but before
+    // approx rates, since those may have ReacLibRate,
+    // TemperatureTabularRate / StarLibRate, or DerivedRate as the
+    // underlying rate.
 
     fill_derived_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
@@ -126,7 +136,7 @@ void evaluate_rates(const burn_t& state,
 
     fill_approx_rates<do_T_derivatives, T>(tfactors, state.rho, Y, rate_eval);
 
-    // Calculate tabular rates
+    // Calculate tabular weak rates
 
     [[maybe_unused]] amrex::Real rate, drate_dt, edot_nu, edot_gamma;
 

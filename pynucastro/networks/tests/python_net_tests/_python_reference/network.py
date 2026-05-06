@@ -260,7 +260,7 @@ def rhs(t, Y, rho, T, screen_func=None):
     return rhs_eq(t, Y, rho, T, screen_func)
 
 @numba.njit()
-def rhs_eq(t, Y, rho, T, screen_func):
+def do_rate_eval(t, Y, rho, T, screen_func):
 
     tf = Tfactors(T)
     rate_eval = RateEval()
@@ -294,6 +294,12 @@ def rhs_eq(t, Y, rho, T, screen_func):
     Na23_to_Ne23_weaktab(rate_eval, T, rho=rho, Y=Y)
     Ne23_to_Na23_weaktab(rate_eval, T, rho=rho, Y=Y)
 
+    return rate_eval
+
+@numba.njit()
+def rhs_eq(t, Y, rho, T, screen_func):
+
+    rate_eval = do_rate_eval(t, Y, rho, T, screen_func)
     dYdt = np.zeros((nnuc), dtype=np.float64)
 
     dYdt[jn] = (

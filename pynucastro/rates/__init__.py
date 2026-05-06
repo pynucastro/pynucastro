@@ -3,6 +3,7 @@
 from pynucastro.nucdata import UnsupportedNucleus
 
 from .approximate_rates import ApproximateRate, create_double_neutron_capture
+from .aprox_family_rates import make_CO_approx_rates
 from .derived_rate import DerivedRate
 from .files import RateFileError, _find_rate_file
 from .known_duplicates import find_duplicate_rates, is_allowed_dupe
