@@ -94,8 +94,6 @@ def make_CO_approx_rates(all_rates, root_nuclei,
     # X is a proton lighter than C
     X = F - Nucleus("p")
 
-    print(S1, S2, E, F, X)
-
     # now get the rates (including inverses)
     rates = {}
 
