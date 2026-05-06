@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.approximate_rates &#8212; pynucastro 2.9.0.post103+gd107e174c documentation</title>
+    <title>pynucastro.rates.approximate_rates &#8212; pynucastro 2.9.0.post104+g69358119e documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=fed7fa8e"></script>
+    <script src="../../../_static/documentation_options.js?v=aeb439ce"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -198,6 +198,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../alpha-gamma-approx.html">Approximating alpha-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../double-n-capture.html">Approximating double n-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modified-rates.html">Modified Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../co-approximations.html">Approximating C and O Burning</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../nse-protons.html">Using NSE Protons</a></li>
@@ -241,6 +242,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../aprox13.html">The “aprox13” network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../he-burning-example.html">A He-burning Network</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
@@ -308,6 +310,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
@@ -504,6 +507,23 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rate</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_assert_rate_prop</span><span class="p">(</span><span class="n">rate</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                      <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                      <span class="n">num_reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_products</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">reactants</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">reactants</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">rate</span><span class="o">.</span><span class="n">reactants</span>
+    <span class="k">if</span> <span class="n">num_reactants</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="n">num_reactants</span>
+
+    <span class="k">if</span> <span class="n">products</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">products</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">rate</span><span class="o">.</span><span class="n">products</span>
+    <span class="k">if</span> <span class="n">num_products</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">rate</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="n">num_products</span>
+
+
 <div class="viewcode-block" id="create_double_neutron_capture">
 <a class="viewcode-back" href="../../../pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.create_double_neutron_capture">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_double_neutron_capture</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="n">reactant</span><span class="p">,</span> <span class="n">product</span><span class="p">):</span>
@@ -553,14 +573,37 @@
 <div class="viewcode-block" id="ApproximateRate">
 <a class="viewcode-back" href="../../../pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ApproximateRate</span><span class="p">(</span><span class="n">Rate</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;An approximation to a rate sequence.  Two approximations are</span>
-<span class="sd">    currently supported:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An approximation to a rate sequence A &lt;--&gt; B.  The following</span>
+<span class="sd">    approximations are currently supported:</span>
 
-<span class="sd">    * &quot;ap_pg&quot; : combine the A(a, g)B and A(a, p)X(p, g)B sequences</span>
-<span class="sd">      into a single, effective A(a, g)B rate.</span>
+<span class="sd">    * &quot;ap_pg&quot; : combine the A(α,γ)B and A(α,p)X(p,γ)B sequences</span>
+<span class="sd">      into a single, effective A(α,γ)B rate.</span>
 
-<span class="sd">    * &quot;nn_g&quot; : replace the sequence A(n, g)X(n, g)B with an</span>
-<span class="sd">      effective A(nn, g)B rate.</span>
+<span class="sd">      An example of this is combining S32(α,γ)Ar36 and</span>
+<span class="sd">      S32(α,p)Cl35(p,γ)Ar36.</span>
+
+<span class="sd">    * &quot;nn_g&quot; : replace the sequence A(n,γ)X(n,γ)B with an</span>
+<span class="sd">      effective A(nn,γ)B rate.</span>
+
+<span class="sd">      An example of this is combining Fe52(n,γ)Fe53(n,γ)Fe54</span>
+
+<span class="sd">    * &quot;Yp_pg&quot; : combine A(Y,γ)B and A(Y,p)X(p,γ)B sequences into a</span>
+<span class="sd">      single, effective A(Y,γ)B rate.  Note: the original A(Y,γ)B does</span>
+<span class="sd">      not need to be included, in which case just A(Y,p)X(p,γ)B is</span>
+<span class="sd">      approximated.  We also include another pathway from X connecting</span>
+<span class="sd">      to a different nucleus C, X(p,α)C.  This affects the branching</span>
+<span class="sd">      from X that serves as the normalization.</span>
+
+<span class="sd">      Here Y is another nucleus, and we assume that mass_number(A) &gt;=</span>
+<span class="sd">      mass_number(Y)</span>
+
+<span class="sd">      An example of this is combining O16(O16,p)P31(p,γ)S32 and</span>
+<span class="sd">      optionally (a modified rate version of) O16(O16,γ)S32.</span>
+
+<span class="sd">    * &quot;Yp_pa&quot; : combine the A(Y,α)B and A(Y,p)X(p,α)B sequences into a</span>
+<span class="sd">      single, effective A(Y,α)B rate.  We also include another pathway</span>
+<span class="sd">      from X connecting to a different nucleus C, X(p,γ)C. This affects</span>
+<span class="sd">      the branching from X that serves as the normalization.</span>
 
 <span class="sd">    This class stores all of the rates needed to implement these</span>
 <span class="sd">    approximations.</span>
@@ -572,12 +615,11 @@
 <span class="sd">        &quot;A(a,p)X&quot;, that provides the ``Rate`` object for that rate.</span>
 <span class="sd">        Each approximation has a different set of keys that is</span>
 <span class="sd">        expected.</span>
-
 <span class="sd">    is_reverse : bool</span>
-<span class="sd">        Are we creating the effective A(x,y)B or B(y, x)A?</span>
+<span class="sd">        Are we creating the effective A(x,y)B or B(y,x)A?</span>
 <span class="sd">    approx_type : str</span>
 <span class="sd">        The type of approximation to do.  Currently supported are</span>
-<span class="sd">        &quot;ap_pg&quot; and &quot;nn_g&quot;</span>
+<span class="sd">        &quot;ap_pg&quot;, &quot;nn_g&quot;, &quot;Yp_pg&quot;, and &quot;Yp_pa&quot;</span>
 <span class="sd">    use_identical_particle_factor : bool</span>
 <span class="sd">        Usually if a rate has 2 reactants of the same type, we</span>
 <span class="sd">        divide by 2, since the order doesn&#39;t matter.  However, for</span>
@@ -613,24 +655,23 @@
 
             <span class="c1"># an ap_pg approximate rate combines A(a,g)B and</span>
             <span class="c1"># A(a,p)X(p,g)B into a single effective rate by assuming</span>
-            <span class="c1"># proton equilibrium.</span>
+            <span class="c1"># proton equilibrium.  There can be 6 or 7 rates (7 for</span>
+            <span class="c1"># the case when we are expecting another branching from X)</span>
 
-            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">7</span>
 
             <span class="c1"># make sure the keys we expect are valid in the rates dict</span>
 
             <span class="k">try</span><span class="p">:</span>
                 <span class="c1"># this primary rate is the forward rate that connects</span>
-                <span class="c1"># the nucleus endpoints directly</span>
+                <span class="c1"># the nucleus endpoints directly. This should be A(a,g)B</span>
                 <span class="n">primary_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(a,g)B&quot;</span><span class="p">]</span>
-
-                <span class="c1"># make sure that the primary forward rate makes sense</span>
-                <span class="c1"># this should be A(a,g)B</span>
-                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">primary_rate</span><span class="o">.</span><span class="n">reactants</span>
-                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">primary_rate</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;primary rate not found&quot;</span><span class="p">)</span>
                 <span class="k">raise</span>
+
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">primary_rate</span><span class="p">,</span>
+                              <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)],</span> <span class="n">num_products</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
             <span class="c1"># we are going to define the product A and reactant B from</span>
             <span class="c1"># this reaction</span>
@@ -641,13 +682,13 @@
                 <span class="c1"># the first secondary rate should be A(a,p)X, where X</span>
                 <span class="c1"># is the intermediate nucleus</span>
                 <span class="n">secondary_rate_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(a,p)X&quot;</span><span class="p">]</span>
-
-                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="ow">in</span> <span class="n">secondary_rate_1</span><span class="o">.</span><span class="n">reactants</span>
-                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_rate_1</span><span class="o">.</span><span class="n">reactants</span>
-                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_rate_1</span><span class="o">.</span><span class="n">products</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;first secondary rate not found&quot;</span><span class="p">)</span>
                 <span class="k">raise</span>
+
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">secondary_rate_1</span><span class="p">,</span>
+                              <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)],</span>
+                              <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)])</span>
 
             <span class="c1"># get the intermediate nucleus (X) from this rate</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">secondary_rate_1</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
@@ -655,48 +696,63 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="c1"># now the second secondary rate show be X(p,g)B</span>
                 <span class="n">secondary_rate_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,g)B&quot;</span><span class="p">]</span>
-
-                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="ow">in</span> <span class="n">secondary_rate_2</span><span class="o">.</span><span class="n">reactants</span>
-                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_rate_2</span><span class="o">.</span><span class="n">reactants</span>
-                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="ow">in</span> <span class="n">secondary_rate_2</span><span class="o">.</span><span class="n">products</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;second secondary rate not found&quot;</span><span class="p">)</span>
                 <span class="k">raise</span>
+
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">secondary_rate_2</span><span class="p">,</span>
+                              <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)],</span>
+                              <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span><span class="p">],</span> <span class="n">num_products</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
             <span class="c1"># now ensure that the reverse rate makes sense</span>
 
             <span class="k">try</span><span class="p">:</span>
                 <span class="c1"># the primary reverse rate is B(g,a)A</span>
                 <span class="n">primary_reverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(g,a)A&quot;</span><span class="p">]</span>
-
-                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="ow">in</span> <span class="n">primary_reverse</span><span class="o">.</span><span class="n">reactants</span>
-                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="ow">in</span> <span class="n">primary_reverse</span><span class="o">.</span><span class="n">products</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;primary reverse rate not found&quot;</span><span class="p">)</span>
                 <span class="k">raise</span>
 
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">primary_reverse</span><span class="p">,</span>
+                              <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span><span class="p">],</span>
+                              <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">])</span>
+
             <span class="k">try</span><span class="p">:</span>
                 <span class="c1"># the first secondary reverse rate should be B(g,p)X</span>
                 <span class="n">secondary_reverse_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(g,p)X&quot;</span><span class="p">]</span>
-
-                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="ow">in</span> <span class="n">secondary_reverse_1</span><span class="o">.</span><span class="n">reactants</span>
-                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="ow">in</span> <span class="n">secondary_reverse_1</span><span class="o">.</span><span class="n">products</span>
-                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_reverse_1</span><span class="o">.</span><span class="n">products</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;first secondary reverse rate not found&quot;</span><span class="p">)</span>
                 <span class="k">raise</span>
 
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">secondary_reverse_1</span><span class="p">,</span>
+                              <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span><span class="p">],</span>
+                              <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)])</span>
+
             <span class="k">try</span><span class="p">:</span>
                 <span class="c1"># the second secondary reverse rate should be X(p,a)A</span>
                 <span class="n">secondary_reverse_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,a)A&quot;</span><span class="p">]</span>
-
-                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="ow">in</span> <span class="n">secondary_reverse_2</span><span class="o">.</span><span class="n">reactants</span>
-                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_reverse_2</span><span class="o">.</span><span class="n">reactants</span>
-                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="ow">in</span> <span class="n">secondary_reverse_2</span><span class="o">.</span><span class="n">products</span>
-                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">secondary_reverse_2</span><span class="o">.</span><span class="n">products</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;second secondary reverse rate not found&quot;</span><span class="p">)</span>
                 <span class="k">raise</span>
+
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">secondary_reverse_2</span><span class="p">,</span>
+                              <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)],</span>
+                              <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)])</span>
+
+            <span class="c1"># finally, check to see if we have the additional branching rate</span>
+            <span class="n">alternate_rate</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># the alternate branching rate should be X(p,Y)C</span>
+                <span class="n">alternate_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,Y)C&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">6</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;alternate branching rate X(p,Y)C missing&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span>
+
+            <span class="k">if</span> <span class="n">alternate_rate</span><span class="p">:</span>
+                <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">alternate_rate</span><span class="p">,</span>
+                                  <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)],</span>
+                                  <span class="n">num_products</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
             <span class="c1"># now initialize the super class with these reactants and products</span>
 
@@ -728,20 +784,22 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="c1"># the first forward rate should be A(n,g)X</span>
                 <span class="n">forward1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(n,g)X&quot;</span><span class="p">]</span>
-                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">forward1</span><span class="o">.</span><span class="n">reactants</span>
-                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">forward1</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;first forward rate not found&quot;</span><span class="p">)</span>
                 <span class="k">raise</span>
 
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">forward1</span><span class="p">,</span>
+                              <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)],</span> <span class="n">num_products</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
             <span class="k">try</span><span class="p">:</span>
                 <span class="c1"># the second forward rate should be X(n,g)B</span>
                 <span class="n">forward2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(n,g)B&quot;</span><span class="p">]</span>
-                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">forward2</span><span class="o">.</span><span class="n">reactants</span>
-                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">forward2</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;second forward rate not found&quot;</span><span class="p">)</span>
                 <span class="k">raise</span>
+
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">forward2</span><span class="p">,</span>
+                              <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)],</span> <span class="n">num_products</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
             <span class="c1"># make sure that the intermediate nucleus matches</span>
             <span class="k">assert</span> <span class="n">forward1</span><span class="o">.</span><span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">max</span><span class="p">(</span><span class="n">forward2</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
@@ -761,26 +819,29 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="c1"># the first reverse rate should be B(g,n)X</span>
                 <span class="n">reverse1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(g,n)X&quot;</span><span class="p">]</span>
-                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="ow">in</span> <span class="n">reverse1</span><span class="o">.</span><span class="n">reactants</span>
-                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">reverse1</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="ow">in</span> <span class="n">reverse1</span><span class="o">.</span><span class="n">products</span>
-                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">reverse1</span><span class="o">.</span><span class="n">products</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;first reverse rate not found&quot;</span><span class="p">)</span>
                 <span class="k">raise</span>
 
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">reverse1</span><span class="p">,</span>
+                              <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span><span class="p">],</span> <span class="n">num_reactants</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                              <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)])</span>
+
             <span class="k">try</span><span class="p">:</span>
                 <span class="c1"># the second reverse rate should be X(g,n)A</span>
                 <span class="n">reverse2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(g,n)A&quot;</span><span class="p">]</span>
-                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="ow">in</span> <span class="n">reverse2</span><span class="o">.</span><span class="n">reactants</span>
-                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">reverse2</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-                <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="ow">in</span> <span class="n">reverse2</span><span class="o">.</span><span class="n">products</span>
-                <span class="k">assert</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">reverse2</span><span class="o">.</span><span class="n">products</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;second reverse rate not found&quot;</span><span class="p">)</span>
                 <span class="k">raise</span>
 
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">reverse2</span><span class="p">,</span>
+                              <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span><span class="p">],</span> <span class="n">num_reactants</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                              <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)])</span>
+
             <span class="c1"># now initialize the super class with these reactants and products</span>
+
+            <span class="c1"># this only makes sense with the use_identical_particle_factor = False</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="n">use_identical_particle_factor</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reverse</span><span class="p">:</span>
                 <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)],</span>
@@ -800,6 +861,223 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_rho</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">==</span> <span class="s2">&quot;Yp_pg&quot;</span><span class="p">:</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># this is the first forward rate</span>
+                <span class="n">first_forward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(Y,p)X&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rate A(Y,p)X not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
+
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">first_forward</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)])</span>
+
+            <span class="c1"># get the primary reactant, other reactant (Y), and</span>
+            <span class="c1"># intermediate nucleus (X).</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">first_forward</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">other_reactant</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">first_forward</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">first_forward</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># this is the second forward rate</span>
+                <span class="n">second_forward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,g)B&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rate X(p,g)B not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
+
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">second_forward</span><span class="p">,</span>
+                              <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)],</span>
+                              <span class="n">num_products</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># get the primary product from this rate</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">second_forward</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># this is the first reverse rate</span>
+                <span class="n">first_reverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(g,p)X&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rate B(g,p)X not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
+
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">first_reverse</span><span class="p">,</span>
+                              <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span><span class="p">],</span> <span class="n">num_reactants</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                              <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)])</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># this is the second reverse rate</span>
+                <span class="n">second_reverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,Y)A&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rate X(p,Y)A not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
+
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">second_reverse</span><span class="p">,</span>
+                              <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)],</span>
+                              <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">other_reactant</span><span class="p">])</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># This is the direct rate that may optionally be present</span>
+                <span class="c1"># it connects the nucleus endpoints</span>
+                <span class="n">direct_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(Y,g)B&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">direct_rate</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="n">direct_rate</span><span class="p">:</span>
+                <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">direct_rate</span><span class="p">,</span>
+                                  <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">other_reactant</span><span class="p">],</span>
+                                  <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span><span class="p">],</span> <span class="n">num_products</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># This is the direct reverse rate that may be optionally present</span>
+                <span class="n">direct_reverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(g,Y)A&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">direct_reverse</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="n">direct_reverse</span><span class="p">:</span>
+                <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">direct_reverse</span><span class="p">,</span>
+                                  <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span><span class="p">],</span> <span class="n">num_reactants</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                  <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">other_reactant</span><span class="p">])</span>
+
+            <span class="k">assert</span> <span class="p">(</span><span class="n">direct_rate</span> <span class="ow">and</span> <span class="n">direct_reverse</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">direct_rate</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">direct_reverse</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># The alternate branching rate</span>
+                <span class="n">alternate_branch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,a)C&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rate X(p,a)C not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
+
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">alternate_branch</span><span class="p">,</span>
+                              <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)],</span>
+                              <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)])</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reverse</span><span class="p">:</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">other_reactant</span><span class="p">],</span>
+                                 <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span><span class="p">],</span>
+                                 <span class="n">label</span><span class="o">=</span><span class="s2">&quot;approx&quot;</span><span class="p">,</span>
+                                 <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="n">use_identical_particle_factor</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">hidden_rates</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(Y,p)X&quot;</span><span class="p">],</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,g)B&quot;</span><span class="p">],</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,Y)A&quot;</span><span class="p">],</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,a)C&quot;</span><span class="p">]]</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span><span class="p">],</span>
+                                 <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">other_reactant</span><span class="p">],</span>
+                                 <span class="n">label</span><span class="o">=</span><span class="s2">&quot;approx&quot;</span><span class="p">,</span>
+                                 <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="n">use_identical_particle_factor</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">hidden_rates</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,g)B&quot;</span><span class="p">],</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(g,p)X&quot;</span><span class="p">],</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,Y)A&quot;</span><span class="p">],</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,a)C&quot;</span><span class="p">]]</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">==</span> <span class="s2">&quot;Yp_pa&quot;</span><span class="p">:</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># this is the single-step forward rate</span>
+                <span class="n">primary_forward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(Y,a)B&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rate A(Y,a)B not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
+
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">primary_forward</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)])</span>
+
+            <span class="c1"># get the primary reactant, other reactant (Y), and</span>
+            <span class="c1"># primary product</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">primary_forward</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">other_reactant</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">primary_forward</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">primary_forward</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># this is the forward rate 1 for the 2-rate sequence</span>
+                <span class="n">first_forward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(Y,p)X&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rate A(Y,p)X not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
+
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">first_forward</span><span class="p">,</span>
+                              <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">other_reactant</span><span class="p">],</span>
+                              <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)])</span>
+
+            <span class="c1"># get the intermediate nucleus</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">first_forward</span><span class="o">.</span><span class="n">products</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># this is the forward rate 2 for the 2-rate sequence</span>
+                <span class="n">second_forward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,a)B&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rate X(p,g)B not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
+
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">second_forward</span><span class="p">,</span>
+                              <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)],</span>
+                              <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span><span class="p">])</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># this is the single-step reverse rate</span>
+                <span class="n">primary_reverse</span> <span class="o">=</span> <span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(a,Y)A&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rate B(a,Y)A not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
+
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">primary_reverse</span><span class="p">,</span>
+                              <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)],</span>
+                              <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">other_reactant</span><span class="p">])</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># this is the reverse rate 1 for the 2-rate sequence</span>
+                <span class="n">first_reverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(a,p)X&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rate B(a,p)X not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
+
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">first_reverse</span><span class="p">,</span>
+                              <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)],</span>
+                              <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)])</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># this is the reverse rate 2 for the 2-rate sequence</span>
+                <span class="n">second_reverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,Y)A&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rate X(p,Y)A not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
+
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">second_reverse</span><span class="p">,</span>
+                              <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)],</span>
+                              <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">other_reactant</span><span class="p">])</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># The alternate branching rate</span>
+                <span class="n">alternate_branch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,g)C&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rate X(p,g)C not found&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
+
+            <span class="n">_assert_rate_prop</span><span class="p">(</span><span class="n">alternate_branch</span><span class="p">,</span>
+                              <span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">intermediate_nucleus</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)],</span>
+                              <span class="n">num_products</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reverse</span><span class="p">:</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">other_reactant</span><span class="p">],</span>
+                                 <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)],</span>
+                                 <span class="n">label</span><span class="o">=</span><span class="s2">&quot;approx&quot;</span><span class="p">,</span>
+                                 <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="n">use_identical_particle_factor</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">hidden_rates</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(Y,p)X&quot;</span><span class="p">],</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,a)B&quot;</span><span class="p">],</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,g)C&quot;</span><span class="p">],</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,Y)A&quot;</span><span class="p">]]</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)],</span>
+                                 <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">other_reactant</span><span class="p">],</span>
+                                 <span class="n">label</span><span class="o">=</span><span class="s2">&quot;approx&quot;</span><span class="p">,</span>
+                                 <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="n">use_identical_particle_factor</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">hidden_rates</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(a,p)X&quot;</span><span class="p">],</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,a)B&quot;</span><span class="p">],</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,Y)A&quot;</span><span class="p">],</span>
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,g)C&quot;</span><span class="p">]]</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;approximation type </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span><span class="si">}</span><span class="s2"> not supported&quot;</span><span class="p">)</span>
@@ -856,7 +1134,7 @@
 
 <div class="viewcode-block" id="ApproximateRate.eval">
 <a class="viewcode-back" href="../../../pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate.eval">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># pylint: disable=too-many-return-statements</span>
              <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the approximate rate.</span>
 
@@ -880,19 +1158,27 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">==</span> <span class="s2">&quot;ap_pg&quot;</span><span class="p">:</span>
+
+            <span class="n">r_pg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,g)B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                              <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+            <span class="n">r_pa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,a)A&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                              <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+            <span class="c1"># there might be another branching from X that we need to</span>
+            <span class="c1"># account for</span>
+            <span class="n">r_pY</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">if</span> <span class="s2">&quot;X(p,Y)C&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+                <span class="n">r_pY</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,Y)C&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                                  <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+
+            <span class="n">denom</span> <span class="o">=</span> <span class="n">r_pg</span> <span class="o">+</span> <span class="n">r_pa</span> <span class="o">+</span> <span class="n">r_pY</span>
+
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reverse</span><span class="p">:</span>  <span class="c1"># pylint: disable=no-else-return</span>
                 <span class="c1"># the approximate forward rate is r_ag + r_ap r_pg / (r_pg + r_pa)</span>
                 <span class="n">r_ag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(a,g)B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
                                                   <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
                 <span class="n">r_ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(a,p)X&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
                                                   <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
-                <span class="n">r_pg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,g)B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
-                                                  <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
-
-                <span class="n">r_pa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,a)A&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
-                                                  <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
-
-                <span class="k">return</span> <span class="n">r_ag</span> <span class="o">+</span> <span class="n">r_ap</span> <span class="o">*</span> <span class="n">r_pg</span> <span class="o">/</span> <span class="p">(</span><span class="n">r_pg</span> <span class="o">+</span> <span class="n">r_pa</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">r_ag</span> <span class="o">+</span> <span class="n">r_ap</span> <span class="o">*</span> <span class="n">r_pg</span> <span class="o">/</span> <span class="n">denom</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># the approximate reverse rate is r_ga + r_pa r_gp / (r_pg + r_pa)</span>
@@ -901,43 +1187,106 @@
                                                   <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
                 <span class="n">r_gp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(g,p)X&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
                                                   <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
-                <span class="n">r_pa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,a)A&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
-                                                  <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
-
-                <span class="n">r_pg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,g)B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
-                                                  <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
-
-                <span class="k">return</span> <span class="n">r_ga</span> <span class="o">+</span> <span class="n">r_pa</span> <span class="o">*</span> <span class="n">r_gp</span> <span class="o">/</span> <span class="p">(</span><span class="n">r_pg</span> <span class="o">+</span> <span class="n">r_pa</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">r_ga</span> <span class="o">+</span> <span class="n">r_pa</span> <span class="o">*</span> <span class="n">r_gp</span> <span class="o">/</span> <span class="n">denom</span>
 
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">==</span> <span class="s2">&quot;nn_g&quot;</span><span class="p">:</span>
 
             <span class="c1"># we are approximating A(n,g)X(n,g)B</span>
 
             <span class="n">Yn</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)]</span>
+            <span class="n">X_ng_B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(n,g)B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                                <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+            <span class="n">X_gn_A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(g,n)A&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                                <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+            <span class="n">denom</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">Yn</span> <span class="o">*</span> <span class="n">X_ng_B</span> <span class="o">+</span> <span class="n">X_gn_A</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reverse</span><span class="p">:</span>  <span class="c1"># pylint: disable=no-else-return</span>
                 <span class="c1"># the forward rate</span>
                 <span class="n">A_ng_X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(n,g)X&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
                                                     <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
-                <span class="n">X_ng_B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(n,g)B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
-                                                    <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
-
-                <span class="n">X_gn_A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(g,n)A&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
-                                                    <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
-
-                <span class="k">return</span> <span class="n">A_ng_X</span> <span class="o">*</span> <span class="n">X_ng_B</span> <span class="o">/</span> <span class="p">(</span><span class="n">rho</span> <span class="o">*</span> <span class="n">Yn</span> <span class="o">*</span> <span class="n">X_ng_B</span> <span class="o">+</span> <span class="n">X_gn_A</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">A_ng_X</span> <span class="o">*</span> <span class="n">X_ng_B</span> <span class="o">/</span> <span class="n">denom</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># the reverse rate</span>
                 <span class="n">B_gn_X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(g,n)X&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
                                                     <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
-                <span class="n">X_gn_A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(g,n)A&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
-                                                    <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">B_gn_X</span> <span class="o">*</span> <span class="n">X_gn_A</span> <span class="o">/</span> <span class="n">denom</span>
 
-                <span class="n">X_ng_B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(n,g)B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
-                                                    <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">==</span> <span class="s2">&quot;Yp_pg&quot;</span><span class="p">:</span>
 
-                <span class="k">return</span> <span class="n">B_gn_X</span> <span class="o">*</span> <span class="n">X_gn_A</span> <span class="o">/</span> <span class="p">(</span><span class="n">rho</span> <span class="o">*</span> <span class="n">Yn</span> <span class="o">*</span> <span class="n">X_ng_B</span> <span class="o">+</span> <span class="n">X_gn_A</span><span class="p">)</span>
+            <span class="c1"># we are approximating A(Y,p)X(p,g)B with an alternate</span>
+            <span class="c1"># branch from X, X(p,a)C, and possibly a direct path</span>
+            <span class="c1"># between A and B, A(Y,g)B</span>
+
+            <span class="n">r_pY</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,Y)A&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                              <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+            <span class="n">r_pa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,a)C&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                              <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+            <span class="n">r_pg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,g)B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                              <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+            <span class="n">denom</span> <span class="o">=</span> <span class="n">r_pY</span> <span class="o">+</span> <span class="n">r_pa</span> <span class="o">+</span> <span class="n">r_pg</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reverse</span><span class="p">:</span>  <span class="c1"># pylint: disable=no-else-return</span>
+                <span class="c1"># optional direct forward rate</span>
+                <span class="n">r_Yg</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">rr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(Y,g)B&quot;</span><span class="p">]</span>
+                    <span class="n">r_Yg</span> <span class="o">=</span> <span class="n">rr</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                   <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="c1"># forward rates</span>
+                <span class="n">r_Yp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(Y,p)X&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                                  <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">r_Yg</span> <span class="o">+</span> <span class="n">r_Yp</span> <span class="o">*</span> <span class="n">r_pg</span> <span class="o">/</span> <span class="n">denom</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># optional direct reverse rate</span>
+                <span class="n">r_gY</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">rr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(g,Y)A&quot;</span><span class="p">]</span>
+                    <span class="n">r_gY</span> <span class="o">=</span> <span class="n">rr</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                   <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="c1"># reverse</span>
+                <span class="n">r_gp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(g,p)X&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                                  <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">r_gY</span> <span class="o">+</span> <span class="n">r_pY</span> <span class="o">*</span> <span class="n">r_gp</span> <span class="o">/</span> <span class="n">denom</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">==</span> <span class="s2">&quot;Yp_pa&quot;</span><span class="p">:</span>
+
+            <span class="c1"># we are approximating A(Y,a)B + A(Y,p)X(p,a)B with an alternate</span>
+            <span class="c1"># branch from X, X(p,g)C</span>
+
+            <span class="n">r_pY</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,Y)A&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                              <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+            <span class="n">r_pa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,a)B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                              <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+            <span class="n">r_pg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(p,g)C&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                              <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+            <span class="n">denom</span> <span class="o">=</span> <span class="n">r_pY</span> <span class="o">+</span> <span class="n">r_pa</span> <span class="o">+</span> <span class="n">r_pg</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reverse</span><span class="p">:</span>  <span class="c1"># pylint: disable=no-else-return</span>
+                <span class="c1"># direct forward rate</span>
+                <span class="n">r_Ya</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(Y,a)B&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                                  <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+
+                <span class="c1"># forward rates</span>
+                <span class="n">r_Yp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(Y,p)X&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                                  <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">r_Ya</span> <span class="o">+</span> <span class="n">r_Yp</span> <span class="o">*</span> <span class="n">r_pa</span> <span class="o">/</span> <span class="n">denom</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># direct reverse rate</span>
+                <span class="n">r_aY</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(a,Y)A&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                                  <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+                <span class="c1"># reverse rates</span>
+                <span class="n">r_ap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(a,p)X&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                                  <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">r_aY</span> <span class="o">+</span> <span class="n">r_pY</span> <span class="o">*</span> <span class="n">r_ap</span> <span class="o">/</span> <span class="n">denom</span>
 
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;approximation type </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span><span class="si">}</span><span class="s2"> not supported&quot;</span><span class="p">)</span></div>
 
@@ -957,32 +1306,36 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">==</span> <span class="s2">&quot;ap_pg&quot;</span><span class="p">:</span>
 
             <span class="c1"># we are approximating A(a,p)X(p,g)B</span>
+            <span class="c1"># with the possibility of X(p,Y)C as another branching</span>
 
             <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;@numba.njit()</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf):</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_pg = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,g)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_pa = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,a)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">if</span> <span class="s2">&quot;X(p,Y)C&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_pY = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,Y)C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;    r_pY = 0.0</span><span class="se">\n</span><span class="s2">&quot;</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reverse</span><span class="p">:</span>
 
                 <span class="c1"># first we need to get all of the rates that make this up</span>
                 <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_ag = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;A(a,g)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_ap = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;A(a,p)X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_pg = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,g)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_pa = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,a)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
 
                 <span class="c1"># now the approximation</span>
-                <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;    rate = r_ag + r_ap * r_pg / (r_pg + r_pa)</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;    rate = r_ag + r_ap * r_pg / (r_pg + r_pa + r_pY)</span><span class="se">\n</span><span class="s2">&quot;</span>
 
             <span class="k">else</span><span class="p">:</span>
 
                 <span class="c1"># first we need to get all of the rates that make this up</span>
                 <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_ga = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;B(g,a)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_pa = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,a)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_gp = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;B(g,p)X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_pg = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,g)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
 
                 <span class="c1"># now the approximation</span>
-                <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;    rate = r_ga + r_pa * r_gp / (r_pg + r_pa)</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;    rate = r_ga + r_pa * r_gp / (r_pg + r_pa + r_pY)</span><span class="se">\n</span><span class="s2">&quot;</span>
 
             <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = rate</span><span class="se">\n\n</span><span class="s2">&quot;</span>
             <span class="k">return</span> <span class="n">string</span>
@@ -1016,6 +1369,85 @@
 
                 <span class="c1"># now the approximation</span>
                 <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;    rate = r1_gn * r2_gn / (rho * Yn * r2_ng + r1_gn)</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = rate</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="k">return</span> <span class="n">string</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">==</span> <span class="s2">&quot;Yp_pg&quot;</span><span class="p">:</span>
+
+            <span class="c1"># we are approximating A(Y,p)X(p,g)B with an alternate</span>
+            <span class="c1"># branch from X, X(p,a)C, and possibly a direct path</span>
+            <span class="c1"># between A and B, A(Y,g)B</span>
+
+            <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;@numba.njit()</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf):</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_pY = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,Y)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_pa = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,a)C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_pg = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,g)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;    denom = r_pY + r_pa + r_pg</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reverse</span><span class="p">:</span>
+
+                <span class="c1"># first we need to get all of the rates that make this up</span>
+                <span class="k">if</span> <span class="s2">&quot;A(Y,g)B&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+                    <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_Yg = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;A(Y,g)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;    r_Yg = 0.0</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_Yp = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;A(Y,p)X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="c1"># now the approximation</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;    rate = r_Yg + r_Yp * r_pg / denom</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="c1"># first we need to get all of the rates that make this up</span>
+                <span class="k">if</span> <span class="s2">&quot;B(g,Y)A&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+                    <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_gY = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;B(g,Y)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;    r_gY = 0.0</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_gp = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;B(g,p)X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="c1"># now the approximation</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;    rate = r_gY + r_pY * r_gp / denom</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = rate</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="k">return</span> <span class="n">string</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">==</span> <span class="s2">&quot;Yp_pa&quot;</span><span class="p">:</span>
+
+            <span class="c1"># we are approximating A(Y,a)B + A(Y,p)X(p,a)B with an alternate</span>
+            <span class="c1"># branch from X, X(p,g)C</span>
+
+            <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;@numba.njit()</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf):</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_pY = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,Y)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_pa = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,a)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_pg = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,g)C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;    denom = r_pY + r_pa + r_pg</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reverse</span><span class="p">:</span>
+
+                <span class="c1"># first we need to get all of the rates that make this up</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_Ya = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;A(Y,a)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_Yp = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;A(Y,p)X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="c1"># now the approximation</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;    rate = r_Ya + r_Yp * r_pa / denom</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="c1"># first we need to get all of the rates that make this up</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_aY = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;B(a,Y)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r_ap = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;B(a,p)X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="c1"># now the approximation</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;    rate = r_aY + r_pY * r_ap / denom</span><span class="se">\n</span><span class="s2">&quot;</span>
 
             <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = rate</span><span class="se">\n\n</span><span class="s2">&quot;</span>
             <span class="k">return</span> <span class="n">string</span>
@@ -1068,41 +1500,54 @@
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specifiers</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;void rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">) </span><span class="se">{{\n\n</span><span class="s2">&quot;</span>
 
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_pg = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,g)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_pa = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,a)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">if</span> <span class="s2">&quot;X(p,Y)C&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_pY = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,Y)C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_pY = 0.0_rt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dd = 1.0_rt / (r_pg + r_pa + r_pY);</span><span class="se">\n</span><span class="s2">&quot;</span>
+
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reverse</span><span class="p">:</span>
 
                 <span class="c1"># first we need to get all of the rates that make this up</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_ag = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;A(a,g)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_ap = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;A(a,p)X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_pg = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,g)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_pa = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,a)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
 
                 <span class="c1"># now the approximation</span>
-                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dd = 1.0_rt / (r_pg + r_pa);</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate = r_ag + r_ap * r_pg * dd;</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_ag = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;A(a,g)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_ap = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;A(a,p)X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pg = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,g)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pa = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,a)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT = drdT_ag + drdT_ap * r_pg * dd + r_ap * drdT_pg * dd - r_ap * r_pg * dd * dd * (drdT_pg + drdT_pa);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">if</span> <span class="s2">&quot;X(p,Y)C&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pY = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,Y)C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pY = 0.0_rt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT = drdT_ag + drdT_ap * r_pg * dd + r_ap * drdT_pg * dd - r_ap * r_pg * dd * dd * (drdT_pg + drdT_pa + drdT_pY);</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    }</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="k">else</span><span class="p">:</span>
 
                 <span class="c1"># first we need to get all of the rates that make this up</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_ga = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;B(g,a)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_pa = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,a)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_gp = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;B(g,p)X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_pg = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,g)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
 
                 <span class="c1"># now the approximation</span>
-                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dd = 1.0_rt / (r_pg + r_pa);</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate = r_ga + r_gp * r_pa * dd;</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_ga = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;B(g,a)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pa = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,a)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_gp = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;B(g,p)X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pg = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,g)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT = drdT_ga + drdT_gp * r_pa * dd + r_gp * drdT_pa * dd - r_gp * r_pa * dd * dd * (drdT_pg + drdT_pa);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">if</span> <span class="s2">&quot;X(p,Y)C&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pY = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,Y)C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pY = 0.0_rt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT = drdT_ga + drdT_gp * r_pa * dd + r_gp * drdT_pa * dd - r_gp * r_pa * dd * dd * (drdT_pg + drdT_pa + drdT_pY);</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    }</span><span class="se">\n</span><span class="s2">&quot;</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">leave_open</span><span class="p">:</span>
@@ -1151,6 +1596,136 @@
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dr2dT_gn = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;B(g,n)X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dr2dT_ng = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(n,g)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT = dr1dT_gn * r2_gn * dd + r1_gn * dr2dT_gn * dd - r1_gn * r2_gn * dd * dd * (rho * Yn * dr2dT_ng + dr1dT_gn);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    }</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">leave_open</span><span class="p">:</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
+            <span class="k">return</span> <span class="n">fstring</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">==</span> <span class="s2">&quot;Yp_pg&quot;</span><span class="p">:</span>
+
+            <span class="c1"># we are approximating A(Y,p)X(p,g)B with an alternate</span>
+            <span class="c1"># branch from X, X(p,a)C, and possibly a direct path</span>
+            <span class="c1"># between A and B, A(Y,g)B</span>
+
+            <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;const T&amp; rate_eval&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; rate&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; drate_dT&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_args</span><span class="p">]</span>
+            <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;template &lt;typename T&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specifiers</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;void rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">) </span><span class="se">{{\n\n</span><span class="s2">&quot;</span>
+
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_pY = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,Y)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_pa = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,a)C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_pg = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,g)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dd = 1.0_rt / (r_pY + r_pa + r_pg);</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reverse</span><span class="p">:</span>
+
+                <span class="c1"># first we need to get all of the rates that make this up</span>
+                <span class="k">if</span> <span class="s2">&quot;A(Y,g)B&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_Yg = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;A(Y,g)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_Yg = 0.0_rt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_Yp = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;A(Y,p)X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="c1"># now the approximation</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate = r_Yg + r_Yp * r_pg * dd;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pY = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,Y)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pa = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,a)C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pg = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,g)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="k">if</span> <span class="s2">&quot;A(Y,g)B&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_Yg = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;A(Y,g)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_Yg = 0.0_rt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_Yp = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;A(Y,p)X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT = drdT_Yg + drdT_Yp * r_pg * dd + r_Yp * drdT_pg * dd - r_Yp * r_pg * dd * dd * (drdT_pY + drdT_pa + drdT_pg);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    }</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="c1"># first we need to get all of the rates that make this up</span>
+                <span class="k">if</span> <span class="s2">&quot;B(g,Y)A&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_gY = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;B(g,Y)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_gY = 0.0_rt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_gp = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;B(g,p)X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="c1"># now the approximation</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate = r_gY + r_pY * r_gp * dd;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pY = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,Y)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pa = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,a)C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pg = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,g)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">if</span> <span class="s2">&quot;B(g,Y)A&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_gY = rate_eval.screened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;B(g,Y)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_gY = 0.0_rt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_gp = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;B(g,p)X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT = drdT_gY + drdT_pY * r_gp * dd + r_pY * drdT_gp * dd - r_pY * r_gp * dd * dd * (drdT_pY + drdT_pa + drdT_pg);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    }</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">leave_open</span><span class="p">:</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
+            <span class="k">return</span> <span class="n">fstring</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">==</span> <span class="s2">&quot;Yp_pa&quot;</span><span class="p">:</span>
+
+            <span class="c1"># we are approximating A(Y,a)B + A(Y,p)X(p,a)B with an alternate</span>
+            <span class="c1"># branch from X, X(p,g)C</span>
+
+            <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;const T&amp; rate_eval&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; rate&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; drate_dT&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_args</span><span class="p">]</span>
+            <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;template &lt;typename T&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specifiers</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;void rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">) </span><span class="se">{{\n\n</span><span class="s2">&quot;</span>
+
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_pY = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,Y)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_pa = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,a)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_pg = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,g)C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dd = 1.0_rt / (r_pY + r_pa + r_pg);</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reverse</span><span class="p">:</span>
+
+                <span class="c1"># first we need to get all of the rates that make this up</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_Ya = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;A(Y,a)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_Yp = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;A(Y,p)X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="c1"># now the approximation</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate = r_Ya + r_Yp * r_pa * dd;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pY = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,Y)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pa = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,a)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pg = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,g)C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_Ya = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;A(Y,a)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_Yp = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;A(Y,p)X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT = drdT_Ya + drdT_Yp * r_pa * dd + r_Ya * drdT_pa * dd - r_Yp * r_pa * dd * dd * (drdT_pY + drdT_pa + drdT_pg);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    }</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+
+                <span class="c1"># first we need to get all of the rates that make this up</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_aY = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;B(a,Y)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> r_ap = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;B(a,p)X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="c1"># now the approximation</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate = r_aY + r_pY * r_ap * dd;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pY = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,Y)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pa = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,a)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_pg = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(p,g)C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_aY = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;B(a,Y)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> drdT_ap = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;B(a,p)X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT = drdT_aY + drdT_pY * r_ap * dd + r_pY * drdT_ap * dd - r_pY * r_ap * dd * dd * (drdT_pY + drdT_pa + drdT_pg);</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    }</span><span class="se">\n</span><span class="s2">&quot;</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">leave_open</span><span class="p">:</span>

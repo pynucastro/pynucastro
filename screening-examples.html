@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Screening Rates &#8212; pynucastro 2.9.0.post103+gd107e174c documentation</title>
+    <title>Screening Rates &#8212; pynucastro 2.9.0.post104+g69358119e documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=fed7fa8e"></script>
+    <script src="_static/documentation_options.js?v=aeb439ce"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -202,6 +202,7 @@
 <li class="toctree-l2"><a class="reference internal" href="alpha-gamma-approx.html">Approximating alpha-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="double-n-capture.html">Approximating double n-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modified-rates.html">Modified Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="co-approximations.html">Approximating C and O Burning</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
@@ -245,6 +246,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="aprox13.html">The “aprox13” network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="he-burning-example.html">A He-burning Network</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
@@ -312,6 +314,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
@@ -607,10 +610,10 @@ surrounded by a sea of electrons.</p>
 <h2>Screening implementations<a class="headerlink" href="#screening-implementations" title="Link to this heading">#</a></h2>
 <p>pynucastro currently has 4 screening implementations that computes <span class="math notranslate nohighlight">\(h\)</span> for the fusion process between two ions:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.screen5" title="pynucastro.screening.screen.screen5"><code class="xref py py-func docutils literal notranslate"><span class="pre">screen5</span></code></a> based on <span id="id1">Wallace <em>et al.</em> [<a class="reference internal" href="zreferences.html#id29" title="R. K. Wallace, S. E. Woosley, and T. A. Weaver. The thermonuclear model for X-ray transients. \apj , 258:696-715, July 1982. doi:10.1086/160119.">1982</a>]</span></p></li>
-<li><p><a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.potekhin_1998" title="pynucastro.screening.screen.potekhin_1998"><code class="xref py py-func docutils literal notranslate"><span class="pre">potekhin_1998</span></code></a> based on <span id="id2">Chabrier and Potekhin [<a class="reference internal" href="zreferences.html#id8" title="Gilles Chabrier and Alexander Y. Potekhin. Equation of state of fully ionized electron-ion plasmas. Physical Review E, 58(4):4941–4949, October 1998. doi:10.1103/PhysRevE.58.4941.">1998</a>]</span></p></li>
-<li><p><a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.chugunov_2007" title="pynucastro.screening.screen.chugunov_2007"><code class="xref py py-func docutils literal notranslate"><span class="pre">chugunov_2007</span></code></a> based on <span id="id3">Chugunov <em>et al.</em> [<a class="reference internal" href="zreferences.html#id4" title="A. I. Chugunov, H. E. DeWitt, and D. G. Yakovlev. Coulomb tunneling for fusion reactions in dense matter: Path integral Monte Carlo versus mean field. Physical Review D, 76(2):025028, July 2007. arXiv:0707.3500, doi:10.1103/PhysRevD.76.025028.">2007</a>]</span></p></li>
-<li><p><a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.chugunov_2009" title="pynucastro.screening.screen.chugunov_2009"><code class="xref py py-func docutils literal notranslate"><span class="pre">chugunov_2009</span></code></a> based on <span id="id4">Chugunov and DeWitt [<a class="reference internal" href="zreferences.html#id6" title="A. I. Chugunov and H. E. DeWitt. Nuclear fusion reaction rates for strongly coupled ionic mixtures. Physical Review C, 80(1):014611, July 2009. arXiv:0905.3844, doi:10.1103/PhysRevC.80.014611.">2009</a>]</span></p></li>
+<li><p><a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.screen5" title="pynucastro.screening.screen.screen5"><code class="xref py py-func docutils literal notranslate"><span class="pre">screen5</span></code></a> based on <span class="bibtex-citation" id="id1">Wallace <em>et al.</em> [<a class="reference internal" href="zreferences.html#id29" title="R. K. Wallace, S. E. Woosley, and T. A. Weaver. The thermonuclear model for X-ray transients. \apj , 258:696-715, July 1982. doi:10.1086/160119.">1982</a>]</span></p></li>
+<li><p><a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.potekhin_1998" title="pynucastro.screening.screen.potekhin_1998"><code class="xref py py-func docutils literal notranslate"><span class="pre">potekhin_1998</span></code></a> based on <span class="bibtex-citation" id="id2">Chabrier and Potekhin [<a class="reference internal" href="zreferences.html#id8" title="Gilles Chabrier and Alexander Y. Potekhin. Equation of state of fully ionized electron-ion plasmas. Physical Review E, 58(4):4941–4949, October 1998. doi:10.1103/PhysRevE.58.4941.">1998</a>]</span></p></li>
+<li><p><a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.chugunov_2007" title="pynucastro.screening.screen.chugunov_2007"><code class="xref py py-func docutils literal notranslate"><span class="pre">chugunov_2007</span></code></a> based on <span class="bibtex-citation" id="id3">Chugunov <em>et al.</em> [<a class="reference internal" href="zreferences.html#id4" title="A. I. Chugunov, H. E. DeWitt, and D. G. Yakovlev. Coulomb tunneling for fusion reactions in dense matter: Path integral Monte Carlo versus mean field. Physical Review D, 76(2):025028, July 2007. arXiv:0707.3500, doi:10.1103/PhysRevD.76.025028.">2007</a>]</span></p></li>
+<li><p><a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.chugunov_2009" title="pynucastro.screening.screen.chugunov_2009"><code class="xref py py-func docutils literal notranslate"><span class="pre">chugunov_2009</span></code></a> based on <span class="bibtex-citation" id="id4">Chugunov and DeWitt [<a class="reference internal" href="zreferences.html#id6" title="A. I. Chugunov and H. E. DeWitt. Nuclear fusion reaction rates for strongly coupled ionic mixtures. Physical Review C, 80(1):014611, July 2009. arXiv:0905.3844, doi:10.1103/PhysRevC.80.014611.">2009</a>]</span></p></li>
 </ul>
 <p>Each of these use various approximations to account for the influence of the plasma on screening the electric charge of the nuclei that are fusing.</p>
 </section>
@@ -871,7 +874,7 @@ reaction rate information is contained in the <code class="docutils literal notr
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/01379f09044e2d60521985f4294091ea352cec4d9c6e0b3e679deabb6fa30217.png" src="_images/01379f09044e2d60521985f4294091ea352cec4d9c6e0b3e679deabb6fa30217.png" />
+<img alt="_images/5ec8842e8d9d3382cd5edc0b38948a3431eb2d241ba893bb52150936b8bbce97.png" src="_images/5ec8842e8d9d3382cd5edc0b38948a3431eb2d241ba893bb52150936b8bbce97.png" />
 </div>
 </div>
 <p>As expected, using screening makes the carbon burn much more quickly.</p>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.approximate_rates module &#8212; pynucastro 2.9.0.post103+gd107e174c documentation</title>
+    <title>pynucastro.rates.approximate_rates module &#8212; pynucastro 2.9.0.post104+g69358119e documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=fed7fa8e"></script>
+    <script src="_static/documentation_options.js?v=aeb439ce"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,7 +52,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'pynucastro.rates.approximate_rates';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pynucastro.rates.derived_rate module" href="pynucastro.rates.derived_rate.html" />
+    <link rel="next" title="pynucastro.rates.aprox_family_rates module" href="pynucastro.rates.aprox_family_rates.html" />
     <link rel="prev" title="pynucastro.rates.alternate_rates module" href="pynucastro.rates.alternate_rates.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -199,6 +199,7 @@
 <li class="toctree-l2"><a class="reference internal" href="alpha-gamma-approx.html">Approximating alpha-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="double-n-capture.html">Approximating double n-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modified-rates.html">Modified Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="co-approximations.html">Approximating C and O Burning</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
@@ -242,6 +243,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="aprox13.html">The “aprox13” network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="he-burning-example.html">A He-burning Network</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
@@ -309,6 +311,7 @@
 <li class="toctree-l3 current active has-children"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
 <li class="toctree-l4 current active"><a class="current reference internal" href="#">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
@@ -601,13 +604,33 @@ equilibrium through a nucleus.</p>
 <dt class="sig sig-object py" id="pynucastro.rates.approximate_rates.ApproximateRate">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.approximate_rates.</span></span><span class="sig-name descname"><span class="pre">ApproximateRate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rates</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approx_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ap_pg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_identical_particle_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/approximate_rates.html#ApproximateRate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.approximate_rates.ApproximateRate" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rate</span></code></a></p>
-<p>An approximation to a rate sequence.  Two approximations are
-currently supported:</p>
-<ul class="simple">
-<li><p>“ap_pg” : combine the A(a, g)B and A(a, p)X(p, g)B sequences
-into a single, effective A(a, g)B rate.</p></li>
-<li><p>“nn_g” : replace the sequence A(n, g)X(n, g)B with an
-effective A(nn, g)B rate.</p></li>
+<p>An approximation to a rate sequence A &lt;–&gt; B.  The following
+approximations are currently supported:</p>
+<ul>
+<li><p>“ap_pg” : combine the A(α,γ)B and A(α,p)X(p,γ)B sequences
+into a single, effective A(α,γ)B rate.</p>
+<p>An example of this is combining S32(α,γ)Ar36 and
+S32(α,p)Cl35(p,γ)Ar36.</p>
+</li>
+<li><p>“nn_g” : replace the sequence A(n,γ)X(n,γ)B with an
+effective A(nn,γ)B rate.</p>
+<p>An example of this is combining Fe52(n,γ)Fe53(n,γ)Fe54</p>
+</li>
+<li><p>“Yp_pg” : combine A(Y,γ)B and A(Y,p)X(p,γ)B sequences into a
+single, effective A(Y,γ)B rate.  Note: the original A(Y,γ)B does
+not need to be included, in which case just A(Y,p)X(p,γ)B is
+approximated.  We also include another pathway from X connecting
+to a different nucleus C, X(p,α)C.  This affects the branching
+from X that serves as the normalization.</p>
+<p>Here Y is another nucleus, and we assume that mass_number(A) &gt;=
+mass_number(Y)</p>
+<p>An example of this is combining O16(O16,p)P31(p,γ)S32 and
+optionally (a modified rate version of) O16(O16,γ)S32.</p>
+</li>
+<li><p>“Yp_pa” : combine the A(Y,α)B and A(Y,p)X(p,α)B sequences into a
+single, effective A(Y,α)B rate.  We also include another pathway
+from X connecting to a different nucleus C, X(p,γ)C. This affects
+the branching from X that serves as the normalization.</p></li>
 </ul>
 <p>This class stores all of the rates needed to implement these
 approximations.</p>
@@ -618,9 +641,9 @@ approximations.</p>
 “A(a,p)X”, that provides the <code class="docutils literal notranslate"><span class="pre">Rate</span></code> object for that rate.
 Each approximation has a different set of keys that is
 expected.</p></li>
-<li><p><strong>is_reverse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Are we creating the effective A(x,y)B or B(y, x)A?</p></li>
+<li><p><strong>is_reverse</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Are we creating the effective A(x,y)B or B(y,x)A?</p></li>
 <li><p><strong>approx_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The type of approximation to do.  Currently supported are
-“ap_pg” and “nn_g”</p></li>
+“ap_pg”, “nn_g”, “Yp_pg”, and “Yp_pa”</p></li>
 <li><p><strong>use_identical_particle_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Usually if a rate has 2 reactants of the same type, we
 divide by 2, since the order doesn’t matter.  However, for
 some approximations, like A(n,g)X(n,g)B -&gt; A(nn,g), we
@@ -767,11 +790,11 @@ A(n,g)X(n,g)B -&gt; A(nn,g)B approximation</p>
       </div>
     </a>
     <a class="right-next"
-       href="pynucastro.rates.derived_rate.html"
+       href="pynucastro.rates.aprox_family_rates.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pynucastro.rates.derived_rate module</p>
+        <p class="prev-next-title">pynucastro.rates.aprox_family_rates module</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Approximating alpha-capture &#8212; pynucastro 2.9.0.post103+gd107e174c documentation</title>
+    <title>Approximating alpha-capture &#8212; pynucastro 2.9.0.post104+g69358119e documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=fed7fa8e"></script>
+    <script src="_static/documentation_options.js?v=aeb439ce"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -202,6 +202,7 @@
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Approximating alpha-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="double-n-capture.html">Approximating double n-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modified-rates.html">Modified Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="co-approximations.html">Approximating C and O Burning</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
@@ -245,6 +246,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="aprox13.html">The “aprox13” network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="he-burning-example.html">A He-burning Network</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
@@ -312,6 +314,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
@@ -678,12 +681,12 @@ combining them into a single effective rate by assuming that the protons and nuc
 
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e-10</span><span class="p">,</span> <span class="mf">1.e-3</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-12</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/4d614af72766f675464f9dd980c2adf2fbc1a71a92283007e30cc7543c42bd4e.png" src="_images/4d614af72766f675464f9dd980c2adf2fbc1a71a92283007e30cc7543c42bd4e.png" />
+<img alt="_images/7595145178febec62173029ff5d2f3007f50e2f4e6cabcc4044bbba3e2f767a1.png" src="_images/7595145178febec62173029ff5d2f3007f50e2f4e6cabcc4044bbba3e2f767a1.png" />
 </div>
 </div>
 </section>
@@ -848,17 +851,18 @@ S32
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@numba.njit()
 def Mg24_He4_to_Si28_approx(rate_eval, tf):
-    r_ag = rate_eval.He4_Mg24_to_Si28_reaclib
-    r_ap = rate_eval.He4_Mg24_to_p_Al27_reaclib
     r_pg = rate_eval.p_Al27_to_Si28_reaclib
     r_pa = rate_eval.p_Al27_to_He4_Mg24_reaclib
-    rate = r_ag + r_ap * r_pg / (r_pg + r_pa)
+    r_pY = 0.0
+    r_ag = rate_eval.He4_Mg24_to_Si28_reaclib
+    r_ap = rate_eval.He4_Mg24_to_p_Al27_reaclib
+    rate = r_ag + r_ap * r_pg / (r_pg + r_pa + r_pY)
     rate_eval.Mg24_He4_to_Si28_approx = rate
 </pre></div>
 </div>
 </div>
 </div>
-<p>where the 4 lines before the rate approximation is made are evaluating the original, unapproximated rates.</p>
+<p>where the 4 lines before the rate approximation is made are evaluating the original, unapproximated rates.  (The <code class="docutils literal notranslate"><span class="pre">r_pY</span></code> can be used to add another branching rate on the intermediate nucleus that would need to be accounted for in the denominator.  We do not use that here).</p>
 </section>
 <section id="integrating-the-approximate-network">
 <h2>Integrating the approximate network<a class="headerlink" href="#integrating-the-approximate-network" title="Link to this heading">#</a></h2>
@@ -897,13 +901,12 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e-10</span><span class="p">,</span> <span class="mf">1.e-3</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-10</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-
-<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/232b48973e378a9563b2c58d40881dfb97fa26c753054af83bb308b561473a37.png" src="_images/232b48973e378a9563b2c58d40881dfb97fa26c753054af83bb308b561473a37.png" />
+<img alt="_images/0f7f6dc207e7c6302005209f40df113b433399e86a5e85f0371c71483cebea61.png" src="_images/0f7f6dc207e7c6302005209f40df113b433399e86a5e85f0371c71483cebea61.png" />
 </div>
 </div>
 </section>
@@ -928,13 +931,12 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e-10</span><span class="p">,</span> <span class="mf">1.e-3</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-10</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-
-<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/2dc9cad280aa7e1c4d9dc2a66d6750ea18a3a92f2c2ad7ccdc270a00add821b4.png" src="_images/2dc9cad280aa7e1c4d9dc2a66d6750ea18a3a92f2c2ad7ccdc270a00add821b4.png" />
+<img alt="_images/8672bb630abe54ce4b1e7cbcb2cdb236a373819fd4f0f68d885ef2b10474c3a6.png" src="_images/8672bb630abe54ce4b1e7cbcb2cdb236a373819fd4f0f68d885ef2b10474c3a6.png" />
 </div>
 </div>
 <p>Here the dotted line is the approximate network.  We see that the results agree well.</p>
@@ -1019,13 +1021,12 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e-10</span><span class="p">,</span> <span class="mf">1.e-3</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-10</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-
-<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/7afd98715c3191cf9917ab1e9b4d143d61de66b5559d5a4f1845ff143a0c4249.png" src="_images/7afd98715c3191cf9917ab1e9b4d143d61de66b5559d5a4f1845ff143a0c4249.png" />
+<img alt="_images/a3cd1beaeabbd32d13bb02e463b2203be553a2ca69aa2ff5fa0eca0f4b28efe5.png" src="_images/a3cd1beaeabbd32d13bb02e463b2203be553a2ca69aa2ff5fa0eca0f4b28efe5.png" />
 </div>
 </div>
 <p>Here we see all 3 networks.  The full network (7 nuclei) is the solid lines.  The approximate version of that is the dotted line.  We see that they track reasonably well, especially when the abundance is high.  The dashed line is the version of the network that has the same 4 nuclei as the approximate network, but with out approximating the <span class="math notranslate nohighlight">\((\alpha, p)(p,\gamma)\)</span> links, so we see that the <span class="math notranslate nohighlight">\({}^{24}\mathrm{Mg}\)</span> takes longer to burn.</p>

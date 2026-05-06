@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>alternate_rates &#8212; pynucastro 2.9.0.post103+gd107e174c documentation</title>
+    <title>alternate_rates &#8212; pynucastro 2.9.0.post104+g69358119e documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=fed7fa8e"></script>
+    <script src="_static/documentation_options.js?v=aeb439ce"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -202,6 +202,7 @@
 <li class="toctree-l2"><a class="reference internal" href="alpha-gamma-approx.html">Approximating alpha-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="double-n-capture.html">Approximating double n-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modified-rates.html">Modified Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="co-approximations.html">Approximating C and O Burning</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
@@ -245,6 +246,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="aprox13.html">The “aprox13” network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="he-burning-example.html">A He-burning Network</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
@@ -312,6 +314,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
@@ -605,9 +608,9 @@
 in one of two forms:</p>
 <ul class="simple">
 <li><p>As a new set of fit parameters in the ReacLib format.  An example of this is the
-<span id="id1">deBoer <em>et al.</em> [<a class="reference internal" href="zreferences.html#id35" title="R. J. deBoer, J. Görres, M. Wiescher, R. E. Azuma, A. Best, C. R. Brune, C. E. Fields, S. Jones, M. Pignatari, D. Sayre, K. Smith, F. X. Timmes, and E. Uberseder. The $^12$C(\ensuremath \alpha  ,\ensuremath \gamma  )$^16$O reaction and its implications for stellar helium burning. Reviews of Modern Physics, 89(3):035007, July 2017. arXiv:1709.03144, doi:10.1103/RevModPhys.89.035007.">2017</a>]</span> <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span> rate.
+<span class="bibtex-citation" id="id1">deBoer <em>et al.</em> [<a class="reference internal" href="zreferences.html#id35" title="R. J. deBoer, J. Görres, M. Wiescher, R. E. Azuma, A. Best, C. R. Brune, C. E. Fields, S. Jones, M. Pignatari, D. Sayre, K. Smith, F. X. Timmes, and E. Uberseder. The $^12$C(\ensuremath \alpha  ,\ensuremath \gamma  )$^16$O reaction and its implications for stellar helium burning. Reviews of Modern Physics, 89(3):035007, July 2017. arXiv:1709.03144, doi:10.1103/RevModPhys.89.035007.">2017</a>]</span> <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span> rate.
 This type of rate can be added by subclassing the <a class="reference internal" href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate" title="pynucastro.rates.reaclib_rate.ReacLibRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a> class.</p></li>
-<li><p>A tabulation of <span class="math notranslate nohighlight">\(N_A \langle \sigma v\rangle\)</span> in terms of temperature.  An example of this is the <span id="id2">Iliadis <em>et al.</em> [<a class="reference internal" href="zreferences.html#id36" title="Christian Iliadis, Vimal Palanivelrajan, and Rafael S. de Souza. Bayesian estimation of the S factor and thermonuclear reaction rate for $^16$O(p ,\ensuremath \gamma  )$^17$F. \prc , 106(5):055802, November 2022. arXiv:2210.14354, doi:10.1103/PhysRevC.106.055802.">2022</a>]</span>
+<li><p>A tabulation of <span class="math notranslate nohighlight">\(N_A \langle \sigma v\rangle\)</span> in terms of temperature.  An example of this is the <span class="bibtex-citation" id="id2">Iliadis <em>et al.</em> [<a class="reference internal" href="zreferences.html#id36" title="Christian Iliadis, Vimal Palanivelrajan, and Rafael S. de Souza. Bayesian estimation of the S factor and thermonuclear reaction rate for $^16$O(p ,\ensuremath \gamma  )$^17$F. \prc , 106(5):055802, November 2022. arXiv:2210.14354, doi:10.1103/PhysRevC.106.055802.">2022</a>]</span>
 <span class="math notranslate nohighlight">\({}^{16}\mathrm{O}(p, \gamma){}^{17}\mathrm{F}\)</span> rate.  This type of rate can be added by
 subclassing the <a class="reference internal" href="pynucastro.rates.temperature_tabular_rate.html#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate" title="pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code></a> class.</p></li>
 </ul>
@@ -706,7 +709,7 @@ subclassing the <a class="reference internal" href="pynucastro.rates.temperature
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f985bd4be00&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fe226aae270&gt;
 </pre></div>
 </div>
 <img alt="_images/1ccdc3cddff1b3b03a037289b256b1f86ff6d08e50c0a18d8d0ec857cd604f1f.png" src="_images/1ccdc3cddff1b3b03a037289b256b1f86ff6d08e50c0a18d8d0ec857cd604f1f.png" />

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Derived Rates &#8212; pynucastro 2.9.0.post103+gd107e174c documentation</title>
+    <title>Derived Rates &#8212; pynucastro 2.9.0.post104+g69358119e documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=fed7fa8e"></script>
+    <script src="_static/documentation_options.js?v=aeb439ce"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -202,6 +202,7 @@
 <li class="toctree-l2"><a class="reference internal" href="alpha-gamma-approx.html">Approximating alpha-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="double-n-capture.html">Approximating double n-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modified-rates.html">Modified Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="co-approximations.html">Approximating C and O Burning</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
@@ -245,6 +246,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="aprox13.html">The “aprox13” network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="he-burning-example.html">A He-burning Network</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
@@ -312,6 +314,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
@@ -596,7 +599,7 @@
 <a class="reference internal" href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate" title="pynucastro.rates.derived_rate.DerivedRate"><code class="xref py py-class docutils literal notranslate"><span class="pre">DerivedRate</span></code></a>
 via detailed balance.
 We will also discuss the partition functions mentioned in
-<span id="id1">Rauscher and Thielemann [<a class="reference internal" href="zreferences.html#id22" title="Thomas Rauscher and Friedrich-Karl Thielemann. Astrophysical Reaction Rates From Statistical Model Calculations. Atomic Data and Nuclear Data Tables, 75(1-2):1-351, May 2000. arXiv:astro-ph/0004059, doi:10.1006/adnd.2000.0834.">2000</a>]</span> and <span id="id2">Rauscher [<a class="reference internal" href="zreferences.html#id23" title="T. Rauscher. Nuclear partition functions at temperatures exceeding 10^10 K. The Astrophysical Journal Supplement Series, 147(2):403, August 2003. doi:10.1086/375733.">2003</a>]</span>
+<span class="bibtex-citation" id="id1">Rauscher and Thielemann [<a class="reference internal" href="zreferences.html#id22" title="Thomas Rauscher and Friedrich-Karl Thielemann. Astrophysical Reaction Rates From Statistical Model Calculations. Atomic Data and Nuclear Data Tables, 75(1-2):1-351, May 2000. arXiv:astro-ph/0004059, doi:10.1006/adnd.2000.0834.">2000</a>]</span> and <span class="bibtex-citation" id="id2">Rauscher [<a class="reference internal" href="zreferences.html#id23" title="T. Rauscher. Nuclear partition functions at temperatures exceeding 10^10 K. The Astrophysical Journal Supplement Series, 147(2):403, August 2003. doi:10.1086/375733.">2003</a>]</span>
 with the purpose to compute inverse rates at extreme temperatures and
 heavy nuclide conditions.</p>
 <section id="semi-relativistic-ideal-gas-model">
@@ -637,7 +640,7 @@ semi-relativistic ideal gas by:</p>
 <p>or equivalently,</p>
 <div class="math notranslate nohighlight">
 \[\mu = \underbrace{k_B T \log \left[\dfrac{n}{g}\left( \dfrac{2\pi \hbar^2}{mkT} \right)^{3/2} \right]}_{\mu^{kin}} + mc^2 + \mu^c\]</div>
-<p>as summarized in <span id="id3">[<a class="reference internal" href="zreferences.html#id22" title="Thomas Rauscher and Friedrich-Karl Thielemann. Astrophysical Reaction Rates From Statistical Model Calculations. Atomic Data and Nuclear Data Tables, 75(1-2):1-351, May 2000. arXiv:astro-ph/0004059, doi:10.1006/adnd.2000.0834.">Rauscher and Thielemann, 2000</a>]</span>.</p>
+<p>as summarized in <span class="bibtex-citation" id="id3">[<a class="reference internal" href="zreferences.html#id22" title="Thomas Rauscher and Friedrich-Karl Thielemann. Astrophysical Reaction Rates From Statistical Model Calculations. Atomic Data and Nuclear Data Tables, 75(1-2):1-351, May 2000. arXiv:astro-ph/0004059, doi:10.1006/adnd.2000.0834.">Rauscher and Thielemann, 2000</a>]</span>.</p>
 <p>Often times we want to work in massfractions, <span class="math notranslate nohighlight">\(X_i = m_i n_i / \rho\)</span>,
 or in molar fractions, <span class="math notranslate nohighlight">\(Y_i = X_i / A_i\)</span>. Hence:</p>
 <div class="math notranslate nohighlight">
@@ -654,7 +657,7 @@ in their ground state as they approach. Hence to account for state degeneracy,
 However, particles may be in a superposition of states due to excitation
 of upper levels, with excitation energies <span class="math notranslate nohighlight">\(\Delta_l\)</span>,
 caused by an steady increase of the temperature.
-As pointed out in <span id="id4">[<a class="reference internal" href="zreferences.html#id22" title="Thomas Rauscher and Friedrich-Karl Thielemann. Astrophysical Reaction Rates From Statistical Model Calculations. Atomic Data and Nuclear Data Tables, 75(1-2):1-351, May 2000. arXiv:astro-ph/0004059, doi:10.1006/adnd.2000.0834.">Rauscher and Thielemann, 2000</a>]</span>, we have to replace
+As pointed out in <span class="bibtex-citation" id="id4">[<a class="reference internal" href="zreferences.html#id22" title="Thomas Rauscher and Friedrich-Karl Thielemann. Astrophysical Reaction Rates From Statistical Model Calculations. Atomic Data and Nuclear Data Tables, 75(1-2):1-351, May 2000. arXiv:astro-ph/0004059, doi:10.1006/adnd.2000.0834.">Rauscher and Thielemann, 2000</a>]</span>, we have to replace
 <span class="math notranslate nohighlight">\(g \rightarrow (2J_0 + 1) G\)</span>, where <span class="math notranslate nohighlight">\(G\)</span> is the internal partition
 function normalized by the ground state spin.</p>
 <div class="math notranslate nohighlight">
@@ -677,7 +680,7 @@ constant to the nearest boundary value.</p></li>
 reads a table and construct a dictionary between each nucleus and their partition function class object.</p></li>
 <li><p><a class="reference internal" href="pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunctionCollection" title="pynucastro.nucdata.partition_function.PartitionFunctionCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">PartitionFunctionCollection</span></code></a>
 collects all the formatted table information, inside <code class="docutils literal notranslate"><span class="pre">/nucdata/PartitionFunction/</span></code>.
-It allow us to include the high temperature tables in <span id="id5">[<a class="reference internal" href="zreferences.html#id23" title="T. Rauscher. Nuclear partition functions at temperatures exceeding 10^10 K. The Astrophysical Journal Supplement Series, 147(2):403, August 2003. doi:10.1086/375733.">Rauscher, 2003</a>]</span> and to
+It allow us to include the high temperature tables in <span class="bibtex-citation" id="id5">[<a class="reference internal" href="zreferences.html#id23" title="T. Rauscher. Nuclear partition functions at temperatures exceeding 10^10 K. The Astrophysical Journal Supplement Series, 147(2):403, August 2003. doi:10.1086/375733.">Rauscher, 2003</a>]</span> and to
 select the model used to compute the partition functions, respectively. By default,
 we include high temperatures, and our partition function model to be the
 <em>finite range droplet model (FRDM)</em>. If a nucleus is not in the collection,
@@ -724,9 +727,9 @@ how it works:</p>
 <p>The forward and reverse reactions are entangled due to thermodynamical and
 nuclear equilibrium aspects. In this section we will see how this connection is introduced
 and explore its consequences in the nuclear rates computation,
-as discussed in <span id="id6">[<a class="reference internal" href="zreferences.html#id22" title="Thomas Rauscher and Friedrich-Karl Thielemann. Astrophysical Reaction Rates From Statistical Model Calculations. Atomic Data and Nuclear Data Tables, 75(1-2):1-351, May 2000. arXiv:astro-ph/0004059, doi:10.1006/adnd.2000.0834.">Rauscher and Thielemann, 2000</a>]</span>. The general case is worked out in the appendix of
-<span id="id7">[<a class="reference internal" href="zreferences.html#id38" title="Alexander I. Smith, Eric T. Johnson, Zhi Chen, Kiran Eiden, Donald E. Willcox, Brendan Boyd, Lyra Cao, Christopher J. DeGrendele, and Michael Zingale. Pynucastro: A Python Library for Nuclear Astrophysics. The Astrophysical Journal, 947(2):65, April 2023. URL: https://iopscience.iop.org/article/10.3847/1538-4357/acbaff (visited on 2025-04-21), doi:10.3847/1538-4357/acbaff.">Smith <em>et al.</em>, 2023</a>]</span>. Here we demonstrate a less general reaction channel,
-<span class="math notranslate nohighlight">\(A + B \rightarrow C + D\)</span>, discussed in <span id="id8">[<a class="reference internal" href="zreferences.html#id3" title="Richard H. Cyburt, A. Matthew Amthor, Ryan Ferguson, Zach Meisel, Karl Smith, Scott Warren, Alexander Heger, R. D. Hoffman, Thomas Rauscher, Alexander Sakharuk, Hendrik Schatz, F. K. Thielemann, and Michael Wiescher. The JINA REACLIB database: its recent updates and impact on type-i x-ray bursts. The Astrophysical Journal Supplement Series, 189(1):240, 2010. URL: https://stacks.iop.org/0067-0049/189/i=1/a=240.">Cyburt <em>et al.</em>, 2010</a>]</span>, for simplicity.</p>
+as discussed in <span class="bibtex-citation" id="id6">[<a class="reference internal" href="zreferences.html#id22" title="Thomas Rauscher and Friedrich-Karl Thielemann. Astrophysical Reaction Rates From Statistical Model Calculations. Atomic Data and Nuclear Data Tables, 75(1-2):1-351, May 2000. arXiv:astro-ph/0004059, doi:10.1006/adnd.2000.0834.">Rauscher and Thielemann, 2000</a>]</span>. The general case is worked out in the appendix of
+<span class="bibtex-citation" id="id7">[<a class="reference internal" href="zreferences.html#id38" title="Alexander I. Smith, Eric T. Johnson, Zhi Chen, Kiran Eiden, Donald E. Willcox, Brendan Boyd, Lyra Cao, Christopher J. DeGrendele, and Michael Zingale. Pynucastro: A Python Library for Nuclear Astrophysics. The Astrophysical Journal, 947(2):65, April 2023. URL: https://iopscience.iop.org/article/10.3847/1538-4357/acbaff (visited on 2025-04-21), doi:10.3847/1538-4357/acbaff.">Smith <em>et al.</em>, 2023</a>]</span>. Here we demonstrate a less general reaction channel,
+<span class="math notranslate nohighlight">\(A + B \rightarrow C + D\)</span>, discussed in <span class="bibtex-citation" id="id8">[<a class="reference internal" href="zreferences.html#id3" title="Richard H. Cyburt, A. Matthew Amthor, Ryan Ferguson, Zach Meisel, Karl Smith, Scott Warren, Alexander Heger, R. D. Hoffman, Thomas Rauscher, Alexander Sakharuk, Hendrik Schatz, F. K. Thielemann, and Michael Wiescher. The JINA REACLIB database: its recent updates and impact on type-i x-ray bursts. The Astrophysical Journal Supplement Series, 189(1):240, 2010. URL: https://stacks.iop.org/0067-0049/189/i=1/a=240.">Cyburt <em>et al.</em>, 2010</a>]</span>, for simplicity.</p>
 <p>Starting with a pair of reaction channels, where <span class="math notranslate nohighlight">\(A\)</span>, <span class="math notranslate nohighlight">\(B\)</span>, <span class="math notranslate nohighlight">\(C\)</span>, <span class="math notranslate nohighlight">\(D\)</span> are distinct
 nuclear species:</p>
 <div class="math notranslate nohighlight">
@@ -763,7 +766,7 @@ and the prefactor <span class="math notranslate nohighlight">\(K\)</span> is def
 <div class="math notranslate nohighlight">
 \[K_i \equiv \frac{m_i^{5/2}}{A_i} g_i \left(\frac{k_B T}{2\pi\hbar^2}\right)^{3/2}\]</div>
 <p>Now assuming that the electron screening routine follows linear mixing rule
-<span id="id9">[<a class="reference internal" href="zreferences.html#id39" title="H. E. Dewitt, H. C. Graboske, and M. S. Cooper. Screening Factors for Nuclear Reactions. I. General Theory. The Astrophysical Journal, 181:439–456, April 1973. URL: https://ui.adsabs.harvard.edu/abs/1973ApJ...181..439D/abstract (visited on 2025-12-22), doi:10.1086/152061.">Dewitt <em>et al.</em>, 1973</a>]</span>, then the screening enhancement factors for
+<span class="bibtex-citation" id="id9">[<a class="reference internal" href="zreferences.html#id39" title="H. E. Dewitt, H. C. Graboske, and M. S. Cooper. Screening Factors for Nuclear Reactions. I. General Theory. The Astrophysical Journal, 181:439–456, April 1973. URL: https://ui.adsabs.harvard.edu/abs/1973ApJ...181..439D/abstract (visited on 2025-12-22), doi:10.1086/152061.">Dewitt <em>et al.</em>, 1973</a>]</span>, then the screening enhancement factors for
 the forward and reverse reaction channels that we’re considering where
 <span class="math notranslate nohighlight">\(\lambda^\mathrm{scn}_\mathrm{rev} = \lambda^\mathrm{uns}_\mathrm{rev} \ F^\mathrm{scn}_\mathrm{rev}\)</span>
 and <span class="math notranslate nohighlight">\(\lambda^\mathrm{scn}_\mathrm{for} = \lambda^\mathrm{uns}_\mathrm{for} \ F^\mathrm{scn}_\mathrm{for}\)</span>
@@ -822,9 +825,9 @@ work in log-space:</p>
 <p>When deriving an inverse rate from a ReacLib rate,
 the equilibrium ratio, excluding the partition functions,
 can be absorbed into the <a class="reference internal" href="rate_types.html#reaclib"><span class="std std-ref">ReacLib</span></a> parameterization,
-as shown in <span id="id10">[<a class="reference internal" href="zreferences.html#id22" title="Thomas Rauscher and Friedrich-Karl Thielemann. Astrophysical Reaction Rates From Statistical Model Calculations. Atomic Data and Nuclear Data Tables, 75(1-2):1-351, May 2000. arXiv:astro-ph/0004059, doi:10.1006/adnd.2000.0834.">Rauscher and Thielemann, 2000</a>]</span>.
+as shown in <span class="bibtex-citation" id="id10">[<a class="reference internal" href="zreferences.html#id22" title="Thomas Rauscher and Friedrich-Karl Thielemann. Astrophysical Reaction Rates From Statistical Model Calculations. Atomic Data and Nuclear Data Tables, 75(1-2):1-351, May 2000. arXiv:astro-ph/0004059, doi:10.1006/adnd.2000.0834.">Rauscher and Thielemann, 2000</a>]</span>.
 The general ReacLib parameterization of the DerivedRate
-is given in the appendix of <span id="id11">[<a class="reference internal" href="zreferences.html#id38" title="Alexander I. Smith, Eric T. Johnson, Zhi Chen, Kiran Eiden, Donald E. Willcox, Brendan Boyd, Lyra Cao, Christopher J. DeGrendele, and Michael Zingale. Pynucastro: A Python Library for Nuclear Astrophysics. The Astrophysical Journal, 947(2):65, April 2023. URL: https://iopscience.iop.org/article/10.3847/1538-4357/acbaff (visited on 2025-04-21), doi:10.3847/1538-4357/acbaff.">Smith <em>et al.</em>, 2023</a>]</span>.</p>
+is given in the appendix of <span class="bibtex-citation" id="id11">[<a class="reference internal" href="zreferences.html#id38" title="Alexander I. Smith, Eric T. Johnson, Zhi Chen, Kiran Eiden, Donald E. Willcox, Brendan Boyd, Lyra Cao, Christopher J. DeGrendele, and Michael Zingale. Pynucastro: A Python Library for Nuclear Astrophysics. The Astrophysical Journal, 947(2):65, April 2023. URL: https://iopscience.iop.org/article/10.3847/1538-4357/acbaff (visited on 2025-04-21), doi:10.3847/1538-4357/acbaff.">Smith <em>et al.</em>, 2023</a>]</span>.</p>
 </div>
 </section>
 </section>

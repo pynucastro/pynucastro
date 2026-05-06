@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>NSE vs. Direct Integration &#8212; pynucastro 2.9.0.post103+gd107e174c documentation</title>
+    <title>NSE vs. Direct Integration &#8212; pynucastro 2.9.0.post104+g69358119e documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=fed7fa8e"></script>
+    <script src="_static/documentation_options.js?v=aeb439ce"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -202,6 +202,7 @@
 <li class="toctree-l2"><a class="reference internal" href="alpha-gamma-approx.html">Approximating alpha-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="double-n-capture.html">Approximating double n-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modified-rates.html">Modified Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="co-approximations.html">Approximating C and O Burning</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
@@ -245,6 +246,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="aprox13.html">The “aprox13” network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="he-burning-example.html">A He-burning Network</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
@@ -312,6 +314,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
@@ -622,7 +625,7 @@ To understand this, we need to revisit the assumptions made when deriving the NS
 X_i = \frac{m_i}{\rho}G_i \left(\frac{m_i k_B T}{2\pi\hbar^2}\right)^{3/2} \exp{\left(\frac{\mu_i - m_i c^2 - \mu^C_i}{k_B T}\right)}
 \]</div>
 <ol class="arabic simple" start="3">
-<li><p>Assumed that the chemical potential of any species in the network can be represented as a linear combination of chemical potential of any 2 species. The NSE condition specifically chooses to work in the basis of proton and neutron, but any two can work. See Appendix B in <span id="id1">Lippuner and Roberts [<a class="reference internal" href="zreferences.html#id40" title="Jonas Lippuner and Luke F. Roberts. SkyNet: A Modular Nuclear Reaction Network Library. \apjs , 233(2):18, December 2017. arXiv:1706.06198, doi:10.3847/1538-4365/aa94cb.">2017</a>]</span> for reference.</p></li>
+<li><p>Assumed that the chemical potential of any species in the network can be represented as a linear combination of chemical potential of any 2 species. The NSE condition specifically chooses to work in the basis of proton and neutron, but any two can work. See Appendix B in <span class="bibtex-citation" id="id1">Lippuner and Roberts [<a class="reference internal" href="zreferences.html#id40" title="Jonas Lippuner and Luke F. Roberts. SkyNet: A Modular Nuclear Reaction Network Library. \apjs , 233(2):18, December 2017. arXiv:1706.06198, doi:10.3847/1538-4365/aa94cb.">2017</a>]</span> for reference.</p></li>
 </ol>
 <div class="math notranslate nohighlight">
 \[
@@ -828,7 +831,7 @@ Since we will compare to NSE, we want to use the same screening that NSE uses �
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/dedc0493458be90f75a8788cb7d98591762c8a3e76fd5cfd3fc24c5b8181e7a3.png" src="_images/dedc0493458be90f75a8788cb7d98591762c8a3e76fd5cfd3fc24c5b8181e7a3.png" />
+<img alt="_images/500a7eea972790251a618da3b1e3cd4ce20902520620abc09d2e6ef683b62728.png" src="_images/500a7eea972790251a618da3b1e3cd4ce20902520620abc09d2e6ef683b62728.png" />
 </div>
 </div>
 </section>
@@ -896,7 +899,7 @@ Since we will compare to NSE, we want to use the same screening that NSE uses �
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/89c4c9f8efc48760266a83a6fbf11e9ec3fce5f0e025d3c512e1b6e9633777e1.png" src="_images/89c4c9f8efc48760266a83a6fbf11e9ec3fce5f0e025d3c512e1b6e9633777e1.png" />
+<img alt="_images/8b7c6745881eaac9e585962fa5499751ddce1685f985e122670ac848e482fd68.png" src="_images/8b7c6745881eaac9e585962fa5499751ddce1685f985e122670ac848e482fd68.png" />
 </div>
 </div>
 <p>We see that the plot of absolute and relative difference shows that the mass fraction obtained from direct integration matches with NSE equations to machine precision just as <code class="docutils literal notranslate"><span class="pre">isNSECompatible()</span></code> predicted. The differences between the two are largely set by the tolerances of both the NSE solver and the ODE integrator.</p>
@@ -933,7 +936,7 @@ by the total activity of the rate (forward + reverse) by doing <code class="docu
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/94e7b29fc16fc4efc235764f120fb38a439d71e9c4a4e4694cd55343b3edf170.png" src="_images/94e7b29fc16fc4efc235764f120fb38a439d71e9c4a4e4694cd55343b3edf170.png" />
+<img alt="_images/e1650781c7d61ef1990790e573265c9bf1663ce4361dbe785ecb4f8a6a2bcdfd.png" src="_images/e1650781c7d61ef1990790e573265c9bf1663ce4361dbe785ecb4f8a6a2bcdfd.png" />
 </div>
 </div>
 <p>Here we see that the normalized net rates are all &lt; <span class="math notranslate nohighlight">\(10^{-12}\)</span>, so we are effectively seeing the integration tolerance, and are very close to machine precision.</p>
@@ -996,7 +999,7 @@ But let’s verify it by integrating the network.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/f036567dedb54252e301120e7dc3de4c3240ccf11e31bec51b49df405421f3e6.png" src="_images/f036567dedb54252e301120e7dc3de4c3240ccf11e31bec51b49df405421f3e6.png" />
+<img alt="_images/3f6519fb69e07c9e93ea2fd8442dc003fec871830563abe88d74376e106bbf54.png" src="_images/3f6519fb69e07c9e93ea2fd8442dc003fec871830563abe88d74376e106bbf54.png" />
 <img alt="_images/6c0aec138426c7cbb73fe6b495ca9ed59a8797a36ece2c08cccc51d2e3793924.png" src="_images/6c0aec138426c7cbb73fe6b495ca9ed59a8797a36ece2c08cccc51d2e3793924.png" />
 </div>
 </div>
@@ -1081,8 +1084,8 @@ Let’s verify its prediction by integrating the network.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/d488e7d7d073193ca77cb2e747bfa2a81545d0da0dcc256b7212a14b250976d1.png" src="_images/d488e7d7d073193ca77cb2e747bfa2a81545d0da0dcc256b7212a14b250976d1.png" />
-<img alt="_images/57789131bf071f8c83dde4222d85f179a1d1df75ab2a0fe5e036b8f40e86a1be.png" src="_images/57789131bf071f8c83dde4222d85f179a1d1df75ab2a0fe5e036b8f40e86a1be.png" />
+<img alt="_images/5e703fdd2bae94ca14f5dbd96c38ea6cb18f6f17762abf43cd1a9a1f3bd38422.png" src="_images/5e703fdd2bae94ca14f5dbd96c38ea6cb18f6f17762abf43cd1a9a1f3bd38422.png" />
+<img alt="_images/338459361575da7e6a80eb92e30c3dfd38a336381c2c372fc77a40a336161fa9.png" src="_images/338459361575da7e6a80eb92e30c3dfd38a336381c2c372fc77a40a336161fa9.png" />
 </div>
 </div>
 <p>The error plot above shows that NSE and integration agrees to machine-precision once again.</p>

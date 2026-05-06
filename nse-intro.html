@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>NSE Intro &#8212; pynucastro 2.9.0.post103+gd107e174c documentation</title>
+    <title>NSE Intro &#8212; pynucastro 2.9.0.post104+g69358119e documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=fed7fa8e"></script>
+    <script src="_static/documentation_options.js?v=aeb439ce"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -202,6 +202,7 @@
 <li class="toctree-l2"><a class="reference internal" href="alpha-gamma-approx.html">Approximating alpha-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="double-n-capture.html">Approximating double n-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modified-rates.html">Modified Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="co-approximations.html">Approximating C and O Burning</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
@@ -245,6 +246,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="aprox13.html">The “aprox13” network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="he-burning-example.html">A He-burning Network</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
@@ -312,6 +314,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
@@ -625,8 +628,8 @@ shown in <a class="reference internal" href="derived-rates.html#gas-model"><span
 <h2>NSE Constraint Equations<a class="headerlink" href="#nse-constraint-equations" title="Link to this heading">#</a></h2>
 <p>Given the input, <span class="math notranslate nohighlight">\((\rho, T, Y_e)\)</span>, the NSE abundance equation has two unknowns,
 <span class="math notranslate nohighlight">\(\mu_p^{\mathrm{kin}}\)</span> and <span class="math notranslate nohighlight">\(\mu_n^{\mathrm{kin}}\)</span>, which can be solved
-subject two constraint equations (see <span id="id1">Calder <em>et al.</em> [<a class="reference internal" href="zreferences.html#id7" title="A. C. Calder, D. M. Townsley, I. R. Seitenzahl, F. Peng, O. E. B. Messer, N. Vladimirova, E. F. Brown, J. W. Truran, and D. Q. Lamb. Capturing the fire: flame energetics and neutronization for type ia supernova simulations. The Astrophysical Journal, 656(1):313–332, February 2007. doi:10.1086/510709.">2007</a>]</span> and
-<span id="id2">Seitenzahl <em>et al.</em> [<a class="reference internal" href="zreferences.html#id11" title="Ivo R. Seitenzahl, Dean M. Townsley, Fang Peng, and James W. Truran. Nuclear statistical equilibrium for type ia supernova simulations. Atomic Data and Nuclear Data Tables, 95(1):96-114, 2009. doi:10.1016/j.adt.2008.08.001.">2009</a>]</span>):</p>
+subject two constraint equations (see <span class="bibtex-citation" id="id1">Calder <em>et al.</em> [<a class="reference internal" href="zreferences.html#id7" title="A. C. Calder, D. M. Townsley, I. R. Seitenzahl, F. Peng, O. E. B. Messer, N. Vladimirova, E. F. Brown, J. W. Truran, and D. Q. Lamb. Capturing the fire: flame energetics and neutronization for type ia supernova simulations. The Astrophysical Journal, 656(1):313–332, February 2007. doi:10.1086/510709.">2007</a>]</span> and
+<span class="bibtex-citation" id="id2">Seitenzahl <em>et al.</em> [<a class="reference internal" href="zreferences.html#id11" title="Ivo R. Seitenzahl, Dean M. Townsley, Fang Peng, and James W. Truran. Nuclear statistical equilibrium for type ia supernova simulations. Atomic Data and Nuclear Data Tables, 95(1):96-114, 2009. doi:10.1016/j.adt.2008.08.001.">2009</a>]</span>):</p>
 <ol class="arabic simple">
 <li><p>Conservation of mass, or a constraint on the input density, <span class="math notranslate nohighlight">\(\rho\)</span>.</p></li>
 </ol>

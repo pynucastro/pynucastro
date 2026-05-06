@@ -50,14 +50,26 @@ The main classes are:
 
   * :py:obj:`ApproximateRate <pynucastro.rates.approximate_rates.ApproximateRate>`:
     An approximate rate assumes equilibration of intermediate nuclei to create
-    an approximation for a rate sequence.  Currently, there are two
-    approximations that can be made:
+    an approximation for a rate sequence.  Currently, it can make the following
+    approximations:
 
-    * grouping $A(\alpha, \gamma)B$ and $A(\alpha,p)X(p,\gamma)B$ into
-      a single effective rate, assuming equilibrium of $p$ and $X$.
+    * ``"ap_pg"`` : grouping $A(\alpha, \gamma)B$ and $A(\alpha,p)X(p,\gamma)B$ into
+      a single effective rate, assuming equilibrium of $p$ and $X$
+      (allowing for the possibility of a capture $X(p,Y)C$, where $Y$
+      and $C$ are heavy nuclei not in our sequence).
 
-    * converting $A(n,\gamma)X(n,\gamma)B$ into $A(nn,\gamma)B$
+    * ``"nn_g"`` : converting $A(n,\gamma)X(n,\gamma)B$ into $A(nn,\gamma)B$
       by assuming equilibrium of $X$.
+
+    * ``"Yp_pg"`` : combining $A(Y,p)X(p,\gamma)B$ and (optionally) $A(Y,\gamma)B$
+      into a single $A(Y,\gamma)B$ rate, where $Y$ is a heavy nucleus.
+      This also includes the pathway from $X$ connecting to nucleus $C$,
+      $X(p,\alpha)C$ for normalization.
+
+    * ``"Yp_pa"`` : combining $A(Y,\alpha)B$ and $A(Y,p)X(p,\alpha)B$ into
+      a single $A(Y,\alpha)B$ rate, where $Y$ is a heavy nucleus.  This includes
+      the pathway from $X$ connecting to nucleus $C$, $X(p,\gamma)C$ for
+      normalization.
 
   * :py:obj:`ModifiedRate <pynucastro.rates.modified_rate.ModifiedRate>`:
     A container for a single rate that allows for different stoichiometry

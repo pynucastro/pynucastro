@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Overview of pynucastro &#8212; pynucastro 2.9.0.post103+gd107e174c documentation</title>
+    <title>Overview of pynucastro &#8212; pynucastro 2.9.0.post104+g69358119e documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=fed7fa8e"></script>
+    <script src="_static/documentation_options.js?v=aeb439ce"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -202,6 +202,7 @@
 <li class="toctree-l2"><a class="reference internal" href="alpha-gamma-approx.html">Approximating alpha-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="double-n-capture.html">Approximating double n-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modified-rates.html">Modified Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="co-approximations.html">Approximating C and O Burning</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
@@ -245,6 +246,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="aprox13.html">The “aprox13” network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="he-burning-example.html">A He-burning Network</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
@@ -312,6 +314,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
@@ -627,13 +630,23 @@ This supports a strong rate where the temperature dependent part
 of temperature.</p></li>
 <li><p><a class="reference internal" href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate" title="pynucastro.rates.approximate_rates.ApproximateRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ApproximateRate</span></code></a>:
 An approximate rate assumes equilibration of intermediate nuclei to create
-an approximation for a rate sequence.  Currently, there are two
-approximations that can be made:</p>
+an approximation for a rate sequence.  Currently, it can make the following
+approximations:</p>
 <ul>
-<li><p>grouping <span class="math notranslate nohighlight">\(A(\alpha, \gamma)B\)</span> and <span class="math notranslate nohighlight">\(A(\alpha,p)X(p,\gamma)B\)</span> into
-a single effective rate, assuming equilibrium of <span class="math notranslate nohighlight">\(p\)</span> and <span class="math notranslate nohighlight">\(X\)</span>.</p></li>
-<li><p>converting <span class="math notranslate nohighlight">\(A(n,\gamma)X(n,\gamma)B\)</span> into <span class="math notranslate nohighlight">\(A(nn,\gamma)B\)</span>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;ap_pg&quot;</span></code> : grouping <span class="math notranslate nohighlight">\(A(\alpha, \gamma)B\)</span> and <span class="math notranslate nohighlight">\(A(\alpha,p)X(p,\gamma)B\)</span> into
+a single effective rate, assuming equilibrium of <span class="math notranslate nohighlight">\(p\)</span> and <span class="math notranslate nohighlight">\(X\)</span>
+(allowing for the possibility of a capture <span class="math notranslate nohighlight">\(X(p,Y)C\)</span>, where <span class="math notranslate nohighlight">\(Y\)</span>
+and <span class="math notranslate nohighlight">\(C\)</span> are heavy nuclei not in our sequence).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;nn_g&quot;</span></code> : converting <span class="math notranslate nohighlight">\(A(n,\gamma)X(n,\gamma)B\)</span> into <span class="math notranslate nohighlight">\(A(nn,\gamma)B\)</span>
 by assuming equilibrium of <span class="math notranslate nohighlight">\(X\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;Yp_pg&quot;</span></code> : combining <span class="math notranslate nohighlight">\(A(Y,p)X(p,\gamma)B\)</span> and (optionally) <span class="math notranslate nohighlight">\(A(Y,\gamma)B\)</span>
+into a single <span class="math notranslate nohighlight">\(A(Y,\gamma)B\)</span> rate, where <span class="math notranslate nohighlight">\(Y\)</span> is a heavy nucleus.
+This also includes the pathway from <span class="math notranslate nohighlight">\(X\)</span> connecting to nucleus <span class="math notranslate nohighlight">\(C\)</span>,
+<span class="math notranslate nohighlight">\(X(p,\alpha)C\)</span> for normalization.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;Yp_pa&quot;</span></code> : combining <span class="math notranslate nohighlight">\(A(Y,\alpha)B\)</span> and <span class="math notranslate nohighlight">\(A(Y,p)X(p,\alpha)B\)</span> into
+a single <span class="math notranslate nohighlight">\(A(Y,\alpha)B\)</span> rate, where <span class="math notranslate nohighlight">\(Y\)</span> is a heavy nucleus.  This includes
+the pathway from <span class="math notranslate nohighlight">\(X\)</span> connecting to nucleus <span class="math notranslate nohighlight">\(C\)</span>, <span class="math notranslate nohighlight">\(X(p,\gamma)C\)</span> for
+normalization.</p></li>
 </ul>
 </li>
 <li><p><a class="reference internal" href="pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate" title="pynucastro.rates.modified_rate.ModifiedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModifiedRate</span></code></a>:
@@ -712,7 +725,7 @@ A reaction network takes the form:</p>
 \[\frac{dY_i}{dt} = - \sum_{j,k} Y_i Y_j \lambda_{i(j,k)l} + \sum_{j,k} Y_l Y_k \lambda_{l(k,j)i}\]</div>
 <p>where the <span class="math notranslate nohighlight">\(\lambda\)</span>’s are the rates of destruction and creation
 of species i, represented by the molar fraction <span class="math notranslate nohighlight">\(Y_i\)</span> (see,
-e.g., <span id="id1">Timmes [<a class="reference internal" href="zreferences.html#id2" title="F. X. Timmes. Integration of Nuclear Reaction Networks for Stellar Hydrodynamics. The Astrophysical Journal Supplement Series, 124(1):241-263, September 1999. doi:10.1086/313257.">1999</a>]</span>).  pynucastro
+e.g., <span class="bibtex-citation" id="id1">Timmes [<a class="reference internal" href="zreferences.html#id2" title="F. X. Timmes. Integration of Nuclear Reaction Networks for Stellar Hydrodynamics. The Astrophysical Journal Supplement Series, 124(1):241-263, September 1999. doi:10.1086/313257.">1999</a>]</span>).  pynucastro
 will create the righthand sides of this system of ODEs (as python or
 C++ code) from the list of rates you provide. One can use this to
 add reaction networks to existing simulation codes, for example, the

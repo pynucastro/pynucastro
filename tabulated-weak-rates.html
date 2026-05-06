@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Tabulated Weak Rate Sources &#8212; pynucastro 2.9.0.post103+gd107e174c documentation</title>
+    <title>Tabulated Weak Rate Sources &#8212; pynucastro 2.9.0.post104+g69358119e documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=fed7fa8e"></script>
+    <script src="_static/documentation_options.js?v=aeb439ce"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -202,6 +202,7 @@
 <li class="toctree-l2"><a class="reference internal" href="alpha-gamma-approx.html">Approximating alpha-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="double-n-capture.html">Approximating double n-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modified-rates.html">Modified Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="co-approximations.html">Approximating C and O Burning</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
@@ -245,6 +246,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="aprox13.html">The “aprox13” network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="he-burning-example.html">A He-burning Network</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
@@ -312,6 +314,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
@@ -593,11 +596,11 @@
 <p>There are a variety of sources for tabulated weak rates.  Each of these sources has their own class that will
 just read in that source:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.FFNLibrary" title="pynucastro.rates.library.FFNLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FFNLibrary</span></code></a> : from <span id="id1">Fuller <em>et al.</em> [<a class="reference internal" href="zreferences.html#id31" title="G. M. Fuller, W. A. Fowler, and M. J. Newman. Stellar weak interaction rates for intermediate mass nuclei. III - Rate tables for the free nucleons and nuclei with A = 21 to A = 60. Astrophysical Journal Supplement, 48:279-319, March 1982. doi:10.1086/190779.">1982</a>]</span> covering <span class="math notranslate nohighlight">\(21 \le A \le 60\)</span></p></li>
-<li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.OdaLibrary" title="pynucastro.rates.library.OdaLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OdaLibrary</span></code></a> : from <span id="id2">Oda <em>et al.</em> [<a class="reference internal" href="zreferences.html#id32" title="T. Oda, M. Hino, K. Muto, M. Takahara, and K. Sato. Rate tables for the weak processes of sd-shell nuclei in stellar matter. Atomic Data and Nuclear Data Tables, 56(2):231-403, 1994. URL: https://www.sciencedirect.com/science/article/pii/S0092640X84710072, doi:https://doi.org/10.1006/adnd.1994.1007.">1994</a>]</span> covering <span class="math notranslate nohighlight">\(17 \le A \le 39\)</span></p></li>
-<li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.LangankeLibrary" title="pynucastro.rates.library.LangankeLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LangankeLibrary</span></code></a> : from <span id="id3">Langanke and Martínez-Pinedo [<a class="reference internal" href="zreferences.html#id9" title="K. Langanke and G. Martínez-Pinedo. Rate tables for the weak processes of pf-shell nuclei in stellar environments. Atomic Data and Nuclear Data Tables, 79(1):1-46, 2001. doi:10.1006/adnd.2001.0865.">2001</a>]</span> covering <span class="math notranslate nohighlight">\(45 \le A \le 65\)</span></p></li>
-<li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.PruetFullerLibrary" title="pynucastro.rates.library.PruetFullerLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PruetFullerLibrary</span></code></a> from <span id="id4">Pruet and Fuller [<a class="reference internal" href="zreferences.html#id34" title="Jason Pruet and George M. Fuller. Estimates of stellar weak interaction rates for nuclei in the mass range a = 65-80. The Astrophysical Journal Supplement Series, 149(1):189, nov 2003. URL: https://dx.doi.org/10.1086/376753, doi:10.1086/376753.">2003</a>]</span> covering <span class="math notranslate nohighlight">\(65 \le A \le 80\)</span></p></li>
-<li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.SuzukiLibrary" title="pynucastro.rates.library.SuzukiLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SuzukiLibrary</span></code></a> : from <span id="id5">Suzuki <em>et al.</em> [<a class="reference internal" href="zreferences.html#id10" title="Toshio Suzuki, Hiroshi Toki, and Ken’ichi Nomoto. Electron-capture and β-decay rates for sd-shell nuclei in stellar environments relevant to high-density o–ne–mg cores. The Astrophysical Journal, 817(2):163, January 2016. doi:10.3847/0004-637X/817/2/163.">2016</a>]</span> covering <span class="math notranslate nohighlight">\(17 \le A \le 28\)</span></p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.FFNLibrary" title="pynucastro.rates.library.FFNLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FFNLibrary</span></code></a> : from <span class="bibtex-citation" id="id1">Fuller <em>et al.</em> [<a class="reference internal" href="zreferences.html#id31" title="G. M. Fuller, W. A. Fowler, and M. J. Newman. Stellar weak interaction rates for intermediate mass nuclei. III - Rate tables for the free nucleons and nuclei with A = 21 to A = 60. Astrophysical Journal Supplement, 48:279-319, March 1982. doi:10.1086/190779.">1982</a>]</span> covering <span class="math notranslate nohighlight">\(21 \le A \le 60\)</span></p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.OdaLibrary" title="pynucastro.rates.library.OdaLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OdaLibrary</span></code></a> : from <span class="bibtex-citation" id="id2">Oda <em>et al.</em> [<a class="reference internal" href="zreferences.html#id32" title="T. Oda, M. Hino, K. Muto, M. Takahara, and K. Sato. Rate tables for the weak processes of sd-shell nuclei in stellar matter. Atomic Data and Nuclear Data Tables, 56(2):231-403, 1994. URL: https://www.sciencedirect.com/science/article/pii/S0092640X84710072, doi:https://doi.org/10.1006/adnd.1994.1007.">1994</a>]</span> covering <span class="math notranslate nohighlight">\(17 \le A \le 39\)</span></p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.LangankeLibrary" title="pynucastro.rates.library.LangankeLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LangankeLibrary</span></code></a> : from <span class="bibtex-citation" id="id3">Langanke and Martínez-Pinedo [<a class="reference internal" href="zreferences.html#id9" title="K. Langanke and G. Martínez-Pinedo. Rate tables for the weak processes of pf-shell nuclei in stellar environments. Atomic Data and Nuclear Data Tables, 79(1):1-46, 2001. doi:10.1006/adnd.2001.0865.">2001</a>]</span> covering <span class="math notranslate nohighlight">\(45 \le A \le 65\)</span></p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.PruetFullerLibrary" title="pynucastro.rates.library.PruetFullerLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PruetFullerLibrary</span></code></a> from <span class="bibtex-citation" id="id4">Pruet and Fuller [<a class="reference internal" href="zreferences.html#id34" title="Jason Pruet and George M. Fuller. Estimates of stellar weak interaction rates for nuclei in the mass range a = 65-80. The Astrophysical Journal Supplement Series, 149(1):189, nov 2003. URL: https://dx.doi.org/10.1086/376753, doi:10.1086/376753.">2003</a>]</span> covering <span class="math notranslate nohighlight">\(65 \le A \le 80\)</span></p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.SuzukiLibrary" title="pynucastro.rates.library.SuzukiLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SuzukiLibrary</span></code></a> : from <span class="bibtex-citation" id="id5">Suzuki <em>et al.</em> [<a class="reference internal" href="zreferences.html#id10" title="Toshio Suzuki, Hiroshi Toki, and Ken’ichi Nomoto. Electron-capture and β-decay rates for sd-shell nuclei in stellar environments relevant to high-density o–ne–mg cores. The Astrophysical Journal, 817(2):163, January 2016. doi:10.3847/0004-637X/817/2/163.">2016</a>]</span> covering <span class="math notranslate nohighlight">\(17 \le A \le 28\)</span></p></li>
 </ul>
 <p>Additionally, a union of these sources can be read in via <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.TabularLibrary" title="pynucastro.rates.library.TabularLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularLibrary</span></code></a>.  However, since there is some overlap in the
 coverage between these different sources, we need to pick an order of precedence.  The default order is the sequence in the

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Nuclear Properties &#8212; pynucastro 2.9.0.post103+gd107e174c documentation</title>
+    <title>Nuclear Properties &#8212; pynucastro 2.9.0.post104+g69358119e documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=fed7fa8e"></script>
+    <script src="_static/documentation_options.js?v=aeb439ce"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -202,6 +202,7 @@
 <li class="toctree-l2"><a class="reference internal" href="alpha-gamma-approx.html">Approximating alpha-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="double-n-capture.html">Approximating double n-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modified-rates.html">Modified Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="co-approximations.html">Approximating C and O Burning</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
@@ -245,6 +246,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="aprox13.html">The “aprox13” network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="he-burning-example.html">A He-burning Network</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
@@ -312,6 +314,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
@@ -851,7 +854,7 @@ Fe56         -60.60716  52103.06257552      8.79035626
 </section>
 <section id="partition-functions">
 <h2>Partition functions<a class="headerlink" href="#partition-functions" title="Link to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">Nucleus</span></code> objects also have their partition function data (managed by <a class="reference internal" href="pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction" title="pynucastro.nucdata.partition_function.PartitionFunction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PartitionFunction</span></code></a>.  These come from the work of <span id="id1">Rauscher <em>et al.</em> [<a class="reference internal" href="zreferences.html#id21" title="Thomas Rauscher, Friedrich-Karl Thielemann, and Karl-Ludwig Kratz. Nuclear level density and the determination of thermonuclear rates for astrophysics. Phys. Rev. C, 56:1613–1625, September 1997. URL: https://link.aps.org/doi/10.1103/PhysRevC.56.1613, doi:10.1103/PhysRevC.56.1613.">1997</a>]</span> for low temperatures (<span class="math notranslate nohighlight">\(T \le 10^{10}~\mathrm{K}\)</span>) and <span id="id2">Rauscher [<a class="reference internal" href="zreferences.html#id23" title="T. Rauscher. Nuclear partition functions at temperatures exceeding 10^10 K. The Astrophysical Journal Supplement Series, 147(2):403, August 2003. doi:10.1086/375733.">2003</a>]</span> for high temperatures.  The data from these two sources is concatenated and a spline fit is used to evaluate it.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Nucleus</span></code> objects also have their partition function data (managed by <a class="reference internal" href="pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction" title="pynucastro.nucdata.partition_function.PartitionFunction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PartitionFunction</span></code></a>.  These come from the work of <span class="bibtex-citation" id="id1">Rauscher <em>et al.</em> [<a class="reference internal" href="zreferences.html#id21" title="Thomas Rauscher, Friedrich-Karl Thielemann, and Karl-Ludwig Kratz. Nuclear level density and the determination of thermonuclear rates for astrophysics. Phys. Rev. C, 56:1613–1625, September 1997. URL: https://link.aps.org/doi/10.1103/PhysRevC.56.1613, doi:10.1103/PhysRevC.56.1613.">1997</a>]</span> for low temperatures (<span class="math notranslate nohighlight">\(T \le 10^{10}~\mathrm{K}\)</span>) and <span class="bibtex-citation" id="id2">Rauscher [<a class="reference internal" href="zreferences.html#id23" title="T. Rauscher. Nuclear partition functions at temperatures exceeding 10^10 K. The Astrophysical Journal Supplement Series, 147(2):403, August 2003. doi:10.1086/375733.">2003</a>]</span> for high temperatures.  The data from these two sources is concatenated and a spline fit is used to evaluate it.</p>
 <p>We can use <a class="reference internal" href="pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction.eval" title="pynucastro.nucdata.partition_function.PartitionFunction.eval"><code class="xref py py-meth docutils literal notranslate"><span class="pre">eval</span></code></a> to evaluate the partition function at any temperature.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>

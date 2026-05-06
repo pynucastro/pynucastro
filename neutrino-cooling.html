@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Neutrino Cooling &#8212; pynucastro 2.9.0.post103+gd107e174c documentation</title>
+    <title>Neutrino Cooling &#8212; pynucastro 2.9.0.post104+g69358119e documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=fed7fa8e"></script>
+    <script src="_static/documentation_options.js?v=aeb439ce"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -202,6 +202,7 @@
 <li class="toctree-l2"><a class="reference internal" href="alpha-gamma-approx.html">Approximating alpha-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="double-n-capture.html">Approximating double n-capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modified-rates.html">Modified Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="co-approximations.html">Approximating C and O Burning</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
@@ -245,6 +246,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="aprox13.html">The “aprox13” network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="he-burning-example.html">A He-burning Network</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
@@ -312,6 +314,7 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
@@ -591,7 +594,7 @@
   <section class="tex2jax_ignore mathjax_ignore" id="neutrino-cooling">
 <h1>Neutrino Cooling<a class="headerlink" href="#neutrino-cooling" title="Link to this heading">#</a></h1>
 <p>At high temperatures, pair, plasma, Bremmstrahlung, and photo neutrinos become important. These are often treated as a source term to an energy equation when integrating the temperature evolution due to reactions.</p>
-<p>pynucastro implements the functions of <span id="id1">Itoh <em>et al.</em> [<a class="reference internal" href="zreferences.html#id12" title="Naoki Itoh, Hiroshi Hayashi, Akinori Nishikawa, and Yasuharu Kohyama. Neutrino Energy Loss in Stellar Interiors. VII. Pair, Photo-, Plasma, Bremsstrahlung, and Recombination Neutrino Processes. The Astrophysical Journal Supplement Series, 102:411, February 1996. doi:10.1086/192264.">1996</a>]</span> to incorporate these effects.  In many codes, a routine called <code class="docutils literal notranslate"><span class="pre">sneut5</span></code> was used for this implementation.  pynucastro contains a port of that routine.</p>
+<p>pynucastro implements the functions of <span class="bibtex-citation" id="id1">Itoh <em>et al.</em> [<a class="reference internal" href="zreferences.html#id12" title="Naoki Itoh, Hiroshi Hayashi, Akinori Nishikawa, and Yasuharu Kohyama. Neutrino Energy Loss in Stellar Interiors. VII. Pair, Photo-, Plasma, Bremsstrahlung, and Recombination Neutrino Processes. The Astrophysical Journal Supplement Series, 102:411, February 1996. doi:10.1086/192264.">1996</a>]</span> to incorporate these effects.  In many codes, a routine called <code class="docutils literal notranslate"><span class="pre">sneut5</span></code> was used for this implementation.  pynucastro contains a port of that routine.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.neutrino_cooling</span><span class="w"> </span><span class="kn">import</span> <span class="n">sneut5</span><span class="p">,</span> <span class="n">NeutrinoCooling</span>
