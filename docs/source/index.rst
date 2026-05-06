@@ -132,6 +132,7 @@ and interactively exploring nuclear reaction networks.
    :caption: Some Useful Networks
    :hidden:
 
+   aprox13
    he-burning-example
 
 .. toctree::

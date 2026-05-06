@@ -1,6 +1,5 @@
-# this creates the same network as in Python (inline / module) and C++
-# (AMReX and simple-C++).  We then compare the ydots across each.
-# Note: screening is not considered.
+# test the comparison of the C+C, C+O, and O+O approximation
+# across network types
 
 import sys
 import warnings
@@ -10,7 +9,8 @@ import pytest
 from pytest import approx
 
 from pynucastro.networks.network_compare import NetworkCompare
-from pynucastro.rates.derived_rate import DerivedRate
+from pynucastro.rates.aprox_family_rates import make_CO_approx_rates
+from pynucastro.rates.library import Library
 
 
 def _skip_build():
@@ -22,26 +22,28 @@ class TestNetworkCompare:
     # pylint: disable=duplicate-code
     @pytest.fixture(scope="class")
     def lib(self, reaclib_library):
-        nuc = ["p", "he4", "c12", "o16", "ne20", "na23", "mg24"]
-        lib = reaclib_library.linking_nuclei(nuc)
-        rates_to_derive = lib.backward().get_rates()
-        for r in rates_to_derive:
-            fr = lib.get_rate_by_nuclei(r.products, r.reactants)
-            if fr:
-                lib.remove_rate(r)
-                d = DerivedRate(source_rate=fr, use_pf=True, use_unreliable_spins=True)
-                lib.add_rate(d)
+        crates = make_CO_approx_rates(reaclib_library.get_rates(), "C")
+        corates = make_CO_approx_rates(reaclib_library.get_rates(), "CO")
+        orates = make_CO_approx_rates(reaclib_library.get_rates(), "O")
+
+        c12ag = reaclib_library.get_rate_by_name("c12(a,g)o16")
+        c12ag_reverse = reaclib_library.get_rate_by_name("o16(g,a)c12")
+        o16ag = reaclib_library.get_rate_by_name("o16(a,g)ne20")
+        o16ag_reverse = reaclib_library.get_rate_by_name("ne20(g,a)o16")
+        other_rates = [c12ag, c12ag_reverse, o16ag, o16ag_reverse]
+
+        lib = Library(rates=crates+corates+orates+other_rates)
         return lib
 
     @pytest.fixture(scope="class")
     def nc(self, lib):
-        cxx_test_path = Path("_test_compare_cxx/")
-        amrex_test_path = Path("_test_compare_amrex/")
+        cxx_test_path = Path("_test_compare_coapprox_cxx/")
+        amrex_test_path = Path("_test_compare_coapprox_amrex/")
 
         nc = NetworkCompare(lib,
                             include_amrex=True,
                             include_simple_cxx=True,
-                            python_module_name="basic_cxx_py_compare.py",
+                            python_module_name="coapprox_compare.py",
                             amrex_test_path=amrex_test_path,
                             cxx_test_path=cxx_test_path)
         return nc
@@ -49,7 +51,7 @@ class TestNetworkCompare:
     @pytest.fixture(scope="class")
     def eval_cond1(self, nc):
         # thermodynamic conditions
-        rho = 2.e8
+        rho = 2.e6
         T = 1.e9
 
         if not _skip_build():
@@ -62,7 +64,7 @@ class TestNetworkCompare:
     @pytest.fixture(scope="class")
     def eval_cond2(self, nc):
         # thermodynamic conditions
-        rho = 2.e7
+        rho = 2.e9
         T = 4.e9
 
         if not _skip_build():
