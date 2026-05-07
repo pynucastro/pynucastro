@@ -289,6 +289,30 @@ class Composition(collections.UserDict):
         for k in self:
             self[k] /= X_sum
 
+    def get_array(self):
+        """Return the composition as mass fractions in a NumPy array,
+        The ordering is the same as the ``get_nuclei`` gives.
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        return np.array(list(self.values()))
+
+    def get_molar_array(self):
+        """Return the composition as molar fractions in a NumPy array,
+        The ordering is the same as the ``get_nuclei`` gives.
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        return np.array([X / n.A for n, X in self.items()])
+
     @property
     def ye(self):
         """Return the electron fraction of the composition
