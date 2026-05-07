@@ -341,11 +341,20 @@ class NetworkSolution:
 
         """
 
-        fig, ax = plt.subplots(figsize=(size[0]/dpi, size[1]/dpi))
+        # sort the nuclei by peak X, since that will ensure that the
+        # color cycles don't put two very close species in the same
+        # color
+        sorted_nuc = []
         for i, nuc in enumerate(self.unique_nuclei):
-
             X = self.Y[i, :] * nuc.A
             max_X = X.max()
+            sorted_nuc.append((i, nuc, max_X))
+        sorted_nuc.sort(key=lambda t: t[-1])
+
+        fig, ax = plt.subplots(figsize=(size[0]/dpi, size[1]/dpi))
+        for i, nuc, max_X in sorted_nuc:
+
+            X = self.Y[i, :] * nuc.A
             if X_cutoff_value is None and ymin is not None:
                 X_cutoff_value = ymin
             if X_cutoff_value is not None and max_X <= X_cutoff_value:
