@@ -1,5 +1,7 @@
 # unit tests for networks
+import numpy as np
 import pytest
+from numpy.testing import assert_allclose
 from pytest import approx
 
 import pynucastro as pyna
@@ -82,6 +84,20 @@ class TestComposition:
         comp.set_solar_like(Z=0.02)
         molar = comp.get_molar()
         assert molar[Nucleus("he4")] == approx((0.3-0.02)/4.0)
+
+    def test_get_array(self, comp):
+        comp.set_solar_like(Z=0.02)
+        Xs = comp.get_array()
+        assert_allclose(Xs, np.array([0.7, 0.28, 0.005, 0.005, 0.005, 0.005]),
+                        rtol=1.e-14, atol=1.e-30)
+
+    def test_get_molar_array(self, comp):
+        comp.set_solar_like(Z=0.02)
+        Ys = comp.get_molar_array()
+        assert_allclose(Ys, np.array([7.00000000e-01, 7.00000000e-02,
+                                      4.16666667e-04, 3.12500000e-04,
+                                      3.57142857e-04, 1.25000000e-04]),
+                        rtol=1.e-7, atol=1.e-20)
 
     def test_set_equal(self, nuclei, comp):
         comp.set_equal()
