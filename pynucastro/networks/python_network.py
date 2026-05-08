@@ -341,31 +341,59 @@ class NetworkSolution:
 
         """
 
+        # sort the nuclei by peak X, since that will ensure that the
+        # color cycles don't put two very close species in the same
+        # color
+        sorted_nuc = []
+        for i, nuc in enumerate(self.unique_nuclei):
+            X = self.Y[i, :] * nuc.A
+            max_X = X.max()
+            sorted_nuc.append((i, nuc, max_X))
+        sorted_nuc.sort(key=lambda t: t[-1])
+
+        # now figure out the line colors and styles
+        c1 = 0
+        c2 = 0
+        c3 = 0
+        styles = {}
+        for _, nuc, max_X in sorted_nuc:
+            if three_level_style:
+                # Set 3 levels of visual levels depending on maximum mass fraction
+                if max_X > 0.5:
+                    lw = 2.5
+                    ls = "-"
+                    color = f"C{c1 % 10}"
+                    c1 += 1
+                elif max_X > 0.01:
+                    lw = 1.5
+                    ls = "-"
+                    color = f"C{c2 % 10}"
+                    c2 += 1
+                else:
+                    lw = 1
+                    ls = "--"
+                    color = f"C{c3 % 10}"
+                    c3 += 1
+            else:
+                lw = 1.5
+                ls = "-"
+                color = f"C{c1 % 10}"
+                c1 += 1
+            styles[nuc] = (color, ls, lw)
+
         fig, ax = plt.subplots(figsize=(size[0]/dpi, size[1]/dpi))
         for i, nuc in enumerate(self.unique_nuclei):
 
             X = self.Y[i, :] * nuc.A
             max_X = X.max()
+
             if X_cutoff_value is None and ymin is not None:
                 X_cutoff_value = ymin
             if X_cutoff_value is not None and max_X <= X_cutoff_value:
                 continue
 
-            # Set linestyle and linewidth
-            lw = 1.5
-            ls = "-"
-            if three_level_style:
-                # Set 3 levels of visual levels depending on maximum mass fraction
-                lw = 1
-                ls = "--"
-                if max_X > 0.5:
-                    lw = 2.5
-                    ls = "-"
-                elif max_X > 0.01:
-                    lw = 1.5
-                    ls = "-"
-
-            ax.loglog(self.t, X, lw=lw, ls=ls,
+            color, ls, lw = styles[nuc]
+            ax.loglog(self.t, X, color=color, lw=lw, ls=ls,
                       label=rf"X(${nuc.pretty}$)")
 
         if tmin is None:
