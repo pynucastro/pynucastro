@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 2.10.0.post1+g9f83d7cdd documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 2.10.0.post2+g361570901 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=eb5f1151"></script>
+    <script src="../../../_static/documentation_options.js?v=b252cc7c"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -872,31 +872,59 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="c1"># sort the nuclei by peak X, since that will ensure that the</span>
+        <span class="c1"># color cycles don&#39;t put two very close species in the same</span>
+        <span class="c1"># color</span>
+        <span class="n">sorted_nuc</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span>
+            <span class="n">max_X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="n">sorted_nuc</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">nuc</span><span class="p">,</span> <span class="n">max_X</span><span class="p">))</span>
+        <span class="n">sorted_nuc</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># now figure out the line colors and styles</span>
+        <span class="n">c1</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">c2</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">c3</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">styles</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">nuc</span><span class="p">,</span> <span class="n">max_X</span> <span class="ow">in</span> <span class="n">sorted_nuc</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">three_level_style</span><span class="p">:</span>
+                <span class="c1"># Set 3 levels of visual levels depending on maximum mass fraction</span>
+                <span class="k">if</span> <span class="n">max_X</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
+                    <span class="n">lw</span> <span class="o">=</span> <span class="mf">2.5</span>
+                    <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">c1</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">10</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">c1</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">elif</span> <span class="n">max_X</span> <span class="o">&gt;</span> <span class="mf">0.01</span><span class="p">:</span>
+                    <span class="n">lw</span> <span class="o">=</span> <span class="mf">1.5</span>
+                    <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">c2</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">10</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">c2</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">lw</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;--&quot;</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">c3</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">10</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">c3</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lw</span> <span class="o">=</span> <span class="mf">1.5</span>
+                <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">c1</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">10</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">c1</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">styles</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">ls</span><span class="p">,</span> <span class="n">lw</span><span class="p">)</span>
+
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">dpi</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">dpi</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
 
             <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span>
             <span class="n">max_X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
             <span class="k">if</span> <span class="n">X_cutoff_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ymin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">X_cutoff_value</span> <span class="o">=</span> <span class="n">ymin</span>
             <span class="k">if</span> <span class="n">X_cutoff_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_X</span> <span class="o">&lt;=</span> <span class="n">X_cutoff_value</span><span class="p">:</span>
                 <span class="k">continue</span>
 
-            <span class="c1"># Set linestyle and linewidth</span>
-            <span class="n">lw</span> <span class="o">=</span> <span class="mf">1.5</span>
-            <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
-            <span class="k">if</span> <span class="n">three_level_style</span><span class="p">:</span>
-                <span class="c1"># Set 3 levels of visual levels depending on maximum mass fraction</span>
-                <span class="n">lw</span> <span class="o">=</span> <span class="mi">1</span>
-                <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;--&quot;</span>
-                <span class="k">if</span> <span class="n">max_X</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
-                    <span class="n">lw</span> <span class="o">=</span> <span class="mf">2.5</span>
-                    <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
-                <span class="k">elif</span> <span class="n">max_X</span> <span class="o">&gt;</span> <span class="mf">0.01</span><span class="p">:</span>
-                    <span class="n">lw</span> <span class="o">=</span> <span class="mf">1.5</span>
-                    <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
-
-            <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="n">ls</span><span class="p">,</span>
+            <span class="n">color</span><span class="p">,</span> <span class="n">ls</span><span class="p">,</span> <span class="n">lw</span> <span class="o">=</span> <span class="n">styles</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="n">ls</span><span class="p">,</span>
                       <span class="n">label</span><span class="o">=</span><span class="sa">rf</span><span class="s2">&quot;X($</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">$)&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">tmin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
