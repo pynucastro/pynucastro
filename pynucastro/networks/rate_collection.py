@@ -212,9 +212,26 @@ class RateCollection:
         # approx nuclei are used in approximate rates
         self.approx_nuclei = []
         for r in self.rates:
+            # check if the intermediate nucleus is still in the network
             if isinstance(r, ApproximateRate):
                 if r.intermediate_nucleus not in self.unique_nuclei + self.approx_nuclei:
                     self.approx_nuclei.append(r.intermediate_nucleus)
+
+                # also sometimes we may have approximated out protons
+                # so check the child rates
+                if Nucleus("p") not in self.unique_nuclei + self.approx_nuclei:
+                    for cr in r.get_child_rates():
+                        if Nucleus("p") in cr.reactants + cr.products:
+                            self.approx_nuclei.append(Nucleus("p"))
+                            break
+
+                if Nucleus("p_nse") not in self.unique_nuclei + self.approx_nuclei:
+                    for cr in r.get_child_rates():
+                        if Nucleus("p_nse") in cr.reactants + cr.products:
+                            self.approx_nuclei.append(Nucleus("p_nse"))
+                            break
+
+        self.approx_nuclei.sort()
 
         if self.inert_nuclei is not None:
             for nuc in self.inert_nuclei:
