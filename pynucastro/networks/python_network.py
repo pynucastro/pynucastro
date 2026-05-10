@@ -973,8 +973,7 @@ class PythonNetwork(RateCollection):
             if initial_comp is None:
                 raise ValueError("Valid initial compositions are ['uniform', 'random', 'solar']")
             comp = Composition(self.unique_nuclei, init=initial_comp)
-            ys = comp.get_molar()
-            Y0 = np.array([ys[nuc] for nuc in self.unique_nuclei])
+            Y0 = comp.get_molar_array()
 
         # Integrate using SciPy's solve_ivp() using BDF method -- good for stiff system.
         sol = solve_ivp(rhs, [0, tmax], Y0, method="BDF",

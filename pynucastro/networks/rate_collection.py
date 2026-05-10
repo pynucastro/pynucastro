@@ -945,7 +945,7 @@ class RateCollection:
 
         self._build_collection()
 
-    def isNSECompatible(self):
+    def is_NSE_compatible(self, verbose=None):
         """Determine whether the current network is compatible
         with the NSE description. Checks if there are any rate that
         uses stoichiometry, or if every strong rate has a corresponding
@@ -958,11 +958,20 @@ class RateCollection:
         An example would be the alpha-chain network, i.e. Ye = 0.5 always.
         In this case, the second NSE constraint on Ye is pointless.
 
+        Parameters
+        ----------
+        verbose : bool
+            Do we print an NSE summary?  If not set, the network verbose
+            property is used.
+
         Returns
         -------
         bool
 
         """
+
+        if verbose is None:
+            verbose = self.verbose
 
         S = []
         for rp in self.get_rate_pairs():
@@ -977,7 +986,7 @@ class RateCollection:
 
             # After treating weak rate cases, return False if one of them is None
             if fr is None or rr is None:
-                if self.verbose:
+                if verbose:
                     print("Either the forward or the reverse rate for the "
                           f"following strong reaction rate pair is missing: {rp}")
                 return False
@@ -990,14 +999,14 @@ class RateCollection:
             if not ((isinstance(fr, DerivedRate) and fr.source_rate == rr) or
                     (isinstance(rr, DerivedRate) and rr.source_rate == fr) or
                     (isinstance(fr, ApproximateRate) and isinstance(rr, ApproximateRate))):
-                if self.verbose:
+                if verbose:
                     print("Either the forward or the reverse rate for the "
                           f"following strong reaction rate pair is not a DerivedRate: {rp}")
                 return False
 
             # Check if there are any rate uses stoichiometry
             if fr.stoichiometry is not None or rr.stoichiometry is not None:
-                if self.verbose:
+                if verbose:
                     print("Either the forward or the reverse rate for the "
                           f"following strong reaction rate pair uses stoichiometry: {rp}")
                 return False
@@ -1031,7 +1040,7 @@ class RateCollection:
         if len(Z_A_ratios) == 1:
             max_dim = 1
 
-        if self.verbose:
+        if verbose:
             print("NSE Compatibility Summary \n"
                   "-------------------------\n"
                   f"  Nullity: {nullity}\n"
@@ -1053,6 +1062,9 @@ class RateCollection:
         else:
             print("  inert nuclei (included in carried): 0")
 
+        print("")
+
+        print(f"  NSE compatible? {self.is_NSE_compatible()}")
         print("")
 
         print(f"  total number of rates: {len(self.all_rates)}")
