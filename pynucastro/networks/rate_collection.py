@@ -1220,7 +1220,7 @@ class RateCollection:
         return np.max(np.abs(e))
 
     def find_stiffest_rate(self, rho, T, comp, *,
-                        screen_func=None, exclude_rates=None):
+                        screen_func=None):
         """Iterate through rates and compute the spectral radius for the
         network excluding the rate to determine which rate is most responsible
         for making the network stiff.
