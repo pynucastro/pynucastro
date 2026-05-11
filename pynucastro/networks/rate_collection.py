@@ -1216,6 +1216,42 @@ class RateCollection:
         e = eigvals(J)
         return np.max(np.abs(e))
 
+    def find_stiffest_rate(self, rho, T, comp, *,
+                        screen_func=None, exclude_rates=None):
+        """Iterate through rates and compute the spectral radius for the
+        network excluding the rate to determine which rate is most responsible
+        for making the network stiff.
+
+        Parameters
+        ----------
+        rho : float
+            density used to evaluate Jacobian terms
+        T : float
+            temperature used to evaluate Jacobian terms
+        comp : Composition
+            composition used to evaluate Jacobian terms
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the evaluated rates will include the screening
+            correction.
+
+        Returns
+        -------
+        Rate
+
+        """
+
+        stiff_rate = None
+        spectral_radius = self.spectral_radius(rho, T, comp, screen_func=screen_func)
+
+        for r in self.rates:
+            _sprad = self.spectral_radius(rho, T, comp, screen_func=screen_func, exclude_rates=[r])
+            if _sprad < spectral_radius:
+                stiff_rate = r
+                spectral_radius = _sprad
+
+        return stiff_rate
+
     def validate(self, other_library, *, forward_only=True):
         """Perform various checks on the library, comparing to
         ``other_library``, to ensure that we are not missing important
