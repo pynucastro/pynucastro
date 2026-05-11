@@ -964,13 +964,13 @@ class RateCollection:
 
     def isNSECompatible(self):
         """Determine whether the current network is compatible
-        with the NSE description. Checks if there are any rate that
+        with the NSE description. Checks if there are any rates that
         uses stoichiometry, or if every strong rate has a corresponding
-        inverse rate. If none of the both are true, check if we are sufficienctly
-        connected by checking whether the the nullity of the network
+        inverse rate. If neither of those is true, check if we are sufficiently
+        connected by checking whether the nullity of the network
         stoichiometric matrix is not greater than 2, then the
         NSE equation will predict the correct equilibrium abundance.
-        If all isotope in the network have the same Ye ratio,
+        If all isotopes in the network have the same Ye ratio,
         then the nullity must not be greater than 1.
         An example would be the alpha-chain network, i.e. Ye = 0.5 always.
         In this case, the second NSE constraint on Ye is pointless.
@@ -1699,7 +1699,7 @@ class RateCollection:
                              normalize_net_rate=False,
                              consuming_rate_threshold=None,
                              show_small_ydot=False,
-                             hide_xalpha=False, hide_xp=False,
+                             hide_xalpha=True, hide_xp=True,
                              rate_filter_function=None,
                              highlight_filter_function=None):
         """Create a graph representation of the network using
@@ -1917,7 +1917,7 @@ class RateCollection:
              curved_edges=False,
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False,
-             hide_xp=False, hide_xalpha=False,
+             hide_xp=True, hide_xalpha=True,
              edge_labels=None,
              highlight_filter_function=None,
              nucleus_filter_function=None, rate_filter_function=None,
