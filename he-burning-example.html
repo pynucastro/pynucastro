@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>A He-burning Network &#8212; pynucastro 2.10.0.post5+g96a5cf9fe documentation</title>
+    <title>A He-burning Network &#8212; pynucastro 2.10.0.post7+g039207d52 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=ad986fc3"></script>
+    <script src="_static/documentation_options.js?v=c0c43a58"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -823,7 +823,7 @@ warning: Fe54 was not able to be linked in TabularLibrary
 <p>Let’s visualize the network</p>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1500</span><span class="p">,</span> <span class="mi">550</span><span class="p">),</span>
                <span class="n">node_size</span><span class="o">=</span><span class="mi">550</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
 </pre></div>
@@ -978,11 +978,11 @@ warning: Fe54 was not able to be linked in TabularLibrary
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span>
                <span class="n">screen_func</span><span class="o">=</span><span class="n">chugunov_2007</span><span class="p">,</span>
-               <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-               <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+               <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                <span class="n">color_nodes_by_abundance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1500</span><span class="p">,</span> <span class="mi">550</span><span class="p">),</span>
                <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="mf">1.e-20</span><span class="p">,</span>
+               <span class="n">use_net_rate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                <span class="n">Z_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">29</span><span class="p">),</span>
                <span class="n">node_size</span><span class="o">=</span><span class="mi">550</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
 </pre></div>
@@ -997,7 +997,7 @@ warning: Fe54 was not able to be linked in TabularLibrary
   warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
 </pre></div>
 </div>
-<img alt="_images/abc49066a1f93681ea4bfb5a1da0129f56fff02b7f96a3a4023b8e90a8598bce.png" src="_images/abc49066a1f93681ea4bfb5a1da0129f56fff02b7f96a3a4023b8e90a8598bce.png" />
+<img alt="_images/e6b2938ab22fd6a3590101fffd145413756c2484d6d74be1699ed3ec0a1e1b1b.png" src="_images/e6b2938ab22fd6a3590101fffd145413756c2484d6d74be1699ed3ec0a1e1b1b.png" />
 </div>
 </div>
 <p>At this point we see that we are really in the iron-group, with some lingering He.</p>
