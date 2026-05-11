@@ -60,6 +60,8 @@ def network_helper(nuclei, *,
 
     """
 
+    assert main_library in ["reaclib", "starlib"]
+
     if main_library == "reaclib":
         rl = ReacLibLibrary()
         lib = rl.linking_nuclei(nuclei, with_reverse=with_reverse)
