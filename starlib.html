@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Networks with StarLib rates &#8212; pynucastro 2.10.0.post3+gff06969ac documentation</title>
+    <title>Networks with StarLib rates &#8212; pynucastro 2.10.0.post4+ge6fde7567 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=374077bf"></script>
+    <script src="_static/documentation_options.js?v=9092df3e"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -575,7 +575,12 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-networks-with-sampled-rates">Integrating Networks with sampled rates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-networks-with-sampled-rates">Integrating Networks with sampled rates</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#starlib-median-rates-integration">StarLib median rates integration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-starlib-uncertainties-integrations">Sampling StarLib uncertainties integrations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reaclib-comparison-integration">ReacLib comparison integration</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-solutions">Plotting Solutions</a></li>
 </ul>
             </nav>
@@ -606,40 +611,95 @@
 </div>
 </div>
 </div>
-<p>To enable sampling, we must pass a seed. This seed can be passed when a <code class="docutils literal notranslate"><span class="pre">StarLibLibrary</span></code> is initialized or we can resample an existing <code class="docutils literal notranslate"><span class="pre">StarLibLibrary</span></code>. Here, we demonstrate the latter by writing out several basic CNO networks. Note that the seeds are chosen arbitrarily to ensure reproducibility.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span>  <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;c13&quot;</span><span class="p">,</span> <span class="s2">&quot;n13&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;n14&quot;</span><span class="p">,</span> <span class="s2">&quot;n15&quot;</span><span class="p">,</span> <span class="s2">&quot;o14&quot;</span><span class="p">,</span> <span class="s2">&quot;o15&quot;</span> <span class="p">]</span>
-
-<span class="c1">#Write network with median rates</span>
-<span class="n">smrates</span> <span class="o">=</span> <span class="n">sl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
-<span class="n">smnet</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">smrates</span><span class="p">)</span>
-<span class="n">smnet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;smnet.py&quot;</span><span class="p">)</span>
-
-<span class="c1"># Write networks with sampled rates</span>
-<span class="n">seeds</span> <span class="o">=</span> <span class="p">[</span><span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">,</span> <span class="mi">2468</span><span class="p">,</span> <span class="mi">46802</span><span class="p">,</span> <span class="mi">13579</span><span class="p">,</span> <span class="mi">11235</span><span class="p">,</span> <span class="mi">235711</span><span class="p">]</span>
-<span class="n">n_sampled</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">seeds</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">seeds</span><span class="p">):</span>
-    <span class="n">sl</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">s</span><span class="p">)</span>
-    <span class="n">lib</span> <span class="o">=</span> <span class="n">sl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
-    <span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">lib</span><span class="p">)</span>
-    <span class="n">net</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;s</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">net.py&quot;</span><span class="p">)</span>
+           <span class="s2">&quot;n14&quot;</span><span class="p">,</span> <span class="s2">&quot;n15&quot;</span><span class="p">,</span> <span class="s2">&quot;o14&quot;</span><span class="p">,</span> <span class="s2">&quot;o15&quot;</span> <span class="p">]</span>
 </pre></div>
 </div>
 </div>
 </div>
 <section id="integrating-networks-with-sampled-rates">
 <h2>Integrating Networks with sampled rates<a class="headerlink" href="#integrating-networks-with-sampled-rates" title="Link to this heading">#</a></h2>
+<p>First we’ll create a network with the median rates</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_ivp</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">smrates</span> <span class="o">=</span> <span class="n">sl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
+<span class="n">smnet</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">smrates</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
+<p>and set the thermodynamic conditions (roughly corresponding to the center of the Sun)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mi">150</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mf">1.5e7</span>
+
+<span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">smnet</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.7</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.28</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.02</span>
+
+<span class="n">Y0</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar_array</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="starlib-median-rates-integration">
+<h3>StarLib median rates integration<a class="headerlink" href="#starlib-median-rates-integration" title="Link to this heading">#</a></h3>
+<p>Now we’ll integrate the median network</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e20</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sl_sol</span> <span class="o">=</span> <span class="n">smnet</span><span class="o">.</span><span class="n">integrate_network</span><span class="p">(</span><span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-8</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="sampling-starlib-uncertainties-integrations">
+<h3>Sampling StarLib uncertainties integrations<a class="headerlink" href="#sampling-starlib-uncertainties-integrations" title="Link to this heading">#</a></h3>
+<p>Now we’ll do a suite of integrations with different random rate samplings.</p>
+<p>To enable sampling, we must pass a seed. This seed can be passed when a <code class="docutils literal notranslate"><span class="pre">StarLibLibrary</span></code> is initialized or we can resample an existing <code class="docutils literal notranslate"><span class="pre">StarLibLibrary</span></code>.  Here, we demonstrate the latter by creating several variants of our network with different samplings, integrating them, and storing the solution for plotting later.</p>
+<p>Note that we seed the numpy random number generator to ensure reproducibility here</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nsamples</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="k">for</span> <span class="n">seed</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">nsamples</span><span class="p">):</span>
+    <span class="n">sl</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">lib</span> <span class="o">=</span> <span class="n">sl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
+    <span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">lib</span><span class="p">)</span>
+    <span class="n">sol</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">integrate_network</span><span class="p">(</span><span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-8</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="reaclib-comparison-integration">
+<h3>ReacLib comparison integration<a class="headerlink" href="#reaclib-comparison-integration" title="Link to this heading">#</a></h3>
 <p>We can compare the integration of networks with sampled and median starlib rates against that for ReacLib rates.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -652,64 +712,12 @@
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rrates</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
 <span class="n">rrnet</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">rrates</span><span class="p">)</span>
-<span class="n">rrnet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;rrnet.py&quot;</span><span class="p">)</span>
+<span class="n">rl_sol</span> <span class="o">=</span> <span class="n">rrnet</span><span class="o">.</span><span class="n">integrate_network</span><span class="p">(</span><span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-8</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>Since the sampled networks are indexed, importing them can be handled in a scalable manner through the <code class="docutils literal notranslate"><span class="pre">importlib</span></code> package.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">rrnet</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">smnet</span>
-
-<span class="n">snets</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_sampled</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;s</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">net&quot;</span>
-    <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-    <span class="n">snets</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">reload</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>We initialize thermodynamic conditions and composition similar to previous CNO example.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mi">150</span>
-<span class="n">T</span> <span class="o">=</span> <span class="mf">1.5e7</span>
-
-<span class="n">X0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">rrnet</span><span class="o">.</span><span class="n">nnuc</span><span class="p">)</span>
-<span class="n">X0</span><span class="p">[</span><span class="n">rrnet</span><span class="o">.</span><span class="n">jp</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.7</span>
-<span class="n">X0</span><span class="p">[</span><span class="n">rrnet</span><span class="o">.</span><span class="n">jhe4</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.28</span>
-<span class="n">X0</span><span class="p">[</span><span class="n">rrnet</span><span class="o">.</span><span class="n">jc12</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.02</span>
-
-<span class="n">Y0</span> <span class="o">=</span> <span class="n">X0</span><span class="o">/</span><span class="n">rrnet</span><span class="o">.</span><span class="n">A</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Then, we integrate.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e20</span>
-
-<span class="n">rrsol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">rrnet</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">rrnet</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span>
-                <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">)</span>
-<span class="n">smsol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">smnet</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">smnet</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span>
-                <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">)</span>
-
-<span class="n">ssols</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_sampled</span><span class="p">):</span>
-    <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">snets</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;s</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">net&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span>
-                    <span class="n">jac</span><span class="o">=</span><span class="n">snets</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;s</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">net&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span> <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">),</span> 
-                    <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">)</span>
-    <span class="n">ssols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
+</section>
 </section>
 <section id="plotting-solutions">
 <h2>Plotting Solutions<a class="headerlink" href="#plotting-solutions" title="Link to this heading">#</a></h2>
@@ -723,51 +731,54 @@
 <p>Given that we are comparing network integration across three kinds of rates: sampled StarLib rates, median StarLib rates and ReacLib rates, we can setup color maps to best visualize mass fractions over time.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
-
-<span class="n">col_map_light</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;H1&#39;</span><span class="p">:</span><span class="s1">&#39;lightsalmon&#39;</span><span class="p">,</span> <span class="s1">&#39;He4&#39;</span><span class="p">:</span><span class="s1">&#39;lightsteelblue&#39;</span><span class="p">,</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">col_map_light</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;p&#39;</span><span class="p">:</span><span class="s1">&#39;lightsalmon&#39;</span><span class="p">,</span> <span class="s1">&#39;He4&#39;</span><span class="p">:</span><span class="s1">&#39;lightsteelblue&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;C12&#39;</span><span class="p">:</span> <span class="s1">&#39;lightgray&#39;</span><span class="p">,</span> <span class="s1">&#39;C13&#39;</span><span class="p">:</span> <span class="s1">&#39;thistle&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;N13&#39;</span><span class="p">:</span> <span class="s1">&#39;paleturquoise&#39;</span><span class="p">,</span> <span class="s1">&#39;N14&#39;</span><span class="p">:</span> <span class="s1">&#39;palegreen&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;N15&#39;</span><span class="p">:</span> <span class="s1">&#39;pink&#39;</span><span class="p">,</span> <span class="s1">&#39;O14&#39;</span><span class="p">:</span> <span class="s1">&#39;peachpuff&#39;</span><span class="p">,</span> <span class="s1">&#39;O15&#39;</span><span class="p">:</span> <span class="s1">&#39;khaki&#39;</span><span class="p">}</span>
 
-<span class="n">col_map_med</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;H1&#39;</span><span class="p">:</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;He4&#39;</span><span class="p">:</span><span class="s1">&#39;royalblue&#39;</span><span class="p">,</span><span class="s1">&#39;C12&#39;</span><span class="p">:</span> <span class="s1">&#39;dimgray&#39;</span><span class="p">,</span> 
+<span class="n">col_map_med</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;p&#39;</span><span class="p">:</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;He4&#39;</span><span class="p">:</span><span class="s1">&#39;royalblue&#39;</span><span class="p">,</span><span class="s1">&#39;C12&#39;</span><span class="p">:</span> <span class="s1">&#39;dimgray&#39;</span><span class="p">,</span> 
                <span class="s1">&#39;C13&#39;</span><span class="p">:</span> <span class="s1">&#39;mediumorchid&#39;</span><span class="p">,</span> <span class="s1">&#39;N13&#39;</span><span class="p">:</span> <span class="s1">&#39;darkturquoise&#39;</span><span class="p">,</span> <span class="s1">&#39;N14&#39;</span><span class="p">:</span> <span class="s1">&#39;green&#39;</span><span class="p">,</span>
                <span class="s1">&#39;N15&#39;</span><span class="p">:</span> <span class="s1">&#39;deeppink&#39;</span><span class="p">,</span> <span class="s1">&#39;O14&#39;</span><span class="p">:</span> <span class="s1">&#39;peru&#39;</span><span class="p">,</span> <span class="s1">&#39;O15&#39;</span><span class="p">:</span> <span class="s1">&#39;gold&#39;</span><span class="p">}</span>
 
-<span class="n">col_map_dark</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;H1&#39;</span><span class="p">:</span><span class="s1">&#39;maroon&#39;</span><span class="p">,</span> <span class="s1">&#39;He4&#39;</span><span class="p">:</span><span class="s1">&#39;navy&#39;</span><span class="p">,</span><span class="s1">&#39;C12&#39;</span><span class="p">:</span> <span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="s1">&#39;C13&#39;</span><span class="p">:</span> <span class="s1">&#39;darkorchid&#39;</span><span class="p">,</span> 
+<span class="n">col_map_dark</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;p&#39;</span><span class="p">:</span><span class="s1">&#39;maroon&#39;</span><span class="p">,</span> <span class="s1">&#39;He4&#39;</span><span class="p">:</span><span class="s1">&#39;navy&#39;</span><span class="p">,</span><span class="s1">&#39;C12&#39;</span><span class="p">:</span> <span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="s1">&#39;C13&#39;</span><span class="p">:</span> <span class="s1">&#39;darkorchid&#39;</span><span class="p">,</span> 
                <span class="s1">&#39;N13&#39;</span><span class="p">:</span> <span class="s1">&#39;teal&#39;</span><span class="p">,</span> <span class="s1">&#39;N14&#39;</span><span class="p">:</span> <span class="s1">&#39;darkgreen&#39;</span><span class="p">,</span> <span class="s1">&#39;N15&#39;</span><span class="p">:</span> <span class="s1">&#39;mediumvioletred&#39;</span><span class="p">,</span>
                <span class="s1">&#39;O14&#39;</span><span class="p">:</span> <span class="s1">&#39;saddlebrown&#39;</span><span class="p">,</span> <span class="s1">&#39;O15&#39;</span><span class="p">:</span> <span class="s1">&#39;goldenrod&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 
-<span class="c1">#Plotting sampled StarLib rates</span>
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sol</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ssols</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">snets</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;s</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">net&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">,:]</span><span class="o">*</span><span class="n">snets</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;s</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">net&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> 
-                  <span class="n">color</span><span class="o">=</span><span class="n">col_map_light</span><span class="p">[</span><span class="n">snets</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;s</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">net&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">j</span><span class="p">]])</span>
+<span class="c1"># sampled StarLib rates</span>
+<span class="k">for</span> <span class="n">sol</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span>
+                  <span class="n">color</span><span class="o">=</span><span class="n">col_map_light</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">caps_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span>
 
-<span class="c1">#Plotting median StarLib rates</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">smnet</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">smsol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">smsol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">*</span><span class="n">smnet</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">col_map_med</span><span class="p">[</span><span class="n">smnet</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span>
-              <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">smnet</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="c1"># median StarLib rates</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sl_sol</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sl_sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sl_sol</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span>
+              <span class="n">color</span><span class="o">=</span><span class="n">col_map_med</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">caps_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span>
+              <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X($</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">$)&quot;</span><span class="p">)</span>
 
-<span class="c1">#Plotting Reaclib rates</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">smnet</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">rrsol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">rrsol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">*</span><span class="n">rrnet</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">col_map_dark</span><span class="p">[</span><span class="n">rrnet</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span>
-              <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;_X(</span><span class="si">{</span><span class="n">rrnet</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
-
+<span class="c1">#P Reaclib rates</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rl_sol</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">rl_sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">rl_sol</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span>
+              <span class="n">color</span><span class="o">=</span><span class="n">col_map_dark</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">caps_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
 
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e10</span><span class="p">,</span> <span class="mf">1.e20</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-8</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;t (s)&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
-
-<span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/15c7f2015bc60e0c5d76460663c42190a7acb04de390ae1c6d01740e451d5659.png" src="_images/15c7f2015bc60e0c5d76460663c42190a7acb04de390ae1c6d01740e451d5659.png" />
+<img alt="_images/e32c2729871968685229cb9fab7e93a06319d8b1ee0d4053c99d4a4bf98d4d57.png" src="_images/e32c2729871968685229cb9fab7e93a06319d8b1ee0d4053c99d4a4bf98d4d57.png" />
 </div>
 </div>
 <p>Here the dotted lines depict the evolution of mass fractions over time given ReacLib rates, the solid lines depict that for median StarLib rates and the faint lines depict that for each sampled StarLib rates.</p>
@@ -821,7 +832,12 @@
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-networks-with-sampled-rates">Integrating Networks with sampled rates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-networks-with-sampled-rates">Integrating Networks with sampled rates</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#starlib-median-rates-integration">StarLib median rates integration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-starlib-uncertainties-integrations">Sampling StarLib uncertainties integrations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reaclib-comparison-integration">ReacLib comparison integration</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-solutions">Plotting Solutions</a></li>
 </ul>
   </nav></div>
