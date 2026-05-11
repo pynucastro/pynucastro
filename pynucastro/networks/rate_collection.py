@@ -1721,7 +1721,7 @@ class RateCollection:
                              normalize_net_rate=False,
                              consuming_rate_threshold=None,
                              show_small_ydot=False,
-                             hide_xalpha=False, hide_xp=False,
+                             hide_xalpha=True, hide_xp=True,
                              rate_filter_function=None,
                              highlight_filter_function=None):
         """Create a graph representation of the network using
@@ -1939,7 +1939,7 @@ class RateCollection:
              curved_edges=False,
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False,
-             hide_xp=False, hide_xalpha=False,
+             hide_xp=True, hide_xalpha=True,
              edge_labels=None,
              highlight_filter_function=None,
              nucleus_filter_function=None, rate_filter_function=None,
