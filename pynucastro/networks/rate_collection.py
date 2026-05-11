@@ -1210,9 +1210,12 @@ class RateCollection:
 
         """
 
-        J = self.evaluate_jacobian(rho, T, comp,
-                                   screen_func=screen_func,
-                                   exclude_rates=exclude_rates)
+        with warnings.catch_warnings():
+            # don't display partition function warnings
+            warnings.simplefilter("ignore", UserWarning)
+            J = self.evaluate_jacobian(rho, T, comp,
+                                       screen_func=screen_func,
+                                       exclude_rates=exclude_rates)
         e = eigvals(J)
         return np.max(np.abs(e))
 
