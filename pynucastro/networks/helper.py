@@ -53,7 +53,8 @@ def network_helper(nuclei, *,
     """
 
     rl = ReacLibLibrary()
-    lib = rl.linking_nuclei(nuclei, with_reverse=with_reverse)
+    lib = rl.linking_nuclei(nuclei, with_reverse=with_reverse,
+                            print_warning=verbose)
 
     if use_tabular_rates:
         if tabular_ordering:
@@ -61,7 +62,7 @@ def network_helper(nuclei, *,
         else:
             tl = TabularLibrary()
 
-        lib += tl.linking_nuclei(nuclei)
+        lib += tl.linking_nuclei(nuclei, print_warning=verbose)
 
         # if we have both a tabular and ReacLib rate,
         # remove the ReacLib version
