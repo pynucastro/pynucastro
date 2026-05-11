@@ -48,7 +48,7 @@ class SimpleCxxNetwork(BaseCxxNetwork):
                 of.write(f'{self.indent*n_indent}' + '}\n\n')
 
     def _write_network(self, odir=None):
-        """Output the the RHS, jacobian and ancillary files for the
+        """Output the RHS, jacobian and ancillary files for the
         system of ODEs that this network describes, using the template
         files.
 
