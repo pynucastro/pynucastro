@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.helper &#8212; pynucastro 2.10.0.post4+ge6fde7567 documentation</title>
+    <title>pynucastro.networks.helper &#8212; pynucastro 2.10.0.post6+g3214c7e8a documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=9092df3e"></script>
+    <script src="../../../_static/documentation_options.js?v=2520ca1c"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -497,7 +497,8 @@
   <h1>Source code for pynucastro.networks.helper</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Methods to ease the creation of networks.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">DerivedRate</span><span class="p">,</span> <span class="n">ReacLibLibrary</span><span class="p">,</span> <span class="n">TabularLibrary</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">DerivedRate</span><span class="p">,</span> <span class="n">ReacLibLibrary</span><span class="p">,</span> <span class="n">StarLibLibrary</span><span class="p">,</span>
+                              <span class="n">TabularLibrary</span><span class="p">)</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.amrexastro_cxx_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">AmrexAstroCxxNetwork</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.fortran_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">FortranNetwork</span>
@@ -510,6 +511,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">network_helper</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                    <span class="n">network_type</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span>
                    <span class="n">inert_nuclei</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                   <span class="n">main_library</span><span class="o">=</span><span class="s2">&quot;reaclib&quot;</span><span class="p">,</span>
                    <span class="n">use_detailed_balance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                    <span class="n">use_tabular_rates</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                    <span class="n">tabular_ordering</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -532,6 +534,12 @@
 <span class="sd">    inert_nuclei : list, tuple</span>
 <span class="sd">        an iterable of Nuclei that should be part of the collection but</span>
 <span class="sd">        are not linked via reactions to the other Nuclei in the network.</span>
+<span class="sd">    main_library : str</span>
+<span class="sd">        Which library, ReacLib or StarLib, is used as the main rate source?</span>
+<span class="sd">        Allowed values are:</span>
+
+<span class="sd">        * &quot;reaclib&quot; : use the ReacLib library</span>
+<span class="sd">        * &quot;starlib&quot; : use the StarLib library</span>
 <span class="sd">    use_detailed_balanace : bool</span>
 <span class="sd">        Do we rederive inverse rates using detailed balance?</span>
 <span class="sd">    use_tabular_rates : bool</span>
@@ -551,9 +559,14 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">rl</span> <span class="o">=</span> <span class="n">ReacLibLibrary</span><span class="p">()</span>
-    <span class="n">lib</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="n">with_reverse</span><span class="o">=</span><span class="n">with_reverse</span><span class="p">,</span>
-                            <span class="n">print_warning</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">main_library</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;reaclib&quot;</span><span class="p">,</span> <span class="s2">&quot;starlib&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">main_library</span> <span class="o">==</span> <span class="s2">&quot;reaclib&quot;</span><span class="p">:</span>
+        <span class="n">rl</span> <span class="o">=</span> <span class="n">ReacLibLibrary</span><span class="p">()</span>
+        <span class="n">lib</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="n">with_reverse</span><span class="o">=</span><span class="n">with_reverse</span><span class="p">,</span> <span class="n">print_warning</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sl</span> <span class="o">=</span> <span class="n">StarLibLibrary</span><span class="p">()</span>
+        <span class="n">lib</span> <span class="o">=</span> <span class="n">sl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="n">with_reverse</span><span class="o">=</span><span class="n">with_reverse</span><span class="p">,</span> <span class="n">print_warning</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">use_tabular_rates</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">tabular_ordering</span><span class="p">:</span>
