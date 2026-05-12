@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.10.0.post7+g039207d52 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.10.0.post8+g96eb3ece7 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=c0c43a58"></script>
+    <script src="../../../_static/documentation_options.js?v=952a934a"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1786,11 +1786,53 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">J</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_jacobian</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span>
-                                   <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">,</span>
-                                   <span class="n">exclude_rates</span><span class="o">=</span><span class="n">exclude_rates</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="c1"># don&#39;t display partition function warnings</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
+            <span class="n">J</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_jacobian</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span>
+                                       <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">,</span>
+                                       <span class="n">exclude_rates</span><span class="o">=</span><span class="n">exclude_rates</span><span class="p">)</span>
         <span class="n">e</span> <span class="o">=</span> <span class="n">eigvals</span><span class="p">(</span><span class="n">J</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="RateCollection.find_stiffest_rate">
+<a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.find_stiffest_rate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_stiffest_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                        <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate through rates and compute the spectral radius for the</span>
+<span class="sd">        network excluding the rate to determine which rate is most responsible</span>
+<span class="sd">        for making the network stiff.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            density used to evaluate Jacobian terms</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature used to evaluate Jacobian terms</span>
+<span class="sd">        comp : Composition</span>
+<span class="sd">            composition used to evaluate Jacobian terms</span>
+<span class="sd">        screen_func : Callable</span>
+<span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
+<span class="sd">            -- if provided, then the evaluated rates will include the screening</span>
+<span class="sd">            correction.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Rate</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">stiff_rate</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">spectral_radius</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectral_radius</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+            <span class="n">_sprad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectral_radius</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">,</span> <span class="n">exclude_rates</span><span class="o">=</span><span class="p">[</span><span class="n">r</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">_sprad</span> <span class="o">&lt;</span> <span class="n">spectral_radius</span><span class="p">:</span>
+                <span class="n">stiff_rate</span> <span class="o">=</span> <span class="n">r</span>
+                <span class="n">spectral_radius</span> <span class="o">=</span> <span class="n">_sprad</span>
+
+        <span class="k">return</span> <span class="n">stiff_rate</span></div>
 
 
 <div class="viewcode-block" id="RateCollection.validate">

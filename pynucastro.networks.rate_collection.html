@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.rate_collection module &#8212; pynucastro 2.10.0.post7+g039207d52 documentation</title>
+    <title>pynucastro.networks.rate_collection module &#8212; pynucastro 2.10.0.post8+g96eb3ece7 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=c0c43a58"></script>
+    <script src="_static/documentation_options.js?v=952a934a"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -591,6 +591,7 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.export_as"><code class="docutils literal notranslate"><span class="pre">RateCollection.export_as()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.find_duplicate_links"><code class="docutils literal notranslate"><span class="pre">RateCollection.find_duplicate_links()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.find_reverse"><code class="docutils literal notranslate"><span class="pre">RateCollection.find_reverse()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.find_stiffest_rate"><code class="docutils literal notranslate"><span class="pre">RateCollection.find_stiffest_rate()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.find_unimportant_rates"><code class="docutils literal notranslate"><span class="pre">RateCollection.find_unimportant_rates()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.get_forward_rates"><code class="docutils literal notranslate"><span class="pre">RateCollection.get_forward_rates()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.get_hidden_rates"><code class="docutils literal notranslate"><span class="pre">RateCollection.get_hidden_rates()</span></code></a></li>
@@ -952,6 +953,29 @@ that share the same link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate">Rate</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.find_stiffest_rate">
+<span class="sig-name descname"><span class="pre">find_stiffest_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.find_stiffest_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.find_stiffest_rate" title="Link to this definition">#</a></dt>
+<dd><p>Iterate through rates and compute the spectral radius for the
+network excluding the rate to determine which rate is most responsible
+for making the network stiff.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – density used to evaluate Jacobian terms</p></li>
+<li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – temperature used to evaluate Jacobian terms</p></li>
+<li><p><strong>comp</strong> (<a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition"><em>Composition</em></a>) – composition used to evaluate Jacobian terms</p></li>
+<li><p><strong>screen_func</strong> (<em>Callable</em>) – one of the screening functions from <a class="reference internal" href="pynucastro.screening.html#module-pynucastro.screening" title="pynucastro.screening"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pynucastro.screening</span></code></a>
+– if provided, then the evaluated rates will include the screening
+correction.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate">Rate</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1613,6 +1637,7 @@ are distinguishable.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.export_as"><code class="docutils literal notranslate"><span class="pre">RateCollection.export_as()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.find_duplicate_links"><code class="docutils literal notranslate"><span class="pre">RateCollection.find_duplicate_links()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.find_reverse"><code class="docutils literal notranslate"><span class="pre">RateCollection.find_reverse()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.find_stiffest_rate"><code class="docutils literal notranslate"><span class="pre">RateCollection.find_stiffest_rate()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.find_unimportant_rates"><code class="docutils literal notranslate"><span class="pre">RateCollection.find_unimportant_rates()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.get_forward_rates"><code class="docutils literal notranslate"><span class="pre">RateCollection.get_forward_rates()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.get_hidden_rates"><code class="docutils literal notranslate"><span class="pre">RateCollection.get_hidden_rates()</span></code></a></li>
