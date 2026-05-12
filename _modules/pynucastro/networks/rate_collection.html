@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.10.0.post8+g96eb3ece7 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.10.0.post9+gb0e86e105 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=952a934a"></script>
+    <script src="../../../_static/documentation_options.js?v=644c1d77"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1507,9 +1507,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="RateCollection.isNSECompatible">
-<a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.isNSECompatible">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">isNSECompatible</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="RateCollection.is_NSE_compatible">
+<a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.is_NSE_compatible">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_NSE_compatible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine whether the current network is compatible</span>
 <span class="sd">        with the NSE description. Checks if there are any rates that</span>
 <span class="sd">        uses stoichiometry, or if every strong rate has a corresponding</span>
@@ -1522,11 +1522,20 @@
 <span class="sd">        An example would be the alpha-chain network, i.e. Ye = 0.5 always.</span>
 <span class="sd">        In this case, the second NSE constraint on Ye is pointless.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        verbose : bool</span>
+<span class="sd">            Do we print an NSE summary?  If not set, the network verbose</span>
+<span class="sd">            property is used.</span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">verbose</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">verbose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span>
 
         <span class="n">S</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">rp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate_pairs</span><span class="p">():</span>
@@ -1541,7 +1550,7 @@
 
             <span class="c1"># After treating weak rate cases, return False if one of them is None</span>
             <span class="k">if</span> <span class="n">fr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">rr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Either the forward or the reverse rate for the &quot;</span>
                           <span class="sa">f</span><span class="s2">&quot;following strong reaction rate pair is missing: </span><span class="si">{</span><span class="n">rp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">False</span>
@@ -1554,14 +1563,14 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="p">((</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">fr</span><span class="p">,</span> <span class="n">DerivedRate</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fr</span><span class="o">.</span><span class="n">source_rate</span> <span class="o">==</span> <span class="n">rr</span><span class="p">)</span> <span class="ow">or</span>
                     <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">rr</span><span class="p">,</span> <span class="n">DerivedRate</span><span class="p">)</span> <span class="ow">and</span> <span class="n">rr</span><span class="o">.</span><span class="n">source_rate</span> <span class="o">==</span> <span class="n">fr</span><span class="p">)</span> <span class="ow">or</span>
                     <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">fr</span><span class="p">,</span> <span class="n">ApproximateRate</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rr</span><span class="p">,</span> <span class="n">ApproximateRate</span><span class="p">))):</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Either the forward or the reverse rate for the &quot;</span>
                           <span class="sa">f</span><span class="s2">&quot;following strong reaction rate pair is not a DerivedRate: </span><span class="si">{</span><span class="n">rp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">False</span>
 
             <span class="c1"># Check if there are any rate uses stoichiometry</span>
             <span class="k">if</span> <span class="n">fr</span><span class="o">.</span><span class="n">stoichiometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">rr</span><span class="o">.</span><span class="n">stoichiometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Either the forward or the reverse rate for the &quot;</span>
                           <span class="sa">f</span><span class="s2">&quot;following strong reaction rate pair uses stoichiometry: </span><span class="si">{</span><span class="n">rp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">False</span>
@@ -1595,7 +1604,7 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">Z_A_ratios</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">max_dim</span> <span class="o">=</span> <span class="mi">1</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NSE Compatibility Summary </span><span class="se">\n</span><span class="s2">&quot;</span>
                   <span class="s2">&quot;-------------------------</span><span class="se">\n</span><span class="s2">&quot;</span>
                   <span class="sa">f</span><span class="s2">&quot;  Nullity: </span><span class="si">{</span><span class="n">nullity</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -1620,6 +1629,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  inert nuclei (included in carried): 0&quot;</span><span class="p">)</span>
 
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  NSE compatible? </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">is_NSE_compatible</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  total number of rates: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>

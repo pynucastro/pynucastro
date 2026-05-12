@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>NSE vs. Direct Integration &#8212; pynucastro 2.10.0.post8+g96eb3ece7 documentation</title>
+    <title>NSE vs. Direct Integration &#8212; pynucastro 2.10.0.post9+gb0e86e105 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=952a934a"></script>
+    <script src="_static/documentation_options.js?v=644c1d77"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -657,7 +657,7 @@ If all species in the network have the same <span class="math notranslate nohigh
 \]</div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>In pynucastro, <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateCollection</span></code></a> provides a convenient method, <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.isNSECompatible" title="pynucastro.networks.rate_collection.RateCollection.isNSECompatible"><code class="xref py py-meth docutils literal notranslate"><span class="pre">isNSECompatible</span></code></a>, that checks all the above assumptions and pre-determines whether a network will be compatible with NSE.</p>
+<p>In pynucastro, <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateCollection</span></code></a> provides a convenient method, <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.is_NSE_compatible" title="pynucastro.networks.rate_collection.RateCollection.is_NSE_compatible"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_NSE_compatible</span></code></a>, that checks all the above assumptions and pre-determines whether a network will be compatible with NSE.</p>
 </div>
 <p>To demonstrate, we will create the <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a> needed for direct integration using the same set of nuclei as our previous example.</p>
 <p>First we recreate our library, but we make sure that we use reverse rates calculated via detailed balance.
@@ -759,6 +759,8 @@ In pynucastro, this is the <a class="reference internal" href="pynucastro.rates.
   approximated-out nuclei: 5
   inert nuclei (included in carried): 0
 
+  NSE compatible? True
+
   total number of rates: 107
 
   rates explicitly connecting nuclei: 74
@@ -776,7 +778,7 @@ In pynucastro, this is the <a class="reference internal" href="pynucastro.rates.
 </div>
 </div>
 </div>
-<p>Let’s predict whether our network <code class="docutils literal notranslate"><span class="pre">net</span></code> will be compatible with NSE by using <code class="docutils literal notranslate"><span class="pre">isNSECompatible()</span></code></p>
+<p>Let’s predict whether our network <code class="docutils literal notranslate"><span class="pre">net</span></code> will be compatible with NSE by using <code class="docutils literal notranslate"><span class="pre">is_NSE_compatible()</span></code></p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>Set <code class="docutils literal notranslate"><span class="pre">verbose=True</span></code> when creating the network to output additional information of the network property such as the rank of the stoichiometric matrix, <span class="math notranslate nohighlight">\(S\)</span>.</p>
@@ -784,7 +786,7 @@ In pynucastro, this is the <a class="reference internal" href="pynucastro.rates.
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is net compatible with NSE? </span><span class="si">{</span><span class="n">net</span><span class="o">.</span><span class="n">isNSECompatible</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is net compatible with NSE? </span><span class="si">{</span><span class="n">net</span><span class="o">.</span><span class="n">is_NSE_compatible</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -902,7 +904,7 @@ Since we will compare to NSE, we want to use the same screening that NSE uses �
 <img alt="_images/89c4c9f8efc48760266a83a6fbf11e9ec3fce5f0e025d3c512e1b6e9633777e1.png" src="_images/89c4c9f8efc48760266a83a6fbf11e9ec3fce5f0e025d3c512e1b6e9633777e1.png" />
 </div>
 </div>
-<p>We see that the plot of absolute and relative difference shows that the mass fraction obtained from direct integration matches with NSE equations to machine precision just as <code class="docutils literal notranslate"><span class="pre">isNSECompatible()</span></code> predicted. The differences between the two are largely set by the tolerances of both the NSE solver and the ODE integrator.</p>
+<p>We see that the plot of absolute and relative difference shows that the mass fraction obtained from direct integration matches with NSE equations to machine precision just as <code class="docutils literal notranslate"><span class="pre">is_NSE_compatible()</span></code> predicted. The differences between the two are largely set by the tolerances of both the NSE solver and the ODE integrator.</p>
 </section>
 <section id="visualizing-equilibrium">
 <h2>Visualizing equilibrium<a class="headerlink" href="#visualizing-equilibrium" title="Link to this heading">#</a></h2>
@@ -966,10 +968,10 @@ by the total activity of the rate (forward + reverse) by doing <code class="docu
 </div>
 </div>
 </div>
-<p>Check if it is still compatible with NSE via <code class="docutils literal notranslate"><span class="pre">isNSECompatible()</span></code></p>
+<p>Check if it is still compatible with NSE via <code class="docutils literal notranslate"><span class="pre">is_NSE_compatible()</span></code></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is net compatible with NSE? </span><span class="si">{</span><span class="n">net</span><span class="o">.</span><span class="n">isNSECompatible</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is net compatible with NSE? </span><span class="si">{</span><span class="n">net</span><span class="o">.</span><span class="n">is_NSE_compatible</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1023,7 +1025,7 @@ allowing for the exchange of <span class="math notranslate nohighlight">\({}^{4}
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is net compatible with NSE? </span><span class="si">{</span><span class="n">net</span><span class="o">.</span><span class="n">isNSECompatible</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is net compatible with NSE? </span><span class="si">{</span><span class="n">net</span><span class="o">.</span><span class="n">is_NSE_compatible</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1046,7 +1048,7 @@ But we can do better by approximating out <span class="math notranslate nohighli
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">make_nn_g_approx</span><span class="p">(</span><span class="n">intermediate_nuclei</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;fe53&quot;</span><span class="p">])</span>
 <span class="n">net</span><span class="o">.</span><span class="n">remove_nuclei</span><span class="p">([</span><span class="s2">&quot;fe53&quot;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is net compatible with NSE? </span><span class="si">{</span><span class="n">net</span><span class="o">.</span><span class="n">isNSECompatible</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is net compatible with NSE? </span><span class="si">{</span><span class="n">net</span><span class="o">.</span><span class="n">is_NSE_compatible</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
