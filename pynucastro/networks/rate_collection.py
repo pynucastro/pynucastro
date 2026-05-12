@@ -962,7 +962,7 @@ class RateCollection:
 
         self._build_collection()
 
-    def isNSECompatible(self):
+    def is_NSE_compatible(self, verbose=None):
         """Determine whether the current network is compatible
         with the NSE description. Checks if there are any rates that
         uses stoichiometry, or if every strong rate has a corresponding
@@ -975,11 +975,20 @@ class RateCollection:
         An example would be the alpha-chain network, i.e. Ye = 0.5 always.
         In this case, the second NSE constraint on Ye is pointless.
 
+        Parameters
+        ----------
+        verbose : bool
+            Do we print an NSE summary?  If not set, the network verbose
+            property is used.
+
         Returns
         -------
         bool
 
         """
+
+        if verbose is None:
+            verbose = self.verbose
 
         S = []
         for rp in self.get_rate_pairs():
@@ -994,7 +1003,7 @@ class RateCollection:
 
             # After treating weak rate cases, return False if one of them is None
             if fr is None or rr is None:
-                if self.verbose:
+                if verbose:
                     print("Either the forward or the reverse rate for the "
                           f"following strong reaction rate pair is missing: {rp}")
                 return False
@@ -1007,14 +1016,14 @@ class RateCollection:
             if not ((isinstance(fr, DerivedRate) and fr.source_rate == rr) or
                     (isinstance(rr, DerivedRate) and rr.source_rate == fr) or
                     (isinstance(fr, ApproximateRate) and isinstance(rr, ApproximateRate))):
-                if self.verbose:
+                if verbose:
                     print("Either the forward or the reverse rate for the "
                           f"following strong reaction rate pair is not a DerivedRate: {rp}")
                 return False
 
             # Check if there are any rate uses stoichiometry
             if fr.stoichiometry is not None or rr.stoichiometry is not None:
-                if self.verbose:
+                if verbose:
                     print("Either the forward or the reverse rate for the "
                           f"following strong reaction rate pair uses stoichiometry: {rp}")
                 return False
@@ -1048,7 +1057,7 @@ class RateCollection:
         if len(Z_A_ratios) == 1:
             max_dim = 1
 
-        if self.verbose:
+        if verbose:
             print("NSE Compatibility Summary \n"
                   "-------------------------\n"
                   f"  Nullity: {nullity}\n"
@@ -1070,6 +1079,9 @@ class RateCollection:
         else:
             print("  inert nuclei (included in carried): 0")
 
+        print("")
+
+        print(f"  NSE compatible? {self.is_NSE_compatible()}")
         print("")
 
         print(f"  total number of rates: {len(self.all_rates)}")
@@ -1227,11 +1239,50 @@ class RateCollection:
 
         """
 
-        J = self.evaluate_jacobian(rho, T, comp,
-                                   screen_func=screen_func,
-                                   exclude_rates=exclude_rates)
+        with warnings.catch_warnings():
+            # don't display partition function warnings
+            warnings.simplefilter("ignore", UserWarning)
+            J = self.evaluate_jacobian(rho, T, comp,
+                                       screen_func=screen_func,
+                                       exclude_rates=exclude_rates)
         e = eigvals(J)
         return np.max(np.abs(e))
+
+    def find_stiffest_rate(self, rho, T, comp, *,
+                        screen_func=None):
+        """Iterate through rates and compute the spectral radius for the
+        network excluding the rate to determine which rate is most responsible
+        for making the network stiff.
+
+        Parameters
+        ----------
+        rho : float
+            density used to evaluate Jacobian terms
+        T : float
+            temperature used to evaluate Jacobian terms
+        comp : Composition
+            composition used to evaluate Jacobian terms
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the evaluated rates will include the screening
+            correction.
+
+        Returns
+        -------
+        Rate
+
+        """
+
+        stiff_rate = None
+        spectral_radius = self.spectral_radius(rho, T, comp, screen_func=screen_func)
+
+        for r in self.rates:
+            _sprad = self.spectral_radius(rho, T, comp, screen_func=screen_func, exclude_rates=[r])
+            if _sprad < spectral_radius:
+                stiff_rate = r
+                spectral_radius = _sprad
+
+        return stiff_rate
 
     def validate(self, other_library, *, forward_only=True):
         """Perform various checks on the library, comparing to
