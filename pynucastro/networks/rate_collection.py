@@ -1292,7 +1292,7 @@ class RateCollection:
 
         Returns
         -------
-        bool, dict(Rates)
+        bool, dict(Rate)
 
         """
 
