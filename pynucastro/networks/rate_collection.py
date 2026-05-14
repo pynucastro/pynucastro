@@ -1267,7 +1267,8 @@ class RateCollection:
 
         return stiff_rate
 
-    def validate(self, other_library, *, forward_only=True):
+    def validate(self, other_library, *,
+                 forward_only=True, return_dict=False, skip_duplicates=True):
         """Perform various checks on the library, comparing to
         ``other_library``, to ensure that we are not missing important
         rates.  The idea is that the current library should be a
@@ -1281,12 +1282,21 @@ class RateCollection:
             the library to compare to
         forward_only : bool
             do we only check the forward rates?
+        return_dict : bool
+            do we return a dictionary of the rates that are missing?
+            if so, we suppress their output to stdout and include the
+            reason as the dictionary value.
+        skip_duplicates : bool
+            if a rate in `other_library` represents the same process
+            as one already in the network, don't consider it missing
 
         Returns
         -------
-        bool
+        bool, dict(Rates)
 
         """
+
+        missing_rates = {}
 
         current_rates = sorted(self.get_rates())
 
@@ -1313,7 +1323,8 @@ class RateCollection:
                     msg = f"validation: {p} produced in {rate} never consumed."
                     print(msg)
 
-        # now check if we are missing any rates from other_library with the exact same reactants
+        # now check if we are missing any rates from other_library
+        # with the exact same reactants
 
         other_by_reactants = collections.defaultdict(list)
         for rate in sorted(other_library.get_rates()):
@@ -1326,14 +1337,28 @@ class RateCollection:
             key = tuple(sorted(rate.reactants))
             for other_rate in other_by_reactants[key]:
                 # check to see if other_rate is already in current_rates
+                # start by assuming we already have other_rate
                 found = True
                 if other_rate not in current_rates:
                     found = False
 
+                # now check to see if perhaps it is a duplicate of
+                # something we already have
+                if len(find_duplicate_rates([other_rate] + self.get_rates())) > 0:
+                    found = True
+
                 if not found:
                     msg = f"validation: missing {other_rate} as alternative to {rate} (Q = {other_rate.Q} MeV)."
-                    print(msg)
+                    if return_dict:
+                        missing_rates[other_rate] = msg
+                    else:
+                        print(msg)
 
+        # next loop over the nuclei in our network and check if we are missing
+        # any alpha, p, or n captures
+
+        if return_dict:
+            return passed_validation, missing_rates
         return passed_validation
 
     def find_duplicate_links(self):
