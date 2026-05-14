@@ -1344,8 +1344,9 @@ class RateCollection:
 
                 # now check to see if perhaps it is a duplicate of
                 # something we already have
-                if len(find_duplicate_rates([other_rate] + self.get_rates())) > 0:
-                    found = True
+                if skip_duplicates:
+                    if len(find_duplicate_rates([other_rate] + self.get_rates())) > 0:
+                        found = True
 
                 if not found:
                     msg = f"validation: missing {other_rate} as alternative to {rate} (Q = {other_rate.Q} MeV)."
