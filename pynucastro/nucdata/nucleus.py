@@ -2,6 +2,7 @@
 
 import re
 from pathlib import Path
+from unicodedata import name
 
 from pynucastro.constants import constants
 from pynucastro.nucdata.elements import PeriodicTable, UnidentifiedElement
@@ -24,6 +25,8 @@ _pcollection = PartitionFunctionCollection(use_high_temperatures=True, use_set='
 
 _NUCLEUS_SYMBOL_MASS_RE = re.compile(r"^([a-zA-Z]+)(\d*)$")
 _NUCLEUS_MASS_SYMBOL_RE = re.compile(r"^(\d*)([a-zA-Z]*)$")
+_ALUMINUM_26_ISOMER_GND = re.compile(r"^(al)\-((\d+))$")
+_ALUMINUM_26_ISOMER = re.compile(r"^(al)\*(\d*)$")
 
 # Note: for Nubase 2020, we need to use the CODATA 18 constants
 _mass_H = _mass_table.get_mass_diff(a=1, z=1) + constants.m_u_MeV_C18
@@ -92,10 +95,12 @@ class Nucleus:
 
     def __init__(self, name, dummy=False):
         name = name.lower()
+
         self.raw = name
 
         self.dummy = dummy
         self.nse = False
+        self.isomer_state = "ground state" # Ground state as the default
 
         # element symbol and atomic weight
         if name == "p":
@@ -143,8 +148,8 @@ class Nucleus:
             self.pretty = r"\mathrm{p}_\mathrm{NSE}"
             self.caps_name = "p_NSE"
             self.nse = True
-        elif name.lower().strip() in ("al-6", "al*6"):
-            raise UnsupportedNucleus("isomers of Al26 are not currently supported")
+        #elif name.lower().strip() in ("al-6", "al*6"):
+         #   raise UnsupportedNucleus("isomers of Al26 are not currently supported")
         else:
             if e := _NUCLEUS_SYMBOL_MASS_RE.match(name):
                 self.el = e.group(1).title()  # chemical symbol
@@ -152,14 +157,37 @@ class Nucleus:
             elif e := _NUCLEUS_MASS_SYMBOL_RE.match(name):
                 self.el = e.group(2).title()  # chemical symbol
                 self.A = int(e.group(1))
+            elif e := _ALUMINUM_26_ISOMER.match(name): # for al*6
+                self.el = "al"
+                self.A = 26
+                self.isomer_state = "excited"
+                self.short_spec_name = "al26isomer"
+                self.raw = "al26isomer"
+                self.caps_name = "Al26isomer"
+            elif e := _ALUMINUM_26_ISOMER_GND.match(name):  # for al-6
+                self.el = "al"
+                self.A = 26
+                self.isomer_state = "excited"
+                self.short_spec_name = "al26isomer"
+                self.raw = "al26isomer"
+                self.caps_name = "Al26isomer"
             if e is None:
                 raise ValueError(f"invalid nucleus string, {name}")
 
             assert self.el
             assert self.A >= 0
-            self.short_spec_name = f"{self.el.lower()}{self.A}"
-            self.raw = f"{self.el.lower()}{self.A}"
-            self.caps_name = self.short_spec_name.capitalize()
+            #self.short_spec_name = f"{self.el.lower()}{self.A}"
+            #self.raw = f"{self.el.lower()}{self.A}"
+            #self.caps_name = self.short_spec_name.capitalize()
+
+            if self.isomer_state == "excited":
+                self.short_spec_name = f"{self.el.lower()}{self.A}isomer"
+                self.raw = f"{self.el.lower()}{self.A}isomer"
+                self.caps_name = self.short_spec_name.capitalize()
+            else:
+                self.short_spec_name = f"{self.el.lower()}{self.A}"
+                self.raw = f"{self.el.lower()}{self.A}"
+                self.caps_name = self.short_spec_name.capitalize()
 
         # use lowercase element abbreviation regardless the case of the input
         self.el = self.el.lower()
@@ -320,8 +348,9 @@ class Nucleus:
             return self.raw.capitalize()
         return self.raw
 
+    #Added a call for the isomer state
     def __hash__(self):
-        return hash((self.Z, self.A))
+        return hash((self.Z, self.A, self.isomer_state))
 
     def c(self):
         """Return the capitalized-style name"""
@@ -335,7 +364,8 @@ class Nucleus:
         if isinstance(other, Nucleus):
             return (self.el == other.el and
                     self.Z == other.Z and self.A == other.A and
-                    self.nse == other.nse)
+                    self.nse == other.nse and
+                    self.isomer_state == other.isomer_state)
         if isinstance(other, tuple):
             return (self.Z, self.A) == other
         return NotImplemented
