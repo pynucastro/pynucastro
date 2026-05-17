@@ -780,7 +780,8 @@ class Rate:
         log_rate = np.atleast_1d(self.log_eval(T, rho=rho, comp=comp, screen_func=screen_func))
         return float(np.exp(log_rate).sum())
 
-    def eval_full_rate(self, rho, T, composition, screen_func=None):
+    def eval_full_rate(self, rho, T, composition, *,
+                       screen_func=None, y_molar=None, y_e=None):
         """Evaluate the rate for a specific density, temperature, and
         composition, with optional screening.  Note: this returns that
         rate as dY/dt, where Y is the molar fraction.  For a 2 body
@@ -806,19 +807,26 @@ class Rate:
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
             correction.
-
+        y_molar : dict{Nucleus: float}
+            the molar fractions of the nuclei.  If not provided, this
+            will be computed from composition
         Returns
         -------
         float
 
         """
 
-        ys = composition.get_molar()
-        y_e = composition.ye
+        if y_molar:
+            ys = y_molar
+        else:
+            ys = composition.get_molar()
+
+        if not y_e:
+            y_e = composition.ye
 
         # Note screening effect is already included
         val = self.prefactor * rho**self.dens_exp * self.eval(T, rho=rho, comp=composition,
-                                                     screen_func=screen_func)
+                                                              screen_func=screen_func)
         if self.use_ye_weighting:
             # we already added 1 to dens_exp
             val = val * y_e
