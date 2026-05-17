@@ -404,6 +404,15 @@ class ReacLibRate(Rate):
             self.weak = self.labelprops[4] == 'w'
             self.derived_from_inverse = self.labelprops[5] == 'v'
 
+    def _set_rhs_properties(self):
+
+        super()._set_rhs_properties()
+
+        # ReacLib rates that represent electron capture need a rho Ye
+        if self.weak_type == 'electron_capture':
+            self.dens_exp = self.dens_exp + 1
+            self.use_ye_weighting = True
+
     @staticmethod
     def _read_from_file(rfile):
         """Given a file object, read rate data from the file.
