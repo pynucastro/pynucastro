@@ -5,10 +5,8 @@ rates that together make up a network.
 
 import collections
 import copy
-import functools
 import math
 import warnings
-from operator import mul
 from pathlib import Path
 
 import matplotlib as mpl
@@ -1083,7 +1081,7 @@ class RateCollection:
         print(f"  modified rates: {len(self.modified_rates)}")
         print(f"  custom rates: {len(self.custom_rates)}")
 
-    def evaluate_rates(self, rho, T, composition, *,
+    def evaluate_rates(self, rho, T, composition,
                        screen_func=None):
         """Evaluate the rates for a specific density, temperature, and
         composition, with optional screening.  Note: this returns that
