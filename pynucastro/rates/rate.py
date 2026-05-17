@@ -1,6 +1,8 @@
 """Classes and methods to interface with files storing rate data."""
 
+import functools
 import math
+from operator import mul
 from pathlib import Path
 
 import numpy as np
@@ -179,10 +181,17 @@ class Rate:
         else:
             self.Q = Q
 
+        # this is used by eval to determine if we need to add
+        # a Ye weighting when we compute the full dY/dt form
+        # of the rate
+        self.use_ye_weighting = False
+
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
 
+        # these apply to the argument list for the function that evaluates
+        # the just the N_A <σv> part of the rate
         self.rate_eval_needs_rho = False
         self.rate_eval_needs_comp = False
 
@@ -453,8 +462,6 @@ class Rate:
                 self.inv_prefactor = self.inv_prefactor * math.factorial(self.reactants.count(r))
         self.prefactor = self.prefactor/float(self.inv_prefactor)
         self.dens_exp = len(self.reactants)-1
-        if self.weak_type == 'electron_capture':
-            self.dens_exp = self.dens_exp + 1
 
     def _set_screening_pairs(self):
         """Find a list reactant pairs used for screening. For reactions
@@ -699,7 +706,8 @@ class Rate:
             ydot_string_components.append(f"rho**{self.dens_exp}")
 
         # electron fraction dependence
-        if self.weak_type == 'electron_capture' and not self.tabular:
+        if self.use_ye_weighting:
+            # we already would have added the rho to dens_exp
             ydot_string_components.append("ye(Y)")
 
         # composition dependence
@@ -772,6 +780,59 @@ class Rate:
         log_rate = np.atleast_1d(self.log_eval(T, rho=rho, comp=comp, screen_func=screen_func))
         return float(np.exp(log_rate).sum())
 
+    def eval_full_rate(self, rho, T, composition, *,
+                       screen_func=None, y_molar=None, y_e=None):
+        """Evaluate the rate for a specific density, temperature, and
+        composition, with optional screening.  Note: this returns that
+        rate as dY/dt, where Y is the molar fraction.  For a 2 body
+        reaction, a + b, this will be of the form:
+
+        ρ Y_a Y_b N_A <σv> / (1 + δ_{ab})
+
+        where δ is the Kronecker delta that accounts for a = b.
+
+        If you want dn/dt, where n is the number density (so you get
+        n_a n_b <σv>), then you need to multiply the results here
+        by ρ N_A (where N_A is Avogadro's number).
+
+        Parameters
+        ----------
+        rho : float
+            density used to evaluate rates
+        T : float
+            temperature used to evaluate rates
+        composition : Composition
+            composition used to evaluate rates
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the evaluated rates will include the screening
+            correction.
+        y_molar : dict{Nucleus: float}
+            the molar fractions of the nuclei.  If not provided, this
+            will be computed from composition
+        Returns
+        -------
+        float
+
+        """
+
+        if y_molar:
+            ys = y_molar
+        else:
+            ys = composition.get_molar()
+
+        if not y_e:
+            y_e = composition.ye
+
+        # Note screening effect is already included
+        val = self.prefactor * rho**self.dens_exp * self.eval(T, rho=rho, comp=composition,
+                                                              screen_func=screen_func)
+        if self.use_ye_weighting:
+            # we already added 1 to dens_exp
+            val = val * y_e
+        yfac = functools.reduce(mul, [ys[q] for q in self.reactants])
+        return yfac * val
+
     def function_string_py(self):
         """Return a string containing the python function that
         computes the rate.
@@ -815,7 +876,7 @@ class Rate:
             jac_string_components.append(f"rho**{self.dens_exp}")
 
         # electron fraction dependence
-        if self.weak_type == 'electron_capture' and not self.tabular:
+        if self.use_ye_weighting:
             jac_string_components.append("ye(Y)")
 
         # composition dependence
@@ -896,7 +957,7 @@ class Rate:
         dens_term = rho**self.dens_exp
 
         # electron fraction dependence
-        if self.weak_type == 'electron_capture' and not self.tabular:
+        if self.use_ye_weighting:
             y_e_term = comp.ye
         else:
             y_e_term = 1.0
