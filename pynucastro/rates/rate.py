@@ -819,10 +819,10 @@ class Rate:
         # Note screening effect is already included
         val = self.prefactor * rho**self.dens_exp * self.eval(T, rho=rho, comp=composition,
                                                      screen_func=screen_func)
-        if (self.weak_type == 'electron_capture' and
-            not isinstance(self, TabularRate)):
+        if self.use_ye_weighting:
+            # we already added 1 to dens_exp
             val = val * y_e
-        yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
+        yfac = functools.reduce(mul, [ys[q] for q in self.reactants])
         return yfac * val
 
     def function_string_py(self):
