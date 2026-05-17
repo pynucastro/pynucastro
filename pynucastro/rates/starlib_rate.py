@@ -62,6 +62,15 @@ class StarLibRate(TemperatureTabularRate):
         #Ensure same number of data points in rate and sigma
         assert (len(self.log_median_rates) == len(self.sigma_data))
 
+    def _set_rhs_properties(self):
+
+        super()._set_rhs_properties()
+
+        # ReacLib rates that represent electron capture need a rho Ye
+        if self.weak_type == 'electron_capture':
+            self.dens_exp = self.dens_exp + 1
+            self.use_ye_weighting = True
+
     def sample_rates(self, rng=None):
         """Sample rate values as median_rate + N(0,1)*sigma for each of the
         60 entries in the data for a Starlib rate, given a non-empty seed. Use

@@ -1124,7 +1124,7 @@ class RateCollection:
             # Note screening effect is already included
             val = r.prefactor * rho**r.dens_exp * r.eval(T, rho=rho, comp=composition,
                                                          screen_func=screen_func)
-            if (r.weak_type == 'electron_capture' and not isinstance(r, TabularRate)):
+            if r.use_ye_weighting:
                 val = val * y_e
             yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
             rvals[r] = yfac * val
