@@ -3,7 +3,6 @@ tabulated in terms of electron density and temperature.
 
 """
 
-import math
 import re
 from enum import Enum
 from pathlib import Path
