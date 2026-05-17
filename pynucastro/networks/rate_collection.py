@@ -5,10 +5,8 @@ rates that together make up a network.
 
 import collections
 import copy
-import functools
 import math
 import warnings
-from operator import mul
 from pathlib import Path
 
 import matplotlib as mpl
@@ -1083,7 +1081,8 @@ class RateCollection:
         print(f"  modified rates: {len(self.modified_rates)}")
         print(f"  custom rates: {len(self.custom_rates)}")
 
-    def evaluate_rates(self, rho, T, composition, screen_func=None):
+    def evaluate_rates(self, rho, T, composition,
+                       screen_func=None):
         """Evaluate the rates for a specific density, temperature, and
         composition, with optional screening.  Note: this returns that
         rate as dY/dt, where Y is the molar fraction.  For a 2 body
@@ -1121,13 +1120,9 @@ class RateCollection:
         y_e = composition.ye
 
         for r in self.rates:
-            # Note screening effect is already included
-            val = r.prefactor * rho**r.dens_exp * r.eval(T, rho=rho, comp=composition,
-                                                         screen_func=screen_func)
-            if (r.weak_type == 'electron_capture' and not isinstance(r, TabularRate)):
-                val = val * y_e
-            yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
-            rvals[r] = yfac * val
+            rvals[r] = r.eval_full_rate(rho, T, composition,
+                                        screen_func=screen_func,
+                                        y_molar=ys, y_e=y_e)
 
         return rvals
 
@@ -1267,7 +1262,8 @@ class RateCollection:
 
         return stiff_rate
 
-    def validate(self, other_library, *, forward_only=True):
+    def validate(self, other_library, *,
+                 forward_only=True, return_dict=False, skip_duplicates=True):
         """Perform various checks on the library, comparing to
         ``other_library``, to ensure that we are not missing important
         rates.  The idea is that the current library should be a
@@ -1281,12 +1277,21 @@ class RateCollection:
             the library to compare to
         forward_only : bool
             do we only check the forward rates?
+        return_dict : bool
+            do we return a dictionary of the rates that are missing?
+            if so, we suppress their output to stdout and include the
+            reason as the dictionary value.
+        skip_duplicates : bool
+            if a rate in `other_library` represents the same process
+            as one already in the network, don't consider it missing
 
         Returns
         -------
-        bool
+        bool, dict(Rate)
 
         """
+
+        missing_rates = {}
 
         current_rates = sorted(self.get_rates())
 
@@ -1313,7 +1318,8 @@ class RateCollection:
                     msg = f"validation: {p} produced in {rate} never consumed."
                     print(msg)
 
-        # now check if we are missing any rates from other_library with the exact same reactants
+        # now check if we are missing any rates from other_library
+        # with the exact same reactants
 
         other_by_reactants = collections.defaultdict(list)
         for rate in sorted(other_library.get_rates()):
@@ -1326,14 +1332,50 @@ class RateCollection:
             key = tuple(sorted(rate.reactants))
             for other_rate in other_by_reactants[key]:
                 # check to see if other_rate is already in current_rates
+                # start by assuming we already have other_rate
                 found = True
                 if other_rate not in current_rates:
                     found = False
 
+                # now check to see if perhaps it is a duplicate of
+                # something we already have
+                if skip_duplicates:
+                    if len(find_duplicate_rates([other_rate] + self.get_rates())) > 0:
+                        found = True
+
                 if not found:
                     msg = f"validation: missing {other_rate} as alternative to {rate} (Q = {other_rate.Q} MeV)."
-                    print(msg)
+                    if return_dict:
+                        missing_rates[other_rate] = msg
+                    else:
+                        print(msg)
 
+        # next loop over the nuclei in our network and check if we are missing
+        # any alpha, p, or n captures
+        net_has_n = bool(Nucleus("n") in self.unique_nuclei)
+        net_has_p = bool(Nucleus("p") in self.unique_nuclei)
+        net_has_alpha = bool(Nucleus("he4") in self.unique_nuclei)
+        for nuc in self.unique_nuclei:
+            if net_has_n:
+                key = tuple(sorted([Nucleus("n"), nuc]))
+                for rate in other_by_reactants[key]:
+                    if rate not in current_rates and rate not in missing_rates:
+                        missing_rates[rate] = "neutron capture"
+
+            if net_has_p:
+                key = tuple(sorted([Nucleus("p"), nuc]))
+                for rate in other_by_reactants[key]:
+                    if rate not in current_rates and rate not in missing_rates:
+                        missing_rates[rate] = "proton capture"
+
+            if net_has_alpha:
+                key = tuple(sorted([Nucleus("he4"), nuc]))
+                for rate in other_by_reactants[key]:
+                    if rate not in current_rates and rate not in missing_rates:
+                        missing_rates[rate] = "alpha capture"
+
+        if return_dict:
+            return passed_validation, missing_rates
         return passed_validation
 
     def find_duplicate_links(self):
