@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.10.0.post12+g3d1116147 documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.10.0.post13+gc72ea83bf documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=ad771683"></script>
+    <script src="../../../_static/documentation_options.js?v=404b8a3a"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -497,7 +497,9 @@
   <h1>Source code for pynucastro.rates.rate</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Classes and methods to interface with files storing rate data.&quot;&quot;&quot;</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">mul</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -1323,6 +1325,62 @@
         <span class="c1"># 2) A list of log_rates, e.g. ReacLib</span>
         <span class="n">log_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">))</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_rate</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="Rate.eval_full_rate">
+<a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval_full_rate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval_full_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                       <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y_molar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y_e</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the rate for a specific density, temperature, and</span>
+<span class="sd">        composition, with optional screening.  Note: this returns that</span>
+<span class="sd">        rate as dY/dt, where Y is the molar fraction.  For a 2 body</span>
+<span class="sd">        reaction, a + b, this will be of the form:</span>
+
+<span class="sd">        ρ Y_a Y_b N_A &lt;σv&gt; / (1 + δ_{ab})</span>
+
+<span class="sd">        where δ is the Kronecker delta that accounts for a = b.</span>
+
+<span class="sd">        If you want dn/dt, where n is the number density (so you get</span>
+<span class="sd">        n_a n_b &lt;σv&gt;), then you need to multiply the results here</span>
+<span class="sd">        by ρ N_A (where N_A is Avogadro&#39;s number).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            density used to evaluate rates</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature used to evaluate rates</span>
+<span class="sd">        composition : Composition</span>
+<span class="sd">            composition used to evaluate rates</span>
+<span class="sd">        screen_func : Callable</span>
+<span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
+<span class="sd">            -- if provided, then the evaluated rates will include the screening</span>
+<span class="sd">            correction.</span>
+<span class="sd">        y_molar : dict{Nucleus: float}</span>
+<span class="sd">            the molar fractions of the nuclei.  If not provided, this</span>
+<span class="sd">            will be computed from composition</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">y_molar</span><span class="p">:</span>
+            <span class="n">ys</span> <span class="o">=</span> <span class="n">y_molar</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ys</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">y_e</span><span class="p">:</span>
+            <span class="n">y_e</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">ye</span>
+
+        <span class="c1"># Note screening effect is already included</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">*</span> <span class="n">rho</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">composition</span><span class="p">,</span>
+                                                              <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_ye_weighting</span><span class="p">:</span>
+            <span class="c1"># we already added 1 to dens_exp</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">val</span> <span class="o">*</span> <span class="n">y_e</span>
+        <span class="n">yfac</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">mul</span><span class="p">,</span> <span class="p">[</span><span class="n">ys</span><span class="p">[</span><span class="n">q</span><span class="p">]</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">yfac</span> <span class="o">*</span> <span class="n">val</span></div>
 
 
 <div class="viewcode-block" id="Rate.function_string_py">
