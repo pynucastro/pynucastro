@@ -285,7 +285,8 @@ class ReacLibRate(Rate):
     weak_type : str
         the type of weak reaction the rate represents.
         Possible values include "electron_capture", "beta_pos", or
-        "beta_neg"
+        "beta_neg".  Note for electron-capture rates, we will
+        include an explicit ρYₑ weighting in the evaluation
     rate_source: str
         the key to get the source information for the rate
         from rate_sources.csv
@@ -307,8 +308,13 @@ class ReacLibRate(Rate):
         else:
             self.sets = []
 
+        use_ye_weighting = False
+        if weak_type == "electron_capture":
+            use_ye_weighting = True
+
         super().__init__(reactants=reactants, products=products,
                          Q=Q, weak_type=weak_type, label="reaclib",
+                         use_ye_weighting=use_ye_weighting,
                          stoichiometry=None, rate_source=rate_source,
                          use_identical_particle_factor=True)
 
