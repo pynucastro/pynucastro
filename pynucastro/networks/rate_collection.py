@@ -1266,10 +1266,19 @@ class RateCollection:
                  forward_only=True, return_dict=False, skip_duplicates=True):
         """Perform various checks on the library, comparing to
         ``other_library``, to ensure that we are not missing important
-        rates.  The idea is that the current library should be a
-        reduced library (perhaps the result of filtering) and then we
-        want to compare to the larger ``other_library`` to see if we
-        missed something important.
+        rates.  The idea is that the current network represents a
+        reduced set of rates (perhaps the result of filtering) and
+        then we want to compare to the larger ``other_library`` to see
+        if we missed something important.
+
+        Currently we check:
+
+        * If there are any additional rates in ``other_library`` that
+          have the same reactants as rates we already carry.
+
+        * If we are missing any p, n, or α-captures on the nuclei in
+          our network (only checked if p, n or α already exist in the
+          network).
 
         Parameters
         ----------
