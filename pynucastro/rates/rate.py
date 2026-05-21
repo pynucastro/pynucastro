@@ -95,6 +95,9 @@ class Rate:
     label : str
         A descriptive label for the rate (usually representative of the
         source
+    use_ye_weighting : bool
+        Do we include an explicit ρYₑ term in the evaluation?  This
+        is sometimes needed for electron-capture rates.
     stoichiometry : dict(Nucleus)
         a custom set of coefficients to be used in the evolution
         equations dY(Nucleus)/dt.  If this is not set, then simply the
@@ -113,6 +116,7 @@ class Rate:
 
     def __init__(self, reactants=None, products=None,
                  Q=None, weak_type="", label="generic",
+                 use_ye_weighting=False,
                  stoichiometry=None, rate_source=None,
                  use_identical_particle_factor=True):
 
@@ -182,7 +186,7 @@ class Rate:
         # this is used by eval to determine if we need to add
         # a Ye weighting when we compute the full dY/dt form
         # of the rate
-        self.use_ye_weighting = False
+        self.use_ye_weighting = use_ye_weighting
 
         self._set_rhs_properties()
         self._set_screening()
@@ -460,6 +464,11 @@ class Rate:
                 self.inv_prefactor = self.inv_prefactor * math.factorial(self.reactants.count(r))
         self.prefactor = self.prefactor/float(self.inv_prefactor)
         self.dens_exp = len(self.reactants)-1
+
+        if self.use_ye_weighting:
+            # electron-capture rates from some sources need ρYₑ,
+            # some incremement the density exponent here
+            self.dens_exp += 1
 
     def _set_screening_pairs(self):
         """Find a list reactant pairs used for screening. For reactions
