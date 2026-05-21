@@ -5,10 +5,8 @@ rates that together make up a network.
 
 import collections
 import copy
-import functools
 import math
 import warnings
-from operator import mul
 from pathlib import Path
 
 import matplotlib as mpl
@@ -1083,7 +1081,8 @@ class RateCollection:
         print(f"  modified rates: {len(self.modified_rates)}")
         print(f"  custom rates: {len(self.custom_rates)}")
 
-    def evaluate_rates(self, rho, T, composition, screen_func=None):
+    def evaluate_rates(self, rho, T, composition,
+                       screen_func=None):
         """Evaluate the rates for a specific density, temperature, and
         composition, with optional screening.  Note: this returns that
         rate as dY/dt, where Y is the molar fraction.  For a 2 body
@@ -1121,13 +1120,9 @@ class RateCollection:
         y_e = composition.ye
 
         for r in self.rates:
-            # Note screening effect is already included
-            val = r.prefactor * rho**r.dens_exp * r.eval(T, rho=rho, comp=composition,
-                                                         screen_func=screen_func)
-            if r.use_ye_weighting:
-                val = val * y_e
-            yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
-            rvals[r] = yfac * val
+            rvals[r] = r.eval_full_rate(rho, T, composition,
+                                        screen_func=screen_func,
+                                        y_molar=ys, y_e=y_e)
 
         return rvals
 
