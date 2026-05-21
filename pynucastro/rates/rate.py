@@ -467,7 +467,7 @@ class Rate:
 
         if self.use_ye_weighting:
             # electron-capture rates from some sources need ρYₑ,
-            # some incremement the density exponent here
+            # some increment the density exponent here
             self.dens_exp += 1
 
     def _set_screening_pairs(self):
