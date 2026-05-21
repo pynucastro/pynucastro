@@ -41,11 +41,14 @@ class StarLibRate(TemperatureTabularRate):
         rate_source = labelprops[0:4].strip()
         #Check for electron capture
         weak_type = ''
+        use_ye_weighting = False
         if rate_source == 'ec':
             weak_type = "electron_capture"
+            use_ye_weighting = True
 
         super().__init__(log_t9_data, log_rate_data, label=label,
                          rate_source=rate_source, weak_type=weak_type,
+                         use_ye_weighting=use_ye_weighting,
                          **kwargs)
 
         #Set relevant flags
@@ -61,15 +64,6 @@ class StarLibRate(TemperatureTabularRate):
 
         #Ensure same number of data points in rate and sigma
         assert (len(self.log_median_rates) == len(self.sigma_data))
-
-    def _set_rhs_properties(self):
-
-        super()._set_rhs_properties()
-
-        # ReacLib rates that represent electron capture need a rho Ye
-        if self.weak_type == 'electron_capture':
-            self.dens_exp = self.dens_exp + 1
-            self.use_ye_weighting = True
 
     def sample_rates(self, rng=None):
         """Sample rate values as median_rate + N(0,1)*sigma for each of the
