@@ -310,7 +310,7 @@ class ReacLibRate(Rate):
 
         use_ye_weighting = False
         if weak_type == "electron_capture":
-            self.use_ye_weighting = True
+            use_ye_weighting = True
 
         super().__init__(reactants=reactants, products=products,
                          Q=Q, weak_type=weak_type, label="reaclib",
