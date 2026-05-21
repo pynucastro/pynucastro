@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.10.0.post11+g3ef0fc615 documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.10.0.post12+g3d1116147 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=39fec10f"></script>
+    <script src="../../../_static/documentation_options.js?v=ad771683"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -600,6 +600,9 @@
 <span class="sd">    label : str</span>
 <span class="sd">        A descriptive label for the rate (usually representative of the</span>
 <span class="sd">        source</span>
+<span class="sd">    use_ye_weighting : bool</span>
+<span class="sd">        Do we include an explicit ρYₑ term in the evaluation?  This</span>
+<span class="sd">        is sometimes needed for electron-capture rates.</span>
 <span class="sd">    stoichiometry : dict(Nucleus)</span>
 <span class="sd">        a custom set of coefficients to be used in the evolution</span>
 <span class="sd">        equations dY(Nucleus)/dt.  If this is not set, then simply the</span>
@@ -618,6 +621,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weak_type</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;generic&quot;</span><span class="p">,</span>
+                 <span class="n">use_ye_weighting</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">stoichiometry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rate_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 
@@ -684,10 +688,17 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span>
 
+        <span class="c1"># this is used by eval to determine if we need to add</span>
+        <span class="c1"># a Ye weighting when we compute the full dY/dt form</span>
+        <span class="c1"># of the rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_ye_weighting</span> <span class="o">=</span> <span class="n">use_ye_weighting</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_rhs_properties</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_screening</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span>
 
+        <span class="c1"># these apply to the argument list for the function that evaluates</span>
+        <span class="c1"># the just the N_A &lt;σv&gt; part of the rate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_rho</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -958,8 +969,11 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">factorial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_ye_weighting</span><span class="p">:</span>
+            <span class="c1"># electron-capture rates from some sources need ρYₑ,</span>
+            <span class="c1"># some increment the density exponent here</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_screening_pairs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Find a list reactant pairs used for screening. For reactions</span>
@@ -1230,7 +1244,8 @@
             <span class="n">ydot_string_components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rho**</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># electron fraction dependence</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_ye_weighting</span><span class="p">:</span>
+            <span class="c1"># we already would have added the rho to dens_exp</span>
             <span class="n">ydot_string_components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;ye(Y)&quot;</span><span class="p">)</span>
 
         <span class="c1"># composition dependence</span>
@@ -1358,7 +1373,7 @@
             <span class="n">jac_string_components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rho**</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># electron fraction dependence</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_ye_weighting</span><span class="p">:</span>
             <span class="n">jac_string_components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;ye(Y)&quot;</span><span class="p">)</span>
 
         <span class="c1"># composition dependence</span>
@@ -1442,7 +1457,7 @@
         <span class="n">dens_term</span> <span class="o">=</span> <span class="n">rho</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span>
 
         <span class="c1"># electron fraction dependence</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s1">&#39;electron_capture&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_ye_weighting</span><span class="p">:</span>
             <span class="n">y_e_term</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">ye</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">y_e_term</span> <span class="o">=</span> <span class="mf">1.0</span>

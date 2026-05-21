@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.tabular_rate &#8212; pynucastro 2.10.0.post11+g3ef0fc615 documentation</title>
+    <title>pynucastro.rates.tabular_rate &#8212; pynucastro 2.10.0.post12+g3d1116147 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=39fec10f"></script>
+    <script src="../../../_static/documentation_options.js?v=ad771683"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -500,7 +500,6 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -849,19 +848,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">table_temp_lines</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_data_table</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table_num_vars</span> <span class="o">=</span> <span class="mi">6</span>  <span class="c1"># Hard-coded number of variables in tables for now.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table_index_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;j_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_set_rhs_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute statistical prefactor and density exponent from the</span>
-<span class="sd">        reactants.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># this is 1/2 for rates like a + a (double counting)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_identical_particle_factor</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">factorial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_screening</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Tabular rates are not currently screened (they are</span>
