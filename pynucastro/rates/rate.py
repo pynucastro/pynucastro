@@ -96,7 +96,7 @@ class Rate:
         "beta_neg"
     label : str
         A descriptive label for the rate (usually representative of the
-        source
+        source)
     use_ye_weighting : bool
         Do we include an explicit ρYₑ term in the evaluation?  This
         is sometimes needed for electron-capture rates.
