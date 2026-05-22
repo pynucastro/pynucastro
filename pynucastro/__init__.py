@@ -127,7 +127,11 @@ reaction rates.  The main core rate classes are:
   an approximation to a rate that uses multiple "hidden rates" to
   compute an effective rate.
 
-Some helper functions to approximate rates are contained in
+Some helper functions and special rates are contained in:
+
+* :py:mod:`alternate_rates <pynucastro.rates.alternate_rates>` :
+  Some rates from the literature that are not yet incorporated into
+  one of the main libraries.
 
 * :py:mod:`aprox_family_rates <pynucastro.rates.aprox_family_rates>` :
   Functions to construct approximate rates that are used in the
