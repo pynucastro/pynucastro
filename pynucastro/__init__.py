@@ -114,8 +114,11 @@ reaction rates.  The main core rate classes are:
 
 * :py:obj:`TemperatureTabularRate
   <pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate>`
-  : a tabulated temperature dependent rate (T vs. N_A <σv>), with
+  : a tabulated temperature-dependent rate (T vs. N_A <σv>), with
   methods to visualize and evaluate it.
+
+* :py:obj:`StarLibRate <pynucastro.rates.starlib_rate.StarLibRate>` : a
+  tabulated temperature-dependent rate with uncertainties.
 
 * :py:obj:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>` :
   a rate computed via detailed balance from a forward rate.
@@ -123,6 +126,12 @@ reaction rates.  The main core rate classes are:
 * :py:obj:`ApproximateRate <pynucastro.rates.approximate_rates.ApproximateRate>` :
   an approximation to a rate that uses multiple "hidden rates" to
   compute an effective rate.
+
+Some helper functions to approximate rates are contained in
+
+* :py:mod:`aprox_family_rates <pynucastro.rates.aprox_family_rates>` :
+  Functions to construct approximate rates that are used in the
+  aprox-family of networks.
 
 For some temperature-dependent rates, we have a class to hold
 temperature factors:
