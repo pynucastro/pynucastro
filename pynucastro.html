@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro package &#8212; pynucastro 2.10.0.post14+g491c8e2ff documentation</title>
+    <title>pynucastro package &#8212; pynucastro 2.10.0.post17+g926df3efa documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=89073cd9"></script>
+    <script src="_static/documentation_options.js?v=987a470b"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -687,13 +687,24 @@ methods to visualize and evaluate it.</p></li>
 a tabulated (temperature and electron density) weak reaction rate),
 with methods to visualize and evaluate it.</p></li>
 <li><p><a class="reference internal" href="pynucastro.rates.temperature_tabular_rate.html#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate" title="pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code></a>
-: a tabulated temperature dependent rate (T vs. N_A &lt;σv&gt;), with
+: a tabulated temperature-dependent rate (T vs. N_A &lt;σv&gt;), with
 methods to visualize and evaluate it.</p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.starlib_rate.html#pynucastro.rates.starlib_rate.StarLibRate" title="pynucastro.rates.starlib_rate.StarLibRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StarLibRate</span></code></a> : a
+tabulated temperature-dependent rate with uncertainties.</p></li>
 <li><p><a class="reference internal" href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate" title="pynucastro.rates.derived_rate.DerivedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DerivedRate</span></code></a> :
 a rate computed via detailed balance from a forward rate.</p></li>
 <li><p><a class="reference internal" href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate" title="pynucastro.rates.approximate_rates.ApproximateRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ApproximateRate</span></code></a> :
 an approximation to a rate that uses multiple “hidden rates” to
 compute an effective rate.</p></li>
+</ul>
+<p>Some helper functions and special rates are contained in:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="pynucastro.rates.alternate_rates.html#module-pynucastro.rates.alternate_rates" title="pynucastro.rates.alternate_rates"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alternate_rates</span></code></a> :
+Some rates from the literature that are not yet incorporated into
+one of the main libraries.</p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.aprox_family_rates.html#module-pynucastro.rates.aprox_family_rates" title="pynucastro.rates.aprox_family_rates"><code class="xref py py-mod docutils literal notranslate"><span class="pre">aprox_family_rates</span></code></a> :
+Functions to construct approximate rates that are used in the
+aprox-family of networks.</p></li>
 </ul>
 <p>For some temperature-dependent rates, we have a class to hold
 temperature factors:</p>
