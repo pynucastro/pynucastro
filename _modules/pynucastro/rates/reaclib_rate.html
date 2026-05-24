@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.reaclib_rate &#8212; pynucastro 2.10.0.post16+gfd0b88577 documentation</title>
+    <title>pynucastro.rates.reaclib_rate &#8212; pynucastro 2.10.0.post14+g491c8e2ff documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=110aa0c3"></script>
+    <script src="../../../_static/documentation_options.js?v=89073cd9"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -807,9 +807,6 @@
 <span class="sd">        Possible values include &quot;electron_capture&quot;, &quot;beta_pos&quot;, or</span>
 <span class="sd">        &quot;beta_neg&quot;.  Note for electron-capture rates, we will</span>
 <span class="sd">        include an explicit ρYₑ weighting in the evaluation</span>
-<span class="sd">    label : str</span>
-<span class="sd">        a descriptive label for the rate (usually representative</span>
-<span class="sd">        of the source)</span>
 <span class="sd">    rate_source: str</span>
 <span class="sd">        the key to get the source information for the rate</span>
 <span class="sd">        from rate_sources.csv</span>
@@ -817,8 +814,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">sets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weak_type</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-                 <span class="n">label</span><span class="o">=</span><span class="s2">&quot;reaclib&quot;</span><span class="p">,</span> <span class="n">rate_source</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">sets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weak_type</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">rate_source</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="c1"># Metadata for rate data files</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rfile_name</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -837,7 +833,7 @@
             <span class="n">use_ye_weighting</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="n">products</span><span class="p">,</span>
-                         <span class="n">Q</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span> <span class="n">weak_type</span><span class="o">=</span><span class="n">weak_type</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
+                         <span class="n">Q</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span> <span class="n">weak_type</span><span class="o">=</span><span class="n">weak_type</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;reaclib&quot;</span><span class="p">,</span>
                          <span class="n">use_ye_weighting</span><span class="o">=</span><span class="n">use_ye_weighting</span><span class="p">,</span>
                          <span class="n">stoichiometry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rate_source</span><span class="o">=</span><span class="n">rate_source</span><span class="p">,</span>
                          <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
