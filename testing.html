@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Testing and Comparing Backends &#8212; pynucastro 2.10.0.post15+g53b9f97bc documentation</title>
+    <title>Testing and Comparing Backends &#8212; pynucastro 2.10.0.post16+gfd0b88577 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=8cec83bf"></script>
+    <script src="_static/documentation_options.js?v=110aa0c3"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -633,16 +633,18 @@ equivalent) is stored as a <code class="docutils literal notranslate"><span clas
 an <span class="math notranslate nohighlight">\(\alpha\)</span>-chain and an iron-group, with <span class="math notranslate nohighlight">\((\alpha,p)(p,\gamma)\)</span> and
 <span class="math notranslate nohighlight">\((nn,\gamma)\)</span> rate approximations, derived reverse rates, modified
 rates, and tabular weak rates.  It is modeled off of the <a class="reference external" href="https://amrex-astro.github.io/Microphysics/docs/networks.html#ase-iron">AMReX
-Astro Microphysics ase-iron network</a>.
-Note that simple-C++ networks are not currently included.</p></li>
+Astro Microphysics ase-iron network</a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_compare_co_approx.py</span></code> : this compares the approximate
+rates for carbon and oxygen burning.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">test_compare_cxx_and_python.py</span></code> : this compares just strong
 reaction rates, but includes derived reverse rates.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">test_compare_cxx_and_python_screened.py</span></code> : a simpler version of
 <code class="docutils literal notranslate"><span class="pre">test_compare_cxx_and_python.py</span></code> (no derived reverse rates), but
 with screening enabled.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">test_compare_temperature_tabular.py</span></code> : this compares the
-evaluation of a <code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code>.  Note that simple-C++
-networks are not currently included.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test_compare_temp_tabular_starlib.py</span></code> : this compares the
+evaluation of a <code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code> and several
+<code class="docutils literal notranslate"><span class="pre">StarLibRate</span></code>.  Note that simple-C++ networks are not currently
+included.</p></li>
 </ul>
 <p>As more features are ported to <code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code>, we should extend
 the testing to compare with python rates.</p>
