@@ -138,7 +138,7 @@ class NetworkSolution:
         """
 
         As = np.array([n.A for n in self.unique_nuclei])
-        return self._sol.sol(t)[0:len(self.unique_nuclei)] * As
+        return self._sol.sol(t)[0:len(self.unique_nuclei), ...] * As
 
     def Y_at(self, t):
         """Evaluate the molar abundances for a given time.
@@ -154,7 +154,7 @@ class NetworkSolution:
 
         """
 
-        return self._sol.sol(t)[0:len(self.unique_nuclei)]
+        return self._sol.sol(t)[0:len(self.unique_nuclei), ...]
 
     def T_at(self, t):
         """Evaluate the temperature for a given time.
@@ -170,7 +170,7 @@ class NetworkSolution:
 
         """
 
-        return self._sol.sol(t)[-1]
+        return self._sol.sol(t)[-1, ...]
 
     def ye(self, Y):
         """Evaluate the electron fraction with a given set of molar fractions
