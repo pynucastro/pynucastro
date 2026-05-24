@@ -112,6 +112,19 @@ class NetworkSolution:
         return self._sol.y[0:len(self.unique_nuclei), :]
 
     @property
+    def Temp(self):
+        """Return the array of temperature for all times.
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        assert self.self_heating
+        return self._sol.y[-1, :]
+
+    @property
     def unique_nuclei(self):
         """Return a list of nuclei explicitly carried in the network,
         ordered consistent with molar fraction solution, Y.
@@ -449,6 +462,59 @@ class NetworkSolution:
         ax.set_xlabel("time [s]", fontsize=label_size)
         ax.set_ylabel("X", fontsize=label_size)
         ax.legend(loc="best", fontsize=legend_size, ncol=ncol)
+        ax.grid(ls=":")
+        fig.tight_layout()
+
+        if outfile is not None:
+            fig.savefig(outfile, dpi=dpi)
+
+        return fig
+
+    def plot_temperature(self,
+                         tmin=None, tmax=None,
+                         size=(800, 600), dpi=100,
+                         label_size=14,
+                         outfile=None):
+        """Plot the time evolution of temperature for self-heating burns.
+
+        Parameters
+        ----------
+        tmin : float
+            Minimum time shown on the x-axis. If `None`, the first value of
+            `self.t` is used.
+        tmax : float
+            Maximum time shown on the x-axis. If `None`, the last value of
+            `self.t` is used.
+        dpi : int
+            dots per inch used with size to set output image size
+        size : (tuple, list)
+            (width, height) of the plot in pixels
+        label_size : int
+            Font size for axis labels.
+        outfile : str
+            output name of the plot (extension determines the type)
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+
+        """
+
+        assert self.self_heating
+
+        fig, ax = plt.subplots(figsize=(size[0]/dpi, size[1]/dpi))
+
+        ax.loglog(self.t, self.Temp)
+
+        if tmin is None:
+            tmin = self.t[0]
+        if tmax is None:
+            tmax = self.t[-1]
+
+        ax.set_xlim(tmin, tmax)
+
+        ax.set_xlabel("time [s]", fontsize=label_size)
+        ax.set_ylabel("T [K]", fontsize=label_size)
         ax.grid(ls=":")
         fig.tight_layout()
 
@@ -1089,6 +1155,7 @@ class PythonNetwork(RateCollection):
 
         # Create NetworkSolution
         network_sol = NetworkSolution(sol, rhs, jacobian, self,
-                                      rho, T, screen_func=screen_func)
+                                      rho, T, screen_func=screen_func,
+                                      self_heating=self_heating)
 
         return network_sol
