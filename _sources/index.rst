@@ -153,7 +153,6 @@ and interactively exploring nuclear reaction networks.
    :hidden:
 
    rates-devel
-   adding-rates
    testing
 
 .. toctree::

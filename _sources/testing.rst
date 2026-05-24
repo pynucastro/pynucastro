@@ -56,9 +56,7 @@ Current unit tests comparing networks
   rates, and tabular weak rates.  It is modeled off of the `AMReX
   Astro Microphysics ase-iron network
   <https://amrex-astro.github.io/Microphysics/docs/networks.html#ase-iron>`_.
-
-* ``test_compare_co_approx.py`` : this compares the approximate
-  rates for carbon and oxygen burning.
+  Note that simple-C++ networks are not currently included.
 
 * ``test_compare_cxx_and_python.py`` : this compares just strong
   reaction rates, but includes derived reverse rates.
@@ -67,10 +65,9 @@ Current unit tests comparing networks
   ``test_compare_cxx_and_python.py`` (no derived reverse rates), but
   with screening enabled.
 
-* ``test_compare_temp_tabular_starlib.py`` : this compares the
-  evaluation of a ``TemperatureTabularRate`` and several
-  ``StarLibRate``.  Note that simple-C++ networks are not currently
-  included.
+* ``test_compare_temperature_tabular.py`` : this compares the
+  evaluation of a ``TemperatureTabularRate``.  Note that simple-C++
+  networks are not currently included.
 
 As more features are ported to ``SimpleCxxNetwork``, we should extend
 the testing to compare with python rates.
