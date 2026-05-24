@@ -816,7 +816,7 @@ class Rate:
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
             correction.
-        y_molar : dict{Nucleus: float}
+        y_molar : dict(Nucleus)
             the molar fractions of the nuclei.  If not provided, this
             will be computed from composition
         Returns
