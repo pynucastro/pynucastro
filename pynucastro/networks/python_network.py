@@ -38,14 +38,18 @@ class NetworkSolution:
     rho : float
         density used to integrate the network
     T : float
-        temperature used to integrate the network
+        temperature used to integrate the network.  Only needed if
+        this is not a self-heating burn
+    self_heating : bool
+        is temperature integrated together with composition?
     screen_func: Callable
         screening function used to evaluate rates when integrating
         the network
 
     """
 
-    def __init__(self, sol, rhs, jac, network, rho, T, screen_func=None):
+    def __init__(self, sol, rhs, jac, network, rho, T=None,
+                 self_heating=False, screen_func=None):
 
         self._sol = sol
         self._rhs = rhs
@@ -53,6 +57,7 @@ class NetworkSolution:
         self.network = network
         self.rho = rho
         self.T = T
+        self.self_heating = self_heating
         self.screen_func = screen_func
 
     @property
@@ -91,7 +96,7 @@ class NetworkSolution:
         """
 
         As = np.array([n.A for n in self.unique_nuclei])
-        return self._sol.y * As[:, None]
+        return self._sol.y[0:len(self.unique_nuclei), :] * As[:, None]
 
     @property
     def Y(self):
@@ -104,7 +109,7 @@ class NetworkSolution:
 
         """
 
-        return self._sol.y
+        return self._sol.y[0:len(self.unique_nuclei), :]
 
     @property
     def unique_nuclei(self):
@@ -133,7 +138,7 @@ class NetworkSolution:
         """
 
         As = np.array([n.A for n in self.unique_nuclei])
-        return self._sol.sol(t) * As
+        return self._sol.sol(t)[0:len(self.unique_nuclei)] * As
 
     def Y_at(self, t):
         """Evaluate the molar abundances for a given time.
@@ -149,7 +154,23 @@ class NetworkSolution:
 
         """
 
-        return self._sol.sol(t)
+        return self._sol.sol(t)[0:len(self.unique_nuclei)]
+
+    def T_at(self, t):
+        """Evaluate the temperature for a given time.
+
+        Parameters
+        ----------
+        t : float or list or numpy.ndarray
+            time or time array used to evaluate the molar abundances
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        return self._sol.sol(t)[-1]
 
     def ye(self, Y):
         """Evaluate the electron fraction with a given set of molar fractions
@@ -185,7 +206,7 @@ class NetworkSolution:
         Y = self.Y_at(t)
         return self.ye(Y)
 
-    def rhs(self, t, Y):
+    def rhs(self, t, Y, T=None):
         """Evaluate the RHS of the network with the same thermodynamic
         condition and screening routine used to integrate the network.
 
@@ -195,6 +216,8 @@ class NetworkSolution:
             time used to evaluate the RHS
         Y : numpy.ndarray
             molar abundances of the species
+        T : float
+            temperature (required for self-heating)
 
         Returns
         -------
@@ -202,10 +225,14 @@ class NetworkSolution:
 
         """
 
+        if self.self_heating:
+            assert T is not None
+            return self._rhs(t, Y, self.rho, T, screen_func=self.screen_func)
         return self._rhs(t, Y, self.rho, self.T, screen_func=self.screen_func)
 
     def rhs_at(self, t):
-        """Evaluate the RHS of the network for a given time.
+        """Evaluate the RHS of the network for a given time.  Note:
+        for a self-heating burn, this gives only dY/dt.
 
         Parameters
         ----------
@@ -219,6 +246,9 @@ class NetworkSolution:
         """
 
         Y = self.Y_at(t)
+        if self.self_heating:
+            T = self.T_at(t)
+            return self.rhs(t, Y, T=T)
         return self.rhs(t, Y)
 
     def jac(self, t, Y):
@@ -237,6 +267,9 @@ class NetworkSolution:
         numpy.ndarray
 
         """
+
+        # we don't support the Jacobian for self-heating networks
+        assert not self.self_heating
 
         return self._jac(t, Y, self.rho, self.T, screen_func=self.screen_func)
 
