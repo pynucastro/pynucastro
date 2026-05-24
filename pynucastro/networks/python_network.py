@@ -11,6 +11,7 @@ import numpy as np
 from scipy.integrate import solve_ivp
 
 from pynucastro.constants import constants
+from pynucastro.eos import StellarEOS
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.nucdata import Composition
 from pynucastro.rates import ApproximateRate, ModifiedRate
@@ -943,10 +944,12 @@ class PythonNetwork(RateCollection):
 
     def integrate_network(self, tmax, rho, T, Y0=None,
                           screen_method=None,
+                          self_heating=False,
                           initial_comp="uniform",
                           rtol=1e-8, atol=1e-8):
         """Integrate the network to tmax given (rho, T, Y0) using
-        SciPy's solve_ivp() with BDF method.
+        SciPy's solve_ivp() with BDF method.  Optionally, we can
+        integrate temperature together in a self-heating mode.
 
         Parameters
         ----------
@@ -963,6 +966,8 @@ class PythonNetwork(RateCollection):
             name of the screening function used to evaluate rates when integrating
             the network. Valid choices are: `screen5`, `chugunov_2007`, `chugunov_2009`,
             `potekhin_1998`, and `debye_huckel`. If `None`, no screening is applied.
+        self_heating : bool
+            do we evolve temperature (as dT/dt = ε / c_v) together with the EOS?
         initial_comp : str
             different modes to use to set up the initial composition if Y0 is None.
             Valid choices are: `uniform`, `random`, and `solar`.
@@ -1003,10 +1008,48 @@ class PythonNetwork(RateCollection):
             comp = Composition(self.unique_nuclei, init=initial_comp)
             Y0 = comp.get_molar_array()
 
-        # Integrate using SciPy's solve_ivp() using BDF method -- good for stiff system.
-        sol = solve_ivp(rhs, [0, tmax], Y0, method="BDF",
-                        dense_output=True, args=(rho, T, screen_func),
-                        rtol=rtol, atol=atol, jac=jacobian)
+        if self_heating:
+            energy_release = getattr(network, "energy_release")
+
+            def rhs_wrapper(t, xi, rhs, energy_release, rho, screen_func):
+                nspec = len(self.unique_nuclei)
+                assert len(xi) == nspec + 1
+
+                # unpack the integration state
+                Y = xi[0:nspec]
+                T = xi[-1]
+
+                dxidt = np.zeros_like(xi)
+
+                # first get the dYdt from our network module
+                dxidt[0:nspec] = rhs(t, Y, rho, T, screen_func=screen_func)
+
+                # now get the energy generation rate using this dY/dt
+                eps = energy_release(dxidt[0:nspec])
+
+                # use the EOS to get the specific heat
+                eos = StellarEOS()
+                comp = Composition(self.unique_nuclei)
+                comp.set_molar_array(Y)
+                state = eos.pe_state(rho, T, comp)
+
+                # and finally compute dT/dt
+                dxidt[-1] = eps / state.c_v
+
+                return dxidt
+
+            xi0 = np.append(Y0, T)
+            sol = solve_ivp(rhs_wrapper, [0, tmax], xi0, method="BDF",
+                            dense_output=True,
+                            args=(rhs, energy_release, rho, screen_func),
+                            rtol=rtol, atol=atol)
+
+        else:
+            # Integrate using SciPy's solve_ivp() using BDF method --
+            # good for stiff system.
+            sol = solve_ivp(rhs, [0, tmax], Y0, method="BDF",
+                            dense_output=True, args=(rho, T, screen_func),
+                            rtol=rtol, atol=atol, jac=jacobian)
 
         if not sol.success:
             warnings.warn(f"Warning, integration failed, final integration time = {sol.t[-1]}")
