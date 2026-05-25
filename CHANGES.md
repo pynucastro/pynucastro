@@ -4,7 +4,7 @@
 
   * `PythonNetwork` / `RateCollection` :
 
-    * assign colors better in `plot_evolution` (#1355)
+    * assign colors better in `plot_evolution` (#1355, #1379)
     * rename `isNSECompatible` -> `is_NSE_compatible` (#1357)
     * change default for `hide_xp` and `hide_xalpha` (#1361)
     * add a method `find_stiffest_rate` (#1363)
@@ -31,6 +31,7 @@
     * add some missing modules to the rate module docstring (#1373)
     * add documentation on adding new rates from papers (#1374)
     * fix API doc rendering (#1375)
+    * use `get_molar_array` for `Y0` when integrating (#1377)
 
   * helper functionality:
 
