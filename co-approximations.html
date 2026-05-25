@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Approximating C and O Burning &#8212; pynucastro 2.10.0.post19+g2a978c367 documentation</title>
+    <title>Approximating C and O Burning &#8212; pynucastro 2.10.0.post20+g0abf980a2 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=cd8a42de"></script>
+    <script src="_static/documentation_options.js?v=e3824bd5"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -749,10 +749,10 @@ the C / O burning approximations.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e7</span>
 <span class="n">T</span> <span class="o">=</span> <span class="mf">3e9</span>
 
-<span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+<span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span> <span class="n">small</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.5</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.5</span>
-<span class="n">Y0</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+<span class="n">Y0</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar_array</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -788,7 +788,7 @@ the C / O burning approximations.</p>
   ax.set_xlim(tmin, tmax)
 </pre></div>
 </div>
-<img alt="_images/5ed54d8c22d49e6765f6832d2c884730082b02d38f879119a6397dd862d1d699.png" src="_images/5ed54d8c22d49e6765f6832d2c884730082b02d38f879119a6397dd862d1d699.png" />
+<img alt="_images/51dc689dc58a86cae4542a18c8d0a3daf34fcbff5af8cc5b7c6886a0eeb21368.png" src="_images/51dc689dc58a86cae4542a18c8d0a3daf34fcbff5af8cc5b7c6886a0eeb21368.png" />
 </div>
 </div>
 </section>
@@ -894,10 +894,10 @@ the C / O burning approximations.</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">anet</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">anet</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span> <span class="n">small</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.5</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.5</span>
-<span class="n">Y0</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+<span class="n">Y0</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar_array</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -926,7 +926,7 @@ the C / O burning approximations.</p>
   ax.set_xlim(tmin, tmax)
 </pre></div>
 </div>
-<img alt="_images/270bab8d9460c7c8d945302c40390e123d4888d041bc943f6f8d3cc6d19b705c.png" src="_images/270bab8d9460c7c8d945302c40390e123d4888d041bc943f6f8d3cc6d19b705c.png" />
+<img alt="_images/49841011f32bec8ead12ebf475db12a2d6a96effc674fc63748964ad8f316314.png" src="_images/49841011f32bec8ead12ebf475db12a2d6a96effc674fc63748964ad8f316314.png" />
 </div>
 </div>
 </section>
@@ -963,7 +963,7 @@ the C / O burning approximations.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/1b045e89cce99364d4c51f8a49509c7b51014a18b073232ea3b784586ec547a3.png" src="_images/1b045e89cce99364d4c51f8a49509c7b51014a18b073232ea3b784586ec547a3.png" />
+<img alt="_images/dfcfe1c69987cb7a4ce6969e860fb4f409bd656a92525f7939ec08af8416376d.png" src="_images/dfcfe1c69987cb7a4ce6969e860fb4f409bd656a92525f7939ec08af8416376d.png" />
 </div>
 </div>
 </section>

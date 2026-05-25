@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>The “aprox13” network &#8212; pynucastro 2.10.0.post19+g2a978c367 documentation</title>
+    <title>The “aprox13” network &#8212; pynucastro 2.10.0.post20+g0abf980a2 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=cd8a42de"></script>
+    <script src="_static/documentation_options.js?v=e3824bd5"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -750,26 +750,12 @@
 <h3>the full network<a class="headerlink" href="#the-full-network" title="Link to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;full_aprox13.py&quot;</span><span class="p">)</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">full_aprox13</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">fn</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.5/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:120: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e7</span>
 <span class="n">T</span> <span class="o">=</span> <span class="mf">3.e9</span>
 
-<span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+<span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span> <span class="n">small</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">1.0</span>
-<span class="n">Y0</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+<span class="n">Y0</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar_array</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -787,6 +773,12 @@
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.5/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:120: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
+  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -799,7 +791,7 @@
   ax.set_xlim(tmin, tmax)
 </pre></div>
 </div>
-<img alt="_images/be0f5714ea206151c57e60af917ff0779c33251191493f7d118b4b77e7df99d3.png" src="_images/be0f5714ea206151c57e60af917ff0779c33251191493f7d118b4b77e7df99d3.png" />
+<img alt="_images/8f46d25f37cd88eea1b1b7d3cedf4f32347a659228e6ad0f0e12db6738fedfd0.png" src="_images/8f46d25f37cd88eea1b1b7d3cedf4f32347a659228e6ad0f0e12db6738fedfd0.png" />
 </div>
 </div>
 </section>
@@ -807,9 +799,9 @@
 <h3>aprox13 net<a class="headerlink" href="#aprox13-net" title="Link to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">approx_net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">approx_net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span> <span class="n">small</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">1.0</span>
-<span class="n">Y0</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+<span class="n">Y0</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar_array</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -838,7 +830,7 @@
   ax.set_xlim(tmin, tmax)
 </pre></div>
 </div>
-<img alt="_images/7519552adbab23f0de4191f8d76f5e6a6489a4b9ddf668ef13ef1c49cceab0c4.png" src="_images/7519552adbab23f0de4191f8d76f5e6a6489a4b9ddf668ef13ef1c49cceab0c4.png" />
+<img alt="_images/f05e6dcb2b0da4be3983dd76f1034acc9374a0872aa532aa82e1818b661a4534.png" src="_images/f05e6dcb2b0da4be3983dd76f1034acc9374a0872aa532aa82e1818b661a4534.png" />
 </div>
 </div>
 </section>
@@ -877,7 +869,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/5dd62999a3bed0b220c8e84da420b7d7433d4046f5f2ae2295ac6c3bc2428794.png" src="_images/5dd62999a3bed0b220c8e84da420b7d7433d4046f5f2ae2295ac6c3bc2428794.png" />
+<img alt="_images/f67daba0b7884ee83561b2debaec4539e75f15abd2429af88b615d379e719229.png" src="_images/f67daba0b7884ee83561b2debaec4539e75f15abd2429af88b615d379e719229.png" />
 </div>
 </div>
 <p>We see good agreement for the nuclei the two networks have in common.</p>
