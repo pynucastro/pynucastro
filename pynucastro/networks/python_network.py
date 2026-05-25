@@ -341,6 +341,9 @@ class NetworkSolution:
 
         """
 
+        if X_cutoff_value is None and ymin is not None:
+            X_cutoff_value = ymin
+
         # sort the nuclei by peak X, since that will ensure that the
         # color cycles don't put two very close species in the same
         # color
@@ -356,7 +359,11 @@ class NetworkSolution:
         c2 = 0
         c3 = 0
         styles = {}
-        for _, nuc, max_X in sorted_nuc:
+        for _, nuc, max_X in reversed(sorted_nuc):
+            if X_cutoff_value is not None:
+                if max_X < X_cutoff_value:
+                    continue
+
             if three_level_style:
                 # Set 3 levels of visual levels depending on maximum mass fraction
                 if max_X > 0.5:
@@ -387,8 +394,6 @@ class NetworkSolution:
             X = self.Y[i, :] * nuc.A
             max_X = X.max()
 
-            if X_cutoff_value is None and ymin is not None:
-                X_cutoff_value = ymin
             if X_cutoff_value is not None and max_X <= X_cutoff_value:
                 continue
 
