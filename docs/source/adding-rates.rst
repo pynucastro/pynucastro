@@ -55,7 +55,7 @@ subclass :py:obj:`TemperatureTabularRate
 .. important::
 
    The data must be given as natural logs, e.g., $(\ln(T_9),
-   \ln(\lambda)$.
+   \ln(\lambda))$.
 
 For example, for a hypothetical process $A(B,\gamma)C$ we could do:
 
