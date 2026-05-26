@@ -380,13 +380,13 @@ class DerivedRate(Rate):
 
             # Get rate uncertainty for starlib rate case
             if isinstance(self.underlying_rate, StarLibRate):
-                    fstring += f"    auto p = Rates::get_p_random<k_{self.underlying_rate.fname}>();\n"
-                    fstring += "    auto [_sigma, _dsigma_dlogT9] = interp_net::cubic_interp_uneven<do_T_derivatives>(\n"
-                    fstring += "                                                 tfactors.lnT9,\n"
-                    fstring += f"                                                 {self.underlying_rate.fname}_data::log_t9,\n"
-                    fstring += f"                                                 {self.underlying_rate.fname}_data::sigma_rate);\n\n"
-                    fstring += "    // Add rate uncertainty\n"
-                    fstring += "    _rate += p * _sigma;\n\n"
+                fstring += f"    auto p = Rates::get_p_random<k_{self.underlying_rate.fname}>();\n"
+                fstring += "    auto [_sigma, _dsigma_dlogT9] = interp_net::cubic_interp_uneven<do_T_derivatives>(\n"
+                fstring += "                                                 tfactors.lnT9,\n"
+                fstring += f"                                                 {self.underlying_rate.fname}_data::log_t9,\n"
+                fstring += f"                                                 {self.underlying_rate.fname}_data::sigma_rate);\n\n"
+                fstring += "    // Add rate uncertainty\n"
+                fstring += "    _rate += p * _sigma;\n\n"
 
             fstring += "    // Apply Equilibrium Ratio\n"
             fstring += f"    constexpr {dtype} Q_kBGK = {self.Q} * 1.0e-9_rt / C::k_MeV;\n"
