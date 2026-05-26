@@ -15,7 +15,13 @@ class TestAlternateRates:
 
         assert r.products[0] == Nucleus("o16")
 
-        assert r.eval(3.e8) == approx(3.667497144762534e-12)
+        assert r.eval(3.e8) == approx(3.667497144762534e-12, abs=1.e-50)
+        assert r.eval(1.e9) == approx(5.183808877454677e-06, abs=1.e-50)
+
+        assert r.label == "deboer"
+        assert r.source["Label"] == "deboer2017"
+
+        assert len(r.sets) == 2
 
 
 class TestIliadisO16:
