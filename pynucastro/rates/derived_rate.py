@@ -34,7 +34,7 @@ class DerivedRate(Rate):
 
     """
 
-    def __init__(self, source_rate, use_pf=False, use_unreliable_spins=True):
+    def __init__(self, source_rate, use_pf=True, use_unreliable_spins=True):
 
         self.use_pf = use_pf
         self.source_rate = source_rate
