@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.derived_rate &#8212; pynucastro 2.10.0.post21+g129db5713 documentation</title>
+    <title>pynucastro.rates.derived_rate &#8212; pynucastro 2.10.0.post22+g70e5b365f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=88c10249"></script>
+    <script src="../../../_static/documentation_options.js?v=38b85f19"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -512,6 +512,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.modified_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModifiedRate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">Tfactors</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.reaclib_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">SingleSet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.starlib_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">StarLibRate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.tabular_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">TabularRate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.temperature_tabular_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemperatureTabularRate</span>
 
@@ -525,7 +526,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    source_rate : Rate</span>
-<span class="sd">        The forward rate that will be used to derive the reverse</span>
+<span class="sd">        The rate that will be used to derive the corresponding inverse</span>
 <span class="sd">    use_pf : bool</span>
 <span class="sd">        Do we apply the partition function?</span>
 <span class="sd">    use_unreliable_spins : bool</span>
@@ -533,10 +534,17 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_rate</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_rate</span><span class="p">,</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">use_pf</span> <span class="o">=</span> <span class="n">use_pf</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span> <span class="o">=</span> <span class="n">source_rate</span>
+
+        <span class="c1"># This is the actual rate used for doing detailed-balance</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source_rate</span><span class="p">,</span> <span class="n">ModifiedRate</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span> <span class="o">=</span> <span class="n">source_rate</span><span class="o">.</span><span class="n">original_rate</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span> <span class="o">=</span> <span class="n">source_rate</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">use_unreliable_spins</span> <span class="o">=</span> <span class="n">use_unreliable_spins</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="p">,</span> <span class="n">Rate</span><span class="p">):</span>
@@ -595,11 +603,8 @@
 
         <span class="c1"># Determine if the source rate has reaclib sets</span>
         <span class="n">source_sets</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="p">,</span> <span class="n">ReacLibRate</span><span class="p">):</span>
-            <span class="n">source_sets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">sets</span>
-        <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="p">,</span> <span class="n">ModifiedRate</span><span class="p">)</span> <span class="ow">and</span>
-              <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">original_rate</span><span class="p">,</span> <span class="n">ReacLibRate</span><span class="p">)):</span>
-            <span class="n">source_sets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">sets</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span><span class="p">,</span> <span class="n">ReacLibRate</span><span class="p">):</span>
+            <span class="n">source_sets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span><span class="o">.</span><span class="n">sets</span>
 
         <span class="k">if</span> <span class="n">source_sets</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">derived_sets</span> <span class="o">=</span> <span class="p">[]</span>
@@ -738,9 +743,9 @@
 
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = rate</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="p">,</span> <span class="n">TemperatureTabularRate</span><span class="p">):</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator = TempTableInterpolator(*</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_info)</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    log_r = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator.interpolate(tf.T9 * 1.0e9)</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span><span class="p">,</span> <span class="n">TemperatureTabularRate</span><span class="p">):</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator = TempTableInterpolator(*</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_info)</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    log_r = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator.interpolate(tf.T9 * 1.0e9)</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    # Apply equilibrium ratio and screening</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    log_r += </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Q_kBGK</span><span class="si">}</span><span class="s2"> * tf.T9i + net_log_pf + log_scor</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -875,11 +880,21 @@
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    }</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="p">,</span> <span class="n">TemperatureTabularRate</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span><span class="p">,</span> <span class="n">TemperatureTabularRate</span><span class="p">):</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    auto [_rate, _drate_dT] = interp_net::cubic_interp_uneven&lt;do_T_derivatives&gt;(</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;                                               tfactors.lnT9,</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;                                               </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_data::log_t9,</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;                                               </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_data::log_rate);</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;                                               </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_data::log_t9,</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;                                               </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_data::log_rate);</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
+            <span class="c1"># Get rate uncertainty for starlib rate case</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span><span class="p">,</span> <span class="n">StarLibRate</span><span class="p">):</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    auto p = Rates::get_p_random&lt;k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">&gt;();</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    auto [_sigma, _dsigma_dlogT9] = interp_net::cubic_interp_uneven&lt;do_T_derivatives&gt;(</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;                                                 tfactors.lnT9,</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;                                                 </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_data::log_t9,</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;                                                 </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_data::sigma_rate);</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    // Add rate uncertainty</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    _rate += p * _sigma;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
 
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    // Apply Equilibrium Ratio</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    constexpr </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> Q_kBGK = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Q</span><span class="si">}</span><span class="s2"> * 1.0e-9_rt / C::k_MeV;</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -894,6 +909,11 @@
 
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    // we found dlog(rate)/dlog(T9)</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span><span class="p">,</span> <span class="n">StarLibRate</span><span class="p">):</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        // Add rate uncertainty term</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        _drate_dT += p * _dsigma_dlogT9;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        // Convert to dlog(rate)/dT9 first</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        _drate_dT = (_drate_dT + </span><span class="si">{</span><span class="mf">1.5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span><span class="si">}</span><span class="s2"> - Q_kBT) * tfactors.T9i + net_dlog_pf_dT9 + dlog_scor_dT * 1.0e9_rt;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT = rate * _drate_dT * 1.0e-9_rt;</span><span class="se">\n</span><span class="s2">&quot;</span>
