@@ -8,6 +8,8 @@
     * rename `isNSECompatible` -> `is_NSE_compatible` (#1357)
     * change default for `hide_xp` and `hide_xalpha` (#1361)
     * add a method `find_stiffest_rate` (#1363)
+    * `RateCollection.validate` now returns a dict of missing rates +
+      includes some additional checks (#1366)
 
   * general rate changes:
 
@@ -15,6 +17,7 @@
     * move the full rate evaluation into `Rate` (#1367)
     * reorganize `_set_rhs_properties` (#1368)
     * clean up the deBoer rate class (#1371)
+    * update `DerivedRate` to work with C++ `StarLibRate` (#1381)
 
   * nuclei / screening / partition functions:
 
