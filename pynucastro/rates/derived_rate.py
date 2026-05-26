@@ -14,8 +14,8 @@ from pynucastro.nucdata import Nucleus
 from pynucastro.rates.modified_rate import ModifiedRate
 from pynucastro.rates.rate import Rate, Tfactors
 from pynucastro.rates.reaclib_rate import ReacLibRate, SingleSet
-from pynucastro.rates.tabular_rate import TabularRate
 from pynucastro.rates.starlib_rate import StarLibRate
+from pynucastro.rates.tabular_rate import TabularRate
 from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
 
 
