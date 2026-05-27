@@ -16,7 +16,7 @@ import numpy as np
 from ipywidgets import interact
 from matplotlib.colors import SymLogNorm
 from matplotlib.scale import SymmetricalLogTransform
-from matplotlib.ticker import MaxNLocator
+from matplotlib.ticker import (MaxNLocator,MultipleLocator)
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy.linalg import eigvals
 
@@ -2399,8 +2399,8 @@ class RateCollection:
         ax.xaxis.set_ticks_position('bottom')
         ax.yaxis.set_ticks_position('left')
 
-        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True, min_n_ticks=1))
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True, min_n_ticks=1))
 
         if not rotated:
             if Z_range is not None and N_range is not None:
