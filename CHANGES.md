@@ -10,6 +10,7 @@
     * add a method `find_stiffest_rate` (#1363)
     * `RateCollection.validate` now returns a dict of missing rates +
       includes some additional checks (#1366)
+    * enforce integer tick values for `RateCollection.plot` (#1383)
 
   * general rate changes:
 
