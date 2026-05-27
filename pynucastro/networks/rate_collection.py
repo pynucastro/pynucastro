@@ -16,7 +16,7 @@ import numpy as np
 from ipywidgets import interact
 from matplotlib.colors import SymLogNorm
 from matplotlib.scale import SymmetricalLogTransform
-from matplotlib.ticker import (MaxNLocator,MultipleLocator)
+from matplotlib.ticker import MaxNLocator
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy.linalg import eigvals
 
