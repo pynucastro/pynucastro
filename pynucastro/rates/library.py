@@ -1025,7 +1025,6 @@ class StarLibLibrary(Library):
                        5: (2, 2), 6: (2, 3), 7: (2, 4), 8: (3, 1),
                        9: (3, 2), 10: (4, 2), 11: (1, 4)}
     NLINES = 60
-    LOG_RATE_FLOOR = -700.0
     UNSUPPORTED_NUCLIDES = frozenset(["al-6", "al*6", "al01", "al02", "al03"])
 
     def __init__(self, seed=None):
@@ -1057,13 +1056,14 @@ class StarLibLibrary(Library):
                     raise ValueError(f"incomplete STARLIB data block for header: {header!r}")
                 block = block.reshape(self.NLINES, 3)
 
-                log_t9 = np.log(block[:, 0])
-                sigma = np.log(block[:, 2])
-
-                # initialize log_rate to the floor value and fill the non-zero entries
-                log_rate = np.full(self.NLINES, self.LOG_RATE_FLOOR)
+                # Sometimes there are 0 rates in the original data
+                # These are likely placeholders values.
+                # So including them is not physical and messes up interpolation
                 positive = block[:, 1] > 0.0
-                log_rate[positive] = np.log(block[positive, 1])
+                log_block = np.log(block[positive])
+                log_t9 = log_block[:, 0]
+                log_rate = log_block[:, 1]
+                sigma = log_block[:, 2]
 
                 # Create rate
                 rate = StarLibRate(log_t9, log_rate, sigma, rng=rng,
