@@ -1,5 +1,48 @@
 # Changelog
 
+## 2.11.0
+
+  * `PythonNetwork` / `RateCollection` :
+
+    * assign colors better in `plot_evolution` (#1355, #1379)
+    * rename `isNSECompatible` -> `is_NSE_compatible` (#1357)
+    * change default for `hide_xp` and `hide_xalpha` (#1361)
+    * add a method `find_stiffest_rate` (#1363)
+    * `RateCollection.validate` now returns a dict of missing rates +
+      includes some additional checks (#1366)
+    * enforce integer tick values for `RateCollection.plot` (#1383)
+
+  * general rate changes:
+
+    * fix rate plot to use LaTeX for <> (#1365)
+    * move the full rate evaluation into `Rate` (#1367)
+    * reorganize `_set_rhs_properties` (#1368)
+    * clean up the deBoer rate class (#1371)
+    * update `DerivedRate` to work with C++ `StarLibRate` (#1381)
+
+  * nuclei / screening / partition functions:
+
+    * `Composition` : add `get_array` and `get_molar_array` methods
+      (#1354)
+
+  * documentation:
+
+    * update the StarLib example to use the new integration (#1359)
+    * fix typos (#1362)
+    * update the double-n capture docs to use the new integration
+      (#1364)
+    * update the comparing networks test docs (#1372)
+    * add some missing modules to the rate module docstring (#1373)
+    * add documentation on adding new rates from papers (#1374)
+    * fix API doc rendering (#1375)
+    * use `get_molar_array` for `Y0` when integrating (#1377)
+
+  * helper functionality:
+
+    * `network_helper` : if `verbose=False`, then suppress linking nuclei
+      warnings (#1358)
+    * add `main_library` to `network_helper` (#1360)
+
 ## 2.10.0
 
   * `AmrexAstroCxxNetwork` :
