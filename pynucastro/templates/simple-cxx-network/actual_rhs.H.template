@@ -51,7 +51,7 @@ void evaluate_screening(const burn_t& state,
 
     Real log_scor;
 
-    <compute_screening_factors>(1)
+    <compute_all_screening_factors>(1)
 }
 #endif
 
