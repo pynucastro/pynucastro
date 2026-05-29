@@ -15,7 +15,7 @@ using namespace Rates;
 
 namespace O16_p_to_F17_iliadis_data {
 
-    inline AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 1, 51> log_t9 = {
+    inline AMREX_GPU_DEVICE amrex::Array1D<amrex::Real, 1, 51> log_t9 = {
      -5.809142990314028  , -5.521460917862246  , -5.298317366548036  ,
      -5.115995809754082  , -4.961845129926823  , -4.8283137373023015 ,
      -4.710530701645918  , -4.605170185988091  , -4.509860006183766  ,
@@ -35,7 +35,7 @@ namespace O16_p_to_F17_iliadis_data {
      0.9162907318741551 ,  1.0986122886681098 ,  1.252762968495368
     };
 
-    inline AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 1, 51> log_rate = {
+    inline AMREX_GPU_DEVICE amrex::Array1D<amrex::Real, 1, 51> log_rate = {
      -92.93857540035118  , -82.5573056521023   , -75.17704808114306  ,
      -69.55076155001605  , -65.06026927373573  , -61.357534849389125 ,
      -58.22977030900149  , -55.537137188803406 , -53.184101816303524 ,
