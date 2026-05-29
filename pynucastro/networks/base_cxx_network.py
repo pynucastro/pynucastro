@@ -494,30 +494,41 @@ class BaseCxxNetwork(ABC, RateCollection):
             self._write_ydot_nuc(n_indent, of, self.ydot_out_result[n])
 
     def _ydot_weak(self, n_indent, of):
-        # Writes ydot for tabular weak reactions only
+        # Writes ydot for weak reactions and computes corresponding neutrino loss term
 
-        # Get the tabular weak rates first.
+        # Fill all the weak rates
         idnt = self.indent*n_indent
+        idntp1 = self.indent*(n_indent + 1)
 
+        # Consider possible cases for weak rates in realicb, modifed, and starlib rates.
+        # Here we leave out derived rate since we don't expect derived rate to be a weak rate.
+        # Also handle tabular weak rates separately
+        for r in self.reaclib_rates + self.modified_rates + self.starlib_rates + self.temperature_tabular_rates:
+            if not r.weak:
+                continue
+            of.write(f"{idnt}" + "{\n")
+            of.write(f"{idntp1}// {r.fname}\n\n")
+            self.write_screen_var(n_indent+1, of, r)
+            of.write(f"{idntp1}rate_{r.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n")
+            of.write(f"{idntp1}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
+            of.write(f"{idnt}" + "}\n\n")
+
+        # Now do tabular weak rates
+        # Also get neutrino loss terms from tabular weak rates
         if len(self.tabular_rates) > 0:
-
             of.write(f'{idnt}{self.dtype} log_temp = std::log10(state.T);\n')
             of.write(f'{idnt}{self.dtype} log_rhoy = std::log10(rhoy);\n\n')
 
             for r in self.tabular_rates:
-
                 of.write(f'{idnt}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
                 of.write(f'{idnt}                 log_rhoy, log_temp, state.T, rate, drate_dt, edot_nu, edot_gamma);\n')
-
                 of.write(f'{idnt}rate_eval.screened_rates(k_{r.fname}) = rate;\n')
-
                 of.write(f'{idnt}rate_eval.enuc_weak += C::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
-
                 of.write('\n')
             of.write(f'{idnt}const auto& screened_rates = rate_eval.screened_rates;\n')
         of.write('\n')
 
-        # Compose and write ydot weak
+        # Compose and write ydot for all weak reactions
 
         for n in self.unique_nuclei:
 
@@ -528,7 +539,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             )
 
             if not self.nuclei_rate_pairs[n] or not has_weak_rates:
-                of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) = 0.0_rt;\n\n")
+                of.write(f"{idnt}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) = 0.0_rt;\n\n")
                 continue
 
             ydot_sym_terms = []
@@ -544,7 +555,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 if (fwd, rvs).count(None) < 2:
                     ydot_sym_terms.append((fwd, rvs))
 
-            of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) =\n")
+            of.write(f"{idnt}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) =\n")
 
             self._write_ydot_nuc(n_indent, of, ydot_sym_terms)
 
