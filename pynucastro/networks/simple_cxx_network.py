@@ -4,7 +4,6 @@
 from pathlib import Path
 
 from pynucastro.networks.base_cxx_network import BaseCxxNetwork
-from pynucastro.screening import get_screening_pair_set
 
 
 class SimpleCxxNetwork(BaseCxxNetwork):
