@@ -253,7 +253,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _compute_screening_factors(self, n_indent, of, rates,
                                    do_T_derivatives=True):
-        """A helper function that composes the screening factors string
+        """Helper function that composes the screening factors string
         given a list of rates. It evaluates log(screening) and stores them
         to rate_eval.log_screen.
 
@@ -637,7 +637,7 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _fill_rates(self, n_indent, of, rates,
                     args=["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"],
                     do_T_derivative=True):
-        """A helper function to fill in the rates by calling the appropriate rate functions"""
+        """Helper function to fill in the rates by calling the appropriate rate functions"""
 
         for r in rates:
             of.write(f"{self.indent*n_indent}" + "{\n")
