@@ -92,7 +92,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<rate_names>'] = self._rate_names
         self.ftags['<ebind>'] = self._ebind
         self.ftags['<mion>'] = self._mion
-        self.ftags['<compute_all_screening_factors>'] = self._compute_all_screening_factors
+        self.ftags['<compute_screening_factors>'] = self._compute_screening_factors
         self.ftags['<table_num>'] = self._table_num
         self.ftags['<declare_tables>'] = self._declare_tables
         self.ftags['<table_init_meta>'] = self._table_init_meta
@@ -251,8 +251,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.jac_null_entries = jac_null
         self.solved_jacobian = True
 
-    def _compute_screening_factors(self, n_indent, of, rates,
-                                   do_T_derivatives=True):
+    def _compute_screening_factors_helper(self, n_indent, of, rates,
+                                          do_T_derivatives=True):
         """Helper function that composes the screening factors string
         given a list of rates. It evaluates log(screening) and stores them
         to rate_eval.log_screen.
@@ -285,13 +285,13 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f'{self.indent*(n_indent+1)}}}\n')
                 of.write(f'{self.indent*n_indent}' + '}\n\n')
 
-    def _compute_all_screening_factors(self, n_indent, of):
+    def _compute_screening_factors(self, n_indent, of):
         """Composes the screening factors string for all rates.
         It evaluates log(screening) and stores them to rate_eval.log_screen.
 
         """
-        self._compute_screening_factors(self, n_indent, of, self.get_rates(),
-                                        do_T_derivatives=True)
+        self._compute_screening_factors_helper(n_indent, of, self.get_rates(),
+                                               do_T_derivatives=True)
 
     def _nrxn(self, n_indent, of):
         for i, r in enumerate(self.all_rates):
@@ -635,8 +635,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write("#endif\n")
 
     def _fill_rates(self, n_indent, of, rates,
-                    args=["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"],
-                    do_T_derivative=True):
+                    args, do_T_derivative=True):
         """Helper function to fill in the rates by calling the appropriate rate functions"""
 
         for r in rates:
@@ -654,16 +653,20 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}" + "}\n\n")
 
     def _fill_temp_tabular_rates(self, n_indent, of):
-        self._fill_rates(n_indent, of, self.temperature_tabular_rates)
+        args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
+        self._fill_rates(n_indent, of, self.temperature_tabular_rates, args)
 
     def _fill_starlib_rates(self, n_indent, of):
-        self._fill_rates(n_indent, of, self.starlib_rates)
+        args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
+        self._fill_rates(n_indent, of, self.starlib_rates, args)
 
     def _fill_reaclib_rates(self, n_indent, of):
-        self._fill_rates(n_indent, of, self.reaclib_rates)
+        args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
+        self._fill_rates(n_indent, of, self.reaclib_rates, args)
 
     def _fill_modified_rates(self, n_indent, of):
-        self._fill_rates(n_indent, of, self.modified_rates)
+        args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
+        self._fill_rates(n_indent, of, self.modified_rates, args)
 
     def _fill_derived_rates(self, n_indent, of):
         if self.derived_rates:
@@ -674,7 +677,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write("\n")
 
         args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT", "rate_eval", "pf_cache"]
-        self._fill_rates(n_indent, of, self.derived_rates, args=args)
+        self._fill_rates(n_indent, of, self.derived_rates, args)
 
     def _fill_approx_rates(self, n_indent, of):
         for r in self.approx_rates:

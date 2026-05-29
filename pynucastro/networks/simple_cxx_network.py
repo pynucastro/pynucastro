@@ -25,15 +25,15 @@ class SimpleCxxNetwork(BaseCxxNetwork):
 
         return path.glob("*.template")
 
-    def _compute_all_screening_factors(self, n_indent, of):
+    def _compute_screening_factors(self, n_indent, of):
         """Composes the screening factors string for all rates.
         It evaluates log(screening) and stores them to rate_eval.log_screen.
         It doesn't include the Temperature derivative since we currently
         do not support temperature evolution in simple-cxx network.
 
         """
-        self._compute_screening_factors(self, n_indent, of, self.get_rates(),
-                                        do_T_derivatives=False)
+        self._compute_screening_factors_helper(n_indent, of, self.get_rates(),
+                                               do_T_derivatives=False)
 
     def _write_network(self, odir=None):
         """Output the RHS, jacobian and ancillary files for the
