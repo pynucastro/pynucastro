@@ -253,9 +253,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _compute_screening_factors_helper(self, n_indent, of, rates,
                                           do_T_derivatives=True):
-        """Helper function that composes the screening factors string
-        given a list of rates. It evaluates log(screening) and stores them
-        to rate_eval.log_screen.
+        """Compose the screening factors string given a list of rates.
+        It evaluates log(screening) and stores them to rate_eval.log_screen.
 
         """
         screening_pair_set = get_screening_pair_set(rates)
@@ -286,7 +285,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{self.indent*n_indent}' + '}\n\n')
 
     def _compute_screening_factors(self, n_indent, of):
-        """Composes the screening factors string for all rates.
+        """Compose the screening factors string for all rates.
         It evaluates log(screening) and stores them to rate_eval.log_screen.
 
         """
@@ -636,7 +635,10 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _fill_rates(self, n_indent, of, rates,
                     args, do_T_derivative=True):
-        """Helper function to fill in the rates by calling the appropriate rate functions"""
+        """Fill in the rates by calling the appropriate rate functions
+        given a list of rates.
+
+        """
 
         for r in rates:
             of.write(f"{self.indent*n_indent}" + "{\n")
