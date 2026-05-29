@@ -26,26 +26,15 @@ class SimpleCxxNetwork(BaseCxxNetwork):
 
         return path.glob("*.template")
 
-    def _compute_screening_factors(self, n_indent, of):
-        """Compose the screening factors string. It evaluates log(screening)
-        and stores them to rate_eval.log_screen.
+    def _compute_all_screening_factors(self, n_indent, of):
+        """Composes the screening factors string for all rates.
+        It evaluates log(screening) and stores them to rate_eval.log_screen.
+        It doesn't include the Temperature derivative since we currently
+        do not support temperature evolution in simple-cxx network.
 
         """
-        screening_pair_set = get_screening_pair_set(self.get_rates())
-        for n1, n2 in screening_pair_set:
-            nuc1_info = f'{float(n1.Z)}_rt, {float(n1.A)}_rt'
-            nuc2_info = f'{float(n2.Z)}_rt, {float(n2.A)}_rt'
-
-            if not self.do_screening:
-                # Set log_scor terms to be 0 if not doing screening
-                of.write(f'{self.indent*(n_indent)}rate_eval.log_screen(k_{n1}_{n2}) = 0.0_rt;\n')
-            else:
-                # Scope the screening calculation to avoid multiple definitions of scn_fac.
-                of.write(f'{self.indent*n_indent}' + '{\n')
-                of.write(f'{self.indent*(n_indent+1)}auto scn_fac = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n')
-                of.write(f'{self.indent*(n_indent+1)}actual_log_screen(pstate, scn_fac, log_scor);\n')
-                of.write(f'{self.indent*(n_indent+1)}rate_eval.log_screen(k_{n1}_{n2}) = log_scor;\n')
-                of.write(f'{self.indent*n_indent}' + '}\n\n')
+        self._compute_screening_factors(self, n_indent, of, rate=self.get_rates(),
+                                        do_T_derivatives=False)
 
     def _write_network(self, odir=None):
         """Output the RHS, jacobian and ancillary files for the

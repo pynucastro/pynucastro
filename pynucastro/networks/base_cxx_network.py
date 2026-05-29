@@ -92,7 +92,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<rate_names>'] = self._rate_names
         self.ftags['<ebind>'] = self._ebind
         self.ftags['<mion>'] = self._mion
-        self.ftags['<compute_screening_factors>'] = self._compute_screening_factors
+        self.ftags['<compute_all_screening_factors>'] = self._compute_all_screening_factors
         self.ftags['<table_num>'] = self._table_num
         self.ftags['<declare_tables>'] = self._declare_tables
         self.ftags['<table_init_meta>'] = self._table_init_meta
@@ -251,15 +251,13 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.jac_null_entries = jac_null
         self.solved_jacobian = True
 
-    def _compute_screening_factors(self, n_indent, of, rates=None,
+    def _compute_screening_factors(self, n_indent, of, rate,
                                    do_T_derivatives=True):
-        """Compose the screening factors string. It evaluates log(screening)
-        and stores them to rate_eval.log_screen.
+        """A helper function that composes the screening factors string
+        given a list of rates. It evaluates log(screening) and stores them
+        to rate_eval.log_screen.
 
         """
-        if rates is None:
-            rates = self.get_rates()
-
         screening_pair_set = get_screening_pair_set(rates)
         for n1, n2 in screening_pair_set:
             nuc1_info = f'{float(n1.Z)}_rt, {float(n1.A)}_rt'
@@ -286,6 +284,14 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dT(k_{n1}_{n2}) = dlog_scor_dT;\n')
                     of.write(f'{self.indent*(n_indent+1)}}}\n')
                 of.write(f'{self.indent*n_indent}' + '}\n\n')
+
+    def _compute_all_screening_factors(self, n_indent, of):
+        """Composes the screening factors string for all rates.
+        It evaluates log(screening) and stores them to rate_eval.log_screen.
+
+        """
+        self._compute_screening_factors(self, n_indent, of, rate=self.get_rates(),
+                                        do_T_derivatives=True)
 
     def _nrxn(self, n_indent, of):
         for i, r in enumerate(self.all_rates):
