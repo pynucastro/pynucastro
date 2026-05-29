@@ -508,30 +508,37 @@ class BaseCxxNetwork(ABC, RateCollection):
         # Writes ydot for weak reactions and computes corresponding neutrino loss term
 
         # Fill all the weak rates
-        idnt = self.indent*n_indent
 
         # Consider possible cases for weak rates in realicb, modifed, and starlib rates.
         # Here we leave out derived rate since we don't expect derived rate to be a weak rate.
         # Also handle tabular weak rates separately
         weak_rates = [r for r in self.reaclib_rates + self.modified_rates + self.starlib_rates + self.temperature_tabular_rates
                       if r.weak]
-        self._compute_screening_factors(n_indent, of, rates=weak_rates,
-                                        do_T_derivatives=False)
+
+        screening_pair_set = get_screening_pair_set(weak_rates)
+        if len(screening_pair_set) > 0:
+            of.write('#ifdef SCREENING\n')
+            of.write(f'{self.indent*n_indent}plasma_state_t<{self.dtype}> pstate{{}};\n')
+            of.write(f'{self.indent*n_indent}fill_plasma_state(pstate, state.T, state.rho, Y);\n')
+            of.write(f'{self.indent*n_indent}{self.dtype} log_scor;\n')
+            of.write('#endif SCREENING\n\n')
+            self._compute_screening_factors(n_indent, of, rates=weak_rates,
+                                            do_T_derivatives=False)
         self._fill_rates(n_indent, of, weak_rates, do_T_derivatives=False)
 
         # Now do tabular weak rates explicitly
         # And get neutrino loss terms from tabular weak rates
         if len(self.tabular_rates) > 0:
-            of.write(f'{idnt}{self.dtype} log_temp = std::log10(state.T);\n')
-            of.write(f'{idnt}{self.dtype} log_rhoy = std::log10(rhoy);\n\n')
+            of.write(f'{self.indent*n_indent}{self.dtype} log_temp = std::log10(state.T);\n')
+            of.write(f'{self.indent*n_indent}{self.dtype} log_rhoy = std::log10(rhoy);\n\n')
 
             for r in self.tabular_rates:
-                of.write(f'{idnt}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
-                of.write(f'{idnt}                 log_rhoy, log_temp, state.T, rate, drate_dt, edot_nu, edot_gamma);\n')
-                of.write(f'{idnt}rate_eval.screened_rates(k_{r.fname}) = rate;\n')
-                of.write(f'{idnt}rate_eval.enuc_weak += C::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
+                of.write(f'{self.indent*n_indent}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
+                of.write(f'{self.indent*n_indent}                 log_rhoy, log_temp, state.T, rate, drate_dt, edot_nu, edot_gamma);\n')
+                of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n')
+                of.write(f'{self.indent*n_indent}rate_eval.enuc_weak += C::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
                 of.write('\n')
-            of.write(f'{idnt}const auto& screened_rates = rate_eval.screened_rates;\n')
+            of.write(f'{self.indent*n_indent}const auto& screened_rates = rate_eval.screened_rates;\n')
         of.write('\n')
 
         # Compose and write ydot for all weak reactions
@@ -545,7 +552,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             )
 
             if not self.nuclei_rate_pairs[n] or not has_weak_rates:
-                of.write(f"{idnt}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) = 0.0_rt;\n\n")
+                of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) = 0.0_rt;\n\n")
                 continue
 
             ydot_sym_terms = []
@@ -561,7 +568,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 if (fwd, rvs).count(None) < 2:
                     ydot_sym_terms.append((fwd, rvs))
 
-            of.write(f"{idnt}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) =\n")
+            of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) =\n")
 
             self._write_ydot_nuc(n_indent, of, ydot_sym_terms)
 
