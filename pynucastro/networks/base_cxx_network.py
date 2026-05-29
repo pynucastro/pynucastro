@@ -251,12 +251,15 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.jac_null_entries = jac_null
         self.solved_jacobian = True
 
-    def _compute_screening_factors(self, n_indent, of, rates=self.get_rates(),
+    def _compute_screening_factors(self, n_indent, of, rates=None,
                                    do_T_derivatives=True):
         """Compose the screening factors string. It evaluates log(screening)
         and stores them to rate_eval.log_screen.
 
         """
+        if rates is None:
+            rates = self.get_rates()
+
         screening_pair_set = get_screening_pair_set(rates)
         for n1, n2 in screening_pair_set:
             nuc1_info = f'{float(n1.Z)}_rt, {float(n1.A)}_rt'
