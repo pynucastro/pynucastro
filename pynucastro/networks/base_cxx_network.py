@@ -78,7 +78,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.solved_jacobian = False
 
         self.function_specifier = "inline"
-        self.gpu_data_specifier = ""
+        self.gpu_managed_specifier = ""
+        self.gpu_device_specifier = ""
         self.dtype = "double"
         self.array_namespace = ""
 
@@ -333,12 +334,12 @@ class BaseCxxNetwork(ABC, RateCollection):
             comps = [TableIndex.RATE, TableIndex.NU, TableIndex.GAMMA]
 
             of.write(f'{idnt}// {r.rid}\n')
-            of.write(f'{idnt}inline {self.gpu_data_specifier} table_t {r.table_index_name}_meta{{.ntemp={r.table_temp_lines}, .nrhoy={r.table_rhoy_lines}, .nvars={len(comps)}, .nheader={r.table_header_lines}}};\n')
+            of.write(f'{idnt}inline {self.gpu_device_specifier} table_t {r.table_index_name}_meta{{.ntemp={r.table_temp_lines}, .nrhoy={r.table_rhoy_lines}, .nvars={len(comps)}, .nheader={r.table_header_lines}}};\n')
 
-            of.write(f'{idnt}inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy{{{", ".join(str(v) for v in r.interpolator.rhoy)}}};\n')
-            of.write(f'{idnt}inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_temp_lines}> {r.table_index_name}_temp{{{", ".join(str(v) for v in r.interpolator.temp)}}};\n')
+            of.write(f'{idnt}inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy{{{", ".join(str(v) for v in r.interpolator.rhoy)}}};\n')
+            of.write(f'{idnt}inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_temp_lines}> {r.table_index_name}_temp{{{", ".join(str(v) for v in r.interpolator.temp)}}};\n')
             of.write(f'{idnt}// Array3D is column-major (Fortran-ordering).  T varies fastest, then rho Ye, then the component\n')
-            of.write(f'{idnt}inline {self.gpu_data_specifier} {self.array_namespace}Array3D<{self.dtype}, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, num_vars>\n')
+            of.write(f'{idnt}inline {self.gpu_device_specifier} {self.array_namespace}Array3D<{self.dtype}, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, num_vars>\n')
             of.write(f'{idnt}     {r.table_index_name}_data{{\n')
             for ncomp in comps:
                 for jrho in range(len(r.interpolator.rhoy)):
@@ -396,7 +397,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             # remove the [ ]
             log_temp_str = " " + log_temp_str[1:-1]
 
-            of.write(f'{idnt}    inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_t9 = {{\n')
+            of.write(f'{idnt}    inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_t9 = {{\n')
             for line in log_temp_str.split("\n"):
                 of.write(f"     {line.strip()}\n")
             of.write("    };\n\n")
@@ -406,7 +407,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             # remove the [ ]
             log_rate_str = " " + log_rate_str[1:-1]
 
-            of.write(f'{idnt}    inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_rate = {{\n')
+            of.write(f'{idnt}    inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_rate = {{\n')
             for line in log_rate_str.split("\n"):
                 of.write(f"     {line.strip()}\n")
             of.write("    };\n\n")
@@ -418,7 +419,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 # remove the [ ]
                 sigma_str = " " + sigma_str[1:-1]
 
-                of.write(f'{idnt}    inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> sigma_rate = {{\n')
+                of.write(f'{idnt}    inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> sigma_rate = {{\n')
                 for line in sigma_str.split("\n"):
                     of.write(f"     {line.strip()}\n")
                 of.write("    };\n\n")
@@ -724,7 +725,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             # number of points
             of.write(f"{self.indent*n_indent}constexpr int npts_{i+1} = {len(temp)};\n\n")
 
-            decl = f"inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 0, npts_{i+1}-1>"
+            decl = f"inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 0, npts_{i+1}-1>"
 
             # write the temperature out, but for readability, split it to 5 values per line
 
@@ -747,7 +748,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}// {n}\n\n")
             of.write(f"{self.indent*n_indent}// this is log(partition function)\n\n")
 
-            decl = f"inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 0, npts_{i+1}-1>"
+            decl = f"inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 0, npts_{i+1}-1>"
             of.write(f"{self.indent*n_indent}{decl} {n}_pf_array = {{\n")
 
             for data in batched(n.partition_function.log_pf_data, 5):
@@ -826,7 +827,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 namespace starlib {{
 
     constexpr std::uint8_t NumStarLibRates = {num_sl};
-    inline {self.gpu_data_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, NumStarLibRates> prand{{}};
+    inline {self.gpu_managed_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, NumStarLibRates> prand{{}};
 }}"""
 
         if num_sl > 0:
