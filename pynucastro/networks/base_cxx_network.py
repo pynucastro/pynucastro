@@ -503,14 +503,15 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         # Fill all the weak rates
         idnt = self.indent*n_indent
-        idntp1 = self.indent*(n_indent + 1)
 
         # Consider possible cases for weak rates in realicb, modifed, and starlib rates.
         # Here we leave out derived rate since we don't expect derived rate to be a weak rate.
         # Also handle tabular weak rates separately
         weak_rates = [r for r in self.reaclib_rates + self.modified_rates + self.starlib_rates + self.temperature_tabular_rates
                       if r.weak]
-        self._fill_rates(n_indent, of, weak_rates, do_T_derivative=False)
+        self._compute_screening_factors(n_indent, of, rates=weak_rates,
+                                        do_T_derivatives=False)
+        self._fill_rates(n_indent, of, weak_rates, do_T_derivatives=False)
 
         # Now do tabular weak rates explicitly
         # And get neutrino loss terms from tabular weak rates

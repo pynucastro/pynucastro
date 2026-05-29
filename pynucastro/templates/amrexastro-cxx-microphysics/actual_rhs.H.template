@@ -171,7 +171,7 @@ void get_ydot_weak(const burn_t& state,
 
     rate_eval.enuc_weak = 0.0_rt;
 
-    // Compute all weakr rates and get ydot_weak
+    // Compute all weak rates and get ydot_weak
 
     <ydot_weak>(1)
     enuc_weak = rate_eval.enuc_weak;
