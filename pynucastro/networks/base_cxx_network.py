@@ -251,7 +251,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.jac_null_entries = jac_null
         self.solved_jacobian = True
 
-    def _compute_screening_factors(self, n_indent, of, rate,
+    def _compute_screening_factors(self, n_indent, of, rates,
                                    do_T_derivatives=True):
         """A helper function that composes the screening factors string
         given a list of rates. It evaluates log(screening) and stores them
