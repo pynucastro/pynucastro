@@ -32,7 +32,7 @@ class SimpleCxxNetwork(BaseCxxNetwork):
         do not support temperature evolution in simple-cxx network.
 
         """
-        self._compute_screening_factors(self, n_indent, of, rate=self.get_rates(),
+        self._compute_screening_factors(self, n_indent, of, self.get_rates(),
                                         do_T_derivatives=False)
 
     def _write_network(self, odir=None):

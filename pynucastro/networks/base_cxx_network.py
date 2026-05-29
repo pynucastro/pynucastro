@@ -290,7 +290,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         It evaluates log(screening) and stores them to rate_eval.log_screen.
 
         """
-        self._compute_screening_factors(self, n_indent, of, rate=self.get_rates(),
+        self._compute_screening_factors(self, n_indent, of, self.get_rates(),
                                         do_T_derivatives=True)
 
     def _nrxn(self, n_indent, of):
