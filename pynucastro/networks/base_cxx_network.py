@@ -278,7 +278,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(n1.Z)}_rt);\n')
                 of.write(f'{self.indent*(n_indent+1)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);\n')
                 of.write(f'{self.indent*(n_indent+1)}rate_eval.log_screen(k_{n1}_{n2}) = log_scor;\n')
-                if do T_derivatives:
+                if do_T_derivatives:
                     of.write(f'{self.indent*(n_indent+1)}if constexpr (do_T_derivatives) {{\n')
                     of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dT(k_{n1}_{n2}) = dlog_scor_dT;\n')
                     of.write(f'{self.indent*(n_indent+1)}}}\n')
