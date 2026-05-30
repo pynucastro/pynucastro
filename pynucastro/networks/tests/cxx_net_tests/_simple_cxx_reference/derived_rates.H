@@ -165,6 +165,8 @@ fill_derived_rates(const tf_t& tfactors, T& rate_eval)
     part_fun::pf_cache_t pf_cache{};
 
     {
+        // He4_Ne20_to_C12_C12_derived
+
         Real log_scor {0.0_rt};
         Real dlog_scor_dT {0.0_rt};
 #ifdef SCREENING
@@ -181,6 +183,8 @@ fill_derived_rates(const tf_t& tfactors, T& rate_eval)
     }
 
     {
+        // p_Na23_to_C12_C12_derived
+
         Real log_scor {0.0_rt};
         Real dlog_scor_dT {0.0_rt};
 #ifdef SCREENING
@@ -197,6 +201,8 @@ fill_derived_rates(const tf_t& tfactors, T& rate_eval)
     }
 
     {
+        // O16_to_He4_C12_derived
+
         Real log_scor {0.0_rt};
         Real dlog_scor_dT {0.0_rt};
         rate_O16_to_He4_C12_derived<do_T_derivatives, T>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT, rate_eval, pf_cache);
