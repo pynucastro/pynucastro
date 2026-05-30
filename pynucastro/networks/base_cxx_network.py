@@ -530,6 +530,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         if len(weak_rates) > 0:
             args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
             template_args = ["do_T_derivatives"]
+            of.write(f'{self.indent*n_indent}const tf_t tfactors = evaluate_tfactors(state.T);\n\n')
             self._fill_rates(n_indent, of, weak_rates,
                              args, template_args, do_T_derivatives=False)
 
@@ -545,10 +546,11 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n')
                 of.write(f'{self.indent*n_indent}rate_eval.enuc_weak += C::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
                 of.write('\n')
-            of.write(f'{self.indent*n_indent}const auto& screened_rates = rate_eval.screened_rates;\n')
         of.write('\n')
 
         # Compose and write ydot for all weak reactions
+        if len(self.tabular_rates) > 0 or len(weak_rates) > 0:
+            of.write(f'{self.indent*n_indent}const auto& screened_rates = rate_eval.screened_rates;\n\n')
 
         for n in self.unique_nuclei:
 
