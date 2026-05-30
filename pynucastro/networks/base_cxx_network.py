@@ -634,7 +634,8 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write("#endif\n")
 
     def _fill_rates(self, n_indent, of, rates,
-                    args, do_T_derivative=True):
+                    args, template_args,
+                    do_T_derivative=True):
         """Fill in the rates by calling the appropriate rate functions
         given a list of rates.
 
@@ -644,7 +645,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}" + "{\n")
             of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n\n")
             self.write_screen_var(n_indent+1, of, r)
-            of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<do_T_derivatives>({', '.join(args)});\n")
+            of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<{', '.join(template_args)}>({', '.join(args)});\n")
             of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
 
             if do_T_derivative:
@@ -656,19 +657,27 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _fill_temp_tabular_rates(self, n_indent, of):
         args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
-        self._fill_rates(n_indent, of, self.temperature_tabular_rates, args)
+        template_args = ["do_T_derivatives"]
+        self._fill_rates(n_indent, of, self.temperature_tabular_rates,
+                         args, template_args)
 
     def _fill_starlib_rates(self, n_indent, of):
         args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
-        self._fill_rates(n_indent, of, self.starlib_rates, args)
+        template_args = ["do_T_derivatives"]
+        self._fill_rates(n_indent, of, self.starlib_rates,
+                         args, template_args)
 
     def _fill_reaclib_rates(self, n_indent, of):
         args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
-        self._fill_rates(n_indent, of, self.reaclib_rates, args)
+        template_args = ["do_T_derivatives"]
+        self._fill_rates(n_indent, of, self.reaclib_rates,
+                         args, template_args)
 
     def _fill_modified_rates(self, n_indent, of):
         args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
-        self._fill_rates(n_indent, of, self.modified_rates, args)
+        template_args = ["do_T_derivatives"]
+        self._fill_rates(n_indent, of, self.modified_rates,
+                         args, template_args)
 
     def _fill_derived_rates(self, n_indent, of):
         if self.derived_rates:
@@ -679,7 +688,9 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write("\n")
 
         args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT", "rate_eval", "pf_cache"]
-        self._fill_rates(n_indent, of, self.derived_rates, args)
+        template_args = ["do_T_derivatives", "T"]
+        self._fill_rates(n_indent, of, self.derived_rates,
+                         args, template_args)
 
     def _fill_approx_rates(self, n_indent, of):
         for r in self.approx_rates:
