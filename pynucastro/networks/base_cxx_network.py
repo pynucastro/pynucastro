@@ -508,7 +508,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         # Fill all the weak rates
 
-        # Consider possible cases for weak rates in realicb, modifed, and starlib rates.
+        # Consider possible cases for weak rates in realicb, modified, and starlib rates.
         # Here we leave out derived rate since we don't expect derived rate to be a weak rate.
         # Also handle tabular weak rates separately
         weak_rates = [r for r in self.reaclib_rates + self.modified_rates + self.starlib_rates + self.temperature_tabular_rates
