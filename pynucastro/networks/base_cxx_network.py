@@ -251,12 +251,13 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.jac_null_entries = jac_null
         self.solved_jacobian = True
 
-    def _compute_screening_factors(self, n_indent, of):
-        """Compose the screening factors string. It evaluates log(screening)
-        and stores them to rate_eval.log_screen.
+    def _compute_screening_factors_helper(self, n_indent, of, rates,
+                                          do_T_derivatives=True):
+        """Compose the screening factors string given a list of rates.
+        It evaluates log(screening) and stores them to rate_eval.log_screen.
 
         """
-        screening_pair_set = get_screening_pair_set(self.get_rates())
+        screening_pair_set = get_screening_pair_set(rates)
         for n1, n2 in screening_pair_set:
             nuc1_info = f'{float(n1.Z)}_rt, {float(n1.A)}_rt'
             nuc2_info = f'{float(n2.Z)}_rt, {float(n2.A)}_rt'
@@ -277,10 +278,19 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(n1.Z)}_rt);\n')
                 of.write(f'{self.indent*(n_indent+1)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);\n')
                 of.write(f'{self.indent*(n_indent+1)}rate_eval.log_screen(k_{n1}_{n2}) = log_scor;\n')
-                of.write(f'{self.indent*(n_indent+1)}if constexpr (do_T_derivatives) {{\n')
-                of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dT(k_{n1}_{n2}) = dlog_scor_dT;\n')
-                of.write(f'{self.indent*(n_indent+1)}}}\n')
+                if do_T_derivatives:
+                    of.write(f'{self.indent*(n_indent+1)}if constexpr (do_T_derivatives) {{\n')
+                    of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dT(k_{n1}_{n2}) = dlog_scor_dT;\n')
+                    of.write(f'{self.indent*(n_indent+1)}}}\n')
                 of.write(f'{self.indent*n_indent}' + '}\n\n')
+
+    def _compute_screening_factors(self, n_indent, of):
+        """Compose the screening factors string for all rates.
+        It evaluates log(screening) and stores them to rate_eval.log_screen.
+
+        """
+        self._compute_screening_factors_helper(n_indent, of, self.get_rates(),
+                                               do_T_derivatives=True)
 
     def _nrxn(self, n_indent, of):
         for i, r in enumerate(self.all_rates):
@@ -604,7 +614,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         for r in self.approx_rates:
             of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
 
-    def write_screen_var(self, n_indent, of, rate):
+    def write_screen_var(self, n_indent, of, rate, do_T_derivatives=True):
         """Return the string that composes the screening variable for a rate."""
 
         # Set default log screening to be 0
@@ -618,56 +628,56 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write("#ifdef SCREENING\n")
             of.write(f"{self.indent*n_indent}log_scor = " + log_screen_term + ";\n")
-            of.write(f"{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
-            of.write(f"{self.indent*n_indent}    dlog_scor_dT = " + dlog_screen_dT_term + ";\n")
-            of.write(f"{self.indent*n_indent}}}\n")
+            if do_T_derivatives:
+                of.write(f"{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
+                of.write(f"{self.indent*n_indent}    dlog_scor_dT = " + dlog_screen_dT_term + ";\n")
+                of.write(f"{self.indent*n_indent}}}\n")
             of.write("#endif\n")
 
-    def _fill_temp_tabular_rates(self, n_indent, of):
-        for r in self.temperature_tabular_rates:
+    def _fill_rates(self, n_indent, of, rates,
+                    args, template_args, do_T_derivatives=True):
+        """Fill in the rates by calling the appropriate rate functions
+        given a list of rates.
+
+        """
+
+        for r in rates:
             of.write(f"{self.indent*n_indent}" + "{\n")
             of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n\n")
-            self.write_screen_var(n_indent+1, of, r)
-            of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n")
+            self.write_screen_var(n_indent+1, of, r, do_T_derivatives=do_T_derivatives)
+            of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<{', '.join(template_args)}>({', '.join(args)});\n")
             of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
-            of.write(f"{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
-            of.write(f"{self.indent*(n_indent+1)}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n")
-            of.write(f"{self.indent*(n_indent+1)}}}\n")
+
+            if do_T_derivatives:
+                of.write(f"{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
+                of.write(f"{self.indent*(n_indent+1)}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n")
+                of.write(f"{self.indent*(n_indent+1)}}}\n")
+
             of.write(f"{self.indent*n_indent}" + "}\n\n")
+
+    def _fill_temp_tabular_rates(self, n_indent, of):
+        args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
+        template_args = ["do_T_derivatives"]
+        self._fill_rates(n_indent, of, self.temperature_tabular_rates,
+                         args, template_args)
 
     def _fill_starlib_rates(self, n_indent, of):
-        for r in self.starlib_rates:
-            of.write(f"{self.indent*n_indent}" + "{\n")
-            of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n\n")
-            self.write_screen_var(n_indent+1, of, r)
-            of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n")
-            of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
-            of.write(f"{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
-            of.write(f"{self.indent*(n_indent+1)}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n")
-            of.write(f"{self.indent*(n_indent+1)}}}\n")
-            of.write(f"{self.indent*n_indent}" + "}\n\n")
+        args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
+        template_args = ["do_T_derivatives"]
+        self._fill_rates(n_indent, of, self.starlib_rates,
+                         args, template_args)
 
     def _fill_reaclib_rates(self, n_indent, of):
-        for r in self.reaclib_rates:
-            of.write(f"{self.indent*n_indent}" + "{\n")
-            self.write_screen_var(n_indent+1, of, r)
-            of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n")
-            of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
-            of.write(f"{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
-            of.write(f"{self.indent*(n_indent+1)}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n")
-            of.write(f"{self.indent*(n_indent+1)}}}\n")
-            of.write(f"{self.indent*n_indent}" + "}\n\n")
+        args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
+        template_args = ["do_T_derivatives"]
+        self._fill_rates(n_indent, of, self.reaclib_rates,
+                         args, template_args)
 
     def _fill_modified_rates(self, n_indent, of):
-        for r in self.modified_rates:
-            of.write(f"{self.indent*n_indent}" + "{\n")
-            self.write_screen_var(n_indent+1, of, r)
-            of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n")
-            of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
-            of.write(f"{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
-            of.write(f"{self.indent*(n_indent+1)}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n")
-            of.write(f"{self.indent*(n_indent+1)}}}\n")
-            of.write(f"{self.indent*n_indent}" + "}\n\n")
+        args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
+        template_args = ["do_T_derivatives"]
+        self._fill_rates(n_indent, of, self.modified_rates,
+                         args, template_args)
 
     def _fill_derived_rates(self, n_indent, of):
         if self.derived_rates:
@@ -677,15 +687,10 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f"{self.indent*n_indent}pf_cache.index_temp_array_{i+1} = interp_net::find_index(tfactors.T9, part_fun::temp_array_{i+1});\n")
                 of.write("\n")
 
-        for r in self.derived_rates:
-            of.write(f"{self.indent*n_indent}" + "{\n")
-            self.write_screen_var(n_indent+1, of, r)
-            of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<do_T_derivatives, T>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT, rate_eval, pf_cache);\n")
-            of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
-            of.write(f"{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
-            of.write(f"{self.indent*(n_indent+1)}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n")
-            of.write(f"{self.indent*(n_indent+1)}}}\n")
-            of.write(f"{self.indent*n_indent}" + "}\n\n")
+        args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT", "rate_eval", "pf_cache"]
+        template_args = ["do_T_derivatives", "T"]
+        self._fill_rates(n_indent, of, self.derived_rates,
+                         args, template_args)
 
     def _fill_approx_rates(self, n_indent, of):
         for r in self.approx_rates:
