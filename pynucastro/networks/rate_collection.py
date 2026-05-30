@@ -2399,8 +2399,8 @@ class RateCollection:
         ax.xaxis.set_ticks_position('bottom')
         ax.yaxis.set_ticks_position('left')
 
-        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True, min_n_ticks=1))
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True, min_n_ticks=1))
 
         if not rotated:
             if Z_range is not None and N_range is not None:
