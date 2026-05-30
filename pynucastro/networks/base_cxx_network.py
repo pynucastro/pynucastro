@@ -504,30 +504,53 @@ class BaseCxxNetwork(ABC, RateCollection):
             self._write_ydot_nuc(n_indent, of, self.ydot_out_result[n])
 
     def _ydot_weak(self, n_indent, of):
-        # Writes ydot for tabular weak reactions only
+        # Writes ydot for weak reactions and computes corresponding neutrino loss term
 
-        # Get the tabular weak rates first.
-        idnt = self.indent*n_indent
+        # Fill all the weak rates
 
+        # Consider possible cases for weak rates in realicb, modified, and starlib rates.
+        # Here we leave out derived rate since we don't expect derived rate to be a weak rate.
+        # Also handle tabular weak rates separately
+        weak_rates = [r for r in self.reaclib_rates + self.modified_rates + self.starlib_rates + self.temperature_tabular_rates
+                      if r.weak]
+
+        # Compute necessary screening term.
+        # This is really only possible for weak ModifiedRates
+        screening_pair_set = get_screening_pair_set(weak_rates)
+        if len(screening_pair_set) > 0:
+            of.write('#ifdef SCREENING\n')
+            of.write(f'{self.indent*n_indent}plasma_state_t<{self.dtype}> pstate{{}};\n')
+            of.write(f'{self.indent*n_indent}fill_plasma_state(pstate, state.T, state.rho, Y);\n')
+            of.write(f'{self.indent*n_indent}{self.dtype} log_scor, dlog_scor_dT;\n')
+            self._compute_screening_factors_helper(n_indent, of, weak_rates,
+                                                   do_T_derivatives=False)
+            of.write('#endif\n\n')
+
+        # Call different rate functions to evaluate the rates.
+        if len(weak_rates) > 0:
+            args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
+            template_args = ["do_T_derivatives"]
+            of.write(f'{self.indent*n_indent}const tf_t tfactors = evaluate_tfactors(state.T);\n\n')
+            self._fill_rates(n_indent, of, weak_rates,
+                             args, template_args, do_T_derivatives=False)
+
+        # Now do tabular weak rates explicitly
+        # And get neutrino loss terms from tabular weak rates
         if len(self.tabular_rates) > 0:
-
-            of.write(f'{idnt}{self.dtype} log_temp = std::log10(state.T);\n')
-            of.write(f'{idnt}{self.dtype} log_rhoy = std::log10(rhoy);\n\n')
+            of.write(f'{self.indent*n_indent}{self.dtype} log_temp = std::log10(state.T);\n')
+            of.write(f'{self.indent*n_indent}{self.dtype} log_rhoy = std::log10(rhoy);\n\n')
 
             for r in self.tabular_rates:
-
-                of.write(f'{idnt}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
-                of.write(f'{idnt}                 log_rhoy, log_temp, state.T, rate, drate_dt, edot_nu, edot_gamma);\n')
-
-                of.write(f'{idnt}rate_eval.screened_rates(k_{r.fname}) = rate;\n')
-
-                of.write(f'{idnt}rate_eval.enuc_weak += C::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
-
+                of.write(f'{self.indent*n_indent}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
+                of.write(f'{self.indent*n_indent}                 log_rhoy, log_temp, state.T, rate, drate_dT, edot_nu, edot_gamma);\n')
+                of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n')
+                of.write(f'{self.indent*n_indent}rate_eval.enuc_weak += C::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
                 of.write('\n')
-            of.write(f'{idnt}const auto& screened_rates = rate_eval.screened_rates;\n')
         of.write('\n')
 
-        # Compose and write ydot weak
+        # Compose and write ydot for all weak reactions
+        if len(self.tabular_rates) > 0 or len(weak_rates) > 0:
+            of.write(f'{self.indent*n_indent}const auto& screened_rates = rate_eval.screened_rates;\n\n')
 
         for n in self.unique_nuclei:
 
