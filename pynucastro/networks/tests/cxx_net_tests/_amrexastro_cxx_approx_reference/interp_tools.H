@@ -55,7 +55,7 @@ namespace interp_net {
 
         if (x0 < x_array(left)) {
             idx = left;
-        } else if (x0 > x_array(right)) {
+        } else if (x0 >= x_array(right)) {
             idx = right - 1;
         } else {
             idx = find_index(x0, x_array);
