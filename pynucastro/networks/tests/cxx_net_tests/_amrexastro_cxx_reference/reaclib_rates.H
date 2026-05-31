@@ -12,7 +12,7 @@ using namespace Rates;
 using namespace Species;
 
 template <int do_T_derivatives>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void rate_C12_C12_to_He4_Ne20_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
     // C12 + C12 --> He4 + Ne20
@@ -48,7 +48,7 @@ void rate_C12_C12_to_He4_Ne20_reaclib(const tf_t& tfactors, const amrex::Real lo
 }
 
 template <int do_T_derivatives>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void rate_C12_C12_to_n_Mg23_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
     // C12 + C12 --> n + Mg23
@@ -84,7 +84,7 @@ void rate_C12_C12_to_n_Mg23_reaclib(const tf_t& tfactors, const amrex::Real log_
 }
 
 template <int do_T_derivatives>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void rate_C12_C12_to_p_Na23_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
     // C12 + C12 --> p + Na23
@@ -120,7 +120,7 @@ void rate_C12_C12_to_p_Na23_reaclib(const tf_t& tfactors, const amrex::Real log_
 }
 
 template <int do_T_derivatives>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void rate_He4_C12_to_O16_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
     // C12 + He4 --> O16
@@ -177,7 +177,7 @@ void rate_He4_C12_to_O16_reaclib(const tf_t& tfactors, const amrex::Real log_sco
 }
 
 template <int do_T_derivatives>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void rate_n_to_p_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
     // n --> p

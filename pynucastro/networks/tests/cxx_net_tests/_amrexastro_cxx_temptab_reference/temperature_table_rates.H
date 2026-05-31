@@ -61,7 +61,7 @@ namespace O16_p_to_F17_iliadis_data {
 namespace temp_tabular {
 
     template <int do_T_derivatives>
-    AMREX_GPU_HOST_DEVICE AMREX_INLINE
+    AMREX_GPU_DEVICE AMREX_INLINE
     void rate_O16_p_to_F17_iliadis(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // O16 + p --> F17
