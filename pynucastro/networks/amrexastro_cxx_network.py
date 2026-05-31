@@ -32,7 +32,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         self.ftags['<nse_rate_pair_data>'] = self._write_nse_rate_pair_data
 
         self.disable_rate_params = disable_rate_params
-        self.function_specifier = "AMREX_GPU_HOST_DEVICE AMREX_INLINE"
+        self.function_specifier = "AMREX_GPU_DEVICE AMREX_INLINE"
         self.gpu_managed_specifier = "AMREX_GPU_MANAGED"
         self.gpu_device_specifier = "AMREX_GPU_DEVICE"
         self.dtype = "amrex::Real"
