@@ -519,11 +519,13 @@ class BaseCxxNetwork(ABC, RateCollection):
         screening_pair_set = get_screening_pair_set(weak_rates)
         if len(screening_pair_set) > 0:
             of.write('#ifdef SCREENING\n')
-            of.write(f'{self.indent*n_indent}plasma_state_t<{self.dtype}> pstate{{}};\n')
-            of.write(f'{self.indent*n_indent}fill_plasma_state(pstate, state.T, state.rho, Y);\n')
-            of.write(f'{self.indent*n_indent}{self.dtype} log_scor, dlog_scor_dT;\n')
-            self._compute_screening_factors_helper(n_indent, of, weak_rates,
+            of.write(f'{self.indent*n_indent}{{\n')
+            of.write(f'{self.indent*(n_indent+1)}plasma_state_t<{self.dtype}> pstate{{}};\n')
+            of.write(f'{self.indent*(n_indent+1)}fill_plasma_state(pstate, state.T, state.rho, Y);\n')
+            of.write(f'{self.indent*(n_indent+1)}{self.dtype} log_scor, dlog_scor_dT;\n')
+            self._compute_screening_factors_helper(n_indent+1, of, weak_rates,
                                                    do_T_derivatives=False)
+            of.write(f'{self.indent*n_indent}}}\n')
             of.write('#endif\n\n')
 
         # Call different rate functions to evaluate the rates.
