@@ -60,4 +60,4 @@ jobs:
           export PATH=$PATH:/usr/local/cuda/bin
           cd external/Microphysics/unit_test/test_sdc
           make clean
-          make USE_CUDA=TRUE USE_NSE_NET=TRUE NETWORK_DIR=he-burn/ase-iron -j 4
+          make USE_CUDA=TRUE USE_NSE_NET=TRUE SCREEN_METHOD=chabrier1998 NETWORK_DIR=he-burn/ase-iron -j 4
