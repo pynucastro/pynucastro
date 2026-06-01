@@ -32,7 +32,7 @@ using namespace Rates;
 using namespace rate_tables;
 
 template<class T>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void ener_gener_rate(T const& dydt, amrex::Real& enuc)
 {
 
@@ -53,7 +53,7 @@ void ener_gener_rate(T const& dydt, amrex::Real& enuc)
 
 #ifdef SCREENING
 template <int do_T_derivatives, typename T>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void evaluate_screening(const burn_t& state,
                         const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
                         T& rate_eval) {
@@ -117,7 +117,7 @@ void evaluate_screening(const burn_t& state,
 
 
 template <int do_T_derivatives, typename T>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void evaluate_rates(const burn_t& state,
                     const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
                     T& rate_eval) {
@@ -168,7 +168,7 @@ void evaluate_rates(const burn_t& state,
 
 // backwards-compatible wrapper
 template <int do_T_derivatives, typename T>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void evaluate_rates(const burn_t& state,
                     T& rate_eval) {
 
@@ -183,7 +183,7 @@ void evaluate_rates(const burn_t& state,
 
 
 #ifdef NSE_NET
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void get_ydot_weak(const burn_t& state,
                    amrex::Array1D<amrex::Real, 1, neqs>& ydot_nuc,
                    amrex::Real& enuc_weak,
@@ -227,7 +227,7 @@ void get_ydot_weak(const burn_t& state,
 #endif
 
 
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void rhs_nuc(const burn_t& state,
              amrex::Array1D<amrex::Real, 1, neqs>& ydot_nuc,
              const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
@@ -252,7 +252,7 @@ void rhs_nuc(const burn_t& state,
 }
 
 
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void actual_rhs (const burn_t& state, amrex::Array1D<amrex::Real, 1, neqs>& ydot)
 {
 
@@ -299,7 +299,7 @@ void actual_rhs (const burn_t& state, amrex::Array1D<amrex::Real, 1, neqs>& ydot
 
 
 template<class MatrixType>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void jac_nuc(const burn_t& state,
              MatrixType& jac,
              const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
@@ -360,7 +360,7 @@ void jac_nuc(const burn_t& state,
 
 
 template<class MatrixType>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void actual_jac(const burn_t& state, MatrixType& jac)
 {
 
