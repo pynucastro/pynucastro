@@ -125,6 +125,8 @@ namespace interp_net {
 
         // Clamp index within table boundary
         // Note idx should already be clamped within [ilo, ihi-1]
+        AMREX_ASSERT(idx >= ilo && idx < ihi);
+
         const int im1 = amrex::max(idx - 1, ilo);
         const int ip1 = idx + 1;
         const int ip2 = amrex::min(idx + 2, ihi);

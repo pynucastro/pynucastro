@@ -142,6 +142,8 @@ class TempTableInterpolator:
 
         # Get surround 4 data points
         # Note idx should already be clamped within [0, max_idx-1]
+        assert idx >= 0 and idx < max_idx
+
         im1 = max(idx - 1, 0)
         ip1 = idx + 1
         ip2 = min(idx + 2, max_idx)
@@ -218,6 +220,7 @@ class TempTableInterpolator:
 
         # Use monotone Hermite cubic interpolation
         return self._monotone_cubic_interp(log_T9_0, idx)
+
 
 class TemperatureTabularRate(Rate):
     """A rate whose temperature dependence is tabulated.
