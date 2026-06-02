@@ -142,7 +142,7 @@ class TempTableInterpolator:
 
         # Get surround 4 data points
         # Note idx should already be clamped within [0, max_idx-1]
-        assert idx >= 0 and idx < max_idx
+        assert 0 <= idx < max_idx
 
         im1 = max(idx - 1, 0)
         ip1 = idx + 1

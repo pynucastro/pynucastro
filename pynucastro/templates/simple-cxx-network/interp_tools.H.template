@@ -92,6 +92,9 @@ namespace interp_net {
     Real
     limit_slope(const Real hm, const Real hp,
                 const Real dm, const Real dp) {
+        // Slope Limiter to preserve monotonicity
+        // See C. Moler, Numerical Computing with Matlab, 2004.
+        // :doi:`10.1137/1.9780898717952`, Chapter 3.4
 
         if (dm * dp <= 0.0_rt) {
             return 0.0_rt;

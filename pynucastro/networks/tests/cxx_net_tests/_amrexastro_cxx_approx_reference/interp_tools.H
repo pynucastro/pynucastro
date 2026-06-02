@@ -91,6 +91,9 @@ namespace interp_net {
     amrex::Real
     limit_slope(const amrex::Real hm, const amrex::Real hp,
                 const amrex::Real dm, const amrex::Real dp) {
+        // Slope Limiter to preserve monotonicity
+        // See C. Moler, Numerical Computing with Matlab, 2004.
+        // :doi:`10.1137/1.9780898717952`, Chapter 3.4
 
         if (dm * dp <= 0.0_rt) {
             return 0.0_rt;
@@ -125,6 +128,8 @@ namespace interp_net {
 
         // Clamp index within table boundary
         // Note idx should already be clamped within [ilo, ihi-1]
+        AMREX_ASSERT(idx >= ilo && idx < ihi);
+
         const int im1 = amrex::max(idx - 1, ilo);
         const int ip1 = idx + 1;
         const int ip2 = amrex::min(idx + 2, ihi);
