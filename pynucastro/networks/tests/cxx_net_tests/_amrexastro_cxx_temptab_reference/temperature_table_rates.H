@@ -66,7 +66,7 @@ namespace temp_tabular {
 
         // O16 + p --> F17
 
-        auto [_log_rate, _dlog_rate_dlogT9] = interp_net::cubic_interp_uneven<do_T_derivatives>(
+        auto [_log_rate, _dlog_rate_dlogT9] = interp_net::monotone_1d_interp<do_T_derivatives>(
                                                    tfactors.lnT9,
                                                    O16_p_to_F17_iliadis_data::log_t9,
                                                    O16_p_to_F17_iliadis_data::log_rate);
