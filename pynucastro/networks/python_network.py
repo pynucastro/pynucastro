@@ -132,7 +132,7 @@ class NetworkSolution:
         """
 
         As = np.array([n.A for n in self.unique_nuclei])
-        return self._sol.sol(t) * As
+        return self._sol.sol(t) * As[:, None]
 
     def Y_at(self, t):
         """Evaluate the molar abundances for a given time.
