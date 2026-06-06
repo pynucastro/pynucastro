@@ -57,7 +57,7 @@ namespace rate_tables
 }
 
 
-AMREX_INLINE AMREX_GPU_HOST_DEVICE
+AMREX_INLINE AMREX_GPU_DEVICE
 amrex::Real
 evaluate_linear_1d(const amrex::Real fhi, const amrex::Real flo, const amrex::Real xhi, const amrex::Real xlo, const amrex::Real x)
 {
@@ -70,7 +70,7 @@ evaluate_linear_1d(const amrex::Real fhi, const amrex::Real flo, const amrex::Re
     return f;
 }
 
-AMREX_INLINE AMREX_GPU_HOST_DEVICE
+AMREX_INLINE AMREX_GPU_DEVICE
 amrex::Real
 evaluate_linear_2d(const amrex::Real fip1jp1, const amrex::Real fip1j, const amrex::Real fijp1, const amrex::Real fij,
           const amrex::Real xhi, const amrex::Real xlo, const amrex::Real yhi, const amrex::Real ylo,
@@ -102,7 +102,7 @@ evaluate_linear_2d(const amrex::Real fip1jp1, const amrex::Real fip1j, const amr
 
 
 template<typename R, typename T, typename D>
-AMREX_INLINE AMREX_GPU_HOST_DEVICE
+AMREX_INLINE AMREX_GPU_DEVICE
 amrex::Real
 evaluate_vars(const int irhoy_lo, const int jtemp_lo,
               const R& log_rhoy_table, const T& log_temp_table, const D& data,
@@ -132,7 +132,7 @@ evaluate_vars(const int irhoy_lo, const int jtemp_lo,
 
 
 template<typename R, typename T, typename D>
-AMREX_INLINE AMREX_GPU_HOST_DEVICE
+AMREX_INLINE AMREX_GPU_DEVICE
 amrex::Real
 evaluate_dr_dtemp(const int irhoy_lo, const int jtemp_lo,
                   const table_t& table_meta, const R& log_rhoy_table, const T& log_temp_table, const D& data,
@@ -275,7 +275,7 @@ evaluate_dr_dtemp(const int irhoy_lo, const int jtemp_lo,
 
 
 template <typename R, typename T, typename D>
-AMREX_INLINE AMREX_GPU_HOST_DEVICE
+AMREX_INLINE AMREX_GPU_DEVICE
 void
 get_entries(const int irhoy_lo, const int jtemp_lo,
             const table_t& table_meta, const R& log_rhoy_table, const T& log_temp_table, const D& data,
@@ -303,7 +303,7 @@ get_entries(const int irhoy_lo, const int jtemp_lo,
 }
 
 template <typename R, typename T, typename D>
-AMREX_INLINE AMREX_GPU_HOST_DEVICE
+AMREX_INLINE AMREX_GPU_DEVICE
 void
 tabular_evaluate(const table_t& table_meta,
                  const R& log_rhoy_table, const T& log_temp_table, const D& data,

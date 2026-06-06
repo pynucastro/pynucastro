@@ -184,7 +184,7 @@ namespace Rates
     };
 
     template<std::uint8_t rate>
-    AMREX_GPU_HOST_DEVICE AMREX_INLINE
+    AMREX_GPU_DEVICE AMREX_INLINE
     constexpr amrex::Real get_p_random() {
         return 0.0_rt;
     }

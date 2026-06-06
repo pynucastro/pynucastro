@@ -32,8 +32,9 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         self.ftags['<nse_rate_pair_data>'] = self._write_nse_rate_pair_data
 
         self.disable_rate_params = disable_rate_params
-        self.function_specifier = "AMREX_GPU_HOST_DEVICE AMREX_INLINE"
-        self.gpu_data_specifier = "AMREX_GPU_MANAGED"
+        self.function_specifier = "AMREX_GPU_DEVICE AMREX_INLINE"
+        self.gpu_managed_specifier = "AMREX_GPU_MANAGED"
+        self.gpu_device_specifier = "AMREX_GPU_DEVICE"
         self.dtype = "amrex::Real"
         self.array_namespace = "amrex::"
 
@@ -203,7 +204,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
         # Write Fill in the rate indices
         of.write(f"{self.indent*n_indent}constexpr int NumNSERatePairs = {NumNSERatePairs};\n\n")
-        of.write(f"{self.indent*n_indent}inline {self.gpu_data_specifier} amrex::Array2D<{dtype}, 1, NumNSERatePairs, 1, 10, amrex::Order::C> rate_pair_data {{\n")
+        of.write(f"{self.indent*n_indent}inline {self.gpu_managed_specifier} amrex::Array2D<{dtype}, 1, NumNSERatePairs, 1, 10, amrex::Order::C> rate_pair_data {{\n")
 
         for n, rp in enumerate(nse_rate_pairs):
             fr = rp.forward

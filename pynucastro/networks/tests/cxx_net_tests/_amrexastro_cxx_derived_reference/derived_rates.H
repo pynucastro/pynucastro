@@ -10,7 +10,7 @@
 using namespace Rates;
 
 template <int do_T_derivatives, typename T>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void rate_Ni56_to_He4_Fe52_derived(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT, [[maybe_unused]] const T& rate_eval, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
 
     // Ni56 --> He4 + Fe52
@@ -67,7 +67,7 @@ void rate_Ni56_to_He4_Fe52_derived(const tf_t& tfactors, const amrex::Real log_s
 }
 
 template <int do_T_derivatives, typename T>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void rate_Ni56_to_p_Co55_derived(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT, [[maybe_unused]] const T& rate_eval, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
 
     // Ni56 --> p + Co55
@@ -124,7 +124,7 @@ void rate_Ni56_to_p_Co55_derived(const tf_t& tfactors, const amrex::Real log_sco
 }
 
 template <int do_T_derivatives, typename T>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void rate_p_Co55_to_He4_Fe52_derived(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT, [[maybe_unused]] const T& rate_eval, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
 
     // Co55 + p --> He4 + Fe52
