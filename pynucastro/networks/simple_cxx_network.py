@@ -16,7 +16,8 @@ class SimpleCxxNetwork(BaseCxxNetwork):
         super().__init__(*args, **kwargs)
 
         self.function_specifier = "inline"
-        self.gpu_data_specifier = ""
+        self.gpu_managed_specifier = ""
+        self.gpu_device_specifier = ""
         self.dtype = "Real"
         self.array_namespace = ""
 
@@ -48,7 +49,7 @@ class SimpleCxxNetwork(BaseCxxNetwork):
                 of.write(f'{self.indent*n_indent}' + '}\n\n')
 
     def _write_network(self, odir=None):
-        """Output the the RHS, jacobian and ancillary files for the
+        """Output the RHS, jacobian and ancillary files for the
         system of ODEs that this network describes, using the template
         files.
 

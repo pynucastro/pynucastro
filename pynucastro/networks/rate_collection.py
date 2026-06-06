@@ -5,10 +5,8 @@ rates that together make up a network.
 
 import collections
 import copy
-import functools
 import math
 import warnings
-from operator import mul
 from pathlib import Path
 
 import matplotlib as mpl
@@ -945,24 +943,33 @@ class RateCollection:
 
         self._build_collection()
 
-    def isNSECompatible(self):
+    def is_NSE_compatible(self, verbose=None):
         """Determine whether the current network is compatible
-        with the NSE description. Checks if there are any rate that
+        with the NSE description. Checks if there are any rates that
         uses stoichiometry, or if every strong rate has a corresponding
-        inverse rate. If none of the both are true, check if we are sufficienctly
-        connected by checking whether the the nullity of the network
+        inverse rate. If neither of those is true, check if we are sufficiently
+        connected by checking whether the nullity of the network
         stoichiometric matrix is not greater than 2, then the
         NSE equation will predict the correct equilibrium abundance.
-        If all isotope in the network have the same Ye ratio,
+        If all isotopes in the network have the same Ye ratio,
         then the nullity must not be greater than 1.
         An example would be the alpha-chain network, i.e. Ye = 0.5 always.
         In this case, the second NSE constraint on Ye is pointless.
+
+        Parameters
+        ----------
+        verbose : bool
+            Do we print an NSE summary?  If not set, the network verbose
+            property is used.
 
         Returns
         -------
         bool
 
         """
+
+        if verbose is None:
+            verbose = self.verbose
 
         S = []
         for rp in self.get_rate_pairs():
@@ -977,7 +984,7 @@ class RateCollection:
 
             # After treating weak rate cases, return False if one of them is None
             if fr is None or rr is None:
-                if self.verbose:
+                if verbose:
                     print("Either the forward or the reverse rate for the "
                           f"following strong reaction rate pair is missing: {rp}")
                 return False
@@ -990,14 +997,14 @@ class RateCollection:
             if not ((isinstance(fr, DerivedRate) and fr.source_rate == rr) or
                     (isinstance(rr, DerivedRate) and rr.source_rate == fr) or
                     (isinstance(fr, ApproximateRate) and isinstance(rr, ApproximateRate))):
-                if self.verbose:
+                if verbose:
                     print("Either the forward or the reverse rate for the "
                           f"following strong reaction rate pair is not a DerivedRate: {rp}")
                 return False
 
             # Check if there are any rate uses stoichiometry
             if fr.stoichiometry is not None or rr.stoichiometry is not None:
-                if self.verbose:
+                if verbose:
                     print("Either the forward or the reverse rate for the "
                           f"following strong reaction rate pair uses stoichiometry: {rp}")
                 return False
@@ -1031,7 +1038,7 @@ class RateCollection:
         if len(Z_A_ratios) == 1:
             max_dim = 1
 
-        if self.verbose:
+        if verbose:
             print("NSE Compatibility Summary \n"
                   "-------------------------\n"
                   f"  Nullity: {nullity}\n"
@@ -1055,6 +1062,9 @@ class RateCollection:
 
         print("")
 
+        print(f"  NSE compatible? {self.is_NSE_compatible()}")
+        print("")
+
         print(f"  total number of rates: {len(self.all_rates)}")
         print("")
 
@@ -1071,7 +1081,8 @@ class RateCollection:
         print(f"  modified rates: {len(self.modified_rates)}")
         print(f"  custom rates: {len(self.custom_rates)}")
 
-    def evaluate_rates(self, rho, T, composition, screen_func=None):
+    def evaluate_rates(self, rho, T, composition,
+                       screen_func=None):
         """Evaluate the rates for a specific density, temperature, and
         composition, with optional screening.  Note: this returns that
         rate as dY/dt, where Y is the molar fraction.  For a 2 body
@@ -1109,13 +1120,9 @@ class RateCollection:
         y_e = composition.ye
 
         for r in self.rates:
-            # Note screening effect is already included
-            val = r.prefactor * rho**r.dens_exp * r.eval(T, rho=rho, comp=composition,
-                                                         screen_func=screen_func)
-            if (r.weak_type == 'electron_capture' and not isinstance(r, TabularRate)):
-                val = val * y_e
-            yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
-            rvals[r] = yfac * val
+            rvals[r] = r.eval_full_rate(rho, T, composition,
+                                        screen_func=screen_func,
+                                        y_molar=ys, y_e=y_e)
 
         return rvals
 
@@ -1210,19 +1217,68 @@ class RateCollection:
 
         """
 
-        J = self.evaluate_jacobian(rho, T, comp,
-                                   screen_func=screen_func,
-                                   exclude_rates=exclude_rates)
+        with warnings.catch_warnings():
+            # don't display partition function warnings
+            warnings.simplefilter("ignore", UserWarning)
+            J = self.evaluate_jacobian(rho, T, comp,
+                                       screen_func=screen_func,
+                                       exclude_rates=exclude_rates)
         e = eigvals(J)
         return np.max(np.abs(e))
 
-    def validate(self, other_library, *, forward_only=True):
+    def find_stiffest_rate(self, rho, T, comp, *,
+                        screen_func=None):
+        """Iterate through rates and compute the spectral radius for the
+        network excluding the rate to determine which rate is most responsible
+        for making the network stiff.
+
+        Parameters
+        ----------
+        rho : float
+            density used to evaluate Jacobian terms
+        T : float
+            temperature used to evaluate Jacobian terms
+        comp : Composition
+            composition used to evaluate Jacobian terms
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the evaluated rates will include the screening
+            correction.
+
+        Returns
+        -------
+        Rate
+
+        """
+
+        stiff_rate = None
+        spectral_radius = self.spectral_radius(rho, T, comp, screen_func=screen_func)
+
+        for r in self.rates:
+            _sprad = self.spectral_radius(rho, T, comp, screen_func=screen_func, exclude_rates=[r])
+            if _sprad < spectral_radius:
+                stiff_rate = r
+                spectral_radius = _sprad
+
+        return stiff_rate
+
+    def validate(self, other_library, *,
+                 forward_only=True, return_dict=False, skip_duplicates=True):
         """Perform various checks on the library, comparing to
         ``other_library``, to ensure that we are not missing important
-        rates.  The idea is that the current library should be a
-        reduced library (perhaps the result of filtering) and then we
-        want to compare to the larger ``other_library`` to see if we
-        missed something important.
+        rates.  The idea is that the current network represents a
+        reduced set of rates (perhaps the result of filtering) and
+        then we want to compare to the larger ``other_library`` to see
+        if we missed something important.
+
+        Currently we check:
+
+        * If there are any additional rates in ``other_library`` that
+          have the same reactants as rates we already carry.
+
+        * If we are missing any p, n, or α-captures on the nuclei in
+          our network (only checked if p, n or α already exist in the
+          network).
 
         Parameters
         ----------
@@ -1230,12 +1286,21 @@ class RateCollection:
             the library to compare to
         forward_only : bool
             do we only check the forward rates?
+        return_dict : bool
+            do we return a dictionary of the rates that are missing?
+            if so, we suppress their output to stdout and include the
+            reason as the dictionary value.
+        skip_duplicates : bool
+            if a rate in `other_library` represents the same process
+            as one already in the network, don't consider it missing
 
         Returns
         -------
-        bool
+        bool, dict(Rate)
 
         """
+
+        missing_rates = {}
 
         current_rates = sorted(self.get_rates())
 
@@ -1262,7 +1327,8 @@ class RateCollection:
                     msg = f"validation: {p} produced in {rate} never consumed."
                     print(msg)
 
-        # now check if we are missing any rates from other_library with the exact same reactants
+        # now check if we are missing any rates from other_library
+        # with the exact same reactants
 
         other_by_reactants = collections.defaultdict(list)
         for rate in sorted(other_library.get_rates()):
@@ -1275,14 +1341,50 @@ class RateCollection:
             key = tuple(sorted(rate.reactants))
             for other_rate in other_by_reactants[key]:
                 # check to see if other_rate is already in current_rates
+                # start by assuming we already have other_rate
                 found = True
                 if other_rate not in current_rates:
                     found = False
 
+                # now check to see if perhaps it is a duplicate of
+                # something we already have
+                if skip_duplicates:
+                    if len(find_duplicate_rates([other_rate] + self.get_rates())) > 0:
+                        found = True
+
                 if not found:
                     msg = f"validation: missing {other_rate} as alternative to {rate} (Q = {other_rate.Q} MeV)."
-                    print(msg)
+                    if return_dict:
+                        missing_rates[other_rate] = msg
+                    else:
+                        print(msg)
 
+        # next loop over the nuclei in our network and check if we are missing
+        # any alpha, p, or n captures
+        net_has_n = bool(Nucleus("n") in self.unique_nuclei)
+        net_has_p = bool(Nucleus("p") in self.unique_nuclei)
+        net_has_alpha = bool(Nucleus("he4") in self.unique_nuclei)
+        for nuc in self.unique_nuclei:
+            if net_has_n:
+                key = tuple(sorted([Nucleus("n"), nuc]))
+                for rate in other_by_reactants[key]:
+                    if rate not in current_rates and rate not in missing_rates:
+                        missing_rates[rate] = "neutron capture"
+
+            if net_has_p:
+                key = tuple(sorted([Nucleus("p"), nuc]))
+                for rate in other_by_reactants[key]:
+                    if rate not in current_rates and rate not in missing_rates:
+                        missing_rates[rate] = "proton capture"
+
+            if net_has_alpha:
+                key = tuple(sorted([Nucleus("he4"), nuc]))
+                for rate in other_by_reactants[key]:
+                    if rate not in current_rates and rate not in missing_rates:
+                        missing_rates[rate] = "alpha capture"
+
+        if return_dict:
+            return passed_validation, missing_rates
         return passed_validation
 
     def find_duplicate_links(self):
@@ -1682,7 +1784,7 @@ class RateCollection:
                              normalize_net_rate=False,
                              consuming_rate_threshold=None,
                              show_small_ydot=False,
-                             hide_xalpha=False, hide_xp=False,
+                             hide_xalpha=True, hide_xp=True,
                              rate_filter_function=None,
                              highlight_filter_function=None):
         """Create a graph representation of the network using
@@ -1900,7 +2002,7 @@ class RateCollection:
              curved_edges=False,
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False,
-             hide_xp=False, hide_xalpha=False,
+             hide_xp=True, hide_xalpha=True,
              edge_labels=None,
              highlight_filter_function=None,
              nucleus_filter_function=None, rate_filter_function=None,
@@ -2297,8 +2399,8 @@ class RateCollection:
         ax.xaxis.set_ticks_position('bottom')
         ax.yaxis.set_ticks_position('left')
 
-        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True, min_n_ticks=1))
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True, min_n_ticks=1))
 
         if not rotated:
             if Z_range is not None and N_range is not None:

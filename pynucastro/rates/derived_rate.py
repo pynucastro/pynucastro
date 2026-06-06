@@ -14,6 +14,7 @@ from pynucastro.nucdata import Nucleus
 from pynucastro.rates.modified_rate import ModifiedRate
 from pynucastro.rates.rate import Rate, Tfactors
 from pynucastro.rates.reaclib_rate import ReacLibRate, SingleSet
+from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.tabular_rate import TabularRate
 from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
 
@@ -25,7 +26,7 @@ class DerivedRate(Rate):
     Parameters
     ----------
     source_rate : Rate
-        The forward rate that will be used to derive the reverse
+        The rate that will be used to derive the corresponding inverse
     use_pf : bool
         Do we apply the partition function?
     use_unreliable_spins : bool
@@ -33,10 +34,17 @@ class DerivedRate(Rate):
 
     """
 
-    def __init__(self, source_rate, use_pf=False, use_unreliable_spins=True):
+    def __init__(self, source_rate, use_pf=True, use_unreliable_spins=True):
 
         self.use_pf = use_pf
         self.source_rate = source_rate
+
+        # This is the actual rate used for doing detailed-balance
+        if isinstance(source_rate, ModifiedRate):
+            self.underlying_rate = source_rate.original_rate
+        else:
+            self.underlying_rate = source_rate
+
         self.use_unreliable_spins = use_unreliable_spins
 
         if not isinstance(self.source_rate, Rate):
@@ -95,11 +103,8 @@ class DerivedRate(Rate):
 
         # Determine if the source rate has reaclib sets
         source_sets = []
-        if isinstance(self.source_rate, ReacLibRate):
-            source_sets = self.source_rate.sets
-        elif (isinstance(self.source_rate, ModifiedRate) and
-              isinstance(self.source_rate.original_rate, ReacLibRate)):
-            source_sets = self.source_rate.original_rate.sets
+        if isinstance(self.underlying_rate, ReacLibRate):
+            source_sets = self.underlying_rate.sets
 
         if source_sets:
             self.derived_sets = []
@@ -233,9 +238,9 @@ class DerivedRate(Rate):
 
             fstring += f"    rate_eval.{self.fname} = rate\n\n"
 
-        elif isinstance(self.source_rate, TemperatureTabularRate):
-            fstring += f"    {self.source_rate.fname}_interpolator = TempTableInterpolator(*{self.source_rate.fname}_info)\n"
-            fstring += f"    log_r = {self.source_rate.fname}_interpolator.interpolate(tf.T9 * 1.0e9)\n\n"
+        elif isinstance(self.underlying_rate, TemperatureTabularRate):
+            fstring += f"    {self.underlying_rate.fname}_interpolator = TempTableInterpolator(*{self.underlying_rate.fname}_info)\n"
+            fstring += f"    log_r = {self.underlying_rate.fname}_interpolator.interpolate(tf.T9 * 1.0e9)\n\n"
 
             fstring += "    # Apply equilibrium ratio and screening\n"
             fstring += f"    log_r += {self.ratio_factor} + {self.Q_kBGK} * tf.T9i + net_log_pf + log_scor\n"
@@ -367,11 +372,21 @@ class DerivedRate(Rate):
                 fstring += "        drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;\n"
                 fstring += "    }\n\n"
 
-        elif isinstance(self.source_rate, TemperatureTabularRate):
+        elif isinstance(self.underlying_rate, TemperatureTabularRate):
             fstring += "    auto [_rate, _drate_dT] = interp_net::cubic_interp_uneven<do_T_derivatives>(\n"
             fstring += "                                               tfactors.lnT9,\n"
-            fstring += f"                                               {self.source_rate.fname}_data::log_t9,\n"
-            fstring += f"                                               {self.source_rate.fname}_data::log_rate);\n\n"
+            fstring += f"                                               {self.underlying_rate.fname}_data::log_t9,\n"
+            fstring += f"                                               {self.underlying_rate.fname}_data::log_rate);\n\n"
+
+            # Get rate uncertainty for starlib rate case
+            if isinstance(self.underlying_rate, StarLibRate):
+                fstring += f"    auto p = Rates::get_p_random<k_{self.underlying_rate.fname}>();\n"
+                fstring += "    auto [_sigma, _dsigma_dlogT9] = interp_net::cubic_interp_uneven<do_T_derivatives>(\n"
+                fstring += "                                                 tfactors.lnT9,\n"
+                fstring += f"                                                 {self.underlying_rate.fname}_data::log_t9,\n"
+                fstring += f"                                                 {self.underlying_rate.fname}_data::sigma_rate);\n\n"
+                fstring += "    // Add rate uncertainty\n"
+                fstring += "    _rate += p * _sigma;\n\n"
 
             fstring += "    // Apply Equilibrium Ratio\n"
             fstring += f"    constexpr {dtype} Q_kBGK = {self.Q} * 1.0e-9_rt / C::k_MeV;\n"
@@ -386,6 +401,11 @@ class DerivedRate(Rate):
 
             fstring += "    // we found dlog(rate)/dlog(T9)\n"
             fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+
+            if isinstance(self.underlying_rate, StarLibRate):
+                fstring += "        // Add rate uncertainty term\n"
+                fstring += "        _drate_dT += p * _dsigma_dlogT9;\n\n"
+
             fstring += "        // Convert to dlog(rate)/dT9 first\n"
             fstring += f"        _drate_dT = (_drate_dT + {1.5 * self.net_stoich} - Q_kBT) * tfactors.T9i + net_dlog_pf_dT9 + dlog_scor_dT * 1.0e9_rt;\n"
             fstring += "        drate_dT = rate * _drate_dT * 1.0e-9_rt;\n"

@@ -12,7 +12,7 @@ using namespace Rates;
 using namespace Species;
 
 template <int do_T_derivatives>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void rate_He4_Fe52_to_Ni56_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
     // Fe52 + He4 --> Ni56
@@ -48,7 +48,7 @@ void rate_He4_Fe52_to_Ni56_reaclib(const tf_t& tfactors, const amrex::Real log_s
 }
 
 template <int do_T_derivatives>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void rate_p_Co55_to_Ni56_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
     // Co55 + p --> Ni56
@@ -84,7 +84,7 @@ void rate_p_Co55_to_Ni56_reaclib(const tf_t& tfactors, const amrex::Real log_sco
 }
 
 template <int do_T_derivatives>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void rate_He4_Fe52_to_p_Co55_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
     // Fe52 + He4 --> p + Co55
@@ -131,6 +131,8 @@ fill_reaclib_rates([[maybe_unused]] const tf_t& tfactors,
     [[maybe_unused]] amrex::Real drate_dT;
 
     {
+        // He4_Fe52_to_Ni56_reaclib
+
         amrex::Real log_scor {0.0_rt};
         amrex::Real dlog_scor_dT {0.0_rt};
 #ifdef SCREENING
@@ -147,6 +149,8 @@ fill_reaclib_rates([[maybe_unused]] const tf_t& tfactors,
     }
 
     {
+        // p_Co55_to_Ni56_reaclib
+
         amrex::Real log_scor {0.0_rt};
         amrex::Real dlog_scor_dT {0.0_rt};
 #ifdef SCREENING
@@ -163,6 +167,8 @@ fill_reaclib_rates([[maybe_unused]] const tf_t& tfactors,
     }
 
     {
+        // He4_Fe52_to_p_Co55_reaclib
+
         amrex::Real log_scor {0.0_rt};
         amrex::Real dlog_scor_dT {0.0_rt};
 #ifdef SCREENING

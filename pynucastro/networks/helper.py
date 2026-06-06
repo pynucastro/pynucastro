@@ -1,6 +1,7 @@
 """Methods to ease the creation of networks."""
 
-from pynucastro.rates import DerivedRate, ReacLibLibrary, TabularLibrary
+from pynucastro.rates import (DerivedRate, ReacLibLibrary, StarLibLibrary,
+                              TabularLibrary)
 
 from .amrexastro_cxx_network import AmrexAstroCxxNetwork
 from .fortran_network import FortranNetwork
@@ -11,6 +12,7 @@ from .simple_cxx_network import SimpleCxxNetwork
 def network_helper(nuclei, *,
                    network_type="python",
                    inert_nuclei=None,
+                   main_library="reaclib",
                    use_detailed_balance=True,
                    use_tabular_rates=True,
                    tabular_ordering=None,
@@ -33,6 +35,12 @@ def network_helper(nuclei, *,
     inert_nuclei : list, tuple
         an iterable of Nuclei that should be part of the collection but
         are not linked via reactions to the other Nuclei in the network.
+    main_library : str
+        Which library, ReacLib or StarLib, is used as the main rate source?
+        Allowed values are:
+
+        * "reaclib" : use the ReacLib library
+        * "starlib" : use the StarLib library
     use_detailed_balanace : bool
         Do we rederive inverse rates using detailed balance?
     use_tabular_rates : bool
@@ -52,8 +60,14 @@ def network_helper(nuclei, *,
 
     """
 
-    rl = ReacLibLibrary()
-    lib = rl.linking_nuclei(nuclei, with_reverse=with_reverse)
+    assert main_library in ["reaclib", "starlib"]
+
+    if main_library == "reaclib":
+        rl = ReacLibLibrary()
+        lib = rl.linking_nuclei(nuclei, with_reverse=with_reverse, print_warning=verbose)
+    else:
+        sl = StarLibLibrary()
+        lib = sl.linking_nuclei(nuclei, with_reverse=with_reverse, print_warning=verbose)
 
     if use_tabular_rates:
         if tabular_ordering:
@@ -61,7 +75,7 @@ def network_helper(nuclei, *,
         else:
             tl = TabularLibrary()
 
-        lib += tl.linking_nuclei(nuclei)
+        lib += tl.linking_nuclei(nuclei, print_warning=verbose)
 
         # if we have both a tabular and ReacLib rate,
         # remove the ReacLib version

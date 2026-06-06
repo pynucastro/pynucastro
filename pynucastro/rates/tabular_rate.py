@@ -3,7 +3,6 @@ tabulated in terms of electron density and temperature.
 
 """
 
-import math
 import re
 from enum import Enum
 from pathlib import Path
@@ -344,19 +343,6 @@ class TabularRate(Rate):
         self.table_temp_lines = len(np.unique(self.tabular_data_table[:, 1]))
         self.table_num_vars = 6  # Hard-coded number of variables in tables for now.
         self.table_index_name = f'j_{self.reactants[0]}_{self.products[0]}'
-
-    def _set_rhs_properties(self):
-        """Compute statistical prefactor and density exponent from the
-        reactants.
-
-        """
-        self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
-        self.inv_prefactor = 1
-        if self.use_identical_particle_factor:
-            for r in set(self.reactants):
-                self.inv_prefactor = self.inv_prefactor * math.factorial(self.reactants.count(r))
-        self.prefactor = self.prefactor/float(self.inv_prefactor)
-        self.dens_exp = len(self.reactants)-1
 
     def _set_screening(self):
         """Tabular rates are not currently screened (they are

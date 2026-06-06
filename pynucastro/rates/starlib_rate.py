@@ -41,11 +41,14 @@ class StarLibRate(TemperatureTabularRate):
         rate_source = labelprops[0:4].strip()
         #Check for electron capture
         weak_type = ''
+        use_ye_weighting = False
         if rate_source == 'ec':
             weak_type = "electron_capture"
+            use_ye_weighting = True
 
         super().__init__(log_t9_data, log_rate_data, label=label,
                          rate_source=rate_source, weak_type=weak_type,
+                         use_ye_weighting=use_ye_weighting,
                          **kwargs)
 
         #Set relevant flags

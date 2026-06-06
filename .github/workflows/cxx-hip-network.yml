@@ -55,9 +55,9 @@ jobs:
           cd external/Microphysics/networks/he-burn/ase-iron
           NPY_DISABLE_CPU_FEATURES="X86_V4" python ase_iron.py
 
-      - name: Compile nse_net_cell (NSE_NET, ase)
+      - name: Compile test_sdc (NSE_NET, ase-iron)
         run: |
           export PATH=$PATH:/usr/local/cuda/bin
-          cd external/Microphysics/unit_test/nse_net_cell
+          cd external/Microphysics/unit_test/test_sdc
           make clean
-          make USE_HIP=TRUE NETWORK_DIR=he-burn/ase-iron -j 4
+          make USE_HIP=TRUE USE_NSE_NET=TRUE SCREEN_METHOD=chabrier1998 NETWORK_DIR=he-burn/ase-iron -j 4
