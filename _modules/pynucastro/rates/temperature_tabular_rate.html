@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.temperature_tabular_rate &#8212; pynucastro 2.11.0.post7+g6944c31a3 documentation</title>
+    <title>pynucastro.rates.temperature_tabular_rate &#8212; pynucastro 2.11.0.post8+gad1880c32 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=457b0a66"></script>
+    <script src="../../../_static/documentation_options.js?v=8f658cf2"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -517,7 +517,9 @@
 <span class="p">])</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">TempTableInterpolator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A class that holds a pointer to the rate data and</span>
-<span class="sd">    methods that allow us to interpolate the rate</span>
+<span class="sd">    methods that allow us to interpolate the rate.</span>
+<span class="sd">    This uses the monotone cubic hermite interpolation for</span>
+<span class="sd">    log(rate) and log(T9).</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -537,7 +539,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_logT9_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_T9_0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the index into the temperatures such that T[i] &lt; T0</span>
 <span class="sd">        &lt;= T[i+1].  We return i here, corresponding to the lower</span>
-<span class="sd">        value.  We also make sure that i-1 and i+2 are in bounds.</span>
+<span class="sd">        value. We also make sure that i and i+1 are in bounds.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -551,13 +553,144 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">max_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_temp_points</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span>
-        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_temp_points</span><span class="p">,</span> <span class="n">log_T9_0</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_temp_points</span><span class="p">,</span> <span class="n">log_T9_0</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_limit_slope</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hm</span><span class="p">,</span> <span class="n">hp</span><span class="p">,</span> <span class="n">dm</span><span class="p">,</span> <span class="n">dp</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given the slope from the left, dm, and the slope</span>
+<span class="sd">        from the right, dp. Limit the slope to preserve monotonicity.</span>
+<span class="sd">        Uses harmonic mean of the two slopes weighted by the</span>
+<span class="sd">        lengths of the two intervals.</span>
+
+<span class="sd">        See C. Moler, Numerical Computing with Matlab, 2004.</span>
+<span class="sd">        :doi:`10.1137/1.9780898717952`, Chapter 3.4</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        hm : float</span>
+<span class="sd">            length interval between i and i-1</span>
+<span class="sd">        hp : float</span>
+<span class="sd">            length interval between i and i+1</span>
+<span class="sd">        dm : float</span>
+<span class="sd">            slope using i and i-1 data</span>
+<span class="sd">        dp : float</span>
+<span class="sd">            slope using i and i+1 data</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">dm</span> <span class="o">*</span> <span class="n">dp</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="n">w1</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">hp</span> <span class="o">+</span> <span class="n">hm</span>
+        <span class="n">w2</span> <span class="o">=</span> <span class="n">hp</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">hm</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">w1</span> <span class="o">+</span> <span class="n">w2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">w1</span> <span class="o">/</span> <span class="n">dm</span> <span class="o">+</span> <span class="n">w2</span> <span class="o">/</span> <span class="n">dp</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_linear_extrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">idx0</span><span class="p">,</span> <span class="n">idx1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Do linear extrapolation given the log(T9).</span>
+<span class="sd">        This returns log(rate).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature (log(T/1.e9 K)) to interpolate at</span>
+<span class="sd">        idx0 : int</span>
+<span class="sd">            reference point index</span>
+<span class="sd">        idx1 : int</span>
+<span class="sd">            neighboring index for computing derivative</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">x0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_temp_points</span><span class="p">[</span><span class="n">idx0</span><span class="p">]</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_temp_points</span><span class="p">[</span><span class="n">idx1</span><span class="p">]</span>
+
+        <span class="n">f0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_rate_data</span><span class="p">[</span><span class="n">idx0</span><span class="p">]</span>
+        <span class="n">f1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_rate_data</span><span class="p">[</span><span class="n">idx1</span><span class="p">]</span>
+
+        <span class="n">dfdx</span> <span class="o">=</span> <span class="p">(</span><span class="n">f1</span> <span class="o">-</span> <span class="n">f0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">f0</span> <span class="o">+</span> <span class="n">dfdx</span> <span class="o">*</span> <span class="p">(</span><span class="n">T</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_monotone_cubic_interp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given log(T9) and the corresponding index where</span>
+<span class="sd">        T[i] &lt; T &lt;= T[i+1], do Monotone Hermite cubic interpolation.</span>
+<span class="sd">        Note this method only guarantees monotonicity within</span>
+<span class="sd">        the table interval. It returns log(rate).</span>
+
+<span class="sd">        See C. Moler, Numerical Computing with Matlab, 2004.</span>
+<span class="sd">        :doi:`10.1137/1.9780898717952`, Chapter 3.6</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature (log(T/1.e9 K)) to interpolate at</span>
+<span class="sd">        idx : int</span>
+<span class="sd">            temperature index where T[i] &lt; T &lt;= T[i+1]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">max_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_temp_points</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="c1"># Get surround 4 data points</span>
+        <span class="c1"># Note idx should already be clamped within [0, max_idx-1]</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="n">max_idx</span>
+
+        <span class="n">im1</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">idx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">ip1</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">ip2</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">max_idx</span><span class="p">)</span>
+
+        <span class="n">x_im1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_temp_points</span><span class="p">[</span><span class="n">im1</span><span class="p">]</span>
+        <span class="n">x_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_temp_points</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">x_ip1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_temp_points</span><span class="p">[</span><span class="n">ip1</span><span class="p">]</span>
+        <span class="n">x_ip2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_temp_points</span><span class="p">[</span><span class="n">ip2</span><span class="p">]</span>
+
+        <span class="n">f_im1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_rate_data</span><span class="p">[</span><span class="n">im1</span><span class="p">]</span>
+        <span class="n">f_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_rate_data</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">f_ip1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_rate_data</span><span class="p">[</span><span class="n">ip1</span><span class="p">]</span>
+        <span class="n">f_ip2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_rate_data</span><span class="p">[</span><span class="n">ip2</span><span class="p">]</span>
+
+        <span class="c1"># Compute the slope at idx and idx + 1</span>
+        <span class="n">m0</span> <span class="o">=</span> <span class="n">m1</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_ip1</span> <span class="o">-</span> <span class="n">f_idx</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x_ip1</span> <span class="o">-</span> <span class="n">x_idx</span><span class="p">)</span>
+
+        <span class="c1"># If NOT on the edge, compute the slope from the other side</span>
+        <span class="c1"># and limit the slope to preserve monotonicity</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">d_im1</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_idx</span> <span class="o">-</span> <span class="n">f_im1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x_idx</span> <span class="o">-</span> <span class="n">x_im1</span><span class="p">)</span>
+            <span class="n">m0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_limit_slope</span><span class="p">(</span><span class="n">x_idx</span> <span class="o">-</span> <span class="n">x_im1</span><span class="p">,</span> <span class="n">x_ip1</span> <span class="o">-</span> <span class="n">x_idx</span><span class="p">,</span>
+                                   <span class="n">d_im1</span><span class="p">,</span> <span class="n">m0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">!=</span> <span class="n">max_idx</span><span class="p">:</span>
+            <span class="n">d_ip1</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_ip2</span> <span class="o">-</span> <span class="n">f_ip1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">x_ip2</span> <span class="o">-</span> <span class="n">x_ip1</span><span class="p">)</span>
+            <span class="n">m1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_limit_slope</span><span class="p">(</span><span class="n">x_ip1</span> <span class="o">-</span> <span class="n">x_idx</span><span class="p">,</span> <span class="n">x_ip2</span> <span class="o">-</span> <span class="n">x_ip1</span><span class="p">,</span>
+                                   <span class="n">m1</span><span class="p">,</span> <span class="n">d_ip1</span><span class="p">)</span>
+
+        <span class="c1"># Compute cubic Hermite polynomial basis</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">x_ip1</span> <span class="o">-</span> <span class="n">x_idx</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="n">T</span> <span class="o">-</span> <span class="n">x_idx</span><span class="p">)</span> <span class="o">/</span> <span class="n">h</span>
+
+        <span class="n">H0</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">t</span><span class="o">**</span><span class="mi">3</span> <span class="o">-</span> <span class="mf">3.0</span><span class="o">*</span><span class="n">t</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mf">1.0</span>
+        <span class="n">H1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.0</span><span class="o">*</span><span class="n">t</span><span class="o">**</span><span class="mi">3</span> <span class="o">+</span> <span class="mf">3.0</span><span class="o">*</span><span class="n">t</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">Hhat0</span> <span class="o">=</span> <span class="n">h</span> <span class="o">*</span> <span class="p">(</span><span class="n">t</span><span class="o">**</span><span class="mi">3</span> <span class="o">-</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">t</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">Hhat1</span> <span class="o">=</span> <span class="n">h</span> <span class="o">*</span> <span class="p">(</span><span class="n">t</span><span class="o">**</span><span class="mi">3</span> <span class="o">-</span> <span class="n">t</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Construct the interpolant</span>
+        <span class="c1"># H_3(x) = f0 H_{1,0}(x) + f1 H_{1,1}(x) + f&#39;0 Ĥ_{1,0}(x) + f&#39;1 Ĥ_{1,0}(x)</span>
+
+        <span class="k">return</span> <span class="n">f_idx</span> <span class="o">*</span> <span class="n">H0</span> <span class="o">+</span> <span class="n">f_ip1</span> <span class="o">*</span> <span class="n">H1</span> <span class="o">+</span> <span class="n">m0</span> <span class="o">*</span> <span class="n">Hhat0</span> <span class="o">+</span> <span class="n">m1</span> <span class="o">*</span> <span class="n">Hhat1</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given T0, the temperature where we want the rate, do</span>
-<span class="sd">        cubic interpolation to find the value of the rate in the</span>
-<span class="sd">        table. If T0 goes out of bound of the table, then we do</span>
-<span class="sd">        extrapolation based on the first or last 4 table points.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given T0, the temperature where we want the rate,</span>
+<span class="sd">        do monotone Hermite cubic interpolation to find</span>
+<span class="sd">        the value of the rate in the table. Use linear extrapolation</span>
+<span class="sd">        when T0 is out of bound of the table.</span>
 <span class="sd">        Note this returns log(rate).</span>
 
 <span class="sd">        Parameters</span>
@@ -571,37 +704,22 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">T9_0</span> <span class="o">=</span> <span class="n">T0</span> <span class="o">*</span> <span class="mf">1.e-9</span>
-        <span class="n">log_T9_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T9_0</span><span class="p">)</span>
+        <span class="n">log_T9_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T0</span> <span class="o">*</span> <span class="mf">1.e-9</span><span class="p">)</span>
+        <span class="n">max_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_temp_points</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
 
-        <span class="n">idx_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logT9_idx</span><span class="p">(</span><span class="n">log_T9_0</span><span class="p">)</span>
+        <span class="c1"># Get temperature index such that T[i] &lt; T0 &lt;= T[i+1]</span>
+        <span class="c1"># We ensure i is within [0, max_idx - 1]</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logT9_idx</span><span class="p">(</span><span class="n">log_T9_0</span><span class="p">)</span>
 
-        <span class="c1"># get the 4 points surrounding T0</span>
+        <span class="c1"># For temperature out of the bound, use linear extrapolation</span>
+        <span class="k">if</span> <span class="n">log_T9_0</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_temp_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linear_extrap</span><span class="p">(</span><span class="n">log_T9_0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-        <span class="n">xp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">log_temp_points</span><span class="p">[</span><span class="n">idx_t</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-                       <span class="bp">self</span><span class="o">.</span><span class="n">log_temp_points</span><span class="p">[</span><span class="n">idx_t</span><span class="p">],</span>
-                       <span class="bp">self</span><span class="o">.</span><span class="n">log_temp_points</span><span class="p">[</span><span class="n">idx_t</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
-                       <span class="bp">self</span><span class="o">.</span><span class="n">log_temp_points</span><span class="p">[</span><span class="n">idx_t</span><span class="o">+</span><span class="mi">2</span><span class="p">]])</span>
+        <span class="k">if</span> <span class="n">log_T9_0</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_temp_points</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_linear_extrap</span><span class="p">(</span><span class="n">log_T9_0</span><span class="p">,</span> <span class="n">max_idx</span><span class="p">,</span> <span class="n">max_idx</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="n">fp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">log_rate_data</span><span class="p">[</span><span class="n">idx_t</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-                       <span class="bp">self</span><span class="o">.</span><span class="n">log_rate_data</span><span class="p">[</span><span class="n">idx_t</span><span class="p">],</span>
-                       <span class="bp">self</span><span class="o">.</span><span class="n">log_rate_data</span><span class="p">[</span><span class="n">idx_t</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span>
-                       <span class="bp">self</span><span class="o">.</span><span class="n">log_rate_data</span><span class="p">[</span><span class="n">idx_t</span><span class="o">+</span><span class="mi">2</span><span class="p">]])</span>
-
-        <span class="n">r</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
-
-            <span class="c1"># create the Lagrange basis function for point m</span>
-            <span class="n">l</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="n">m</span><span class="p">:</span>
-                    <span class="k">continue</span>
-
-                <span class="n">l</span> <span class="o">*=</span> <span class="p">(</span><span class="n">log_T9_0</span> <span class="o">-</span> <span class="n">xp</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">xp</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">-</span> <span class="n">xp</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
-
-            <span class="n">r</span> <span class="o">+=</span> <span class="n">fp</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">*</span> <span class="n">l</span>
-
-        <span class="k">return</span> <span class="n">r</span></div>
+        <span class="c1"># Use monotone Hermite cubic interpolation</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monotone_cubic_interp</span><span class="p">(</span><span class="n">log_T9_0</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span></div>
 
 
 
@@ -719,7 +837,7 @@
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    // </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
         <span class="c1"># pylint: enable=duplicate-code</span>
 
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    auto [_log_rate, _dlog_rate_dlogT9] = interp_net::cubic_interp_uneven&lt;do_T_derivatives&gt;(</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    auto [_log_rate, _dlog_rate_dlogT9] = interp_net::monotone_1d_interp&lt;do_T_derivatives&gt;(</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;                                               tfactors.lnT9,</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;                                               </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_data::log_t9,</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;                                               </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_data::log_rate);</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -812,7 +930,6 @@
         <span class="k">if</span> <span class="n">Tmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">Tmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_Tmax</span>
 
-        <span class="c1"># pylint: disable=duplicate-code</span>
         <span class="n">temps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Tmin</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Tmax</span><span class="p">),</span> <span class="mi">100</span><span class="p">)</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">temps</span><span class="p">)</span>
 
@@ -820,8 +937,17 @@
             <span class="n">r</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
 
         <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">temps</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$T$&quot;</span><span class="p">)</span>
 
+        <span class="c1"># overplot tabular data within plotting range</span>
+        <span class="n">T_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_t9_data</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e9</span>
+        <span class="n">rate_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_rate_data</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">T_data</span> <span class="o">&gt;=</span> <span class="n">Tmin</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">T_data</span> <span class="o">&lt;=</span> <span class="n">Tmax</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">T_data</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="n">rate_data</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span>
+                <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;^&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span>
+                <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Tabular Data&quot;</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$T [K]$&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\tau$&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -830,7 +956,6 @@
             <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$N_A^2 \langle n_a n_b n_c v\rangle$&quot;</span><span class="p">)</span>
 
         <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">fr</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="c1">#pylint: enable=duplicate-code</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">fig</span></div>
