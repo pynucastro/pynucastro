@@ -11,7 +11,7 @@ namespace interp_net {
     // return the index i such that x_array[i] <= x0 < x_array[i+1]
 
     template <typename T>
-    AMREX_GPU_HOST_DEVICE AMREX_INLINE
+    AMREX_GPU_DEVICE AMREX_INLINE
     int
     find_index(const amrex::Real x0, const T& x_array) {
 
@@ -44,7 +44,7 @@ namespace interp_net {
     // of returning -1
 
     template <typename T>
-    AMREX_GPU_HOST_DEVICE AMREX_INLINE
+    AMREX_GPU_DEVICE AMREX_INLINE
     int
     find_index_extrap(const amrex::Real x0, const T& x_array) {
 
@@ -65,7 +65,7 @@ namespace interp_net {
     }
 
     template <int do_derivative, typename T>
-    AMREX_GPU_HOST_DEVICE AMREX_INLINE
+    AMREX_GPU_DEVICE AMREX_INLINE
     std::pair<amrex::Real, amrex::Real>
     linear_extrap(const amrex::Real xv, const int idx0, const int idx1,
                   const T& x_array, const T& f_array) {
@@ -87,7 +87,7 @@ namespace interp_net {
         return {f, dfdx};
     }
 
-    AMREX_GPU_HOST_DEVICE AMREX_INLINE
+    AMREX_GPU_DEVICE AMREX_INLINE
     amrex::Real
     limit_slope(const amrex::Real hm, const amrex::Real hp,
                 const amrex::Real dm, const amrex::Real dp) {
@@ -118,7 +118,7 @@ namespace interp_net {
     // :doi:`10.1137/1.9780898717952`, Chapter 3.4 and 3.6
 
     template <int do_derivative, typename T>
-    AMREX_GPU_HOST_DEVICE AMREX_INLINE
+    AMREX_GPU_DEVICE AMREX_INLINE
     std::pair<amrex::Real, amrex::Real>
     monotone_cubic_interp(const amrex::Real xv, const int idx,
                           const T& x_array, const T& f_array) {
@@ -190,7 +190,7 @@ namespace interp_net {
     }
 
     template <int do_derivative, typename T>
-    AMREX_GPU_HOST_DEVICE AMREX_INLINE
+    AMREX_GPU_DEVICE AMREX_INLINE
     std::pair<amrex::Real, amrex::Real>
     monotone_1d_interp(const amrex::Real xv, const T& x_array, const T& f_array) {
         // Main driver for interpolating and extrapolating 1D table data.
