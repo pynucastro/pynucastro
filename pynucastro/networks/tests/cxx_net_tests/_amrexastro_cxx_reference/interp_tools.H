@@ -11,7 +11,7 @@ namespace interp_net {
     // return the index i such that x_array[i] <= x0 < x_array[i+1]
 
     template <typename T>
-    AMREX_GPU_DEVICE AMREX_INLINE
+    AMREX_GPU_HOST_DEVICE AMREX_INLINE
     int
     find_index(const amrex::Real x0, const T& x_array) {
 
