@@ -10,7 +10,8 @@ from pynucastro.screening import (chugunov_2007, chugunov_2009, debye_huckel,
 
 class TestScreen:
     @pytest.fixture(scope="class")
-    def nuclei(self):
+    @classmethod
+    def nuclei(cls):
         return [pyna.Nucleus("h1"),
                 pyna.Nucleus("he4"),
                 pyna.Nucleus("c12"),
@@ -19,7 +20,8 @@ class TestScreen:
                 pyna.Nucleus("ca40")]
 
     @pytest.fixture(scope="class")
-    def plasma_state(self, nuclei):
+    @classmethod
+    def plasma_state(cls, nuclei):
         temp = 1.e6
         dens = 1.e5
         comp = pyna.Composition(nuclei)
@@ -27,7 +29,8 @@ class TestScreen:
         return make_plasma_state(temp, dens, comp.get_molar())
 
     @pytest.fixture(scope="class")
-    def plasma_state2(self, nuclei):
+    @classmethod
+    def plasma_state2(cls, nuclei):
         temp = 2.e8
         dens = 1.e9
         comp = pyna.Composition(nuclei)
@@ -35,7 +38,8 @@ class TestScreen:
         return make_plasma_state(temp, dens, comp.get_molar())
 
     @pytest.fixture(scope="class")
-    def scn_fac(self):
+    @classmethod
+    def scn_fac(cls):
         c12 = pyna.Nucleus("c12")
         he4 = pyna.Nucleus("he4")
         return make_screen_factors(c12, he4)

@@ -12,7 +12,8 @@ import pynucastro as pyna
 class TestTabularRates:
 
     @pytest.fixture(scope="class")
-    def rc_la(self, langanke_library):
+    @classmethod
+    def rc_la(cls, langanke_library):
         return pyna.RateCollection(libraries=[langanke_library])
 
     def test_rate_values_langanke(self, rc_la):

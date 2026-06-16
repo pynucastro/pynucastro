@@ -5,7 +5,8 @@ import pynucastro as pyna
 
 class TestTabularLibrary:
     @pytest.fixture(scope="class")
-    def tl_default(self):
+    @classmethod
+    def tl_default(cls):
         return pyna.TabularLibrary()
 
     def test_number_of_rates(self, tl_default):

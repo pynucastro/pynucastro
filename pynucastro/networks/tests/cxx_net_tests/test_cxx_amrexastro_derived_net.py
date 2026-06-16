@@ -11,7 +11,8 @@ import pynucastro as pyna
                     reason="we get roundoff diffs on Macs and Windows")
 class TestAmrexAstroCxxNetwork:
     @pytest.fixture(scope="class")
-    def fn(self, reaclib_library):
+    @classmethod
+    def fn(cls, reaclib_library):
         # based on the partition_test network in Microphysics
         nuclei = ["p", "he4", "fe52", "ni56", "co55"]
         lib = reaclib_library.linking_nuclei(nuclist=nuclei,

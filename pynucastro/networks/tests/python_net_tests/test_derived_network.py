@@ -8,7 +8,8 @@ import pynucastro as pyna
 
 class TestPythonDerivedNetwork:
     @pytest.fixture(scope='class')
-    def pynet(self, reaclib_library):
+    @classmethod
+    def pynet(cls, reaclib_library):
 
         fwd_reactions = reaclib_library.forward_for_detailed_balance(use_unreliable_spins=False)
 
@@ -32,7 +33,8 @@ class TestPythonDerivedNetwork:
         return pynet
 
     @pytest.fixture(scope='class')
-    def pynet2(self, reaclib_library):
+    @classmethod
+    def pynet2(cls, reaclib_library):
 
         n14agf18 = reaclib_library.get_rate_by_name("n14(a,g)f18")
         n14_new = pyna.ModifiedRate(n14agf18, new_products=["ne20"],

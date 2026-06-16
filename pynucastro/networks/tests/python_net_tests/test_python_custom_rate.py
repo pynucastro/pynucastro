@@ -50,7 +50,8 @@ class MyRate(pyna.Rate):
 
 class TestPythonCustomNetwork:
     @pytest.fixture(scope="class")
-    def pynet(self, reaclib_library):
+    @classmethod
+    def pynet(cls, reaclib_library):
 
         # create a CNO like network but with a custom rate
         # for N14(p,g)O15

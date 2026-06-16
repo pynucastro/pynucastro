@@ -8,7 +8,8 @@ import pynucastro as pyna
 
 class TestFFNLibibrary:
     @pytest.fixture(scope="class")
-    def ffn_lib(self):
+    @classmethod
+    def ffn_lib(cls):
         return pyna.FFNLibrary()
 
     def test_mg21_na21(self, ffn_lib):
