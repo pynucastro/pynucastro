@@ -36,7 +36,7 @@ class TestNetworkCompare:
 
     @pytest.fixture(scope="class")
     @classmethod
-    def nc(clsf, lib):
+    def nc(cls, lib):
         cxx_test_path = Path("_test_compare_cxx/")
         amrex_test_path = Path("_test_compare_amrex/")
 
