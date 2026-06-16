@@ -12,7 +12,8 @@ from pynucastro import Nucleus
                     reason="we get roundoff diffs on Macs and Windows")
 class TestNSETable:
     @pytest.fixture(scope="class")
-    def nse_net(self, reaclib_library, tabular_library):
+    @classmethod
+    def nse_net(cls, reaclib_library, tabular_library):
 
         nucs = [Nucleus("p"), Nucleus("n"), Nucleus("he4"),
                 Nucleus("fe52"), Nucleus("fe53"), Nucleus("fe54"),

@@ -21,7 +21,8 @@ class TestNetworkCompare:
 
     # pylint: disable=duplicate-code
     @pytest.fixture(scope="class")
-    def lib(self, reaclib_library):
+    @classmethod
+    def lib(cls, reaclib_library):
         nuc = ["p", "he4", "c12", "o16", "ne20", "na23", "mg24"]
         lib = reaclib_library.linking_nuclei(nuc)
         rates_to_derive = lib.backward().get_rates()
@@ -34,7 +35,8 @@ class TestNetworkCompare:
         return lib
 
     @pytest.fixture(scope="class")
-    def nc(self, lib):
+    @classmethod
+    def nc(clsf, lib):
         cxx_test_path = Path("_test_compare_cxx/")
         amrex_test_path = Path("_test_compare_amrex/")
 
@@ -47,7 +49,8 @@ class TestNetworkCompare:
         return nc
 
     @pytest.fixture(scope="class")
-    def eval_cond1(self, nc):
+    @classmethod
+    def eval_cond1(cls, nc):
         # thermodynamic conditions
         rho = 2.e8
         T = 1.e9
@@ -60,7 +63,8 @@ class TestNetworkCompare:
         return nc
 
     @pytest.fixture(scope="class")
-    def eval_cond2(self, nc):
+    @classmethod
+    def eval_cond2(cls, nc):
         # thermodynamic conditions
         rho = 2.e7
         T = 4.e9
