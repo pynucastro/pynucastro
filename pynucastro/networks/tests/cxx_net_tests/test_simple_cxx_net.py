@@ -9,7 +9,8 @@ from pynucastro.rates import DerivedRate
 
 class TestSimpleCxxNetwork:
     @pytest.fixture(scope="class")
-    def fn(self, reaclib_library):
+    @classmethod
+    def fn(cls, reaclib_library):
         reaclib_rate_names = ["c12(c12,a)ne20",
                               "c12(c12,n)mg23",
                               "c12(c12,p)na23",

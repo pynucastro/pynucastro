@@ -5,7 +5,8 @@ import pynucastro as pyna
 
 class TestFullLibrary:
     @pytest.fixture(scope="class")
-    def full_lib(self):
+    @classmethod
+    def full_lib(cls):
         return pyna.full_library()
 
     def test_ni56_rates(self, full_lib):

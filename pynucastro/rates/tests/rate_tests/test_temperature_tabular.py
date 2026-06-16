@@ -21,7 +21,8 @@ class TestTemperatureTabular:
     # if the interpolation recovers the correct values
 
     @pytest.fixture(scope="class")
-    def myrate(self):
+    @classmethod
+    def myrate(cls):
         Ts = np.logspace(np.log10(1.e7), np.log10(1.e10), 75)
         rate = rate_fcn(Ts)
 

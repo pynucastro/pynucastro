@@ -7,12 +7,14 @@ from pynucastro.nucdata.composition import LoddersComposition
 class TestLoddersComposition:
 
     @pytest.fixture(scope="class")
-    def solar(self):
+    @classmethod
+    def solar(cls):
         """Default Lodders solar comp, without scaling"""
         return LoddersComposition()
 
     @pytest.fixture(scope="class")
-    def scaled(self):
+    @classmethod
+    def scaled(cls):
         """Scale Lodders to desired metallicity"""
         return LoddersComposition(Z=0.04)
 

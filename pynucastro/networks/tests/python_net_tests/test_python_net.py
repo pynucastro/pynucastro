@@ -6,19 +6,23 @@ from pynucastro import rates
 
 class TestPythonNetwork:
     @pytest.fixture(scope="class")
-    def rate1(self):
+    @classmethod
+    def rate1(cls):
         return rates.ReacLibRate.from_file("c13-pg-n14-nacr")
 
     @pytest.fixture(scope="class")
-    def rate2(self):
+    @classmethod
+    def rate2(cls):
         return rates.ReacLibRate.from_file("he4-pphe3-he3-nacr")
 
     @pytest.fixture(scope="class")
-    def rate3(self):
+    @classmethod
+    def rate3(cls):
         return rates.ReacLibRate.from_file("he4-npahe3-li7-mafo")
 
     @pytest.fixture(scope="class")
-    def rate4(self):
+    @classmethod
+    def rate4(cls):
         return rates.ReacLibRate.from_file("p-p-d-ec")
 
     def test_ydot_string(self, rate1, rate2, rate3, rate4):

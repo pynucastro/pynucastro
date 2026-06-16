@@ -5,7 +5,8 @@ import pynucastro as pyna
 
 class TestDuplicates:
     @pytest.fixture(scope="class")
-    def nuclei(self):
+    @classmethod
+    def nuclei(cls):
         nuclei = (["p", "he4"] +
                   pyna.get_nuclei_in_range("fe", A_range=(52, 56)) +
                   pyna.get_nuclei_in_range("co", A_range=(54, 58)) +
@@ -13,18 +14,21 @@ class TestDuplicates:
         return nuclei
 
     @pytest.fixture(scope="class")
-    def all_lib(self, reaclib_library, tabular_library):
+    @classmethod
+    def all_lib(cls, reaclib_library, tabular_library):
         # we need to be careful about mutating the reaclib_library or
         # tabular_library fixtures, so we'l create our own private
         # copies here
         return reaclib_library + tabular_library
 
     @pytest.fixture(scope="class")
-    def pp_reaclib(self, reaclib_library):
+    @classmethod
+    def pp_reaclib(cls, reaclib_library):
         return reaclib_library.linking_nuclei(["p", "d"])
 
     @pytest.fixture(scope="class")
-    def pp_starlib(self, starlib_library):
+    @classmethod
+    def pp_starlib(cls, starlib_library):
         return starlib_library.linking_nuclei(["p", "d"])
 
     def check_pp_dupes_reaclib(self, pp_reaclib):
