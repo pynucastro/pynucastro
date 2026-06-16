@@ -1,5 +1,30 @@
 # Changelog
 
+## 2.11.1
+
+  * `AmrexAstroCxxNetwork` :
+
+    * Scope screening into its own block (#1390)
+    * Generalize `get_ydot_weak` to all weak rates (#1388)
+    * ROCm/HIP does not like managed inline data (#1387)
+    * Fix undefined behavior in interpolating right on the upper
+      boundary of data (#1382)
+
+  * `SimpleCxxNetwork` / `FortranNetwork` / `BaseCxxNetwork` :
+
+    * Add helper functions to `fill_rates` and
+      `compute_screening_factors` (#1386)
+
+  * `PythonNetwork` / `RateCollection` :
+
+    * fix broadcast in `NetworkSolution` (#1392)
+
+  * general rate changes:
+
+    * we now use PCHIP interpolation + linear extrapolation for
+      StarLib rates (#1391)
+    * Remove placeholder rate data for StarLib (#1384)
+
 ## 2.11.0
 
   * `PythonNetwork` / `RateCollection` :
