@@ -124,7 +124,7 @@ class NetworkSolution:
         ----------
         t : float or list or numpy.ndarray
             time or time array used to evaluate the mass fractions.  If a time
-            array is given, the output is an array or shape (nuc, times)
+            array is given, the output is an array of shape (nuc, times)
 
         Returns
         -------
