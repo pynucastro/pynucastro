@@ -7,11 +7,13 @@ import pynucastro as pyna
 class TestStellarEOS:
 
     @pytest.fixture(scope="class")
-    def eos(self):
+    @classmethod
+    def eos(cls):
         return pyna.StellarEOS(include_positrons=True)
 
     @pytest.fixture(scope="class")
-    def comp(self):
+    @classmethod
+    def comp(cls):
         comp = pyna.Composition(["he4"])
         comp.set_equal()
         return comp

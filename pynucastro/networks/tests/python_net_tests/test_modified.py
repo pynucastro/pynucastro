@@ -14,7 +14,8 @@ import pynucastro as pyna
 
 class TestModifiedRate:
     @pytest.fixture(scope="class")
-    def original_net(self, reaclib_library):
+    @classmethod
+    def original_net(cls, reaclib_library):
         # create a network and use the rate .modify_products()
         # to change the endpoints
 
@@ -30,7 +31,8 @@ class TestModifiedRate:
         return pyna.PythonNetwork(libraries=[lib])
 
     @pytest.fixture(scope="class")
-    def new_net(self, reaclib_library):
+    @classmethod
+    def new_net(cls, reaclib_library):
         # create a network that uses a ModifiedRate
 
         lib = reaclib_library.linking_nuclei(["he4", "c12", "o16",

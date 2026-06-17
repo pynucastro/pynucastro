@@ -9,7 +9,8 @@ from pynucastro.rates.alternate_rates import IliadisO16pgF17
 
 class TestStarLibNet:
     @pytest.fixture(scope="class")
-    def rc(self, reaclib_library, starlib_library):
+    @classmethod
+    def rc(cls, reaclib_library, starlib_library):
         nuc = ["p", "n15", "o16"]
         lib = reaclib_library.linking_nuclei(nuc, with_reverse=False)
 

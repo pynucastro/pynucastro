@@ -7,13 +7,15 @@ import pynucastro as pyna
 
 class TestRateCollectionJacobian:
     @pytest.fixture(scope="class")
-    def rc(self, reaclib_library):
+    @classmethod
+    def rc(cls, reaclib_library):
         mylib = reaclib_library.linking_nuclei(["he4", "c12", "o16", "ne20"],
                                                with_reverse=False)
         return pyna.RateCollection(libraries=[mylib])
 
     @pytest.fixture(scope="class")
-    def comp(self, rc):
+    @classmethod
+    def comp(cls, rc):
         _comp = pyna.Composition(rc.unique_nuclei)
         _comp.set_solar_like()
         return _comp

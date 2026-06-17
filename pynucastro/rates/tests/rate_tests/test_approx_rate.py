@@ -9,20 +9,24 @@ from pynucastro.rates import create_double_neutron_capture
 
 class TestAlphaGammaTfactors:
     @pytest.fixture(scope="class")
-    def rc(self, reaclib_library):
+    @classmethod
+    def rc(cls, reaclib_library):
         mylib = reaclib_library.linking_nuclei(["mg24", "al27", "si28", "he4", "p"])
         return pyna.RateCollection(libraries=[mylib])
 
     @pytest.fixture(scope="class")
-    def rp(self, rc):
+    @classmethod
+    def rp(cls, rc):
         return rc.get_rate("he4_mg24_to_si28")
 
     @pytest.fixture(scope="class")
-    def rs(self, rc):
+    @classmethod
+    def rs(cls, rc):
         return [rc.get_rate("he4_mg24_to_p_al27"), rc.get_rate("p_al27_to_si28")]
 
     @pytest.fixture(scope="class")
-    def ar(self, rc, rp, rs):
+    @classmethod
+    def ar(cls, rc, rp, rs):
         # approximate Mg24(a,g)Si28 together with Mg24(a,p)Al27(p,g)Si28
         rates = {"A(a,g)B": rp,
                  "A(a,p)X": rs[0],
@@ -61,7 +65,8 @@ class TestAlphaGammaTfactors:
 class TestDoubleN:
 
     @pytest.fixture(scope="class")
-    def nn(self, reaclib_library):
+    @classmethod
+    def nn(cls, reaclib_library):
         return create_double_neutron_capture(reaclib_library, "Fe52", "Fe54")
 
     def test_nn_name(self, nn):
