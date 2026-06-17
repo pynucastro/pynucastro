@@ -1,11 +1,13 @@
 # This tests the PythonNetwork integrate_solution and NetworkSolution methods
 
-import numpy as np
-import pytest
 import warnings
 
+import numpy as np
+import pytest
 from numpy.testing import assert_allclose
-from pynucastro import network_helper, Composition, Nucleus
+
+from pynucastro import Composition, Nucleus, network_helper
+
 
 class TestPythonIntegrate:
     @pytest.fixture(scope="class")
