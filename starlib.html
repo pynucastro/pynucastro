@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Networks with StarLib rates &#8212; pynucastro 2.11.0.post10+gb8a1b7ecf documentation</title>
+    <title>Networks with StarLib rates &#8212; pynucastro 2.11.0.post13+g61ee31442 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=ee8529ba"></script>
+    <script src="_static/documentation_options.js?v=3d9d1c0f"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -668,7 +668,7 @@
 <section id="sampling-starlib-uncertainties-integrations">
 <h3>Sampling StarLib uncertainties integrations<a class="headerlink" href="#sampling-starlib-uncertainties-integrations" title="Link to this heading">#</a></h3>
 <p>Now we’ll do a suite of integrations with different random rate samplings.</p>
-<p>To enable sampling, we must pass a seed. This seed can be passed when a <code class="docutils literal notranslate"><span class="pre">StarLibLibrary</span></code> is initialized or we can resample an existing <code class="docutils literal notranslate"><span class="pre">StarLibLibrary</span></code>.  Here, we demonstrate the latter by creating several variants of our network with different samplings, integrating them, and storing the solution for plotting later.</p>
+<p>To enable sampling, we must pass a seed. This seed can be passed when a <code class="docutils literal notranslate"><span class="pre">StarLibLibrary</span></code> is initialized or we can resample an existing <code class="docutils literal notranslate"><span class="pre">StarLibLibrary</span></code>. We can also resample an existing <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> or any network object.  Here, we demonstrate the latter by creating several variants of our network with different samplings, integrating them, and storing the solution for plotting later.</p>
 <p>Note that we seed the numpy random number generator to ensure reproducibility here</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -689,10 +689,8 @@
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nsamples</span> <span class="o">=</span> <span class="mi">15</span>
 <span class="k">for</span> <span class="n">seed</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">nsamples</span><span class="p">):</span>
-    <span class="n">sl</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
-    <span class="n">lib</span> <span class="o">=</span> <span class="n">sl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
-    <span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">lib</span><span class="p">)</span>
-    <span class="n">sol</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">integrate_network</span><span class="p">(</span><span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-8</span><span class="p">)</span>
+    <span class="n">smnet</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">sol</span> <span class="o">=</span> <span class="n">smnet</span><span class="o">.</span><span class="n">integrate_network</span><span class="p">(</span><span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-8</span><span class="p">)</span>
     <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -764,7 +762,7 @@
               <span class="n">color</span><span class="o">=</span><span class="n">col_map_med</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">caps_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span>
               <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X($</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">$)&quot;</span><span class="p">)</span>
 
-<span class="c1">#P Reaclib rates</span>
+<span class="c1"># Reaclib rates</span>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rl_sol</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">rl_sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">rl_sol</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span>
               <span class="n">color</span><span class="o">=</span><span class="n">col_map_dark</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">caps_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
@@ -779,7 +777,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/ebf7aed475f6203321b6acf1dc40afd6baf4730d34c1b067b9430db25df92327.png" src="_images/ebf7aed475f6203321b6acf1dc40afd6baf4730d34c1b067b9430db25df92327.png" />
+<img alt="_images/eb996bd8585685e7ebcfdd8bcc126fc1cecdfc27c8c998bfec5d35e183cff8e2.png" src="_images/eb996bd8585685e7ebcfdd8bcc126fc1cecdfc27c8c998bfec5d35e183cff8e2.png" />
 </div>
 </div>
 <p>Here the dotted lines depict the evolution of mass fractions over time given ReacLib rates, the solid lines depict that for median StarLib rates and the faint lines depict that for each sampled StarLib rates.</p>
