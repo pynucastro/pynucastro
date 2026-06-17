@@ -682,6 +682,29 @@ class RateCollection:
 
         self._build_collection()
 
+    def resample(self, seed=None):
+        """Resample starlib rates
+
+        Parameters
+        ----------
+        seed: int
+            Seed for resampling. If no seed is provided then
+            an arbitrary seed is used.
+        """
+
+        if seed is None:
+            #arbitrarily chosen upper limit for np.random
+            #since it requires one.
+            seed = np.random.randint(10e5)
+        rng = np.random.default_rng(seed=seed)
+        for rate in self.starlib_rates:
+            rate.sample_rates(rng=rng)
+
+    def unsample(self):
+        """Restore starlib rates to median values."""
+        for rate in self.starlib_rates:
+            rate.sample_rates()
+
     def make_ap_pg_approx(self, intermediate_nuclei=None):
         """Combine the rates A(a,g)B and A(a,p)X(p,g)B (and the
         reverse) into a single effective approximate rate.  The new

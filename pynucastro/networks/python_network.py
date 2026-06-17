@@ -946,7 +946,7 @@ class PythonNetwork(RateCollection):
         if close_file:
             of.close()
 
-    def integrate_network(self, tmax, rho, T, Y0=None,
+    def integrate_network(self, tmax, rho, T, molar_composition=None,
                           screen_method=None,
                           initial_comp="uniform",
                           rtol=1e-8, atol=1e-8):
@@ -961,15 +961,18 @@ class PythonNetwork(RateCollection):
             density used to integrate the network
         T : float
             temperature used to integrate the network
-        Y0 : numpy.ndarray
-            initial molar abundance of the nuclei. If not provided,
-            the initial composition is initialized according to `initial_comp`
+        molar_composition : numpy.ndarray or Composition
+            initial molar abundance of the nuclei. This can be either
+            a NumPy array of molar fractions or a Composition object.
+            If not provided, the initial composition is initialized
+            according to `initial_comp`
         screen_method : str
             name of the screening function used to evaluate rates when integrating
             the network. Valid choices are: `screen5`, `chugunov_2007`, `chugunov_2009`,
             `potekhin_1998`, and `debye_huckel`. If `None`, no screening is applied.
         initial_comp : str
-            different modes to use to set up the initial composition if Y0 is None.
+            different modes to use to set up the initial composition if
+            molar_composition is None.
             Valid choices are: `uniform`, `random`, and `solar`.
         rtol : float
             relative tolerance for SciPy's solve_ivp()
@@ -1002,11 +1005,16 @@ class PythonNetwork(RateCollection):
         screen_func = get_screening_func(screen_method)
 
         # Setup the initial molar abundance if Y0 is None
-        if Y0 is None:
+        if molar_composition is None:
             if initial_comp is None:
                 raise ValueError("Valid initial compositions are ['uniform', 'random', 'solar']")
             comp = Composition(self.unique_nuclei, init=initial_comp)
             Y0 = comp.get_molar_array()
+        else:
+            if isinstance(molar_composition, Composition):
+                Y0 = molar_composition.get_molar_array()
+            else:
+                Y0 = np.asarray(molar_composition)
 
         # Integrate using SciPy's solve_ivp() using BDF method -- good for stiff system.
         sol = solve_ivp(rhs, [0, tmax], Y0, method="BDF",
