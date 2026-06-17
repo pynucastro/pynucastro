@@ -123,7 +123,8 @@ class NetworkSolution:
         Parameters
         ----------
         t : float or list or numpy.ndarray
-            time or time array used to evaluate the molar abundances
+            time or time array used to evaluate the mass fractions.  If a time
+            array is given, the output is an array or shape (nuc, times)
 
         Returns
         -------
@@ -132,6 +133,8 @@ class NetworkSolution:
         """
 
         As = np.array([n.A for n in self.unique_nuclei])
+        if isinstance(t, (float, int)):
+            return self._sol.sol(t) * As
         return self._sol.sol(t) * As[:, None]
 
     def Y_at(self, t):
