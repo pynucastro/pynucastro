@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.python_network module &#8212; pynucastro 2.11.0.post9+g0f64477d0 documentation</title>
+    <title>pynucastro.networks.python_network module &#8212; pynucastro 2.11.0.post10+gb8a1b7ecf documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=f7336461"></script>
+    <script src="_static/documentation_options.js?v=ee8529ba"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -938,7 +938,7 @@ of indent desired.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.python_network.PythonNetwork.integrate_network">
-<span class="sig-name descname"><span class="pre">integrate_network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uniform'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/python_network.html#PythonNetwork.integrate_network"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.python_network.PythonNetwork.integrate_network" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">integrate_network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">molar_composition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uniform'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/python_network.html#PythonNetwork.integrate_network"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.python_network.PythonNetwork.integrate_network" title="Link to this definition">#</a></dt>
 <dd><p>Integrate the network to tmax given (rho, T, Y0) using
 SciPy’s solve_ivp() with BDF method.</p>
 <dl class="field-list simple">
@@ -947,12 +947,15 @@ SciPy’s solve_ivp() with BDF method.</p>
 <li><p><strong>tmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – final integration time.</p></li>
 <li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – density used to integrate the network</p></li>
 <li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – temperature used to integrate the network</p></li>
-<li><p><strong>Y0</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – initial molar abundance of the nuclei. If not provided,
-the initial composition is initialized according to <cite>initial_comp</cite></p></li>
+<li><p><strong>molar_composition</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a><em> or </em><a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition"><em>Composition</em></a>) – initial molar abundance of the nuclei. This can be either
+a NumPy array of molar fractions or a Composition object.
+If not provided, the initial composition is initialized
+according to <cite>initial_comp</cite></p></li>
 <li><p><strong>screen_method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – name of the screening function used to evaluate rates when integrating
 the network. Valid choices are: <cite>screen5</cite>, <cite>chugunov_2007</cite>, <cite>chugunov_2009</cite>,
 <cite>potekhin_1998</cite>, and <cite>debye_huckel</cite>. If <cite>None</cite>, no screening is applied.</p></li>
-<li><p><strong>initial_comp</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – different modes to use to set up the initial composition if Y0 is None.
+<li><p><strong>initial_comp</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – different modes to use to set up the initial composition if
+molar_composition is None.
 Valid choices are: <cite>uniform</cite>, <cite>random</cite>, and <cite>solar</cite>.</p></li>
 <li><p><strong>rtol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – relative tolerance for SciPy’s solve_ivp()</p></li>
 <li><p><strong>atol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – absolute tolerance for SciPy’s solve_ivp()</p></li>

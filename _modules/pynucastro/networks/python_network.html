@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 2.11.0.post9+g0f64477d0 documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 2.11.0.post10+gb8a1b7ecf documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=f7336461"></script>
+    <script src="../../../_static/documentation_options.js?v=ee8529ba"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1496,7 +1496,7 @@
 
 <div class="viewcode-block" id="PythonNetwork.integrate_network">
 <a class="viewcode-back" href="../../../pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.integrate_network">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">integrate_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Y0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">integrate_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">molar_composition</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                           <span class="n">screen_method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                           <span class="n">initial_comp</span><span class="o">=</span><span class="s2">&quot;uniform&quot;</span><span class="p">,</span>
                           <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
@@ -1511,15 +1511,18 @@
 <span class="sd">            density used to integrate the network</span>
 <span class="sd">        T : float</span>
 <span class="sd">            temperature used to integrate the network</span>
-<span class="sd">        Y0 : numpy.ndarray</span>
-<span class="sd">            initial molar abundance of the nuclei. If not provided,</span>
-<span class="sd">            the initial composition is initialized according to `initial_comp`</span>
+<span class="sd">        molar_composition : numpy.ndarray or Composition</span>
+<span class="sd">            initial molar abundance of the nuclei. This can be either</span>
+<span class="sd">            a NumPy array of molar fractions or a Composition object.</span>
+<span class="sd">            If not provided, the initial composition is initialized</span>
+<span class="sd">            according to `initial_comp`</span>
 <span class="sd">        screen_method : str</span>
 <span class="sd">            name of the screening function used to evaluate rates when integrating</span>
 <span class="sd">            the network. Valid choices are: `screen5`, `chugunov_2007`, `chugunov_2009`,</span>
 <span class="sd">            `potekhin_1998`, and `debye_huckel`. If `None`, no screening is applied.</span>
 <span class="sd">        initial_comp : str</span>
-<span class="sd">            different modes to use to set up the initial composition if Y0 is None.</span>
+<span class="sd">            different modes to use to set up the initial composition if</span>
+<span class="sd">            molar_composition is None.</span>
 <span class="sd">            Valid choices are: `uniform`, `random`, and `solar`.</span>
 <span class="sd">        rtol : float</span>
 <span class="sd">            relative tolerance for SciPy&#39;s solve_ivp()</span>
@@ -1552,11 +1555,16 @@
         <span class="n">screen_func</span> <span class="o">=</span> <span class="n">get_screening_func</span><span class="p">(</span><span class="n">screen_method</span><span class="p">)</span>
 
         <span class="c1"># Setup the initial molar abundance if Y0 is None</span>
-        <span class="k">if</span> <span class="n">Y0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">molar_composition</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">initial_comp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Valid initial compositions are [&#39;uniform&#39;, &#39;random&#39;, &#39;solar&#39;]&quot;</span><span class="p">)</span>
             <span class="n">comp</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="n">initial_comp</span><span class="p">)</span>
             <span class="n">Y0</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar_array</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">molar_composition</span><span class="p">,</span> <span class="n">Composition</span><span class="p">):</span>
+                <span class="n">Y0</span> <span class="o">=</span> <span class="n">molar_composition</span><span class="o">.</span><span class="n">get_molar_array</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Y0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">molar_composition</span><span class="p">)</span>
 
         <span class="c1"># Integrate using SciPy&#39;s solve_ivp() using BDF method -- good for stiff system.</span>
         <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span>
