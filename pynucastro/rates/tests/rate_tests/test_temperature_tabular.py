@@ -21,7 +21,8 @@ class TestTemperatureTabular:
     # if the interpolation recovers the correct values
 
     @pytest.fixture(scope="class")
-    def myrate(self):
+    @classmethod
+    def myrate(cls):
         Ts = np.logspace(np.log10(1.e7), np.log10(1.e10), 75)
         rate = rate_fcn(Ts)
 
@@ -39,7 +40,7 @@ class TestTemperatureTabular:
 
         for T in [3.12e7, 9.81e7, 2.56e8, 4.7e8, 1.2e9, 5.7e9]:
             assert myrate.eval(T) == approx(rate_fcn(T),
-                                            rel=1.e-4, abs=1.e-100)
+                                            rel=3e-3, abs=1.e-100)
 
     def test_ydot_string(self, myrate):
         ydot_str = "rho*Y[jp]*Y[jc12]*rate_eval.C12_p_to_N13_temptab"

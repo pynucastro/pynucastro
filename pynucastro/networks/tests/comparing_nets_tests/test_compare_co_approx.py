@@ -21,7 +21,8 @@ class TestNetworkCompare:
 
     # pylint: disable=duplicate-code
     @pytest.fixture(scope="class")
-    def lib(self, reaclib_library):
+    @classmethod
+    def lib(cls, reaclib_library):
         crates = make_CO_approx_rates(reaclib_library.get_rates(), "C")
         corates = make_CO_approx_rates(reaclib_library.get_rates(), "CO")
         orates = make_CO_approx_rates(reaclib_library.get_rates(), "O")
@@ -36,7 +37,8 @@ class TestNetworkCompare:
         return lib
 
     @pytest.fixture(scope="class")
-    def nc(self, lib):
+    @classmethod
+    def nc(cls, lib):
         cxx_test_path = Path("_test_compare_coapprox_cxx/")
         amrex_test_path = Path("_test_compare_coapprox_amrex/")
 
@@ -49,7 +51,8 @@ class TestNetworkCompare:
         return nc
 
     @pytest.fixture(scope="class")
-    def eval_cond1(self, nc):
+    @classmethod
+    def eval_cond1(cls, nc):
         # thermodynamic conditions
         rho = 2.e6
         T = 1.e9
@@ -62,7 +65,8 @@ class TestNetworkCompare:
         return nc
 
     @pytest.fixture(scope="class")
-    def eval_cond2(self, nc):
+    @classmethod
+    def eval_cond2(cls, nc):
         # thermodynamic conditions
         rho = 2.e9
         T = 4.e9

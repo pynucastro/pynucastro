@@ -5,7 +5,8 @@ import pynucastro as pyna
 
 class TestNetworkExport:
     @pytest.fixture(scope="class")
-    def net(self):
+    @classmethod
+    def net(cls):
         _net = pyna.network_helper(["p", "he4", "c12", "o16",
                                     "ne20", "na23", "mg24"])
 

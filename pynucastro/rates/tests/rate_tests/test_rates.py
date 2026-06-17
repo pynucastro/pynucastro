@@ -15,7 +15,8 @@ from pynucastro.screening.screen import chugunov_2007
 
 class TestTfactors:
     @pytest.fixture(scope="class")
-    def tf(self):
+    @classmethod
+    def tf(cls):
         return rates.Tfactors(2.e9)
 
     def test_tfactors(self, tf):
@@ -421,27 +422,33 @@ class TestDerivedRate:
 
 class TestWeakRates:
     @pytest.fixture(scope="class")
-    def rate1(self):
+    @classmethod
+    def rate1(cls):
         return rates.TabularRate("suzuki-18o-18f_betadecay.dat")
 
     @pytest.fixture(scope="class")
-    def rate2(self):
+    @classmethod
+    def rate2(cls):
         return rates.TabularRate("suzuki-22na-22ne_electroncapture.dat")
 
     @pytest.fixture(scope="class")
-    def rate3(self):
+    @classmethod
+    def rate3(cls):
         return rates.TabularRate("langanke-45sc-45ca_electroncapture.dat")
 
     @pytest.fixture(scope="class")
-    def rate4(self):
+    @classmethod
+    def rate4(cls):
         return rates.TabularRate("langanke-45ti-45sc_electroncapture.dat")
 
     @pytest.fixture(scope="class")
-    def rate5(self):
+    @classmethod
+    def rate5(cls):
         return rates.TabularRate("langanke-45v-45ti_electroncapture.dat")
 
     @pytest.fixture(scope="class")
-    def rate6(self):
+    @classmethod
+    def rate6(cls):
         return rates.TabularRate("langanke-45ca-45sc_betadecay.dat")
 
     def test_reactants(self, rate1, rate2, rate3, rate4, rate5, rate6):
@@ -483,7 +490,8 @@ class TestWeakRates:
 
 class TestModify:
     @pytest.fixture(scope="function")
-    def rate(self):
+    @classmethod
+    def rate(cls):
         return rates.load_rate("c12-c12n-mg23-cf88")
 
     def test_modify(self, rate):
@@ -497,7 +505,8 @@ class TestModify:
 
 class TestModifiedRate:
     @pytest.fixture(scope="function")
-    def rate(self):
+    @classmethod
+    def rate(cls):
         return rates.load_rate("c12-c12n-mg23-cf88")
 
     def test_eval(self, rate):

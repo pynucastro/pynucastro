@@ -11,7 +11,8 @@ class TestStoichiometry:
     stichiometry coefficients of a rate in a network"""
 
     @pytest.fixture(scope="class")
-    def lib(self, reaclib_library):
+    @classmethod
+    def lib(cls, reaclib_library):
         nuclei = ["he4", "c12", "o16"]
         lib = reaclib_library.linking_nuclei(nuclei, with_reverse=False)
         _c12ag = lib.get_rate_by_name("c12(a,g)o16")

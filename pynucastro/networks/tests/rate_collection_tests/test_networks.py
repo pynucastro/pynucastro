@@ -8,7 +8,8 @@ from pynucastro.nucdata import Composition, Nucleus
 
 class TestRateCollection:
     @pytest.fixture(scope="class")
-    def rc(self, reaclib_library):
+    @classmethod
+    def rc(cls, reaclib_library):
         rate_names = ["c12(p,g)n13",
                       "c13(p,g)n14",
                       "n13(,)c13",

@@ -32,7 +32,7 @@ using namespace Rates;
 using namespace rate_tables;
 
 template<class T>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void ener_gener_rate(T const& dydt, amrex::Real& enuc)
 {
 
@@ -53,7 +53,7 @@ void ener_gener_rate(T const& dydt, amrex::Real& enuc)
 
 #ifdef SCREENING
 template <int do_T_derivatives, typename T>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void evaluate_screening(const burn_t& state,
                         const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
                         T& rate_eval) {
@@ -97,7 +97,7 @@ void evaluate_screening(const burn_t& state,
 
 
 template <int do_T_derivatives, typename T>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void evaluate_rates(const burn_t& state,
                     const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
                     T& rate_eval) {
@@ -148,7 +148,7 @@ void evaluate_rates(const burn_t& state,
 
 // backwards-compatible wrapper
 template <int do_T_derivatives, typename T>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void evaluate_rates(const burn_t& state,
                     T& rate_eval) {
 
@@ -163,17 +163,19 @@ void evaluate_rates(const burn_t& state,
 
 
 #ifdef NSE_NET
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void get_ydot_weak(const burn_t& state,
-             amrex::Array1D<amrex::Real, 1, neqs>& ydot_nuc,
-             amrex::Real& enuc_weak,
-             [[maybe_unused]] const amrex::Array1D<amrex::Real, 1, NumSpec>& Y) {
+                   amrex::Array1D<amrex::Real, 1, neqs>& ydot_nuc,
+                   amrex::Real& enuc_weak,
+                   [[maybe_unused]] const amrex::Array1D<amrex::Real, 1, NumSpec>& Y) {
     ///
     /// Calculate Ydots contribute only from weak reactions.
     /// This is used to calculate dyedt and energy generation from
     /// weak reactions for self-consistent NSE
     ///
 
+    using namespace modified_rates;
+    using namespace temp_tabular;
 
     // initialize ydot_nuc to 0
 
@@ -183,12 +185,13 @@ void get_ydot_weak(const burn_t& state,
 
     rate_t rate_eval;
 
-    [[maybe_unused]] amrex::Real rate, drate_dt, edot_nu, edot_gamma;
+    constexpr int do_T_derivatives = 0;
+    [[maybe_unused]] amrex::Real rate, drate_dT, edot_nu, edot_gamma;
     [[maybe_unused]] amrex::Real rhoy = state.rho * state.y_e;
 
     rate_eval.enuc_weak = 0.0_rt;
 
-    // Calculate tabular rates and get ydot_weak
+    // Compute all weak rates and get ydot_weak
 
 
     ydot_nuc(H1) = 0.0_rt;
@@ -206,7 +209,7 @@ void get_ydot_weak(const burn_t& state,
 #endif
 
 
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void rhs_nuc(const burn_t& state,
              amrex::Array1D<amrex::Real, 1, neqs>& ydot_nuc,
              const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
@@ -237,7 +240,7 @@ void rhs_nuc(const burn_t& state,
 }
 
 
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void actual_rhs (const burn_t& state, amrex::Array1D<amrex::Real, 1, neqs>& ydot)
 {
 
@@ -284,7 +287,7 @@ void actual_rhs (const burn_t& state, amrex::Array1D<amrex::Real, 1, neqs>& ydot
 
 
 template<class MatrixType>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void jac_nuc(const burn_t& state,
              MatrixType& jac,
              const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
@@ -374,7 +377,7 @@ void jac_nuc(const burn_t& state,
 
 
 template<class MatrixType>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void actual_jac(const burn_t& state, MatrixType& jac)
 {
 

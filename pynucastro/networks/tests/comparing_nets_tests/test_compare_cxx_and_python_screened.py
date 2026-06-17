@@ -20,13 +20,15 @@ def _skip_build():
 class TestNetworkCompare:
 
     @pytest.fixture(scope="class")
-    def lib(self, reaclib_library):
+    @classmethod
+    def lib(cls, reaclib_library):
         nuc = ["p", "he4", "c12", "o16", "ne20", "na23", "mg24"]
         lib = reaclib_library.linking_nuclei(nuc)
         return lib
 
     @pytest.fixture(scope="class")
-    def nc(self, lib):
+    @classmethod
+    def nc(cls, lib):
         cxx_test_path = Path("_test_compare_cxx_screened/")
         amrex_test_path = Path("_test_compare_amrex_screened/")
 
@@ -40,7 +42,8 @@ class TestNetworkCompare:
         return nc
 
     @pytest.fixture(scope="class")
-    def eval_cond(self, nc):
+    @classmethod
+    def eval_cond(cls, nc):
         # thermodynamic conditions
         # we set the composition to be uniform for all tests
         rho = 2.e8

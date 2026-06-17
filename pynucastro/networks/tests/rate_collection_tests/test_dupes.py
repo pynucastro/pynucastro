@@ -7,7 +7,8 @@ import pynucastro as pyna
 class TestDuplicates:
 
     @pytest.fixture(scope="class")
-    def ecsn_lib(self, reaclib_library, tabular_library):
+    @classmethod
+    def ecsn_lib(cls, reaclib_library, tabular_library):
         all_nuclei = ["p", "he4",
                       "ne20", "o20", "f20",
                       "mg24", "al27", "o16",

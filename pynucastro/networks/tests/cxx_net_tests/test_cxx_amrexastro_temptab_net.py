@@ -12,7 +12,8 @@ from pynucastro.rates.alternate_rates import IliadisO16pgF17
                     reason="we get roundoff diffs on Macs and Windows")
 class TestAmrexAstroCxxNetwork:
     @pytest.fixture(scope="class")
-    def fn(self):
+    @classmethod
+    def fn(cls):
 
         iliadis = IliadisO16pgF17()
         iliadis_derived = pyna.DerivedRate(iliadis, use_pf=True)
