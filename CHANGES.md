@@ -18,12 +18,19 @@
   * `PythonNetwork` / `RateCollection` :
 
     * fix broadcast in `NetworkSolution` (#1392)
+    * allow resampling of StarLib rates within the network (#1393)
+    * allow `integrate_network` to take a `Composition` object (#1398)
 
   * general rate changes:
 
     * we now use PCHIP interpolation + linear extrapolation for
       StarLib rates (#1391)
     * Remove placeholder rate data for StarLib (#1384)
+
+  * testing:
+
+    * make pytest fixtures as `@classmethod` for pytest 9.1.0
+      compatibility (#1397)
 
 ## 2.11.0
 
