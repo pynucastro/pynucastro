@@ -11,6 +11,7 @@ import numpy as np
 from scipy.integrate import solve_ivp
 
 from pynucastro.constants import constants
+from pynucastro.eos import StellarEOS
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.nucdata import Composition
 from pynucastro.rates import ApproximateRate, ModifiedRate
@@ -37,14 +38,18 @@ class NetworkSolution:
     rho : float
         density used to integrate the network
     T : float
-        temperature used to integrate the network
+        temperature used to integrate the network.  Only needed if
+        this is not a self-heating burn
+    self_heating : bool
+        is temperature integrated together with composition?
     screen_func: Callable
         screening function used to evaluate rates when integrating
         the network
 
     """
 
-    def __init__(self, sol, rhs, jac, network, rho, T, screen_func=None):
+    def __init__(self, sol, rhs, jac, network, rho, T=None,
+                 self_heating=False, screen_func=None):
 
         self._sol = sol
         self._rhs = rhs
@@ -52,6 +57,7 @@ class NetworkSolution:
         self.network = network
         self.rho = rho
         self.T = T
+        self.self_heating = self_heating
         self.screen_func = screen_func
 
     @property
@@ -90,7 +96,7 @@ class NetworkSolution:
         """
 
         As = np.array([n.A for n in self.unique_nuclei])
-        return self._sol.y * As[:, None]
+        return self._sol.y[0:len(self.unique_nuclei), :] * As[:, None]
 
     @property
     def Y(self):
@@ -103,7 +109,20 @@ class NetworkSolution:
 
         """
 
-        return self._sol.y
+        return self._sol.y[0:len(self.unique_nuclei), :]
+
+    @property
+    def Temp(self):
+        """Return the array of temperature for all times.
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        assert self.self_heating
+        return self._sol.y[-1, :]
 
     @property
     def unique_nuclei(self):
@@ -133,9 +152,10 @@ class NetworkSolution:
         """
 
         As = np.array([n.A for n in self.unique_nuclei])
+
         if isinstance(t, (float, int)):
-            return self._sol.sol(t) * As
-        return self._sol.sol(t) * As[:, None]
+            return self._sol.sol(t)[0:len(self.unique_nuclei)] * As
+        return self._sol.sol(t)[0:len(self.unique_nuclei), ...] * As[:, None]
 
     def Y_at(self, t):
         """Evaluate the molar abundances for a given time.
@@ -150,8 +170,28 @@ class NetworkSolution:
         numpy.ndarray
 
         """
+        if isinstance(t, (float, int)):
+            return self._sol.sol(t)[0:len(self.unique_nuclei)]
 
-        return self._sol.sol(t)
+        return self._sol.sol(t)[0:len(self.unique_nuclei), ...]
+
+    def T_at(self, t):
+        """Evaluate the temperature for a given time.
+
+        Parameters
+        ----------
+        t : float or list or numpy.ndarray
+            time or time array used to evaluate the molar abundances
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        assert self.self_heating
+
+        return self._sol.sol(t)[-1, ...]
 
     def ye(self, Y):
         """Evaluate the electron fraction with a given set of molar fractions
@@ -187,7 +227,7 @@ class NetworkSolution:
         Y = self.Y_at(t)
         return self.ye(Y)
 
-    def rhs(self, t, Y):
+    def rhs(self, t, Y, T=None):
         """Evaluate the RHS of the network with the same thermodynamic
         condition and screening routine used to integrate the network.
 
@@ -197,6 +237,8 @@ class NetworkSolution:
             time used to evaluate the RHS
         Y : numpy.ndarray
             molar abundances of the species
+        T : float
+            temperature (required for self-heating)
 
         Returns
         -------
@@ -204,10 +246,14 @@ class NetworkSolution:
 
         """
 
+        if self.self_heating:
+            assert T is not None
+            return self._rhs(t, Y, self.rho, T, screen_func=self.screen_func)
         return self._rhs(t, Y, self.rho, self.T, screen_func=self.screen_func)
 
     def rhs_at(self, t):
-        """Evaluate the RHS of the network for a given time.
+        """Evaluate the RHS of the network for a given time.  Note:
+        for a self-heating burn, this gives only dY/dt.
 
         Parameters
         ----------
@@ -221,6 +267,9 @@ class NetworkSolution:
         """
 
         Y = self.Y_at(t)
+        if self.self_heating:
+            T = self.T_at(t)
+            return self.rhs(t, Y, T=T)
         return self.rhs(t, Y)
 
     def jac(self, t, Y):
@@ -239,6 +288,9 @@ class NetworkSolution:
         numpy.ndarray
 
         """
+
+        # we don't support the Jacobian for self-heating networks
+        assert not self.self_heating
 
         return self._jac(t, Y, self.rho, self.T, screen_func=self.screen_func)
 
@@ -423,6 +475,59 @@ class NetworkSolution:
         ax.set_xlabel("time [s]", fontsize=label_size)
         ax.set_ylabel("X", fontsize=label_size)
         ax.legend(loc="best", fontsize=legend_size, ncol=ncol)
+        ax.grid(ls=":")
+        fig.tight_layout()
+
+        if outfile is not None:
+            fig.savefig(outfile, dpi=dpi)
+
+        return fig
+
+    def plot_temperature(self,
+                         tmin=None, tmax=None,
+                         size=(800, 600), dpi=100,
+                         label_size=14,
+                         outfile=None):
+        """Plot the time evolution of temperature for self-heating burns.
+
+        Parameters
+        ----------
+        tmin : float
+            Minimum time shown on the x-axis. If `None`, the first value of
+            `self.t` is used.
+        tmax : float
+            Maximum time shown on the x-axis. If `None`, the last value of
+            `self.t` is used.
+        dpi : int
+            dots per inch used with size to set output image size
+        size : (tuple, list)
+            (width, height) of the plot in pixels
+        label_size : int
+            Font size for axis labels.
+        outfile : str
+            output name of the plot (extension determines the type)
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+
+        """
+
+        assert self.self_heating
+
+        fig, ax = plt.subplots(figsize=(size[0]/dpi, size[1]/dpi))
+
+        ax.loglog(self.t, self.Temp)
+
+        if tmin is None:
+            tmin = self.t[0]
+        if tmax is None:
+            tmax = self.t[-1]
+
+        ax.set_xlim(tmin, tmax)
+
+        ax.set_xlabel("time [s]", fontsize=label_size)
+        ax.set_ylabel("T [K]", fontsize=label_size)
         ax.grid(ls=":")
         fig.tight_layout()
 
@@ -951,10 +1056,12 @@ class PythonNetwork(RateCollection):
 
     def integrate_network(self, tmax, rho, T, molar_composition=None,
                           screen_method=None,
+                          self_heating=False,
                           initial_comp="uniform",
                           rtol=1e-8, atol=1e-8):
         """Integrate the network to tmax given (rho, T, Y0) using
-        SciPy's solve_ivp() with BDF method.
+        SciPy's solve_ivp() with BDF method.  Optionally, we can
+        integrate temperature together in a self-heating mode.
 
         Parameters
         ----------
@@ -973,6 +1080,8 @@ class PythonNetwork(RateCollection):
             name of the screening function used to evaluate rates when integrating
             the network. Valid choices are: `screen5`, `chugunov_2007`, `chugunov_2009`,
             `potekhin_1998`, and `debye_huckel`. If `None`, no screening is applied.
+        self_heating : bool
+            do we evolve temperature (as dT/dt = ε / c_v) together with the EOS?
         initial_comp : str
             different modes to use to set up the initial composition if
             molar_composition is None.
@@ -1019,16 +1128,55 @@ class PythonNetwork(RateCollection):
             else:
                 Y0 = np.asarray(molar_composition)
 
-        # Integrate using SciPy's solve_ivp() using BDF method -- good for stiff system.
-        sol = solve_ivp(rhs, [0, tmax], Y0, method="BDF",
-                        dense_output=True, args=(rho, T, screen_func),
-                        rtol=rtol, atol=atol, jac=jacobian)
+        if self_heating:
+            energy_release = getattr(network, "energy_release")
+
+            def rhs_wrapper(t, xi, rhs, energy_release, rho, screen_func):
+                nspec = len(self.unique_nuclei)
+                assert len(xi) == nspec + 1
+
+                # unpack the integration state
+                Y = xi[0:nspec]
+                T = xi[-1]
+
+                dxidt = np.zeros_like(xi)
+
+                # first get the dYdt from our network module
+                dxidt[0:nspec] = rhs(t, Y, rho, T, screen_func=screen_func)
+
+                # now get the energy generation rate using this dY/dt
+                eps = energy_release(dxidt[0:nspec])
+
+                # use the EOS to get the specific heat
+                eos = StellarEOS()
+                comp = Composition(self.unique_nuclei)
+                comp.set_molar_array(Y)
+                state = eos.pe_state(rho, T, comp)
+
+                # and finally compute dT/dt
+                dxidt[-1] = eps / state.c_v
+
+                return dxidt
+
+            xi0 = np.append(Y0, T)
+            sol = solve_ivp(rhs_wrapper, [0, tmax], xi0, method="BDF",
+                            dense_output=True,
+                            args=(rhs, energy_release, rho, screen_func),
+                            rtol=rtol, atol=atol)
+
+        else:
+            # Integrate using SciPy's solve_ivp() using BDF method --
+            # good for stiff system.
+            sol = solve_ivp(rhs, [0, tmax], Y0, method="BDF",
+                            dense_output=True, args=(rho, T, screen_func),
+                            rtol=rtol, atol=atol, jac=jacobian)
 
         if not sol.success:
             warnings.warn(f"Warning, integration failed, final integration time = {sol.t[-1]}")
 
         # Create NetworkSolution
         network_sol = NetworkSolution(sol, rhs, jacobian, self,
-                                      rho, T, screen_func=screen_func)
+                                      rho, T, screen_func=screen_func,
+                                      self_heating=self_heating)
 
         return network_sol
