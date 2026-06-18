@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 2.11.0.post12+g20a0099f4 documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 2.11.0.post14+g896aee590 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=f6ae811c"></script>
+    <script src="../../../_static/documentation_options.js?v=108aa1e9"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -509,6 +509,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_ivp</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.eos</span><span class="w"> </span><span class="kn">import</span> <span class="n">StellarEOS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.rate_collection</span><span class="w"> </span><span class="kn">import</span> <span class="n">RateCollection</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Composition</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApproximateRate</span><span class="p">,</span> <span class="n">ModifiedRate</span>
@@ -537,14 +538,18 @@
 <span class="sd">    rho : float</span>
 <span class="sd">        density used to integrate the network</span>
 <span class="sd">    T : float</span>
-<span class="sd">        temperature used to integrate the network</span>
+<span class="sd">        temperature used to integrate the network.  Only needed if</span>
+<span class="sd">        this is not a self-heating burn</span>
+<span class="sd">    self_heating : bool</span>
+<span class="sd">        is temperature integrated together with composition?</span>
 <span class="sd">    screen_func: Callable</span>
 <span class="sd">        screening function used to evaluate rates when integrating</span>
 <span class="sd">        the network</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">jac</span><span class="p">,</span> <span class="n">network</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">jac</span><span class="p">,</span> <span class="n">network</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">self_heating</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span> <span class="o">=</span> <span class="n">sol</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rhs</span> <span class="o">=</span> <span class="n">rhs</span>
@@ -552,6 +557,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">network</span> <span class="o">=</span> <span class="n">network</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="n">rho</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">self_heating</span> <span class="o">=</span> <span class="n">self_heating</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span> <span class="o">=</span> <span class="n">screen_func</span>
 
     <span class="nd">@property</span>
@@ -590,7 +596,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">As</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">])</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">As</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">),</span> <span class="p">:]</span> <span class="o">*</span> <span class="n">As</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">Y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -603,7 +609,20 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="o">.</span><span class="n">y</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">),</span> <span class="p">:]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Temp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the array of temperature for all times.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_heating</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">unique_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -625,7 +644,8 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        t : float or list or numpy.ndarray</span>
-<span class="sd">            time or time array used to evaluate the molar abundances</span>
+<span class="sd">            time or time array used to evaluate the mass fractions.  If a time</span>
+<span class="sd">            array is given, the output is an array of shape (nuc, times)</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -634,7 +654,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">As</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">])</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">As</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span></div>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">t</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)]</span> <span class="o">*</span> <span class="n">As</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">t</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">),</span> <span class="o">...</span><span class="p">]</span> <span class="o">*</span> <span class="n">As</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="NetworkSolution.Y_at">
@@ -652,8 +675,31 @@
 <span class="sd">        numpy.ndarray</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">t</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)]</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">t</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">t</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">),</span> <span class="o">...</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="NetworkSolution.T_at">
+<a class="viewcode-back" href="../../../pynucastro.networks.python_network.html#pynucastro.networks.python_network.NetworkSolution.T_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">T_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the temperature for a given time.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t : float or list or numpy.ndarray</span>
+<span class="sd">            time or time array used to evaluate the molar abundances</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_heating</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">t</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="NetworkSolution.ye">
@@ -698,7 +744,7 @@
 
 <div class="viewcode-block" id="NetworkSolution.rhs">
 <a class="viewcode-back" href="../../../pynucastro.networks.python_network.html#pynucastro.networks.python_network.NetworkSolution.rhs">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the RHS of the network with the same thermodynamic</span>
 <span class="sd">        condition and screening routine used to integrate the network.</span>
 
@@ -708,6 +754,8 @@
 <span class="sd">            time used to evaluate the RHS</span>
 <span class="sd">        Y : numpy.ndarray</span>
 <span class="sd">            molar abundances of the species</span>
+<span class="sd">        T : float</span>
+<span class="sd">            temperature (required for self-heating)</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -715,13 +763,17 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_heating</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">T</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rhs</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rhs</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="NetworkSolution.rhs_at">
 <a class="viewcode-back" href="../../../pynucastro.networks.python_network.html#pynucastro.networks.python_network.NetworkSolution.rhs_at">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">rhs_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the RHS of the network for a given time.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the RHS of the network for a given time.  Note:</span>
+<span class="sd">        for a self-heating burn, this gives only dY/dt.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -735,6 +787,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y_at</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_heating</span><span class="p">:</span>
+            <span class="n">T</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_at</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span></div>
 
 
@@ -756,6 +811,9 @@
 <span class="sd">        numpy.ndarray</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># we don&#39;t support the Jacobian for self-heating networks</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_heating</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jac</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span><span class="p">)</span></div>
 
@@ -952,6 +1010,62 @@
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;time [s]&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_size</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_size</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">legend_size</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="n">ncol</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">outfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="NetworkSolution.plot_temperature">
+<a class="viewcode-back" href="../../../pynucastro.networks.python_network.html#pynucastro.networks.python_network.NetworkSolution.plot_temperature">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                         <span class="n">tmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                         <span class="n">label_size</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span>
+                         <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the time evolution of temperature for self-heating burns.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tmin : float</span>
+<span class="sd">            Minimum time shown on the x-axis. If `None`, the first value of</span>
+<span class="sd">            `self.t` is used.</span>
+<span class="sd">        tmax : float</span>
+<span class="sd">            Maximum time shown on the x-axis. If `None`, the last value of</span>
+<span class="sd">            `self.t` is used.</span>
+<span class="sd">        dpi : int</span>
+<span class="sd">            dots per inch used with size to set output image size</span>
+<span class="sd">        size : (tuple, list)</span>
+<span class="sd">            (width, height) of the plot in pixels</span>
+<span class="sd">        label_size : int</span>
+<span class="sd">            Font size for axis labels.</span>
+<span class="sd">        outfile : str</span>
+<span class="sd">            output name of the plot (extension determines the type)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matplotlib.figure.Figure</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_heating</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">dpi</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">dpi</span><span class="p">))</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Temp</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">tmin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">tmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;time [s]&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_size</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;T [K]&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_size</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 
@@ -1498,10 +1612,12 @@
 <a class="viewcode-back" href="../../../pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.integrate_network">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">integrate_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">molar_composition</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                           <span class="n">screen_method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                          <span class="n">self_heating</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                           <span class="n">initial_comp</span><span class="o">=</span><span class="s2">&quot;uniform&quot;</span><span class="p">,</span>
                           <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Integrate the network to tmax given (rho, T, Y0) using</span>
-<span class="sd">        SciPy&#39;s solve_ivp() with BDF method.</span>
+<span class="sd">        SciPy&#39;s solve_ivp() with BDF method.  Optionally, we can</span>
+<span class="sd">        integrate temperature together in a self-heating mode.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1520,6 +1636,8 @@
 <span class="sd">            name of the screening function used to evaluate rates when integrating</span>
 <span class="sd">            the network. Valid choices are: `screen5`, `chugunov_2007`, `chugunov_2009`,</span>
 <span class="sd">            `potekhin_1998`, and `debye_huckel`. If `None`, no screening is applied.</span>
+<span class="sd">        self_heating : bool</span>
+<span class="sd">            do we evolve temperature (as dT/dt = ε / c_v) together with the EOS?</span>
 <span class="sd">        initial_comp : str</span>
 <span class="sd">            different modes to use to set up the initial composition if</span>
 <span class="sd">            molar_composition is None.</span>
@@ -1566,17 +1684,56 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">Y0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">molar_composition</span><span class="p">)</span>
 
-        <span class="c1"># Integrate using SciPy&#39;s solve_ivp() using BDF method -- good for stiff system.</span>
-        <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span>
-                        <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">),</span>
-                        <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">jacobian</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">self_heating</span><span class="p">:</span>
+            <span class="n">energy_release</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="s2">&quot;energy_release&quot;</span><span class="p">)</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">rhs_wrapper</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">energy_release</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">):</span>
+                <span class="n">nspec</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span> <span class="o">==</span> <span class="n">nspec</span> <span class="o">+</span> <span class="mi">1</span>
+
+                <span class="c1"># unpack the integration state</span>
+                <span class="n">Y</span> <span class="o">=</span> <span class="n">xi</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">nspec</span><span class="p">]</span>
+                <span class="n">T</span> <span class="o">=</span> <span class="n">xi</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+                <span class="n">dxidt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+
+                <span class="c1"># first get the dYdt from our network module</span>
+                <span class="n">dxidt</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">nspec</span><span class="p">]</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+
+                <span class="c1"># now get the energy generation rate using this dY/dt</span>
+                <span class="n">eps</span> <span class="o">=</span> <span class="n">energy_release</span><span class="p">(</span><span class="n">dxidt</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">nspec</span><span class="p">])</span>
+
+                <span class="c1"># use the EOS to get the specific heat</span>
+                <span class="n">eos</span> <span class="o">=</span> <span class="n">StellarEOS</span><span class="p">()</span>
+                <span class="n">comp</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+                <span class="n">comp</span><span class="o">.</span><span class="n">set_molar_array</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">eos</span><span class="o">.</span><span class="n">pe_state</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+
+                <span class="c1"># and finally compute dT/dt</span>
+                <span class="n">dxidt</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">eps</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">c_v</span>
+
+                <span class="k">return</span> <span class="n">dxidt</span>
+
+            <span class="n">xi0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Y0</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+            <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">rhs_wrapper</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">xi0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span>
+                            <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">energy_release</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">),</span>
+                            <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Integrate using SciPy&#39;s solve_ivp() using BDF method --</span>
+            <span class="c1"># good for stiff system.</span>
+            <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span>
+                            <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">),</span>
+                            <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">jacobian</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">sol</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning, integration failed, final integration time = </span><span class="si">{</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># Create NetworkSolution</span>
         <span class="n">network_sol</span> <span class="o">=</span> <span class="n">NetworkSolution</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">jacobian</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span>
-                                      <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+                                      <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">,</span>
+                                      <span class="n">self_heating</span><span class="o">=</span><span class="n">self_heating</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">network_sol</span></div>
 </div>
