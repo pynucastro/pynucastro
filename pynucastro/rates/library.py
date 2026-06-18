@@ -471,30 +471,39 @@ class Library:
 
         return duplicates
 
-    def eliminate_duplicates(self, *, rate_type_preference="tabular"):
+    def eliminate_duplicates(self, *, rate_type_preference=None):
         """Attempt to eliminate duplicate rates for the same link.
-        Presently, this works for the case where there are 2 instances of the
-        same link, and one is a ``ReacLibRate`` (or derived from that) and
-        the other is a ``TabularRate``
+        Presently, this works for the case where there are 2 or 3 instances 
+        of the same link. The duplicate rates must be instances of 
+        ``ReacLibRate`` (or derived from it), ``TabularRate``, and/or
+        ``StarLibRate``
 
         Parameters
         ----------
-        rate_type_preference : str
-            In the event of a duplicate, which type of rate do we keep?
-            Valid options are "tabular" or "reaclib"
+        rate_type_preference : list[str]
+            In what priority should different rate types be 
+            eliminated for a given group of duplicate rates.
+            Default priority is "tabular" -> "starlib" -> "reaclib" 
 
         """
 
         duplicates = self.find_duplicate_links()
 
+        if rate_type_preference is None:
+            rate_type_preference = ["tabular", "starlib", "reaclib"]
+
+        # this dict sets up the rate types given a preferred rate
+        types = {"tabular": lambda r: isinstance(r, TabularRate),
+                 "starlib": lambda r: isinstance(r, StarLibRate),
+                 "reaclib": lambda r: isinstance(r, ReacLibRate)}
+
         rates_to_remove = []
-        for pair in duplicates:
-            assert len(pair) == 2
-            for r in pair:
-                if rate_type_preference == "tabular" and isinstance(r, ReacLibRate):
-                    rates_to_remove.append(r)
-                elif rate_type_preference == "reaclib" and isinstance(r, TabularRate):
-                    rates_to_remove.append(r)
+        for group in duplicates:
+            for pref_type in rate_type_preference:
+                    match = [r for r in group if types[pref_type](r)]
+                    if match:
+                        rates_to_remove.extend([r for r in group if r not in match])
+                        break
 
         for r in rates_to_remove:
             self.remove_rate(r)
