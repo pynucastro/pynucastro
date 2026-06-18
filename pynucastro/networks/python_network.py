@@ -154,8 +154,8 @@ class NetworkSolution:
         As = np.array([n.A for n in self.unique_nuclei])
 
         if isinstance(t, (float, int)):
-            return self._sol.sol(t) * As
-        return self._sol.sol(t) * As[:, None]
+            return self._sol.sol(t)[0:len(self.unique_nuclei)] * As
+        return self._sol.sol(t)[0:len(self.unique_nuclei), ...] * As[:, None]
 
     def Y_at(self, t):
         """Evaluate the molar abundances for a given time.
@@ -170,6 +170,8 @@ class NetworkSolution:
         numpy.ndarray
 
         """
+        if isinstance(t, (float, int)):
+            return self._sol.sol(t)[0:len(self.unique_nuclei)]
 
         return self._sol.sol(t)[0:len(self.unique_nuclei), ...]
 
@@ -186,6 +188,8 @@ class NetworkSolution:
         numpy.ndarray
 
         """
+
+        assert self.self_heating
 
         return self._sol.sol(t)[-1, ...]
 
