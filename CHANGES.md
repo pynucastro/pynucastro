@@ -17,7 +17,8 @@
 
   * `PythonNetwork` / `RateCollection` :
 
-    * fix broadcast in `NetworkSolution` (#1392)
+    * integration now supports self-heating (#1378)
+    * fix broadcast in `NetworkSolution` (#1392, #1399)
     * allow resampling of StarLib rates within the network (#1393)
     * allow `integrate_network` to take a `Composition` object (#1398)
 
@@ -26,6 +27,10 @@
     * we now use PCHIP interpolation + linear extrapolation for
       StarLib rates (#1391)
     * Remove placeholder rate data for StarLib (#1384)
+
+  * documentation:
+
+    * fill spelling (#1400)
 
   * testing:
 
