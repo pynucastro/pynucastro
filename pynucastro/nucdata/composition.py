@@ -211,9 +211,27 @@ class Composition(collections.UserDict):
         ----------
         arr : list, tuple, numpy.ndarray
             input values of mass fractions
+
         """
+
         for i, k in enumerate(self):
             self[k] = arr[i]
+
+    def set_molar_array(self, arr):
+        """Set the molar fractions of all species to the values
+        in arr, `get_nuclei()`
+
+        Parameters
+        ----------
+        arr : list, tuple, numpy.ndarray
+            input values of mass fractions
+
+        """
+
+        As = np.array([n.A for n in self])
+
+        for i, k in enumerate(self):
+            self[k] = float(arr[i] * As[i])
 
     def set_all(self, xval: float):
         """Set all species to the same scalar value.
