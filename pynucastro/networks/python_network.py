@@ -16,7 +16,7 @@ from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.nucdata import Composition
 from pynucastro.rates import ApproximateRate, ModifiedRate
 from pynucastro.screening import get_screening_func, get_screening_pair_set
-
+from pynucastro.neutrino_cooling import sneut5
 
 class NetworkSolution:
     """A class to hold the solution from integrating PythonNetwork.
@@ -42,6 +42,8 @@ class NetworkSolution:
         this is not a self-heating burn
     self_heating : bool
         is temperature integrated together with composition?
+    thermal_neutrinos: bool
+        whether to include thermal neutrino cooling in the energy balance?
     screen_func: Callable
         screening function used to evaluate rates when integrating
         the network
@@ -49,7 +51,8 @@ class NetworkSolution:
     """
 
     def __init__(self, sol, rhs, jac, network, rho, T=None,
-                 self_heating=False, screen_func=None):
+                 self_heating=False, thermal_neutrinos=False,
+                 screen_func=None):
 
         self._sol = sol
         self._rhs = rhs
@@ -58,6 +61,7 @@ class NetworkSolution:
         self.rho = rho
         self.T = T
         self.self_heating = self_heating
+        self.thermal_neutrinos = thermal_neutrinos
         self.screen_func = screen_func
 
     @property
@@ -1057,6 +1061,7 @@ class PythonNetwork(RateCollection):
     def integrate_network(self, tmax, rho, T, molar_composition=None,
                           screen_method=None,
                           self_heating=False,
+                          thermal_neutrinos=False,
                           initial_comp="uniform",
                           rtol=1e-8, atol=1e-8):
         """Integrate the network to tmax given (rho, T, Y0) using
@@ -1082,6 +1087,8 @@ class PythonNetwork(RateCollection):
             `potekhin_1998`, and `debye_huckel`. If `None`, no screening is applied.
         self_heating : bool
             do we evolve temperature (as dT/dt = ε / c_v) together with the EOS?
+        thermal_neutrinos: bool
+            whether to include thermal neutrino cooling in the energy balance?
         initial_comp : str
             different modes to use to set up the initial composition if
             molar_composition is None.
@@ -1153,8 +1160,13 @@ class PythonNetwork(RateCollection):
                 comp.set_molar_array(Y)
                 state = eos.pe_state(rho, T, comp)
 
+                # include neutrino loss in the temperature evolution equation if wanted
+                eps_nu = 0.0
+                if thermal_neutrinos:
+                    eps_nu = sneut5(rho, T, comp)
+
                 # and finally compute dT/dt
-                dxidt[-1] = eps / state.c_v
+                dxidt[-1] = (eps - eps_nu) / state.c_v
 
                 return dxidt
 
@@ -1177,6 +1189,7 @@ class PythonNetwork(RateCollection):
         # Create NetworkSolution
         network_sol = NetworkSolution(sol, rhs, jacobian, self,
                                       rho, T, screen_func=screen_func,
-                                      self_heating=self_heating)
+                                      self_heating=self_heating,
+                                      thermal_neutrinos=thermal_neutrinos)
 
         return network_sol
