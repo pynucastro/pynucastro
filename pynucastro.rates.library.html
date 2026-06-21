@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.library module &#8212; pynucastro 2.11.0.post15+gff3da037b documentation</title>
+    <title>pynucastro.rates.library module &#8212; pynucastro 2.11.0.post16+gaad489323 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=6bd8dd2e"></script>
+    <script src="_static/documentation_options.js?v=09a33ad9"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -733,13 +733,19 @@ function and recomputing Q.</p>
 <dt class="sig sig-object py" id="pynucastro.rates.library.Library.eliminate_duplicates">
 <span class="sig-name descname"><span class="pre">eliminate_duplicates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_type_preference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tabular'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/library.html#Library.eliminate_duplicates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.library.Library.eliminate_duplicates" title="Link to this definition">#</a></dt>
 <dd><p>Attempt to eliminate duplicate rates for the same link.
-Presently, this works for the case where there are 2 instances of the
-same link, and one is a <code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code> (or derived from that) and
-the other is a <code class="docutils literal notranslate"><span class="pre">TabularRate</span></code></p>
+Presently, this works for the case where there are 2 or 3 instances
+of the same link. The duplicate rates must be instances of
+<code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code> (or derived from it), <code class="docutils literal notranslate"><span class="pre">TabularRate</span></code>, and/or
+<code class="docutils literal notranslate"><span class="pre">StarLibRate</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>rate_type_preference</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – In the event of a duplicate, which type of rate do we keep?
-Valid options are “tabular” or “reaclib”</p>
+<dd class="field-odd"><p><strong>rate_type_preference</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>] or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – In what priority should different rate types be
+eliminated for a given group of duplicate rates.
+Default priority is “tabular” -&gt; “starlib” -&gt; “reaclib”.
+Passing “tabular” sets default priority
+Passing “reaclib” sets “reaclib” -&gt; “tabular” -&gt; “starlib”
+Passing “starlib” sets “starlib” -&gt; “tabular” -&gt; “reaclib”
+One may also pass a list[str] with custom priority</p>
 </dd>
 </dl>
 </dd></dl>
