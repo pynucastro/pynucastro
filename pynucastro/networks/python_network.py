@@ -540,6 +540,90 @@ class NetworkSolution:
             fig.savefig(outfile, dpi=dpi)
 
         return fig
+    
+    def plot_energy_generation(self,
+                            tmin=None, tmax=None,
+                            ymin=None, ymax=None,
+                            include_neutrino_loss=None,
+                            size=(800, 600), dpi=100,
+                            label_size=14, legend_size=10,
+                            outfile=None):
+        """Plot the nuclear energy generation rate, and optionally the thermal 
+        neutrino cooling rate.
+        
+        Parameters
+        ----------
+        tmin: float
+            Minimum time shown on the x-axis. If `None`, the first value of
+                `self.t` is used.
+        tmax : float
+            Maximum time shown on the x-axis. If `None`, the last value of 
+            `self.t` is used.
+        ymin : float
+            Minimum rate shown on the y-axis.
+        ymax : float
+            Maximum rate shown on the y-axis.
+        include_neutrino_loss : bool
+            Whether to also plot the thermal neutrino cooling rate. If `None`,
+            use `self.thermal_neutrinos`.
+        dpi : int
+            dots per inch used with size to set output image size.
+        size : (tuple, list)
+            (width, height) of the plot in pixels.
+        label_size : int
+            Font size for axis labels.
+        legend_size : int
+            Font size for the legend.
+        outfile : str
+            output name of the plot (extension determines the type).
+
+        Returns
+            -------
+            matplotlib.figure.Figure
+
+        """
+
+        if include_neutrino_loss is None:
+            include_neutrino_loss = self.thermal_neutrinos
+
+        eps_nuc = np.array([self.energy_release_at(t) for t in self.t])
+
+        fig, ax = plt.subplots(figsize=(size[0]/dpi, size[1]/dpi))
+
+        ax.loglog(self.t, eps_nuc, label=r"$\epsilon_\mathrm{nuc}$")
+
+        if include_neutrino_loss:
+            eps_nu = []
+            for t in self.t:
+                comp = Composition(self.unique_nuclei)
+                comp.set_molar_array(self.Y_at(t))
+
+                if self.self_heating:
+                    T = self.T_at(t)
+                else:
+                    T = self.T
+
+                eps_nu.append(sneut5(self.rho, T, comp))
+
+            ax.loglog(self.t, eps_nu, label=r"$\epsilon_\nu$")
+            
+        if tmin is None:
+            tmin = self.t[0]
+        if tmax is None:
+            tmax = self.t[-1]
+        
+        ax.set_xlim(tmin, tmax)
+        ax.set_ylim(ymin, ymax)
+        
+        ax.set_xlabel("time [s]", fontsize=label_size)
+        ax.set_ylabel("Rates [erg/g/s]", fontsize=label_size)
+        ax.legend(loc="best", fontsize=legend_size)
+        ax.grid(ls=":")
+        fig.tight_layout()
+
+        if outfile is not None:
+            fig.savefig(outfile, dpi=dpi)
+        return fig  
 
 
 class PythonNetwork(RateCollection):
