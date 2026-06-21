@@ -22,6 +22,10 @@
     * allow resampling of StarLib rates within the network (#1393)
     * allow `integrate_network` to take a `Composition` object (#1398)
 
+  * `Library` :
+
+     * update `eliminate_duplicates` to support `StarLibRate` (#1401)
+
   * general rate changes:
 
     * we now use PCHIP interpolation + linear extrapolation for
@@ -36,6 +40,10 @@
 
     * make pytest fixtures as `@classmethod` for pytest 9.1.0
       compatibility (#1397)
+
+  * helper functionality:
+
+    * update `yt_utils` to recognize neutrons (#1403)
 
 ## 2.11.0
 
