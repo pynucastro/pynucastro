@@ -540,7 +540,7 @@ class NetworkSolution:
             fig.savefig(outfile, dpi=dpi)
 
         return fig
-    
+
     def plot_energy_generation(self,
                             tmin=None, tmax=None,
                             ymin=None, ymax=None,
@@ -606,7 +606,7 @@ class NetworkSolution:
                 eps_nu.append(sneut5(self.rho, T, comp))
 
             ax.loglog(self.t, eps_nu, label=r"$\epsilon_\nu$")
-    
+
         if tmin is None:
             tmin = self.t[0]
         if tmax is None:
