@@ -548,16 +548,16 @@ class NetworkSolution:
                             size=(800, 600), dpi=100,
                             label_size=14, legend_size=10,
                             outfile=None):
-        """Plot the nuclear energy generation rate, and optionally the thermal 
+        """Plot the nuclear energy generation rate, and optionally the thermal
         neutrino cooling rate.
-        
+
         Parameters
         ----------
         tmin: float
             Minimum time shown on the x-axis. If `None`, the first value of
                 `self.t` is used.
         tmax : float
-            Maximum time shown on the x-axis. If `None`, the last value of 
+            Maximum time shown on the x-axis. If `None`, the last value of
             `self.t` is used.
         ymin : float
             Minimum rate shown on the y-axis.
@@ -578,8 +578,8 @@ class NetworkSolution:
             output name of the plot (extension determines the type).
 
         Returns
-            -------
-            matplotlib.figure.Figure
+        -------
+        matplotlib.figure.Figure
 
         """
 
@@ -606,16 +606,16 @@ class NetworkSolution:
                 eps_nu.append(sneut5(self.rho, T, comp))
 
             ax.loglog(self.t, eps_nu, label=r"$\epsilon_\nu$")
-            
+    
         if tmin is None:
             tmin = self.t[0]
         if tmax is None:
             tmax = self.t[-1]
-        
+
         ax.set_xlim(tmin, tmax)
         ax.set_ylim(ymin, ymax)
-        
-        ax.set_xlabel("time [s]", fontsize=label_size)
+
+        ax.set_xlabel("Time [s]", fontsize=label_size)
         ax.set_ylabel("Rates [erg/g/s]", fontsize=label_size)
         ax.legend(loc="best", fontsize=legend_size)
         ax.grid(ls=":")
@@ -623,7 +623,7 @@ class NetworkSolution:
 
         if outfile is not None:
             fig.savefig(outfile, dpi=dpi)
-        return fig  
+        return fig
 
 
 class PythonNetwork(RateCollection):
