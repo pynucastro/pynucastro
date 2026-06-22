@@ -94,7 +94,10 @@ class Composition(collections.UserDict):
         elif init == "random":
             self.set_random()
         elif init == "solar":
-            self.set_solar_like(Z=0.02)
+            solar = LoddersComposition(Z=0.02)
+            _tmp_comp = solar.bin_as(nuclei)
+            _tmp_comp.normalize()
+            self.set_array(_tmp_comp.get_array())
         elif init is None:
             pass
         else:
