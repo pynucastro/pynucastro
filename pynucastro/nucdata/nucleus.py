@@ -161,16 +161,16 @@ class Nucleus:
                 self.el = "al"
                 self.A = 26
                 self.isomer_state = "excited"
-                self.short_spec_name = "al26isomer"
-                self.raw = "al26isomer"
+                self.short_spec_name = "al*6"
+                self.raw = "al*6"
                 self.caps_name = "Al26isomer"
             elif e := _ALUMINUM_26_ISOMER_GND.match(name):  # for al-6
                 self.el = "al"
                 self.A = 26
-                self.isomer_state = "excited"
+                self.isomer_state = "ground"
                 self.short_spec_name = "al26isomer"
-                self.raw = "al26isomer"
-                self.caps_name = "Al26isomer"
+                self.raw = "al-6"
+                self.caps_name = "al-6"
             if e is None:
                 raise ValueError(f"invalid nucleus string, {name}")
 
