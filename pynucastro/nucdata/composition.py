@@ -107,6 +107,7 @@ class Composition(collections.UserDict):
         elif init == "lightest":
             lightest = min(nuc for nuc in self)
             self.X[lightest] = 1.0
+            self.normalize()
         elif init is None:
             pass
         else:
