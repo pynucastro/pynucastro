@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 2.11.0.post17+g2398c9d62 documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 2.11.0.post18+g24468d56e documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=6418c65b"></script>
+    <script src="../../../_static/documentation_options.js?v=bdb7e46b"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -225,6 +225,7 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../neutrino-cooling.html">Neutrino Cooling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../neutrino-cooling-effects.html">Effects of Thermal Neutrino Cooling in Network Integrations</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exporting Networks</span></p>
 <ul class="nav bd-sidenav">
@@ -511,6 +512,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.eos</span><span class="w"> </span><span class="kn">import</span> <span class="n">StellarEOS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.rate_collection</span><span class="w"> </span><span class="kn">import</span> <span class="n">RateCollection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.neutrino_cooling</span><span class="w"> </span><span class="kn">import</span> <span class="n">sneut5</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Composition</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApproximateRate</span><span class="p">,</span> <span class="n">ModifiedRate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_screening_func</span><span class="p">,</span> <span class="n">get_screening_pair_set</span>
@@ -542,6 +544,8 @@
 <span class="sd">        this is not a self-heating burn</span>
 <span class="sd">    self_heating : bool</span>
 <span class="sd">        is temperature integrated together with composition?</span>
+<span class="sd">    thermal_neutrinos: bool</span>
+<span class="sd">        whether to include thermal neutrino cooling in the energy balance?</span>
 <span class="sd">    screen_func: Callable</span>
 <span class="sd">        screening function used to evaluate rates when integrating</span>
 <span class="sd">        the network</span>
@@ -549,7 +553,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">jac</span><span class="p">,</span> <span class="n">network</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">self_heating</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">self_heating</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">thermal_neutrinos</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span> <span class="o">=</span> <span class="n">sol</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rhs</span> <span class="o">=</span> <span class="n">rhs</span>
@@ -558,6 +563,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="n">rho</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">T</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">self_heating</span> <span class="o">=</span> <span class="n">self_heating</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thermal_neutrinos</span> <span class="o">=</span> <span class="n">thermal_neutrinos</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span> <span class="o">=</span> <span class="n">screen_func</span>
 
     <span class="nd">@property</span>
@@ -1072,6 +1078,93 @@
         <span class="k">if</span> <span class="n">outfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">)</span>
 
+        <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="NetworkSolution.plot_energy_generation">
+<a class="viewcode-back" href="../../../pynucastro.networks.python_network.html#pynucastro.networks.python_network.NetworkSolution.plot_energy_generation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_energy_generation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                            <span class="n">tmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">ymin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">include_neutrino_loss</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                            <span class="n">label_size</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">legend_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                            <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the nuclear energy generation rate, and optionally the thermal</span>
+<span class="sd">        neutrino cooling rate.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tmin: float</span>
+<span class="sd">            Minimum time shown on the x-axis. If `None`, the first value of</span>
+<span class="sd">                `self.t` is used.</span>
+<span class="sd">        tmax : float</span>
+<span class="sd">            Maximum time shown on the x-axis. If `None`, the last value of</span>
+<span class="sd">            `self.t` is used.</span>
+<span class="sd">        ymin : float</span>
+<span class="sd">            Minimum rate shown on the y-axis.</span>
+<span class="sd">        ymax : float</span>
+<span class="sd">            Maximum rate shown on the y-axis.</span>
+<span class="sd">        include_neutrino_loss : bool</span>
+<span class="sd">            Whether to also plot the thermal neutrino cooling rate. If `None`,</span>
+<span class="sd">            use `self.thermal_neutrinos`.</span>
+<span class="sd">        dpi : int</span>
+<span class="sd">            dots per inch used with size to set output image size.</span>
+<span class="sd">        size : (tuple, list)</span>
+<span class="sd">            (width, height) of the plot in pixels.</span>
+<span class="sd">        label_size : int</span>
+<span class="sd">            Font size for axis labels.</span>
+<span class="sd">        legend_size : int</span>
+<span class="sd">            Font size for the legend.</span>
+<span class="sd">        outfile : str</span>
+<span class="sd">            output name of the plot (extension determines the type).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matplotlib.figure.Figure</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">include_neutrino_loss</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">include_neutrino_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">thermal_neutrinos</span>
+
+        <span class="n">eps_nuc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">energy_release_at</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">])</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">dpi</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">dpi</span><span class="p">))</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">eps_nuc</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\epsilon_\mathrm</span><span class="si">{nuc}</span><span class="s2">$&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">include_neutrino_loss</span><span class="p">:</span>
+            <span class="n">eps_nu</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">:</span>
+                <span class="n">comp</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+                <span class="n">comp</span><span class="o">.</span><span class="n">set_molar_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Y_at</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_heating</span><span class="p">:</span>
+                    <span class="n">T</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_at</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">T</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
+
+                <span class="n">eps_nu</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sneut5</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">))</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">eps_nu</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\epsilon_\nu$&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">tmin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">tmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time [s]&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_size</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Rates [erg/g/s]&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_size</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">legend_size</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">outfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">fig</span></div>
 </div>
 
@@ -1613,6 +1706,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">integrate_network</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">molar_composition</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                           <span class="n">screen_method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                           <span class="n">self_heating</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                          <span class="n">thermal_neutrinos</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                           <span class="n">initial_comp</span><span class="o">=</span><span class="s2">&quot;uniform&quot;</span><span class="p">,</span>
                           <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Integrate the network to tmax given (rho, T, Y0) using</span>
@@ -1638,6 +1732,8 @@
 <span class="sd">            `potekhin_1998`, and `debye_huckel`. If `None`, no screening is applied.</span>
 <span class="sd">        self_heating : bool</span>
 <span class="sd">            do we evolve temperature (as dT/dt = ε / c_v) together with the EOS?</span>
+<span class="sd">        thermal_neutrinos: bool</span>
+<span class="sd">            whether to include thermal neutrino cooling in the energy balance?</span>
 <span class="sd">        initial_comp : str</span>
 <span class="sd">            different modes to use to set up the initial composition if</span>
 <span class="sd">            molar_composition is None.</span>
@@ -1709,8 +1805,13 @@
                 <span class="n">comp</span><span class="o">.</span><span class="n">set_molar_array</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
                 <span class="n">state</span> <span class="o">=</span> <span class="n">eos</span><span class="o">.</span><span class="n">pe_state</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
 
+                <span class="c1"># include neutrino loss in the temperature evolution equation if wanted</span>
+                <span class="n">eps_nu</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="k">if</span> <span class="n">thermal_neutrinos</span><span class="p">:</span>
+                    <span class="n">eps_nu</span> <span class="o">=</span> <span class="n">sneut5</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+
                 <span class="c1"># and finally compute dT/dt</span>
-                <span class="n">dxidt</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">eps</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">c_v</span>
+                <span class="n">dxidt</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">eps</span> <span class="o">-</span> <span class="n">eps_nu</span><span class="p">)</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">c_v</span>
 
                 <span class="k">return</span> <span class="n">dxidt</span>
 
@@ -1733,7 +1834,8 @@
         <span class="c1"># Create NetworkSolution</span>
         <span class="n">network_sol</span> <span class="o">=</span> <span class="n">NetworkSolution</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">jacobian</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span>
                                       <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">,</span>
-                                      <span class="n">self_heating</span><span class="o">=</span><span class="n">self_heating</span><span class="p">)</span>
+                                      <span class="n">self_heating</span><span class="o">=</span><span class="n">self_heating</span><span class="p">,</span>
+                                      <span class="n">thermal_neutrinos</span><span class="o">=</span><span class="n">thermal_neutrinos</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">network_sol</span></div>
 </div>

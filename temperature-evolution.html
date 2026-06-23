@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Integrating Networks with Temperature Evolution &#8212; pynucastro 2.11.0.post17+g2398c9d62 documentation</title>
+    <title>Integrating Networks with Temperature Evolution &#8212; pynucastro 2.11.0.post18+g24468d56e documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=6418c65b"></script>
+    <script src="_static/documentation_options.js?v=bdb7e46b"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -228,6 +228,7 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="neutrino-cooling.html">Neutrino Cooling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutrino-cooling-effects.html">Effects of Thermal Neutrino Cooling in Network Integrations</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exporting Networks</span></p>
 <ul class="nav bd-sidenav">
@@ -677,7 +678,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.6/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:467: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.6/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:472: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
   ax.set_xlim(tmin, tmax)
 </pre></div>
 </div>
@@ -716,33 +717,33 @@ is not Numba-compiled.  As a result, integrating with temperature evolution can 
 </div>
 </div>
 <p>Now we can visualize.  First the composition.</p>
-<div class="cell tag_nbval-ignore-output docutils container">
+<div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">sol2</span><span class="o">.</span><span class="n">plot_evolution</span><span class="p">(</span><span class="n">ymin</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.6/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:467: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.6/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:472: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
   ax.set_xlim(tmin, tmax)
 </pre></div>
 </div>
-<img alt="_images/85fef060a43e3faa1f4637822f92fa0d5c078ade448047e2c108fd3b9e7947fa.png" src="_images/85fef060a43e3faa1f4637822f92fa0d5c078ade448047e2c108fd3b9e7947fa.png" />
+<img alt="_images/2e8869594727a75005bd85a4fe14b34c2f38f67d666f7924ca8b17a4043f5f85.png" src="_images/2e8869594727a75005bd85a4fe14b34c2f38f67d666f7924ca8b17a4043f5f85.png" />
 </div>
 </div>
 <p>This looks dramatically different than the fixed-temperature case.  This is not too surprising, since at these temperatures, the 3-<span class="math notranslate nohighlight">\(\alpha\)</span> rate is very temperature sensitive, so as the temperature increases due to the energy release from burning, the He burning rate increases dramatically.</p>
-<div class="cell tag_nbval-ignore-output docutils container">
+<div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">sol2</span><span class="o">.</span><span class="n">plot_temperature</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.6/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:527: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.6/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:532: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
   ax.set_xlim(tmin, tmax)
 </pre></div>
 </div>
-<img alt="_images/043747854123490d48fe0084f070d4d7ff972388b56444c1f72efd3a65874cde.png" src="_images/043747854123490d48fe0084f070d4d7ff972388b56444c1f72efd3a65874cde.png" />
+<img alt="_images/0945e68941eab2a7809e19c72c81678dbf84ae20288ebb287bc7a67222937963.png" src="_images/0945e68941eab2a7809e19c72c81678dbf84ae20288ebb287bc7a67222937963.png" />
 </div>
 </div>
 <p>We see that the temperature increased from <span class="math notranslate nohighlight">\(2\times 10^8\)</span> K to over <span class="math notranslate nohighlight">\(1.6\times 10^9\)</span> K.</p>
@@ -754,8 +755,9 @@ drive an expansive flow and quench some of this heating.  To really capture this
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>It is straightforward to include thermal neutrino loses in the temperature evolution equation as well,
-using the <a class="reference internal" href="pynucastro.neutrino_cooling.sneut5_mod.html#pynucastro.neutrino_cooling.sneut5_mod.sneut5" title="pynucastro.neutrino_cooling.sneut5_mod.sneut5"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sneut5</span></code></a> method.</p>
+<p>Thermal neutrino losses can also be included in the temperature evolution equation.
+For an example comparing integrations with and without thermal neutrino cooling, see
+<a class="reference internal" href="neutrino-cooling-effects.html"><span class="doc">Effects of Thermal Neutrino Cooling in Network Integrations</span></a>.</p>
 </div>
 </section>
 </section>
