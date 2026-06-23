@@ -1,5 +1,60 @@
 # Changelog
 
+## 2.11.1
+
+  * `AmrexAstroCxxNetwork` :
+
+    * Scope screening into its own block (#1390)
+    * Generalize `get_ydot_weak` to all weak rates (#1388)
+    * ROCm/HIP does not like managed inline data (#1387)
+    * Fix undefined behavior in interpolating right on the upper
+      boundary of data (#1382)
+
+  * `SimpleCxxNetwork` / `FortranNetwork` / `BaseCxxNetwork` :
+
+    * Add helper functions to `fill_rates` and
+      `compute_screening_factors` (#1386)
+
+  * `PythonNetwork` / `RateCollection` :
+
+    * integration now supports self-heating (#1378) including with
+      thermal neutrino loses (#1402)
+    * fix broadcast in `NetworkSolution` (#1392, #1399)
+    * allow resampling of StarLib rates within the network (#1393)
+    * allow `integrate_network` to take a `Composition` object (#1398)
+
+  * `Library` :
+
+     * update `eliminate_duplicates` to support `StarLibRate` (#1401)
+
+  * general rate changes:
+
+    * we now use PCHIP interpolation + linear extrapolation for
+      StarLib rates (#1391)
+    * Remove placeholder rate data for StarLib (#1384)
+
+  * nuclei / screening / partition functions:
+
+    * `Composition` with `init="solar"` now uses the Lodders solar
+       composition.  Also added `init="lightest"` (#1409)
+
+  * git / project infrastructure:
+
+    * update to checkout 7 (#1404)
+
+  * documentation:
+
+    * fix spelling (#1400)
+
+  * testing:
+
+    * make pytest fixtures as `@classmethod` for pytest 9.1.0
+      compatibility (#1397)
+
+  * helper functionality:
+
+    * update `yt_utils` to recognize neutrons (#1403)
+
 ## 2.11.0
 
   * `PythonNetwork` / `RateCollection` :
