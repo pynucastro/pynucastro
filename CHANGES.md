@@ -17,7 +17,8 @@
 
   * `PythonNetwork` / `RateCollection` :
 
-    * integration now supports self-heating (#1378)
+    * integration now supports self-heating (#1378) including with
+      thermal neutrino loses (#1402)
     * fix broadcast in `NetworkSolution` (#1392, #1399)
     * allow resampling of StarLib rates within the network (#1393)
     * allow `integrate_network` to take a `Composition` object (#1398)
@@ -32,9 +33,18 @@
       StarLib rates (#1391)
     * Remove placeholder rate data for StarLib (#1384)
 
+  * nuclei / screening / partition functions:
+
+    * `Composition` with `init="solar"` now uses the Lodders solar
+       composition.  Also added `init="lightest"` (#1409)
+
+  * git / project infrastructure:
+
+    * update to checkout 7 (#1404)
+
   * documentation:
 
-    * fill spelling (#1400)
+    * fix spelling (#1400)
 
   * testing:
 
