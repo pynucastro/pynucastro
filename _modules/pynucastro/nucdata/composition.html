@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.nucdata.composition &#8212; pynucastro 2.11.0.post18+g24468d56e documentation</title>
+    <title>pynucastro.nucdata.composition &#8212; pynucastro 2.11.0.post19+g929fd2a2b documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=bdb7e46b"></script>
+    <script src="../../../_static/documentation_options.js?v=7b61f88f"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -579,8 +579,14 @@
 <span class="sd">        a floor for nuclei mass fractions, used as the default value.</span>
 <span class="sd">    init : str</span>
 <span class="sd">        Different modes to set up the initial composition. Valid choices</span>
-<span class="sd">        are [`uniform`, `random`, `solar`]. If &quot;solar&quot; is selected, assume</span>
-<span class="sd">        we work with metallicity, Z=0.02. If init=None, then no initial composition</span>
+<span class="sd">        are:</span>
+
+<span class="sd">        * &quot;lightest&quot; : the least massive nucleus is given X = 1</span>
+<span class="sd">        * &quot;random&quot; : mass fractions are assigned randomly</span>
+<span class="sd">        * &quot;solar&quot; : uses the Lodders composition with Z=0.02</span>
+<span class="sd">        * &quot;uniform&quot; : all mass fractions are given the same value</span>
+
+<span class="sd">        If init=None, then no initial composition</span>
 <span class="sd">        will be set.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -595,7 +601,14 @@
         <span class="k">elif</span> <span class="n">init</span> <span class="o">==</span> <span class="s2">&quot;random&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_random</span><span class="p">()</span>
         <span class="k">elif</span> <span class="n">init</span> <span class="o">==</span> <span class="s2">&quot;solar&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">set_solar_like</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+            <span class="n">solar</span> <span class="o">=</span> <span class="n">LoddersComposition</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+            <span class="n">_tmp_comp</span> <span class="o">=</span> <span class="n">solar</span><span class="o">.</span><span class="n">bin_as</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
+            <span class="n">_tmp_comp</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="n">_tmp_comp</span><span class="o">.</span><span class="n">get_array</span><span class="p">())</span>
+        <span class="k">elif</span> <span class="n">init</span> <span class="o">==</span> <span class="s2">&quot;lightest&quot;</span><span class="p">:</span>
+            <span class="n">lightest</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">nuc</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">lightest</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
         <span class="k">elif</span> <span class="n">init</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
