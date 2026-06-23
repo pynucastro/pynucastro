@@ -114,6 +114,7 @@ and interactively exploring nuclear reaction networks.
    :hidden:
 
    neutrino-cooling.ipynb
+   neutrino-cooling-effects.ipynb
 
 .. toctree::
    :maxdepth: 1
