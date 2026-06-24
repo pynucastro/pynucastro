@@ -201,7 +201,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         nse_rate_pairs = self._get_nse_rate_pairs()
         NumNSERatePairs = len(nse_rate_pairs)
 
-        # the data type must accomodate the largest rate index, not
+        # the data type must accommodate the largest rate index, not
         # just the number of rate pairs.  It also is signed because
         # we use -1 to indicate no nucleus for < 3-body reactions.
         dtype = _signed_rate_dtype(len(self.all_rates))
