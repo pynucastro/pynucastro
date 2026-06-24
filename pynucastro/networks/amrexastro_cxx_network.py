@@ -200,7 +200,11 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         # Write RatePair data table
         nse_rate_pairs = self._get_nse_rate_pairs()
         NumNSERatePairs = len(nse_rate_pairs)
-        dtype = _signed_rate_dtype(NumNSERatePairs)
+
+        # the data type must accomodate the largest rate index, not
+        # just the number of rate pairs.  It also is signed because
+        # we use -1 to indicate no nucleus for < 3-body reactions.
+        dtype = _signed_rate_dtype(len(self.all_rates))
 
         # Write Fill in the rate indices
         of.write(f"{self.indent*n_indent}constexpr int NumNSERatePairs = {NumNSERatePairs};\n\n")
