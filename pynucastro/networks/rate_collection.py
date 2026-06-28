@@ -2444,8 +2444,6 @@ class RateCollection:
             if ZA.min() == ZA.max():
                 ax.set_ylim(ZA.min() - 0.5, ZA.min() + 0.5)
 
-
-
         # add a legend showing the direction that each type of capture
         # moves you in the plane
 
