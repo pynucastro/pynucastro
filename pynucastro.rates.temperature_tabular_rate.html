@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.temperature_tabular_rate module &#8212; pynucastro 2.12.0.post1+g500bf4ce4 documentation</title>
+    <title>pynucastro.rates.temperature_tabular_rate module &#8212; pynucastro 2.12.0.post2+g929c4159e documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=bc3d3896"></script>
+    <script src="_static/documentation_options.js?v=10d37c8d"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -614,15 +614,15 @@ log(rate) and log(T9).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>log_temp_points</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – an array giving the temperature at the points where we
+<li><p><strong>log_temp_points</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – an array giving the temperature at the points where we
 tabulate the rate — this is log(T9)</p></li>
-<li><p><strong>log_rate_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – an array giving the tabulated log(rate) data</p></li>
+<li><p><strong>log_rate_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – an array giving the tabulated log(rate) data</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.temperature_tabular_rate.TempTableInterpolator.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.TempTableInterpolator#7f2ce2da8640&lt;log_temp_points:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),log_rate_data:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A)&gt;</span></span><a class="headerlink" href="#pynucastro.rates.temperature_tabular_rate.TempTableInterpolator.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.TempTableInterpolator#7f05b49e8770&lt;log_temp_points:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),log_rate_data:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A)&gt;</span></span><a class="headerlink" href="#pynucastro.rates.temperature_tabular_rate.TempTableInterpolator.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -635,8 +635,8 @@ tabulate the rate — this is log(T9)</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>log_t9_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – The temperature (in log(T / 1.e9 K)) where we tabulate the rate</p></li>
-<li><p><strong>log_rate_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – The tabulated log(rate) data, N_A &lt;σv&gt;</p></li>
+<li><p><strong>log_t9_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – The temperature (in log(T / 1.e9 K)) where we tabulate the rate</p></li>
+<li><p><strong>log_rate_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – The tabulated log(rate) data, N_A &lt;σv&gt;</p></li>
 </ul>
 </dd>
 </dl>

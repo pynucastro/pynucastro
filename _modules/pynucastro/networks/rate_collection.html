@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.12.0.post1+g500bf4ce4 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.12.0.post2+g929c4159e documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=bc3d3896"></script>
+    <script src="../../../_static/documentation_options.js?v=10d37c8d"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -3058,6 +3058,10 @@
             <span class="k">if</span> <span class="n">Z_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">N_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">N_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">N_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
                 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">Z_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Z_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="s2">&quot;datalim&quot;</span><span class="p">)</span>
+
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">Z_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">Z_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Z_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -3068,9 +3072,6 @@
             <span class="n">ZA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">])</span>
             <span class="k">if</span> <span class="n">ZA</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">==</span> <span class="n">ZA</span><span class="o">.</span><span class="n">max</span><span class="p">():</span>
                 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ZA</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">ZA</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">rotated</span><span class="p">:</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="s2">&quot;datalim&quot;</span><span class="p">)</span>
 
         <span class="c1"># add a legend showing the direction that each type of capture</span>
         <span class="c1"># moves you in the plane</span>

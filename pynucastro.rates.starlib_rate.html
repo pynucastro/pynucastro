@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.starlib_rate module &#8212; pynucastro 2.12.0.post1+g500bf4ce4 documentation</title>
+    <title>pynucastro.rates.starlib_rate module &#8212; pynucastro 2.12.0.post2+g929c4159e documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=bc3d3896"></script>
+    <script src="_static/documentation_options.js?v=10d37c8d"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -608,10 +608,10 @@ Upon creation of an instance, rates at all tabulated log(T9) values are sampled.
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>log_t9_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – The temperature (in log(T / 1.e9 K)) where we tabulate the rate</p></li>
-<li><p><strong>log_rate_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – The tabulated log(rate) data, N_A &lt;σv&gt;</p></li>
-<li><p><strong>sigma_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><em>numpy.ndarray</em></a>) – The tabulated log(uncertainty) data</p></li>
-<li><p><strong>rng</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.4)"><em>numpy.random.Generator</em></a>) – An rng for rate sampling</p></li>
+<li><p><strong>log_t9_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – The temperature (in log(T / 1.e9 K)) where we tabulate the rate</p></li>
+<li><p><strong>log_rate_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – The tabulated log(rate) data, N_A &lt;σv&gt;</p></li>
+<li><p><strong>sigma_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – The tabulated log(uncertainty) data</p></li>
+<li><p><strong>rng</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.5)"><em>numpy.random.Generator</em></a>) – An rng for rate sampling</p></li>
 </ul>
 </dd>
 </dl>
@@ -621,7 +621,7 @@ Upon creation of an instance, rates at all tabulated log(T9) values are sampled.
 <dd><p>A backup of the median rate, stored so we can resample</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)">numpy.ndarray</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">numpy.ndarray</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -659,7 +659,7 @@ function interface.</p></li>
 sampled rates to overwrite interpolator</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>rng</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.4)"><em>numpy.random.Generator</em></a>) – An rng that draws the gaussian deviate required for rate sampling</p>
+<dd class="field-odd"><p><strong>rng</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.5)"><em>numpy.random.Generator</em></a>) – An rng that draws the gaussian deviate required for rate sampling</p>
 </dd>
 </dl>
 </dd></dl>
