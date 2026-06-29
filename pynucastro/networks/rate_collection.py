@@ -2429,6 +2429,10 @@ class RateCollection:
             if Z_range is not None and N_range is not None:
                 ax.set_xlim(N_range[0], N_range[1])
                 ax.set_ylim(Z_range[0], Z_range[1])
+                ax.set_aspect("equal")
+            else:
+                ax.set_aspect("equal", "datalim")
+
         else:
             if Z_range is not None:
                 ax.set_xlim(Z_range[0], Z_range[1])
@@ -2439,9 +2443,6 @@ class RateCollection:
             ZA = np.array([n.A - 2 * n.Z for n in node_nuclei])
             if ZA.min() == ZA.max():
                 ax.set_ylim(ZA.min() - 0.5, ZA.min() + 0.5)
-
-        if not rotated:
-            ax.set_aspect("equal", "datalim")
 
         # add a legend showing the direction that each type of capture
         # moves you in the plane
