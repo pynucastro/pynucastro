@@ -2022,7 +2022,7 @@ class RateCollection:
              node_color="#444444", node_shape="o",
              color_nodes_by_abundance=False, node_abundance_cutoff=1.e-10,
              nuclei_custom_labels=None,
-             curved_edges=False,
+             curved_edges=False, curved_edge_radius=0.2,
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False,
              hide_xp=True, hide_xalpha=True,
@@ -2092,6 +2092,10 @@ class RateCollection:
             the lower cutoff value used for coloring nodes by abundance.
         curved_edges : bool
             do we use arcs to connect the nodes?
+        curved_edge_radius : float
+            amount of curvature when drawing the edges with
+            ``curved_edges=True``.  This is used by the
+            matplotlib ``connectionstyle``.
         N_range : Iterable
             range of neutron number to zoom in on
         Z_range : Iterable
@@ -2276,7 +2280,7 @@ class RateCollection:
         # draw the edges -- we'll do this in several groups
 
         if curved_edges:
-            connectionstyle = "arc3, rad = 0.2"
+            connectionstyle = f"arc3, rad = {curved_edge_radius}"
             sort_reverse = False
         else:
             connectionstyle = "arc3"
