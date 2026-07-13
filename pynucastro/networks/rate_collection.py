@@ -1689,6 +1689,12 @@ class RateCollection:
     def get_nuclei_latex_string(self, combine=True):
         """Return a string listing the nuclei in latex format
 
+        Parameters
+        ----------
+        combine : bool
+            Do we combine all isotopes of the same element together
+            into a single quantity (e.g. ¹²⁻¹⁴C)?
+
         Returns
         -------
         str
