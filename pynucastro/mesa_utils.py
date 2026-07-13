@@ -6,7 +6,7 @@ pynucastro can use.
 
 import re
 
-from pynucastro.nucdata import Composition, Nucleus
+from pynucastro.nucdata import Composition, Nucleus, UnidentifiedElement
 
 
 def get_nuclei(model):
@@ -23,14 +23,24 @@ def get_nuclei(model):
 
     """
 
-    # the species are written as log_he4, etc. in the
+    # the species may be written as log_he4, etc. in the
     # "bulk names" section of the header
     species_re = re.compile(r"log_([a-z]+[\d]+)")
+
+    # sometimes they may be without the log_.  In this case,
+    # restrict the element name to 1-2 characters
+    species_nolog_re = re.compile(r"^([a-z]{1,2}[\d]+)$")
 
     nuclei = []
     for field in model.bulk_names:
         if g := species_re.match(field):
             nuclei.append(Nucleus(g.group(1)))
+        elif g := species_nolog_re.match(field):
+            try:
+                nuc = Nucleus(g.group(1))
+            except UnidentifiedElement:
+                continue
+            nuclei.append(nuc)
 
     return nuclei
 
@@ -65,7 +75,11 @@ def get_zone_data(model, i, *, nuclei=None):
     T = 10.0**model.bulk_data[i]["logT"]
     comp = Composition(nuclei)
     for n in nuclei:
-        val = 10.0**model.bulk_data[i][f"log_{str(n).lower()}"]
+        # sometimes the species data is in terms of log
+        try:
+            val = 10.0**model.bulk_data[i][f"log_{str(n).lower()}"]
+        except ValueError:
+            val = model.bulk_data[i][f"{str(n).lower()}"]
         comp[n] = val
     return (rho, T, comp)
 
