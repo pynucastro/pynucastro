@@ -1716,7 +1716,7 @@ class RateCollection:
                     if len(group) == 1:
                         ranges.append(f"{group[0]}")
                     else:
-                        ranges.append(f"{group[0]}\mbox{{-}}{group[-1]}")
+                        ranges.append(rf"{group[0]}\mbox{{-}}{group[-1]}")
 
                 nuc_list[el] = ranges
 
