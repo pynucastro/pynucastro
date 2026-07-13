@@ -581,7 +581,7 @@ class Composition(collections.UserDict):
         return fig
 
 
-class LoddersComposition(Composition):
+class SolarComposition(Composition):
     """A class to use present day solar abundances from Lodders et al. 2020 & 2021.
 
     Parameters
