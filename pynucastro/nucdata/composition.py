@@ -82,7 +82,7 @@ class Composition(collections.UserDict):
 
         * "lightest" : the least massive nucleus is given X = 1
         * "random" : mass fractions are assigned randomly
-        * "solar" : uses the Lodders composition with Z=0.02
+        * "solar" : uses the Solar composition with Z=0.02
         * "uniform" : all mass fractions are given the same value
 
         If init=None, then no initial composition
@@ -100,7 +100,7 @@ class Composition(collections.UserDict):
         elif init == "random":
             self.set_random()
         elif init == "solar":
-            solar = LoddersComposition(Z=0.02)
+            solar = SolarComposition(Z=0.02)
             _tmp_comp = solar.bin_as(nuclei)
             _tmp_comp.normalize()
             self.set_array(_tmp_comp.get_array())
@@ -581,7 +581,7 @@ class Composition(collections.UserDict):
         return fig
 
 
-class LoddersComposition(Composition):
+class SolarComposition(Composition):
     """A class to use present day solar abundances from Lodders et al. 2020 & 2021.
 
     Parameters
