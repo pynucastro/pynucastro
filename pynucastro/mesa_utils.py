@@ -8,8 +8,8 @@ import re
 
 import numpy as np
 
+from pynucastro.constants.constants import M_sun, R_sun
 from pynucastro.nucdata import Composition, Nucleus, UnidentifiedElement
-from pynucastro.constants.constants import R_sun, M_sun
 
 
 class MesaZoneState:
