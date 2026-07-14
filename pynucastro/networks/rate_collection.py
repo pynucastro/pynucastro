@@ -862,11 +862,9 @@ class RateCollection:
             rates = {"A(n,g)X": rf1, "X(n,g)B": rf2,
                      "B(g,n)X": rr1, "X(g,n)A": rr2}
 
-            ar = ApproximateRate(rates, approx_type="nn_g",
-                                 use_identical_particle_factor=False)
+            ar = ApproximateRate(rates, approx_type="nn_g")
 
-            ar_reverse = ApproximateRate(rates, is_reverse=True, approx_type="nn_g",
-                                         use_identical_particle_factor=False)
+            ar_reverse = ApproximateRate(rates, is_reverse=True, approx_type="nn_g")
 
             nuclei_approximated_out.append(inter_nuc)
             if self.verbose:

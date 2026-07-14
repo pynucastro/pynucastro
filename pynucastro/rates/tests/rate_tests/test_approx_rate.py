@@ -94,16 +94,10 @@ def Fe52_n_n_to_Fe54_approx(rate_eval, tf, rho=None, Y=None):
     r1_ng = rate_eval.n_Fe52_to_Fe53_reaclib
     r2_ng = rate_eval.n_Fe53_to_Fe54_reaclib
     r1_gn = rate_eval.Fe53_to_n_Fe52_reaclib
-    rate = r1_ng * r2_ng / (rho * Yn * r2_ng + r1_gn)
+    rate = 2.0 * r1_ng * r2_ng / (rho * Yn * r2_ng + r1_gn)
     rate_eval.Fe52_n_n_to_Fe54_approx = rate
 
 """
-
-    def test_particle_factor(self, nn):
-
-        rf, _ = nn
-
-        assert not rf.use_identical_particle_factor
 
     def test_eval(self, nn):
 
