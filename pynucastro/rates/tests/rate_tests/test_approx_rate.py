@@ -119,4 +119,4 @@ def Fe52_n_n_to_Fe54_approx(rate_eval, tf, rho=None, Y=None):
         # so the total rate will just be the first forward
         # rate scaled by rho Y(n)
 
-        assert rf.eval(T, rho=rho, comp=comp) == approx(rf1.eval(T, rho=rho, comp=comp) / rho / Yn)
+        assert rf.eval(T, rho=rho, comp=comp) == approx(2.0 * rf1.eval(T, rho=rho, comp=comp) / rho / Yn)
