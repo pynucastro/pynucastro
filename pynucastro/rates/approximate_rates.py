@@ -61,11 +61,9 @@ def create_double_neutron_capture(lib, reactant, product):
     rates["B(g,n)X"] = lib.get_rate_by_name(f"{product.raw}(,n){intermediate.raw}")
     rates["X(g,n)A"] = lib.get_rate_by_name(f"{intermediate.raw}(,n){reactant.raw}")
 
-    forward = ApproximateRate(rates, approx_type="nn_g",
-                              use_identical_particle_factor=False)
+    forward = ApproximateRate(rates, approx_type="nn_g")
 
-    reverse = ApproximateRate(rates, approx_type="nn_g", is_reverse=True,
-                              use_identical_particle_factor=False)
+    reverse = ApproximateRate(rates, approx_type="nn_g", is_reverse=True)
 
     return forward, reverse
 
@@ -337,9 +335,6 @@ class ApproximateRate(Rate):
                               products=[self.primary_reactant, Nucleus("n")])
 
             # now initialize the super class with these reactants and products
-
-            # this only makes sense with the use_identical_particle_factor = False
-            assert not use_identical_particle_factor
 
             if not self.is_reverse:
                 super().__init__(reactants=[self.primary_reactant, Nucleus("n"), Nucleus("n")],
@@ -694,7 +689,7 @@ class ApproximateRate(Rate):
                 # the forward rate
                 A_ng_X = self.rates["A(n,g)X"].eval(T, rho=rho, comp=comp,
                                                     screen_func=screen_func)
-                return A_ng_X * X_ng_B / denom
+                return 2.0 * A_ng_X * X_ng_B / denom
 
             else:
                 # the reverse rate
@@ -845,7 +840,7 @@ class ApproximateRate(Rate):
                 string += f"    r1_gn = rate_eval.{self.rates['X(g,n)A'].fname}\n"
 
                 # now the approximation
-                string += "    rate = r1_ng * r2_ng / (rho * Yn * r2_ng + r1_gn)\n"
+                string += "    rate = 2.0 * r1_ng * r2_ng / (rho * Yn * r2_ng + r1_gn)\n"
 
             else:
 
@@ -1058,12 +1053,12 @@ class ApproximateRate(Rate):
 
                 # now the approximation
                 fstring += f"    {dtype} dd = 1.0_rt / (rho * Yn * r2_ng + r1_gn);\n"
-                fstring += "    rate = r1_ng * r2_ng * dd;\n"
+                fstring += "    rate = 2.0_rt * r1_ng * r2_ng * dd;\n"
                 fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
                 fstring += f"        {dtype} dr1dT_ng = rate_eval.dscreened_rates_dT(k_{self.rates['A(n,g)X'].fname});\n"
                 fstring += f"        {dtype} dr2dT_ng = rate_eval.dscreened_rates_dT(k_{self.rates['X(n,g)B'].fname});\n"
                 fstring += f"        {dtype} dr1dT_gn = rate_eval.dscreened_rates_dT(k_{self.rates['X(g,n)A'].fname});\n"
-                fstring += "        drate_dT = dr1dT_ng * r2_ng * dd + r1_ng * dr2dT_ng * dd - r1_ng * r2_ng * dd * dd * (rho * Yn * dr2dT_ng + dr1dT_gn);\n"
+                fstring += "        drate_dT = 2.0_rt * (dr1dT_ng * r2_ng * dd + r1_ng * dr2dT_ng * dd - r1_ng * r2_ng * dd * dd * (rho * Yn * dr2dT_ng + dr1dT_gn));\n"
                 fstring += "    }\n"
             else:
 
