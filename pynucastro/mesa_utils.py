@@ -6,7 +6,36 @@ pynucastro can use.
 
 import re
 
+import numpy as np
+
 from pynucastro.nucdata import Composition, Nucleus, UnidentifiedElement
+from pynucastro.constants.constants import R_sun, M_sun
+
+
+class MesaZoneState:
+    """A container for a single MESA zone's data
+
+    Attributes
+    ----------
+    r : float
+        radius (cm)
+    m : float
+        mass shell (g)
+    rho : float
+        density (CGS)
+    T : float
+        temperature (K)
+    comp : Composition
+        the composition of the zone
+
+    """
+
+    def __init__(self, r, m, rho, T, comp):
+        self.r = r
+        self.m = m
+        self.rho = rho
+        self.T = T
+        self.comp = comp
 
 
 def get_nuclei(model):
@@ -64,13 +93,15 @@ def get_zone_data(model, i, *, nuclei=None):
 
     Returns
     -------
-    tuple(float, float, Composition)
+    MesaZoneState
 
     """
 
     if nuclei is None:
         nuclei = get_nuclei(model)
 
+    r = 10.0**model.bulk_data[i]["logR"] * R_sun
+    m = model.bulk_data[i]["mass"] * M_sun
     rho = 10.0**model.bulk_data[i]["logRho"]
     T = 10.0**model.bulk_data[i]["logT"]
     comp = Composition(nuclei)
@@ -81,33 +112,81 @@ def get_zone_data(model, i, *, nuclei=None):
         except ValueError:
             val = model.bulk_data[i][f"{str(n).lower()}"]
         comp[n] = val
-    return (rho, T, comp)
+
+    return MesaZoneState(r, m, rho, T, comp)
 
 
-def get_all_data(model):
-    """Return a dictionary keyed by MESA zone index containing the
-    thermodynamic information (rho, T, composition) for all the
-    zones in the model.
+class MesaModel:
+    """Read data from a MESA model and store the thermodynamic
+    state for each zone in a pynucastro-compatible format.
 
     Parameters
     ----------
     model : ``mesa_reader.MesaData``
         The MESA model as read by ``mesa_reader.MesaData``
 
-    Returns
-    -------
-    dict[int, tuple(float, float, Composition)]
-
     """
 
-    mesa_zones = {}
+    def __init__(self, model):
 
-    # get the list of nuclei objects once, so we don't
-    # need to repeat the construction.
-    nuclei = get_nuclei(model)
+        self.mesa_zones = {}
 
-    for i in range(model.header_data["num_zones"]):
-        rho, T, comp = get_zone_data(model, i, nuclei=nuclei)
-        mesa_zones[i] = (rho, T, comp)
+        # get the list of nuclei objects once, so we don't
+        # need to repeat the construction.
+        nuclei = get_nuclei(model)
 
-    return mesa_zones
+        for i in range(model.header_data["num_zones"]):
+            self.mesa_zones[i] = get_zone_data(model, i, nuclei=nuclei)
+
+    def get_data_array(self, var="T"):
+        """Return an array of a single variable indexed by zone
+
+        Parameters
+        ----------
+        var : str
+           The name of the variable to access.  This must be a member
+           of :py:obj:`MesaZoneState`.
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        return np.asarray([getattr(m, var) for _, m in self.mesa_zones.items()])
+
+    def get_peak_index(self, var):
+        """Return the index in the MESA model with the highest
+        value of var.
+
+        Parameters
+        ----------
+        var : str
+           The name of the variable to access.  This must be a member
+           of :py:obj:`MesaZoneState`.
+
+        Returns
+        -------
+        int
+
+        """
+
+        vs = self.get_data_array(var)
+        return np.argmax(vs)
+
+    def get_zone_data(self, i):
+        """Return the thermodynamic state for a single zone in the
+        MESA model
+
+        Parameters
+        ----------
+        i : int
+            The index into the MESA model
+
+        Returns
+        -------
+        MesaZoneState
+
+        """
+
+        return self.mesa_zones[i]
