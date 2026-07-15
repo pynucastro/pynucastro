@@ -3,6 +3,7 @@ import pytest
 import pynucastro as pyna
 from pynucastro.rates import ReacLibRate, StarLibRate
 
+
 class TestFullLibrary:
     @pytest.fixture(scope="class")
     @classmethod
