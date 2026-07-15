@@ -15,8 +15,8 @@ from pathlib import Path
 
 import numpy as np
 
-from pynucastro.nucdata import Nucleus, UnsupportedNucleus
 import pynucastro.rates.alternate_rates as alternate_rates
+from pynucastro.nucdata import Nucleus, UnsupportedNucleus
 from pynucastro.rates.derived_rate import DerivedRate
 from pynucastro.rates.files import _find_rate_file, get_rates_dir
 from pynucastro.rates.known_duplicates import (find_duplicate_rates,
