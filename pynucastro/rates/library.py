@@ -894,7 +894,7 @@ class ReacLibLibrary(Library):
 
     """
 
-    def __init__(self, *, libfile='reaclib_default2_20250330'):
+    def __init__(self, *, libfile='reaclib_default2_20260622'):
 
         super().__init__()
         library_file = _find_rate_file(libfile)
