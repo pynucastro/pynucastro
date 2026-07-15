@@ -69,7 +69,7 @@ class NeutrinoCooling:
                        extent=extent, aspect="auto", origin="lower")
         cbar = fig.colorbar(im, ax=ax)
         cbar.set_label(
-            r"$\log(\epsilon_\nu)$ [erg g$^{-1}$ s$^{-1}$]"
+            r"$\log(\epsilon_{\nu, \mathrm{therm}})$ [erg g$^{-1}$ s$^{-1}$]"
         )
 
         ax.set_ylabel(r"$\log(T)$ [K]")

@@ -605,7 +605,7 @@ class NetworkSolution:
 
                 eps_nu.append(sneut5(self.rho, T, comp))
 
-            ax.loglog(self.t, eps_nu, label=r"$\epsilon_\nu$")
+            ax.loglog(self.t, eps_nu, label=r"$\epsilon_{\nu, \mathrm{therm}}$")
 
         if tmin is None:
             tmin = self.t[0]
