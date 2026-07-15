@@ -1216,6 +1216,7 @@ def full_library():
 
     lib = Library()
     lib += ReacLibLibrary()
+    lib += StarLibLibrary()
     lib += SuzukiLibrary()
     lib += LangankeLibrary()
     lib += PruetFullerLibrary()
