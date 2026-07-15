@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.nse_network &#8212; pynucastro 2.12.0.post4+g3723ee6c8 documentation</title>
+    <title>pynucastro.networks.nse_network &#8212; pynucastro 2.12.0.post5+g59c5d7600 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=d9346a7b"></script>
+    <script src="../../../_static/documentation_options.js?v=8e658a0b"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -818,7 +818,7 @@
                 <span class="n">Xs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nucleon_fraction_nse</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">u_c</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
                 <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constraint_eq</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">u_c</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
                 <span class="n">is_pos_new</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">k</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">res</span><span class="p">)</span>
-                <span class="n">found_sol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-11</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.0e-11</span><span class="p">))</span>
+                <span class="n">found_sol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">found_sol</span><span class="p">:</span>
                     <span class="n">Xs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nucleon_fraction_nse</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">u_c</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
