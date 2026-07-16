@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Effects of Thermal Neutrino Cooling in Network Integrations &#8212; pynucastro 2.12.0.post5+g59c5d7600 documentation</title>
+    <title>Effects of Thermal Neutrino Cooling in Network Integrations &#8212; pynucastro 2.12.0.post6+g639abf963 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=8e658a0b"></script>
+    <script src="_static/documentation_options.js?v=c3cf4ab3"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -599,9 +599,9 @@
 <p>When <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.integrate_network" title="pynucastro.networks.python_network.PythonNetwork.integrate_network"><code class="xref py py-func docutils literal notranslate"><span class="pre">integrate_network</span></code></a> is run with <code class="docutils literal notranslate"><span class="pre">self_heating=True</span></code>, adding <code class="docutils literal notranslate"><span class="pre">thermal_neutrinos=True</span></code> changes the temperature equation to</p>
 <div class="math notranslate nohighlight">
 \[
-\frac{dT}{dt} = \frac{\epsilon_\mathrm{nuc} - \epsilon_\nu}{c_V},
+\frac{dT}{dt} = \frac{\epsilon_\mathrm{nuc} - \epsilon_{\nu, \mathrm{therm}}}{c_V},
 \]</div>
-<p>where <span class="math notranslate nohighlight">\(\epsilon_\mathrm{nuc}\)</span> is the nuclear energy generation rate, <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span> is evaluated with <code class="docutils literal notranslate"><span class="pre">sneut5</span></code>, and <span class="math notranslate nohighlight">\(c_V\)</span> is the specific heat from the equation of state.</p>
+<p>where <span class="math notranslate nohighlight">\(\epsilon_\mathrm{nuc}\)</span> is the nuclear energy generation rate, <span class="math notranslate nohighlight">\(\epsilon_{\nu, \mathrm{therm}}\)</span> is evaluated with <code class="docutils literal notranslate"><span class="pre">sneut5</span></code>, and <span class="math notranslate nohighlight">\(c_V\)</span> is the specific heat from the equation of state.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This is a one-zone calculation.  It does not include hydrodynamic expansion or transport, so it is intended to demonstrate how the cooling term enters the network integration rather than to model a full stellar environment.</p>
@@ -683,7 +683,7 @@
 </section>
 <section id="energy-generation-and-neutrino-loss">
 <h2>Energy Generation and Neutrino Loss<a class="headerlink" href="#energy-generation-and-neutrino-loss" title="Link to this heading">#</a></h2>
-<p>For the cooled trajectory, we can compare the nuclear energy generation rate, <span class="math notranslate nohighlight">\(\epsilon_\mathrm{nuc}\)</span>, with the thermal neutrino loss rate, <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span>.</p>
+<p>For the cooled trajectory, we can compare the nuclear energy generation rate, <span class="math notranslate nohighlight">\(\epsilon_\mathrm{nuc}\)</span>, with the thermal neutrino loss rate, <span class="math notranslate nohighlight">\(\epsilon_{\nu, \mathrm{therm}}\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">sol_cooling</span><span class="o">.</span><span class="n">plot_energy_generation</span><span class="p">(</span><span class="n">ymax</span><span class="o">=</span><span class="mf">1.e18</span><span class="p">,</span>
@@ -696,10 +696,10 @@
   ax.set_xlim(tmin, tmax)
 </pre></div>
 </div>
-<img alt="_images/5eed746a3b5aa1e1b855d4bffe92c97c7d12662d5947051766568946f0e2eb89.png" src="_images/5eed746a3b5aa1e1b855d4bffe92c97c7d12662d5947051766568946f0e2eb89.png" />
+<img alt="_images/b841fb457d7d341307283888c5d955c044cce521f205ffd70d9b7564e6f50328.png" src="_images/b841fb457d7d341307283888c5d955c044cce521f205ffd70d9b7564e6f50328.png" />
 </div>
 </div>
-<p>During the runaway, <span class="math notranslate nohighlight">\(\epsilon_\mathrm{nuc}\)</span> is much larger than <span class="math notranslate nohighlight">\(\epsilon_\nu\)</span>.  After the peak, the nuclear energy generation rate falls while the neutrino loss rate remains large for longer.</p>
+<p>During the runaway, <span class="math notranslate nohighlight">\(\epsilon_\mathrm{nuc}\)</span> is much larger than <span class="math notranslate nohighlight">\(\epsilon_{\nu, \mathrm{therm}}\)</span>.  After the peak, the nuclear energy generation rate falls while the neutrino loss rate remains large for longer.</p>
 </section>
 <section id="temperature-evolution">
 <h2>Temperature Evolution<a class="headerlink" href="#temperature-evolution" title="Link to this heading">#</a></h2>
@@ -727,7 +727,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/442a3a3c22b5f81f1aaa0c928dc10f23ac8a7da2ba199456f8ceb14ee3087e40.png" src="_images/442a3a3c22b5f81f1aaa0c928dc10f23ac8a7da2ba199456f8ceb14ee3087e40.png" />
+<img alt="_images/9d92decc2b6bab1f90918266ad621a32ca63161ef80139f776feb6a8d2f69044.png" src="_images/9d92decc2b6bab1f90918266ad621a32ca63161ef80139f776feb6a8d2f69044.png" />
 </div>
 </div>
 <p>The integration with thermal neutrino cooling cools after the runaway, while the integration without this loss term remains hot.  The difference arises because the cooling term changes the temperature history, and the reaction rates depend on temperature.</p>
