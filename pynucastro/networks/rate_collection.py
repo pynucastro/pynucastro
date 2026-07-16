@@ -7,6 +7,7 @@ import collections
 import copy
 import math
 import warnings
+from itertools import groupby
 from pathlib import Path
 
 import matplotlib as mpl
@@ -1685,8 +1686,14 @@ class RateCollection:
                 ostr += f"     {rp}\n"
         return ostr
 
-    def get_nuclei_latex_string(self):
+    def get_nuclei_latex_string(self, combine=True):
         """Return a string listing the nuclei in latex format
+
+        Parameters
+        ----------
+        combine : bool
+            Do we combine all isotopes of the same element together
+            into a single quantity (e.g. ¹²⁻¹⁴C)?
 
         Returns
         -------
@@ -1695,10 +1702,42 @@ class RateCollection:
         """
 
         ostr = ""
-        for i, n in enumerate(self.unique_nuclei):
-            ostr += f"${n.pretty}$"
-            if i != len(self.unique_nuclei)-1:
-                ostr += ", "
+
+        if combine:
+
+            # make a dict keyed by element that gives the mass numbers
+            nuc_combined = {}
+            for n in self.unique_nuclei:
+                if n.el in nuc_combined:
+                    nuc_combined[n.el].append(n.A)
+                else:
+                    nuc_combined[n.el] = [n.A]
+
+            # now combine them into contiguous sequences
+            nuc_list = {}
+            for el, As in nuc_combined.items():
+                ranges = []
+                for _, g in groupby(enumerate(As), lambda x: x[1] - x[0]):
+                    group = [v for _, v in g]
+                    if len(group) == 1:
+                        ranges.append(f"{group[0]}")
+                    else:
+                        ranges.append(rf"{group[0]}\mbox{{-}}{group[-1]}")
+
+                nuc_list[el] = ranges
+
+            for i, (el, As) in enumerate(nuc_list.items()):
+                A_str = ",".join(As)
+                ostr += rf"${{}}^{{{A_str}}}\mathrm{{{el.capitalize()}}}$"
+                if i != len(nuc_list)-1:
+                    ostr += ", "
+        else:
+
+            for i, n in enumerate(self.unique_nuclei):
+                ostr += f"${n.pretty}$"
+                if i != len(self.unique_nuclei)-1:
+                    ostr += ", "
+
         return ostr
 
     def get_rates_latex_table_string(self):
@@ -1715,9 +1754,9 @@ class RateCollection:
         ostr = ""
         for rp in sorted(self.get_rate_pairs()):
             if rp.forward:
-                ostr += f"{rp.forward.pretty_string:38} & \n"
+                ostr += f"{rp.forward.pretty_string:38} &"
             else:
-                ostr += f"{' ':38} \n &"
+                ostr += f"{' ':38}  &"
 
             if rp.reverse:
                 ostr += rf"  {rp.reverse.pretty_string:38} \\"
