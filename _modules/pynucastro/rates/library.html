@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.library &#8212; pynucastro 2.12.0.post7+gbb6f93c24 documentation</title>
+    <title>pynucastro.rates.library &#8212; pynucastro 2.12.0.post8+g49105f76a documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../_static/documentation_options.js?v=67d97d89"></script>
+    <script src="../../../_static/documentation_options.js?v=0d1c92e2"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -506,6 +506,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">bz2</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">islice</span>
@@ -515,7 +516,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span><span class="p">,</span> <span class="n">UnsupportedNucleus</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.alternate_rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeBoerC12agO16</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">alternate_rates</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.derived_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">DerivedRate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.files</span><span class="w"> </span><span class="kn">import</span> <span class="n">_find_rate_file</span><span class="p">,</span> <span class="n">get_rates_dir</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.known_duplicates</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">find_duplicate_rates</span><span class="p">,</span>
@@ -1823,12 +1824,21 @@
 
     <span class="n">lib</span> <span class="o">=</span> <span class="n">Library</span><span class="p">()</span>
     <span class="n">lib</span> <span class="o">+=</span> <span class="n">ReacLibLibrary</span><span class="p">()</span>
+    <span class="n">lib</span> <span class="o">+=</span> <span class="n">StarLibLibrary</span><span class="p">()</span>
     <span class="n">lib</span> <span class="o">+=</span> <span class="n">SuzukiLibrary</span><span class="p">()</span>
     <span class="n">lib</span> <span class="o">+=</span> <span class="n">LangankeLibrary</span><span class="p">()</span>
     <span class="n">lib</span> <span class="o">+=</span> <span class="n">PruetFullerLibrary</span><span class="p">()</span>
     <span class="n">lib</span> <span class="o">+=</span> <span class="n">FFNLibrary</span><span class="p">()</span>
     <span class="n">lib</span> <span class="o">+=</span> <span class="n">OdaLibrary</span><span class="p">()</span>
-    <span class="n">lib</span><span class="o">.</span><span class="n">add_rate</span><span class="p">(</span><span class="n">DeBoerC12agO16</span><span class="p">())</span>
+
+    <span class="c1"># discover the alternate rates from the module directly</span>
+    <span class="n">rate_classes</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="bp">cls</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="n">alternate_rates</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">==</span> <span class="n">alternate_rates</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="n">rate_classes</span><span class="p">:</span>
+        <span class="n">lib</span><span class="o">.</span><span class="n">add_rate</span><span class="p">(</span><span class="n">rate</span><span class="p">())</span>
 
     <span class="k">return</span> <span class="n">lib</span></div>
 

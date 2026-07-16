@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Finding Available Rates &#8212; pynucastro 2.12.0.post7+gbb6f93c24 documentation</title>
+    <title>Finding Available Rates &#8212; pynucastro 2.12.0.post8+g49105f76a documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=67d97d89"></script>
+    <script src="_static/documentation_options.js?v=0d1c92e2"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -602,7 +602,7 @@
 <p>The <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library</span></code></a> class provides a high level interface for reading files containing one or more Reaclib rates and then filtering these rates based on user-specified criteria for the nuclei involved in the reactions. We can then use the resulting rates to build a network.</p>
 <section id="searching-all-rates">
 <h2>Searching all rates<a class="headerlink" href="#searching-all-rates" title="Link to this heading">#</a></h2>
-<p>We can get a single library with all the rates known to pynucastro—this is a combination of <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.ReacLibLibrary" title="pynucastro.rates.library.ReacLibLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReacLibLibrary</span></code></a>, all of the different collections that can be part of <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.TabularLibrary" title="pynucastro.rates.library.TabularLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularLibrary</span></code></a>, and the rates contained in <a class="reference internal" href="pynucastro.rates.alternate_rates.html#module-pynucastro.rates.alternate_rates" title="pynucastro.rates.alternate_rates"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alternate_rates</span></code></a>.  This is done via <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.full_library" title="pynucastro.rates.library.full_library"><code class="xref py py-meth docutils literal notranslate"><span class="pre">full_library</span></code></a>.</p>
+<p>We can get a single library with all the rates known to pynucastro—this is a combination of <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.ReacLibLibrary" title="pynucastro.rates.library.ReacLibLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReacLibLibrary</span></code></a>, <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.StarLibLibrary" title="pynucastro.rates.library.StarLibLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StarLibLibrary</span></code></a>, all of the different collections that can be part of <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.TabularLibrary" title="pynucastro.rates.library.TabularLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularLibrary</span></code></a>, and the rates contained in <a class="reference internal" href="pynucastro.rates.alternate_rates.html#module-pynucastro.rates.alternate_rates" title="pynucastro.rates.alternate_rates"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alternate_rates</span></code></a>.  This is done via <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.full_library" title="pynucastro.rates.library.full_library"><code class="xref py py-meth docutils literal notranslate"><span class="pre">full_library</span></code></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
@@ -629,7 +629,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>82491
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>156397
 </pre></div>
 </div>
 </div>
@@ -648,12 +648,12 @@ can be used on any <code class="docutils literal notranslate"><span class="pre">
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[C12 + He4 ⟶ O16 + 𝛾, C12 + He4 ⟶ O16 + 𝛾]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[C12 + He4 ⟶ O16 + 𝛾, C12 + He4 ⟶ O16 + 𝛾, C12 + He4 ⟶ O16 + 𝛾]
 </pre></div>
 </div>
 </div>
 </div>
-<p>Here we see that we pick up two rates—these are from different sources:</p>
+<p>Here we see that we pick up three rates—these are from different sources:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">c12ag</span><span class="p">:</span>
@@ -663,12 +663,14 @@ can be used on any <code class="docutils literal notranslate"><span class="pre">
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C12 + He4 ⟶ O16 + 𝛾      nac2        ReacLibRate
+C12 + He4 ⟶ O16 + 𝛾      ku02        StarLibRate
 C12 + He4 ⟶ O16 + 𝛾      deboer2017  DeBoerC12agO16
 </pre></div>
 </div>
 </div>
 </div>
-<p>The first is from ReacLib and the second is a more recent rate from <span class="bibtex-citation" id="id1">deBoer <em>et al.</em> [<a class="reference internal" href="zreferences.html#id35" title="R. J. deBoer, J. Görres, M. Wiescher, R. E. Azuma, A. Best, C. R. Brune, C. E. Fields, S. Jones, M. Pignatari, D. Sayre, K. Smith, F. X. Timmes, and E. Uberseder. The $^12$C(\ensuremath \alpha  ,\ensuremath \gamma  )$^16$O reaction and its implications for stellar helium burning. Reviews of Modern Physics, 89(3):035007, July 2017. arXiv:1709.03144, doi:10.1103/RevModPhys.89.035007.">2017</a>]</span>.</p>
+<p>The first is from ReacLib, the second from StarLib, and the last more recent rate from <span class="bibtex-citation" id="id1">deBoer <em>et al.</em> [<a class="reference internal" href="zreferences.html#id35" title="R. J. deBoer, J. Görres, M. Wiescher, R. E. Azuma, A. Best, C. R. Brune, C. E. Fields, S. Jones, M. Pignatari, D. Sayre, K. Smith, F. X. Timmes, and E. Uberseder. The $^12$C(\ensuremath \alpha  ,\ensuremath \gamma  )$^16$O reaction and its implications for stellar helium burning. Reviews of Modern Physics, 89(3):035007, July 2017. arXiv:1709.03144, doi:10.1103/RevModPhys.89.035007.">2017</a>]</span>,
+provided by the <a class="reference internal" href="pynucastro.rates.alternate_rates.html#module-pynucastro.rates.alternate_rates" title="pynucastro.rates.alternate_rates"><code class="xref py py-mod docutils literal notranslate"><span class="pre">alternate_rates</span></code></a> module.</p>
 </section>
 <section id="using-filters">
 <h2>Using filters<a class="headerlink" href="#using-filters" title="Link to this heading">#</a></h2>
@@ -691,16 +693,29 @@ C12 + He4 ⟶ O16 + 𝛾      deboer2017  DeBoerC12agO16
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ni56 + e⁻ ⟶ Co56 + 𝜈     ffn         TabularRate
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ni56 ⟶ He4 + Fe52        taly        StarLibRate
+Ni56 ⟶ p + Co55          taly        StarLibRate
+Ni56 + e⁻ ⟶ Co56 + 𝜈     ffn         TabularRate
 Ni56 + e⁻ ⟶ Co56 + 𝜈     langanke    TabularRate
+Ni56 + n ⟶ He4 + Fe53    taly        StarLibRate
+Ni56 ⟶ Co56 + e⁺ + 𝜈     au03        StarLibRate
+Ni56 ⟶ n + Ni55          taly        StarLibRate
 Ni56 + n ⟶ He4 + Fe53    ths8        ReacLibRate
+Ni56 + n ⟶ p + Co56      taly        StarLibRate
 Ni56 + n ⟶ p + Co56      ths8        ReacLibRate
+Ni56 + n ⟶ Ni57 + 𝛾      taly        StarLibRate
 Ni56 + n ⟶ Ni57 + 𝛾      ths8        ReacLibRate
+Ni56 + p ⟶ He4 + Co53    taly        StarLibRate
 Ni56 + p ⟶ He4 + Co53    ths8        ReacLibRate
+Ni56 + p ⟶ n + Cu56      taly        StarLibRate
 Ni56 + p ⟶ n + Cu56      ths8        ReacLibRate
+Ni56 + p ⟶ Cu57 + 𝛾      re98        StarLibRate
 Ni56 + p ⟶ Cu57 + 𝛾      wien        ReacLibRate
+Ni56 + He4 ⟶ p + Cu59    taly        StarLibRate
 Ni56 + He4 ⟶ p + Cu59    ths8        ReacLibRate
+Ni56 + He4 ⟶ n + Zn59    taly        StarLibRate
 Ni56 + He4 ⟶ n + Zn59    ths8        ReacLibRate
+Ni56 + He4 ⟶ Zn60 + 𝛾    taly        StarLibRate
 Ni56 + He4 ⟶ Zn60 + 𝛾    ths8        ReacLibRate
 Ni56 ⟶ He4 + Fe52        ths8        ReacLibRate
 Ni56 ⟶ p + Co55          ths8        ReacLibRate
@@ -710,11 +725,12 @@ Ni56 ⟶ n + Ni55          ths8        ReacLibRate
 </div>
 </div>
 </div>
-<p>Now we see that there are three electron capture / <span class="math notranslate nohighlight">\(\beta^+\)</span> rates:</p>
+<p>Now we see that there are four electron capture / <span class="math notranslate nohighlight">\(\beta^+\)</span> rates:</p>
 <ul class="simple">
 <li><p>a tabular version from <span class="bibtex-citation" id="id2">Fuller <em>et al.</em> [<a class="reference internal" href="zreferences.html#id31" title="G. M. Fuller, W. A. Fowler, and M. J. Newman. Stellar weak interaction rates for intermediate mass nuclei. III - Rate tables for the free nucleons and nuclei with A = 21 to A = 60. Astrophysical Journal Supplement, 48:279-319, March 1982. doi:10.1086/190779.">1982</a>]</span></p></li>
 <li><p>a tabular version from <span class="bibtex-citation" id="id3">Langanke and Martínez-Pinedo [<a class="reference internal" href="zreferences.html#id9" title="K. Langanke and G. Martínez-Pinedo. Rate tables for the weak processes of pf-shell nuclei in stellar environments. Atomic Data and Nuclear Data Tables, 79(1):1-46, 2001. doi:10.1006/adnd.2001.0865.">2001</a>]</span></p></li>
-<li><p>a simple decay constant from ReacLib</p></li>
+<li><p>a StarLib rate (with the source <code class="docutils literal notranslate"><span class="pre">au03</span></code>)</p></li>
+<li><p>a simple decay constant from ReacLib (with the source <code class="docutils literal notranslate"><span class="pre">wc12</span></code>)</p></li>
 </ul>
 <p>For a network, we would only use one on these.  In fact, we will raise an exception if we try to use them all:</p>
 <div class="cell tag_nbval-ignore-output tag_nbval-raises-exception docutils container">
@@ -724,7 +740,7 @@ Ni56 ⟶ n + Ni55          ths8        ReacLibRate
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[Ni56 ⟶ Co56 + e⁺ + 𝜈, Ni56 + e⁻ ⟶ Co56 + 𝜈, Ni56 + e⁻ ⟶ Co56 + 𝜈]]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[Ni56 ⟶ Co56 + e⁺ + 𝜈, Ni56 ⟶ Co56 + e⁺ + 𝜈, Ni56 + e⁻ ⟶ Co56 + 𝜈, Ni56 + e⁻ ⟶ Co56 + 𝜈], [Ni56 ⟶ n + Ni55, Ni56 ⟶ n + Ni55], [Ni56 ⟶ p + Co55, Ni56 ⟶ p + Co55], [Ni56 ⟶ He4 + Fe52, Ni56 ⟶ He4 + Fe52], [Ni56 + n ⟶ Ni57 + 𝛾, Ni56 + n ⟶ Ni57 + 𝛾], [Ni56 + p ⟶ Cu57 + 𝛾, Ni56 + p ⟶ Cu57 + 𝛾], [Ni56 + He4 ⟶ Zn60 + 𝛾, Ni56 + He4 ⟶ Zn60 + 𝛾], [Ni56 + n ⟶ p + Co56, Ni56 + n ⟶ p + Co56], [Ni56 + n ⟶ He4 + Fe53, Ni56 + n ⟶ He4 + Fe53], [Ni56 + p ⟶ n + Cu56, Ni56 + p ⟶ n + Cu56], [Ni56 + p ⟶ He4 + Co53, Ni56 + p ⟶ He4 + Co53], [Ni56 + He4 ⟶ n + Zn59, Ni56 + He4 ⟶ n + Zn59], [Ni56 + He4 ⟶ p + Cu59, Ni56 + He4 ⟶ p + Cu59]]
 </pre></div>
 </div>
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
@@ -828,8 +844,11 @@ Ni56 ⟶ n + Ni55          ths8        ReacLibRate
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C12 + C12 ⟶ He4 + Ne20         [Q =   4.62 MeV] (C12 + C12 --&gt; He4 + Ne20 &lt;reaclib_cf88&gt;)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C12 + C12 ⟶ He4 + Ne20         [Q =   4.62 MeV] (C12 + C12 --&gt; He4 + Ne20 &lt;starlib_cf88&gt;)
+C12 + C12 ⟶ He4 + Ne20         [Q =   4.62 MeV] (C12 + C12 --&gt; He4 + Ne20 &lt;reaclib_cf88&gt;)
+C12 + C12 ⟶ p + Na23           [Q =   2.24 MeV] (C12 + C12 --&gt; p + Na23 &lt;starlib_cf88&gt;)
 C12 + C12 ⟶ p + Na23           [Q =   2.24 MeV] (C12 + C12 --&gt; p + Na23 &lt;reaclib_cf88&gt;)
+C12 + C12 ⟶ n + Mg23           [Q =   2.60 MeV] (C12 + C12 --&gt; n + Mg23 &lt;starlib_cf88&gt;)
 C12 + C12 ⟶ n + Mg23           [Q =  -2.60 MeV] (C12 + C12 --&gt; n + Mg23 &lt;reaclib_cf88&gt;)
 </pre></div>
 </div>
