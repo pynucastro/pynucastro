@@ -6,6 +6,7 @@ multiple sources.
 import bz2
 import collections
 import copy
+import inspect
 import io
 import re
 from itertools import islice
@@ -15,7 +16,7 @@ from pathlib import Path
 import numpy as np
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
-from pynucastro.rates.alternate_rates import DeBoerC12agO16
+from pynucastro.rates import alternate_rates
 from pynucastro.rates.derived_rate import DerivedRate
 from pynucastro.rates.files import _find_rate_file, get_rates_dir
 from pynucastro.rates.known_duplicates import (find_duplicate_rates,
@@ -1216,11 +1217,20 @@ def full_library():
 
     lib = Library()
     lib += ReacLibLibrary()
+    lib += StarLibLibrary()
     lib += SuzukiLibrary()
     lib += LangankeLibrary()
     lib += PruetFullerLibrary()
     lib += FFNLibrary()
     lib += OdaLibrary()
-    lib.add_rate(DeBoerC12agO16())
+
+    # discover the alternate rates from the module directly
+    rate_classes = [
+        cls for _, cls in inspect.getmembers(alternate_rates, inspect.isclass)
+        if cls.__module__ == alternate_rates.__name__
+    ]
+
+    for rate in rate_classes:
+        lib.add_rate(rate())
 
     return lib

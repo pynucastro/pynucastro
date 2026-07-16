@@ -1,6 +1,7 @@
 import pytest
 
 import pynucastro as pyna
+from pynucastro.rates import ReacLibRate, StarLibRate
 
 
 class TestFullLibrary:
@@ -14,7 +15,19 @@ class TestFullLibrary:
         new_lib = full_lib.filter(rf)
         dupes = new_lib.find_duplicate_links()
 
-        assert len(dupes) == 1
+        assert len(dupes) == 13
 
-        # there are 3 electron capture rates
-        assert len(dupes[0]) == 3
+        # most of the dupes are strong-mediated rates for which there
+        # are just ReacLib and StarLib versions
+        for dd in dupes:
+            if len(dd) == 2:
+                if isinstance(dd[0], ReacLibRate):
+                    assert isinstance(dd[1], StarLibRate)
+                elif isinstance(dd[0], StarLibRate):
+                    assert isinstance(dd[1], ReacLibRate)
+                else:
+                    # shouldn't get here
+                    raise AssertionError("invalid dupe")
+
+        # there are 4 electron capture rates
+        assert len(dupes[0]) == 4
