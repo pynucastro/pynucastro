@@ -27,7 +27,7 @@ class TestFullLibrary:
                     assert isinstance(dd[1], ReacLibRate)
                 else:
                     # shouldn't get here
-                    raise AssertionError("invalid duple")
+                    raise AssertionError("invalid dupe")
 
         # there are 4 electron capture rates
         assert len(dupes[0]) == 4
