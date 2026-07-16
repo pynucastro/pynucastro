@@ -1754,9 +1754,9 @@ class RateCollection:
         ostr = ""
         for rp in sorted(self.get_rate_pairs()):
             if rp.forward:
-                ostr += f"{rp.forward.pretty_string:38} & \n"
+                ostr += f"{rp.forward.pretty_string:38} &"
             else:
-                ostr += f"{' ':38} \n &"
+                ostr += f"{' ':38}  &"
 
             if rp.reverse:
                 ostr += rf"  {rp.reverse.pretty_string:38} \\"
