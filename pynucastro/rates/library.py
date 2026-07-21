@@ -513,7 +513,7 @@ class Library:
                 if len(match) == 2 and all([type(r) is ReacLibRate for r in match]):
                     rate_a, rate_b = match
 
-                    if len(rate_a.sets) == 1 and len(rate_b.sets) == 1:
+                    if all([len(r.sets) == 1 for r in match]):
                         info_a = rate_a.sets[0]
                         info_b = rate_b.sets[0]
 
