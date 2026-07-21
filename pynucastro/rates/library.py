@@ -510,10 +510,10 @@ class Library:
             for pref_type in rate_type_preference:
                 match = [r for r in group if types[pref_type](r)]
 
-                if len(match) == 2 and all([type(r) is ReacLibRate for r in match]):
+                if len(match) == 2 and all((isinstance(r, ReacLibRate) for r in match)):
                     rate_a, rate_b = match
 
-                    if all([len(r.sets) == 1 for r in match]):
+                    if all((len(r.sets) == 1 for r in match)):
                         info_a = rate_a.sets[0]
                         info_b = rate_b.sets[0]
 
