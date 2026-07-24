@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>NSE vs. Direct Integration &#8212; pynucastro 2.12.0.post9+g94de54279 documentation</title>
+    <title>NSE vs. Direct Integration &#8212; pynucastro 2.12.0.post10+gc3c367123 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=037b81c8"></script>
+    <script src="_static/documentation_options.js?v=8b3f0d74"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -106,50 +106,6 @@
 
   
     <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
-<div class="bd-header__inner bd-page-width">
-  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
-    <span class="fa-solid fa-bars"></span>
-  </button>
-  
-  
-  <div class="col-lg-9 navbar-header-items">
-    
-    
-    <div class="navbar-header-items__end">
-      
-        <div class="navbar-item navbar-persistent--container">
-          
-
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button>
-        </div>
-      
-      
-    </div>
-    
-  </div>
-  
-  
-    <div class="navbar-persistent--mobile">
-
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button>
-    </div>
-  
-
-  
-    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
-      <span class="fa-solid fa-outdent"></span>
-    </button>
-  
-</div>
-
     </header>
   
 
@@ -893,7 +849,7 @@ Since we will compare to NSE, we want to use the same screening that NSE uses â€
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/5f8474ed6be9b797a6dabc24efb45687335346127f9ffb7b94708cb8d4aad3c5.png" src="_images/5f8474ed6be9b797a6dabc24efb45687335346127f9ffb7b94708cb8d4aad3c5.png" />
+<img alt="_images/d23304ec44db15c102ce79ee75c151daced454e7fdc8f187c681936bc5f6336b.png" src="_images/d23304ec44db15c102ce79ee75c151daced454e7fdc8f187c681936bc5f6336b.png" />
 </div>
 </div>
 </section>
@@ -961,7 +917,7 @@ Since we will compare to NSE, we want to use the same screening that NSE uses â€
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/d72eebf78d12fbefe77a0485503ce299748c42a757763493fe00c3a6e03bd8a7.png" src="_images/d72eebf78d12fbefe77a0485503ce299748c42a757763493fe00c3a6e03bd8a7.png" />
+<img alt="_images/bfedce9fcd3ace6c942ff5e2809aa7d41c9cfe04770ac823eed90801d2c869c9.png" src="_images/bfedce9fcd3ace6c942ff5e2809aa7d41c9cfe04770ac823eed90801d2c869c9.png" />
 </div>
 </div>
 <p>We see that the plot of absolute and relative difference shows that the mass fraction obtained from direct integration matches with NSE equations to machine precision just as <code class="docutils literal notranslate"><span class="pre">is_NSE_compatible()</span></code> predicted. The differences between the two are largely set by the tolerances of both the NSE solver and the ODE integrator.</p>
@@ -997,7 +953,7 @@ by the total activity of the rate (forward + reverse) by doing <code class="docu
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/4faa2d27d11071db0988cd85730517cd9bf4d8953240bcc541874cc527befcdb.png" src="_images/4faa2d27d11071db0988cd85730517cd9bf4d8953240bcc541874cc527befcdb.png" />
+<img alt="_images/09b0cbddeb64e0b7effe775db05d4611f747128c6475062f085e6f77ee3e6fcd.png" src="_images/09b0cbddeb64e0b7effe775db05d4611f747128c6475062f085e6f77ee3e6fcd.png" />
 </div>
 </div>
 <p>Here we see that the normalized net rates are all &lt; <span class="math notranslate nohighlight">\(10^{-12}\)</span>, so we are effectively seeing the integration tolerance, and are very close to machine precision.</p>
@@ -1060,7 +1016,7 @@ But letâ€™s verify it by integrating the network.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/bd719688d6aebe330e1a8a07c736b62facb01b9bac3f35eb5e2bee6add02481f.png" src="_images/bd719688d6aebe330e1a8a07c736b62facb01b9bac3f35eb5e2bee6add02481f.png" />
+<img alt="_images/d1be0b18f157a0b43b5819765efaaa980a987052c15349eb656513a9fd5bdf2a.png" src="_images/d1be0b18f157a0b43b5819765efaaa980a987052c15349eb656513a9fd5bdf2a.png" />
 <img alt="_images/5859998a3a31b861d6dc51e1b530bc37462632d8d1013268bf8f9dc3cea60aa6.png" src="_images/5859998a3a31b861d6dc51e1b530bc37462632d8d1013268bf8f9dc3cea60aa6.png" />
 </div>
 </div>
@@ -1145,8 +1101,8 @@ Letâ€™s verify its prediction by integrating the network.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/b6b9cdd29cda0d5768e1324a0fd1b7fdaf3f81a1f1b7e86d3d6ac1119d5a68aa.png" src="_images/b6b9cdd29cda0d5768e1324a0fd1b7fdaf3f81a1f1b7e86d3d6ac1119d5a68aa.png" />
-<img alt="_images/4dd9c89f246a0ec6861c14a6b9777159bc72cc1a147fae182f66fdff02712003.png" src="_images/4dd9c89f246a0ec6861c14a6b9777159bc72cc1a147fae182f66fdff02712003.png" />
+<img alt="_images/885146ca6b7a66a68d6bb8cf3374757df2559b97c3bc193bc1d1734524bd104c.png" src="_images/885146ca6b7a66a68d6bb8cf3374757df2559b97c3bc193bc1d1734524bd104c.png" />
+<img alt="_images/7ffa3b3c39eb26f61a3b1399e0922c5a6a898d4749c42169544f9ff59c754ecf.png" src="_images/7ffa3b3c39eb26f61a3b1399e0922c5a6a898d4749c42169544f9ff59c754ecf.png" />
 </div>
 </div>
 <p>The error plot above shows that NSE and integration agrees to machine-precision once again.</p>
