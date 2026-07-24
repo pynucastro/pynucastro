@@ -173,7 +173,8 @@ html_theme_options = {
         "text": f"pynucastro {version}",
         "image_light": "logo.png",
         "image_dark": "logo.png",
-    }
+    },
+    "navbar_persistent": []
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
