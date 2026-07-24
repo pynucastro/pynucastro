@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Approximating alpha-capture &#8212; pynucastro 2.12.0.post8+g49105f76a documentation</title>
+    <title>Approximating alpha-capture &#8212; pynucastro 2.12.0.post9+g94de54279 documentation</title>
   
   
   
@@ -27,22 +27,22 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=4418a689" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="_static/myfile.css?v=15ab05d9" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=0d1c92e2"></script>
+    <script src="_static/documentation_options.js?v=037b81c8"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,6 +52,7 @@
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'alpha-gamma-approx';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Approximating double n-capture" href="double-n-capture.html" />
@@ -59,20 +60,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="2.12" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -98,7 +105,51 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
     </header>
   
 
@@ -547,11 +598,18 @@
 
 
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
 
 
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -579,7 +637,7 @@
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-the-full-network">Integrating the full network</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approximate-version">Approximate version</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-the-approximate-network">Integrating the approximate network</a></li>
@@ -628,7 +686,7 @@ combining them into a single effective rate by assuming that the protons and nuc
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/03abd9eb02b9f6bca27079433a06393fb19f1dabff3a78027bc0f536937155d7.png" src="_images/03abd9eb02b9f6bca27079433a06393fb19f1dabff3a78027bc0f536937155d7.png" />
+<img alt="_images/f7595eb4dc4b53aa26d023335a33aaa007eeaa40627a2dafa17197c361fffdb6.png" src="_images/f7595eb4dc4b53aa26d023335a33aaa007eeaa40627a2dafa17197c361fffdb6.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -688,7 +746,7 @@ combining them into a single effective rate by assuming that the protons and nuc
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/80fde521ed99828f146ecd00e8b0298a3d643731ce3849cec24577aa9fccd5fc.png" src="_images/80fde521ed99828f146ecd00e8b0298a3d643731ce3849cec24577aa9fccd5fc.png" />
+<img alt="_images/5d8483a09930359e97c4192a18d3dc139fb1f91e09f206d67d6f4f2ef43dd5ba.png" src="_images/5d8483a09930359e97c4192a18d3dc139fb1f91e09f206d67d6f4f2ef43dd5ba.png" />
 </div>
 </div>
 </section>
@@ -808,7 +866,7 @@ S32
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/fc743e31d04218c707195ee2804aa7fb005ae7dc48d23a3b9c8ae2d869c997c2.png" src="_images/fc743e31d04218c707195ee2804aa7fb005ae7dc48d23a3b9c8ae2d869c997c2.png" />
+<img alt="_images/1bd7dc9eec853390a35b314658665fb4564867976c7cdc4de6bb5025ecdda345.png" src="_images/1bd7dc9eec853390a35b314658665fb4564867976c7cdc4de6bb5025ecdda345.png" />
 </div>
 </div>
 <p>As we see above, the nuclei <span class="math notranslate nohighlight">\({}^{27}\mathrm{Al}\)</span> and <span class="math notranslate nohighlight">\({}^{31}\mathrm{P}\)</span> no longer appear in the network, but  the links to them are still understood to the network.  This reduces the size of the network, while still preserving those flows.</p>
@@ -908,7 +966,7 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/f860bf48635b4d85b23b5f7d63d6020ca2158b29cc3dc847c56aaadfa4bb0bbc.png" src="_images/f860bf48635b4d85b23b5f7d63d6020ca2158b29cc3dc847c56aaadfa4bb0bbc.png" />
+<img alt="_images/2e48c24278713810bb90db1925ad9c03e9fe1b35ecba29c929bb8a8cd1678475.png" src="_images/2e48c24278713810bb90db1925ad9c03e9fe1b35ecba29c929bb8a8cd1678475.png" />
 </div>
 </div>
 </section>
@@ -938,7 +996,7 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/15cb7b6904f99c2bff41a6b48cfbce889a85c8c47439de5fbdaca9a56df756db.png" src="_images/15cb7b6904f99c2bff41a6b48cfbce889a85c8c47439de5fbdaca9a56df756db.png" />
+<img alt="_images/d290ec3aeb57ed2be1a2ee71501ec25733b5932822c4873e33ed42e67e558434.png" src="_images/d290ec3aeb57ed2be1a2ee71501ec25733b5932822c4873e33ed42e67e558434.png" />
 </div>
 </div>
 <p>Here the dotted line is the approximate network.  We see that the results agree well.</p>
@@ -955,7 +1013,7 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/ad54cccf8b38a72f535b390750e7eb39f76b80ee3b7b6a1b53f96468588f25f8.png" src="_images/ad54cccf8b38a72f535b390750e7eb39f76b80ee3b7b6a1b53f96468588f25f8.png" />
+<img alt="_images/5f06698fc2f63cf154dcb6f71dc9bbbe42b6e188551963b6a0f2fea8b2c6d050.png" src="_images/5f06698fc2f63cf154dcb6f71dc9bbbe42b6e188551963b6a0f2fea8b2c6d050.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1028,7 +1086,7 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a4998b85d8096f10d76e8158e767f9757594bd2e0e85a2f8896dde4290c35974.png" src="_images/a4998b85d8096f10d76e8158e767f9757594bd2e0e85a2f8896dde4290c35974.png" />
+<img alt="_images/123d884b90c23bac6e3cf05bcb628f25660f8fa5159035f264493b2e16303379.png" src="_images/123d884b90c23bac6e3cf05bcb628f25660f8fa5159035f264493b2e16303379.png" />
 </div>
 </div>
 <p>Here we see all 3 networks.  The full network (7 nuclei) is the solid lines.  The approximate version of that is the dotted line.  We see that they track reasonably well, especially when the abundance is high.  The dashed line is the version of the network that has the same 4 nuclei as the approximate network, but with out approximating the <span class="math notranslate nohighlight">\((\alpha, p)(p,\gamma)\)</span> links, so we see that the <span class="math notranslate nohighlight">\({}^{24}\mathrm{Mg}\)</span> takes longer to burn.</p>
@@ -1081,7 +1139,7 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-the-full-network">Integrating the full network</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approximate-version">Approximate version</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-the-approximate-network">Integrating the approximate network</a></li>
@@ -1135,8 +1193,8 @@ By pynucastro development team
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
   </footer>

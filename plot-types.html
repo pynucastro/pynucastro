@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Plotting Examples &#8212; pynucastro 2.12.0.post8+g49105f76a documentation</title>
+    <title>Plotting Examples &#8212; pynucastro 2.12.0.post9+g94de54279 documentation</title>
   
   
   
@@ -27,22 +27,22 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=4418a689" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="_static/myfile.css?v=15ab05d9" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=0d1c92e2"></script>
+    <script src="_static/documentation_options.js?v=037b81c8"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,6 +52,7 @@
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'plot-types';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Basic Networks" href="basic_network.html" />
@@ -59,20 +60,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="2.12" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -98,7 +105,51 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
     </header>
   
 
@@ -547,11 +598,18 @@
 
 
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
 
 
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -579,7 +637,7 @@
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#standard-view">Standard view</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rotated-view">Rotated view</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#showing-p-and-alpha-links">Showing <span class="math notranslate nohighlight">\(p\)</span> and <span class="math notranslate nohighlight">\(\alpha\)</span> links</a></li>
@@ -649,7 +707,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/fb1d98dc8f32eaa0c381c677e1ceba37e638c08f6db187ca5cbe4e17f077887e.png" src="_images/fb1d98dc8f32eaa0c381c677e1ceba37e638c08f6db187ca5cbe4e17f077887e.png" />
+<img alt="_images/cccce784f9cab9b68023d10da2b397c4ddfaa189c0cba5e3538fe53b8923c3cb.png" src="_images/cccce784f9cab9b68023d10da2b397c4ddfaa189c0cba5e3538fe53b8923c3cb.png" />
 </div>
 </div>
 </section>
@@ -694,7 +752,7 @@ and composition (as a <a class="reference internal" href="pynucastro.nucdata.com
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/71d58c6078224655624982b435c35a5691ee6751418fe4fbe6c0378072331fbd.png" src="_images/71d58c6078224655624982b435c35a5691ee6751418fe4fbe6c0378072331fbd.png" />
+<img alt="_images/23d92c23996f21848c23175084966b2b107809f2c3e6d90d59cc9949f5b3d913.png" src="_images/23d92c23996f21848c23175084966b2b107809f2c3e6d90d59cc9949f5b3d913.png" />
 </div>
 </div>
 </section>
@@ -709,7 +767,7 @@ and composition (as a <a class="reference internal" href="pynucastro.nucdata.com
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/f5a09164165058b93a1f0d155ee343b9e3ade728691af76b5d01e812430ae066.png" src="_images/f5a09164165058b93a1f0d155ee343b9e3ade728691af76b5d01e812430ae066.png" />
+<img alt="_images/2222708c07f3f2ffbbb99c8e74b32b990b711ff52bc29e2ac116cd3fa5e2aea0.png" src="_images/2222708c07f3f2ffbbb99c8e74b32b990b711ff52bc29e2ac116cd3fa5e2aea0.png" />
 </div>
 </div>
 </section>
@@ -725,7 +783,7 @@ and composition (as a <a class="reference internal" href="pynucastro.nucdata.com
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/ce093f10070de32f1cff8708c8f55d650c4230983a0e9cbce7354488ed4a63e2.png" src="_images/ce093f10070de32f1cff8708c8f55d650c4230983a0e9cbce7354488ed4a63e2.png" />
+<img alt="_images/0e7918b6b6a0b770ecf202073d61d0c02acf281c29d81fb1e44a71850acd3f21.png" src="_images/0e7918b6b6a0b770ecf202073d61d0c02acf281c29d81fb1e44a71850acd3f21.png" />
 </div>
 </div>
 <p>Sometimes, for a given nucleus, there are multiple rates that consume it, but one might be much more dominant than the others.  We can set a threshold to old show the rates consuming a nucleus if they are within a desired factor of the fastest rate using <code class="docutils literal notranslate"><span class="pre">consuming_rate_threshold</span></code>:</p>
@@ -738,7 +796,7 @@ and composition (as a <a class="reference internal" href="pynucastro.nucdata.com
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/6e6572613621a4f55ccec289b9acbf2d66e5072b349772788b92c9b999b6090d.png" src="_images/6e6572613621a4f55ccec289b9acbf2d66e5072b349772788b92c9b999b6090d.png" />
+<img alt="_images/ee8bccd46c9279b4a2ca308f92b4358634f7282f9db043f8017578f908ff24ca.png" src="_images/ee8bccd46c9279b4a2ca308f92b4358634f7282f9db043f8017578f908ff24ca.png" />
 </div>
 </div>
 </section>
@@ -754,7 +812,7 @@ and composition (as a <a class="reference internal" href="pynucastro.nucdata.com
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/6112b3fd41f26006f6cff44ef209c5e8a6adfcb5886cbbd705797e77bd0fb876.png" src="_images/6112b3fd41f26006f6cff44ef209c5e8a6adfcb5886cbbd705797e77bd0fb876.png" />
+<img alt="_images/c0feeedeacd600d061d46e72c9c9c5d25d29ee7227259c503501c2a6487a066a.png" src="_images/c0feeedeacd600d061d46e72c9c9c5d25d29ee7227259c503501c2a6487a066a.png" />
 </div>
 </div>
 </section>
@@ -771,7 +829,7 @@ and composition (as a <a class="reference internal" href="pynucastro.nucdata.com
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/8953de119daa1fcd3f22a59a31ec75fdf8c18624244e554243e973347f1865d3.png" src="_images/8953de119daa1fcd3f22a59a31ec75fdf8c18624244e554243e973347f1865d3.png" />
+<img alt="_images/3582d7756f7e221ab895f2f063ef956c7da4ae41c37a8a137c1fd0b83aa6ccb5.png" src="_images/3582d7756f7e221ab895f2f063ef956c7da4ae41c37a8a137c1fd0b83aa6ccb5.png" />
 </div>
 </div>
 <p>We can also display the edges as the net rate (forward - reverse) as a single directed edge using <code class="docutils literal notranslate"><span class="pre">use_net_rate</span></code></p>
@@ -785,7 +843,7 @@ and composition (as a <a class="reference internal" href="pynucastro.nucdata.com
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/c22aed716cc88e1aa30859416f5339b5629fc400ace5d6f48ea158e885151912.png" src="_images/c22aed716cc88e1aa30859416f5339b5629fc400ace5d6f48ea158e885151912.png" />
+<img alt="_images/bdd3eff5ffec0086d0d443b40a0695988d14f92cae6d40e698dcc0c83d356580.png" src="_images/bdd3eff5ffec0086d0d443b40a0695988d14f92cae6d40e698dcc0c83d356580.png" />
 </div>
 </div>
 </section>
@@ -801,7 +859,7 @@ and composition (as a <a class="reference internal" href="pynucastro.nucdata.com
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/5c9e57b60f306fe906b601b41b55b9a3a42fe450bf3230a01d64e5b41dc3661f.png" src="_images/5c9e57b60f306fe906b601b41b55b9a3a42fe450bf3230a01d64e5b41dc3661f.png" />
+<img alt="_images/7d03be9eaaf3f724c4a44041d48cf16a49ed42d42f34bef0b4c1e5990aae87d8.png" src="_images/7d03be9eaaf3f724c4a44041d48cf16a49ed42d42f34bef0b4c1e5990aae87d8.png" />
 </div>
 </div>
 <p>Any edge can be labelled by passing a dictionary keyed by a tuple of the nodes in the network.</p>
@@ -822,7 +880,7 @@ and composition (as a <a class="reference internal" href="pynucastro.nucdata.com
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/e417c68e47f7b07cf2624a632680e64a3feab0947ce6866b48fed1482fb3e056.png" src="_images/e417c68e47f7b07cf2624a632680e64a3feab0947ce6866b48fed1482fb3e056.png" />
+<img alt="_images/6c7fd60cf0d1a30c2a076ced749a3da774ca7b4e1f418cb880fce89f6cd41eb2.png" src="_images/6c7fd60cf0d1a30c2a076ced749a3da774ca7b4e1f418cb880fce89f6cd41eb2.png" />
 </div>
 </div>
 </section>
@@ -838,7 +896,7 @@ and composition (as a <a class="reference internal" href="pynucastro.nucdata.com
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/845fbcf8cccf5e9caf7115089b1ba2b253984750a84ec0699fe644356f3e9ebd.png" src="_images/845fbcf8cccf5e9caf7115089b1ba2b253984750a84ec0699fe644356f3e9ebd.png" />
+<img alt="_images/1c2f19705f1e76de4aa165683e7afee15752fb0c8abb91732540bacc6014d55d.png" src="_images/1c2f19705f1e76de4aa165683e7afee15752fb0c8abb91732540bacc6014d55d.png" />
 </div>
 </div>
 <p>We can also highlight rates using the <code class="docutils literal notranslate"><span class="pre">highlight_filter_function</span></code> mechanism.  This takes a function that operates on a rate and returns <code class="docutils literal notranslate"><span class="pre">True</span></code> if we wish to highlight the rate (i.e., as if we used a highlighter marker over the line).</p>
@@ -852,7 +910,7 @@ and composition (as a <a class="reference internal" href="pynucastro.nucdata.com
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/e4f08b11d5d332f259075cb91487f60b86c040a39ccbafabca3446b5611a2e6c.png" src="_images/e4f08b11d5d332f259075cb91487f60b86c040a39ccbafabca3446b5611a2e6c.png" />
+<img alt="_images/e1cb9f4cacb3614b43c7aacd9fbf1472939984d7801ab1dee71b45c8712457af.png" src="_images/e1cb9f4cacb3614b43c7aacd9fbf1472939984d7801ab1dee71b45c8712457af.png" />
 </div>
 </div>
 </section>
@@ -882,7 +940,7 @@ where</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/e1a9ea0fd3bea41ede30b943022ce4da088f626f57c2b360ce2fdcf47ac33e14.png" src="_images/e1a9ea0fd3bea41ede30b943022ce4da088f626f57c2b360ce2fdcf47ac33e14.png" />
+<img alt="_images/f3ce31fe414bbfb2b9341ec427b7b461b43ca8391e5d484432b88f93bbc9482a.png" src="_images/f3ce31fe414bbfb2b9341ec427b7b461b43ca8391e5d484432b88f93bbc9482a.png" />
 </div>
 </div>
 <div class="admonition warning">
@@ -927,7 +985,7 @@ where</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/c35352f3b74c86f21ae75ac88bdf135062de6a76f18eeea3bfd2cb4f27f1d0ab.png" src="_images/c35352f3b74c86f21ae75ac88bdf135062de6a76f18eeea3bfd2cb4f27f1d0ab.png" />
+<img alt="_images/da73a45c05558cfb51c1c7f9c7a9134c9fc5721d4ea8401128dbc6807a70f5c8.png" src="_images/da73a45c05558cfb51c1c7f9c7a9134c9fc5721d4ea8401128dbc6807a70f5c8.png" />
 </div>
 </div>
 <p>The plot is configurable through a large number of keyword arguments. Here we want to look at the rates at which nuclides are being created or destroyed, so we color by <span class="math notranslate nohighlight">\(\dot{Y}\)</span>, the rate of change of molar abundance. Density and temperature need to be supplied to evaluate the rates. A full list of valid keyword arguments can be found in the API documentation.</p>
@@ -939,7 +997,7 @@ where</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/6a293bd9a6b377e4308bee0ca563d739a170b34865e50642e6487b4bbacc6912.png" src="_images/6a293bd9a6b377e4308bee0ca563d739a170b34865e50642e6487b4bbacc6912.png" />
+<img alt="_images/052781ee180ce8d2a13f4981aa4fe0ee356c20dd3663147bb5f2a0839890d773.png" src="_images/052781ee180ce8d2a13f4981aa4fe0ee356c20dd3663147bb5f2a0839890d773.png" />
 </div>
 </div>
 <p>Unlike the network plot, this won’t omit hydrogen and helium by default. To just look at the heavier nuclides, we can define a function to filter by proton number.  Here we also plot
@@ -953,7 +1011,7 @@ where</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/c408cdddafcd1f0e6284f9838276f357b73754cd946cd1eb4513f3b2905c253a.png" src="_images/c408cdddafcd1f0e6284f9838276f357b73754cd946cd1eb4513f3b2905c253a.png" />
+<img alt="_images/45d7c0b83a4b5f2a016edff2203ed4753084ebadb4774fcef975963bc4369e4b.png" src="_images/45d7c0b83a4b5f2a016edff2203ed4753084ebadb4774fcef975963bc4369e4b.png" />
 </div>
 </div>
 </section>
@@ -967,7 +1025,7 @@ where</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/8f89e3da70e7d333d96ebfcc15207f091d0629857f55bd5959c4a2f5178d2f97.png" src="_images/8f89e3da70e7d333d96ebfcc15207f091d0629857f55bd5959c4a2f5178d2f97.png" />
+<img alt="_images/27c9f800e646f6a2b8153d0c88a08334df034d7c187ddb9e02767f46b37df1e0.png" src="_images/27c9f800e646f6a2b8153d0c88a08334df034d7c187ddb9e02767f46b37df1e0.png" />
 </div>
 </div>
 </section>
@@ -1019,7 +1077,7 @@ where</p>
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#standard-view">Standard view</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rotated-view">Rotated view</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#showing-p-and-alpha-links">Showing <span class="math notranslate nohighlight">\(p\)</span> and <span class="math notranslate nohighlight">\(\alpha\)</span> links</a></li>
@@ -1079,8 +1137,8 @@ By pynucastro development team
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
   </footer>
