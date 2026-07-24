@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.library &#8212; pynucastro 2.12.0.post10+gc3c367123 documentation</title>
+    <title>pynucastro.rates.library &#8212; pynucastro 2.12.0.post11+gdac64bc61 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=8b3f0d74"></script>
+    <script src="../../../_static/documentation_options.js?v=30508317"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1063,6 +1063,30 @@
         <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">duplicates</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">pref_type</span> <span class="ow">in</span> <span class="n">rate_type_preference</span><span class="p">:</span>
                 <span class="n">match</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">group</span> <span class="k">if</span> <span class="n">types</span><span class="p">[</span><span class="n">pref_type</span><span class="p">](</span><span class="n">r</span><span class="p">)]</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">((</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ReacLibRate</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">match</span><span class="p">)):</span>
+                    <span class="n">rate_a</span><span class="p">,</span> <span class="n">rate_b</span> <span class="o">=</span> <span class="n">match</span>
+
+                    <span class="k">if</span> <span class="nb">all</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">sets</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">match</span><span class="p">)):</span>
+                        <span class="n">info_a</span> <span class="o">=</span> <span class="n">rate_a</span><span class="o">.</span><span class="n">sets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">info_b</span> <span class="o">=</span> <span class="n">rate_b</span><span class="o">.</span><span class="n">sets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                        <span class="c1"># if two rates are both included in the recommended rates by ReacLib,</span>
+                        <span class="c1"># I found that:</span>
+                        <span class="c1"># (1) one was constant with respect to temperature, and originated</span>
+                        <span class="c1"># from wc17</span>
+                        <span class="c1"># (2) and the other was derived from the inverse (marked by the &#39;v&#39;</span>
+                        <span class="c1"># flag), originated from rath or ths8, and had a comment &quot;unrecommended</span>
+                        <span class="c1"># via script&quot; when viewed online at the ReacLib website.</span>
+                        <span class="c1">#</span>
+                        <span class="c1"># Knowing that (1) looks constant, I choose to keep (2). We identify</span>
+                        <span class="c1"># (2) by .derived_from_inverse.</span>
+
+                        <span class="k">if</span> <span class="n">info_a</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">info_b</span><span class="o">.</span><span class="n">derived_from_inverse</span><span class="p">:</span>
+                            <span class="n">match</span> <span class="o">=</span> <span class="p">[</span><span class="n">rate_a</span><span class="p">]</span>
+                        <span class="k">elif</span> <span class="n">info_b</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">info_a</span><span class="o">.</span><span class="n">derived_from_inverse</span><span class="p">:</span>
+                            <span class="n">match</span> <span class="o">=</span> <span class="p">[</span><span class="n">rate_b</span><span class="p">]</span>
+
                 <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
                     <span class="n">rates_to_remove</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">group</span> <span class="k">if</span> <span class="n">r</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">match</span><span class="p">])</span>
                     <span class="k">break</span>
