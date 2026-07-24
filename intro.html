@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Overview of pynucastro &#8212; pynucastro 2.12.0.post11+gdac64bc61 documentation</title>
+    <title>Overview of pynucastro &#8212; pynucastro 2.12.0.post12+ga8002d344 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=30508317"></script>
+    <script src="_static/documentation_options.js?v=f6b386f1"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -736,16 +736,18 @@ interactively visualize a network and see the flow between nuclei as
 connections colored by the rate linking them.</p></li>
 <li><p>You can use pynucastro to write the righthand side routine for the
 system of ODEs that must be integrated to evolve a reaction network.
-A reaction network takes the form:</p>
+A reaction network (considering binary reactions) takes the form:</p>
 <div class="math notranslate nohighlight">
-\[\frac{dY_i}{dt} = - \sum_{j,k} Y_i Y_j \lambda_{i(j,k)l} + \sum_{j,k} Y_l Y_k \lambda_{l(k,j)i}\]</div>
+\[\frac{dY_i}{dt} = - \sum_{j,k} \rho Y_i Y_j \lambda_{i(j,k)l} + \sum_{j,k} \rho Y_l Y_k \lambda_{l(k,j)i}\]</div>
 <p>where the <span class="math notranslate nohighlight">\(\lambda\)</span>’s are the rates of destruction and creation
 of species i, represented by the molar fraction <span class="math notranslate nohighlight">\(Y_i\)</span> (see,
-e.g., <span class="bibtex-citation" id="id1">Timmes [<a class="reference internal" href="zreferences.html#id2" title="F. X. Timmes. Integration of Nuclear Reaction Networks for Stellar Hydrodynamics. The Astrophysical Journal Supplement Series, 124(1):241-263, September 1999. doi:10.1086/313257.">1999</a>]</span>).  pynucastro
-will create the righthand sides of this system of ODEs (as python or
-C++ code) from the list of rates you provide. One can use this to
-add reaction networks to existing simulation codes, for example, the
-<a class="reference external" href="https://amrex-astro.github.io/MAESTROeX/">MAESTROeX</a> and <a class="reference external" href="https://amrex-astro.github.io/Castro/">Castro</a> codes.</p>
+e.g., <span class="bibtex-citation" id="id1">Timmes [<a class="reference internal" href="zreferences.html#id2" title="F. X. Timmes. Integration of Nuclear Reaction Networks for Stellar Hydrodynamics. The Astrophysical Journal Supplement Series, 124(1):241-263, September 1999. doi:10.1086/313257.">1999</a>]</span>).  For strong-force-mediated rates,
+<span class="math notranslate nohighlight">\(\lambda = N_A \langle \sigma v \rangle\)</span>.</p>
+<p>pynucastro will create the righthand sides of this system of ODEs
+(as python or C++ code) from the list of rates you provide. One can
+use this to add reaction networks to existing simulation codes, for
+example, the <a class="reference external" href="https://amrex-astro.github.io/MAESTROeX/">MAESTROeX</a>
+and <a class="reference external" href="https://amrex-astro.github.io/Castro/">Castro</a> codes.</p>
 </li>
 </ul>
 </section>

@@ -163,19 +163,21 @@ There are two modes of usage for pynucastro.
 
 * You can use pynucastro to write the righthand side routine for the
   system of ODEs that must be integrated to evolve a reaction network.
-  A reaction network takes the form:
+  A reaction network (considering binary reactions) takes the form:
 
   .. math::
 
-     \frac{dY_i}{dt} = - \sum_{j,k} Y_i Y_j \lambda_{i(j,k)l} + \sum_{j,k} Y_l Y_k \lambda_{l(k,j)i}
+     \frac{dY_i}{dt} = - \sum_{j,k} \rho Y_i Y_j \lambda_{i(j,k)l} + \sum_{j,k} \rho Y_l Y_k \lambda_{l(k,j)i}
 
   where the :math:`\lambda`'s are the rates of destruction and creation
   of species i, represented by the molar fraction :math:`Y_i` (see,
-  e.g., :cite:t:`timmes:1999`).  pynucastro
-  will create the righthand sides of this system of ODEs (as python or
-  C++ code) from the list of rates you provide. One can use this to
-  add reaction networks to existing simulation codes, for example, the
-  `MAESTROeX <https://amrex-astro.github.io/MAESTROeX/>`_ and `Castro
-  <https://amrex-astro.github.io/Castro/>`_ codes.
+  e.g., :cite:t:`timmes:1999`).  For strong-force-mediated rates,
+  $\lambda = N_A \langle \sigma v \rangle$.
+
+  pynucastro will create the righthand sides of this system of ODEs
+  (as python or C++ code) from the list of rates you provide. One can
+  use this to add reaction networks to existing simulation codes, for
+  example, the `MAESTROeX <https://amrex-astro.github.io/MAESTROeX/>`_
+  and `Castro <https://amrex-astro.github.io/Castro/>`_ codes.
 
 
