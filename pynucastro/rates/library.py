@@ -509,6 +509,30 @@ class Library:
         for group in duplicates:
             for pref_type in rate_type_preference:
                 match = [r for r in group if types[pref_type](r)]
+
+                if len(match) == 2 and all((isinstance(r, ReacLibRate) for r in match)):
+                    rate_a, rate_b = match
+
+                    if all((len(r.sets) == 1 for r in match)):
+                        info_a = rate_a.sets[0]
+                        info_b = rate_b.sets[0]
+
+                        # if two rates are both included in the recommended rates by ReacLib,
+                        # I found that:
+                        # (1) one was constant with respect to temperature, and originated
+                        # from wc17
+                        # (2) and the other was derived from the inverse (marked by the 'v'
+                        # flag), originated from rath or ths8, and had a comment "unrecommended
+                        # via script" when viewed online at the ReacLib website.
+                        #
+                        # Knowing that (1) looks constant, I choose to keep (2). We identify
+                        # (2) by .derived_from_inverse.
+
+                        if info_a.derived_from_inverse and not info_b.derived_from_inverse:
+                            match = [rate_a]
+                        elif info_b.derived_from_inverse and not info_a.derived_from_inverse:
+                            match = [rate_b]
+
                 if match:
                     rates_to_remove.extend([r for r in group if r not in match])
                     break
@@ -993,7 +1017,7 @@ class TabularLibrary(Library):
 
     """
 
-    lib_path = Path(__file__).parents[1]/"library/tabular"
+    lib_path = Path(__file__).parents[1]/"data/tabular"
 
     def __init__(self, ordering=None):
         # find all of the tabular rates that pynucastro knows about
@@ -1037,7 +1061,7 @@ class StarLibLibrary(Library):
 
     """
 
-    file_path = Path(__file__).parents[1]/"library/starlib.dat.bz2"
+    file_path = Path(__file__).parents[1]/"data/starlib.dat.bz2"
     INTERACTION_MAP = {1: (1, 1), 2: (1, 2), 3: (1, 3), 4: (2, 1),
                        5: (2, 2), 6: (2, 3), 7: (2, 4), 8: (3, 1),
                        9: (3, 2), 10: (4, 2), 11: (1, 4)}
