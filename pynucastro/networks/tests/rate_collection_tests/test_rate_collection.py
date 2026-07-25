@@ -6,7 +6,8 @@ import pynucastro as pyna
 
 class TestRateCollection:
     @pytest.fixture(scope="class")
-    def rc(self, reaclib_library):
+    @classmethod
+    def rc(cls, reaclib_library):
         mylib = reaclib_library.linking_nuclei(["he4", "c12", "o16"])
         return pyna.RateCollection(libraries=[mylib])
 
@@ -72,7 +73,8 @@ class TestRateCollection:
 
 class TestUnimportantRates:
     @pytest.fixture(scope="class")
-    def rc(self, reaclib_library):
+    @classmethod
+    def rc(cls, reaclib_library):
         rate_names = ["c12(p,g)n13",
                       "c13(p,g)n14",
                       "n13(,)c13",
@@ -85,7 +87,8 @@ class TestUnimportantRates:
         return pyna.RateCollection(rates=rates)
 
     @pytest.fixture(scope="class")
-    def comp(self, rc):
+    @classmethod
+    def comp(cls, rc):
         # define a composition
         comp = pyna.Composition(rc.unique_nuclei)
         comp.set_all(1.0)

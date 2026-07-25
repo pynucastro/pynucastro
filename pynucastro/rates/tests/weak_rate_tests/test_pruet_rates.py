@@ -9,7 +9,8 @@ import pynucastro as pyna
 
 class TestPruetFullerLibibrary:
     @pytest.fixture(scope="class")
-    def pl(self):
+    @classmethod
+    def pl(cls):
         return pyna.PruetFullerLibrary()
 
     def test_fe66_mn66(self, pl):

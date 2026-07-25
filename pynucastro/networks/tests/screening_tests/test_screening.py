@@ -10,7 +10,8 @@ from pynucastro.screening import (chugunov_2007, chugunov_2009,
 
 class TestScreening:
     @pytest.fixture(scope="class")
-    def rc(self, reaclib_library):
+    @classmethod
+    def rc(cls, reaclib_library):
         rate_names = ["c12(a,g)o16",
                       "c12(c12,a)ne20",
                       "c12(c12,n)mg23",

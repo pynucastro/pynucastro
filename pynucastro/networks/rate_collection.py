@@ -7,6 +7,7 @@ import collections
 import copy
 import math
 import warnings
+from itertools import groupby
 from pathlib import Path
 
 import matplotlib as mpl
@@ -681,6 +682,29 @@ class RateCollection:
                     self.rates.append(copy.copy(r))
 
         self._build_collection()
+
+    def resample(self, seed=None):
+        """Resample starlib rates
+
+        Parameters
+        ----------
+        seed: int
+            Seed for resampling. If no seed is provided then
+            an arbitrary seed is used.
+        """
+
+        if seed is None:
+            #arbitrarily chosen upper limit for np.random
+            #since it requires one.
+            seed = np.random.randint(10e5)
+        rng = np.random.default_rng(seed=seed)
+        for rate in self.starlib_rates:
+            rate.sample_rates(rng=rng)
+
+    def unsample(self):
+        """Restore starlib rates to median values."""
+        for rate in self.starlib_rates:
+            rate.sample_rates()
 
     def make_ap_pg_approx(self, intermediate_nuclei=None):
         """Combine the rates A(a,g)B and A(a,p)X(p,g)B (and the
@@ -1662,8 +1686,14 @@ class RateCollection:
                 ostr += f"     {rp}\n"
         return ostr
 
-    def get_nuclei_latex_string(self):
+    def get_nuclei_latex_string(self, combine=True):
         """Return a string listing the nuclei in latex format
+
+        Parameters
+        ----------
+        combine : bool
+            Do we combine all isotopes of the same element together
+            into a single quantity (e.g. ¹²⁻¹⁴C)?
 
         Returns
         -------
@@ -1672,10 +1702,42 @@ class RateCollection:
         """
 
         ostr = ""
-        for i, n in enumerate(self.unique_nuclei):
-            ostr += f"${n.pretty}$"
-            if i != len(self.unique_nuclei)-1:
-                ostr += ", "
+
+        if combine:
+
+            # make a dict keyed by element that gives the mass numbers
+            nuc_combined = {}
+            for n in self.unique_nuclei:
+                if n.el in nuc_combined:
+                    nuc_combined[n.el].append(n.A)
+                else:
+                    nuc_combined[n.el] = [n.A]
+
+            # now combine them into contiguous sequences
+            nuc_list = {}
+            for el, As in nuc_combined.items():
+                ranges = []
+                for _, g in groupby(enumerate(As), lambda x: x[1] - x[0]):
+                    group = [v for _, v in g]
+                    if len(group) == 1:
+                        ranges.append(f"{group[0]}")
+                    else:
+                        ranges.append(rf"{group[0]}\mbox{{-}}{group[-1]}")
+
+                nuc_list[el] = ranges
+
+            for i, (el, As) in enumerate(nuc_list.items()):
+                A_str = ",".join(As)
+                ostr += rf"${{}}^{{{A_str}}}\mathrm{{{el.capitalize()}}}$"
+                if i != len(nuc_list)-1:
+                    ostr += ", "
+        else:
+
+            for i, n in enumerate(self.unique_nuclei):
+                ostr += f"${n.pretty}$"
+                if i != len(self.unique_nuclei)-1:
+                    ostr += ", "
+
         return ostr
 
     def get_rates_latex_table_string(self):
@@ -1692,9 +1754,9 @@ class RateCollection:
         ostr = ""
         for rp in sorted(self.get_rate_pairs()):
             if rp.forward:
-                ostr += f"{rp.forward.pretty_string:38} & \n"
+                ostr += f"{rp.forward.pretty_string:38} &"
             else:
-                ostr += f"{' ':38} \n &"
+                ostr += f"{' ':38}  &"
 
             if rp.reverse:
                 ostr += rf"  {rp.reverse.pretty_string:38} \\"
@@ -1999,7 +2061,7 @@ class RateCollection:
              node_color="#444444", node_shape="o",
              color_nodes_by_abundance=False, node_abundance_cutoff=1.e-10,
              nuclei_custom_labels=None,
-             curved_edges=False,
+             curved_edges=False, curved_edge_radius=0.2,
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False,
              hide_xp=True, hide_xalpha=True,
@@ -2069,6 +2131,10 @@ class RateCollection:
             the lower cutoff value used for coloring nodes by abundance.
         curved_edges : bool
             do we use arcs to connect the nodes?
+        curved_edge_radius : float
+            amount of curvature when drawing the edges with
+            ``curved_edges=True``.  This is used by the
+            matplotlib ``connectionstyle``.
         N_range : Iterable
             range of neutron number to zoom in on
         Z_range : Iterable
@@ -2253,7 +2319,7 @@ class RateCollection:
         # draw the edges -- we'll do this in several groups
 
         if curved_edges:
-            connectionstyle = "arc3, rad = 0.2"
+            connectionstyle = f"arc3, rad = {curved_edge_radius}"
             sort_reverse = False
         else:
             connectionstyle = "arc3"
@@ -2406,6 +2472,10 @@ class RateCollection:
             if Z_range is not None and N_range is not None:
                 ax.set_xlim(N_range[0], N_range[1])
                 ax.set_ylim(Z_range[0], Z_range[1])
+                ax.set_aspect("equal")
+            else:
+                ax.set_aspect("equal", "datalim")
+
         else:
             if Z_range is not None:
                 ax.set_xlim(Z_range[0], Z_range[1])
@@ -2416,9 +2486,6 @@ class RateCollection:
             ZA = np.array([n.A - 2 * n.Z for n in node_nuclei])
             if ZA.min() == ZA.max():
                 ax.set_ylim(ZA.min() - 0.5, ZA.min() + 0.5)
-
-        if not rotated:
-            ax.set_aspect("equal", "datalim")
 
         # add a legend showing the direction that each type of capture
         # moves you in the plane

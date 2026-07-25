@@ -9,7 +9,8 @@ import pynucastro.reduction.drgep_module as drgep
 
 class TestDrgepHelpers:
     @pytest.fixture(scope="class")
-    def net(self, reaclib_library):
+    @classmethod
+    def net(cls, reaclib_library):
         rate_names = ["c12(p,g)n13",
                       "c13(p,g)n14",
                       "n13(,)c13",
@@ -22,7 +23,8 @@ class TestDrgepHelpers:
         return pyna.RateCollection(rates=rates)
 
     @pytest.fixture(scope="class")
-    def comp(self, net):
+    @classmethod
+    def comp(cls, net):
         c = pyna.Composition(net.unique_nuclei)
         c.set_solar_like()
         return c

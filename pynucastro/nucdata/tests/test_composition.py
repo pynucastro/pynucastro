@@ -10,7 +10,8 @@ from pynucastro.nucdata import Composition, Nucleus
 
 class TestComposition:
     @pytest.fixture(scope="class")
-    def nuclei(self):
+    @classmethod
+    def nuclei(cls):
         return [Nucleus("h1"),
                 Nucleus("he4"),
                 Nucleus("c12"),
@@ -19,7 +20,8 @@ class TestComposition:
                 Nucleus("ca40")]
 
     @pytest.fixture(scope="class")
-    def comp(self, nuclei):
+    @classmethod
+    def comp(cls, nuclei):
         return Composition(nuclei)
 
     def test_getitem(self, comp):
@@ -123,14 +125,16 @@ class TestComposition:
 
 class TestCompositionVars:
     @pytest.fixture(scope="class")
-    def nuclei(self):
+    @classmethod
+    def nuclei(cls):
         return [Nucleus("h1"),
                 Nucleus("he4"),
                 Nucleus("c12"),
                 Nucleus("fe56")]
 
     @pytest.fixture(scope="class")
-    def comp(self, nuclei):
+    @classmethod
+    def comp(cls, nuclei):
         c = Composition(nuclei)
         c.set_equal()
         return c
@@ -160,7 +164,8 @@ class TestCompBinning:
     with the same A, so we exercise the secondary check on Z"""
 
     @pytest.fixture(scope="class")
-    def nuclei(self):
+    @classmethod
+    def nuclei(cls):
         return [Nucleus("p"),
                 Nucleus("c12"),
                 Nucleus("c13"),
@@ -175,7 +180,8 @@ class TestCompBinning:
                 Nucleus("zn60")]
 
     @pytest.fixture(scope="class")
-    def comp(self, nuclei):
+    @classmethod
+    def comp(cls, nuclei):
         c = Composition(nuclei)
         c.set_equal()
         return c
@@ -232,7 +238,8 @@ class TestCompBinning2:
     """a more extreme example -- we'll be into a composition where
     none of the original nuclei are present"""
     @pytest.fixture(scope="class")
-    def nuclei(self):
+    @classmethod
+    def nuclei(cls):
         return [Nucleus("d"),
                 Nucleus("he3"),
                 Nucleus("he4"),
@@ -245,7 +252,8 @@ class TestCompBinning2:
                 Nucleus("o18")]
 
     @pytest.fixture(scope="class")
-    def comp(self, nuclei):
+    @classmethod
+    def comp(cls, nuclei):
         c = Composition(nuclei)
         c.set_equal()
         return c
@@ -272,13 +280,15 @@ class TestCompBinning2:
 class TestCompBinning3:
     """an example where we exclude Ni56 from the binning."""
     @pytest.fixture(scope="class")
-    def nuclei(self):
+    @classmethod
+    def nuclei(cls):
         nuc_list = pyna.get_nuclei_in_range("Fe", A_range=[52, 58])
         nuc_list += pyna.get_nuclei_in_range(Z_range=[28, 28], A_range=[56, 58])
         return nuc_list
 
     @pytest.fixture(scope="class")
-    def comp(self, nuclei):
+    @classmethod
+    def comp(cls, nuclei):
         c = Composition(nuclei)
         c.set_equal()
         return c

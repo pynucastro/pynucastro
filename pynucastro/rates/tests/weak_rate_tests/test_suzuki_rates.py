@@ -11,7 +11,8 @@ import pynucastro as pyna
 class TestTabularRates:
 
     @pytest.fixture(scope="class")
-    def rc_su(self, suzuki_library):
+    @classmethod
+    def rc_su(cls, suzuki_library):
         return pyna.RateCollection(libraries=[suzuki_library])
 
     def test_rate_values_suzuki(self, rc_su):

@@ -5,14 +5,16 @@ import pynucastro as pyna
 
 class TestNSE:
     @pytest.fixture(scope="class")
-    def pynet(self, reaclib_library):
+    @classmethod
+    def pynet(cls, reaclib_library):
 
         lib = reaclib_library.linking_nuclei(["p", "he4", "fe52",
                                               "co55", "ni56"])
         return pyna.NSENetwork(libraries=lib, use_unreliable_spins=False)
 
     @pytest.fixture(scope="class")
-    def upper_net_unreliable_spins(self, tabular_library, reaclib_library):
+    @classmethod
+    def upper_net_unreliable_spins(cls, tabular_library, reaclib_library):
 
         nuclei = ["p", "n", "cu72", "cu73", "ni72", "ni73"]
         tablib = tabular_library.linking_nuclei(nuclei)
@@ -31,7 +33,8 @@ class TestNSE:
         return pyna.NSENetwork(libraries=lib, use_unreliable_spins=True)
 
     @pytest.fixture(scope="class")
-    def upper_net_reliable_spins(self, tabular_library, reaclib_library):
+    @classmethod
+    def upper_net_reliable_spins(cls, tabular_library, reaclib_library):
 
         nuclei = ["p", "n", "cu72", "cu73", "ni72", "ni73"]
         tablib = tabular_library.linking_nuclei(nuclei)

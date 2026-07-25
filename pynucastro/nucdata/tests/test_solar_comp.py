@@ -1,20 +1,22 @@
 import pytest
 from pytest import approx
 
-from pynucastro.nucdata.composition import LoddersComposition
+from pynucastro.nucdata.composition import SolarComposition
 
 
-class TestLoddersComposition:
-
-    @pytest.fixture(scope="class")
-    def solar(self):
-        """Default Lodders solar comp, without scaling"""
-        return LoddersComposition()
+class TestSolarComposition:
 
     @pytest.fixture(scope="class")
-    def scaled(self):
-        """Scale Lodders to desired metallicity"""
-        return LoddersComposition(Z=0.04)
+    @classmethod
+    def solar(cls):
+        """Default solar composition, without scaling"""
+        return SolarComposition()
+
+    @pytest.fixture(scope="class")
+    @classmethod
+    def scaled(cls):
+        """Scale solar composition to desired metallicity"""
+        return SolarComposition(Z=0.04)
 
     def test_sum_to_one(self, solar, scaled):
         """All mass fractions should add up to 1"""
@@ -25,7 +27,7 @@ class TestLoddersComposition:
         assert xsum_scaled == approx(1.0)
 
     def test_default_z(self, solar):
-        """Default metallicity is 1-H-He from Lodders"""
+        """Default metallicity is 1-H-He from solar composition"""
 
         H = 0.0
         He = 0.0

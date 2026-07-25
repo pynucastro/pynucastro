@@ -11,7 +11,9 @@ import numpy as np
 from scipy.integrate import solve_ivp
 
 from pynucastro.constants import constants
+from pynucastro.eos import StellarEOS
 from pynucastro.networks.rate_collection import RateCollection
+from pynucastro.neutrino_cooling import sneut5
 from pynucastro.nucdata import Composition
 from pynucastro.rates import ApproximateRate, ModifiedRate
 from pynucastro.screening import get_screening_func, get_screening_pair_set
@@ -37,14 +39,21 @@ class NetworkSolution:
     rho : float
         density used to integrate the network
     T : float
-        temperature used to integrate the network
+        temperature used to integrate the network.  Only needed if
+        this is not a self-heating burn
+    self_heating : bool
+        is temperature integrated together with composition?
+    thermal_neutrinos: bool
+        whether to include thermal neutrino cooling in the energy balance?
     screen_func: Callable
         screening function used to evaluate rates when integrating
         the network
 
     """
 
-    def __init__(self, sol, rhs, jac, network, rho, T, screen_func=None):
+    def __init__(self, sol, rhs, jac, network, rho, T=None,
+                 self_heating=False, thermal_neutrinos=False,
+                 screen_func=None):
 
         self._sol = sol
         self._rhs = rhs
@@ -52,6 +61,8 @@ class NetworkSolution:
         self.network = network
         self.rho = rho
         self.T = T
+        self.self_heating = self_heating
+        self.thermal_neutrinos = thermal_neutrinos
         self.screen_func = screen_func
 
     @property
@@ -90,7 +101,7 @@ class NetworkSolution:
         """
 
         As = np.array([n.A for n in self.unique_nuclei])
-        return self._sol.y * As[:, None]
+        return self._sol.y[0:len(self.unique_nuclei), :] * As[:, None]
 
     @property
     def Y(self):
@@ -103,7 +114,20 @@ class NetworkSolution:
 
         """
 
-        return self._sol.y
+        return self._sol.y[0:len(self.unique_nuclei), :]
+
+    @property
+    def Temp(self):
+        """Return the array of temperature for all times.
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        assert self.self_heating
+        return self._sol.y[-1, :]
 
     @property
     def unique_nuclei(self):
@@ -123,7 +147,8 @@ class NetworkSolution:
         Parameters
         ----------
         t : float or list or numpy.ndarray
-            time or time array used to evaluate the molar abundances
+            time or time array used to evaluate the mass fractions.  If a time
+            array is given, the output is an array of shape (nuc, times)
 
         Returns
         -------
@@ -132,7 +157,10 @@ class NetworkSolution:
         """
 
         As = np.array([n.A for n in self.unique_nuclei])
-        return self._sol.sol(t) * As[:, None]
+
+        if isinstance(t, (float, int)):
+            return self._sol.sol(t)[0:len(self.unique_nuclei)] * As
+        return self._sol.sol(t)[0:len(self.unique_nuclei), ...] * As[:, None]
 
     def Y_at(self, t):
         """Evaluate the molar abundances for a given time.
@@ -147,8 +175,28 @@ class NetworkSolution:
         numpy.ndarray
 
         """
+        if isinstance(t, (float, int)):
+            return self._sol.sol(t)[0:len(self.unique_nuclei)]
 
-        return self._sol.sol(t)
+        return self._sol.sol(t)[0:len(self.unique_nuclei), ...]
+
+    def T_at(self, t):
+        """Evaluate the temperature for a given time.
+
+        Parameters
+        ----------
+        t : float or list or numpy.ndarray
+            time or time array used to evaluate the molar abundances
+
+        Returns
+        -------
+        numpy.ndarray
+
+        """
+
+        assert self.self_heating
+
+        return self._sol.sol(t)[-1, ...]
 
     def ye(self, Y):
         """Evaluate the electron fraction with a given set of molar fractions
@@ -184,7 +232,7 @@ class NetworkSolution:
         Y = self.Y_at(t)
         return self.ye(Y)
 
-    def rhs(self, t, Y):
+    def rhs(self, t, Y, T=None):
         """Evaluate the RHS of the network with the same thermodynamic
         condition and screening routine used to integrate the network.
 
@@ -194,6 +242,8 @@ class NetworkSolution:
             time used to evaluate the RHS
         Y : numpy.ndarray
             molar abundances of the species
+        T : float
+            temperature (required for self-heating)
 
         Returns
         -------
@@ -201,10 +251,14 @@ class NetworkSolution:
 
         """
 
+        if self.self_heating:
+            assert T is not None
+            return self._rhs(t, Y, self.rho, T, screen_func=self.screen_func)
         return self._rhs(t, Y, self.rho, self.T, screen_func=self.screen_func)
 
     def rhs_at(self, t):
-        """Evaluate the RHS of the network for a given time.
+        """Evaluate the RHS of the network for a given time.  Note:
+        for a self-heating burn, this gives only dY/dt.
 
         Parameters
         ----------
@@ -218,6 +272,9 @@ class NetworkSolution:
         """
 
         Y = self.Y_at(t)
+        if self.self_heating:
+            T = self.T_at(t)
+            return self.rhs(t, Y, T=T)
         return self.rhs(t, Y)
 
     def jac(self, t, Y):
@@ -236,6 +293,9 @@ class NetworkSolution:
         numpy.ndarray
 
         """
+
+        # we don't support the Jacobian for self-heating networks
+        assert not self.self_heating
 
         return self._jac(t, Y, self.rho, self.T, screen_func=self.screen_func)
 
@@ -426,6 +486,143 @@ class NetworkSolution:
         if outfile is not None:
             fig.savefig(outfile, dpi=dpi)
 
+        return fig
+
+    def plot_temperature(self,
+                         tmin=None, tmax=None,
+                         size=(800, 600), dpi=100,
+                         label_size=14,
+                         outfile=None):
+        """Plot the time evolution of temperature for self-heating burns.
+
+        Parameters
+        ----------
+        tmin : float
+            Minimum time shown on the x-axis. If `None`, the first value of
+            `self.t` is used.
+        tmax : float
+            Maximum time shown on the x-axis. If `None`, the last value of
+            `self.t` is used.
+        dpi : int
+            dots per inch used with size to set output image size
+        size : (tuple, list)
+            (width, height) of the plot in pixels
+        label_size : int
+            Font size for axis labels.
+        outfile : str
+            output name of the plot (extension determines the type)
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+
+        """
+
+        assert self.self_heating
+
+        fig, ax = plt.subplots(figsize=(size[0]/dpi, size[1]/dpi))
+
+        ax.loglog(self.t, self.Temp)
+
+        if tmin is None:
+            tmin = self.t[0]
+        if tmax is None:
+            tmax = self.t[-1]
+
+        ax.set_xlim(tmin, tmax)
+
+        ax.set_xlabel("time [s]", fontsize=label_size)
+        ax.set_ylabel("T [K]", fontsize=label_size)
+        ax.grid(ls=":")
+        fig.tight_layout()
+
+        if outfile is not None:
+            fig.savefig(outfile, dpi=dpi)
+
+        return fig
+
+    def plot_energy_generation(self,
+                            tmin=None, tmax=None,
+                            ymin=None, ymax=None,
+                            include_neutrino_loss=None,
+                            size=(800, 600), dpi=100,
+                            label_size=14, legend_size=10,
+                            outfile=None):
+        """Plot the nuclear energy generation rate, and optionally the thermal
+        neutrino cooling rate.
+
+        Parameters
+        ----------
+        tmin: float
+            Minimum time shown on the x-axis. If `None`, the first value of
+                `self.t` is used.
+        tmax : float
+            Maximum time shown on the x-axis. If `None`, the last value of
+            `self.t` is used.
+        ymin : float
+            Minimum rate shown on the y-axis.
+        ymax : float
+            Maximum rate shown on the y-axis.
+        include_neutrino_loss : bool
+            Whether to also plot the thermal neutrino cooling rate. If `None`,
+            use `self.thermal_neutrinos`.
+        dpi : int
+            dots per inch used with size to set output image size.
+        size : (tuple, list)
+            (width, height) of the plot in pixels.
+        label_size : int
+            Font size for axis labels.
+        legend_size : int
+            Font size for the legend.
+        outfile : str
+            output name of the plot (extension determines the type).
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+
+        """
+
+        if include_neutrino_loss is None:
+            include_neutrino_loss = self.thermal_neutrinos
+
+        eps_nuc = np.array([self.energy_release_at(t) for t in self.t])
+
+        fig, ax = plt.subplots(figsize=(size[0]/dpi, size[1]/dpi))
+
+        ax.loglog(self.t, eps_nuc, label=r"$\epsilon_\mathrm{nuc}$")
+
+        if include_neutrino_loss:
+            eps_nu = []
+            for t in self.t:
+                comp = Composition(self.unique_nuclei)
+                comp.set_molar_array(self.Y_at(t))
+
+                if self.self_heating:
+                    T = self.T_at(t)
+                else:
+                    T = self.T
+
+                eps_nu.append(sneut5(self.rho, T, comp))
+
+            ax.loglog(self.t, eps_nu, label=r"$\epsilon_{\nu, \mathrm{therm}}$")
+
+        if tmin is None:
+            tmin = self.t[0]
+        if tmax is None:
+            tmax = self.t[-1]
+
+        ax.set_xlim(tmin, tmax)
+        ax.set_ylim(ymin, ymax)
+
+        ax.set_xlabel("Time [s]", fontsize=label_size)
+        ax.set_ylabel("Rates [erg/g/s]", fontsize=label_size)
+        ax.legend(loc="best", fontsize=legend_size)
+        ax.grid(ls=":")
+        fig.tight_layout()
+
+        if outfile is not None:
+            fig.savefig(outfile, dpi=dpi)
         return fig
 
 
@@ -946,12 +1143,15 @@ class PythonNetwork(RateCollection):
         if close_file:
             of.close()
 
-    def integrate_network(self, tmax, rho, T, Y0=None,
+    def integrate_network(self, tmax, rho, T, molar_composition=None,
                           screen_method=None,
+                          self_heating=False,
+                          thermal_neutrinos=False,
                           initial_comp="uniform",
                           rtol=1e-8, atol=1e-8):
         """Integrate the network to tmax given (rho, T, Y0) using
-        SciPy's solve_ivp() with BDF method.
+        SciPy's solve_ivp() with BDF method.  Optionally, we can
+        integrate temperature together in a self-heating mode.
 
         Parameters
         ----------
@@ -961,15 +1161,22 @@ class PythonNetwork(RateCollection):
             density used to integrate the network
         T : float
             temperature used to integrate the network
-        Y0 : numpy.ndarray
-            initial molar abundance of the nuclei. If not provided,
-            the initial composition is initialized according to `initial_comp`
+        molar_composition : numpy.ndarray or Composition
+            initial molar abundance of the nuclei. This can be either
+            a NumPy array of molar fractions or a Composition object.
+            If not provided, the initial composition is initialized
+            according to `initial_comp`
         screen_method : str
             name of the screening function used to evaluate rates when integrating
             the network. Valid choices are: `screen5`, `chugunov_2007`, `chugunov_2009`,
             `potekhin_1998`, and `debye_huckel`. If `None`, no screening is applied.
+        self_heating : bool
+            do we evolve temperature (as dT/dt = ε / c_v) together with the EOS?
+        thermal_neutrinos: bool
+            whether to include thermal neutrino cooling in the energy balance?
         initial_comp : str
-            different modes to use to set up the initial composition if Y0 is None.
+            different modes to use to set up the initial composition if
+            molar_composition is None.
             Valid choices are: `uniform`, `random`, and `solar`.
         rtol : float
             relative tolerance for SciPy's solve_ivp()
@@ -1002,22 +1209,72 @@ class PythonNetwork(RateCollection):
         screen_func = get_screening_func(screen_method)
 
         # Setup the initial molar abundance if Y0 is None
-        if Y0 is None:
+        if molar_composition is None:
             if initial_comp is None:
                 raise ValueError("Valid initial compositions are ['uniform', 'random', 'solar']")
             comp = Composition(self.unique_nuclei, init=initial_comp)
             Y0 = comp.get_molar_array()
+        else:
+            if isinstance(molar_composition, Composition):
+                Y0 = molar_composition.get_molar_array()
+            else:
+                Y0 = np.asarray(molar_composition)
 
-        # Integrate using SciPy's solve_ivp() using BDF method -- good for stiff system.
-        sol = solve_ivp(rhs, [0, tmax], Y0, method="BDF",
-                        dense_output=True, args=(rho, T, screen_func),
-                        rtol=rtol, atol=atol, jac=jacobian)
+        if self_heating:
+            energy_release = getattr(network, "energy_release")
+
+            def rhs_wrapper(t, xi, rhs, energy_release, rho, screen_func):
+                nspec = len(self.unique_nuclei)
+                assert len(xi) == nspec + 1
+
+                # unpack the integration state
+                Y = xi[0:nspec]
+                T = xi[-1]
+
+                dxidt = np.zeros_like(xi)
+
+                # first get the dYdt from our network module
+                dxidt[0:nspec] = rhs(t, Y, rho, T, screen_func=screen_func)
+
+                # now get the energy generation rate using this dY/dt
+                eps = energy_release(dxidt[0:nspec])
+
+                # use the EOS to get the specific heat
+                eos = StellarEOS()
+                comp = Composition(self.unique_nuclei)
+                comp.set_molar_array(Y)
+                state = eos.pe_state(rho, T, comp)
+
+                # include neutrino loss in the temperature evolution equation if wanted
+                eps_nu = 0.0
+                if thermal_neutrinos:
+                    eps_nu = sneut5(rho, T, comp)
+
+                # and finally compute dT/dt
+                dxidt[-1] = (eps - eps_nu) / state.c_v
+
+                return dxidt
+
+            xi0 = np.append(Y0, T)
+            sol = solve_ivp(rhs_wrapper, [0, tmax], xi0, method="BDF",
+                            dense_output=True,
+                            args=(rhs, energy_release, rho, screen_func),
+                            rtol=rtol, atol=atol)
+
+        else:
+            # Integrate using SciPy's solve_ivp() using BDF method --
+            # good for stiff system.
+            sol = solve_ivp(rhs, [0, tmax], Y0, method="BDF",
+                            dense_output=True, args=(rho, T, screen_func),
+                            rtol=rtol, atol=atol, jac=jacobian)
 
         if not sol.success:
             warnings.warn(f"Warning, integration failed, final integration time = {sol.t[-1]}")
 
         # Create NetworkSolution
         network_sol = NetworkSolution(sol, rhs, jacobian, self,
-                                      rho, T, screen_func=screen_func)
+                                      rho, T, screen_func=screen_func,
+                                      self_heating=self_heating,
+                                      thermal_neutrinos=thermal_neutrinos)
 
         return network_sol

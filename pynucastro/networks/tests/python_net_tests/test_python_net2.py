@@ -6,7 +6,8 @@ import pynucastro as pyna
 
 class TestPythonNetwork2:
     @pytest.fixture(scope="class")
-    def pynet(self, reaclib_library):
+    @classmethod
+    def pynet(cls, reaclib_library):
         mylib = reaclib_library.linking_nuclei(["he4", "c12", "o16"])
         return pyna.PythonNetwork(libraries=[mylib], inert_nuclei=["ne20"])
 

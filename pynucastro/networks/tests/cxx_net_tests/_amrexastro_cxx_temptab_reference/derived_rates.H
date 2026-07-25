@@ -39,7 +39,7 @@ void rate_F17_to_O16_p_derived(const tf_t& tfactors, const amrex::Real log_scor,
     amrex::Real net_log_pf = O16_log_pf + p_log_pf - F17_log_pf;
     [[maybe_unused]] amrex::Real net_dlog_pf_dT9 = dO16_log_pf_dT9 + dp_log_pf_dT9 - dF17_log_pf_dT9;
 
-    auto [_rate, _drate_dT] = interp_net::cubic_interp_uneven<do_T_derivatives>(
+    auto [_rate, _drate_dT] = interp_net::monotone_1d_interp<do_T_derivatives>(
                                                tfactors.lnT9,
                                                O16_p_to_F17_iliadis_data::log_t9,
                                                O16_p_to_F17_iliadis_data::log_rate);

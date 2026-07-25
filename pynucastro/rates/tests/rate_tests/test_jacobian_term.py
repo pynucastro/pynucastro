@@ -9,7 +9,8 @@ from pynucastro.nucdata import Composition, Nucleus
 class TestJacTerm:
 
     @pytest.fixture(scope="class")
-    def comp(self):
+    @classmethod
+    def comp(cls):
         nuc_list = [Nucleus("he4"), Nucleus("c12"), Nucleus("o16"),
                     Nucleus("ne20"), Nucleus("f20"), Nucleus("mg24")]
         comp = Composition(nuc_list)

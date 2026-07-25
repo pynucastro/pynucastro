@@ -68,9 +68,11 @@ def to_conditions(point):
     T = point["temperature"][0].to_value("K")
     comp = Composition([])
     pat = re.compile(r"X\(([a-zA-Z]+\d+)\)")
+    patn = re.compile(r"X\((n)\)")  # special case for neutrons
     for ns, field in point.ds.field_list:
-        m = pat.match(field)
-        if m is not None:
+        if m := pat.match(field):
+            comp[m[1]] = point[ns, field][0].to_value()
+        if m := patn.match(field):
             comp[m[1]] = point[ns, field][0].to_value()
 
     return rho, T, comp

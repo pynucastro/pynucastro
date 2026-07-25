@@ -7,7 +7,8 @@ import pynucastro as pyna
 
 class TestRateFilter:
     @pytest.fixture(scope="class")
-    def library(self, reaclib_library):
+    @classmethod
+    def library(cls, reaclib_library):
         """ this is run before each test """
 
         rate_names = ["c12(p,g)n13",

@@ -9,7 +9,8 @@ import pynucastro as pyna
 
 class TestOdaLibibrary:
     @pytest.fixture(scope="class")
-    def oda_lib(self):
+    @classmethod
+    def oda_lib(cls):
         return pyna.OdaLibrary()
 
     def test_f17_o17(self, oda_lib):
