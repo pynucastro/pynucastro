@@ -47,13 +47,13 @@ namespaces = false
 [tool.setuptools.package-data]
 # additional files to include when building a wheel
 pynucastro = [
-  "library/*",
-  "library/tabular/*",
-  "library/tabular/suzuki/*",
-  "library/tabular/langanke/*",
-  "library/tabular/pruet_fuller/*",
-  "library/tabular/ffn/*",
-  "library/tabular/oda/*",
+  "data/*",
+  "data/tabular/*",
+  "data/tabular/suzuki/*",
+  "data/tabular/langanke/*",
+  "data/tabular/pruet_fuller/*",
+  "data/tabular/ffn/*",
+  "data/tabular/oda/*",
   "templates/**/*",
   "nucdata/*",
   "nucdata/AtomicMassEvaluation/*",
@@ -130,7 +130,7 @@ skip = ["pynucastro/networks/tests/python_net_tests/_python_reference/network.py
 [tool.pytest.ini_options]
 # Example-Integrating-Network-diffeqpy.ipynb: needs Julia
 # docs/source/*.ipynb: symlinks to notebooks we're already testing
-# pynucastro/library/tabular/*/generate_*.ipynb: tabular rate file generation
+# pynucastro/data/tabular/*/generate_*.ipynb: tabular rate file generation
 addopts = """\
   --ignore-glob=external/** \
   --ignore=docs/source/Example-Integrating-Network-diffeqpy.ipynb \
@@ -140,7 +140,7 @@ addopts = """\
   --ignore=docs/source/duplicate-rates.ipynb \
   --ignore=docs/source/electron-eos.ipynb \
   --ignore=docs/source/stellar-eos.ipynb \
-  --ignore-glob=pynucastro/library/tabular/*/generate_*.ipynb \
+  --ignore-glob=pynucastro/data/tabular/*/generate_*.ipynb \
   --ignore=pynucastro/eos/generate_quadrature_weights.ipynb \
   --ignore=pynucastro/eos/degenerate_derivatives.ipynb \
   --nbval-sanitize-with .github/workflows/nbval_sanitize.cfg \
