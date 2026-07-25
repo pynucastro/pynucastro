@@ -195,5 +195,5 @@ add-ignore = [
   "D400",  # First line should end with a period
 ]
 # exclude directories that start with "." or "_", as well as the
-# scripts under pynucastro/library
-match-dir='^(?![._])(?!library$).*'
+# scripts under pynucastro/data
+match-dir='^(?![._])(?!data$).*'
