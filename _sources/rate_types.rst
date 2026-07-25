@@ -292,8 +292,8 @@ Table format
 
 Each rate table has a header (with lines starting with ``!``), followed
 by the data.  An example can be seen as:
-`suzuki-23na-23ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/suzuki-23na-23ne_electroncapture.dat>`_ in
-``pynucastro/library/tabular/suzuki``
+`suzuki-23na-23ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/data/tabular/suzuki/suzuki-23na-23ne_electroncapture.dat>`_ in
+``pynucastro/data/tabular/suzuki``
 
 .. important::
 
