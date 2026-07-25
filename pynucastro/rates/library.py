@@ -6,6 +6,7 @@ multiple sources.
 import bz2
 import collections
 import copy
+import inspect
 import io
 import re
 from itertools import islice
@@ -15,7 +16,7 @@ from pathlib import Path
 import numpy as np
 
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
-from pynucastro.rates.alternate_rates import DeBoerC12agO16
+from pynucastro.rates import alternate_rates
 from pynucastro.rates.derived_rate import DerivedRate
 from pynucastro.rates.files import _find_rate_file, get_rates_dir
 from pynucastro.rates.known_duplicates import (find_duplicate_rates,
@@ -508,6 +509,30 @@ class Library:
         for group in duplicates:
             for pref_type in rate_type_preference:
                 match = [r for r in group if types[pref_type](r)]
+
+                if len(match) == 2 and all((isinstance(r, ReacLibRate) for r in match)):
+                    rate_a, rate_b = match
+
+                    if all((len(r.sets) == 1 for r in match)):
+                        info_a = rate_a.sets[0]
+                        info_b = rate_b.sets[0]
+
+                        # if two rates are both included in the recommended rates by ReacLib,
+                        # I found that:
+                        # (1) one was constant with respect to temperature, and originated
+                        # from wc17
+                        # (2) and the other was derived from the inverse (marked by the 'v'
+                        # flag), originated from rath or ths8, and had a comment "unrecommended
+                        # via script" when viewed online at the ReacLib website.
+                        #
+                        # Knowing that (1) looks constant, I choose to keep (2). We identify
+                        # (2) by .derived_from_inverse.
+
+                        if info_a.derived_from_inverse and not info_b.derived_from_inverse:
+                            match = [rate_a]
+                        elif info_b.derived_from_inverse and not info_a.derived_from_inverse:
+                            match = [rate_b]
+
                 if match:
                     rates_to_remove.extend([r for r in group if r not in match])
                     break
@@ -1216,11 +1241,20 @@ def full_library():
 
     lib = Library()
     lib += ReacLibLibrary()
+    lib += StarLibLibrary()
     lib += SuzukiLibrary()
     lib += LangankeLibrary()
     lib += PruetFullerLibrary()
     lib += FFNLibrary()
     lib += OdaLibrary()
-    lib.add_rate(DeBoerC12agO16())
+
+    # discover the alternate rates from the module directly
+    rate_classes = [
+        cls for _, cls in inspect.getmembers(alternate_rates, inspect.isclass)
+        if cls.__module__ == alternate_rates.__name__
+    ]
+
+    for rate in rate_classes:
+        lib.add_rate(rate())
 
     return lib

@@ -78,8 +78,14 @@ class Composition(collections.UserDict):
         a floor for nuclei mass fractions, used as the default value.
     init : str
         Different modes to set up the initial composition. Valid choices
-        are [`uniform`, `random`, `solar`]. If "solar" is selected, assume
-        we work with metallicity, Z=0.02. If init=None, then no initial composition
+        are:
+
+        * "lightest" : the least massive nucleus is given X = 1
+        * "random" : mass fractions are assigned randomly
+        * "solar" : uses the Solar composition with Z=0.02
+        * "uniform" : all mass fractions are given the same value
+
+        If init=None, then no initial composition
         will be set.
     """
 
@@ -94,7 +100,14 @@ class Composition(collections.UserDict):
         elif init == "random":
             self.set_random()
         elif init == "solar":
-            self.set_solar_like(Z=0.02)
+            solar = SolarComposition(Z=0.02)
+            _tmp_comp = solar.bin_as(nuclei)
+            _tmp_comp.normalize()
+            self.set_array(_tmp_comp.get_array())
+        elif init == "lightest":
+            lightest = min(nuc for nuc in self)
+            self.X[lightest] = 1.0
+            self.normalize()
         elif init is None:
             pass
         else:
@@ -568,7 +581,7 @@ class Composition(collections.UserDict):
         return fig
 
 
-class LoddersComposition(Composition):
+class SolarComposition(Composition):
     """A class to use present day solar abundances from Lodders et al. 2020 & 2021.
 
     Parameters
