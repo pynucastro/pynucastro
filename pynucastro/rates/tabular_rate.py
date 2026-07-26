@@ -519,12 +519,12 @@ class TabularRate(TabularWeakRate):
     rfile : str, pathlib.Path, io.StringIO
         the file containing the data table
 
-
     .. deprecated:: 3.0
        ``TabularRate`` has been deprecated.  Use ``TabularWeakRate``
        instead.  ``TabularRate`` will be removed in version 3.1.
 
     """
+
     def __init__(self, *args, **kwargs):
         warnings.warn(
             "TabularRate is deprecated; use TabularWeakRate instead.",
