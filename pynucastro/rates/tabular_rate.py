@@ -514,14 +514,14 @@ class TabularWeakRate(Rate):
 class TabularRate(TabularWeakRate):
     """A rate tabulated in terms of log10(ρ Y_e) and log10(T).
 
+    .. deprecated:: 3.0
+       ``TabularRate`` has been deprecated.  Use ``TabularWeakRate``
+       instead.  ``TabularRate`` will be removed in version 3.1.
+
     Parameters
     ----------
     rfile : str, pathlib.Path, io.StringIO
         the file containing the data table
-
-    .. deprecated:: 3.0
-       ``TabularRate`` has been deprecated.  Use ``TabularWeakRate``
-       instead.  ``TabularRate`` will be removed in version 3.1.
 
     """
 
