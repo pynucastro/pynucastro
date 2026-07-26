@@ -519,3 +519,7 @@ class TabularRate(TabularWeakRate):
             stacklevel=2,
         )
         super().__init__(*args, **kwargs)
+
+    # needed because __add__ is abstract in TabularWeakRate
+    def __add__(self, other):
+        raise NotImplementedError("addition not defined for tabular rates")
