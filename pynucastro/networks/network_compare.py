@@ -191,10 +191,17 @@ class NetworkCompare:
             opts = "SCREEN_METHOD=null"
 
         # to reduce compilation time, we'll build in debug mode
-        subprocess.run(f"make DEBUG=TRUE -j 4 {opts}",
-                       capture_output=True,
-                       shell=True, check=True,
-                       cwd=self.amrex_test_path)
+        try:
+            subprocess.run(f"make DEBUG=TRUE -j 4 {opts}",
+                           capture_output=True, text=True,
+                           shell=True, check=True,
+                           cwd=self.amrex_test_path)
+        except subprocess.CalledProcessError as exc:
+            raise RuntimeError(
+                f"AMReX network build failed in {self.amrex_test_path}.\n"
+                f"stdout:\n{exc.stdout}\n"
+                f"stderr:\n{exc.stderr}"
+            ) from exc
 
         cp = subprocess.run(f"./main3d.gnu.DEBUG.ex testing.density={rho} testing.temperature={T}",
                             capture_output=True,
