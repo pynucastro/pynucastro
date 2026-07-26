@@ -36,7 +36,7 @@ The main classes are:
     This is a rate in the StarLib, with median rate and uncertainty
     tabulated in terms of temperature.
 
-  * :py:obj:`TabularRate <pynucastro.rates.tabular_rate.TabularRate>`:
+  * :py:obj:`TabularWeakRate <pynucastro.rates.tabular_rate.TabularWeakRate>`:
     This is a rate that is tabulated in terms of :math:`(T, \rho
     Y_e)`.  This is how the weak rates (electron captures and
     beta-decays) are stored.  Interpolation is used to find the rate

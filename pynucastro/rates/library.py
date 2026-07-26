@@ -24,7 +24,7 @@ from pynucastro.rates.known_duplicates import (find_duplicate_rates,
 from pynucastro.rates.rate import Rate
 from pynucastro.rates.reaclib_rate import ReacLibRate
 from pynucastro.rates.starlib_rate import StarLibRate
-from pynucastro.rates.tabular_rate import TabularRate
+from pynucastro.rates.tabular_rate import TabularWeakRate
 
 
 def _rate_name_to_nuc(name):
@@ -476,7 +476,7 @@ class Library:
         """Attempt to eliminate duplicate rates for the same link.
         Presently, this works for the case where there are 2 or 3 instances
         of the same link. The duplicate rates must be instances of
-        ``ReacLibRate`` (or derived from it), ``TabularRate``, and/or
+        ``ReacLibRate`` (or derived from it), ``TabularWeakRate``, and/or
         ``StarLibRate``
 
         Parameters
@@ -501,7 +501,7 @@ class Library:
             rate_type_preference = ["starlib", "tabular", "reaclib"]
 
         # this dict sets up the rate types given a preferred rate
-        types = {"tabular": lambda r: isinstance(r, TabularRate),
+        types = {"tabular": lambda r: isinstance(r, TabularWeakRate),
                  "starlib": lambda r: isinstance(r, StarLibRate),
                  "reaclib": lambda r: isinstance(r, ReacLibRate)}
 
@@ -1034,7 +1034,7 @@ class TabularLibrary(Library):
             for _, _, filenames in sorted(walk(source_dir)):
                 for f in sorted(filenames):
                     if f.endswith("electroncapture.dat") or f.endswith("betadecay.dat"):
-                        r = TabularRate(rfile=source_dir / f)
+                        r = TabularWeakRate(rfile=source_dir / f)
                         if r in trates:
                             # we are looping over the various libraries in order
                             # from lowest precedence to highest.  So if the rate

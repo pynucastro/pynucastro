@@ -15,7 +15,7 @@ from .modified_rate import ModifiedRate
 from .rate import BaryonConservationError, Rate, RatePair, Tfactors
 from .reaclib_rate import ReacLibRate, SingleSet
 from .starlib_rate import StarLibRate
-from .tabular_rate import TableIndex, TableInterpolator, TabularRate
+from .tabular_rate import TableIndex, TableInterpolator, TabularWeakRate
 from .temperature_tabular_rate import (TemperatureTabularRate,
                                        TempTableInterpolator)
 
@@ -40,7 +40,7 @@ def load_rate(rfile=None):
     """
 
     try:
-        rate = TabularRate(rfile=rfile)
+        rate = TabularWeakRate(rfile=rfile)
     except (AttributeError, RateFileError, UnsupportedNucleus):
         rate = ReacLibRate.from_file(rfile=rfile)
 

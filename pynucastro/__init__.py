@@ -108,7 +108,7 @@ reaction rates.  The main core rate classes are:
   temperature-depended rate from the ReacLib library, including
   methods to visualize and evaluate it.
 
-* :py:obj:`TabularRate <pynucastro.rates.tabular_rate.TabularRate>` :
+* :py:obj:`TabularWeakRate <pynucastro.rates.tabular_rate.TabularWeakRate>` :
   a tabulated (temperature and electron density) weak reaction rate),
   with methods to visualize and evaluate it.
 
