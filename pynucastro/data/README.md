@@ -1,7 +1,17 @@
-These reaction rates were downloaded from the Reaclib website:
+# data
+
+This directory contains the rate data from different sources.
+
+## ReacLib
+
+These reaction rate libraries were downloaded from the Reaclib website:
 
 https://reaclib.jinaweb.org/
 
-To add additional rates, download rates from the JINA Reaclib website
-in the Reaclib 1 or 2 file format to either this library directory or your
-problem directory.
+These are in ReacLib 2 format with the additional chapters (9, 10, 11).
+
+## StarLib
+
+The library was downloaded from the StarLib github page:
+
+https://github.com/Starlib/Rate-Library
