@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.tabular_rate &#8212; pynucastro 2.12.0.post15+gd67624be5 documentation</title>
+    <title>pynucastro.rates.tabular_rate &#8212; pynucastro 2.12.0.post16+gde493b4d0 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=064219a8"></script>
+    <script src="../../../_static/documentation_options.js?v=f321260b"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -518,6 +518,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
@@ -721,9 +722,9 @@
 
 
 
-<div class="viewcode-block" id="TabularRate">
-<a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">TabularRate</span><span class="p">(</span><span class="n">Rate</span><span class="p">):</span>
+<div class="viewcode-block" id="TabularWeakRate">
+<a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TabularWeakRate</span><span class="p">(</span><span class="n">Rate</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A rate tabulated in terms of log10(ρ Y_e) and log10(T).</span>
 
 <span class="sd">    Parameters</span>
@@ -782,7 +783,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">TabularRate</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">TabularWeakRate</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">products</span>
@@ -874,8 +875,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">screening_pairs</span> <span class="o">=</span> <span class="p">[]</span>
 
-<div class="viewcode-block" id="TabularRate.function_string_py">
-<a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.function_string_py">[docs]</a>
+<div class="viewcode-block" id="TabularWeakRate.function_string_py">
+<a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate.function_string_py">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">function_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the python function that computes the rate.</span>
 
@@ -899,8 +900,8 @@
         <span class="k">return</span> <span class="n">fstring</span></div>
 
 
-<div class="viewcode-block" id="TabularRate.log_eval">
-<a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.log_eval">[docs]</a>
+<div class="viewcode-block" id="TabularWeakRate.log_eval">
+<a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate.log_eval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">log_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the natural log of the reaction rate.</span>
@@ -935,8 +936,8 @@
         <span class="k">return</span> <span class="n">log10_r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="TabularRate.get_nu_loss">
-<a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.get_nu_loss">[docs]</a>
+<div class="viewcode-block" id="TabularWeakRate.get_nu_loss">
+<a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate.get_nu_loss">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_nu_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the neutrino loss for the rate.</span>
 
@@ -963,8 +964,8 @@
         <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="n">r</span></div>
 
 
-<div class="viewcode-block" id="TabularRate.plot">
-<a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.plot">[docs]</a>
+<div class="viewcode-block" id="TabularWeakRate.plot">
+<a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate.plot">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">Tmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Tmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rhoYmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rhoYmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">color_field</span><span class="o">=</span><span class="s1">&#39;rate&#39;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the rate or neutrino loss in the log10(ρ Y_e) and</span>
@@ -1042,6 +1043,36 @@
 
         <span class="k">return</span> <span class="n">fig</span></div>
 </div>
+
+
+
+<div class="viewcode-block" id="TabularRate">
+<a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TabularRate</span><span class="p">(</span><span class="n">TabularWeakRate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A rate tabulated in terms of log10(ρ Y_e) and log10(T).</span>
+
+<span class="sd">    .. deprecated:: 3.0</span>
+<span class="sd">       ``TabularRate`` has been deprecated.  Use ``TabularWeakRate``</span>
+<span class="sd">       instead.  ``TabularRate`` will be removed in version 3.1.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rfile : str, pathlib.Path, io.StringIO</span>
+<span class="sd">        the file containing the data table</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;TabularRate is deprecated; use TabularWeakRate instead.&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># needed because __add__ is abstract in TabularWeakRate</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;addition not defined for tabular rates&quot;</span><span class="p">)</span></div>
 
 </pre></div>
 

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Reaction Rate Types &#8212; pynucastro 2.12.0.post15+gd67624be5 documentation</title>
+    <title>Reaction Rate Types &#8212; pynucastro 2.12.0.post16+gde493b4d0 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=064219a8"></script>
+    <script src="_static/documentation_options.js?v=f321260b"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -854,7 +854,7 @@ can be used to resample the rates in the library.</p>
 <p>For electron captures and beta-decays (which are of the form
 <span class="math notranslate nohighlight">\(\rm{A \rightarrow B}\)</span>), we use tabulated rates.  These are
 two-dimensional tables, in terms of <span class="math notranslate nohighlight">\(T\)</span> and <span class="math notranslate nohighlight">\(\rho Y_e\)</span>,
-and managed by the <a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate" title="pynucastro.rates.tabular_rate.TabularRate"><code class="xref py py-func docutils literal notranslate"><span class="pre">TabularRate</span></code></a> class.</p>
+and managed by the <a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate" title="pynucastro.rates.tabular_rate.TabularWeakRate"><code class="xref py py-func docutils literal notranslate"><span class="pre">TabularWeakRate</span></code></a> class.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If positron captures and decays are available in the data source,
@@ -864,7 +864,7 @@ into a single rate.</p>
 <p>A tabular rate is described by a single file for each reaction
 (i.e., beta-decays and electron-captures are in separate files).</p>
 <p>The data reading and interpolation are managed by the
-<a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate" title="pynucastro.rates.tabular_rate.TabularRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularRate</span></code></a>
+<a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate" title="pynucastro.rates.tabular_rate.TabularWeakRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularWeakRate</span></code></a>
 class.</p>
 <section id="id2">
 <h3>ydot term<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
@@ -914,9 +914,9 @@ is inferred from the data file itself.</p>
 </section>
 <section id="id3">
 <h3>Rate evaluation functions<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
-<p>Analogous to <code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code>, <code class="docutils literal notranslate"><span class="pre">TabularRate</span></code> provides functions to
+<p>Analogous to <code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code>, <code class="docutils literal notranslate"><span class="pre">TabularWeakRate</span></code> provides functions to
 evaluate the rate and output the python code.  The function
-<a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.function_string_py" title="pynucastro.rates.tabular_rate.TabularRate.function_string_py"><code class="xref py py-func docutils literal notranslate"><span class="pre">function_string_py</span></code></a>
+<a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate.function_string_py" title="pynucastro.rates.tabular_rate.TabularWeakRate.function_string_py"><code class="xref py py-func docutils literal notranslate"><span class="pre">function_string_py</span></code></a>
 outputs the python code for managing the interpolation of the data.
 For C++ networks, this interpolation is handled directly by the network class.</p>
 </section>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Dealing with Duplicate Rates &#8212; pynucastro 2.12.0.post15+gd67624be5 documentation</title>
+    <title>Dealing with Duplicate Rates &#8212; pynucastro 2.12.0.post16+gde493b4d0 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=064219a8"></script>
+    <script src="_static/documentation_options.js?v=f321260b"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -611,7 +611,7 @@ source or tabulated vs. ReacLib).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
-<span class="n">wl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">TabularLibrary</span><span class="p">()</span>
+<span class="n">wl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">TabularWeakLibrary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -634,11 +634,11 @@ source or tabulated vs. ReacLib).</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>warning: C12 was not able to be linked in TabularLibrary
-warning: He4 was not able to be linked in TabularLibrary
-warning: O16 was not able to be linked in TabularLibrary
-warning: Ne20 was not able to be linked in TabularLibrary
-warning: Mg24 was not able to be linked in TabularLibrary
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>warning: C12 was not able to be linked in TabularWeakLibrary
+warning: He4 was not able to be linked in TabularWeakLibrary
+warning: O16 was not able to be linked in TabularWeakLibrary
+warning: Ne20 was not able to be linked in TabularWeakLibrary
+warning: Mg24 was not able to be linked in TabularWeakLibrary
 </pre></div>
 </div>
 </div>
@@ -702,23 +702,23 @@ warning: Mg24 was not able to be linked in TabularLibrary
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dupe 0:
    rate 1: n ⟶ p + e⁻ + 𝜈 (&lt;class &#39;pynucastro.rates.reaclib_rate.ReacLibRate&#39;&gt;)
-   rate 2: n ⟶ p + e⁻ + 𝜈 (&lt;class &#39;pynucastro.rates.tabular_rate.TabularRate&#39;&gt;)
+   rate 2: n ⟶ p + e⁻ + 𝜈 (&lt;class &#39;pynucastro.rates.tabular_rate.TabularWeakRate&#39;&gt;)
 dupe 1:
    rate 1: Mg23 ⟶ Na23 + e⁺ + 𝜈 (&lt;class &#39;pynucastro.rates.reaclib_rate.ReacLibRate&#39;&gt;)
-   rate 2: Mg23 + e⁻ ⟶ Na23 + 𝜈 (&lt;class &#39;pynucastro.rates.tabular_rate.TabularRate&#39;&gt;)
+   rate 2: Mg23 + e⁻ ⟶ Na23 + 𝜈 (&lt;class &#39;pynucastro.rates.tabular_rate.TabularWeakRate&#39;&gt;)
 </pre></div>
 </div>
 </div>
 </div>
-<p>In this case, we see that one is a <a class="reference internal" href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate" title="pynucastro.rates.reaclib_rate.ReacLibRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a> and the other is a <a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate" title="pynucastro.rates.tabular_rate.TabularRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularRate</span></code></a>.</p>
+<p>In this case, we see that one is a <a class="reference internal" href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate" title="pynucastro.rates.reaclib_rate.ReacLibRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a> and the other is a <a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate" title="pynucastro.rates.tabular_rate.TabularWeakRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularWeakRate</span></code></a>.</p>
 <p>The first duplicate is neutron decay.  ReacLib simply has the decay constant, with no density or temperature
 dependence.  The tabulated rate in this case comes from the <span class="bibtex-citation" id="id1">Langanke and Martínez-Pinedo [<a class="reference internal" href="zreferences.html#id9" title="K. Langanke and G. Martínez-Pinedo. Rate tables for the weak processes of pf-shell nuclei in stellar environments. Atomic Data and Nuclear Data Tables, 79(1):1-46, 2001. doi:10.1006/adnd.2001.0865.">2001</a>]</span> and is accurate at high densities / temperatures when degeneracy effects are important.</p>
-<p>For the second rate, note that in the <code class="docutils literal notranslate"><span class="pre">TabularRate</span></code> we combine the rates:</p>
+<p>For the second rate, note that in the <code class="docutils literal notranslate"><span class="pre">TabularWeakRate</span></code> we combine the rates:</p>
 <div class="math notranslate nohighlight">
 \[(Z, A) \rightarrow (Z -1, A) + e^+ + \nu_e\]</div>
 <div class="math notranslate nohighlight">
 \[(Z, A) + e^- \rightarrow (Z - 1, A) + \bar{\nu}_e\]</div>
-<p>into a single effective rate.  This means that our <code class="docutils literal notranslate"><span class="pre">TabularRate</span></code> version
+<p>into a single effective rate.  This means that our <code class="docutils literal notranslate"><span class="pre">TabularWeakRate</span></code> version
 of the <span class="math notranslate nohighlight">\({}^{23}\mathrm{Mg}\)</span> decay will contain both the <span class="math notranslate nohighlight">\(\beta+\)</span> decay and electron capture.  Furthermore, the tabular rates have both the density and temperature dependence, and thus should be preferred to the <code class="docutils literal notranslate"><span class="pre">ReacLibRates</span></code> when we have a duplicate.</p>
 <p>Here we loop over the duplicates and store the rates (the ReacLib versions) that we wish to <em>remove</em> in a list</p>
 <div class="cell docutils container">

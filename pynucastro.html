@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro package &#8212; pynucastro 2.12.0.post15+gd67624be5 documentation</title>
+    <title>pynucastro package &#8212; pynucastro 2.12.0.post16+gde493b4d0 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=064219a8"></script>
+    <script src="_static/documentation_options.js?v=f321260b"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -700,7 +700,7 @@ reaction rates.  The main core rate classes are:</p>
 <li><p><a class="reference internal" href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate" title="pynucastro.rates.reaclib_rate.ReacLibRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a> : a
 temperature-depended rate from the ReacLib library, including
 methods to visualize and evaluate it.</p></li>
-<li><p><a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate" title="pynucastro.rates.tabular_rate.TabularRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularRate</span></code></a> :
+<li><p><a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate" title="pynucastro.rates.tabular_rate.TabularWeakRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularWeakRate</span></code></a> :
 a tabulated (temperature and electron density) weak reaction rate),
 with methods to visualize and evaluate it.</p></li>
 <li><p><a class="reference internal" href="pynucastro.rates.temperature_tabular_rate.html#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate" title="pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code></a>
@@ -743,7 +743,7 @@ of rates from a <code class="docutils literal notranslate"><span class="pre">Lib
 <ul class="simple">
 <li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.ReacLibLibrary" title="pynucastro.rates.library.ReacLibLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReacLibLibrary</span></code></a> :
 read in the entire collection of ReacLib rates.</p></li>
-<li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.TabularLibrary" title="pynucastro.rates.library.TabularLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularLibrary</span></code></a> :
+<li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.TabularWeakLibrary" title="pynucastro.rates.library.TabularWeakLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularWeakLibrary</span></code></a> :
 read in all known tabular reaction rates.</p></li>
 </ul>
 </section>
@@ -989,6 +989,7 @@ routines for modifying the reaction rates.</p>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.StarLibLibrary"><code class="docutils literal notranslate"><span class="pre">StarLibLibrary</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.SuzukiLibrary"><code class="docutils literal notranslate"><span class="pre">SuzukiLibrary</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.TabularLibrary"><code class="docutils literal notranslate"><span class="pre">TabularLibrary</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.TabularWeakLibrary"><code class="docutils literal notranslate"><span class="pre">TabularWeakLibrary</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.capitalize_id"><code class="docutils literal notranslate"><span class="pre">capitalize_id()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.full_library"><code class="docutils literal notranslate"><span class="pre">full_library()</span></code></a></li>
 </ul>
@@ -1018,6 +1019,7 @@ routines for modifying the reaction rates.</p>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TableIndex"><code class="docutils literal notranslate"><span class="pre">TableIndex</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TableInterpolator"><code class="docutils literal notranslate"><span class="pre">TableInterpolator</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate"><code class="docutils literal notranslate"><span class="pre">TabularRate</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.rates.temperature_tabular_rate.html">pynucastro.rates.temperature_tabular_rate module</a><ul>

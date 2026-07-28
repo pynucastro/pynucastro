@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; pynucastro 2.12.0.post15+gd67624be5 documentation</title>
+    <title>Index &#8212; pynucastro 2.12.0.post16+gde493b4d0 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=064219a8"></script>
+    <script src="_static/documentation_options.js?v=f321260b"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -839,7 +839,7 @@
 </li>
         <li><a href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.function_string_py">(pynucastro.rates.reaclib_rate.ReacLibRate method)</a>
 </li>
-        <li><a href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.function_string_py">(pynucastro.rates.tabular_rate.TabularRate method)</a>
+        <li><a href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate.function_string_py">(pynucastro.rates.tabular_rate.TabularWeakRate method)</a>
 </li>
         <li><a href="pynucastro.rates.temperature_tabular_rate.html#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.function_string_py">(pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate method)</a>
 </li>
@@ -888,7 +888,7 @@
 </li>
       <li><a href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition.get_molar_array">get_molar_array() (pynucastro.nucdata.composition.Composition method)</a>
 </li>
-      <li><a href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.get_nu_loss">get_nu_loss() (pynucastro.rates.tabular_rate.TabularRate method)</a>
+      <li><a href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate.get_nu_loss">get_nu_loss() (pynucastro.rates.tabular_rate.TabularWeakRate method)</a>
 </li>
       <li><a href="pynucastro.mesa_utils.html#pynucastro.mesa_utils.get_nuclei">get_nuclei() (in module pynucastro.mesa_utils)</a>
 
@@ -1062,7 +1062,7 @@
 </li>
       <li><a href="pynucastro.rates.library.html#pynucastro.rates.library.LangankeLibrary">LangankeLibrary (class in pynucastro.rates.library)</a>
 </li>
-      <li><a href="pynucastro.rates.library.html#pynucastro.rates.library.TabularLibrary.lib_path">lib_path (pynucastro.rates.library.TabularLibrary attribute)</a>
+      <li><a href="pynucastro.rates.library.html#pynucastro.rates.library.TabularWeakLibrary.lib_path">lib_path (pynucastro.rates.library.TabularWeakLibrary attribute)</a>
 </li>
       <li><a href="pynucastro.rates.library.html#pynucastro.rates.library.Library">Library (class in pynucastro.rates.library)</a>
 </li>
@@ -1093,7 +1093,7 @@
 </li>
         <li><a href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.log_eval">(pynucastro.rates.reaclib_rate.ReacLibRate method)</a>
 </li>
-        <li><a href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.log_eval">(pynucastro.rates.tabular_rate.TabularRate method)</a>
+        <li><a href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate.log_eval">(pynucastro.rates.tabular_rate.TabularWeakRate method)</a>
 </li>
         <li><a href="pynucastro.rates.temperature_tabular_rate.html#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.log_eval">(pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate method)</a>
 </li>
@@ -1394,7 +1394,7 @@
 </li>
         <li><a href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.plot">(pynucastro.rates.reaclib_rate.ReacLibRate method)</a>
 </li>
-        <li><a href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate.plot">(pynucastro.rates.tabular_rate.TabularRate method)</a>
+        <li><a href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate.plot">(pynucastro.rates.tabular_rate.TabularWeakRate method)</a>
 </li>
         <li><a href="pynucastro.rates.temperature_tabular_rate.html#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate.plot">(pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate method)</a>
 </li>
@@ -2033,13 +2033,17 @@
 </li>
       <li><a href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TableIndex">TableIndex (class in pynucastro.rates.tabular_rate)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TableInterpolator">TableInterpolator (class in pynucastro.rates.tabular_rate)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.rates.library.html#pynucastro.rates.library.TabularLibrary">TabularLibrary (class in pynucastro.rates.library)</a>
 </li>
       <li><a href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate">TabularRate (class in pynucastro.rates.tabular_rate)</a>
+</li>
+      <li><a href="pynucastro.rates.library.html#pynucastro.rates.library.TabularWeakLibrary">TabularWeakLibrary (class in pynucastro.rates.library)</a>
+</li>
+      <li><a href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate">TabularWeakRate (class in pynucastro.rates.tabular_rate)</a>
 </li>
       <li><a href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus.tau">tau (pynucastro.nucdata.nucleus.Nucleus attribute)</a>
 </li>

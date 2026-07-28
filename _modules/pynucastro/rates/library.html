@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.library &#8212; pynucastro 2.12.0.post15+gd67624be5 documentation</title>
+    <title>pynucastro.rates.library &#8212; pynucastro 2.12.0.post16+gde493b4d0 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=064219a8"></script>
+    <script src="../../../_static/documentation_options.js?v=f321260b"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -523,6 +523,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">islice</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">walk</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -538,7 +539,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.reaclib_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReacLibRate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.starlib_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">StarLibRate</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.tabular_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">TabularRate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.tabular_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">TabularWeakRate</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_rate_name_to_nuc</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
@@ -1054,7 +1055,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Attempt to eliminate duplicate rates for the same link.</span>
 <span class="sd">        Presently, this works for the case where there are 2 or 3 instances</span>
 <span class="sd">        of the same link. The duplicate rates must be instances of</span>
-<span class="sd">        ``ReacLibRate`` (or derived from it), ``TabularRate``, and/or</span>
+<span class="sd">        ``ReacLibRate`` (or derived from it), ``TabularWeakRate``, and/or</span>
 <span class="sd">        ``StarLibRate``</span>
 
 <span class="sd">        Parameters</span>
@@ -1079,7 +1080,7 @@
             <span class="n">rate_type_preference</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;starlib&quot;</span><span class="p">,</span> <span class="s2">&quot;tabular&quot;</span><span class="p">,</span> <span class="s2">&quot;reaclib&quot;</span><span class="p">]</span>
 
         <span class="c1"># this dict sets up the rate types given a preferred rate</span>
-        <span class="n">types</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;tabular&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">TabularRate</span><span class="p">),</span>
+        <span class="n">types</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;tabular&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">TabularWeakRate</span><span class="p">),</span>
                  <span class="s2">&quot;starlib&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">StarLibRate</span><span class="p">),</span>
                  <span class="s2">&quot;reaclib&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ReacLibRate</span><span class="p">)}</span>
 
@@ -1614,9 +1615,9 @@
 
 
 
-<div class="viewcode-block" id="TabularLibrary">
-<a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.TabularLibrary">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">TabularLibrary</span><span class="p">(</span><span class="n">Library</span><span class="p">):</span>
+<div class="viewcode-block" id="TabularWeakLibrary">
+<a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.TabularWeakLibrary">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TabularWeakLibrary</span><span class="p">(</span><span class="n">Library</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a :py:class:`Library` containing all of the tabular</span>
 <span class="sd">    rates we know (excluding duplications) across multiple sources.</span>
 
@@ -1649,7 +1650,7 @@
             <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">filenames</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">walk</span><span class="p">(</span><span class="n">source_dir</span><span class="p">)):</span>
                 <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">filenames</span><span class="p">):</span>
                     <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;electroncapture.dat&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;betadecay.dat&quot;</span><span class="p">):</span>
-                        <span class="n">r</span> <span class="o">=</span> <span class="n">TabularRate</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="n">source_dir</span> <span class="o">/</span> <span class="n">f</span><span class="p">)</span>
+                        <span class="n">r</span> <span class="o">=</span> <span class="n">TabularWeakRate</span><span class="p">(</span><span class="n">rfile</span><span class="o">=</span><span class="n">source_dir</span> <span class="o">/</span> <span class="n">f</span><span class="p">)</span>
                         <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">trates</span><span class="p">:</span>
                             <span class="c1"># we are looping over the various libraries in order</span>
                             <span class="c1"># from lowest precedence to highest.  So if the rate</span>
@@ -1660,6 +1661,38 @@
                         <span class="n">trates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
         <span class="n">Library</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rates</span><span class="o">=</span><span class="n">trates</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="TabularLibrary">
+<a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.TabularLibrary">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TabularLibrary</span><span class="p">(</span><span class="n">TabularWeakLibrary</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a :py:class:`Library` containing all of the tabular</span>
+<span class="sd">    rates we know (excluding duplications) across multiple sources.</span>
+
+<span class="sd">    .. deprecated:: 3.0 ``TabularLibrary`` has been deprecated.  Use</span>
+<span class="sd">       ``TabularWeakLibrary`` instead.  ``TabularLibrary`` will be</span>
+<span class="sd">       removed in version 3.1.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ordering : list of str</span>
+<span class="sd">        The list of sources of the rates from lowest to highest</span>
+<span class="sd">        precedence.  We will read from the first source, and then for</span>
+<span class="sd">        any later sources, for any duplicate rates, we will replace</span>
+<span class="sd">        the existing rate with the version from the higher-priority</span>
+<span class="sd">        library.  The default ordering is ``[&quot;ffn&quot;, &quot;oda&quot;, &quot;pruet_fuller&quot;,</span>
+<span class="sd">        &quot;langanke&quot;, &quot;suzuki&quot;]``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;TabularLibrary is deprecated; use TabularWeakLibrary instead.&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 
@@ -1808,7 +1841,7 @@
 
 <div class="viewcode-block" id="SuzukiLibrary">
 <a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.SuzukiLibrary">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">SuzukiLibrary</span><span class="p">(</span><span class="n">TabularLibrary</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SuzukiLibrary</span><span class="p">(</span><span class="n">TabularWeakLibrary</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a :py:class:`Library` containing all of the tabular</span>
 <span class="sd">    rates inside the &quot;suzuki&quot; subdirectory.</span>
 
@@ -1821,7 +1854,7 @@
 
 <div class="viewcode-block" id="LangankeLibrary">
 <a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.LangankeLibrary">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">LangankeLibrary</span><span class="p">(</span><span class="n">TabularLibrary</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LangankeLibrary</span><span class="p">(</span><span class="n">TabularWeakLibrary</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a :py:class:`Library` containing all of the tabular</span>
 <span class="sd">    rates inside the &quot;langanke&quot; subdirectory.</span>
 
@@ -1834,7 +1867,7 @@
 
 <div class="viewcode-block" id="PruetFullerLibrary">
 <a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.PruetFullerLibrary">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">PruetFullerLibrary</span><span class="p">(</span><span class="n">TabularLibrary</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PruetFullerLibrary</span><span class="p">(</span><span class="n">TabularWeakLibrary</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a :py:class:`Library` containing all of the tabular</span>
 <span class="sd">    rates inside the &quot;pruet_fuller&quot; subdirectory.</span>
 
@@ -1847,7 +1880,7 @@
 
 <div class="viewcode-block" id="FFNLibrary">
 <a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.FFNLibrary">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">FFNLibrary</span><span class="p">(</span><span class="n">TabularLibrary</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FFNLibrary</span><span class="p">(</span><span class="n">TabularWeakLibrary</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a :py:class:`Library` containing all of the tabular</span>
 <span class="sd">    rates inside the &quot;ffn&quot; subdirectory.</span>
 
@@ -1860,7 +1893,7 @@
 
 <div class="viewcode-block" id="OdaLibrary">
 <a class="viewcode-back" href="../../../pynucastro.rates.library.html#pynucastro.rates.library.OdaLibrary">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">OdaLibrary</span><span class="p">(</span><span class="n">TabularLibrary</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OdaLibrary</span><span class="p">(</span><span class="n">TabularWeakLibrary</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a :py:class:`Library` containing all of the tabular</span>
 <span class="sd">    rates inside the &quot;oda&quot; subdirectory.</span>
 

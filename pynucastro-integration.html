@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Integrating a Network &#8212; pynucastro 2.12.0.post15+gd67624be5 documentation</title>
+    <title>Integrating a Network &#8212; pynucastro 2.12.0.post16+gde493b4d0 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=064219a8"></script>
+    <script src="_static/documentation_options.js?v=f321260b"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -753,7 +753,7 @@ def p_C13_to_N14_reaclib(rate_eval, tf, log_scor=0.0):
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Other rate classes (like <a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate" title="pynucastro.rates.tabular_rate.TabularRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularRate</span></code></a>
+<p>Other rate classes (like <a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate" title="pynucastro.rates.tabular_rate.TabularWeakRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularWeakRate</span></code></a>
 or <a class="reference internal" href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate" title="pynucastro.rates.approximate_rates.ApproximateRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ApproximateRate</span></code></a>) have their own implementations of <code class="docutils literal notranslate"><span class="pre">function_string_py()</span></code>.</p>
 </div>
 <p>The <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.write_network" title="pynucastro.networks.rate_collection.RateCollection.write_network"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_network</span></code></a> method will output the python code needed to define the RHS of a network for integration with the SciPy integrators.</p>
@@ -780,7 +780,7 @@ import numpy as np
 from pynucastro.constants import constants
 from numba.experimental import jitclass
 
-from pynucastro.rates import (TableIndex, TableInterpolator, TabularRate,
+from pynucastro.rates import (TableIndex, TableInterpolator, TabularWeakRate,
                               TempTableInterpolator, TemperatureTabularRate,
                               Tfactors)
 from pynucastro.screening import PlasmaState, ScreenFactors

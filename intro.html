@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Overview of pynucastro &#8212; pynucastro 2.12.0.post15+gd67624be5 documentation</title>
+    <title>Overview of pynucastro &#8212; pynucastro 2.12.0.post16+gde493b4d0 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=064219a8"></script>
+    <script src="_static/documentation_options.js?v=f321260b"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -635,7 +635,7 @@ coefficients.</p></li>
 <li><p><a class="reference internal" href="pynucastro.rates.starlib_rate.html#pynucastro.rates.starlib_rate.StarLibRate" title="pynucastro.rates.starlib_rate.StarLibRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StarLibRate</span></code></a>:
 This is a rate in the StarLib, with median rate and uncertainty
 tabulated in terms of temperature.</p></li>
-<li><p><a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate" title="pynucastro.rates.tabular_rate.TabularRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularRate</span></code></a>:
+<li><p><a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate" title="pynucastro.rates.tabular_rate.TabularWeakRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularWeakRate</span></code></a>:
 This is a rate that is tabulated in terms of <span class="math notranslate nohighlight">\((T, \rho
 Y_e)\)</span>.  This is how the weak rates (electron captures and
 beta-decays) are stored.  Interpolation is used to find the rate
@@ -688,7 +688,7 @@ to rates.</p></li>
 <li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.StarLibLibrary" title="pynucastro.rates.library.StarLibLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StarLibLibrary</span></code></a>: The
 entire StarLib reaction rate library, which provides uncertainties
 on rates.</p></li>
-<li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.TabularLibrary" title="pynucastro.rates.library.TabularLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularLibrary</span></code></a>: A
+<li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.TabularWeakLibrary" title="pynucastro.rates.library.TabularWeakLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularWeakLibrary</span></code></a>: A
 <cite>Library</cite> providing tabulated weak rate coverage of nuclei.</p></li>
 </ul>
 <p>additionally, the helper function, <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.full_library" title="pynucastro.rates.library.full_library"><code class="xref py py-func docutils literal notranslate"><span class="pre">full_library</span></code></a> will return a <code class="docutils literal notranslate"><span class="pre">Library</span></code>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.tabular_rate module &#8212; pynucastro 2.12.0.post15+gd67624be5 documentation</title>
+    <title>pynucastro.rates.tabular_rate module &#8212; pynucastro 2.12.0.post16+gde493b4d0 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=064219a8"></script>
+    <script src="_static/documentation_options.js?v=f321260b"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -607,11 +607,12 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TableInterpolator.class_type"><code class="docutils literal notranslate"><span class="pre">TableInterpolator.class_type</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate"><code class="docutils literal notranslate"><span class="pre">TabularRate</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate.function_string_py"><code class="docutils literal notranslate"><span class="pre">TabularRate.function_string_py()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate.get_nu_loss"><code class="docutils literal notranslate"><span class="pre">TabularRate.get_nu_loss()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate.log_eval"><code class="docutils literal notranslate"><span class="pre">TabularRate.log_eval()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate.plot"><code class="docutils literal notranslate"><span class="pre">TabularRate.plot()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate"><code class="docutils literal notranslate"><span class="pre">TabularRate</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.function_string_py"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.function_string_py()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.get_nu_loss"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.get_nu_loss()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.log_eval"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.log_eval()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.plot"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.plot()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -696,14 +697,30 @@ component) where index is a 1D flattened representation of
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TableInterpolator.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.TableInterpolator#7fd4b01ed370&lt;data:array(float64,</span> <span class="pre">2d,</span> <span class="pre">A),table_rhoy_lines:int32,table_temp_lines:int32,rhoy:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),temp:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A)&gt;</span></span><a class="headerlink" href="#pynucastro.rates.tabular_rate.TableInterpolator.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.TableInterpolator#7fdb66c25490&lt;data:array(float64,</span> <span class="pre">2d,</span> <span class="pre">A),table_rhoy_lines:int32,table_temp_lines:int32,rhoy:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),temp:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A)&gt;</span></span><a class="headerlink" href="#pynucastro.rates.tabular_rate.TableInterpolator.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TabularRate">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.tabular_rate.</span></span><span class="sig-name descname"><span class="pre">TabularRate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/tabular_rate.html#TabularRate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.tabular_rate.TabularRate" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.tabular_rate.</span></span><span class="sig-name descname"><span class="pre">TabularRate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/tabular_rate.html#TabularRate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.tabular_rate.TabularRate" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pynucastro.rates.tabular_rate.TabularWeakRate" title="pynucastro.rates.tabular_rate.TabularWeakRate"><code class="xref py py-class docutils literal notranslate"><span class="pre">TabularWeakRate</span></code></a></p>
+<p>A rate tabulated in terms of log10(ρ Y_e) and log10(T).</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 3.0: </span><code class="docutils literal notranslate"><span class="pre">TabularRate</span></code> has been deprecated.  Use <code class="docutils literal notranslate"><span class="pre">TabularWeakRate</span></code>
+instead.  <code class="docutils literal notranslate"><span class="pre">TabularRate</span></code> will be removed in version 3.1.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rfile</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><em>pathlib.Path</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/io.html#io.StringIO" title="(in Python v3.14)"><em>io.StringIO</em></a>) – the file containing the data table</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TabularWeakRate">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.tabular_rate.</span></span><span class="sig-name descname"><span class="pre">TabularWeakRate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/tabular_rate.html#TabularWeakRate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.tabular_rate.TabularWeakRate" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rate</span></code></a></p>
 <p>A rate tabulated in terms of log10(ρ Y_e) and log10(T).</p>
 <dl class="field-list simple">
@@ -712,8 +729,8 @@ component) where index is a 1D flattened representation of
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TabularRate.function_string_py">
-<span class="sig-name descname"><span class="pre">function_string_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/tabular_rate.html#TabularRate.function_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.tabular_rate.TabularRate.function_string_py" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TabularWeakRate.function_string_py">
+<span class="sig-name descname"><span class="pre">function_string_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/tabular_rate.html#TabularWeakRate.function_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.tabular_rate.TabularWeakRate.function_string_py" title="Link to this definition">#</a></dt>
 <dd><p>Construct the python function that computes the rate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -723,8 +740,8 @@ component) where index is a 1D flattened representation of
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TabularRate.get_nu_loss">
-<span class="sig-name descname"><span class="pre">get_nu_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/tabular_rate.html#TabularRate.get_nu_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.tabular_rate.TabularRate.get_nu_loss" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TabularWeakRate.get_nu_loss">
+<span class="sig-name descname"><span class="pre">get_nu_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/tabular_rate.html#TabularWeakRate.get_nu_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.tabular_rate.TabularWeakRate.get_nu_loss" title="Link to this definition">#</a></dt>
 <dd><p>Evaluate the neutrino loss for the rate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -743,8 +760,8 @@ to evaluate the rate with.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TabularRate.log_eval">
-<span class="sig-name descname"><span class="pre">log_eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/tabular_rate.html#TabularRate.log_eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.tabular_rate.TabularRate.log_eval" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TabularWeakRate.log_eval">
+<span class="sig-name descname"><span class="pre">log_eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/tabular_rate.html#TabularWeakRate.log_eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.tabular_rate.TabularWeakRate.log_eval" title="Link to this definition">#</a></dt>
 <dd><p>Evaluate the natural log of the reaction rate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -766,8 +783,8 @@ Unused for Tabular weak rates since screening does not affect weak reactions.</p
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TabularRate.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoYmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoYmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rate'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">10)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/tabular_rate.html#TabularRate.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.tabular_rate.TabularRate.plot" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TabularWeakRate.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoYmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhoYmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rate'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(10,</span> <span class="pre">10)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/tabular_rate.html#TabularWeakRate.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.tabular_rate.TabularWeakRate.plot" title="Link to this definition">#</a></dt>
 <dd><p>Plot the rate or neutrino loss in the log10(ρ Y_e) and
 log10(T) plane.</p>
 <dl class="field-list simple">
@@ -853,11 +870,12 @@ log10(T) plane.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TableInterpolator.class_type"><code class="docutils literal notranslate"><span class="pre">TableInterpolator.class_type</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate"><code class="docutils literal notranslate"><span class="pre">TabularRate</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate.function_string_py"><code class="docutils literal notranslate"><span class="pre">TabularRate.function_string_py()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate.get_nu_loss"><code class="docutils literal notranslate"><span class="pre">TabularRate.get_nu_loss()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate.log_eval"><code class="docutils literal notranslate"><span class="pre">TabularRate.log_eval()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate.plot"><code class="docutils literal notranslate"><span class="pre">TabularRate.plot()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate"><code class="docutils literal notranslate"><span class="pre">TabularRate</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.function_string_py"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.function_string_py()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.get_nu_loss"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.get_nu_loss()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.log_eval"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.log_eval()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.plot"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.plot()</span></code></a></li>
 </ul>
 </li>
 </ul>

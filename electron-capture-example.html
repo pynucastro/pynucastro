@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Tabulated Weak Rate Example &#8212; pynucastro 2.12.0.post15+gd67624be5 documentation</title>
+    <title>Tabulated Weak Rate Example &#8212; pynucastro 2.12.0.post16+gde493b4d0 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=064219a8"></script>
+    <script src="_static/documentation_options.js?v=f321260b"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -614,10 +614,10 @@
 </div>
 </div>
 </div>
-<p>We access the tabular rates from <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.TabularLibrary" title="pynucastro.rates.library.TabularLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularLibrary</span></code></a>.  Alternately, for this example, we could directly use <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.LangankeLibrary" title="pynucastro.rates.library.LangankeLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LangankeLibrary</span></code></a>.</p>
+<p>We access the tabular rates from <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.TabularWeakLibrary" title="pynucastro.rates.library.TabularWeakLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularWeakLibrary</span></code></a>.  Alternately, for this example, we could directly use <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.LangankeLibrary" title="pynucastro.rates.library.LangankeLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LangankeLibrary</span></code></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">TabularLibrary</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">TabularWeakLibrary</span><span class="p">()</span>
 <span class="n">lib</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;ni56&quot;</span><span class="p">,</span> <span class="s2">&quot;co56&quot;</span><span class="p">])</span>
 <span class="n">lib</span>
 </pre></div>
