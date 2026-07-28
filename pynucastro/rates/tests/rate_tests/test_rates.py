@@ -6,7 +6,7 @@ import math
 import pytest
 from pytest import approx
 
-from pynucastro import Composition, Rate, ReacLibLibrary, rates
+from pynucastro import Composition, Rate, rates
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import BaryonConservationError, ModifiedRate
 from pynucastro.rates.alternate_rates import IliadisO16pgF17

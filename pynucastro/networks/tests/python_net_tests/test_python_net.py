@@ -1,8 +1,6 @@
 # unit tests for rates
 import pytest
 
-from pynucastro import rates
-
 
 class TestPythonNetwork:
     @pytest.fixture(scope="class")
