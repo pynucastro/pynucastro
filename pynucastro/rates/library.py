@@ -9,6 +9,7 @@ import copy
 import inspect
 import io
 import re
+import warnings
 from itertools import islice
 from os import walk
 from pathlib import Path
@@ -1025,7 +1026,7 @@ class ReacLibLibrary(Library):
                 rate.write_to_file(f)
 
 
-class TabularLibrary(Library):
+class TabularWeakLibrary(Library):
     """Create a :py:class:`Library` containing all of the tabular
     rates we know (excluding duplications) across multiple sources.
 
@@ -1069,6 +1070,35 @@ class TabularLibrary(Library):
                         trates.append(r)
 
         Library.__init__(self, rates=trates)
+
+
+class TabularLibrary(TabularWeakLibrary):
+    """Create a :py:class:`Library` containing all of the tabular
+    rates we know (excluding duplications) across multiple sources.
+
+    .. deprecated:: 3.0 ``TabularLibrary`` has been deprecated.  Use
+       ``TabularWeakLibrary`` instead.  ``TabularLibrary`` will be
+       removed in version 3.1.
+
+    Parameters
+    ----------
+    ordering : list of str
+        The list of sources of the rates from lowest to highest
+        precedence.  We will read from the first source, and then for
+        any later sources, for any duplicate rates, we will replace
+        the existing rate with the version from the higher-priority
+        library.  The default ordering is ``["ffn", "oda", "pruet_fuller",
+        "langanke", "suzuki"]``
+
+    """
+
+    def __init__(self, *args, **kwargs):
+        warnings.warn(
+            "TabularLibrary is deprecated; use TabularWeakLibrary instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        super().__init__(*args, **kwargs)
 
 
 class StarLibLibrary(Library):
@@ -1202,7 +1232,7 @@ class StarLibLibrary(Library):
             rate.sample_rates()
 
 
-class SuzukiLibrary(TabularLibrary):
+class SuzukiLibrary(TabularWeakLibrary):
     """Create a :py:class:`Library` containing all of the tabular
     rates inside the "suzuki" subdirectory.
 
@@ -1212,7 +1242,7 @@ class SuzukiLibrary(TabularLibrary):
         super().__init__(ordering=["suzuki"])
 
 
-class LangankeLibrary(TabularLibrary):
+class LangankeLibrary(TabularWeakLibrary):
     """Create a :py:class:`Library` containing all of the tabular
     rates inside the "langanke" subdirectory.
 
@@ -1222,7 +1252,7 @@ class LangankeLibrary(TabularLibrary):
         super().__init__(ordering=["langanke"])
 
 
-class PruetFullerLibrary(TabularLibrary):
+class PruetFullerLibrary(TabularWeakLibrary):
     """Create a :py:class:`Library` containing all of the tabular
     rates inside the "pruet_fuller" subdirectory.
 
@@ -1232,7 +1262,7 @@ class PruetFullerLibrary(TabularLibrary):
         super().__init__(ordering=["pruet_fuller"])
 
 
-class FFNLibrary(TabularLibrary):
+class FFNLibrary(TabularWeakLibrary):
     """Create a :py:class:`Library` containing all of the tabular
     rates inside the "ffn" subdirectory.
 
@@ -1242,7 +1272,7 @@ class FFNLibrary(TabularLibrary):
         super().__init__(ordering=["ffn"])
 
 
-class OdaLibrary(TabularLibrary):
+class OdaLibrary(TabularWeakLibrary):
     """Create a :py:class:`Library` containing all of the tabular
     rates inside the "oda" subdirectory.
 

@@ -159,7 +159,7 @@ with some specialized library collections available as:
 * :py:obj:`ReacLibLibrary <pynucastro.rates.library.ReacLibLibrary>` :
   read in the entire collection of ReacLib rates.
 
-* :py:obj:`TabularLibrary <pynucastro.rates.library.TabularLibrary>` :
+* :py:obj:`TabularWeakLibrary <pynucastro.rates.library.TabularWeakLibrary>` :
   read in all known tabular reaction rates.
 
 ``reduction``
@@ -195,7 +195,7 @@ from pynucastro.rates import (ApproximateRate, DerivedRate, FFNLibrary,
                               LangankeLibrary, Library, ModifiedRate,
                               OdaLibrary, PruetFullerLibrary, Rate, RateFilter,
                               ReacLibLibrary, StarLibLibrary, SuzukiLibrary,
-                              TabularLibrary, Tfactors, full_library,
-                              load_rate)
+                              TabularLibrary, TabularWeakLibrary, Tfactors,
+                              full_library, load_rate)
 from pynucastro.reduction import drgep, sens_analysis
 from pynucastro.screening import make_plasma_state, make_screen_factors

@@ -98,7 +98,7 @@ The main classes are:
     entire StarLib reaction rate library, which provides uncertainties
     on rates.
 
-  * :py:obj:`TabularLibrary <pynucastro.rates.library.TabularLibrary>`: A
+  * :py:obj:`TabularWeakLibrary <pynucastro.rates.library.TabularWeakLibrary>`: A
     `Library` providing tabulated weak rate coverage of nuclei.
 
   additionally, the helper function, :func:`full_library
