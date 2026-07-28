@@ -368,32 +368,32 @@ class TestWeakRates:
     @pytest.fixture(scope="class")
     @classmethod
     def rate1(cls):
-        return rates.TabularRate("suzuki-18o-18f_betadecay.dat")
+        return rates.TabularWeakRate("suzuki-18o-18f_betadecay.dat")
 
     @pytest.fixture(scope="class")
     @classmethod
     def rate2(cls):
-        return rates.TabularRate("suzuki-22na-22ne_electroncapture.dat")
+        return rates.TabularWeakRate("suzuki-22na-22ne_electroncapture.dat")
 
     @pytest.fixture(scope="class")
     @classmethod
     def rate3(cls):
-        return rates.TabularRate("langanke-45sc-45ca_electroncapture.dat")
+        return rates.TabularWeakRate("langanke-45sc-45ca_electroncapture.dat")
 
     @pytest.fixture(scope="class")
     @classmethod
     def rate4(cls):
-        return rates.TabularRate("langanke-45ti-45sc_electroncapture.dat")
+        return rates.TabularWeakRate("langanke-45ti-45sc_electroncapture.dat")
 
     @pytest.fixture(scope="class")
     @classmethod
     def rate5(cls):
-        return rates.TabularRate("langanke-45v-45ti_electroncapture.dat")
+        return rates.TabularWeakRate("langanke-45v-45ti_electroncapture.dat")
 
     @pytest.fixture(scope="class")
     @classmethod
     def rate6(cls):
-        return rates.TabularRate("langanke-45ca-45sc_betadecay.dat")
+        return rates.TabularWeakRate("langanke-45ca-45sc_betadecay.dat")
 
     def test_reactants(self, rate1, rate2, rate3, rate4, rate5, rate6):
 

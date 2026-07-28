@@ -54,7 +54,7 @@ class TestDuplicates:
         assert lib.num_rates == 54
 
         num_tabular = len([r for r in lib.get_rates()
-                           if isinstance(r, pyna.rates.TabularRate)])
+                           if isinstance(r, pyna.rates.TabularWeakRate)])
 
         assert num_tabular == 12
 
@@ -67,6 +67,6 @@ class TestDuplicates:
         assert lib.num_rates == 54
 
         num_tabular = len([r for r in lib.get_rates()
-                           if isinstance(r, pyna.rates.TabularRate)])
+                           if isinstance(r, pyna.rates.TabularWeakRate)])
 
         assert num_tabular == 7
