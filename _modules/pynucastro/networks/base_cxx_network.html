@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 2.12.0.post14+g4db8b49de documentation</title>
+    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 2.12.0.post15+gd67624be5 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=3ec7db19"></script>
+    <script src="../../../_static/documentation_options.js?v=064219a8"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1382,6 +1382,8 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_fill_num_starlib</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="n">num_sl</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starlib_rates</span><span class="p">)</span>
         <span class="n">sl_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">#define STARLIB</span>
+
 <span class="s2">namespace starlib </span><span class="se">{{</span>
 
 <span class="s2">    constexpr std::uint8_t NumStarLibRates = </span><span class="si">{</span><span class="n">num_sl</span><span class="si">}</span><span class="s2">;</span>
