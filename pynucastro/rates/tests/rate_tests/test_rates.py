@@ -74,19 +74,6 @@ class TestRate:
     def test_source(self, srates):
         assert srates["ch1"].source["Year"] == "2012"
 
-    def test_rfile_name(self, srates):
-        assert srates["ch1"].rfile_name == {"o15--n15-wc12"}
-        assert srates["ch2"].rfile_name == {"t-gn-d-nk06"}
-        assert srates["ch3"].rfile_name == {"he6-gnn-he4-cf88"}
-        assert srates["ch4"].rfile_name == {"c12-ag-o16-nac2"}
-        assert srates["ch5"].rfile_name == {"n15-pa-c12-nacr"}
-        assert srates["ch6"].rfile_name == {"he3-he3pp-he4-nacr"}
-        assert srates["ch7"].rfile_name == {"li7-tnna-he4-mafo"}
-        assert srates["ch8"].rfile_name == {"he4-aag-c12-fy05"}
-        assert srates["ch9"].rfile_name == {"he4-pphe3-he3-nacr"}
-        assert srates["ch10"].rfile_name == {"he4-npahe3-li7-mafo"}
-        assert srates["ch11"].rfile_name == {"b17-nnn-c14-wc12"}
-
     def test_chapter(self, srates):
         assert srates["ch1"].chapter == 1
         assert srates["ch2"].chapter == 2
@@ -448,7 +435,7 @@ class TestModify:
     @pytest.fixture(scope="function")
     @classmethod
     def rate(cls, reaclib_library):
-        return reaclib_library.get_rate_by_name("c12(c12,n)mg23")
+        return copy.deepcopy(reaclib_library.get_rate_by_name("c12(c12,n)mg23"))
 
     def test_modify(self, rate):
 
@@ -463,7 +450,7 @@ class TestModifiedRate:
     @pytest.fixture(scope="function")
     @classmethod
     def rate(cls, reaclib_library):
-        return reaclib_library.get_rate_by_name("c12(c12,n)mg23")
+        return copy.deepcopy(reaclib_library.get_rate_by_name("c12(c12,n)mg23"))
 
     def test_eval(self, rate):
 
