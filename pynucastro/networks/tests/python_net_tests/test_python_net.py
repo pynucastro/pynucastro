@@ -1,29 +1,27 @@
 # unit tests for rates
 import pytest
 
-from pynucastro import rates
-
 
 class TestPythonNetwork:
     @pytest.fixture(scope="class")
     @classmethod
-    def rate1(cls):
-        return rates.ReacLibRate.from_file("c13-pg-n14-nacr")
+    def rate1(cls, reaclib_library):
+        return reaclib_library.get_rate_by_name("c13(p,g)n14")
 
     @pytest.fixture(scope="class")
     @classmethod
-    def rate2(cls):
-        return rates.ReacLibRate.from_file("he4-pphe3-he3-nacr")
+    def rate2(cls, reaclib_library):
+        return reaclib_library.get_rate_by_name("he4(pp,he3)he3")
 
     @pytest.fixture(scope="class")
     @classmethod
-    def rate3(cls):
-        return rates.ReacLibRate.from_file("he4-npahe3-li7-mafo")
+    def rate3(cls, reaclib_library):
+        return reaclib_library.get_rate_by_name("he4(npa,he3)li7")
 
     @pytest.fixture(scope="class")
     @classmethod
-    def rate4(cls):
-        return rates.ReacLibRate.from_file("p-p-d-ec")
+    def rate4(cls, reaclib_library):
+        return reaclib_library.get_rate_by_name("p(p,)d")[1]
 
     def test_ydot_string(self, rate1, rate2, rate3, rate4):
         ydot1 = rate1.ydot_string_py()
@@ -59,14 +57,6 @@ def p_C13_to_N14_reaclib(rate_eval, tf, log_scor=0.0):
     # C13 + p --> N14
     rate = 0.0
 
-    # nacrr
-    ln_set_rate =  15.1825 + -13.5543*tf.T9i \\
-                         + -1.5*tf.lnT9
-
-    ln_set_rate += log_scor
-    set_rate = np.exp(ln_set_rate)
-    rate += set_rate
-
     # nacrn
     ln_set_rate =  18.5155 + -13.72*tf.T913i + -0.450018*tf.T913 \\
                          + 3.70823*tf.T9 + -1.70545*tf.T953 + -0.666667*tf.lnT9
@@ -78,6 +68,14 @@ def p_C13_to_N14_reaclib(rate_eval, tf, log_scor=0.0):
     # nacrr
     ln_set_rate =  13.9637 + -5.78147*tf.T9i + -0.196703*tf.T913 \\
                          + 0.142126*tf.T9 + -0.0238912*tf.T953 + -1.5*tf.lnT9
+
+    ln_set_rate += log_scor
+    set_rate = np.exp(ln_set_rate)
+    rate += set_rate
+
+    # nacrr
+    ln_set_rate =  15.1825 + -13.5543*tf.T9i \\
+                         + -1.5*tf.lnT9
 
     ln_set_rate += log_scor
     set_rate = np.exp(ln_set_rate)
@@ -125,14 +123,6 @@ def n_p_He4_He4_to_He3_Li7_reaclib(rate_eval, tf, log_scor=0.0):
 def p_p_to_d_reaclib_electron_capture(rate_eval, tf, log_scor=0.0):
     # p + p --> d
     rate = 0.0
-
-    # bet+w
-    ln_set_rate =  -34.7863 + -3.51193*tf.T913i + 3.10086*tf.T913 \\
-                         + -0.198314*tf.T9 + 0.0126251*tf.T953 + -1.02517*tf.lnT9
-
-    ln_set_rate += log_scor
-    set_rate = np.exp(ln_set_rate)
-    rate += set_rate
 
     #   ecw
     ln_set_rate =  -43.6499 + -0.00246064*tf.T9i + -2.7507*tf.T913i + -0.424877*tf.T913 \\
