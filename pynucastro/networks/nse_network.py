@@ -309,7 +309,7 @@ class NSENetwork(RateCollection):
                 Xs = self._nucleon_fraction_nse(u, u_c, state)
                 res = self._constraint_eq(u, u_c, state)
                 is_pos_new = all(k > 0 for k in res)
-                found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1.0e-11, atol=1.0e-11))
+                found_sol = np.all(np.abs(res) < tol)
 
                 if found_sol:
                     Xs = self._nucleon_fraction_nse(u, u_c, state)
