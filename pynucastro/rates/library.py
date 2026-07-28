@@ -55,8 +55,20 @@ def _rate_name_to_nuc(name):
             if nuc.lower() == "pp":
                 reactants += [Nucleus("p"), Nucleus("p")]
                 continue
+            if nuc.lower() == "nn":
+                reactants += [Nucleus("n"), Nucleus("n")]
+                continue
             if nuc.lower() == "aa":
                 reactants += [Nucleus("he4"), Nucleus("he4")]
+                continue
+            if nuc.lower() == "npa":
+                reactants += [Nucleus("n"), Nucleus("p"), Nucleus("he4")]
+                continue
+            if nuc.lower() == "nna":
+                reactants += [Nucleus("n"), Nucleus("n"), Nucleus("he4")]
+                continue
+            if nuc.lower() == "nnn":
+                reactants += [Nucleus("n"), Nucleus("n"), Nucleus("n")]
                 continue
             print(f"couldn't deal with {nuc}")
             raise
@@ -76,8 +88,20 @@ def _rate_name_to_nuc(name):
             if nuc.lower() == "pp":
                 products += [Nucleus("p"), Nucleus("p")]
                 continue
+            if nuc.lower() == "nn":
+                products += [Nucleus("n"), Nucleus("n")]
+                continue
             if nuc.lower() == "aa":
                 products += [Nucleus("he4"), Nucleus("he4")]
+                continue
+            if nuc.lower() == "npa":
+                products += [Nucleus("n"), Nucleus("p"), Nucleus("he4")]
+                continue
+            if nuc.lower() == "nna":
+                products += [Nucleus("n"), Nucleus("n"), Nucleus("he4")]
+                continue
+            if nuc.lower() == "nnn":
+                products += [Nucleus("n"), Nucleus("n"), Nucleus("n")]
                 continue
             print(f"couldn't deal with {nuc}")
             raise

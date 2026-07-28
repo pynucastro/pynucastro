@@ -6,104 +6,110 @@ import pynucastro as pyna
 
 
 class TestLibrary:
-    @classmethod
-    def setup_class(cls):
-        """ this is run once for each class before any tests """
 
+    @pytest.fixture(scope="class")
     @classmethod
-    def teardown_class(cls):
-        """ this is run once for each class after all tests """
-
-    def setup_method(self):
-        """ this is run before each test """
+    def regular_library(cls, reaclib_library):
 
         trates = []
-        trates.append(pyna.load_rate("c12-pg-n13-ls09"))
-        trates.append(pyna.load_rate("c13-pg-n14-nacr"))
-        trates.append(pyna.load_rate("n13--c13-wc12"))
-        trates.append(pyna.load_rate("n13-pg-o14-lg06"))
-        trates.append(pyna.load_rate("n14-pg-o15-im05"))
-        trates.append(pyna.load_rate("n15-pa-c12-nacr"))
-        trates.append(pyna.load_rate("o14--n14-wc12"))
-        trates.append(pyna.load_rate("o15--n15-wc12"))
+        trates.append(reaclib_library.get_rate_by_name("c12(p,g)n13"))
+        trates.append(reaclib_library.get_rate_by_name("c13(p,g)n14"))
+        trates.append(reaclib_library.get_rate_by_name("n13(,)c13"))
+        trates.append(reaclib_library.get_rate_by_name("n13(p,g)o14"))
+        trates.append(reaclib_library.get_rate_by_name("n14(p,g)o15"))
+        trates.append(reaclib_library.get_rate_by_name("n15(p,a)c12"))
+        trates.append(reaclib_library.get_rate_by_name("o14(,)n14"))
+        trates.append(reaclib_library.get_rate_by_name("o15(,)n15"))
 
-        self.library = pyna.Library(rates=trates)
+        return pyna.Library(rates=trates)
 
-        self.removed_rates = []
-        self.removed_rates.append(trates.pop())
-        self.removed_rates.append(trates.pop())
+    @pytest.fixture(scope="class")
+    @classmethod
+    def smaller_library(cls, regular_library):
 
-        self.smaller_lib = pyna.Library(rates=trates)
+        rates = regular_library.get_rates()
+        rates.pop()
+        rates.pop()
+        return pyna.Library(rates=rates)
 
-    def teardown_method(self):
-        """ this is run after each test """
-        self.library = None
-        self.smaller_lib = None
-        self.removed_rates = None
+    @pytest.fixture(scope="class")
+    @classmethod
+    def removed_rates(cls, regular_library):
+        trates = regular_library.get_rates()
+        rates = []
+        rates.append(trates.pop())
+        rates.append(trates.pop())
+        return pyna.Library(rates=rates)
 
-    def test_heaviest(self):
-        assert self.library.heaviest() == pyna.Nucleus("n15")
+    def test_heaviest(self, regular_library):
+        assert regular_library.heaviest() == pyna.Nucleus("n15")
 
-    def test_lightest(self):
-        assert self.library.lightest() == pyna.Nucleus("p")
+    def test_lightest(self, regular_library):
+        assert regular_library.lightest() == pyna.Nucleus("p")
 
-    def test_num_rates(self):
-        assert self.library.num_rates == 8
+    def test_num_rates(self, regular_library):
+        assert regular_library.num_rates == 8
 
-    def test_get_rate(self):
+    def test_get_rate(self, regular_library, reaclib_library):
         # get by rate id
-        assert self.library.get_rate("c12 + p --> n13 <reaclib_ls09>") == pyna.load_rate("c12-pg-n13-ls09")
+        assert (regular_library.get_rate("c12 + p --> n13 <reaclib_ls09>") ==
+                reaclib_library.get_rate_by_name("c12(p,g)n13"))
 
         # get by fname
-        assert self.library.get_rate("p_N14_to_O15_reaclib") == pyna.load_rate("n14-pg-o15-im05")
+        assert (regular_library.get_rate("p_N14_to_O15_reaclib") ==
+                reaclib_library.get_rate_by_name("n14(p,g)o15"))
 
         # get by fname
-        assert self.library.get_rate("p_n15_to_he4_c12_reaclib") == pyna.load_rate("n15-pa-c12-nacr")
+        assert (regular_library.get_rate("p_n15_to_he4_c12_reaclib") ==
+                reaclib_library.get_rate_by_name("n15(p,a)c12"))
 
         # get by fname without label, i.e. use base name
-        assert self.library.get_rate("p_N14_to_O15") == pyna.load_rate("n14-pg-o15-im05")
+        assert (regular_library.get_rate("p_N14_to_O15") ==
+                reaclib_library.get_rate_by_name("n14(p,g)o15"))
 
         # get by fname without label, lowercase
-        assert self.library.get_rate("p_n15_to_he4_c12") == pyna.load_rate("n15-pa-c12-nacr")
+        assert (regular_library.get_rate("p_n15_to_he4_c12") ==
+                reaclib_library.get_rate_by_name("n15(p,a)c12"))
 
-    def test_get_rate_failure(self):
+    def test_get_rate_failure(self, regular_library):
         # missing rate id
         with pytest.raises(LookupError):
-            self.library.get_rate("N15 + p --> O16 <reaclib_li10>")
+            regular_library.get_rate("N15 + p --> O16 <reaclib_li10>")
 
         # missing fname
         with pytest.raises(LookupError):
-            self.library.get_rate("F18_to_He4_N14")
+            regular_library.get_rate("F18_to_He4_N14")
 
         # invalid rate
         with pytest.raises(LookupError):
-            self.library.get_rate("this is not a rate")
+            regular_library.get_rate("this is not a rate")
 
-    def test_get_rate_by_nuclei(self):
-        assert self.library.get_rate_by_nuclei(
-            [pyna.Nucleus("p"), pyna.Nucleus("c13")], [pyna.Nucleus("n14")]
-        ) == pyna.load_rate("c13-pg-n14-nacr")
+    def test_get_rate_by_nuclei(self, regular_library, reaclib_library, suzuki_library):
+        assert (regular_library.get_rate_by_nuclei([pyna.Nucleus("p"), pyna.Nucleus("c13")],
+                                                   [pyna.Nucleus("n14")]) ==
+                reaclib_library.get_rate_by_name("c13(p,g)n14"))
 
-        assert self.library.get_rate_by_nuclei(
-            [pyna.Nucleus("p")], [pyna.Nucleus("n14")]
-        ) is None
+        assert regular_library.get_rate_by_nuclei([pyna.Nucleus("p")],
+                                                  [pyna.Nucleus("n14")]) is None
 
-        dup_rates = [pyna.load_rate("f17--o17-wc12"), pyna.load_rate("suzuki-17f-17o_electroncapture.dat")]
-        dup_lib = self.library + pyna.Library(rates=dup_rates)
+        dup_rates = [reaclib_library.get_rate_by_name("f17(,)o17"),
+                     suzuki_library.get_rate_by_name("f17(,)o17")]
+        dup_lib = regular_library + pyna.Library(rates=dup_rates)
 
-        assert dup_lib.get_rate_by_nuclei(
-            [pyna.Nucleus("f17")], [pyna.Nucleus("o17")]
-        ) == dup_rates
+        assert (dup_lib.get_rate_by_nuclei([pyna.Nucleus("f17")],
+                                           [pyna.Nucleus("o17")]) ==
+                dup_rates)
 
-    def test_diff(self):
-        diff_lib = self.library - self.smaller_lib
-        assert sorted(diff_lib.get_rates()) == sorted(self.removed_rates)
+    def test_diff(self, regular_library, smaller_library, removed_rates):
+        diff_lib = regular_library - smaller_library
+        assert sorted(diff_lib.get_rates()) == sorted(removed_rates.get_rates())
 
-    def test_linking_nuclei(self):
-        new_lib = self.library.linking_nuclei(["p", "c12", "n13", "c13"])
+    def test_linking_nuclei(self, regular_library, reaclib_library):
+        new_lib = regular_library.linking_nuclei(["p", "c12", "n13", "c13"])
 
-        assert sorted(new_lib.get_rates()) == sorted([pyna.load_rate("c12-pg-n13-ls09"),
-                                                      pyna.load_rate("n13--c13-wc12")])
+        assert (sorted(new_lib.get_rates()) ==
+                sorted([reaclib_library.get_rate_by_name("c12(p,g)n13"),
+                        reaclib_library.get_rate_by_name("n13(,)c13")]))
 
-    def test_forward_backward(self):
-        assert self.library.backward() is None
+    def test_forward_backward(self, regular_library):
+        assert regular_library.backward() is None
