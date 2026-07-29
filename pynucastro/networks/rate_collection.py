@@ -6,6 +6,7 @@ rates that together make up a network.
 import collections
 import copy
 import math
+import functools
 import warnings
 from itertools import groupby
 from pathlib import Path
@@ -14,6 +15,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
+from dataclasses import dataclass
 from ipywidgets import interact
 from matplotlib.colors import SymLogNorm
 from matplotlib.scale import SymmetricalLogTransform
@@ -100,6 +102,79 @@ def _skip_xp(n, p, r):
         return True
 
     return False
+
+
+@dataclass(kw_only=True)
+class ThermoState:
+    """Class to hold the basic thermodynamic quantities
+    such as density, temperature, and composition.
+
+    Parameters
+    ----------
+    rho : float
+        density in g/cm^3
+    T : float
+        temperature in Kelvin
+    comp : Composition
+        composition object that holds the massfractions
+    """
+
+    rho: float
+    T: float
+    comp: Composition
+
+
+def need_state(func):
+    """
+    Decorator to allow functions with (ThermoState, ..., **kwargs) input
+    to also be called with (rho, T, comp, ..., **kwargs) input.
+    """
+    @functools.wraps(func)
+    def wrapper(self, *args, **kwargs):
+        # Detect whether we already use ThermoState as input
+        # Assume it is always the first argument for args
+        if args and isinstance(args[0], ThermoState):
+            return func(self, *args, **kwargs)
+
+        # Old style: rho, T, comp given as position arguments
+        if len(args) >= 3:
+            warnings.warn(
+                f"{func.__name__}(rho, T, comp, ...) is deprecated, "
+                f"use {func.__name__}(state, ...) instead",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            rho, T, comp, *rest = args
+            return func(self, ThermoState(rho=rho, T=T, comp=comp), *rest, **kwargs)
+
+        # Old style: rho, T, comp given as keywords
+        if {"rho", "T", "comp"} <= kwargs.keys():
+            warnings.warn(
+                f"{func.__name__}(rho=..., T=..., comp=...) is deprecated, "
+                f"use {func.__name__}(state, ...) instead",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            rho = kwargs.pop("rho")
+            T = kwargs.pop("T")
+            comp = kwargs.pop("comp")
+            return func(self, ThermoState(rho=rho, T=T, comp=comp), **kwargs)
+
+        return func(self, *args, **kwargs)
+    return wrapper
+
+
+def _make_thermo_state(rho_or_state, T, comp):
+    """Convert (rho, T, comp) input into ThermoState"""
+
+    if isinstance(rho_or_state, ThermoState):
+        return rho_or_state
+
+    warnings.warn("Using (rho, T, comp) as input argument is deprecated "
+                  "Use ThermoState(rho=rho, T=T, comp=comp) as input instead.",
+                  DeprecationWarning,
+                  stacklevel=3)
+    return ThermoState(rho=rho_or_state, T=T, comp=comp)
 
 
 class RateCollection:
@@ -1105,7 +1180,8 @@ class RateCollection:
         print(f"  modified rates: {len(self.modified_rates)}")
         print(f"  custom rates: {len(self.custom_rates)}")
 
-    def evaluate_rates(self, rho, T, composition,
+    @need_state
+    def evaluate_rates(self, state, *,
                        screen_func=None):
         """Evaluate the rates for a specific density, temperature, and
         composition, with optional screening.  Note: this returns that
@@ -1122,12 +1198,9 @@ class RateCollection:
 
         Parameters
         ----------
-        rho : float
-            density used to evaluate rates
-        T : float
-            temperature used to evaluate rates
-        composition : Composition
-            composition used to evaluate rates
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate rates. It knows about (rho, T, composition).
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
@@ -1138,6 +1211,10 @@ class RateCollection:
         dict(Rate)
 
         """
+
+        rho = state.rho
+        T = state.T
+        composition = state.comp
 
         rvals = {}
         ys = composition.get_molar()
