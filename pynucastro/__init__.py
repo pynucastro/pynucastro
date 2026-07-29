@@ -196,6 +196,6 @@ from pynucastro.rates import (ApproximateRate, DerivedRate, FFNLibrary,
                               OdaLibrary, PruetFullerLibrary, Rate, RateFilter,
                               ReacLibLibrary, StarLibLibrary, SuzukiLibrary,
                               TabularLibrary, Tfactors, full_library,
-                              load_rate)
+                              load_rate, ThermoState)
 from pynucastro.reduction import drgep, sens_analysis
 from pynucastro.screening import make_plasma_state, make_screen_factors

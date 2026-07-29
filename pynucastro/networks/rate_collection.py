@@ -6,7 +6,6 @@ rates that together make up a network.
 import collections
 import copy
 import math
-import functools
 import warnings
 from itertools import groupby
 from pathlib import Path
@@ -15,7 +14,6 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
-from dataclasses import dataclass
 from ipywidgets import interact
 from matplotlib.colors import SymLogNorm
 from matplotlib.scale import SymmetricalLogTransform
@@ -30,7 +28,8 @@ from pynucastro.rates import (ApproximateRate, DerivedRate, Library,
                               ModifiedRate, Rate, RateFileError, RatePair,
                               ReacLibRate, StarLibRate, TabularRate,
                               TemperatureTabularRate, find_duplicate_rates,
-                              is_allowed_dupe, load_rate, make_CO_approx_rates)
+                              is_allowed_dupe, load_rate, make_CO_approx_rates,
+                              ThermoState, need_state)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_id
 
 mpl.rcParams['figure.dpi'] = 100
@@ -102,79 +101,6 @@ def _skip_xp(n, p, r):
         return True
 
     return False
-
-
-@dataclass(kw_only=True)
-class ThermoState:
-    """Class to hold the basic thermodynamic quantities
-    such as density, temperature, and composition.
-
-    Parameters
-    ----------
-    rho : float
-        density in g/cm^3
-    T : float
-        temperature in Kelvin
-    comp : Composition
-        composition object that holds the massfractions
-    """
-
-    rho: float
-    T: float
-    comp: Composition
-
-
-def need_state(func):
-    """
-    Decorator to allow functions with (ThermoState, ..., **kwargs) input
-    to also be called with (rho, T, comp, ..., **kwargs) input.
-    """
-    @functools.wraps(func)
-    def wrapper(self, *args, **kwargs):
-        # Detect whether we already use ThermoState as input
-        # Assume it is always the first argument for args
-        if args and isinstance(args[0], ThermoState):
-            return func(self, *args, **kwargs)
-
-        # Old style: rho, T, comp given as position arguments
-        if len(args) >= 3:
-            warnings.warn(
-                f"{func.__name__}(rho, T, comp, ...) is deprecated, "
-                f"use {func.__name__}(state, ...) instead",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-            rho, T, comp, *rest = args
-            return func(self, ThermoState(rho=rho, T=T, comp=comp), *rest, **kwargs)
-
-        # Old style: rho, T, comp given as keywords
-        if {"rho", "T", "comp"} <= kwargs.keys():
-            warnings.warn(
-                f"{func.__name__}(rho=..., T=..., comp=...) is deprecated, "
-                f"use {func.__name__}(state, ...) instead",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-            rho = kwargs.pop("rho")
-            T = kwargs.pop("T")
-            comp = kwargs.pop("comp")
-            return func(self, ThermoState(rho=rho, T=T, comp=comp), **kwargs)
-
-        return func(self, *args, **kwargs)
-    return wrapper
-
-
-def _make_thermo_state(rho_or_state, T, comp):
-    """Convert (rho, T, comp) input into ThermoState"""
-
-    if isinstance(rho_or_state, ThermoState):
-        return rho_or_state
-
-    warnings.warn("Using (rho, T, comp) as input argument is deprecated "
-                  "Use ThermoState(rho=rho, T=T, comp=comp) as input instead.",
-                  DeprecationWarning,
-                  stacklevel=3)
-    return ThermoState(rho=rho_or_state, T=T, comp=comp)
 
 
 class RateCollection:
@@ -1212,34 +1138,23 @@ class RateCollection:
 
         """
 
-        rho = state.rho
-        T = state.T
-        composition = state.comp
-
         rvals = {}
-        ys = composition.get_molar()
-        y_e = composition.ye
-
         for r in self.rates:
-            rvals[r] = r.eval_full_rate(rho, T, composition,
-                                        screen_func=screen_func,
-                                        y_molar=ys, y_e=y_e)
+            rvals[r] = r.eval_full_rate(state, screen_func=screen_func)
 
         return rvals
 
-    def evaluate_jacobian(self, rho, T, comp, *,
+    @need_state
+    def evaluate_jacobian(self, state, *,
                           screen_func=None, exclude_rates=None):
         """Return an array of the form J_ij = dYdot_i/dY_j for the
         network
 
         Parameters
         ----------
-        rho : float
-            density used to evaluate Jacobian terms
-        T : float
-            temperature used to evaluate Jacobian terms
-        comp : Composition
-            composition used to evaluate Jacobian terms
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate Jacobian terms. It knows about (rho, T, composition).
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
@@ -1275,7 +1190,7 @@ class RateCollection:
 
                     # Note eval_jacobian_term already includes screening
                     jac[i, j] -= c * \
-                        r.eval_jacobian_term(T, rho, comp, n_j,
+                        r.eval_jacobian_term(state, n_j,
                                              screen_func=screen_func)
 
                 for r in self.nuclei_produced[n_i]:
@@ -1285,24 +1200,22 @@ class RateCollection:
                     # how many of n_i are produced by this reaction
                     c = r.product_count(n_i)
                     jac[i, j] += c * \
-                        r.eval_jacobian_term(T, rho, comp, n_j,
+                        r.eval_jacobian_term(state, n_j,
                                              screen_func=screen_func)
 
         return jac
 
-    def spectral_radius(self, rho, T, comp, *,
+    @need_state
+    def spectral_radius(self, state, *,
                         screen_func=None, exclude_rates=None):
         """Compute the spectral radius of the Jacobian---this is the
         max{abs(e_i)}, where e_i are the eigenvalues of the Jacobian.
 
         Parameters
         ----------
-        rho : float
-            density used to evaluate Jacobian terms
-        T : float
-            temperature used to evaluate Jacobian terms
-        comp : Composition
-            composition used to evaluate Jacobian terms
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate Jacobian terms. It knows about (rho, T, composition).
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
@@ -1327,7 +1240,8 @@ class RateCollection:
         e = eigvals(J)
         return np.max(np.abs(e))
 
-    def find_stiffest_rate(self, rho, T, comp, *,
+    @need_state
+    def find_stiffest_rate(self, state, *,
                         screen_func=None):
         """Iterate through rates and compute the spectral radius for the
         network excluding the rate to determine which rate is most responsible
@@ -1335,12 +1249,9 @@ class RateCollection:
 
         Parameters
         ----------
-        rho : float
-            density used to evaluate Jacobian terms
-        T : float
-            temperature used to evaluate Jacobian terms
-        comp : Composition
-            composition used to evaluate Jacobian terms
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate Jacobian terms. It knows about (rho, T, composition).
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
@@ -1353,10 +1264,10 @@ class RateCollection:
         """
 
         stiff_rate = None
-        spectral_radius = self.spectral_radius(rho, T, comp, screen_func=screen_func)
+        spectral_radius = self.spectral_radius(state, screen_func=screen_func)
 
         for r in self.rates:
-            _sprad = self.spectral_radius(rho, T, comp, screen_func=screen_func, exclude_rates=[r])
+            _sprad = self.spectral_radius(state, screen_func=screen_func, exclude_rates=[r])
             if _sprad < spectral_radius:
                 stiff_rate = r
                 spectral_radius = _sprad
@@ -1527,8 +1438,7 @@ class RateCollection:
         Parameters
         ----------
         states : list, tuple
-             A tuple of the form (density, temperature, composition),
-             where composition is a Composition object
+             A list or tuple of ThermoState objects.
         cutoff_ratio : float
              The ratio of a rate to the fastest rate, below which we
              consider this rate to be unimportant.
@@ -1543,26 +1453,24 @@ class RateCollection:
 
         """
         largest_ratio = {r: 0 for r in self.rates}
-        for rho, T, comp in states:
-            rvals = self.evaluate_rates(rho, T, comp, screen_func)
+        for state in states:
+            rvals = self.evaluate_rates(state, screen_func=screen_func)
             fastest = max(rvals.values())
             for r, value in rvals.items():
                 largest_ratio[r] = max(largest_ratio[r], value / fastest)
         return {r: ratio for r, ratio in largest_ratio.items() if ratio < cutoff_ratio}
 
-    def evaluate_ydots(self, rho, T, composition,
+    @need_state
+    def evaluate_ydots(self, state, *,
                        screen_func=None, rate_filter=None):
         """Evaluate net rate of change of molar abundance for each
         nucleus for a specific density, temperature, and composition
 
         Parameters
         ----------
-        rho : float
-            density used to evaluate rates
-        T : float
-            temperature used to evaluate rates
-        composition : Composition
-            composition used to evaluate rates
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate ydots. It knows about (rho, T, composition).
         screen_func : Callable
             a function from :py:mod:`pynucastro.screening` used to compute the
             screening enhancement for the rates.
@@ -1576,7 +1484,7 @@ class RateCollection:
 
         """
 
-        rvals = self.evaluate_rates(rho, T, composition, screen_func)
+        rvals = self.evaluate_rates(state, screen_func)
         ydots = {}
 
         for nuc in self.unique_nuclei:
@@ -1602,19 +1510,17 @@ class RateCollection:
 
         return ydots
 
-    def evaluate_energy_generation(self, rho, T, composition,
+    @need_state
+    def evaluate_energy_generation(self, state, *,
                                    screen_func=None, return_enu=False):
         """Evaluate the specific energy generation rate of the network for a specific
         density, temperature and composition
 
         Parameters
         ----------
-        rho : float
-            density to evaluate the rates with
-        T : float
-            temperature to evaluate the rates with
-        composition : Composition
-            composition to evaluate the rates with
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate rates. It knows about (rho, T, composition).
         screen_func : Callable
             a function from :py:mod:`pynucastro.screening` to
             call to compute the screening factor
@@ -1631,7 +1537,7 @@ class RateCollection:
 
         """
 
-        ydots = self.evaluate_ydots(rho, T, composition, screen_func)
+        ydots = self.evaluate_ydots(state, screen_func=screen_func)
         enuc = 0.
 
         # compute constants and units
@@ -1648,30 +1554,28 @@ class RateCollection:
         for r in self.rates:
             if isinstance(r, TabularRate):
                 # get composition
-                ys = composition.get_molar()
+                ys = state.get_molar()
 
                 # need to get reactant nucleus
                 nuc = r.reactants[0]
-                enu += constants.N_A * ys[nuc] * r.get_nu_loss(T, rho=rho, comp=composition)
+                enu += constants.N_A * ys[nuc] * r.get_nu_loss(state)
 
         enuc -= enu
         if return_enu:
             return enuc, enu
         return enuc
 
-    def evaluate_activity(self, rho, T, composition, screen_func=None):
+    @need_state
+    def evaluate_activity(self, state, *, screen_func=None):
         """Compute the activity for each nucleus--the sum of
         abs(creation rate) + abs(destruction rate), i.e., this neglects the
         sign of the terms.
 
         Parameters
         ----------
-        rho : float
-            density used to evaluate rates
-        T : float
-            temperature used to evaluate rates
-        composition : Composition
-            composition used to evaluate rates
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate rates. It knows about (rho, T, composition).
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
@@ -1683,7 +1587,7 @@ class RateCollection:
 
         """
 
-        rvals = self.evaluate_rates(rho, T, composition, screen_func)
+        rvals = self.evaluate_rates(state, screen_func=screen_func)
         act = {}
 
         for nuc in self.unique_nuclei:
@@ -1702,13 +1606,24 @@ class RateCollection:
 
         return act
 
-    def _get_network_chart(self, rho, T, composition):
+    @need_state
+    def _get_network_chart(self, state):
         """Create a dict, keyed by rate that holds a list of tuples
         (Nucleus, ydot)
 
+        Parameter
+        ---------
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate Jacobian terms. It knows about (rho, T, composition).
+
+        Returns
+        -------
+        Dict
+
         """
 
-        rvals = self.evaluate_rates(rho, T, composition)
+        rvals = self.evaluate_rates(state)
 
         nc = {}
 
@@ -2594,7 +2509,8 @@ class RateCollection:
 
         return fig
 
-    def plot_jacobian(self, rho, T, comp, *,
+    @need_state
+    def plot_jacobian(self, state, *,
                       outfile=None, screen_func=None,
                       rate_scaling=1.e10,
                       size=(800, 800), dpi=100):
@@ -2602,12 +2518,9 @@ class RateCollection:
 
         Parameters
         ----------
-        rho : float
-            density used to evaluate terms
-        T : float
-            temperature used to evaluate terms
-        comp : Composition
-            composition used to evaluate terms
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate Jacobian terms. It knows about (rho, T, composition).
         outfile : str
             output file for plot (extension is used to specify file type)
         screen_func : Callable
@@ -2628,7 +2541,7 @@ class RateCollection:
 
         """
 
-        jac = self.evaluate_jacobian(rho, T, comp, screen_func=screen_func)
+        jac = self.evaluate_jacobian(state, screen_func=screen_func)
 
         valid_max = np.abs(jac).max()
 

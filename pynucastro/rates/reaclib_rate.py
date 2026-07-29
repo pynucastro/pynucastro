@@ -11,7 +11,7 @@ import numpy as np
 
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.files import RateFileError, _find_rate_file
-from pynucastro.rates.rate import Rate, Tfactors
+from pynucastro.rates.rate import Rate, Tfactors, ThermoState
 
 
 class SingleSet:
@@ -777,7 +777,8 @@ class ReacLibRate(Rate):
         if screen_func is not None:
             if rho is None or comp is None:
                 raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
-            log_scor = self.evaluate_screening(rho, T, comp, screen_func)
+            state = ThermoState(rho=rho, T=T, comp=comp)
+            log_scor = self.evaluate_screening(state, screen_func=screen_func)
 
         for s in self.sets:
             log_f = s.log_f()
