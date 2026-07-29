@@ -3,11 +3,11 @@
 import functools
 import math
 import warnings
+from dataclasses import dataclass
 from operator import mul
 from pathlib import Path
 
 import numpy as np
-from dataclasses import dataclass
 
 import pynucastro.numba_util as numba
 from pynucastro.constants import constants
