@@ -12,7 +12,7 @@ from pytest import approx
 from pynucastro.networks.network_compare import NetworkCompare
 from pynucastro.networks.python_network import PythonNetwork
 from pynucastro.rates.derived_rate import DerivedRate
-from pynucastro.rates.library import Library, TabularLibrary
+from pynucastro.rates.library import Library, TabularWeakLibrary
 from pynucastro.rates.modified_rate import ModifiedRate
 
 
@@ -71,7 +71,7 @@ class TestNetworkCompare:
                      "ni56", "ni57", "ni58"]
         lib += reaclib_library.linking_nuclei(iron_peak,
                                               print_warning=False)
-        weak_lib = TabularLibrary(ordering=["ffn", "langanke", "oda"])
+        weak_lib = TabularWeakLibrary(ordering=["ffn", "langanke", "oda"])
         iron_weak_lib = weak_lib.linking_nuclei(set(iron_peak + all_reactants),
                                                 print_warning=False)
         lib += iron_weak_lib

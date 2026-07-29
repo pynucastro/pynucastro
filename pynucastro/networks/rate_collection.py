@@ -26,7 +26,7 @@ from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library,
                               ModifiedRate, Rate, RateFileError, RatePair,
-                              ReacLibRate, StarLibRate, TabularRate,
+                              ReacLibRate, StarLibRate, TabularWeakRate,
                               TemperatureTabularRate, find_duplicate_rates,
                               is_allowed_dupe, load_rate, make_CO_approx_rates,
                               ThermoState, need_state)
@@ -243,7 +243,7 @@ class RateCollection:
         # targets of a pointer array.  It is desired to avoid wasting
         # array size storing meaningless Tabular coefficient pointers.
         self.rates = sorted(self.rates,
-                            key=lambda r: isinstance(r, TabularRate))
+                            key=lambda r: isinstance(r, TabularWeakRate))
 
         self.tabular_rates = []
         self.temperature_tabular_rates = []
@@ -258,7 +258,7 @@ class RateCollection:
             if isinstance(r, ApproximateRate):
                 self.approx_rates.append(r)
                 for cr in r.get_child_rates():
-                    assert not isinstance(cr, TabularRate)
+                    assert not isinstance(cr, TabularWeakRate)
                     self._classify_hidden_rate(cr)
 
             elif isinstance(r, ModifiedRate):
@@ -268,7 +268,7 @@ class RateCollection:
                 cr = r.original_rate
                 self._classify_hidden_rate(cr)
 
-            elif isinstance(r, TabularRate):
+            elif isinstance(r, TabularWeakRate):
                 self.tabular_rates.append(r)
             elif isinstance(r, StarLibRate):
                 self.starlib_rates.append(r)
@@ -1552,7 +1552,7 @@ class RateCollection:
         # subtract neutrino losses for tabular weak reactions
         enu = 0.0
         for r in self.rates:
-            if isinstance(r, TabularRate):
+            if isinstance(r, TabularWeakRate):
                 # get composition
                 ys = state.get_molar()
 

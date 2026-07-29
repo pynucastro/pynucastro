@@ -4,6 +4,7 @@ tabulated in terms of electron density and temperature.
 """
 
 import re
+import warnings
 from enum import Enum
 from pathlib import Path
 
@@ -201,7 +202,7 @@ class TableInterpolator:
         return r
 
 
-class TabularRate(Rate):
+class TabularWeakRate(Rate):
     """A rate tabulated in terms of log10(ρ Y_e) and log10(T).
 
     Parameters
@@ -260,7 +261,7 @@ class TabularRate(Rate):
 
         """
 
-        if not isinstance(other, TabularRate):
+        if not isinstance(other, TabularWeakRate):
             return False
 
         return self.reactants == other.reactants and self.products == other.products
@@ -504,3 +505,30 @@ class TabularRate(Rate):
         ax.set_title(fr"{self.pretty_string}" + "\n" + title)
 
         return fig
+
+
+class TabularRate(TabularWeakRate):
+    """A rate tabulated in terms of log10(ρ Y_e) and log10(T).
+
+    .. deprecated:: 3.0
+       ``TabularRate`` has been deprecated.  Use ``TabularWeakRate``
+       instead.  ``TabularRate`` will be removed in version 3.1.
+
+    Parameters
+    ----------
+    rfile : str, pathlib.Path, io.StringIO
+        the file containing the data table
+
+    """
+
+    def __init__(self, *args, **kwargs):
+        warnings.warn(
+            "TabularRate is deprecated; use TabularWeakRate instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        super().__init__(*args, **kwargs)
+
+    # needed because __add__ is abstract in TabularWeakRate
+    def __add__(self, other):
+        raise NotImplementedError("addition not defined for tabular rates")

@@ -108,7 +108,7 @@ reaction rates.  The main core rate classes are:
   temperature-depended rate from the ReacLib library, including
   methods to visualize and evaluate it.
 
-* :py:obj:`TabularRate <pynucastro.rates.tabular_rate.TabularRate>` :
+* :py:obj:`TabularWeakRate <pynucastro.rates.tabular_rate.TabularWeakRate>` :
   a tabulated (temperature and electron density) weak reaction rate),
   with methods to visualize and evaluate it.
 
@@ -159,7 +159,7 @@ with some specialized library collections available as:
 * :py:obj:`ReacLibLibrary <pynucastro.rates.library.ReacLibLibrary>` :
   read in the entire collection of ReacLib rates.
 
-* :py:obj:`TabularLibrary <pynucastro.rates.library.TabularLibrary>` :
+* :py:obj:`TabularWeakLibrary <pynucastro.rates.library.TabularWeakLibrary>` :
   read in all known tabular reaction rates.
 
 ``reduction``
@@ -195,7 +195,7 @@ from pynucastro.rates import (ApproximateRate, DerivedRate, FFNLibrary,
                               LangankeLibrary, Library, ModifiedRate,
                               OdaLibrary, PruetFullerLibrary, Rate, RateFilter,
                               ReacLibLibrary, StarLibLibrary, SuzukiLibrary,
-                              TabularLibrary, Tfactors, full_library,
-                              load_rate, ThermoState)
+                              TabularLibrary, TabularWeakLibrary, Tfactors,
+                              full_library, load_rate, ThermoState)
 from pynucastro.reduction import drgep, sens_analysis
 from pynucastro.screening import make_plasma_state, make_screen_factors
