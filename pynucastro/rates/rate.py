@@ -11,7 +11,7 @@ import numpy as np
 
 import pynucastro.numba_util as numba
 from pynucastro.constants import constants
-from pynucastro.nucdata import Nucleus
+from pynucastro.nucdata import Nucleus, Composition
 from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import _find_rate_file
 from pynucastro.rates.known_duplicates import ALLOWED_DUPLICATES
