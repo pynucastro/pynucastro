@@ -2,6 +2,7 @@
 
 import copy
 import math
+import warnings
 
 import pytest
 from pytest import approx
@@ -439,7 +440,9 @@ class TestModify:
 
     def test_modify(self, rate):
 
-        rate.modify_products("mg24")
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            rate.modify_products("mg24")
 
         assert rate.Q == approx(13.933578000000125)
         assert rate.products == [Nucleus("mg24")]
