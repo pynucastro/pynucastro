@@ -2042,7 +2042,7 @@ class RateCollection:
         return G
 
     @need_state
-    def plot(self, state=None, *,
+    def plot(self, rho=None, T=None, comp=None, *,
              outfile=None,
              size=(800, 600), dpi=100, title=None,
              screen_func=None,
@@ -2070,9 +2070,12 @@ class RateCollection:
 
         Parameters
         ----------
-        state: ThermoState
-            ThermoState containing relevant thermodynamic information used to
-            evaluate rates. It knows about (rho, T, composition).
+        rho : float
+           density to evaluate rates with
+        T : float
+            temperature to evaluate rates with
+        comp : Composition
+            composition to evaluate rates with
         outfile : str
             output name of the plot (extension determines the type)
         size : (tuple, list)
@@ -2260,7 +2263,8 @@ class RateCollection:
 
         # get the rates for each reaction
 
-        if state is not None:
+        if rho is not None and T is not None and comp is not None:
+            state = ThermoState(rho=rho, T=T, comp=comp)
             rate_ydots = self.evaluate_rates(state,
                                              screen_func=screen_func)
         else:
