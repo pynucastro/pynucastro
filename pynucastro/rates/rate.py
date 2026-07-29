@@ -148,7 +148,7 @@ def need_state(func):
         comp_kw_present = any(k in kwargs for k in COMP_KEYS)
         is_old_keyword = {"rho", "T"} <= kwargs.keys() and comp_kw_present
 
-        # Handle cases where we used a mix of positional and keyward arguments
+        # Handle cases where we used a mix of positional and keyword arguments
         is_old_mixed = args and ({"rho", "T"} & kwargs.keys() or comp_kw_present)
 
         if is_old_positional or is_old_keyword or is_old_mixed:

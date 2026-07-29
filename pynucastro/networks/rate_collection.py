@@ -27,7 +27,7 @@ from pynucastro.nucdata import Nucleus
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library,
                               ModifiedRate, Rate, RateFileError, RatePair,
                               ReacLibRate, StarLibRate, TabularWeakRate,
-                              TemperatureTabularRate,
+                              TemperatureTabularRate, ThermoState,
                               find_duplicate_rates, is_allowed_dupe, load_rate,
                               make_CO_approx_rates, need_state)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_id
@@ -1484,7 +1484,7 @@ class RateCollection:
 
         """
 
-        rvals = self.evaluate_rates(state, screen_func)
+        rvals = self.evaluate_rates(state, screen_func=screen_func)
         ydots = {}
 
         for nuc in self.unique_nuclei:
@@ -2041,7 +2041,8 @@ class RateCollection:
 
         return G
 
-    def plot(self, rho=None, T=None, comp=None, *,
+    @need_state
+    def plot(self, state=None, *,
              outfile=None,
              size=(800, 600), dpi=100, title=None,
              screen_func=None,
@@ -2069,12 +2070,9 @@ class RateCollection:
 
         Parameters
         ----------
-        rho : float
-           density to evaluate rates with
-        T : float
-            temperature to evaluate rates with
-        comp : Composition
-            composition to evaluate rates with
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate rates. It knows about (rho, T, composition).
         outfile : str
             output name of the plot (extension determines the type)
         size : (tuple, list)
@@ -2262,8 +2260,8 @@ class RateCollection:
 
         # get the rates for each reaction
 
-        if rho is not None and T is not None and comp is not None:
-            rate_ydots = self.evaluate_rates(rho, T, comp,
+        if state is not None:
+            rate_ydots = self.evaluate_rates(state,
                                              screen_func=screen_func)
         else:
             rate_ydots = None
@@ -2576,7 +2574,8 @@ class RateCollection:
 
         return fig
 
-    def plot_network_chart(self, rho=None, T=None, comp=None, *,
+    @need_state
+    def plot_network_chart(self, state, *,
                            outfile=None,
                            size=(800, 800), dpi=100,
                            force_one_column=False,
@@ -2587,12 +2586,9 @@ class RateCollection:
 
         Parameters
         ----------
-        rho : float
-            density used to evaluate rates
-        T : float
-            temperature used to evaluate rates
-        comp : Composition
-            composition used to evaluate rates
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate rates. It knows about (rho, T, composition).
         outfile : str
             filename to output image
         size : Iterable(int)
@@ -2612,7 +2608,7 @@ class RateCollection:
 
         """
 
-        nc = self._get_network_chart(rho, T, comp)
+        nc = self._get_network_chart(state)
 
         # find the limits
         _ydot = []
@@ -2857,32 +2853,29 @@ class RateCollection:
             raise ValueError(f"Invalid color field: '{color_field}'")
 
         if comp is None:
-
             values = np.zeros(len(nuclei))
 
         elif color_field == "x":
-
             values = np.array([comp[nuc] for nuc in nuclei])
 
         elif color_field == "y":
-
             ys = comp.get_molar()
             values = np.array([ys[nuc] for nuc in nuclei])
 
         elif color_field in {"ydot", "xdot"}:
-
             if rho is None or T is None:
                 raise ValueError("Need both rho and T to evaluate rates!")
-            ydots = self.evaluate_ydots(rho, T, comp)
+            state = ThermoState(rho=rho, T=T, comp=comp)
+            ydots = self.evaluate_ydots(state)
             values = np.array([ydots[nuc] for nuc in nuclei])
             if color_field == "xdot":
                 values *= As
 
         elif color_field == "activity":
-
             if rho is None or T is None:
                 raise ValueError("Need both rho and T to evaluate rates!")
-            act = self.evaluate_activity(rho, T, comp)
+            state = ThermoState(rho=rho, T=T, comp=comp)
+            act = self.evaluate_activity(state)
             values = np.array([act[nuc] for nuc in nuclei])
 
         if scale == "log":

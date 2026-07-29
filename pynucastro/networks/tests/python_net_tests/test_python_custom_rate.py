@@ -8,6 +8,7 @@ import pytest
 from pytest import approx
 
 import pynucastro as pyna
+from pynucastro.rates import ThermoState
 from pynucastro.screening import chugunov_2007
 
 
@@ -41,7 +42,8 @@ class MyRate(pyna.Rate):
         if screen_func is not None:
             if rho is None or comp is None:
                 raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
-            log_scor = self.evaluate_screening(rho, T, comp, screen_func)
+            state = ThermoState(rho=rho, T=T, comp=comp)
+            log_scor = self.evaluate_screening(state, screen_func=screen_func)
 
         log_rate += log_scor
 
