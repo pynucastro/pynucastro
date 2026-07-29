@@ -128,33 +128,51 @@ def need_state(func):
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
         # Detect whether we already use ThermoState as input
+
         # Assume it is always the first argument for args
+        # And check if we get it in keyword argument
         if args and isinstance(args[0], ThermoState):
             return func(self, *args, **kwargs)
+        if isinstance(kwargs.get("state"), ThermoState):
+            return func(self, *args, **kwargs)
 
-        # Old style: rho, T, comp given as position arguments
-        if len(args) >= 3:
-            warnings.warn(
-                f"{func.__name__}(rho, T, comp, ...) is deprecated, "
-                f"use {func.__name__}(state, ...) instead",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-            rho, T, comp, *rest = args
-            return func(self, ThermoState(rho=rho, T=T, comp=comp), *rest, **kwargs)
+        # Now check if we're using old style. If yes convert to new style
 
-        # Old style: rho, T, comp given as keywords
-        if {"rho", "T", "comp"} <= kwargs.keys():
-            warnings.warn(
-                f"{func.__name__}(rho=..., T=..., comp=...) is deprecated, "
-                f"use {func.__name__}(state, ...) instead",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-            rho = kwargs.pop("rho")
-            T = kwargs.pop("T")
-            comp = kwargs.pop("comp")
-            return func(self, ThermoState(rho=rho, T=T, comp=comp), **kwargs)
+        # Potential old keywords for composition
+        COMP_KEYS = ("comp", "composition")
+
+        # Assume new style will NOT have positional argument more than 3.
+        is_old_positional = len(args) >= 3
+
+        # Handle cases where keyword arguments are used for old style
+        comp_kw_present = any(k in kwargs for k in COMP_KEYS)
+        is_old_keyword = {"rho", "T"} <= kwargs.keys() and comp_kw_present
+
+        # Handle cases where we used a mix of positional and keyward arguments
+        is_old_mixed = args and ({"rho", "T"} & kwargs.keys() or comp_kw_present)
+
+        if is_old_positional or is_old_keyword or is_old_mixed:
+            warnings.warn(f"{func.__name__}(rho, T, comp, ...) is deprecated, "
+                          f"use {func.__name__}(ThermoState(rho=rho, T=T, "
+                          "comp=comp,  ...) instead",
+                          DeprecationWarning,
+                          stacklevel=2)
+            args = list(args)
+            rho = kwargs.pop("rho", args.pop(0) if args else None)
+            T = kwargs.pop("T", args.pop(0) if args else None)
+
+            # Check if we have composition as keyword
+            comp = None
+            for key in COMP_KEYS:
+                if key in kwargs:
+                    comp = kwargs.pop(key)
+
+            # If composition is not in keyword arg, assume its in args.
+            if comp is None and args:
+                comp = args.pop(0)
+
+            state = ThermoState(rho=rho, T=T, comp=comp)
+            return func(self, state, *args, **kwargs)
 
         return func(self, *args, **kwargs)
     return wrapper
