@@ -101,15 +101,28 @@ class ThermoState:
 
     @property
     def ye(self):
+        """Return the electron fraction of the composition
+
+        Returns
+        -------
+        float
+        """
         return comp.ye
 
     def get_molar(self):
+        """Return a dictionary of molar fractions, Y = X/A.
+
+        Returns
+        -------
+        molar : dict
+            {Nucleus : Y}
+        """
         return comp.get_molar()
 
 
 def need_state(func):
     """
-    Decorator to allow functions with (ThermoState, ..., **kwargs) input
+    Allow functions with (ThermoState, ..., **kwargs) input
     to also be called with (rho, T, comp, ..., **kwargs) input.
     """
     @functools.wraps(func)
