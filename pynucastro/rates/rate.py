@@ -11,7 +11,7 @@ import numpy as np
 
 import pynucastro.numba_util as numba
 from pynucastro.constants import constants
-from pynucastro.nucdata import Nucleus, Composition
+from pynucastro.nucdata import Composition, Nucleus
 from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import _find_rate_file
 from pynucastro.rates.known_duplicates import ALLOWED_DUPLICATES
@@ -107,7 +107,7 @@ class ThermoState:
         -------
         float
         """
-        return comp.ye
+        return self.comp.ye
 
     def get_molar(self):
         """Return a dictionary of molar fractions, Y = X/A.
@@ -117,7 +117,7 @@ class ThermoState:
         molar : dict
             {Nucleus : Y}
         """
-        return comp.get_molar()
+        return self.comp.get_molar()
 
 
 def need_state(func):

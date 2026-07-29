@@ -27,7 +27,7 @@ from pynucastro.nucdata import Nucleus
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library,
                               ModifiedRate, Rate, RateFileError, RatePair,
                               ReacLibRate, StarLibRate, TabularWeakRate,
-                              TemperatureTabularRate, ThermoState,
+                              TemperatureTabularRate,
                               find_duplicate_rates, is_allowed_dupe, load_rate,
                               make_CO_approx_rates, need_state)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_id
@@ -1234,7 +1234,7 @@ class RateCollection:
         with warnings.catch_warnings():
             # don't display partition function warnings
             warnings.simplefilter("ignore", UserWarning)
-            J = self.evaluate_jacobian(rho, T, comp,
+            J = self.evaluate_jacobian(state,
                                        screen_func=screen_func,
                                        exclude_rates=exclude_rates)
         e = eigvals(J)
