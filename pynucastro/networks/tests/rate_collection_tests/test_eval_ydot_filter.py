@@ -38,7 +38,7 @@ class TestFullPythonNetwork:
                                      rate_filter=lambda r: isinstance(r, pyna.rates.ReacLibRate))
 
         tl_ydots = fn.evaluate_ydots(rho, T, comp,
-                                     rate_filter=lambda r: isinstance(r, pyna.rates.TabularRate))
+                                     rate_filter=lambda r: isinstance(r, pyna.rates.TabularWeakRate))
 
         print(full_ydots)
 

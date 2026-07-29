@@ -924,7 +924,7 @@ class PythonNetwork(RateCollection):
         of.write("from pynucastro.constants import constants\n")
         of.write("from numba.experimental import jitclass\n\n")
 
-        of.write("from pynucastro.rates import (TableIndex, TableInterpolator, TabularRate,\n")
+        of.write("from pynucastro.rates import (TableIndex, TableInterpolator, TabularWeakRate,\n")
         of.write("                              TempTableInterpolator, TemperatureTabularRate,\n")
         of.write("                              Tfactors)\n")
         of.write("from pynucastro.screening import PlasmaState, ScreenFactors\n\n")

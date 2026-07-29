@@ -854,6 +854,8 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _fill_num_starlib(self, _, of):
         num_sl = len(self.starlib_rates)
         sl_str = f"""
+#define STARLIB
+
 namespace starlib {{
 
     constexpr std::uint8_t NumStarLibRates = {num_sl};

@@ -15,7 +15,7 @@ from pynucastro.rates.modified_rate import ModifiedRate
 from pynucastro.rates.rate import Rate, Tfactors
 from pynucastro.rates.reaclib_rate import ReacLibRate, SingleSet
 from pynucastro.rates.starlib_rate import StarLibRate
-from pynucastro.rates.tabular_rate import TabularRate
+from pynucastro.rates.tabular_rate import TabularWeakRate
 from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
 
 
@@ -50,7 +50,7 @@ class DerivedRate(Rate):
         if not isinstance(self.source_rate, Rate):
             raise TypeError('The source rate must be a Rate subclass')
 
-        if (isinstance(self.source_rate, TabularRate) or self.source_rate.weak or
+        if (isinstance(self.source_rate, TabularWeakRate) or self.source_rate.weak or
             self.source_rate.derived_from_inverse):
             raise ValueError('The source rate is a ReacLib derived from inverse rate or weak or tabular')
 
