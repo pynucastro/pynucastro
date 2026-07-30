@@ -781,8 +781,7 @@ class Rate:
         self._set_print_representation()
 
     @need_state
-    def evaluate_screening(self, state, *,
-                           screen_func):
+    def evaluate_screening(self, state, screen_func):
         """Evaluate the screening correction for this rate.
         Note this returns log(screening).
 
