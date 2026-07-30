@@ -2041,7 +2041,6 @@ class RateCollection:
 
         return G
 
-    @need_state
     def plot(self, rho=None, T=None, comp=None, *,
              outfile=None,
              size=(800, 600), dpi=100, title=None,
