@@ -128,7 +128,8 @@ def N14_p_to_O15_custom(rate_eval, tf, log_scor=0.0):
         comp = pyna.Composition(pynet.unique_nuclei)
         comp.set_equal()
 
-        ydots = pynet.evaluate_ydots(rho, T, comp)
+        state = pyna.ThermoState(rho=rho, T=T, comp=comp)
+        ydots = pynet.evaluate_ydots(state)
 
         ydots_ref = {
             pyna.Nucleus("p"): -4.89131088e-06,

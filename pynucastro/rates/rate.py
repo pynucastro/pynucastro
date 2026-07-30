@@ -152,6 +152,15 @@ def need_state(func):
         is_old_mixed = args and ({"rho", "T"} & kwargs.keys() or comp_kw_present)
 
         if is_old_positional or is_old_keyword or is_old_mixed:
+            # This function previously used (T, rho, comp) instead of
+            # standard (rho, T, comp). But logic below assumes (rho, T, comp).
+            # I'll just throw an error if old style is used for eval_jacobian_term
+            if func.__name__ == "eval_jacobian_term":
+                raise TypeError(f"{func.__name__} no longer accepts "
+                                f"(T, rho, comp) arguments. Call {func.__name__}"
+                                "(ThermoState(rho=rho, T=T, comp=comp), ...) "
+                                "instead.")
+
             warnings.warn(f"{func.__name__}(rho, T, comp, ...) is deprecated, "
                           f"use {func.__name__}(ThermoState(rho=rho, T=T, "
                           "comp=comp,  ...) instead",

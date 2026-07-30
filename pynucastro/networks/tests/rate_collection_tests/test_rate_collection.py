@@ -37,7 +37,8 @@ class TestRateCollection:
 
         rho = 1e5
         T = 1e8
-        assert rc.evaluate_energy_generation(rho, T, comp) == 32.247985011082925
+        state = pyna.ThermoState(rho=rho, T=T, comp=comp)
+        assert rc.evaluate_energy_generation(state) == 32.247985011082925
 
     def test_add_rates(self, rc, reaclib_library):
         new_rate_names = ["o16(a,g)ne20",
@@ -100,7 +101,8 @@ class TestUnimportantRates:
         T = 1e8
 
         expected = {rc.rates[i] for i in [2, 3, 4, 6, 7]}
-        unimportant = rc.find_unimportant_rates([(rho, T, comp)], cutoff_ratio=1e-4)
+        state = pyna.ThermoState(rho=rho, T=T, comp=comp)
+        unimportant = rc.find_unimportant_rates([state], cutoff_ratio=1e-4)
         assert rc.rates[0] not in unimportant
         assert unimportant.keys() == expected
 
@@ -109,12 +111,14 @@ class TestUnimportantRates:
         T = 1e10
 
         expected = {rc.rates[i] for i in [0, 2, 4, 6, 7]}
-        unimportant = rc.find_unimportant_rates([(rho, T, comp)], cutoff_ratio=1e-4)
+        state = pyna.ThermoState(rho=rho, T=T, comp=comp)
+        unimportant = rc.find_unimportant_rates([state], cutoff_ratio=1e-4)
         assert rc.rates[3] not in unimportant
         assert unimportant.keys() == expected
 
     def test_temp_both(self, rc, comp):
-        states = [(1.e5, 1.e8, comp), (1.e5, 1.e10, comp)]
+        states = [pyna.ThermoState(rho=1.e5, T=1.e8, comp=comp),
+                  pyna.ThermoState(rho=1.e5, T=1.e10, comp=comp)]
 
         expected = {rc.rates[i] for i in [2, 4, 6, 7]}
         unimportant = rc.find_unimportant_rates(states, cutoff_ratio=1e-4)
