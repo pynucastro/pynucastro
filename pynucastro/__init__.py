@@ -100,7 +100,7 @@ The nuclear data is derived from the Atomic Mass Evaluations
 ---------
 
 :py:mod:`rates <pynucastro.rates>` provides classes and functions for interpreting individual
-reaction rates.  The main core rate classes are:
+reaction rates.  The core rate classes are:
 
 * :py:obj:`Rate <pynucastro.rates.rate.Rate>` : the base class for all rates.
 
@@ -119,6 +119,10 @@ reaction rates.  The main core rate classes are:
 
 * :py:obj:`StarLibRate <pynucastro.rates.starlib_rate.StarLibRate>` : a
   tabulated temperature-dependent rate with uncertainties.
+
+* :py:obj:`ModifiedRate <pynucastro.rates.modified_rate.ModifiedRate>` :
+  a container that holds a rate and allows for modifications to the
+  reactants, products, or stoichiometry.
 
 * :py:obj:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>` :
   a rate computed via detailed balance from a forward rate.
@@ -158,6 +162,9 @@ with some specialized library collections available as:
 
 * :py:obj:`ReacLibLibrary <pynucastro.rates.library.ReacLibLibrary>` :
   read in the entire collection of ReacLib rates.
+
+* :py:obj:`StarLibLibrary <pynucastro.rates.library.StarLibLibrary>` :
+  read in the entire collection of StarLib rates.
 
 * :py:obj:`TabularWeakLibrary <pynucastro.rates.library.TabularWeakLibrary>` :
   read in all known tabular reaction rates.
