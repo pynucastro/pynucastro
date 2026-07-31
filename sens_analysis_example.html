@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Sensitivity Analysis &#8212; pynucastro 2.12.0.post17+g30a1d175d documentation</title>
+    <title>Sensitivity Analysis &#8212; pynucastro 2.12.0.post18+g20abc8426 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=7ba9e499"></script>
+    <script src="_static/documentation_options.js?v=f7e32426"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -832,8 +832,8 @@ is that we provide an error-function—we’ll use the energy generation rate as
     <span class="n">max_err</span> <span class="o">=</span> <span class="mf">0.0</span>
     <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="p">(</span><span class="n">comp</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">validation_data</span><span class="p">):</span>
         <span class="n">enuc</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">evaluate_energy_generation</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
-        <span class="n">err</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_err</span><span class="p">,</span> <span class="nb">abs</span><span class="p">((</span><span class="n">enuc</span> <span class="o">-</span> <span class="n">enuc_reference</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="o">/</span> <span class="n">enuc_reference</span><span class="p">[</span><span class="n">n</span><span class="p">]))</span>
-    <span class="k">return</span> <span class="n">err</span>
+        <span class="n">max_err</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_err</span><span class="p">,</span> <span class="nb">abs</span><span class="p">((</span><span class="n">enuc</span> <span class="o">-</span> <span class="n">enuc_reference</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="o">/</span> <span class="n">enuc_reference</span><span class="p">[</span><span class="n">n</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">max_err</span>
 </pre></div>
 </div>
 </div>
@@ -875,21 +875,21 @@ is that we provide an error-function—we’ll use the energy generation rate as
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Network summary
 ---------------
-  explicitly carried nuclei: 30
+  explicitly carried nuclei: 35
   approximated-out nuclei: 0
   inert nuclei (included in carried): 0
 
   NSE compatible? False
 
-  total number of rates: 139
+  total number of rates: 209
 
-  rates explicitly connecting nuclei: 139
+  rates explicitly connecting nuclei: 209
   hidden rates: 0
 
-  reaclib rates: 127
+  reaclib rates: 189
   starlib rates: 0
   temperature tabular rates: 0
-  weak tabular rates: 12
+  weak tabular rates: 20
   approximate rates: 0
   derived rates: 0
   modified rates: 0
@@ -898,7 +898,7 @@ is that we provide an error-function—we’ll use the energy generation rate as
 </div>
 </div>
 </div>
-<p>We’ve further reduced the network from 45 nuclei (after DRGEP) to 30.</p>
+<p>We’ve further reduced the network from 45 nuclei (after DRGEP) to 35.</p>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">reduced_net2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">800</span><span class="p">),</span>
@@ -907,7 +907,7 @@ is that we provide an error-function—we’ll use the energy generation rate as
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/920c7d80db68b9a8118d6bca738d94e18374d49a0600d145e5709c1f48bc004a.png" src="_images/920c7d80db68b9a8118d6bca738d94e18374d49a0600d145e5709c1f48bc004a.png" />
+<img alt="_images/08e1802f9b8cd398b2ab3317653372423982795dc123e036f489dcd3dc801000.png" src="_images/08e1802f9b8cd398b2ab3317653372423982795dc123e036f489dcd3dc801000.png" />
 </div>
 </div>
 <p>We see that there is a disjoint sequence of nuclei here.  The choice of conditions and threshold make this reduction very sensitive, so some experimentation is usually needed.</p>
