@@ -943,7 +943,7 @@ class Rate:
 
         """
 
-        if y_molar:
+        if y_molar is not None:
             ys = y_molar
         else:
             ys = state.get_molar()

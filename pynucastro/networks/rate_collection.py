@@ -1137,8 +1137,12 @@ class RateCollection:
         """
 
         rvals = {}
+        ys = state.get_molar()
+        y_e = state.ye
+
         for r in self.rates:
-            rvals[r] = r.eval_full_rate(state, screen_func=screen_func)
+            rvals[r] = r.eval_full_rate(state, screen_func=screen_func,
+                                        y_molar=ys, y_e=y_e)
 
         return rvals
 
