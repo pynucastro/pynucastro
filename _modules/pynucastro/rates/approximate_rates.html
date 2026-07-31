@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.approximate_rates &#8212; pynucastro 2.12.0.post18+g20abc8426 documentation</title>
+    <title>pynucastro.rates.approximate_rates &#8212; pynucastro 2.12.0.post19+g07b9b174e documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=f7e32426"></script>
+    <script src="../../../_static/documentation_options.js?v=ef14e016"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -577,11 +577,9 @@
     <span class="n">rates</span><span class="p">[</span><span class="s2">&quot;B(g,n)X&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">product</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">(,n)</span><span class="si">{</span><span class="n">intermediate</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">rates</span><span class="p">[</span><span class="s2">&quot;X(g,n)A&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">intermediate</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">(,n)</span><span class="si">{</span><span class="n">reactant</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="n">forward</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;nn_g&quot;</span><span class="p">,</span>
-                              <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">forward</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;nn_g&quot;</span><span class="p">)</span>
 
-    <span class="n">reverse</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;nn_g&quot;</span><span class="p">,</span> <span class="n">is_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                              <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">reverse</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">&quot;nn_g&quot;</span><span class="p">,</span> <span class="n">is_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">forward</span><span class="p">,</span> <span class="n">reverse</span></div>
 
@@ -856,9 +854,6 @@
                               <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)])</span>
 
             <span class="c1"># now initialize the super class with these reactants and products</span>
-
-            <span class="c1"># this only makes sense with the use_identical_particle_factor = False</span>
-            <span class="k">assert</span> <span class="ow">not</span> <span class="n">use_identical_particle_factor</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reverse</span><span class="p">:</span>
                 <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_reactant</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)],</span>
@@ -1221,7 +1216,7 @@
                 <span class="c1"># the forward rate</span>
                 <span class="n">A_ng_X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">&quot;A(n,g)X&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
                                                     <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">A_ng_X</span> <span class="o">*</span> <span class="n">X_ng_B</span> <span class="o">/</span> <span class="n">denom</span>
+                <span class="k">return</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">A_ng_X</span> <span class="o">*</span> <span class="n">X_ng_B</span> <span class="o">/</span> <span class="n">denom</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># the reverse rate</span>
@@ -1375,7 +1370,7 @@
                 <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r1_gn = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(g,n)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
 
                 <span class="c1"># now the approximation</span>
-                <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;    rate = r1_ng * r2_ng / (rho * Yn * r2_ng + r1_gn)</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;    rate = 2.0 * r1_ng * r2_ng / (rho * Yn * r2_ng + r1_gn)</span><span class="se">\n</span><span class="s2">&quot;</span>
 
             <span class="k">else</span><span class="p">:</span>
 
@@ -1591,12 +1586,12 @@
 
                 <span class="c1"># now the approximation</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dd = 1.0_rt / (rho * Yn * r2_ng + r1_gn);</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate = r1_ng * r2_ng * dd;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate = 2.0_rt * r1_ng * r2_ng * dd;</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dr1dT_ng = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;A(n,g)X&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dr2dT_ng = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(n,g)B&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dr1dT_gn = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">&#39;X(g,n)A&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT = dr1dT_ng * r2_ng * dd + r1_ng * dr2dT_ng * dd - r1_ng * r2_ng * dd * dd * (rho * Yn * dr2dT_ng + dr1dT_gn);</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT = 2.0_rt * (dr1dT_ng * r2_ng * dd + r1_ng * dr2dT_ng * dd - r1_ng * r2_ng * dd * dd * (rho * Yn * dr2dT_ng + dr1dT_gn));</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    }</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="k">else</span><span class="p">:</span>
 
