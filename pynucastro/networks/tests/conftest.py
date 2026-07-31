@@ -31,8 +31,8 @@ def starlib_library():
 
 @pytest.fixture(scope="package")
 def tabular_library():
-    """Return the TabularLibrary"""
-    return pyna.TabularLibrary()
+    """Return the TabularWeakLibrary"""
+    return pyna.TabularWeakLibrary()
 
 
 @pytest.fixture(scope="package")

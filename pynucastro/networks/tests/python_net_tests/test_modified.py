@@ -4,6 +4,7 @@
 # that these give the same values for the rates.
 
 import copy
+import warnings
 
 import numpy as np
 import pytest
@@ -25,7 +26,9 @@ class TestModifiedRate:
 
         _c12c12_other = reaclib_library.get_rate_by_name("c12(c12,n)mg23")
         c12c12_other = copy.deepcopy(_c12c12_other)
-        c12c12_other.modify_products(["mg24"])
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            c12c12_other.modify_products(["mg24"])
         lib.add_rate(c12c12_other)
 
         return pyna.PythonNetwork(libraries=[lib])
