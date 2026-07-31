@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro package &#8212; pynucastro 2.12.0.post19+g07b9b174e documentation</title>
+    <title>pynucastro package &#8212; pynucastro 2.12.0.post20+ge3d934ca2 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=ef14e016"></script>
+    <script src="_static/documentation_options.js?v=6780411b"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -694,7 +694,7 @@ The nuclear data is derived from the Atomic Mass Evaluations
 <section id="rates">
 <h2><code class="docutils literal notranslate"><span class="pre">rates</span></code><a class="headerlink" href="#rates" title="Link to this heading">#</a></h2>
 <p><a class="reference internal" href="pynucastro.rates.html#module-pynucastro.rates" title="pynucastro.rates"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rates</span></code></a> provides classes and functions for interpreting individual
-reaction rates.  The main core rate classes are:</p>
+reaction rates.  The core rate classes are:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Rate</span></code></a> : the base class for all rates.</p></li>
 <li><p><a class="reference internal" href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate" title="pynucastro.rates.reaclib_rate.ReacLibRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a> : a
@@ -708,6 +708,9 @@ with methods to visualize and evaluate it.</p></li>
 methods to visualize and evaluate it.</p></li>
 <li><p><a class="reference internal" href="pynucastro.rates.starlib_rate.html#pynucastro.rates.starlib_rate.StarLibRate" title="pynucastro.rates.starlib_rate.StarLibRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StarLibRate</span></code></a> : a
 tabulated temperature-dependent rate with uncertainties.</p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate" title="pynucastro.rates.modified_rate.ModifiedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModifiedRate</span></code></a> :
+a container that holds a rate and allows for modifications to the
+reactants, products, or stoichiometry.</p></li>
 <li><p><a class="reference internal" href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate" title="pynucastro.rates.derived_rate.DerivedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DerivedRate</span></code></a> :
 a rate computed via detailed balance from a forward rate.</p></li>
 <li><p><a class="reference internal" href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate" title="pynucastro.rates.approximate_rates.ApproximateRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ApproximateRate</span></code></a> :
@@ -743,6 +746,8 @@ of rates from a <code class="docutils literal notranslate"><span class="pre">Lib
 <ul class="simple">
 <li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.ReacLibLibrary" title="pynucastro.rates.library.ReacLibLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReacLibLibrary</span></code></a> :
 read in the entire collection of ReacLib rates.</p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.StarLibLibrary" title="pynucastro.rates.library.StarLibLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StarLibLibrary</span></code></a> :
+read in the entire collection of StarLib rates.</p></li>
 <li><p><a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.TabularWeakLibrary" title="pynucastro.rates.library.TabularWeakLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularWeakLibrary</span></code></a> :
 read in all known tabular reaction rates.</p></li>
 </ul>
