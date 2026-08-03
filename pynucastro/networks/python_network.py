@@ -355,7 +355,7 @@ class NetworkSolution:
     def plot_evolution(self, *,
                        tmin=None, tmax=None,
                        ymin=None, ymax=None,
-                       size=(800, 700), dpi=100,
+                       size=(800, 600), dpi=100,
                        X_cutoff_value=None,
                        label_size=20, legend_size=15, linewidth=2.5,
                        ncol=None, legend_frameon=True,
