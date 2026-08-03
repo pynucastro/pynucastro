@@ -352,12 +352,14 @@ class NetworkSolution:
         enuc = self.energy_release(dYdt)
         return enuc
 
-    def plot_evolution(self,
+    def plot_evolution(self, *,
                        tmin=None, tmax=None,
                        ymin=None, ymax=None,
-                       size=(800, 600), dpi=100,
+                       size=(800, 700), dpi=100,
                        X_cutoff_value=None,
-                       label_size=14, legend_size=10,
+                       label_size=20, legend_size=15, linewidth=2.5,
+                       ncol=None, legend_frameon=True,
+                       legend_outside=False, tick_dir="in",
                        three_level_style=False,
                        outfile=None):
         """Plot the time evolution of nuclei mass fractions using the
@@ -388,6 +390,16 @@ class NetworkSolution:
             Font size for axis labels.
         legend_size : int
             Font size for the legend.
+        linewidth : int, float
+            Linewidth for plotting.
+        ncol : int
+            Number of columns for legend
+        legend_frameon: bool
+            Turn legend frame on or off.
+        legend_outside: bool
+            Put the legend on top of the figure.
+        tick_dir: str
+            Tick directions. Either "in" or "out"
         three_level_style : bool
             If `True`, use three-level linestyle and linewidth based on the peak
             mass fraction to help distinguish different curves.
@@ -427,22 +439,22 @@ class NetworkSolution:
             if three_level_style:
                 # Set 3 levels of visual levels depending on maximum mass fraction
                 if max_X > 0.5:
-                    lw = 2.5
+                    lw = linewidth + 1
                     ls = "-"
                     color = f"C{c1 % 10}"
                     c1 += 1
                 elif max_X > 0.01:
-                    lw = 1.5
+                    lw = linewidth
                     ls = "-"
                     color = f"C{c2 % 10}"
                     c2 += 1
                 else:
-                    lw = 1
+                    lw = linewidth - 0.5
                     ls = "--"
                     color = f"C{c3 % 10}"
                     c3 += 1
             else:
-                lw = 1.5
+                lw = linewidth
                 ls = "-"
                 color = f"C{c1 % 10}"
                 c1 += 1
@@ -467,7 +479,8 @@ class NetworkSolution:
             tmax = self.t[-1]
 
         # Auto set number of legend column
-        ncol = max(1, len(ax.lines) // 8 + 1)
+        if ncol is None:
+            ncol = max(1, len(ax.lines) // 8 + 1)
 
         ax.set_xlim(tmin, tmax)
         ax.set_ylim(ymin, ymax)
@@ -479,7 +492,19 @@ class NetworkSolution:
 
         ax.set_xlabel("time [s]", fontsize=label_size)
         ax.set_ylabel("X", fontsize=label_size)
-        ax.legend(loc="best", fontsize=legend_size, ncol=ncol)
+
+        if legend_outside:
+            ax.legend(loc="lower center", bbox_to_anchor=(0.5, 1.01),
+                      fontsize=legend_size, ncol=ncol,
+                      frameon=legend_frameon)
+        else:
+            ax.legend(loc="best", fontsize=legend_size, ncol=ncol,
+                      frameon=legend_frameon)
+
+        ax.tick_params(top=True, bottom=True,
+                       left=True, right=True,
+                       direction=tick_dir, which="both")
+
         ax.grid(ls=":")
         fig.tight_layout()
 
