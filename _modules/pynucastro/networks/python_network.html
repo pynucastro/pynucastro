@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 2.12.0.post20+ge3d934ca2 documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 2.12.0.post21+gf93c3c73e documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=6780411b"></script>
+    <script src="../../../_static/documentation_options.js?v=8f9dbd96"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -903,12 +903,14 @@
 
 <div class="viewcode-block" id="NetworkSolution.plot_evolution">
 <a class="viewcode-back" href="../../../pynucastro.networks.python_network.html#pynucastro.networks.python_network.NetworkSolution.plot_evolution">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">plot_evolution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_evolution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                        <span class="n">tmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                        <span class="n">ymin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                        <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
                        <span class="n">X_cutoff_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                       <span class="n">label_size</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">legend_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                       <span class="n">label_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">legend_size</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span>
+                       <span class="n">ncol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">legend_frameon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">legend_outside</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">tick_dir</span><span class="o">=</span><span class="s2">&quot;in&quot;</span><span class="p">,</span>
                        <span class="n">three_level_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                        <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the time evolution of nuclei mass fractions using the</span>
@@ -939,6 +941,16 @@
 <span class="sd">            Font size for axis labels.</span>
 <span class="sd">        legend_size : int</span>
 <span class="sd">            Font size for the legend.</span>
+<span class="sd">        linewidth : int, float</span>
+<span class="sd">            Linewidth for plotting.</span>
+<span class="sd">        ncol : int</span>
+<span class="sd">            Number of columns for legend</span>
+<span class="sd">        legend_frameon: bool</span>
+<span class="sd">            Turn legend frame on or off.</span>
+<span class="sd">        legend_outside: bool</span>
+<span class="sd">            Put the legend on top of the figure.</span>
+<span class="sd">        tick_dir: str</span>
+<span class="sd">            Tick directions. Either &quot;in&quot; or &quot;out&quot;</span>
 <span class="sd">        three_level_style : bool</span>
 <span class="sd">            If `True`, use three-level linestyle and linewidth based on the peak</span>
 <span class="sd">            mass fraction to help distinguish different curves.</span>
@@ -978,22 +990,22 @@
             <span class="k">if</span> <span class="n">three_level_style</span><span class="p">:</span>
                 <span class="c1"># Set 3 levels of visual levels depending on maximum mass fraction</span>
                 <span class="k">if</span> <span class="n">max_X</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
-                    <span class="n">lw</span> <span class="o">=</span> <span class="mf">2.5</span>
+                    <span class="n">lw</span> <span class="o">=</span> <span class="n">linewidth</span> <span class="o">+</span> <span class="mi">1</span>
                     <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
                     <span class="n">color</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">c1</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">10</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="n">c1</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">elif</span> <span class="n">max_X</span> <span class="o">&gt;</span> <span class="mf">0.01</span><span class="p">:</span>
-                    <span class="n">lw</span> <span class="o">=</span> <span class="mf">1.5</span>
+                    <span class="n">lw</span> <span class="o">=</span> <span class="n">linewidth</span>
                     <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
                     <span class="n">color</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">c2</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">10</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="n">c2</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">lw</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">lw</span> <span class="o">=</span> <span class="n">linewidth</span> <span class="o">-</span> <span class="mf">0.5</span>
                     <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;--&quot;</span>
                     <span class="n">color</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">c3</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">10</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="n">c3</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">lw</span> <span class="o">=</span> <span class="mf">1.5</span>
+                <span class="n">lw</span> <span class="o">=</span> <span class="n">linewidth</span>
                 <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
                 <span class="n">color</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">c1</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">10</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="n">c1</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -1018,7 +1030,8 @@
             <span class="n">tmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="c1"># Auto set number of legend column</span>
-        <span class="n">ncol</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">lines</span><span class="p">)</span> <span class="o">//</span> <span class="mi">8</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ncol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ncol</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">lines</span><span class="p">)</span> <span class="o">//</span> <span class="mi">8</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">)</span>
@@ -1030,7 +1043,19 @@
 
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;time [s]&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_size</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">label_size</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">legend_size</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="n">ncol</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">legend_outside</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower center&quot;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">),</span>
+                      <span class="n">fontsize</span><span class="o">=</span><span class="n">legend_size</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="n">ncol</span><span class="p">,</span>
+                      <span class="n">frameon</span><span class="o">=</span><span class="n">legend_frameon</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">legend_size</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="n">ncol</span><span class="p">,</span>
+                      <span class="n">frameon</span><span class="o">=</span><span class="n">legend_frameon</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">top</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">left</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">direction</span><span class="o">=</span><span class="n">tick_dir</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)</span>
+
         <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 

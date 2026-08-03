@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Integrating Networks with Temperature Evolution &#8212; pynucastro 2.12.0.post20+ge3d934ca2 documentation</title>
+    <title>Integrating Networks with Temperature Evolution &#8212; pynucastro 2.12.0.post21+gf93c3c73e documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=6780411b"></script>
+    <script src="_static/documentation_options.js?v=8f9dbd96"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -693,11 +693,11 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.6/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:472: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.6/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:485: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
   ax.set_xlim(tmin, tmax)
 </pre></div>
 </div>
-<img alt="_images/d50861ee34520490f42e5ba575ff6db54e7217cde2ecf0c4507a6de44920ad8c.png" src="_images/d50861ee34520490f42e5ba575ff6db54e7217cde2ecf0c4507a6de44920ad8c.png" />
+<img alt="_images/25ab2f18022b1e60daff515732742a0dc576b889ad74464682c82adf27f2271d.png" src="_images/25ab2f18022b1e60daff515732742a0dc576b889ad74464682c82adf27f2271d.png" />
 </div>
 </div>
 <p>We see it takes about <span class="math notranslate nohighlight">\(10^6\)</span> s for the He mass fraction to start to deplete significantly.</p>
@@ -739,11 +739,11 @@ is not Numba-compiled.  As a result, integrating with temperature evolution can 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.6/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:472: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.6/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:485: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
   ax.set_xlim(tmin, tmax)
 </pre></div>
 </div>
-<img alt="_images/e89fabe081b3996483d4d0cddab9f403fc38646b239c07f4ff42c2231bce11b3.png" src="_images/e89fabe081b3996483d4d0cddab9f403fc38646b239c07f4ff42c2231bce11b3.png" />
+<img alt="_images/d9c83033eb382830c7d97ee48c42d6afeecf662256ec93019f179ba27ff030d6.png" src="_images/d9c83033eb382830c7d97ee48c42d6afeecf662256ec93019f179ba27ff030d6.png" />
 </div>
 </div>
 <p>This looks dramatically different than the fixed-temperature case.  This is not too surprising, since at these temperatures, the 3-<span class="math notranslate nohighlight">\(\alpha\)</span> rate is very temperature sensitive, so as the temperature increases due to the energy release from burning, the He burning rate increases dramatically.</p>
@@ -754,7 +754,7 @@ is not Numba-compiled.  As a result, integrating with temperature evolution can 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.6/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:532: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.6/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:557: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
   ax.set_xlim(tmin, tmax)
 </pre></div>
 </div>
