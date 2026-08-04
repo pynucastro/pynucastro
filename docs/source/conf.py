@@ -40,7 +40,6 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'sphinx.ext.intersphinx',
     'sphinxcontrib.bibtex',
-    'nbsphinx',
     'sphinx.ext.githubpages',
     'sphinx_copybutton',
     'sphinx_prompt',
@@ -80,9 +79,6 @@ if not env_skip_execute:
     nb_execution_mode = "force"
 else:
     nb_execution_mode = "off"
-
-nbsphinx_allow_errors = True
-nbsphinx_timeout = 1000
 
 # myst-nb control of notebooks
 nb_execution_timeout = 500
