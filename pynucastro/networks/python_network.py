@@ -53,7 +53,7 @@ class NetworkSolution:
 
     def __init__(self, sol, rhs, jac, network, rho, T=None,
                  self_heating=False, thermal_neutrinos=False,
-                 screen_func=None):
+                 screen_func=None, rhs_and_enuc_weak=None):
 
         self._sol = sol
         self._rhs = rhs
@@ -64,6 +64,7 @@ class NetworkSolution:
         self.self_heating = self_heating
         self.thermal_neutrinos = thermal_neutrinos
         self.screen_func = screen_func
+        self._rhs_and_enuc_weak = rhs_and_enuc_weak
 
     @property
     def success(self):
@@ -347,6 +348,14 @@ class NetworkSolution:
         float
 
         """
+        Y = self.Y_at(t)
+        T = self.T_at(t) if self.self_heating else self.T
+
+        if self._rhs_and_enuc_weak is not None:
+            dYdt, enuc_weak = self._rhs_and_enuc_weak(
+                t, Y, self.rho, T, screen_func=self.screen_func)
+
+            return self.energy_release(dYdt) + enuc_weak
 
         dYdt = self.rhs_at(t)
         enuc = self.energy_release(dYdt)
@@ -948,7 +957,7 @@ class PythonNetwork(RateCollection):
         of.write("import numpy as np\n")
         of.write("from pynucastro.constants import constants\n")
         of.write("from numba.experimental import jitclass\n\n")
-
+        of.write("N_A = constants.N_A\n\n")
         of.write("from pynucastro.rates import (TableIndex, TableInterpolator, TabularWeakRate,\n")
         of.write("                              TempTableInterpolator, TemperatureTabularRate,\n")
         of.write("                              Tfactors)\n")
@@ -1025,11 +1034,13 @@ class PythonNetwork(RateCollection):
         # rate_eval class
 
         of.write("@jitclass([\n")
+        of.write(f'{indent}("enuc_weak", numba.float64),\n')
         for r in self.all_rates:
             of.write(f'{indent}("{r.fname}", numba.float64),\n')
         of.write("])\n")
         of.write("class RateEval:\n")
         of.write(f"{indent}def __init__(self):\n")
+        of.write(f"{indent*2}self.enuc_weak = 0.0\n")
         for r in self.all_rates:
             of.write(f"{indent*2}self.{r.fname} = np.nan\n")
 
@@ -1127,18 +1138,28 @@ class PythonNetwork(RateCollection):
         of.write(f"{indent}return rate_eval\n")
         of.write("\n")
 
+        of.write("def rhs_and_enuc_weak(t, Y, rho, T, screen_func=None):\n")
+        of.write(f"{indent}return rhs_and_enuc_weak_eq(t, Y, rho, T, screen_func)\n\n")
+
         of.write("@numba.njit()\n")
-        of.write("def rhs_eq(t, Y, rho, T, screen_func):\n\n")
-
-        of.write(f"{indent}rate_eval = do_rate_eval(t, Y, rho, T, screen_func)\n")
-
+        of.write("def ydot_eq(Y, rho, rate_eval):\n\n")
         of.write(f"{indent}dYdt = np.zeros((nnuc), dtype=np.float64)\n\n")
 
-        # now make the RHSs
         for n in self.unique_nuclei:
             of.write(self.full_ydot_string(n, indent=indent))
 
         of.write(f"{indent}return dYdt\n\n")
+
+        of.write("@numba.njit()\n")
+        of.write("def rhs_eq(t, Y, rho, T, screen_func):\n\n")
+        of.write(f"{indent}rate_eval = do_rate_eval(t, Y, rho, T, screen_func)\n")
+        of.write(f"{indent}return ydot_eq(Y, rho, rate_eval)\n\n")
+
+        of.write("@numba.njit()\n")
+        of.write("def rhs_and_enuc_weak_eq(t, Y, rho, T, screen_func):\n\n")
+        of.write(f"{indent}rate_eval = do_rate_eval(t, Y, rho, T, screen_func)\n")
+        of.write(f"{indent}dYdt = ydot_eq(Y, rho, rate_eval)\n")
+        of.write(f"{indent}return dYdt, rate_eval.enuc_weak\n\n")
 
         # the jacobian() function
 
@@ -1228,6 +1249,7 @@ class PythonNetwork(RateCollection):
 
         # Get RHS and Jacobian. Use getattr to avoid pylint warning.
         rhs = getattr(network, "rhs")
+        rhs_and_enuc_weak = getattr(network, "rhs_and_enuc_weak")
         jacobian = getattr(network, "jacobian")
 
         # Get the appropriate screening function
@@ -1248,7 +1270,7 @@ class PythonNetwork(RateCollection):
         if self_heating:
             energy_release = getattr(network, "energy_release")
 
-            def rhs_wrapper(t, xi, rhs, energy_release, rho, screen_func):
+            def rhs_wrapper(t, xi, rhs_and_enuc_weak, energy_release, rho, screen_func):
                 nspec = len(self.unique_nuclei)
                 assert len(xi) == nspec + 1
 
@@ -1258,11 +1280,11 @@ class PythonNetwork(RateCollection):
 
                 dxidt = np.zeros_like(xi)
 
-                # first get the dYdt from our network module
-                dxidt[0:nspec] = rhs(t, Y, rho, T, screen_func=screen_func)
+                dYdt, enuc_weak = rhs_and_enuc_weak(t, Y, rho, T, screen_func=screen_func)
+                dxidt[0:nspec] = dYdt
 
                 # now get the energy generation rate using this dY/dt
-                eps = energy_release(dxidt[0:nspec])
+                eps = energy_release(dYdt) + enuc_weak
 
                 # use the EOS to get the specific heat
                 eos = StellarEOS()
@@ -1283,7 +1305,7 @@ class PythonNetwork(RateCollection):
             xi0 = np.append(Y0, T)
             sol = solve_ivp(rhs_wrapper, [0, tmax], xi0, method="BDF",
                             dense_output=True,
-                            args=(rhs, energy_release, rho, screen_func),
+                            args=(rhs_and_enuc_weak, energy_release, rho, screen_func),
                             rtol=rtol, atol=atol)
 
         else:
@@ -1300,6 +1322,7 @@ class PythonNetwork(RateCollection):
         network_sol = NetworkSolution(sol, rhs, jacobian, self,
                                       rho, T, screen_func=screen_func,
                                       self_heating=self_heating,
-                                      thermal_neutrinos=thermal_neutrinos)
+                                      thermal_neutrinos=thermal_neutrinos,
+                                      rhs_and_enuc_weak=rhs_and_enuc_weak)
 
         return network_sol
