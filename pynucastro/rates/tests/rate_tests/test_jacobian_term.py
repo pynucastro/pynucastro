@@ -4,6 +4,7 @@ import pytest
 from pytest import approx
 
 from pynucastro.nucdata import Composition, Nucleus
+from pynucastro.rates import ThermoState
 
 
 class TestJacTerm:
@@ -23,6 +24,8 @@ class TestJacTerm:
 
         rho = 1.e6
         T = 3.e8
+        state = ThermoState(rho=rho, T=T, comp=comp)
+
         ymolar = comp.get_molar()
 
         # the full rate is Y(alpha)**3 rho**2 N_A <sigma v> / 6
@@ -34,12 +37,12 @@ class TestJacTerm:
         # 3*Y(alpha)**2 rho**2 N_A <sigma v> / 6
 
         dr_dalpha = 3 * ymolar[Nucleus("he4")]**2 * rho**2 * r.eval(T) / 6
-        assert r.eval_jacobian_term(T, rho, comp, Nucleus("he4")) == approx(dr_dalpha)
+        assert r.eval_jacobian_term(state, Nucleus("he4")) == approx(dr_dalpha)
 
         # now consider the rate with respect to c12 -- the derivative
         # should be zero
 
-        assert r.eval_jacobian_term(T, rho, comp, Nucleus("c12")) == 0.0
+        assert r.eval_jacobian_term(state, Nucleus("c12")) == 0.0
 
     def test_c12ag(self, comp, reaclib_library):
 
@@ -47,6 +50,8 @@ class TestJacTerm:
 
         rho = 1.e6
         T = 3.e8
+        state = ThermoState(rho=rho, T=T, comp=comp)
+
         ymolar = comp.get_molar()
 
         # the full rate is Y(c12) Y(alpha) rho N_A <sigma v>
@@ -54,15 +59,15 @@ class TestJacTerm:
         # consider drate/d(he4)
 
         dr_dalpha = ymolar[Nucleus("c12")] * rho * r.eval(T)
-        assert r.eval_jacobian_term(T, rho, comp, Nucleus("he4")) == approx(dr_dalpha)
+        assert r.eval_jacobian_term(state, Nucleus("he4")) == approx(dr_dalpha)
 
         # now drate/d(c12)
 
         dr_dc12 = ymolar[Nucleus("he4")] * rho * r.eval(T)
-        assert r.eval_jacobian_term(T, rho, comp, Nucleus("c12")) == approx(dr_dc12)
+        assert r.eval_jacobian_term(state, Nucleus("c12")) == approx(dr_dc12)
 
         # now drate/d(o16) should be 0
-        assert r.eval_jacobian_term(T, rho, comp, Nucleus("o16")) == 0.0
+        assert r.eval_jacobian_term(state, Nucleus("o16")) == 0.0
 
     def test_tabular_rate(self, comp, tabular_library):
 
@@ -70,13 +75,14 @@ class TestJacTerm:
 
         rho = 5.e9
         T = 3.e8
+        state = ThermoState(rho=rho, T=T, comp=comp)
 
         # this full rate is Y(ne20) lambda, where lambda is the 1/tau
         # read from the table
 
         # the rate does not dependent on alpha
-        assert r.eval_jacobian_term(T, rho, comp, Nucleus("he4")) == 0.0
+        assert r.eval_jacobian_term(state, Nucleus("he4")) == 0.0
 
         # for dr/dY(ne20), we just have the raw rate from the table
         dr_dne20 = r.eval(T, rho=rho, comp=comp)
-        assert r.eval_jacobian_term(T, rho, comp, Nucleus("ne20")) == dr_dne20
+        assert r.eval_jacobian_term(state, Nucleus("ne20")) == dr_dne20
