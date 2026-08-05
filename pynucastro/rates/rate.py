@@ -119,11 +119,20 @@ class ThermoState:
         """
         return self.comp.get_molar()
 
+    def __str__(self):
+        f = "ThermoState\n"
+        f += "===========\n"
+        f += f"rho  : {self.rho:.3e} g cm^-3\n"
+        f += f"T    : {self.T:.3e} K\n"
+        f += f"ye   : {self.ye:.4f}\n"
+        f += f"Comp :\n"
+        f += f"{self.comp}\n"
+        return f
 
 def need_state(func):
     """
-    Allow functions with (ThermoState, ..., **kwargs) input
-    to also be called with (rho, T, comp, ..., **kwargs) input.
+    Allow functions with (ThermoState, ..., \*\*kwargs) input
+    to also be called with (rho, T, comp, ..., \*\*kwargs) input.
     """
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
