@@ -93,7 +93,7 @@ and source files.  These are:
 
 * ``table_rates.H``
 
-  This manages ``TabularRate`` rates and interpolating the
+  This manages ``TabularWeakRate`` rates and interpolating the
   data.  The rate data itself is stored inline in the header file.
 
   .. warning::

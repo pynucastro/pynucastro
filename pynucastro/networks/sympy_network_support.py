@@ -7,7 +7,7 @@ import re
 
 import sympy
 
-from pynucastro.rates import TabularRate
+from pynucastro.rates import TabularWeakRate
 
 
 class SympyRates:
@@ -100,7 +100,7 @@ class SympyRates:
 
         # electron fraction if electron capture reaction
         y_e_sym = sympy.sympify(1)
-        if not isinstance(rate, TabularRate):
+        if not isinstance(rate, TabularWeakRate):
             if rate.use_ye_weighting:
                 y_e_sym = sympy.symbols('__y_e__')
 

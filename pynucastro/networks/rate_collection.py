@@ -7,6 +7,7 @@ import collections
 import copy
 import math
 import warnings
+from itertools import groupby
 from pathlib import Path
 
 import matplotlib as mpl
@@ -25,7 +26,7 @@ from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import (ApproximateRate, DerivedRate, Library,
                               ModifiedRate, Rate, RateFileError, RatePair,
-                              ReacLibRate, StarLibRate, TabularRate,
+                              ReacLibRate, StarLibRate, TabularWeakRate,
                               TemperatureTabularRate, find_duplicate_rates,
                               is_allowed_dupe, load_rate, make_CO_approx_rates)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_id
@@ -241,7 +242,7 @@ class RateCollection:
         # targets of a pointer array.  It is desired to avoid wasting
         # array size storing meaningless Tabular coefficient pointers.
         self.rates = sorted(self.rates,
-                            key=lambda r: isinstance(r, TabularRate))
+                            key=lambda r: isinstance(r, TabularWeakRate))
 
         self.tabular_rates = []
         self.temperature_tabular_rates = []
@@ -256,7 +257,7 @@ class RateCollection:
             if isinstance(r, ApproximateRate):
                 self.approx_rates.append(r)
                 for cr in r.get_child_rates():
-                    assert not isinstance(cr, TabularRate)
+                    assert not isinstance(cr, TabularWeakRate)
                     self._classify_hidden_rate(cr)
 
             elif isinstance(r, ModifiedRate):
@@ -266,7 +267,7 @@ class RateCollection:
                 cr = r.original_rate
                 self._classify_hidden_rate(cr)
 
-            elif isinstance(r, TabularRate):
+            elif isinstance(r, TabularWeakRate):
                 self.tabular_rates.append(r)
             elif isinstance(r, StarLibRate):
                 self.starlib_rates.append(r)
@@ -862,11 +863,9 @@ class RateCollection:
             rates = {"A(n,g)X": rf1, "X(n,g)B": rf2,
                      "B(g,n)X": rr1, "X(g,n)A": rr2}
 
-            ar = ApproximateRate(rates, approx_type="nn_g",
-                                 use_identical_particle_factor=False)
+            ar = ApproximateRate(rates, approx_type="nn_g")
 
-            ar_reverse = ApproximateRate(rates, is_reverse=True, approx_type="nn_g",
-                                         use_identical_particle_factor=False)
+            ar_reverse = ApproximateRate(rates, is_reverse=True, approx_type="nn_g")
 
             nuclei_approximated_out.append(inter_nuc)
             if self.verbose:
@@ -1568,7 +1567,7 @@ class RateCollection:
         # subtract neutrino losses for tabular weak reactions
         enu = 0.0
         for r in self.rates:
-            if isinstance(r, TabularRate):
+            if isinstance(r, TabularWeakRate):
                 # get composition
                 ys = composition.get_molar()
 
@@ -1685,8 +1684,14 @@ class RateCollection:
                 ostr += f"     {rp}\n"
         return ostr
 
-    def get_nuclei_latex_string(self):
+    def get_nuclei_latex_string(self, combine=True):
         """Return a string listing the nuclei in latex format
+
+        Parameters
+        ----------
+        combine : bool
+            Do we combine all isotopes of the same element together
+            into a single quantity (e.g. ¹²⁻¹⁴C)?
 
         Returns
         -------
@@ -1695,10 +1700,42 @@ class RateCollection:
         """
 
         ostr = ""
-        for i, n in enumerate(self.unique_nuclei):
-            ostr += f"${n.pretty}$"
-            if i != len(self.unique_nuclei)-1:
-                ostr += ", "
+
+        if combine:
+
+            # make a dict keyed by element that gives the mass numbers
+            nuc_combined = {}
+            for n in self.unique_nuclei:
+                if n.el in nuc_combined:
+                    nuc_combined[n.el].append(n.A)
+                else:
+                    nuc_combined[n.el] = [n.A]
+
+            # now combine them into contiguous sequences
+            nuc_list = {}
+            for el, As in nuc_combined.items():
+                ranges = []
+                for _, g in groupby(enumerate(As), lambda x: x[1] - x[0]):
+                    group = [v for _, v in g]
+                    if len(group) == 1:
+                        ranges.append(f"{group[0]}")
+                    else:
+                        ranges.append(rf"{group[0]}\mbox{{-}}{group[-1]}")
+
+                nuc_list[el] = ranges
+
+            for i, (el, As) in enumerate(nuc_list.items()):
+                A_str = ",".join(As)
+                ostr += rf"${{}}^{{{A_str}}}\mathrm{{{el.capitalize()}}}$"
+                if i != len(nuc_list)-1:
+                    ostr += ", "
+        else:
+
+            for i, n in enumerate(self.unique_nuclei):
+                ostr += f"${n.pretty}$"
+                if i != len(self.unique_nuclei)-1:
+                    ostr += ", "
+
         return ostr
 
     def get_rates_latex_table_string(self):
@@ -1715,9 +1752,9 @@ class RateCollection:
         ostr = ""
         for rp in sorted(self.get_rate_pairs()):
             if rp.forward:
-                ostr += f"{rp.forward.pretty_string:38} & \n"
+                ostr += f"{rp.forward.pretty_string:38} &"
             else:
-                ostr += f"{' ':38} \n &"
+                ostr += f"{' ':38}  &"
 
             if rp.reverse:
                 ostr += rf"  {rp.reverse.pretty_string:38} \\"

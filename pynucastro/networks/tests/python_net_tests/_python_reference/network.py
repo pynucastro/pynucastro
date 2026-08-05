@@ -3,7 +3,7 @@ import numpy as np
 from pynucastro.constants import constants
 from numba.experimental import jitclass
 
-from pynucastro.rates import (TableIndex, TableInterpolator, TabularRate,
+from pynucastro.rates import (TableIndex, TableInterpolator, TabularWeakRate,
                               TempTableInterpolator, TemperatureTabularRate,
                               Tfactors)
 from pynucastro.screening import PlasmaState, ScreenFactors

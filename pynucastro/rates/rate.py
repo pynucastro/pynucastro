@@ -2,6 +2,7 @@
 
 import functools
 import math
+import warnings
 from operator import mul
 from pathlib import Path
 
@@ -645,12 +646,22 @@ class Rate:
         """Change the products of the rate to new_products.  This will
         recompute the Q value and update the print representation.
 
+        .. deprecated:: 3.0 ``modify_products`` has been deprecated.
+           Use ``ModifiedRate`` instead.  ``modify_products`` will be
+           removed in version 3.1.
+
         Parameters
         ----------
         new_products : list(Nucleus)
             the new products to use with the rate.
 
         """
+
+        warnings.warn(
+            "modified_products is deprecated; use ModifiedRate instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
 
         self.products = Nucleus.cast_list(new_products, allow_single=True)
         self.modified = True
