@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.rate module &#8212; pynucastro 2.12.0.post22+gc239e90c6 documentation</title>
+    <title>pynucastro.rates.rate module &#8212; pynucastro 2.12.0.post23+g65d6120fb documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=18f95d61"></script>
+    <script src="_static/documentation_options.js?v=87875a70"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -629,6 +629,15 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Tfactors.class_type"><code class="docutils literal notranslate"><span class="pre">Tfactors.class_type</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.ThermoState"><code class="docutils literal notranslate"><span class="pre">ThermoState</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.ThermoState.T"><code class="docutils literal notranslate"><span class="pre">ThermoState.T</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.ThermoState.comp"><code class="docutils literal notranslate"><span class="pre">ThermoState.comp</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.ThermoState.get_molar"><code class="docutils literal notranslate"><span class="pre">ThermoState.get_molar()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.ThermoState.rho"><code class="docutils literal notranslate"><span class="pre">ThermoState.rho</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.ThermoState.ye"><code class="docutils literal notranslate"><span class="pre">ThermoState.ye</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.need_state"><code class="docutils literal notranslate"><span class="pre">need_state()</span></code></a></li>
 </ul>
             </nav>
         </div>
@@ -707,7 +716,7 @@ to evaluate the rate and screening effects with.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.eval_full_rate">
-<span class="sig-name descname"><span class="pre">eval_full_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_molar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_e</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.eval_full_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.eval_full_rate" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">eval_full_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_molar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_e</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.eval_full_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.eval_full_rate" title="Link to this definition">#</a></dt>
 <dd><p>Evaluate the rate for a specific density, temperature, and
 composition, with optional screening.  Note: this returns that
 rate as dY/dt, where Y is the molar fraction.  For a 2 body
@@ -720,14 +729,15 @@ by ρ N_A (where N_A is Avogadro’s number).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – density used to evaluate rates</p></li>
-<li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – temperature used to evaluate rates</p></li>
-<li><p><strong>composition</strong> (<a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition"><em>Composition</em></a>) – composition used to evaluate rates</p></li>
+<li><p><strong>state</strong> (<a class="reference internal" href="#pynucastro.rates.rate.ThermoState" title="pynucastro.rates.rate.ThermoState"><em>ThermoState</em></a>) – ThermoState containing relevant thermodynamic information used to
+evaluate rates. It knows about (rho, T, composition).</p></li>
 <li><p><strong>screen_func</strong> (<em>Callable</em>) – one of the screening functions from <a class="reference internal" href="pynucastro.screening.html#module-pynucastro.screening" title="pynucastro.screening"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pynucastro.screening</span></code></a>
 – if provided, then the evaluated rates will include the screening
 correction.</p></li>
 <li><p><strong>y_molar</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>(</em><a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a><em>)</em>) – the molar fractions of the nuclei.  If not provided, this
 will be computed from composition</p></li>
+<li><p><strong>y_e</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – electron fraction.  If not provided, this will be computed
+from composition</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -738,7 +748,7 @@ will be computed from composition</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.eval_jacobian_term">
-<span class="sig-name descname"><span class="pre">eval_jacobian_term</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_i</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.eval_jacobian_term"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.eval_jacobian_term" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">eval_jacobian_term</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_i</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.eval_jacobian_term"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.eval_jacobian_term" title="Link to this definition">#</a></dt>
 <dd><p>Evaluate drate/d(y_i), the derivative of the rate with
 respect to <code class="docutils literal notranslate"><span class="pre">y_i</span></code>.  This rate term has the full composition
 and density dependence, i.e.:</p>
@@ -748,9 +758,8 @@ nucleus <code class="docutils literal notranslate"><span class="pre">y_i</span><
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the temperature to evaluate the rate with</p></li>
-<li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the density to evaluate the rate with</p></li>
-<li><p><strong>comp</strong> (<a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition"><em>Composition</em></a>) – the composition to use in the rate evaluation</p></li>
+<li><p><strong>state</strong> (<a class="reference internal" href="#pynucastro.rates.rate.ThermoState" title="pynucastro.rates.rate.ThermoState"><em>ThermoState</em></a>) – ThermoState containing relevant thermodynamic information used to
+evaluate rates. It knows about (rho, T, composition).</p></li>
 <li><p><strong>y_i</strong> (<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a>) – the nucleus we are differentiating with respect to</p></li>
 <li><p><strong>screen_func</strong> (<em>Callable</em>) – one of the screening functions from <a class="reference internal" href="pynucastro.screening.html#module-pynucastro.screening" title="pynucastro.screening"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pynucastro.screening</span></code></a>
 – if provided, then the jacobian_term will include the
@@ -765,15 +774,14 @@ screening correction.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.evaluate_screening">
-<span class="sig-name descname"><span class="pre">evaluate_screening</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.evaluate_screening"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.evaluate_screening" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">evaluate_screening</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.evaluate_screening"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.evaluate_screening" title="Link to this definition">#</a></dt>
 <dd><p>Evaluate the screening correction for this rate.
 Note this returns log(screening).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – density used to evaluate screening</p></li>
-<li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – temperature used to evaluate screening</p></li>
-<li><p><strong>composition</strong> (<a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition"><em>Composition</em></a>) – composition used to evaluate screening</p></li>
+<li><p><strong>state</strong> (<a class="reference internal" href="#pynucastro.rates.rate.ThermoState" title="pynucastro.rates.rate.ThermoState"><em>ThermoState</em></a>) – ThermoState containing relevant thermodynamic information used to
+evaluate screening. It knows about (rho, T, composition).</p></li>
 <li><p><strong>screen_func</strong> (<em>Callable</em>) – one of the screening functions from <a class="reference internal" href="pynucastro.screening.html#module-pynucastro.screening" title="pynucastro.screening"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pynucastro.screening</span></code></a></p></li>
 </ul>
 </dd>
@@ -1074,9 +1082,73 @@ not found.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Tfactors.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.Tfactors#7f874d3509d0&lt;T9:float64,T9i:float64,T913:float64,T913i:float64,T953:float64,lnT9:float64&gt;</span></span><a class="headerlink" href="#pynucastro.rates.rate.Tfactors.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.Tfactors#7f53868a5350&lt;T9:float64,T9i:float64,T913:float64,T913i:float64,T953:float64,lnT9:float64&gt;</span></span><a class="headerlink" href="#pynucastro.rates.rate.Tfactors.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pynucastro.rates.rate.ThermoState">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">ThermoState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ThermoState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ThermoState" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class to hold the basic thermodynamic quantities
+such as density, temperature, and composition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – density in g/cm^3</p></li>
+<li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – temperature in Kelvin</p></li>
+<li><p><strong>comp</strong> (<a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition"><em>Composition</em></a>) – composition object that holds the massfractions</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.rates.rate.ThermoState.T">
+<span class="sig-name descname"><span class="pre">T</span></span><a class="headerlink" href="#pynucastro.rates.rate.ThermoState.T" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.rates.rate.ThermoState.comp">
+<span class="sig-name descname"><span class="pre">comp</span></span><a class="headerlink" href="#pynucastro.rates.rate.ThermoState.comp" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.rates.rate.ThermoState.get_molar">
+<span class="sig-name descname"><span class="pre">get_molar</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#ThermoState.get_molar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.ThermoState.get_molar" title="Link to this definition">#</a></dt>
+<dd><p>Return a dictionary of molar fractions, Y = X/A.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>molar</strong> – {Nucleus : Y}</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.rates.rate.ThermoState.rho">
+<span class="sig-name descname"><span class="pre">rho</span></span><a class="headerlink" href="#pynucastro.rates.rate.ThermoState.rho" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pynucastro.rates.rate.ThermoState.ye">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ye</span></span><a class="headerlink" href="#pynucastro.rates.rate.ThermoState.ye" title="Link to this definition">#</a></dt>
+<dd><p>Return the electron fraction of the composition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pynucastro.rates.rate.need_state">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.rates.rate.</span></span><span class="sig-name descname"><span class="pre">need_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#need_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.need_state" title="Link to this definition">#</a></dt>
+<dd><p>Allow functions with (ThermoState, …, <cite>**kwargs</cite>) input
+to also be called with (rho, T, comp, …, <cite>**kwargs</cite>) input.</p>
 </dd></dl>
 
 </section>
@@ -1165,6 +1237,15 @@ not found.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.Tfactors.class_type"><code class="docutils literal notranslate"><span class="pre">Tfactors.class_type</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.ThermoState"><code class="docutils literal notranslate"><span class="pre">ThermoState</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.ThermoState.T"><code class="docutils literal notranslate"><span class="pre">ThermoState.T</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.ThermoState.comp"><code class="docutils literal notranslate"><span class="pre">ThermoState.comp</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.ThermoState.get_molar"><code class="docutils literal notranslate"><span class="pre">ThermoState.get_molar()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.ThermoState.rho"><code class="docutils literal notranslate"><span class="pre">ThermoState.rho</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.ThermoState.ye"><code class="docutils literal notranslate"><span class="pre">ThermoState.ye</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.rate.need_state"><code class="docutils literal notranslate"><span class="pre">need_state()</span></code></a></li>
 </ul>
   </nav></div>
 

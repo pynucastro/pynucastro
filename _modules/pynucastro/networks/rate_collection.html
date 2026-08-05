@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.12.0.post22+gc239e90c6 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.12.0.post23+g65d6120fb documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=18f95d61"></script>
+    <script src="../../../_static/documentation_options.js?v=87875a70"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -541,8 +541,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">ApproximateRate</span><span class="p">,</span> <span class="n">DerivedRate</span><span class="p">,</span> <span class="n">Library</span><span class="p">,</span>
                               <span class="n">ModifiedRate</span><span class="p">,</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">RateFileError</span><span class="p">,</span> <span class="n">RatePair</span><span class="p">,</span>
                               <span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">StarLibRate</span><span class="p">,</span> <span class="n">TabularWeakRate</span><span class="p">,</span>
-                              <span class="n">TemperatureTabularRate</span><span class="p">,</span> <span class="n">find_duplicate_rates</span><span class="p">,</span>
-                              <span class="n">is_allowed_dupe</span><span class="p">,</span> <span class="n">load_rate</span><span class="p">,</span> <span class="n">make_CO_approx_rates</span><span class="p">)</span>
+                              <span class="n">TemperatureTabularRate</span><span class="p">,</span> <span class="n">ThermoState</span><span class="p">,</span>
+                              <span class="n">find_duplicate_rates</span><span class="p">,</span> <span class="n">is_allowed_dupe</span><span class="p">,</span> <span class="n">load_rate</span><span class="p">,</span>
+                              <span class="n">make_CO_approx_rates</span><span class="p">,</span> <span class="n">need_state</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.library</span><span class="w"> </span><span class="kn">import</span> <span class="n">_rate_name_to_nuc</span><span class="p">,</span> <span class="n">capitalize_id</span>
 
 <span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
@@ -1696,7 +1697,8 @@
 
 <div class="viewcode-block" id="RateCollection.evaluate_rates">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_rates">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span>
+    <span class="nd">@need_state</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                        <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the rates for a specific density, temperature, and</span>
 <span class="sd">        composition, with optional screening.  Note: this returns that</span>
@@ -1713,12 +1715,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        rho : float</span>
-<span class="sd">            density used to evaluate rates</span>
-<span class="sd">        T : float</span>
-<span class="sd">            temperature used to evaluate rates</span>
-<span class="sd">        composition : Composition</span>
-<span class="sd">            composition used to evaluate rates</span>
+<span class="sd">        state: ThermoState</span>
+<span class="sd">            ThermoState containing relevant thermodynamic information used to</span>
+<span class="sd">            evaluate rates. It knows about (rho, T, composition).</span>
 <span class="sd">        screen_func : Callable</span>
 <span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
 <span class="sd">            -- if provided, then the evaluated rates will include the screening</span>
@@ -1731,12 +1730,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">rvals</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">ys</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
-        <span class="n">y_e</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">ye</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
+        <span class="n">y_e</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">ye</span>
 
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
-            <span class="n">rvals</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">eval_full_rate</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span>
-                                        <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">,</span>
+            <span class="n">rvals</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">eval_full_rate</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">,</span>
                                         <span class="n">y_molar</span><span class="o">=</span><span class="n">ys</span><span class="p">,</span> <span class="n">y_e</span><span class="o">=</span><span class="n">y_e</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">rvals</span></div>
@@ -1744,19 +1742,17 @@
 
 <div class="viewcode-block" id="RateCollection.evaluate_jacobian">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_jacobian">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+    <span class="nd">@need_state</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                           <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude_rates</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an array of the form J_ij = dYdot_i/dY_j for the</span>
 <span class="sd">        network</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        rho : float</span>
-<span class="sd">            density used to evaluate Jacobian terms</span>
-<span class="sd">        T : float</span>
-<span class="sd">            temperature used to evaluate Jacobian terms</span>
-<span class="sd">        comp : Composition</span>
-<span class="sd">            composition used to evaluate Jacobian terms</span>
+<span class="sd">        state: ThermoState</span>
+<span class="sd">            ThermoState containing relevant thermodynamic information used to</span>
+<span class="sd">            evaluate Jacobian terms. It knows about (rho, T, composition).</span>
 <span class="sd">        screen_func : Callable</span>
 <span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
 <span class="sd">            -- if provided, then the evaluated rates will include the screening</span>
@@ -1792,7 +1788,7 @@
 
                     <span class="c1"># Note eval_jacobian_term already includes screening</span>
                     <span class="n">jac</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">-=</span> <span class="n">c</span> <span class="o">*</span> \
-                        <span class="n">r</span><span class="o">.</span><span class="n">eval_jacobian_term</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">n_j</span><span class="p">,</span>
+                        <span class="n">r</span><span class="o">.</span><span class="n">eval_jacobian_term</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">n_j</span><span class="p">,</span>
                                              <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
 
                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">n_i</span><span class="p">]:</span>
@@ -1802,7 +1798,7 @@
                     <span class="c1"># how many of n_i are produced by this reaction</span>
                     <span class="n">c</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">product_count</span><span class="p">(</span><span class="n">n_i</span><span class="p">)</span>
                     <span class="n">jac</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">c</span> <span class="o">*</span> \
-                        <span class="n">r</span><span class="o">.</span><span class="n">eval_jacobian_term</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">n_j</span><span class="p">,</span>
+                        <span class="n">r</span><span class="o">.</span><span class="n">eval_jacobian_term</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">n_j</span><span class="p">,</span>
                                              <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">jac</span></div>
@@ -1810,19 +1806,17 @@
 
 <div class="viewcode-block" id="RateCollection.spectral_radius">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.spectral_radius">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">spectral_radius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+    <span class="nd">@need_state</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">spectral_radius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                         <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude_rates</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the spectral radius of the Jacobian---this is the</span>
 <span class="sd">        max{abs(e_i)}, where e_i are the eigenvalues of the Jacobian.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        rho : float</span>
-<span class="sd">            density used to evaluate Jacobian terms</span>
-<span class="sd">        T : float</span>
-<span class="sd">            temperature used to evaluate Jacobian terms</span>
-<span class="sd">        comp : Composition</span>
-<span class="sd">            composition used to evaluate Jacobian terms</span>
+<span class="sd">        state: ThermoState</span>
+<span class="sd">            ThermoState containing relevant thermodynamic information used to</span>
+<span class="sd">            evaluate Jacobian terms. It knows about (rho, T, composition).</span>
 <span class="sd">        screen_func : Callable</span>
 <span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
 <span class="sd">            -- if provided, then the evaluated rates will include the screening</span>
@@ -1841,7 +1835,7 @@
         <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
             <span class="c1"># don&#39;t display partition function warnings</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
-            <span class="n">J</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_jacobian</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span>
+            <span class="n">J</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_jacobian</span><span class="p">(</span><span class="n">state</span><span class="p">,</span>
                                        <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">,</span>
                                        <span class="n">exclude_rates</span><span class="o">=</span><span class="n">exclude_rates</span><span class="p">)</span>
         <span class="n">e</span> <span class="o">=</span> <span class="n">eigvals</span><span class="p">(</span><span class="n">J</span><span class="p">)</span>
@@ -1850,7 +1844,8 @@
 
 <div class="viewcode-block" id="RateCollection.find_stiffest_rate">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.find_stiffest_rate">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">find_stiffest_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+    <span class="nd">@need_state</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_stiffest_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                         <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate through rates and compute the spectral radius for the</span>
 <span class="sd">        network excluding the rate to determine which rate is most responsible</span>
@@ -1858,12 +1853,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        rho : float</span>
-<span class="sd">            density used to evaluate Jacobian terms</span>
-<span class="sd">        T : float</span>
-<span class="sd">            temperature used to evaluate Jacobian terms</span>
-<span class="sd">        comp : Composition</span>
-<span class="sd">            composition used to evaluate Jacobian terms</span>
+<span class="sd">        state: ThermoState</span>
+<span class="sd">            ThermoState containing relevant thermodynamic information used to</span>
+<span class="sd">            evaluate Jacobian terms. It knows about (rho, T, composition).</span>
 <span class="sd">        screen_func : Callable</span>
 <span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
 <span class="sd">            -- if provided, then the evaluated rates will include the screening</span>
@@ -1876,10 +1868,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">stiff_rate</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">spectral_radius</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectral_radius</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+        <span class="n">spectral_radius</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectral_radius</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
-            <span class="n">_sprad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectral_radius</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">,</span> <span class="n">exclude_rates</span><span class="o">=</span><span class="p">[</span><span class="n">r</span><span class="p">])</span>
+            <span class="n">_sprad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectral_radius</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">,</span> <span class="n">exclude_rates</span><span class="o">=</span><span class="p">[</span><span class="n">r</span><span class="p">])</span>
             <span class="k">if</span> <span class="n">_sprad</span> <span class="o">&lt;</span> <span class="n">spectral_radius</span><span class="p">:</span>
                 <span class="n">stiff_rate</span> <span class="o">=</span> <span class="n">r</span>
                 <span class="n">spectral_radius</span> <span class="o">=</span> <span class="n">_sprad</span>
@@ -2059,8 +2051,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        states : list, tuple</span>
-<span class="sd">             A tuple of the form (density, temperature, composition),</span>
-<span class="sd">             where composition is a Composition object</span>
+<span class="sd">             A list or tuple of ThermoState objects.</span>
 <span class="sd">        cutoff_ratio : float</span>
 <span class="sd">             The ratio of a rate to the fastest rate, below which we</span>
 <span class="sd">             consider this rate to be unimportant.</span>
@@ -2075,8 +2066,8 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">largest_ratio</span> <span class="o">=</span> <span class="p">{</span><span class="n">r</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">}</span>
-        <span class="k">for</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
-            <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+            <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
             <span class="n">fastest</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">rvals</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
             <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">rvals</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">largest_ratio</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">largest_ratio</span><span class="p">[</span><span class="n">r</span><span class="p">],</span> <span class="n">value</span> <span class="o">/</span> <span class="n">fastest</span><span class="p">)</span>
@@ -2085,19 +2076,17 @@
 
 <div class="viewcode-block" id="RateCollection.evaluate_ydots">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_ydots">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_ydots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span>
+    <span class="nd">@need_state</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_ydots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                        <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rate_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate net rate of change of molar abundance for each</span>
 <span class="sd">        nucleus for a specific density, temperature, and composition</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        rho : float</span>
-<span class="sd">            density used to evaluate rates</span>
-<span class="sd">        T : float</span>
-<span class="sd">            temperature used to evaluate rates</span>
-<span class="sd">        composition : Composition</span>
-<span class="sd">            composition used to evaluate rates</span>
+<span class="sd">        state: ThermoState</span>
+<span class="sd">            ThermoState containing relevant thermodynamic information used to</span>
+<span class="sd">            evaluate ydots. It knows about (rho, T, composition).</span>
 <span class="sd">        screen_func : Callable</span>
 <span class="sd">            a function from :py:mod:`pynucastro.screening` used to compute the</span>
 <span class="sd">            screening enhancement for the rates.</span>
@@ -2111,7 +2100,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">)</span>
+        <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
         <span class="n">ydots</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
@@ -2140,19 +2129,17 @@
 
 <div class="viewcode-block" id="RateCollection.evaluate_energy_generation">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_energy_generation">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_energy_generation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span>
+    <span class="nd">@need_state</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_energy_generation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                                    <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_enu</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the specific energy generation rate of the network for a specific</span>
 <span class="sd">        density, temperature and composition</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        rho : float</span>
-<span class="sd">            density to evaluate the rates with</span>
-<span class="sd">        T : float</span>
-<span class="sd">            temperature to evaluate the rates with</span>
-<span class="sd">        composition : Composition</span>
-<span class="sd">            composition to evaluate the rates with</span>
+<span class="sd">        state: ThermoState</span>
+<span class="sd">            ThermoState containing relevant thermodynamic information used to</span>
+<span class="sd">            evaluate rates. It knows about (rho, T, composition).</span>
 <span class="sd">        screen_func : Callable</span>
 <span class="sd">            a function from :py:mod:`pynucastro.screening` to</span>
 <span class="sd">            call to compute the screening factor</span>
@@ -2169,7 +2156,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">ydots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_ydots</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">)</span>
+        <span class="n">ydots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_ydots</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
         <span class="n">enuc</span> <span class="o">=</span> <span class="mf">0.</span>
 
         <span class="c1"># compute constants and units</span>
@@ -2186,11 +2173,11 @@
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">TabularWeakRate</span><span class="p">):</span>
                 <span class="c1"># get composition</span>
-                <span class="n">ys</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
+                <span class="n">ys</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
 
                 <span class="c1"># need to get reactant nucleus</span>
                 <span class="n">nuc</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">enu</span> <span class="o">+=</span> <span class="n">constants</span><span class="o">.</span><span class="n">N_A</span> <span class="o">*</span> <span class="n">ys</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">*</span> <span class="n">r</span><span class="o">.</span><span class="n">get_nu_loss</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">composition</span><span class="p">)</span>
+                <span class="n">enu</span> <span class="o">+=</span> <span class="n">constants</span><span class="o">.</span><span class="n">N_A</span> <span class="o">*</span> <span class="n">ys</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">*</span> <span class="n">r</span><span class="o">.</span><span class="n">get_nu_loss</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 
         <span class="n">enuc</span> <span class="o">-=</span> <span class="n">enu</span>
         <span class="k">if</span> <span class="n">return_enu</span><span class="p">:</span>
@@ -2200,19 +2187,17 @@
 
 <div class="viewcode-block" id="RateCollection.evaluate_activity">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_activity">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_activity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="nd">@need_state</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_activity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the activity for each nucleus--the sum of</span>
 <span class="sd">        abs(creation rate) + abs(destruction rate), i.e., this neglects the</span>
 <span class="sd">        sign of the terms.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        rho : float</span>
-<span class="sd">            density used to evaluate rates</span>
-<span class="sd">        T : float</span>
-<span class="sd">            temperature used to evaluate rates</span>
-<span class="sd">        composition : Composition</span>
-<span class="sd">            composition used to evaluate rates</span>
+<span class="sd">        state: ThermoState</span>
+<span class="sd">            ThermoState containing relevant thermodynamic information used to</span>
+<span class="sd">            evaluate rates. It knows about (rho, T, composition).</span>
 <span class="sd">        screen_func : Callable</span>
 <span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
 <span class="sd">            -- if provided, then the evaluated rates will include the screening</span>
@@ -2224,7 +2209,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">)</span>
+        <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
         <span class="n">act</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
@@ -2244,13 +2229,24 @@
         <span class="k">return</span> <span class="n">act</span></div>
 
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_get_network_chart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">):</span>
+    <span class="nd">@need_state</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_network_chart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a dict, keyed by rate that holds a list of tuples</span>
 <span class="sd">        (Nucleus, ydot)</span>
 
+<span class="sd">        Parameter</span>
+<span class="sd">        ---------</span>
+<span class="sd">        state: ThermoState</span>
+<span class="sd">            ThermoState containing relevant thermodynamic information used to</span>
+<span class="sd">            evaluate Jacobian terms. It knows about (rho, T, composition).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Dict</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">)</span>
+        <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 
         <span class="n">nc</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -2913,7 +2909,8 @@
         <span class="c1"># get the rates for each reaction</span>
 
         <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">T</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">comp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">rate_ydots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">ThermoState</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
+            <span class="n">rate_ydots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">state</span><span class="p">,</span>
                                              <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">rate_ydots</span> <span class="o">=</span> <span class="kc">None</span>
@@ -3162,7 +3159,8 @@
 
 <div class="viewcode-block" id="RateCollection.plot_jacobian">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.plot_jacobian">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">plot_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+    <span class="nd">@need_state</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                       <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                       <span class="n">rate_scaling</span><span class="o">=</span><span class="mf">1.e10</span><span class="p">,</span>
                       <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
@@ -3170,12 +3168,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        rho : float</span>
-<span class="sd">            density used to evaluate terms</span>
-<span class="sd">        T : float</span>
-<span class="sd">            temperature used to evaluate terms</span>
-<span class="sd">        comp : Composition</span>
-<span class="sd">            composition used to evaluate terms</span>
+<span class="sd">        state: ThermoState</span>
+<span class="sd">            ThermoState containing relevant thermodynamic information used to</span>
+<span class="sd">            evaluate Jacobian terms. It knows about (rho, T, composition).</span>
 <span class="sd">        outfile : str</span>
 <span class="sd">            output file for plot (extension is used to specify file type)</span>
 <span class="sd">        screen_func : Callable</span>
@@ -3196,7 +3191,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">jac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_jacobian</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+        <span class="n">jac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_jacobian</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
 
         <span class="n">valid_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">jac</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
 
@@ -3234,7 +3229,8 @@
 
 <div class="viewcode-block" id="RateCollection.plot_network_chart">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.plot_network_chart">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">plot_network_chart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+    <span class="nd">@need_state</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_network_chart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                            <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                            <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">800</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
                            <span class="n">force_one_column</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -3245,12 +3241,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        rho : float</span>
-<span class="sd">            density used to evaluate rates</span>
-<span class="sd">        T : float</span>
-<span class="sd">            temperature used to evaluate rates</span>
-<span class="sd">        comp : Composition</span>
-<span class="sd">            composition used to evaluate rates</span>
+<span class="sd">        state: ThermoState</span>
+<span class="sd">            ThermoState containing relevant thermodynamic information used to</span>
+<span class="sd">            evaluate rates. It knows about (rho, T, composition).</span>
 <span class="sd">        outfile : str</span>
 <span class="sd">            filename to output image</span>
 <span class="sd">        size : Iterable(int)</span>
@@ -3270,7 +3263,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">nc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_network_chart</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+        <span class="n">nc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_network_chart</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 
         <span class="c1"># find the limits</span>
         <span class="n">_ydot</span> <span class="o">=</span> <span class="p">[]</span>
@@ -3518,32 +3511,29 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid color field: &#39;</span><span class="si">{</span><span class="n">color_field</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">comp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-
             <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nuclei</span><span class="p">))</span>
 
         <span class="k">elif</span> <span class="n">color_field</span> <span class="o">==</span> <span class="s2">&quot;x&quot;</span><span class="p">:</span>
-
             <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">comp</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">nuclei</span><span class="p">])</span>
 
         <span class="k">elif</span> <span class="n">color_field</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
-
             <span class="n">ys</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
             <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ys</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">nuclei</span><span class="p">])</span>
 
         <span class="k">elif</span> <span class="n">color_field</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;ydot&quot;</span><span class="p">,</span> <span class="s2">&quot;xdot&quot;</span><span class="p">}:</span>
-
             <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">T</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Need both rho and T to evaluate rates!&quot;</span><span class="p">)</span>
-            <span class="n">ydots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_ydots</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">ThermoState</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
+            <span class="n">ydots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_ydots</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
             <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ydots</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">nuclei</span><span class="p">])</span>
             <span class="k">if</span> <span class="n">color_field</span> <span class="o">==</span> <span class="s2">&quot;xdot&quot;</span><span class="p">:</span>
                 <span class="n">values</span> <span class="o">*=</span> <span class="n">As</span>
 
         <span class="k">elif</span> <span class="n">color_field</span> <span class="o">==</span> <span class="s2">&quot;activity&quot;</span><span class="p">:</span>
-
             <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">T</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Need both rho and T to evaluate rates!&quot;</span><span class="p">)</span>
-            <span class="n">act</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_activity</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">ThermoState</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
+            <span class="n">act</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_activity</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
             <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">act</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">nuclei</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">scale</span> <span class="o">==</span> <span class="s2">&quot;log&quot;</span><span class="p">:</span>

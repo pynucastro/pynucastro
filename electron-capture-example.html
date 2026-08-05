@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Tabulated Weak Rate Example &#8212; pynucastro 2.12.0.post22+gc239e90c6 documentation</title>
+    <title>Tabulated Weak Rate Example &#8212; pynucastro 2.12.0.post23+g65d6120fb documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=18f95d61"></script>
+    <script src="_static/documentation_options.js?v=87875a70"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -672,6 +672,7 @@ to what is in the table.</p>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e7</span> <span class="o">/</span> <span class="n">Ye</span>
 <span class="n">T</span> <span class="o">=</span> <span class="mf">1.e9</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ThermoState</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -693,7 +694,7 @@ to what is in the table.</p>
 <p>Now we can evaluate the rates using <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_rates" title="pynucastro.networks.rate_collection.RateCollection.evaluate_rates"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_rates</span></code></a>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -707,7 +708,7 @@ to what is in the table.</p>
 <p>We can also compute <span class="math notranslate nohighlight">\(dY/dt\)</span> for the network via <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_ydots" title="pynucastro.networks.rate_collection.RateCollection.evaluate_ydots"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_ydots</span></code></a>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ydots</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">evaluate_ydots</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ydots</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">evaluate_ydots</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 <span class="n">ydots</span>
 </pre></div>
 </div>

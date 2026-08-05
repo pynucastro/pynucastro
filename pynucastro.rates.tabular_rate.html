@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.tabular_rate module &#8212; pynucastro 2.12.0.post22+gc239e90c6 documentation</title>
+    <title>pynucastro.rates.tabular_rate module &#8212; pynucastro 2.12.0.post23+g65d6120fb documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=18f95d61"></script>
+    <script src="_static/documentation_options.js?v=87875a70"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -697,7 +697,7 @@ component) where index is a 1D flattened representation of
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TableInterpolator.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.TableInterpolator#7f874d2d7e30&lt;data:array(float64,</span> <span class="pre">2d,</span> <span class="pre">A),table_rhoy_lines:int32,table_temp_lines:int32,rhoy:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),temp:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A)&gt;</span></span><a class="headerlink" href="#pynucastro.rates.tabular_rate.TableInterpolator.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.TableInterpolator#7f538681fe30&lt;data:array(float64,</span> <span class="pre">2d,</span> <span class="pre">A),table_rhoy_lines:int32,table_temp_lines:int32,rhoy:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),temp:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A)&gt;</span></span><a class="headerlink" href="#pynucastro.rates.tabular_rate.TableInterpolator.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -741,17 +741,12 @@ instead.  <code class="docutils literal notranslate"><span class="pre">TabularRa
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TabularWeakRate.get_nu_loss">
-<span class="sig-name descname"><span class="pre">get_nu_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/tabular_rate.html#TabularWeakRate.get_nu_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.tabular_rate.TabularWeakRate.get_nu_loss" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_nu_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/tabular_rate.html#TabularWeakRate.get_nu_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.tabular_rate.TabularWeakRate.get_nu_loss" title="Link to this definition">#</a></dt>
 <dd><p>Evaluate the neutrino loss for the rate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the temperature to evaluate the rate at</p></li>
-<li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the density to evaluate the rate at.</p></li>
-<li><p><strong>comp</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the composition (of type
-<a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Composition</span></code></a>)
-to evaluate the rate with.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.ThermoState" title="pynucastro.rates.rate.ThermoState"><em>ThermoState</em></a>) – ThermoState containing relevant thermodynamic information used to
+evaluate neutrino loss. It knows about (rho, T, composition).</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>

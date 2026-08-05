@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.nse_network &#8212; pynucastro 2.12.0.post22+gc239e90c6 documentation</title>
+    <title>pynucastro.networks.nse_network &#8212; pynucastro 2.12.0.post23+g65d6120fb documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=18f95d61"></script>
+    <script src="../../../_static/documentation_options.js?v=87875a70"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -526,7 +526,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.rate_collection</span><span class="w"> </span><span class="kn">import</span> <span class="n">RateCollection</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Composition</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">TabularWeakRate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">TabularWeakRate</span><span class="p">,</span> <span class="n">ThermoState</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">NseState</span><span class="p">,</span> <span class="n">potekhin_1998</span>
 
 
@@ -916,11 +916,12 @@
                     <span class="n">mu_n</span><span class="p">[</span><span class="n">irho</span><span class="p">,</span> <span class="n">iye</span><span class="p">]</span> <span class="o">=</span> <span class="n">sol</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
                     <span class="c1"># get the dY/dt for just the weak rates</span>
-                    <span class="n">ydots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_ydots</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span>
+                    <span class="n">state</span> <span class="o">=</span> <span class="n">ThermoState</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
+                    <span class="n">ydots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_ydots</span><span class="p">(</span><span class="n">state</span><span class="p">,</span>
                                                 <span class="n">screen_func</span><span class="o">=</span><span class="n">potekhin_1998</span><span class="p">,</span>
                                                 <span class="n">rate_filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">TabularWeakRate</span><span class="p">))</span>
 
-                    <span class="n">_</span><span class="p">,</span> <span class="n">enu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_energy_generation</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span>
+                    <span class="n">_</span><span class="p">,</span> <span class="n">enu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_energy_generation</span><span class="p">(</span><span class="n">state</span><span class="p">,</span>
                                                              <span class="n">screen_func</span><span class="o">=</span><span class="n">potekhin_1998</span><span class="p">,</span>
                                                              <span class="n">return_enu</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 

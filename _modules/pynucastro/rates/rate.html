@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 2.12.0.post22+gc239e90c6 documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 2.12.0.post23+g65d6120fb documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=18f95d61"></script>
+    <script src="../../../_static/documentation_options.js?v=87875a70"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -517,6 +517,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">mul</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
@@ -524,7 +525,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro.numba_util</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">numba</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Composition</span><span class="p">,</span> <span class="n">Nucleus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.numba_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">jitclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.files</span><span class="w"> </span><span class="kn">import</span> <span class="n">_find_rate_file</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.known_duplicates</span><span class="w"> </span><span class="kn">import</span> <span class="n">ALLOWED_DUPLICATES</span>
@@ -596,6 +597,132 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T9i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T913i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T913</span><span class="p">,</span>
                          <span class="bp">self</span><span class="o">.</span><span class="n">T9</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">T953</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lnT9</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="ThermoState">
+<a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.ThermoState">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ThermoState</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to hold the basic thermodynamic quantities</span>
+<span class="sd">    such as density, temperature, and composition.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rho : float</span>
+<span class="sd">        density in g/cm^3</span>
+<span class="sd">    T : float</span>
+<span class="sd">        temperature in Kelvin</span>
+<span class="sd">    comp : Composition</span>
+<span class="sd">        composition object that holds the massfractions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">rho</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">T</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">comp</span><span class="p">:</span> <span class="n">Composition</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ye</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the electron fraction of the composition</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="o">.</span><span class="n">ye</span>
+
+<div class="viewcode-block" id="ThermoState.get_molar">
+<a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.ThermoState.get_molar">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_molar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a dictionary of molar fractions, Y = X/A.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        molar : dict</span>
+<span class="sd">            {Nucleus : Y}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="s2">&quot;ThermoState</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">f</span> <span class="o">+=</span> <span class="s2">&quot;===========</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">f</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;rho  : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2"> g cm^-3</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">f</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;T    : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2"> K</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">f</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;ye   : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ye</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">f</span> <span class="o">+=</span> <span class="s2">&quot;Comp :</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">f</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">f</span></div>
+
+
+
+<div class="viewcode-block" id="need_state">
+<a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.need_state">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">need_state</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Allow functions with (ThermoState, ..., `**kwargs`) input</span>
+<span class="sd">    to also be called with (rho, T, comp, ..., `**kwargs`) input.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># Detect whether we already use ThermoState as input</span>
+
+        <span class="c1"># Assume it is always the first argument for args</span>
+        <span class="c1"># And check if we get it in keyword argument</span>
+        <span class="k">if</span> <span class="n">args</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ThermoState</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state&quot;</span><span class="p">),</span> <span class="n">ThermoState</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Now check if we&#39;re using old style. If yes convert to new style</span>
+
+        <span class="c1"># Potential old keywords for composition</span>
+        <span class="n">COMP_KEYS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;comp&quot;</span><span class="p">,</span> <span class="s2">&quot;composition&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Assume new style will NOT have positional argument more than 3.</span>
+        <span class="n">is_old_positional</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span>
+
+        <span class="c1"># Handle cases where keyword arguments are used for old style</span>
+        <span class="n">comp_kw_present</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">COMP_KEYS</span><span class="p">)</span>
+        <span class="n">is_old_keyword</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;rho&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">}</span> <span class="o">&lt;=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="n">comp_kw_present</span>
+
+        <span class="c1"># Handle cases where we used a mix of positional and keyword arguments</span>
+        <span class="n">is_old_mixed</span> <span class="o">=</span> <span class="n">args</span> <span class="ow">and</span> <span class="p">({</span><span class="s2">&quot;rho&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">}</span> <span class="o">&amp;</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">or</span> <span class="n">comp_kw_present</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_old_positional</span> <span class="ow">or</span> <span class="n">is_old_keyword</span> <span class="ow">or</span> <span class="n">is_old_mixed</span><span class="p">:</span>
+            <span class="c1"># This function previously used (T, rho, comp) instead of</span>
+            <span class="c1"># standard (rho, T, comp). But logic below assumes (rho, T, comp).</span>
+            <span class="c1"># I&#39;ll just throw an error if old style is used for eval_jacobian_term</span>
+            <span class="k">if</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;eval_jacobian_term&quot;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> no longer accepts &quot;</span>
+                                <span class="sa">f</span><span class="s2">&quot;(T, rho, comp) arguments. Call </span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
+                                <span class="s2">&quot;(ThermoState(rho=rho, T=T, comp=comp), ...) &quot;</span>
+                                <span class="s2">&quot;instead.&quot;</span><span class="p">)</span>
+
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(rho, T, comp, ...) is deprecated, &quot;</span>
+                          <span class="sa">f</span><span class="s2">&quot;use </span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(ThermoState(rho=rho, T=T, &quot;</span>
+                          <span class="s2">&quot;comp=comp,  ...) instead&quot;</span><span class="p">,</span>
+                          <span class="ne">DeprecationWarning</span><span class="p">,</span>
+                          <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">rho</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;rho&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">args</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">T</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">args</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+
+            <span class="c1"># Check if we have composition as keyword</span>
+            <span class="n">comp</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">COMP_KEYS</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                    <span class="n">comp</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+            <span class="c1"># If composition is not in keyword arg, assume its in args.</span>
+            <span class="k">if</span> <span class="n">comp</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">args</span><span class="p">:</span>
+                <span class="n">comp</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="n">state</span> <span class="o">=</span> <span class="n">ThermoState</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wrapper</span></div>
 
 
 
@@ -1217,18 +1344,16 @@
 
 <div class="viewcode-block" id="Rate.evaluate_screening">
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.evaluate_screening">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_screening</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">):</span>
+    <span class="nd">@need_state</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_screening</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the screening correction for this rate.</span>
 <span class="sd">        Note this returns log(screening).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        rho : float</span>
-<span class="sd">            density used to evaluate screening</span>
-<span class="sd">        T : float</span>
-<span class="sd">            temperature used to evaluate screening</span>
-<span class="sd">        composition : Composition</span>
-<span class="sd">            composition used to evaluate screening</span>
+<span class="sd">        state: ThermoState</span>
+<span class="sd">            ThermoState containing relevant thermodynamic information used to</span>
+<span class="sd">            evaluate screening. It knows about (rho, T, composition).</span>
 <span class="sd">        screen_func : Callable</span>
 <span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
 
@@ -1238,8 +1363,8 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">ys</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
-        <span class="n">plasma_state</span> <span class="o">=</span> <span class="n">make_plasma_state</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
+        <span class="n">plasma_state</span> <span class="o">=</span> <span class="n">make_plasma_state</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">rho</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span>
 
         <span class="n">log_scor</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">for</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">:</span>
@@ -1357,7 +1482,8 @@
 
 <div class="viewcode-block" id="Rate.eval_full_rate">
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval_full_rate">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">eval_full_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">composition</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+    <span class="nd">@need_state</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval_full_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                        <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y_molar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y_e</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the rate for a specific density, temperature, and</span>
 <span class="sd">        composition, with optional screening.  Note: this returns that</span>
@@ -1374,12 +1500,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        rho : float</span>
-<span class="sd">            density used to evaluate rates</span>
-<span class="sd">        T : float</span>
-<span class="sd">            temperature used to evaluate rates</span>
-<span class="sd">        composition : Composition</span>
-<span class="sd">            composition used to evaluate rates</span>
+<span class="sd">        state: ThermoState</span>
+<span class="sd">            ThermoState containing relevant thermodynamic information used to</span>
+<span class="sd">            evaluate rates. It knows about (rho, T, composition).</span>
 <span class="sd">        screen_func : Callable</span>
 <span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
 <span class="sd">            -- if provided, then the evaluated rates will include the screening</span>
@@ -1387,22 +1510,29 @@
 <span class="sd">        y_molar : dict(Nucleus)</span>
 <span class="sd">            the molar fractions of the nuclei.  If not provided, this</span>
 <span class="sd">            will be computed from composition</span>
+<span class="sd">        y_e : float</span>
+<span class="sd">            electron fraction.  If not provided, this will be computed</span>
+<span class="sd">            from composition</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">y_molar</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">y_molar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">ys</span> <span class="o">=</span> <span class="n">y_molar</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">ys</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
+            <span class="n">ys</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">y_e</span><span class="p">:</span>
-            <span class="n">y_e</span> <span class="o">=</span> <span class="n">composition</span><span class="o">.</span><span class="n">ye</span>
+        <span class="k">if</span> <span class="n">y_e</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">y_e</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">ye</span>
+
+        <span class="n">T</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">rho</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">rho</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">comp</span>
 
         <span class="c1"># Note screening effect is already included</span>
-        <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">*</span> <span class="n">rho</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">composition</span><span class="p">,</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">*</span> <span class="n">rho</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
                                                               <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_ye_weighting</span><span class="p">:</span>
             <span class="c1"># we already added 1 to dens_exp</span>
@@ -1489,7 +1619,8 @@
 
 <div class="viewcode-block" id="Rate.eval_jacobian_term">
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval_jacobian_term">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">eval_jacobian_term</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">y_i</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+    <span class="nd">@need_state</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">eval_jacobian_term</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">y_i</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                            <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate drate/d(y_i), the derivative of the rate with</span>
 <span class="sd">        respect to ``y_i``.  This rate term has the full composition</span>
@@ -1502,12 +1633,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        T : float</span>
-<span class="sd">            the temperature to evaluate the rate with</span>
-<span class="sd">        rho : float</span>
-<span class="sd">            the density to evaluate the rate with</span>
-<span class="sd">        comp : Composition</span>
-<span class="sd">            the composition to use in the rate evaluation</span>
+<span class="sd">        state: ThermoState</span>
+<span class="sd">            ThermoState containing relevant thermodynamic information used to</span>
+<span class="sd">            evaluate rates. It knows about (rho, T, composition).</span>
 <span class="sd">        y_i : Nucleus</span>
 <span class="sd">            the nucleus we are differentiating with respect to</span>
 <span class="sd">        screen_func : Callable</span>
@@ -1522,6 +1650,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">y_i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
             <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="n">rho</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">rho</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">comp</span>
 
         <span class="n">ymolar</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
 

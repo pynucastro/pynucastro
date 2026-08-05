@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Combining ReacLib Rates with Electron Capture Tables &#8212; pynucastro 2.12.0.post22+gc239e90c6 documentation</title>
+    <title>Combining ReacLib Rates with Electron Capture Tables &#8212; pynucastro 2.12.0.post23+g65d6120fb documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=18f95d61"></script>
+    <script src="_static/documentation_options.js?v=87875a70"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -749,7 +749,8 @@ explicitly use <a class="reference internal" href="pynucastro.rates.library.html
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">new_rate_list</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">ydots</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="mf">7.e9</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">,</span> <span class="n">composition</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ThermoState</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="mf">7.e9</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
+<span class="n">ydots</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="n">rc</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ydots</span><span class="p">[</span><span class="n">rate</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mf">1.e-20</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">rate</span><span class="o">.</span><span class="n">weak</span><span class="p">:</span>
         <span class="n">new_rate_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>        
@@ -787,7 +788,7 @@ explicitly use <a class="reference internal" href="pynucastro.rates.library.html
 <p>We can see the values of the rates at our thermodynamic conditions easily:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc_new</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="mf">7.e9</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">,</span> <span class="n">composition</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc_new</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -817,7 +818,7 @@ explicitly use <a class="reference internal" href="pynucastro.rates.library.html
 <p>Additionally, we can see the specific energy generation rate for these conditions, using <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_energy_generation" title="pynucastro.networks.rate_collection.RateCollection.evaluate_energy_generation"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_energy_generation</span></code></a>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc_new</span><span class="o">.</span><span class="n">evaluate_energy_generation</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="mf">7.e9</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">,</span> <span class="n">composition</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc_new</span><span class="o">.</span><span class="n">evaluate_energy_generation</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.tabular_rate &#8212; pynucastro 2.12.0.post22+gc239e90c6 documentation</title>
+    <title>pynucastro.rates.tabular_rate &#8212; pynucastro 2.12.0.post23+g65d6120fb documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=18f95d61"></script>
+    <script src="../../../_static/documentation_options.js?v=87875a70"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -529,7 +529,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span><span class="p">,</span> <span class="n">UnsupportedNucleus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.numba_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">jitclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.files</span><span class="w"> </span><span class="kn">import</span> <span class="n">RateFileError</span><span class="p">,</span> <span class="n">_find_rate_file</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">need_state</span>
 
 
 <div class="viewcode-block" id="TableIndex">
@@ -938,19 +938,15 @@
 
 <div class="viewcode-block" id="TabularWeakRate.get_nu_loss">
 <a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate.get_nu_loss">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_nu_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="nd">@need_state</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_nu_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the neutrino loss for the rate.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        T : float</span>
-<span class="sd">            the temperature to evaluate the rate at</span>
-<span class="sd">        rho : float</span>
-<span class="sd">            the density to evaluate the rate at.</span>
-<span class="sd">        comp : float</span>
-<span class="sd">            the composition (of type</span>
-<span class="sd">            :py:class:`Composition &lt;pynucastro.nucdata.composition.Composition&gt;`)</span>
-<span class="sd">            to evaluate the rate with.</span>
+<span class="sd">        state: ThermoState</span>
+<span class="sd">            ThermoState containing relevant thermodynamic information used to</span>
+<span class="sd">            evaluate neutrino loss. It knows about (rho, T, composition).</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -958,8 +954,8 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">rhoY</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">comp</span><span class="o">.</span><span class="n">ye</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolator</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhoY</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">T</span><span class="p">),</span>
+        <span class="n">rhoY</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">ye</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolator</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhoY</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">T</span><span class="p">),</span>
                                           <span class="n">TableIndex</span><span class="o">.</span><span class="n">NU</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="n">r</span></div>
 

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Assessing the Stiffness of a Network &#8212; pynucastro 2.12.0.post22+gc239e90c6 documentation</title>
+    <title>Assessing the Stiffness of a Network &#8212; pynucastro 2.12.0.post23+g65d6120fb documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=18f95d61"></script>
+    <script src="_static/documentation_options.js?v=87875a70"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -685,6 +685,7 @@ step.</p>
 <span class="n">comp</span><span class="o">.</span><span class="n">set_nuc</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="mf">0.28</span><span class="p">)</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">set_nuc</span><span class="p">(</span><span class="s2">&quot;n14&quot;</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">)</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ThermoState</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -702,7 +703,7 @@ step.</p>
 <p>If we evaluate the spectral radius, we see that it is reasonably large.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sprad</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">spectral_radius</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sprad</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">spectral_radius</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 <span class="n">sprad</span>
 </pre></div>
 </div>
@@ -719,7 +720,7 @@ step.</p>
 <p>We can try to understand which rate is responble for making the spectral radius large by looping over each rate and recomputing the spectral radius without that rate included.  This is done by <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.find_stiffest_rate" title="pynucastro.networks.rate_collection.RateCollection.find_stiffest_rate"><code class="xref py py-func docutils literal notranslate"><span class="pre">find_stiffest_rate</span></code></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">find_stiffest_rate</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">find_stiffest_rate</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -733,7 +734,7 @@ step.</p>
 <p>From here we see that it is just the <span class="math notranslate nohighlight">\({}^6\mathrm{Li}(\mathrm{p},{}^3\mathrm{He}){}^4\mathrm{He}\)</span> rate that is responsible.  Removing that rate drops the spectral radius by almost <span class="math notranslate nohighlight">\(50\times\)</span>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sprad</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">spectral_radius</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">exclude_rates</span><span class="o">=</span><span class="p">[</span><span class="n">r</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sprad</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">spectral_radius</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">exclude_rates</span><span class="o">=</span><span class="p">[</span><span class="n">r</span><span class="p">])</span>
 <span class="n">sprad</span>
 </pre></div>
 </div>
@@ -747,7 +748,7 @@ step.</p>
 <p>We can look at all the rates that involve <span class="math notranslate nohighlight">\({}^6\mathrm{Li}\)</span> and see how fast they are:</p>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rates</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rates</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
