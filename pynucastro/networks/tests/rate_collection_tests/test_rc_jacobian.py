@@ -25,7 +25,8 @@ class TestRateCollectionJacobian:
         T = 5.e8
         ymolar = comp.get_molar()
 
-        jac = rc.evaluate_jacobian(rho, T, comp)
+        state = pyna.ThermoState(rho=rho, T=T, comp=comp)
+        jac = rc.evaluate_jacobian(state)
 
         # let's look now at jac(0, 0), which should be dYdot(He4)/dY(He4)
         #               and jac(1, 1), which should be dYdot(C12)/dY(C12)

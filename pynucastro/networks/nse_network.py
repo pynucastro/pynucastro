@@ -12,7 +12,7 @@ from pynucastro._version import version
 from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.nucdata import Composition
-from pynucastro.rates import TabularWeakRate
+from pynucastro.rates import TabularWeakRate, ThermoState
 from pynucastro.screening import NseState, potekhin_1998
 
 
@@ -389,11 +389,12 @@ class NSENetwork(RateCollection):
                     mu_n[irho, iye] = sol[1]
 
                     # get the dY/dt for just the weak rates
-                    ydots = self.evaluate_ydots(rho, T, comp,
+                    state = ThermoState(rho=rho, T=T, comp=comp)
+                    ydots = self.evaluate_ydots(state,
                                                 screen_func=potekhin_1998,
                                                 rate_filter=lambda r: isinstance(r, TabularWeakRate))
 
-                    _, enu = self.evaluate_energy_generation(rho, T, comp,
+                    _, enu = self.evaluate_energy_generation(state,
                                                              screen_func=potekhin_1998,
                                                              return_enu=True)
 

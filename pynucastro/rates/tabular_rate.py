@@ -15,7 +15,7 @@ import pynucastro.numba_util as numba
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
 from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import RateFileError, _find_rate_file
-from pynucastro.rates.rate import Rate
+from pynucastro.rates.rate import Rate, need_state
 
 
 class TableIndex(Enum):
@@ -417,19 +417,15 @@ class TabularWeakRate(Rate):
                                           TableIndex.RATE.value)
         return log10_r * np.log(10)
 
-    def get_nu_loss(self, T, *, rho=None, comp=None):
+    @need_state
+    def get_nu_loss(self, state):
         """Evaluate the neutrino loss for the rate.
 
         Parameters
         ----------
-        T : float
-            the temperature to evaluate the rate at
-        rho : float
-            the density to evaluate the rate at.
-        comp : float
-            the composition (of type
-            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
-            to evaluate the rate with.
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate neutrino loss. It knows about (rho, T, composition).
 
         Returns
         -------
@@ -437,8 +433,8 @@ class TabularWeakRate(Rate):
 
         """
 
-        rhoY = rho * comp.ye
-        r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
+        rhoY = state.rho * state.ye
+        r = self.interpolator.interpolate(np.log10(rhoY), np.log10(state.T),
                                           TableIndex.NU.value)
         return 10**r
 

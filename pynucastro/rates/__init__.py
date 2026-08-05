@@ -12,7 +12,8 @@ from .library import (FFNLibrary, LangankeLibrary, Library, OdaLibrary,
                       StarLibLibrary, SuzukiLibrary, TabularLibrary,
                       TabularWeakLibrary, full_library)
 from .modified_rate import ModifiedRate
-from .rate import BaryonConservationError, Rate, RatePair, Tfactors
+from .rate import (BaryonConservationError, Rate, RatePair, Tfactors,
+                   ThermoState, need_state)
 from .reaclib_rate import ReacLibRate, SingleSet
 from .starlib_rate import StarLibRate
 from .tabular_rate import TableIndex, TableInterpolator, TabularWeakRate

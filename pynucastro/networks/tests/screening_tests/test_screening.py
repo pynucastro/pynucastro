@@ -4,6 +4,7 @@ from pytest import approx
 
 from pynucastro import networks
 from pynucastro.nucdata import Composition
+from pynucastro.rates import ThermoState
 from pynucastro.screening import (chugunov_2007, chugunov_2009,
                                   get_screening_pair_set)
 
@@ -37,8 +38,9 @@ class TestScreening:
                  "3 He4 --> C12 <reaclib_fy05>": 6.502599619793744}
 
         factors = {}
+        state = ThermoState(rho=1.e6, T=1.e8, comp=c)
         for r in rc.get_rates():
-            factors[r] = np.exp(r.evaluate_screening(1.e6, 1.e8, c, screen_func=chugunov_2007))
+            factors[r] = np.exp(r.evaluate_screening(state, screen_func=chugunov_2007))
 
         for r, factor in factors.items():
             assert factor == approx(rates[r.id])
@@ -54,8 +56,9 @@ class TestScreening:
                  "3 He4 --> C12 <reaclib_fy05>": 4.380701422122169}
 
         factors = {}
+        state = ThermoState(rho=1.e6, T=1.e8, comp=c)
         for r in rc.get_rates():
-            factors[r] = np.exp(r.evaluate_screening(1.e6, 1.e8, c, screen_func=chugunov_2009))
+            factors[r] = np.exp(r.evaluate_screening(state, screen_func=chugunov_2009))
 
         for r, factor in factors.items():
             assert factor == approx(rates[r.id])

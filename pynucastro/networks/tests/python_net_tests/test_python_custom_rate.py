@@ -8,6 +8,7 @@ import pytest
 from pytest import approx
 
 import pynucastro as pyna
+from pynucastro.rates import ThermoState
 from pynucastro.screening import chugunov_2007
 
 
@@ -41,7 +42,8 @@ class MyRate(pyna.Rate):
         if screen_func is not None:
             if rho is None or comp is None:
                 raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
-            log_scor = self.evaluate_screening(rho, T, comp, screen_func)
+            state = ThermoState(rho=rho, T=T, comp=comp)
+            log_scor = self.evaluate_screening(state, screen_func=screen_func)
 
         log_rate += log_scor
 
@@ -126,7 +128,8 @@ def N14_p_to_O15_custom(rate_eval, tf, log_scor=0.0):
         comp = pyna.Composition(pynet.unique_nuclei)
         comp.set_equal()
 
-        ydots = pynet.evaluate_ydots(rho, T, comp)
+        state = pyna.ThermoState(rho=rho, T=T, comp=comp)
+        ydots = pynet.evaluate_ydots(state)
 
         ydots_ref = {
             pyna.Nucleus("p"): -4.89131088e-06,

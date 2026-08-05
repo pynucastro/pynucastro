@@ -14,6 +14,7 @@ from pynucastro.networks.amrexastro_cxx_network import AmrexAstroCxxNetwork
 from pynucastro.networks.python_network import PythonNetwork
 from pynucastro.networks.simple_cxx_network import SimpleCxxNetwork
 from pynucastro.nucdata import Composition, Nucleus
+from pynucastro.rates import ThermoState
 from pynucastro.screening import chugunov_2007
 
 
@@ -145,8 +146,8 @@ class NetworkCompare:
 
         """
 
-        self.ydots_py_inline = self.pynet.evaluate_ydots(rho=rho, T=T,
-                                                         composition=self.comp,
+        state = ThermoState(rho=rho, T=T, comp=self.comp)
+        self.ydots_py_inline = self.pynet.evaluate_ydots(state,
                                                          screen_func=self.screen_func)
         self.rates_py_inline = {r: r.eval(T, rho=rho, comp=self.comp,
                                           screen_func=self.screen_func)
