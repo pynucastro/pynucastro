@@ -11,7 +11,7 @@ Reaction rates
 JINA Reaclib Library
 ^^^^^^^^^^^^^^^^^^^^
 
-The reaction rate parameterizations in `pynucastro/library <https://github.com/pynucastro/pynucastro/tree/main/pynucastro/library>`_
+The reaction rate parameterizations in `pynucastro/data <https://github.com/pynucastro/pynucastro/tree/main/pynucastro/data>`_
 were obtained from the `JINA Reaclib database <https://reaclib.jinaweb.org/>`_, :cite:t:`ReacLib`.
 
 StarLib Library
