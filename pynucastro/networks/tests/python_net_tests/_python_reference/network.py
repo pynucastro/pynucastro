@@ -3,6 +3,8 @@ import numpy as np
 from pynucastro.constants import constants
 from numba.experimental import jitclass
 
+N_A = constants.N_A
+
 from pynucastro.rates import (TableIndex, TableInterpolator, TabularWeakRate,
                               TempTableInterpolator, TemperatureTabularRate,
                               Tfactors)
@@ -86,6 +88,7 @@ def energy_release(dY):
     return enuc
 
 @jitclass([
+    ("enuc_weak", numba.float64),
     ("C12_C12_to_He4_Ne20_reaclib", numba.float64),
     ("C12_C12_to_n_Mg23_reaclib", numba.float64),
     ("C12_C12_to_p_Na23_reaclib", numba.float64),
@@ -97,6 +100,7 @@ def energy_release(dY):
 ])
 class RateEval:
     def __init__(self):
+        self.enuc_weak = 0.0
         self.C12_C12_to_He4_Ne20_reaclib = np.nan
         self.C12_C12_to_n_Mg23_reaclib = np.nan
         self.C12_C12_to_p_Na23_reaclib = np.nan
@@ -245,16 +249,34 @@ def Na23_to_Ne23_weaktab(rate_eval, T, rho, Y):
     # Na23 --> Ne23
     rhoY = rho * ye(Y)
     Na23_to_Ne23_weaktab_interpolator = TableInterpolator(*Na23_to_Ne23_weaktab_info)
-    r = Na23_to_Ne23_weaktab_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)
+    log_rhoY = np.log10(rhoY)
+    log_T = np.log10(T)
+
+    r = Na23_to_Ne23_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)
+    enu = Na23_to_Ne23_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.NU.value)
+    egamma = Na23_to_Ne23_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.GAMMA.value)
+
     rate_eval.Na23_to_Ne23_weaktab = 10.0**r
+    edot_nu = -10.0**enu
+    edot_gamma = 10.0**egamma
+    rate_eval.enuc_weak += N_A * Y[jna23] * (edot_nu + edot_gamma)
 
 @numba.njit()
 def Ne23_to_Na23_weaktab(rate_eval, T, rho, Y):
     # Ne23 --> Na23
     rhoY = rho * ye(Y)
     Ne23_to_Na23_weaktab_interpolator = TableInterpolator(*Ne23_to_Na23_weaktab_info)
-    r = Ne23_to_Na23_weaktab_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)
+    log_rhoY = np.log10(rhoY)
+    log_T = np.log10(T)
+
+    r = Ne23_to_Na23_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)
+    enu = Ne23_to_Na23_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.NU.value)
+    egamma = Ne23_to_Na23_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.GAMMA.value)
+
     rate_eval.Ne23_to_Na23_weaktab = 10.0**r
+    edot_nu = -10.0**enu
+    edot_gamma = 10.0**egamma
+    rate_eval.enuc_weak += N_A * Y[jne23] * (edot_nu + edot_gamma)
 
 def rhs(t, Y, rho, T, screen_func=None):
     return rhs_eq(t, Y, rho, T, screen_func)
@@ -296,10 +318,12 @@ def do_rate_eval(t, Y, rho, T, screen_func):
 
     return rate_eval
 
-@numba.njit()
-def rhs_eq(t, Y, rho, T, screen_func):
+def rhs_and_enuc_weak(t, Y, rho, T, screen_func=None):
+    return rhs_and_enuc_weak_eq(t, Y, rho, T, screen_func)
 
-    rate_eval = do_rate_eval(t, Y, rho, T, screen_func)
+@numba.njit()
+def ydot_eq(Y, rho, rate_eval):
+
     dYdt = np.zeros((nnuc), dtype=np.float64)
 
     dYdt[jn] = (
@@ -348,6 +372,19 @@ def rhs_eq(t, Y, rho, T, screen_func):
        )
 
     return dYdt
+
+@numba.njit()
+def rhs_eq(t, Y, rho, T, screen_func):
+
+    rate_eval = do_rate_eval(t, Y, rho, T, screen_func)
+    return ydot_eq(Y, rho, rate_eval)
+
+@numba.njit()
+def rhs_and_enuc_weak_eq(t, Y, rho, T, screen_func):
+
+    rate_eval = do_rate_eval(t, Y, rho, T, screen_func)
+    dYdt = ydot_eq(Y, rho, rate_eval)
+    return dYdt, rate_eval.enuc_weak
 
 def jacobian(t, Y, rho, T, screen_func=None):
     return jacobian_eq(t, Y, rho, T, screen_func)
