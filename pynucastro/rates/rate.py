@@ -3,6 +3,7 @@
 import functools
 import math
 import warnings
+from dataclasses import dataclass
 from operator import mul
 from pathlib import Path
 
@@ -10,7 +11,7 @@ import numpy as np
 
 import pynucastro.numba_util as numba
 from pynucastro.constants import constants
-from pynucastro.nucdata import Nucleus
+from pynucastro.nucdata import Composition, Nucleus
 from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import _find_rate_file
 from pynucastro.rates.known_duplicates import ALLOWED_DUPLICATES
@@ -77,6 +78,123 @@ class Tfactors:
         """
         return np.array([1, self.T9i, self.T913i, self.T913,
                          self.T9, self.T953, self.lnT9])
+
+
+@dataclass(kw_only=True)
+class ThermoState:
+    """Class to hold the basic thermodynamic quantities
+    such as density, temperature, and composition.
+
+    Parameters
+    ----------
+    rho : float
+        density in g/cm^3
+    T : float
+        temperature in Kelvin
+    comp : Composition
+        composition object that holds the massfractions
+    """
+
+    rho: float
+    T: float
+    comp: Composition
+
+    @property
+    def ye(self):
+        """Return the electron fraction of the composition
+
+        Returns
+        -------
+        float
+        """
+        return self.comp.ye
+
+    def get_molar(self):
+        """Return a dictionary of molar fractions, Y = X/A.
+
+        Returns
+        -------
+        molar : dict
+            {Nucleus : Y}
+        """
+        return self.comp.get_molar()
+
+    def __str__(self):
+        f = "ThermoState\n"
+        f += "===========\n"
+        f += f"rho  : {self.rho:.3e} g cm^-3\n"
+        f += f"T    : {self.T:.3e} K\n"
+        f += f"ye   : {self.ye:.4f}\n"
+        f += "Comp :\n"
+        f += f"{self.comp}\n"
+        return f
+
+
+def need_state(func):
+    """
+    Allow functions with (ThermoState, ..., `**kwargs`) input
+    to also be called with (rho, T, comp, ..., `**kwargs`) input.
+    """
+    @functools.wraps(func)
+    def wrapper(self, *args, **kwargs):
+        # Detect whether we already use ThermoState as input
+
+        # Assume it is always the first argument for args
+        # And check if we get it in keyword argument
+        if args and isinstance(args[0], ThermoState):
+            return func(self, *args, **kwargs)
+        if isinstance(kwargs.get("state"), ThermoState):
+            return func(self, *args, **kwargs)
+
+        # Now check if we're using old style. If yes convert to new style
+
+        # Potential old keywords for composition
+        COMP_KEYS = ("comp", "composition")
+
+        # Assume new style will NOT have positional argument more than 3.
+        is_old_positional = len(args) >= 3
+
+        # Handle cases where keyword arguments are used for old style
+        comp_kw_present = any(k in kwargs for k in COMP_KEYS)
+        is_old_keyword = {"rho", "T"} <= kwargs.keys() and comp_kw_present
+
+        # Handle cases where we used a mix of positional and keyword arguments
+        is_old_mixed = args and ({"rho", "T"} & kwargs.keys() or comp_kw_present)
+
+        if is_old_positional or is_old_keyword or is_old_mixed:
+            # This function previously used (T, rho, comp) instead of
+            # standard (rho, T, comp). But logic below assumes (rho, T, comp).
+            # I'll just throw an error if old style is used for eval_jacobian_term
+            if func.__name__ == "eval_jacobian_term":
+                raise TypeError(f"{func.__name__} no longer accepts "
+                                f"(T, rho, comp) arguments. Call {func.__name__}"
+                                "(ThermoState(rho=rho, T=T, comp=comp), ...) "
+                                "instead.")
+
+            warnings.warn(f"{func.__name__}(rho, T, comp, ...) is deprecated, "
+                          f"use {func.__name__}(ThermoState(rho=rho, T=T, "
+                          "comp=comp,  ...) instead",
+                          DeprecationWarning,
+                          stacklevel=2)
+            args = list(args)
+            rho = kwargs.pop("rho", args.pop(0) if args else None)
+            T = kwargs.pop("T", args.pop(0) if args else None)
+
+            # Check if we have composition as keyword
+            comp = None
+            for key in COMP_KEYS:
+                if key in kwargs:
+                    comp = kwargs.pop(key)
+
+            # If composition is not in keyword arg, assume its in args.
+            if comp is None and args:
+                comp = args.pop(0)
+
+            state = ThermoState(rho=rho, T=T, comp=comp)
+            return func(self, state, *args, **kwargs)
+
+        return func(self, *args, **kwargs)
+    return wrapper
 
 
 class Rate:
@@ -672,18 +790,16 @@ class Rate:
         self._set_screening()
         self._set_print_representation()
 
-    def evaluate_screening(self, rho, T, composition, screen_func):
+    @need_state
+    def evaluate_screening(self, state, screen_func):
         """Evaluate the screening correction for this rate.
         Note this returns log(screening).
 
         Parameters
         ----------
-        rho : float
-            density used to evaluate screening
-        T : float
-            temperature used to evaluate screening
-        composition : Composition
-            composition used to evaluate screening
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate screening. It knows about (rho, T, composition).
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
 
@@ -693,8 +809,8 @@ class Rate:
 
         """
 
-        ys = composition.get_molar()
-        plasma_state = make_plasma_state(T, rho, ys)
+        ys = state.get_molar()
+        plasma_state = make_plasma_state(state.T, state.rho, ys)
 
         log_scor = 0.0
         for n1, n2 in self.screening_pairs:
@@ -800,7 +916,8 @@ class Rate:
         log_rate = np.atleast_1d(self.log_eval(T, rho=rho, comp=comp, screen_func=screen_func))
         return float(np.exp(log_rate).sum())
 
-    def eval_full_rate(self, rho, T, composition, *,
+    @need_state
+    def eval_full_rate(self, state, *,
                        screen_func=None, y_molar=None, y_e=None):
         """Evaluate the rate for a specific density, temperature, and
         composition, with optional screening.  Note: this returns that
@@ -817,12 +934,9 @@ class Rate:
 
         Parameters
         ----------
-        rho : float
-            density used to evaluate rates
-        T : float
-            temperature used to evaluate rates
-        composition : Composition
-            composition used to evaluate rates
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate rates. It knows about (rho, T, composition).
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
@@ -830,22 +944,29 @@ class Rate:
         y_molar : dict(Nucleus)
             the molar fractions of the nuclei.  If not provided, this
             will be computed from composition
+        y_e : float
+            electron fraction.  If not provided, this will be computed
+            from composition
         Returns
         -------
         float
 
         """
 
-        if y_molar:
+        if y_molar is not None:
             ys = y_molar
         else:
-            ys = composition.get_molar()
+            ys = state.get_molar()
 
-        if not y_e:
-            y_e = composition.ye
+        if y_e is None:
+            y_e = state.ye
+
+        T = state.T
+        rho = state.rho
+        comp = state.comp
 
         # Note screening effect is already included
-        val = self.prefactor * rho**self.dens_exp * self.eval(T, rho=rho, comp=composition,
+        val = self.prefactor * rho**self.dens_exp * self.eval(T, rho=rho, comp=comp,
                                                               screen_func=screen_func)
         if self.use_ye_weighting:
             # we already added 1 to dens_exp
@@ -923,7 +1044,8 @@ class Rate:
 
         return "*".join(jac_string_components)
 
-    def eval_jacobian_term(self, T, rho, comp, y_i, *,
+    @need_state
+    def eval_jacobian_term(self, state, y_i, *,
                            screen_func=None):
         """Evaluate drate/d(y_i), the derivative of the rate with
         respect to ``y_i``.  This rate term has the full composition
@@ -936,12 +1058,9 @@ class Rate:
 
         Parameters
         ----------
-        T : float
-            the temperature to evaluate the rate with
-        rho : float
-            the density to evaluate the rate with
-        comp : Composition
-            the composition to use in the rate evaluation
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate rates. It knows about (rho, T, composition).
         y_i : Nucleus
             the nucleus we are differentiating with respect to
         screen_func : Callable
@@ -956,6 +1075,10 @@ class Rate:
         """
         if y_i not in self.reactants:
             return 0.0
+
+        rho = state.rho
+        T = state.T
+        comp = state.comp
 
         ymolar = comp.get_molar()
 

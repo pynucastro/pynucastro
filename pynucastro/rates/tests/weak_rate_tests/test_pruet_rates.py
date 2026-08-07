@@ -43,7 +43,8 @@ class TestPruetFullerLibibrary:
         rate = r.eval(T, rho=rhoYe/Ye, comp=comp)
         assert rate == approx(source_rate, rel=1.e-5, abs=1.e-200)
 
-        nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
+        state = pyna.ThermoState(rho=rhoYe/Ye, T=T, comp=comp)
+        nu_loss = r.get_nu_loss(state)
         assert nu_loss == approx(source_nu_loss, rel=1.e-5, abs=1.e-200)
 
         # now higher rho and T -- this is not floored to -100
@@ -59,7 +60,8 @@ class TestPruetFullerLibibrary:
         rate = r.eval(T, rho=rhoYe/Ye, comp=comp)
         assert rate == approx(source_rate, rel=1.e-4, abs=1.e-50)
 
-        nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
+        state = pyna.ThermoState(rho=rhoYe/Ye, T=T, comp=comp)
+        nu_loss = r.get_nu_loss(state)
         assert nu_loss == approx(source_nu_loss, rel=1.e-5, abs=1.e-50)
 
     def test_fe66_co66(self, pl):
@@ -92,7 +94,8 @@ class TestPruetFullerLibibrary:
         rate = r.eval(T, rho=rhoYe/Ye, comp=comp)
         assert rate == approx(source_rate, rel=1.e-5, abs=1.e-50)
 
-        nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
+        state = pyna.ThermoState(rho=rhoYe/Ye, T=T, comp=comp)
+        nu_loss = r.get_nu_loss(state)
         assert nu_loss == approx(source_nu_loss, rel=1.e-5, abs=1.e-50)
 
     def test_cu68_zn68(self, pl):
@@ -125,7 +128,8 @@ class TestPruetFullerLibibrary:
         rate = r.eval(T, rho=rhoYe/Ye, comp=comp)
         assert rate == approx(source_rate, rel=1.e-5, abs=1.e-50)
 
-        nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
+        state = pyna.ThermoState(rho=rhoYe/Ye, T=T, comp=comp)
+        nu_loss = r.get_nu_loss(state)
         assert nu_loss == approx(source_nu_loss, rel=1.e-5, abs=1.e-50)
 
     def test_br69_kr69(self, pl):
@@ -164,5 +168,6 @@ class TestPruetFullerLibibrary:
         rate = r.eval(T, rho=rhoYe/Ye, comp=comp)
         assert rate == approx(source_rate, rel=1.e-5, abs=1.e-50)
 
-        nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
+        state = pyna.ThermoState(rho=rhoYe/Ye, T=T, comp=comp)
+        nu_loss = r.get_nu_loss(state)
         assert nu_loss == approx(source_nu_loss, rel=1.e-5, abs=1.e-50)

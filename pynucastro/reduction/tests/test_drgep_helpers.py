@@ -60,7 +60,8 @@ class TestDrgepHelpers:
              1.0, 0.0, 0.09317171331069393],
         ]
 
-        rvals = net.evaluate_rates(rho=1e4, T=1e8, composition=comp)
+        state = pyna.ThermoState(rho=1e4, T=1e8, comp=comp)
+        rvals = net.evaluate_rates(state)
         r_AB = drgep.calc_interaction_matrix(net, rvals)
         assert_allclose(r_AB, expected, rtol=1e-10, atol=1e-100)
 

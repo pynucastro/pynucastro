@@ -43,7 +43,8 @@ class TestFFNLibibrary:
         rate = r.eval(T, rho=rhoYe/Ye, comp=comp)
         assert rate == approx(source_rate, rel=1.e-4, abs=1.e-30)
 
-        nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
+        state = pyna.ThermoState(rho=rhoYe/Ye, T=T, comp=comp)
+        nu_loss = r.get_nu_loss(state)
         assert nu_loss == approx(source_nu_loss)
 
     def test_na21_mg21(self, ffn_lib):
@@ -77,7 +78,8 @@ class TestFFNLibibrary:
         rate = r.eval(T, rho=rhoYe/Ye, comp=comp)
         assert rate == approx(source_rate, rel=1.e-4, abs=1.e-30)
 
-        nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
+        state = pyna.ThermoState(rho=rhoYe/Ye, T=T, comp=comp)
+        nu_loss = r.get_nu_loss(state)
         assert nu_loss == approx(source_nu_loss)
 
     def test_p27_si27(self, ffn_lib):
@@ -111,7 +113,8 @@ class TestFFNLibibrary:
         rate = r.eval(T, rho=rhoYe/Ye, comp=comp)
         assert rate == approx(source_rate, rel=1.e-4, abs=1.e-30)
 
-        nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
+        state = pyna.ThermoState(rho=rhoYe/Ye, T=T, comp=comp)
+        nu_loss = r.get_nu_loss(state)
         assert nu_loss == approx(source_nu_loss, rel=1.e-4, abs=1.e-30)
 
     def test_si27_p27(self, ffn_lib):
@@ -145,5 +148,6 @@ class TestFFNLibibrary:
         rate = r.eval(T, rho=rhoYe/Ye, comp=comp)
         assert rate == approx(source_rate, rel=1.e-4, abs=1.e-12)
 
-        nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
+        state = pyna.ThermoState(rho=rhoYe/Ye, T=T, comp=comp)
+        nu_loss = r.get_nu_loss(state)
         assert nu_loss == approx(source_nu_loss, rel=1.e-5, abs=1.e-12)
