@@ -35,20 +35,17 @@ sys.path.insert(0, str(Path.cwd().parents[1]))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.ifconfig',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.intersphinx',
-    'sphinxcontrib.bibtex',
-    'nbsphinx',
-    'sphinx.ext.githubpages',
-    'sphinx_copybutton',
-    'sphinx_prompt',
-    'sphinx_math_dollar',
-    'sphinx_mdinclude',
-    'myst_nb',
-    'sphinx.ext.napoleon',
-    'IPython.sphinxext.ipython_console_highlighting']
+              'sphinx.ext.mathjax',
+              'sphinx.ext.viewcode',
+              'sphinx.ext.intersphinx',
+              'sphinxcontrib.bibtex',
+              'sphinx.ext.githubpages',
+              'sphinx_copybutton',
+              'sphinx_prompt',
+              'sphinx_math_dollar',
+              'sphinx_mdinclude',
+              'myst_nb',
+              'sphinx.ext.napoleon']
 
 # bibtex
 bibtex_bibfiles = ['refs.bib']
@@ -70,7 +67,7 @@ autosummary_generate = True
 autodoc_typehints = "none"
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+#templates_path = ['_templates']
 
 # always execute notebooks
 env_skip_execute = os.getenv("SKIP_EXECUTE")
@@ -80,9 +77,6 @@ if not env_skip_execute:
     nb_execution_mode = "force"
 else:
     nb_execution_mode = "off"
-
-nbsphinx_allow_errors = True
-nbsphinx_timeout = 1000
 
 # myst-nb control of notebooks
 nb_execution_timeout = 500
@@ -132,7 +126,7 @@ exclude_patterns = ["changelog.md"]
 pygments_style = 'sphinx'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = False
+#todo_include_todos = False
 
 # Enable linking references to other projects' documentation.
 intersphinx_mapping = {
