@@ -285,7 +285,6 @@ class Rate:
             self.weak = True
 
         self.removed = False
-        self.modified = False
         self.tabular = False
         self.approx = False
         self.resonant = False
@@ -782,7 +781,6 @@ class Rate:
         )
 
         self.products = Nucleus.cast_list(new_products, allow_single=True)
-        self.modified = True
 
         # we need to update the Q value and the print string for the rate
 
