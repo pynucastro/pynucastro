@@ -516,7 +516,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                       if r.weak]
 
         # Compute necessary screening term.
-        # This is really only possible for weak ModifiedRates
+        # This is really only possible for weak ModifiedRates and BranchedRates
         screening_pair_set = get_screening_pair_set(weak_rates)
         if len(screening_pair_set) > 0:
             of.write('#ifdef SCREENING\n')
