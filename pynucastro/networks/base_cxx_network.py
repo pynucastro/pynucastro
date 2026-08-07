@@ -512,7 +512,9 @@ class BaseCxxNetwork(ABC, RateCollection):
         # Consider possible cases for weak rates in realicb, modified, and starlib rates.
         # Here we leave out derived rate since we don't expect derived rate to be a weak rate.
         # Also handle tabular weak rates separately
-        weak_rates = [r for r in self.reaclib_rates + self.modified_rates + self.starlib_rates + self.temperature_tabular_rates
+        weak_rates = [r for r in self.reaclib_rates + self.modified_rates +
+                      self.branched_rates + self.starlib_rates +
+                      self.temperature_tabular_rates
                       if r.weak]
 
         # Compute necessary screening term.

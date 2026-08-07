@@ -899,6 +899,11 @@ class PythonNetwork(RateCollection):
         for r in self.modified_rates:
             ostr += format_rate_call(r)
 
+        if self.branched_rates:
+            ostr += f"\n{indent}# branched rates\n"
+        for r in self.branched_rates:
+            ostr += format_rate_call(r)
+
         # Derived rate should go last (before approx rates)
         # since the inverse rate should be evaluated first.
         if self.derived_rates:
