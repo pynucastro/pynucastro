@@ -7,7 +7,7 @@ import copy
 
 import numpy as np
 
-from pynucastro.rates.rate import Rate, ThermoState
+from pynucastro.rates.rate import Rate
 from pynucastro.rates.reaclib_rate import ReacLibRate
 from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
@@ -28,7 +28,7 @@ class BranchedRate(Rate):
 
     These differ only in the last rate.  We would set the
     underlying_rate to be N14(p,γ)O15, the primary_branch to be
-    N15(p,α)C12 and the seconary branch to be N15(p,γ))O16.  It would
+    N15(p,α)C12 and the secondary branch to be N15(p,γ))O16.  It would
     then compute the branching ratio:
 
        f = λ_{N15(p,α)C12} / (λ_{N15(p,α)C12} + λ_{N15(p,γ)O16)
