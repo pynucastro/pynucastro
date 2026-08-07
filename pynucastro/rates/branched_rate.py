@@ -1,5 +1,5 @@
-"""Classes and methods for describing rates where one or more
-properties have been modified from the original source.
+"""Classes and methods for describing rate sequences that
+have branching endpoints.
 
 """
 
@@ -61,6 +61,7 @@ class BranchedRate(Rate):
         self.underlying_rate = underlying_rate
         self.primary_branch = primary_branch
         self.other_branch = other_branch
+        self.description = description
 
         # at the moment, this is only tested with ReacLibRate,
         # TemperatureTabularRate, and StarLibRate rates.  It is
@@ -86,6 +87,12 @@ class BranchedRate(Rate):
                          weak_type=self.underlying_rate.weak_type,
                          label="branched")
 
+        # for the moment, we only work if both branches have the same
+        # reactants.  If they don't then we need to weight by (rho Y)
+        # for each nucleus they don't have in common.  We'll also
+        # need to set rate_eval_needs_rho and rate_eval_needs_comp
+        assert self.primary_branch.reactants == self.other_branch.reactants
+
         self._set_print_representation()
 
     def __copy__(self):
@@ -104,18 +111,15 @@ class BranchedRate(Rate):
         # override some shallow copies
         new.reactants = list(self.reactants)
         new.products = list(self.products)
-        if self.stoichiometry:
-            new.stoichiometry = dict(self.stoichiometry)
 
         # copy the original rate
-        new.original_rate = copy.copy(self.original_rate)
+        new.underlying_rate = copy.copy(self.underlying_rate)
 
         return new
 
     def log_eval(self, T, *, rho=None, comp=None,
                  screen_func=None):
-        """Evaluate natural log of reaction rates for the modified rate.
-        This simply calls the evaluation of the underlying original rate.
+        """Evaluate the natural log of reaction rate for approximate rate.
 
         Parameters
         ----------
@@ -133,34 +137,54 @@ class BranchedRate(Rate):
 
         Returns
         -------
-        numpy.ndarray
+        float
+        """
+
+        return np.log(self.eval(T, rho=rho, comp=comp, screen_func=screen_func))
+
+    def eval(self, T, *, rho=None, comp=None,
+             screen_func=None):
+        """Evaluate the branched rate.
+
+        Parameters
+        ----------
+        T : float
+            the temperature to evaluate the rate at
+        rho : float
+            the density to evaluate screening effects at.
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
+            to evaluate screening effects with.
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the rate will include screening correction.
+
+        Returns
+        -------
+        float
 
         """
 
-        # Evaluate original rate without screening
-        # The modified rate can have a different set of reactants for screening
-        log_rate = self.original_rate.log_eval(T, rho=rho, comp=comp, screen_func=None)
+        # evaluate the underlying rate
+        r0 = self.underlying_rate.eval(T, rho=rho, comp=comp,
+                                       screen_func=screen_func)
 
-        # Apply screening correction
-        log_scor = 0.0
-        if screen_func is not None:
-            if rho is None or comp is None:
-                raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
-            state = ThermoState(rho=rho, T=T, comp=comp)
-            log_scor = self.evaluate_screening(state, screen_func=screen_func)
+        # now evaluate the branches
+        r_br_prim = self.primary_branch.eval(T, rho=rho, comp=comp,
+                                           screen_func=screen_func)
+        r_br_other = self.other_branch.eval(T, rho=rho, comp=comp,
+                                          screen_func=screen_func)
 
-        # To consider general cases, convert to 1D array
-        log_rate = np.atleast_1d(log_rate)
+        # compute the branching factor
+        f = r_br_prim / (r_br_prim + r_br_other)
 
-        # Apply screening
-        log_rate += log_scor
-
-        return log_rate
+        return f * r0
 
     def function_string_py(self):
         """Return a string containing the python function that
-        computes the rate -- in this case it is the underlying
-        original rate.
+        computes the rate -- in this case it is the underlying rate
+        modified by the branching ratio
 
         Returns
         -------
@@ -170,17 +194,21 @@ class BranchedRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
-        fstring += f"    # {self.rid}\n"
-        fstring += f"    {self.original_rate.fname}(rate_eval, tf, log_scor=log_scor)\n"
-        fstring += f"    rate_eval.{self.fname} = rate_eval.{self.original_rate.fname}\n\n"
+        fstring += f"def {self.fname}(rate_eval, tf):\n"
+        if self.description:
+            fstring += f"    # represents the sequence {self.description}\n"
+        fstring += f"    r0 = rate_eval.{self.underlying_rate.fname}\n"
+        fstring += f"    r_br_prim = rate_eval.{self.primary_branch.fname}\n"
+        fstring += f"    r_br_other = rate_eval.{self.other_branch.fname}\n"
+        fstring += "    f = r_br_prim / (r_br_prim + r_br_other)\n"
+        fstring += f"    rate_eval.{self.fname} = f * r0\n\n"
         return fstring
 
     def function_string_cxx(self, dtype="double", specifiers="inline",
                             leave_open=False, extra_args=()):
         """Return a string containing the C++ function that computes
-        the rate.  For a ModifiedRate, this simply calls the
-        corresponding function for the underlying original rate.
+        the rate.  For a BranchedRate, this returns the underlying
+        original rate modified by the branching ratio.
 
         Parameters
         ----------
@@ -204,17 +232,31 @@ class BranchedRate(Rate):
 
         """
 
-        args = ["const tf_t& tfactors",
-                f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
-                f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+        args = ["const T& rate_eval", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
-        fstring = "template <int do_T_derivatives>\n"
+        fstring = "template <typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
-        # first we need to get all of the rates that make this up
-        fstring += f"    // {self.rid} (calls the underlying rate)\n\n"
-        fstring += f"    rate_{self.original_rate.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n"
+        if self.description:
+            fstring += f"    // rate sequence {self.description}\n"
+
+        fstring += f"    {dtype} r0 = rate_eval.screened_rates(k_{self.underlying_rate.fname});\n"
+        fstring += f"    {dtype} r_br_prim = rate_eval.screened_rates(k_{self.primary_branch.fname});\n"
+        fstring += f"    {dtype} r_br_other = rate_eval.screened_rates(k_{self.other_branch.fname});\n"
+
+        # now do the approximation
+        fstring += f"    {dtype} f = r_br_prim / (r_br_prim + r_br_other);\n"
+        fstring += "    rate = f * r0;\n"
+
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += f"        {dtype} drdT_0 = rate_eval.dscreened_rates_dT(k_{self.underlying_rate.fname});\n"
+        fstring += f"        {dtype} drdT_br_prim = rate_eval.dscreened_rates_dT(k_{self.primary_branch.fname});\n"
+        fstring += f"        {dtype} drdT_br_other = rate_eval.dscreened_rates_dT(k_{self.other_branch.fname});\n"
+
+        fstring += f"        {dtype} dfdT = (drdT_br_prim - f * (drdT_br_prim + drdT_br_other)) / (r_br_prim + r_br_other);\n"
+        fstring += "        drate_dT = f * drdT_0 + dfdT * r0\n"
+        fstring += "    }\n"
 
         if not leave_open:
             fstring += "}\n\n"
