@@ -44,7 +44,8 @@ class TestOdaLibibrary:
         rate = r.eval(T, rho=rhoYe/Ye, comp=comp)
         assert rate == approx(source_rate, rel=1.e-4, abs=1.e-30)
 
-        nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
+        state = pyna.ThermoState(rho=rhoYe/Ye, T=T, comp=comp)
+        nu_loss = r.get_nu_loss(state)
         assert nu_loss == approx(source_nu_loss)
 
     def test_o17_f17(self, oda_lib):
@@ -78,7 +79,8 @@ class TestOdaLibibrary:
         rate = r.eval(T, rho=rhoYe/Ye, comp=comp)
         assert rate == approx(source_rate, rel=1.e-4, abs=1.e-30)
 
-        nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
+        state = pyna.ThermoState(rho=rhoYe/Ye, T=T, comp=comp)
+        nu_loss = r.get_nu_loss(state)
         assert nu_loss == approx(source_nu_loss)
 
     def test_al23_mg23(self, oda_lib):
@@ -112,7 +114,8 @@ class TestOdaLibibrary:
         rate = r.eval(T, rho=rhoYe/Ye, comp=comp)
         assert rate == approx(source_rate, rel=1.e-4, abs=1.e-30)
 
-        nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
+        state = pyna.ThermoState(rho=rhoYe/Ye, T=T, comp=comp)
+        nu_loss = r.get_nu_loss(state)
         assert nu_loss == approx(source_nu_loss)
 
     def test_mg23_al23(self, oda_lib):
@@ -146,7 +149,8 @@ class TestOdaLibibrary:
         rate = r.eval(T, rho=rhoYe/Ye, comp=comp)
         assert rate == approx(source_rate, rel=1.e-4, abs=1.e-30)
 
-        nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
+        state = pyna.ThermoState(rho=rhoYe/Ye, T=T, comp=comp)
+        nu_loss = r.get_nu_loss(state)
         assert nu_loss == approx(source_nu_loss)
 
     def test_p31_si31(self, oda_lib):
@@ -180,7 +184,8 @@ class TestOdaLibibrary:
         rate = r.eval(T, rho=rhoYe/Ye, comp=comp)
         assert rate == approx(source_rate, rel=1.e-4, abs=1.e-30)
 
-        nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
+        state = pyna.ThermoState(rho=rhoYe/Ye, T=T, comp=comp)
+        nu_loss = r.get_nu_loss(state)
         assert nu_loss == approx(source_nu_loss)
 
     def test_si31_p31(self, oda_lib):
@@ -214,5 +219,6 @@ class TestOdaLibibrary:
         rate = r.eval(T, rho=rhoYe/Ye, comp=comp)
         assert rate == approx(source_rate, rel=1.e-4, abs=1.e-30)
 
-        nu_loss = r.get_nu_loss(T, rho=rhoYe/Ye, comp=comp)
+        state = pyna.ThermoState(rho=rhoYe/Ye, T=T, comp=comp)
+        nu_loss = r.get_nu_loss(state)
         assert nu_loss == approx(source_nu_loss)

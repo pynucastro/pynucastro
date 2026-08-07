@@ -69,11 +69,10 @@ class TestModifiedRate:
         comp = pyna.Composition(original_net.unique_nuclei)
         comp.set_equal()
 
-        rho = 1.e8
-        T = 2.e9
+        state = pyna.ThermoState(rho=1e8, T=2e9, comp=comp)
 
-        onet_eval = original_net.evaluate_rates(rho=rho, T=T, composition=comp)
-        nnet_eval = new_net.evaluate_rates(rho=rho, T=T, composition=comp)
+        onet_eval = original_net.evaluate_rates(state)
+        nnet_eval = new_net.evaluate_rates(state)
 
         for key in onet_eval:
             assert onet_eval[key] == nnet_eval[key]
@@ -87,11 +86,10 @@ class TestModifiedRate:
         comp = pyna.Composition(original_net.unique_nuclei)
         comp.set_equal()
 
-        rho = 1.e8
-        T = 2.e9
+        state = pyna.ThermoState(rho=1e8, T=2e9, comp=comp)
 
-        onet_ydot = original_net.evaluate_ydots(rho=rho, T=T, composition=comp)
-        nnet_ydot = new_net.evaluate_ydots(rho=rho, T=T, composition=comp)
+        onet_ydot = original_net.evaluate_ydots(state)
+        nnet_ydot = new_net.evaluate_ydots(state)
 
         for key in onet_ydot:
             assert onet_ydot[key] == nnet_ydot[key]
@@ -114,7 +112,8 @@ class TestModifiedRate:
 
         module_ydots = mn.rhs(0.0, Y, rho, T)
 
-        net_ydots = new_net.evaluate_ydots(rho=rho, T=T, composition=comp)
+        state = pyna.ThermoState(rho=rho, T=T, comp=comp)
+        net_ydots = new_net.evaluate_ydots(state)
 
         for n, k in enumerate(net_ydots):
             assert net_ydots[k] == approx(module_ydots[n], rel=1.e-11, abs=1.e-14)

@@ -1,10 +1,13 @@
 # runtime dependencies
-ipywidgets>=7.1.2
 matplotlib
 networkx>=3.4
 numpy>=2.0,<3.0
 scipy>=1.0.0
 sympy>=1.1.1
+
+# jupyter notebook dependencies (for running examples)
+ipywidgets>=7.1.2
+jupyterlab-myst
 
 # optional dependencies
 numba

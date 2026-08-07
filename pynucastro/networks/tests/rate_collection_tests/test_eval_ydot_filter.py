@@ -32,12 +32,13 @@ class TestFullPythonNetwork:
         comp = pyna.Composition(fn.unique_nuclei)
         comp.set_equal()
 
-        full_ydots = fn.evaluate_ydots(rho, T, comp)
+        state = pyna.ThermoState(rho=rho, T=T, comp=comp)
+        full_ydots = fn.evaluate_ydots(state)
 
-        rl_ydots = fn.evaluate_ydots(rho, T, comp,
+        rl_ydots = fn.evaluate_ydots(state,
                                      rate_filter=lambda r: isinstance(r, pyna.rates.ReacLibRate))
 
-        tl_ydots = fn.evaluate_ydots(rho, T, comp,
+        tl_ydots = fn.evaluate_ydots(state,
                                      rate_filter=lambda r: isinstance(r, pyna.rates.TabularWeakRate))
 
         print(full_ydots)
