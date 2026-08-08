@@ -15,7 +15,7 @@ from pynucastro.eos import StellarEOS
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.neutrino_cooling import sneut5
 from pynucastro.nucdata import Composition
-from pynucastro.rates import ApproximateRate, ModifiedRate
+from pynucastro.rates import ApproximateRate, BranchedRate, ModifiedRate
 from pynucastro.screening import get_screening_func, get_screening_pair_set
 
 
@@ -899,6 +899,11 @@ class PythonNetwork(RateCollection):
         for r in self.modified_rates:
             ostr += format_rate_call(r)
 
+        if self.branched_rates:
+            ostr += f"\n{indent}# branched rates\n"
+        for r in self.branched_rates:
+            ostr += format_rate_call(r)
+
         # Derived rate should go last (before approx rates)
         # since the inverse rate should be evaluated first.
         if self.derived_rates:
@@ -1092,6 +1097,22 @@ class PythonNetwork(RateCollection):
                 # now write out the function that computes the
                 # approximate rate
                 of.write(r.function_string_py())
+            elif isinstance(r, BranchedRate):
+                # we need to write out the function string
+                # of all the rates we depend on
+                rates_needed = [r.underlying_rate,
+                                r.primary_branch,
+                                r.other_branch]
+                for mr in rates_needed:
+                    if mr in _rate_func_written:
+                        continue
+                    of.write(mr.function_string_py())
+                    _rate_func_written.append(mr)
+
+                # now write out the function that computes the
+                # branched rate
+                of.write(r.function_string_py())
+
             elif isinstance(r, ModifiedRate):
                 orig_rate = r.original_rate
                 if orig_rate in _rate_func_written:
