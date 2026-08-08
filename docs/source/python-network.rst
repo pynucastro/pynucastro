@@ -58,7 +58,7 @@ The following information is provided:
 
   * ``energy_release(dY)`` : computes the energy release (in erg/g) given the change
     in molar fractions ``dY``. This does not include weak-rate energy terms from neutrino losses and gamma deposition.
-    These contributions can be added separately during rate evaluations and therefore be included in self-heating
+    These contributions are accumulated separately during rate evaluations and included in self-heating
     integrations and :func:`NetworkSolution.energy_release_at <pynucastro.networks.python_network.NetworkSolution.energy_release_at>`.
 
 
