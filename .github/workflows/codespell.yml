@@ -20,6 +20,9 @@ jobs:
         with:
           python-version: '3.14'
           cache: "pip"
+          cache-dependency-path: |
+            requirements.txt
+            requirements-docs.txt
 
       - name: Install dependencies
         run: |
@@ -35,4 +38,3 @@ jobs:
       - name: Run codespell
         run: |
           codespell .
-
