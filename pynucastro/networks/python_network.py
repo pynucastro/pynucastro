@@ -1094,7 +1094,7 @@ class PythonNetwork(RateCollection):
                 of.write(r.function_string_py())
             elif isinstance(r, ModifiedRate):
                 orig_rate = r.original_rate
-                if r in _rate_func_written:
+                if orig_rate in _rate_func_written:
                     continue
                 of.write(orig_rate.function_string_py())
                 _rate_func_written.append(orig_rate)
