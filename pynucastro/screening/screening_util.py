@@ -1,5 +1,7 @@
 """Some helper functions for determining which rates need screening"""
 
+from pynucastro.rates.approximate_rates import ApproximateRate
+
 
 def get_screening_pair_set(rates):
     """Create a set of unique screening pairs for a list of rates.
@@ -15,13 +17,12 @@ def get_screening_pair_set(rates):
 
     """
 
-    # we need to consider the child rates that come with ApproximateRate
+    # we need to consider the child rates that come with
+    # ApproximateRate
     all_rates = []
     for r in rates:
         # check if rate is an ApproximateRate
-        # by checking if it has attribute approx_type
-        # Don't do isinstance(r, ApproximateRate) to avoid circular dependency
-        if hasattr(r, "approx_type"):
+        if isinstance(r, ApproximateRate):
             all_rates += r.get_child_rates()
         else:
             all_rates.append(r)
