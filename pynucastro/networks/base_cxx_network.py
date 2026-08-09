@@ -105,9 +105,11 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
         self.ftags['<modified_rate_functions>'] = self._modified_rate_functions
+        self.ftags['<branched_rate_functions>'] = self._branched_rate_functions
         self.ftags['<rate_struct>'] = self._rate_struct
         self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
         self.ftags['<fill_modified_rates>'] = self._fill_modified_rates
+        self.ftags['<fill_branched_rates>'] = self._fill_branched_rates
         self.ftags['<fill_temp_tabular_rates>'] = self._fill_temp_tabular_rates
         self.ftags['<fill_starlib_rates>'] = self._fill_starlib_rates
         self.ftags['<derived_rate_functions>'] = self._derived_rate_functions
@@ -509,9 +511,10 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         # Fill all the weak rates
 
-        # Consider possible cases for weak rates in realicb, modified, and starlib rates.
-        # Here we leave out derived rate since we don't expect derived rate to be a weak rate.
-        # Also handle tabular weak rates separately
+        # Consider possible cases for weak rates in realicb, modified,
+        # branched, and starlib rates.  Here we leave out derived rate
+        # since we don't expect derived rate to be a weak rate.  Also
+        # handle tabular weak rates separately
         weak_rates = [r for r in self.reaclib_rates + self.modified_rates +
                       self.branched_rates + self.starlib_rates +
                       self.temperature_tabular_rates
@@ -612,6 +615,13 @@ class BaseCxxNetwork(ABC, RateCollection):
             indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
             of.write(indented_fstr)
 
+    def _branched_rate_functions(self, n_indent, of):
+        for r in self.branched_rates:
+            fstr = r.function_string_cxx(dtype=self.dtype,
+                                         specifiers=self.function_specifier)
+            indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
+            of.write(indented_fstr)
+
     def _derived_rate_functions(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"
         for r in self.derived_rates:
@@ -673,7 +683,10 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}" + "{\n")
             of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n\n")
             self.write_screen_var(n_indent+1, of, r, do_T_derivatives=do_T_derivatives)
-            of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<{', '.join(template_args)}>({', '.join(args)});\n")
+            if template_args:
+                of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<{', '.join(template_args)}>({', '.join(args)});\n")
+            else:
+                of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}({', '.join(args)});\n")
             of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
 
             if do_T_derivatives:
@@ -705,6 +718,12 @@ class BaseCxxNetwork(ABC, RateCollection):
         args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
         template_args = ["do_T_derivatives"]
         self._fill_rates(n_indent, of, self.modified_rates,
+                         args, template_args)
+
+    def _fill_branched_rates(self, n_indent, of):
+        args = ["rate_eval", "rate", "drate_dT"]
+        template_args = None
+        self._fill_rates(n_indent, of, self.branched_rates,
                          args, template_args)
 
     def _fill_derived_rates(self, n_indent, of):

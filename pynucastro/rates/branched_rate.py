@@ -204,8 +204,9 @@ class BranchedRate(Rate):
         fstring = ""
         fstring += "@numba.njit()\n"
         fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
+        fstring += f"    # {self.rid}\n"
         if self.description:
-            fstring += f"    # represents the sequence {self.description}\n\n"
+            fstring += f"    # represents the sequence: {self.description}\n\n"
         fstring += f"    r0 = rate_eval.{self.underlying_rate.fname}\n"
         fstring += f"    r_prim_br = rate_eval.{self.primary_branch.fname}\n"
         fstring += f"    r_other_br = rate_eval.{self.other_branch.fname}\n\n"
@@ -247,8 +248,9 @@ class BranchedRate(Rate):
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
+        fstring += f"    // {self.rid} (branched rate)\n\n"
         if self.description:
-            fstring += f"    // rate sequence {self.description}\n\n"
+            fstring += f"    // represents the sequence: {self.description}\n\n"
 
         fstring += f"    {dtype} r0 = rate_eval.screened_rates(k_{self.underlying_rate.fname});\n"
         fstring += f"    {dtype} r_prim_br = rate_eval.screened_rates(k_{self.primary_branch.fname});\n"
@@ -264,7 +266,7 @@ class BranchedRate(Rate):
         fstring += f"        {dtype} drdT_other_br = rate_eval.dscreened_rates_dT(k_{self.other_branch.fname});\n\n"
 
         fstring += f"        {dtype} dfdT = (drdT_prim_br - f * (drdT_prim_br + drdT_other_br)) / (r_prim_br + r_other_br);\n"
-        fstring += "        drate_dT = f * drdT_0 + dfdT * r0\n"
+        fstring += "        drate_dT = f * drdT_0 + dfdT * r0;\n"
         fstring += "    }\n"
 
         if not leave_open:
