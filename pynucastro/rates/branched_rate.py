@@ -203,7 +203,7 @@ class BranchedRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf):\n"
+        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
         if self.description:
             fstring += f"    # represents the sequence {self.description}\n\n"
         fstring += f"    r0 = rate_eval.{self.underlying_rate.fname}\n"
