@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.mesa_utils &#8212; pynucastro 2.12.0.post27+ga7268f86f documentation</title>
+    <title>pynucastro.mesa_utils &#8212; pynucastro 2.12.0.post28+g8f06f1028 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../_static/documentation_options.js?v=858848dc"></script>
+    <script src="../../_static/documentation_options.js?v=deeaa9a9"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -519,7 +519,39 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Composition</span><span class="p">,</span> <span class="n">Nucleus</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.constants.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">M_sun</span><span class="p">,</span> <span class="n">R_sun</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Composition</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">,</span> <span class="n">UnidentifiedElement</span>
+
+
+<div class="viewcode-block" id="MesaZoneState">
+<a class="viewcode-back" href="../../pynucastro.mesa_utils.html#pynucastro.mesa_utils.MesaZoneState">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MesaZoneState</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A container for a single MESA zone&#39;s data</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    r : float</span>
+<span class="sd">        radius (cm)</span>
+<span class="sd">    m : float</span>
+<span class="sd">        mass shell (g)</span>
+<span class="sd">    rho : float</span>
+<span class="sd">        density (CGS)</span>
+<span class="sd">    T : float</span>
+<span class="sd">        temperature (K)</span>
+<span class="sd">    comp : Composition</span>
+<span class="sd">        the composition of the zone</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="n">r</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="n">m</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="n">rho</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comp</span> <span class="o">=</span> <span class="n">comp</span></div>
+
 
 
 <div class="viewcode-block" id="get_nuclei">
@@ -538,14 +570,24 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># the species are written as log_he4, etc. in the</span>
+    <span class="c1"># the species may be written as log_he4, etc. in the</span>
     <span class="c1"># &quot;bulk names&quot; section of the header</span>
     <span class="n">species_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;log_([a-z]+[\d]+)&quot;</span><span class="p">)</span>
+
+    <span class="c1"># sometimes they may be without the log_.  In this case,</span>
+    <span class="c1"># restrict the element name to 1-2 characters</span>
+    <span class="n">species_nolog_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^([a-z]{1,2}[\d]+)$&quot;</span><span class="p">)</span>
 
     <span class="n">nuclei</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">bulk_names</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">g</span> <span class="o">:=</span> <span class="n">species_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
             <span class="n">nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span>
+        <span class="k">elif</span> <span class="n">g</span> <span class="o">:=</span> <span class="n">species_nolog_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">nuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">except</span> <span class="n">UnidentifiedElement</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">nuclei</span></div>
 
@@ -572,52 +614,115 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    tuple(float, float, Composition)</span>
+<span class="sd">    MesaZoneState</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">nuclei</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">nuclei</span> <span class="o">=</span> <span class="n">get_nuclei</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 
+    <span class="n">r</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">model</span><span class="o">.</span><span class="n">bulk_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;logR&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">R_sun</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">bulk_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">M_sun</span>
     <span class="n">rho</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">model</span><span class="o">.</span><span class="n">bulk_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;logRho&quot;</span><span class="p">]</span>
     <span class="n">T</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">model</span><span class="o">.</span><span class="n">bulk_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;logT&quot;</span><span class="p">]</span>
     <span class="n">comp</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nuclei</span><span class="p">:</span>
-        <span class="n">val</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">model</span><span class="o">.</span><span class="n">bulk_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="sa">f</span><span class="s2">&quot;log_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+        <span class="c1"># sometimes the species data is in terms of log</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">model</span><span class="o">.</span><span class="n">bulk_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="sa">f</span><span class="s2">&quot;log_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">bulk_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
         <span class="n">comp</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span></div>
+
+    <span class="k">return</span> <span class="n">MesaZoneState</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span></div>
 
 
 
-<div class="viewcode-block" id="get_all_data">
-<a class="viewcode-back" href="../../pynucastro.mesa_utils.html#pynucastro.mesa_utils.get_all_data">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_all_data</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a dictionary keyed by MESA zone index containing the</span>
-<span class="sd">    thermodynamic information (rho, T, composition) for all the</span>
-<span class="sd">    zones in the model.</span>
+<div class="viewcode-block" id="MesaModel">
+<a class="viewcode-back" href="../../pynucastro.mesa_utils.html#pynucastro.mesa_utils.MesaModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MesaModel</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read data from a MESA model and store the thermodynamic</span>
+<span class="sd">    state for each zone in a pynucastro-compatible format.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    model : ``mesa_reader.MesaData``</span>
 <span class="sd">        The MESA model as read by ``mesa_reader.MesaData``</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict[int, tuple(float, float, Composition)]</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">mesa_zones</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
 
-    <span class="c1"># get the list of nuclei objects once, so we don&#39;t</span>
-    <span class="c1"># need to repeat the construction.</span>
-    <span class="n">nuclei</span> <span class="o">=</span> <span class="n">get_nuclei</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mesa_zones</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">header_data</span><span class="p">[</span><span class="s2">&quot;num_zones&quot;</span><span class="p">]):</span>
-        <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span> <span class="o">=</span> <span class="n">get_zone_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuclei</span><span class="o">=</span><span class="n">nuclei</span><span class="p">)</span>
-        <span class="n">mesa_zones</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+        <span class="c1"># get the list of nuclei objects once, so we don&#39;t</span>
+        <span class="c1"># need to repeat the construction.</span>
+        <span class="n">nuclei</span> <span class="o">=</span> <span class="n">get_nuclei</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">mesa_zones</span></div>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">header_data</span><span class="p">[</span><span class="s2">&quot;num_zones&quot;</span><span class="p">]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mesa_zones</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_zone_data</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuclei</span><span class="o">=</span><span class="n">nuclei</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MesaModel.get_data_array">
+<a class="viewcode-back" href="../../pynucastro.mesa_utils.html#pynucastro.mesa_utils.MesaModel.get_data_array">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_data_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="s2">&quot;T&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an array of a single variable indexed by zone</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        var : str</span>
+<span class="sd">           The name of the variable to access.  This must be a member</span>
+<span class="sd">           of :py:obj:`MesaZoneState`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="nb">getattr</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesa_zones</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span></div>
+
+
+<div class="viewcode-block" id="MesaModel.get_peak_index">
+<a class="viewcode-back" href="../../pynucastro.mesa_utils.html#pynucastro.mesa_utils.MesaModel.get_peak_index">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_peak_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the index in the MESA model with the highest</span>
+<span class="sd">        value of var.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        var : str</span>
+<span class="sd">           The name of the variable to access.  This must be a member</span>
+<span class="sd">           of :py:obj:`MesaZoneState`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">vs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_data_array</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">vs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MesaModel.get_zone_data">
+<a class="viewcode-back" href="../../pynucastro.mesa_utils.html#pynucastro.mesa_utils.MesaModel.get_zone_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_zone_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the thermodynamic state for a single zone in the</span>
+<span class="sd">        MESA model</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        i : int</span>
+<span class="sd">            The index into the MESA model</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        MesaZoneState</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesa_zones</span><span class="p">[</span><span class="n">i</span><span class="p">]</span></div>
+</div>
 
 </pre></div>
 

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.mesa_utils module &#8212; pynucastro 2.12.0.post27+ga7268f86f documentation</title>
+    <title>pynucastro.mesa_utils module &#8212; pynucastro 2.12.0.post28+g8f06f1028 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=858848dc"></script>
+    <script src="_static/documentation_options.js?v=deeaa9a9"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -591,7 +591,20 @@
             </div>
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.get_all_data"><code class="docutils literal notranslate"><span class="pre">get_all_data()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.MesaModel"><code class="docutils literal notranslate"><span class="pre">MesaModel</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.MesaModel.get_data_array"><code class="docutils literal notranslate"><span class="pre">MesaModel.get_data_array()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.MesaModel.get_peak_index"><code class="docutils literal notranslate"><span class="pre">MesaModel.get_peak_index()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.MesaModel.get_zone_data"><code class="docutils literal notranslate"><span class="pre">MesaModel.get_zone_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.MesaZoneState"><code class="docutils literal notranslate"><span class="pre">MesaZoneState</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.MesaZoneState.r"><code class="docutils literal notranslate"><span class="pre">MesaZoneState.r</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.MesaZoneState.m"><code class="docutils literal notranslate"><span class="pre">MesaZoneState.m</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.MesaZoneState.rho"><code class="docutils literal notranslate"><span class="pre">MesaZoneState.rho</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.MesaZoneState.T"><code class="docutils literal notranslate"><span class="pre">MesaZoneState.T</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.MesaZoneState.comp"><code class="docutils literal notranslate"><span class="pre">MesaZoneState.comp</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.get_nuclei"><code class="docutils literal notranslate"><span class="pre">get_nuclei()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.get_zone_data"><code class="docutils literal notranslate"><span class="pre">get_zone_data()</span></code></a></li>
 </ul>
@@ -610,20 +623,125 @@
 <p>A collection of methods for accessing data from a MESA models
 as read by py_mesa_reader, and putting them into a form that
 pynucastro can use.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="pynucastro.mesa_utils.get_all_data">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.mesa_utils.</span></span><span class="sig-name descname"><span class="pre">get_all_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/mesa_utils.html#get_all_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.mesa_utils.get_all_data" title="Link to this definition">#</a></dt>
-<dd><p>Return a dictionary keyed by MESA zone index containing the
-thermodynamic information (rho, T, composition) for all the
-zones in the model.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pynucastro.mesa_utils.MesaModel">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.mesa_utils.</span></span><span class="sig-name descname"><span class="pre">MesaModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/mesa_utils.html#MesaModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.mesa_utils.MesaModel" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Read data from a MESA model and store the thermodynamic
+state for each zone in a pynucastro-compatible format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>model</strong> (<code class="docutils literal notranslate"><span class="pre">mesa_reader.MesaData</span></code>) – The MESA model as read by <code class="docutils literal notranslate"><span class="pre">mesa_reader.MesaData</span></code></p>
 </dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.mesa_utils.MesaModel.get_data_array">
+<span class="sig-name descname"><span class="pre">get_data_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'T'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/mesa_utils.html#MesaModel.get_data_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.mesa_utils.MesaModel.get_data_array" title="Link to this definition">#</a></dt>
+<dd><p>Return an array of a single variable indexed by zone</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>var</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the variable to access.  This must be a member
+of <a class="reference internal" href="#pynucastro.mesa_utils.MesaZoneState" title="pynucastro.mesa_utils.MesaZoneState"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MesaZoneState</span></code></a>.</p>
+</dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a>(<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a>, <a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition">Composition</a>)]</p>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">numpy.ndarray</a></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.mesa_utils.MesaModel.get_peak_index">
+<span class="sig-name descname"><span class="pre">get_peak_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/mesa_utils.html#MesaModel.get_peak_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.mesa_utils.MesaModel.get_peak_index" title="Link to this definition">#</a></dt>
+<dd><p>Return the index in the MESA model with the highest
+value of var.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>var</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the variable to access.  This must be a member
+of <a class="reference internal" href="#pynucastro.mesa_utils.MesaZoneState" title="pynucastro.mesa_utils.MesaZoneState"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MesaZoneState</span></code></a>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.mesa_utils.MesaModel.get_zone_data">
+<span class="sig-name descname"><span class="pre">get_zone_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/mesa_utils.html#MesaModel.get_zone_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.mesa_utils.MesaModel.get_zone_data" title="Link to this definition">#</a></dt>
+<dd><p>Return the thermodynamic state for a single zone in the
+MESA model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The index into the MESA model</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#pynucastro.mesa_utils.MesaZoneState" title="pynucastro.mesa_utils.MesaZoneState">MesaZoneState</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pynucastro.mesa_utils.MesaZoneState">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.mesa_utils.</span></span><span class="sig-name descname"><span class="pre">MesaZoneState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/mesa_utils.html#MesaZoneState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.mesa_utils.MesaZoneState" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A container for a single MESA zone’s data</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.mesa_utils.MesaZoneState.r">
+<span class="sig-name descname"><span class="pre">r</span></span><a class="headerlink" href="#pynucastro.mesa_utils.MesaZoneState.r" title="Link to this definition">#</a></dt>
+<dd><p>radius (cm)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.mesa_utils.MesaZoneState.m">
+<span class="sig-name descname"><span class="pre">m</span></span><a class="headerlink" href="#pynucastro.mesa_utils.MesaZoneState.m" title="Link to this definition">#</a></dt>
+<dd><p>mass shell (g)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.mesa_utils.MesaZoneState.rho">
+<span class="sig-name descname"><span class="pre">rho</span></span><a class="headerlink" href="#pynucastro.mesa_utils.MesaZoneState.rho" title="Link to this definition">#</a></dt>
+<dd><p>density (CGS)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.mesa_utils.MesaZoneState.T">
+<span class="sig-name descname"><span class="pre">T</span></span><a class="headerlink" href="#pynucastro.mesa_utils.MesaZoneState.T" title="Link to this definition">#</a></dt>
+<dd><p>temperature (K)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pynucastro.mesa_utils.MesaZoneState.comp">
+<span class="sig-name descname"><span class="pre">comp</span></span><a class="headerlink" href="#pynucastro.mesa_utils.MesaZoneState.comp" title="Link to this definition">#</a></dt>
+<dd><p>the composition of the zone</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition">Composition</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
@@ -658,7 +776,7 @@ a cached list in can speed up the reading.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a>(<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a>, <a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition">Composition</a>)</p>
+<dd class="field-even"><p><a class="reference internal" href="#pynucastro.mesa_utils.MesaZoneState" title="pynucastro.mesa_utils.MesaZoneState">MesaZoneState</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -712,7 +830,20 @@ a cached list in can speed up the reading.</p></li>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.get_all_data"><code class="docutils literal notranslate"><span class="pre">get_all_data()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.MesaModel"><code class="docutils literal notranslate"><span class="pre">MesaModel</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.MesaModel.get_data_array"><code class="docutils literal notranslate"><span class="pre">MesaModel.get_data_array()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.MesaModel.get_peak_index"><code class="docutils literal notranslate"><span class="pre">MesaModel.get_peak_index()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.MesaModel.get_zone_data"><code class="docutils literal notranslate"><span class="pre">MesaModel.get_zone_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.MesaZoneState"><code class="docutils literal notranslate"><span class="pre">MesaZoneState</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.MesaZoneState.r"><code class="docutils literal notranslate"><span class="pre">MesaZoneState.r</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.MesaZoneState.m"><code class="docutils literal notranslate"><span class="pre">MesaZoneState.m</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.MesaZoneState.rho"><code class="docutils literal notranslate"><span class="pre">MesaZoneState.rho</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.MesaZoneState.T"><code class="docutils literal notranslate"><span class="pre">MesaZoneState.T</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.MesaZoneState.comp"><code class="docutils literal notranslate"><span class="pre">MesaZoneState.comp</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.get_nuclei"><code class="docutils literal notranslate"><span class="pre">get_nuclei()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.mesa_utils.get_zone_data"><code class="docutils literal notranslate"><span class="pre">get_zone_data()</span></code></a></li>
 </ul>
