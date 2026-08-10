@@ -135,6 +135,7 @@ and interactively exploring nuclear reaction networks.
    :caption: Some Useful Networks
    :hidden:
 
+   mesa-basic
    aprox13
    he-burning-example
 
