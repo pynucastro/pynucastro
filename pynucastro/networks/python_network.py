@@ -349,10 +349,11 @@ class NetworkSolution:
         float
 
         """
-        Y = self.Y_at(t)
-        T = self.T_at(t) if self.self_heating else self.T
 
         if self._do_rate_eval is not None and self._ydot_eq is not None:
+            Y = self.Y_at(t)
+            T = self.T_at(t) if self.self_heating else self.T
+
             rate_eval = self._do_rate_eval(t, Y, self.rho, T, self.screen_func)
             dYdt = self._ydot_eq(Y, self.rho, rate_eval)
 
