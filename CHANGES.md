@@ -21,6 +21,7 @@
     * update `get_nuclei_latex_string` to group nuclei (#1417)
     * add `curved_edge_radius` option to `plot` (#1413)
     * fix `Z_range` / `N_range` for `rotated=True` (#1412)
+    * Add weak-rate energy contributions to integration (#1440)
 
   * `NSENetwork` :
 
