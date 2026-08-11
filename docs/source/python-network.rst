@@ -57,7 +57,10 @@ The following information is provided:
     <pynucastro.nucdata.composition.Composition>` object
 
   * ``energy_release(dY)`` : computes the energy release (in erg/g) given the change
-    in molar fractions ``dY``.
+    in molar fractions ``dY``. This does not include weak-rate energy terms from neutrino losses and gamma deposition.
+    These contributions are accumulated separately during rate evaluations and included in self-heating
+    integrations and :func:`NetworkSolution.energy_release_at <pynucastro.networks.python_network.NetworkSolution.energy_release_at>`.
+
 
   * ``ye(Y)`` : computes the electron fraction, $Y_e$, for input molar fractions ``Y``.
 
