@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 2.12.0.post28+g8f06f1028 documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 2.12.0.post29+g5a3895452 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=deeaa9a9"></script>
+    <script src="../../../_static/documentation_options.js?v=02e78000"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -568,7 +568,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">jac</span><span class="p">,</span> <span class="n">network</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">self_heating</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">thermal_neutrinos</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">do_rate_eval</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ydot_eq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span> <span class="o">=</span> <span class="n">sol</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rhs</span> <span class="o">=</span> <span class="n">rhs</span>
@@ -579,6 +579,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">self_heating</span> <span class="o">=</span> <span class="n">self_heating</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">thermal_neutrinos</span> <span class="o">=</span> <span class="n">thermal_neutrinos</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span> <span class="o">=</span> <span class="n">screen_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_do_rate_eval</span> <span class="o">=</span> <span class="n">do_rate_eval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ydot_eq</span> <span class="o">=</span> <span class="n">ydot_eq</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">success</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -894,6 +896,15 @@
 <span class="sd">        float</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_rate_eval</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ydot_eq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y_at</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+            <span class="n">T</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_at</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">self_heating</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
+
+            <span class="n">rate_eval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_rate_eval</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span><span class="p">)</span>
+            <span class="n">dYdt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ydot_eq</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">,</span> <span class="n">rate_eval</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">energy_release</span><span class="p">(</span><span class="n">dYdt</span><span class="p">)</span> <span class="o">+</span> <span class="n">rate_eval</span><span class="o">.</span><span class="n">enuc_weak</span>
 
         <span class="n">dYdt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs_at</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
         <span class="n">enuc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">energy_release</span><span class="p">(</span><span class="n">dYdt</span><span class="p">)</span>
@@ -1520,7 +1531,7 @@
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;import numpy as np</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;from pynucastro.constants import constants</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;from numba.experimental import jitclass</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;N_A = constants.N_A</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;from pynucastro.rates import (TableIndex, TableInterpolator, TabularWeakRate,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;                              TempTableInterpolator, TemperatureTabularRate,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;                              Tfactors)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -1597,11 +1608,13 @@
         <span class="c1"># rate_eval class</span>
 
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;@jitclass([</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s1">(&quot;enuc_weak&quot;, numba.float64),</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">:</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s1">(&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s1">&quot;, numba.float64),</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;])</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;class RateEval:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">def __init__(self):</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="o">*</span><span class="mi">2</span><span class="si">}</span><span class="s2">self.enuc_weak = 0.0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">:</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="o">*</span><span class="mi">2</span><span class="si">}</span><span class="s2">self.</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = np.nan</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -1700,17 +1713,18 @@
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;@numba.njit()</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;def rhs_eq(t, Y, rho, T, screen_func):</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
-        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">rate_eval = do_rate_eval(t, Y, rho, T, screen_func)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;def ydot_eq(Y, rho, rate_eval):</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">dYdt = np.zeros((nnuc), dtype=np.float64)</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="c1"># now make the RHSs</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">full_ydot_string</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">))</span>
 
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">return dYdt</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;@numba.njit()</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;def rhs_eq(t, Y, rho, T, screen_func):</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">rate_eval = do_rate_eval(t, Y, rho, T, screen_func)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">return ydot_eq(Y, rho, rate_eval)</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># the jacobian() function</span>
 
@@ -1721,12 +1735,7 @@
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;def jacobian_eq(t, Y, rho, T, screen_func):</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># get the rates</span>
-        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">tf = Tfactors(T)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">rate_eval = RateEval()</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
-        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates_string</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">))</span>
-
-        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">rate_eval = do_rate_eval(t, Y, rho, T, screen_func)</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">jac = np.zeros((nnuc, nnuc), dtype=np.float64)</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -1802,6 +1811,8 @@
 
         <span class="c1"># Get RHS and Jacobian. Use getattr to avoid pylint warning.</span>
         <span class="n">rhs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="s2">&quot;rhs&quot;</span><span class="p">)</span>
+        <span class="n">do_rate_eval</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="s2">&quot;do_rate_eval&quot;</span><span class="p">)</span>
+        <span class="n">ydot_eq</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="s2">&quot;ydot_eq&quot;</span><span class="p">)</span>
         <span class="n">jacobian</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="s2">&quot;jacobian&quot;</span><span class="p">)</span>
 
         <span class="c1"># Get the appropriate screening function</span>
@@ -1822,7 +1833,7 @@
         <span class="k">if</span> <span class="n">self_heating</span><span class="p">:</span>
             <span class="n">energy_release</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="s2">&quot;energy_release&quot;</span><span class="p">)</span>
 
-            <span class="k">def</span><span class="w"> </span><span class="nf">rhs_wrapper</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">energy_release</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">rhs_wrapper</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">do_rate_eval</span><span class="p">,</span> <span class="n">ydot_eq</span><span class="p">,</span> <span class="n">energy_release</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">):</span>
                 <span class="n">nspec</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
                 <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span> <span class="o">==</span> <span class="n">nspec</span> <span class="o">+</span> <span class="mi">1</span>
 
@@ -1832,11 +1843,12 @@
 
                 <span class="n">dxidt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
 
-                <span class="c1"># first get the dYdt from our network module</span>
-                <span class="n">dxidt</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">nspec</span><span class="p">]</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+                <span class="n">rate_eval</span> <span class="o">=</span> <span class="n">do_rate_eval</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">)</span>
+                <span class="n">dYdt</span> <span class="o">=</span> <span class="n">ydot_eq</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">rate_eval</span><span class="p">)</span>
+                <span class="n">dxidt</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">nspec</span><span class="p">]</span> <span class="o">=</span> <span class="n">dYdt</span>
 
                 <span class="c1"># now get the energy generation rate using this dY/dt</span>
-                <span class="n">eps</span> <span class="o">=</span> <span class="n">energy_release</span><span class="p">(</span><span class="n">dxidt</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">nspec</span><span class="p">])</span>
+                <span class="n">eps</span> <span class="o">=</span> <span class="n">energy_release</span><span class="p">(</span><span class="n">dYdt</span><span class="p">)</span> <span class="o">+</span> <span class="n">rate_eval</span><span class="o">.</span><span class="n">enuc_weak</span>
 
                 <span class="c1"># use the EOS to get the specific heat</span>
                 <span class="n">eos</span> <span class="o">=</span> <span class="n">StellarEOS</span><span class="p">()</span>
@@ -1857,7 +1869,7 @@
             <span class="n">xi0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Y0</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
             <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">rhs_wrapper</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">xi0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span>
                             <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">energy_release</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">),</span>
+                            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">do_rate_eval</span><span class="p">,</span> <span class="n">ydot_eq</span><span class="p">,</span> <span class="n">energy_release</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">),</span>
                             <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
@@ -1874,7 +1886,9 @@
         <span class="n">network_sol</span> <span class="o">=</span> <span class="n">NetworkSolution</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">jacobian</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span>
                                       <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">,</span>
                                       <span class="n">self_heating</span><span class="o">=</span><span class="n">self_heating</span><span class="p">,</span>
-                                      <span class="n">thermal_neutrinos</span><span class="o">=</span><span class="n">thermal_neutrinos</span><span class="p">)</span>
+                                      <span class="n">thermal_neutrinos</span><span class="o">=</span><span class="n">thermal_neutrinos</span><span class="p">,</span>
+                                      <span class="n">do_rate_eval</span><span class="o">=</span><span class="n">do_rate_eval</span><span class="p">,</span>
+                                      <span class="n">ydot_eq</span><span class="o">=</span><span class="n">ydot_eq</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">network_sol</span></div>
 </div>

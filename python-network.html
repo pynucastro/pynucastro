@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Python network &#8212; pynucastro 2.12.0.post28+g8f06f1028 documentation</title>
+    <title>Python network &#8212; pynucastro 2.12.0.post29+g5a3895452 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=deeaa9a9"></script>
+    <script src="_static/documentation_options.js?v=02e78000"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -640,7 +640,9 @@ Numba JIT decorators for performance.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">to_composition(Y)</span></code> : convert an array of molar fractions to a <a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition"><code class="xref py py-func docutils literal notranslate"><span class="pre">Composition</span></code></a> object</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">energy_release(dY)</span></code> : computes the energy release (in erg/g) given the change
-in molar fractions <code class="docutils literal notranslate"><span class="pre">dY</span></code>.</p></li>
+in molar fractions <code class="docutils literal notranslate"><span class="pre">dY</span></code>. This does not include weak-rate energy terms from neutrino losses and gamma deposition.
+These contributions are accumulated separately during rate evaluations and included in self-heating
+integrations and <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.NetworkSolution.energy_release_at" title="pynucastro.networks.python_network.NetworkSolution.energy_release_at"><code class="xref py py-func docutils literal notranslate"><span class="pre">NetworkSolution.energy_release_at</span></code></a>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ye(Y)</span></code> : computes the electron fraction, <span class="math notranslate nohighlight">\(Y_e\)</span>, for input molar fractions <code class="docutils literal notranslate"><span class="pre">Y</span></code>.</p></li>
 </ul>
 </li>
