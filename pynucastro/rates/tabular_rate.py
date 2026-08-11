@@ -370,8 +370,17 @@ class TabularWeakRate(Rate):
 
         fstring += f"    {self.fname}_interpolator = TableInterpolator(*{self.fname}_info)\n"
 
-        fstring += f"    r = {self.fname}_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)\n"
-        fstring += f"    rate_eval.{self.fname} = 10.0**r\n\n"
+        fstring += "    log_rhoY = np.log10(rhoY)\n"
+        fstring += "    log_T = np.log10(T)\n\n"
+
+        fstring += f"    r = {self.fname}_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)\n"
+        fstring += f"    enu = {self.fname}_interpolator.interpolate(log_rhoY, log_T, TableIndex.NU.value)\n"
+        fstring += f"    egamma = {self.fname}_interpolator.interpolate(log_rhoY, log_T, TableIndex.GAMMA.value)\n\n"
+
+        fstring += f"    rate_eval.{self.fname} = 10.0**r\n"
+        fstring += "    edot_nu = -10.0**enu\n"
+        fstring += "    edot_gamma = 10.0**egamma\n"
+        fstring += f"    rate_eval.enuc_weak += N_A * Y[j{self.reactants[0].raw}] * (edot_nu + edot_gamma)\n\n"
 
         return fstring
 
