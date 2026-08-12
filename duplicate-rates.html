@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Dealing with Duplicate Rates &#8212; pynucastro 2.12.0.post29+g5a3895452 documentation</title>
+    <title>Dealing with Duplicate Rates &#8212; pynucastro 2.12.0.post30+g167aa061a documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=02e78000"></script>
+    <script src="_static/documentation_options.js?v=316273e0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -658,12 +658,12 @@ warning: Mg24 was not able to be linked in TabularWeakLibrary
 <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
 <span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">])</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/networks/rate_collection.py:173,</span> in <span class="ni">RateCollection.__init__</span><span class="nt">(self, rate_files, libraries, rates, inert_nuclei, do_screening, verbose)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.14.6/x64/lib/python3.14/site-packages/pynucastro/networks/rate_collection.py:173,</span> in <span class="ni">RateCollection.__init__</span><span class="nt">(self, rate_files, libraries, rates, inert_nuclei, do_screening, verbose)</span>
 <span class="g g-Whitespace">    </span><span class="mi">169</span>         <span class="n">combined_library</span> <span class="o">+=</span> <span class="n">lib</span>
 <span class="g g-Whitespace">    </span><span class="mi">171</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="n">combined_library</span><span class="o">.</span><span class="n">get_rates</span><span class="p">(</span><span class="n">as_copies</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="ne">--&gt; </span><span class="mi">173</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/networks/rate_collection.py:305,</span> in <span class="ni">RateCollection._build_collection</span><span class="nt">(self)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.14.6/x64/lib/python3.14/site-packages/pynucastro/networks/rate_collection.py:305,</span> in <span class="ni">RateCollection._build_collection</span><span class="nt">(self)</span>
 <span class="g g-Whitespace">    </span><span class="mi">303</span> <span class="k">if</span> <span class="n">dupes</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">():</span>
 <span class="g g-Whitespace">    </span><span class="mi">304</span>     <span class="nb">print</span><span class="p">(</span><span class="n">dupes</span><span class="p">)</span>
 <span class="ne">--&gt; </span><span class="mi">305</span>     <span class="k">raise</span> <span class="n">RateDuplicationError</span><span class="p">(</span><span class="s2">&quot;Duplicate rates found&quot;</span><span class="p">)</span>
