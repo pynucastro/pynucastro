@@ -2059,7 +2059,7 @@ class RateCollection:
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False,
              hide_xp=True, hide_xalpha=True,
-             edge_labels=None,
+             edge_labels=None, edge_label_size=12,
              highlight_filter_function=None,
              nucleus_filter_function=None, rate_filter_function=None,
              legend_coord=None, plot_to_cbar_ratio=20,
@@ -2152,6 +2152,8 @@ class RateCollection:
             a dictionary of the form {(n1, n2): "label"}
             that gives labels for the edges in the network connecting
             nucleus n1 to n2.
+        edge_label_size : float
+            size of the font used to write the edge labels.
         highlight_filter_function : Callable
             a function that takes a ``Rate`` object and returns True or
             False if we want to highlight the rate edge.
@@ -2400,7 +2402,7 @@ class RateCollection:
         if edge_labels:
             nx.draw_networkx_edge_labels(G, G.position,
                                          connectionstyle=connectionstyle,
-                                         font_size=node_font_size,
+                                         font_size=edge_label_size,
                                          edge_labels=edge_labels)
 
         # colorbars
