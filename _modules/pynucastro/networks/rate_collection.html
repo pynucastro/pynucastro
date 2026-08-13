@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.12.0.post30+g167aa061a documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 2.12.0.post31+g598b775d4 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=316273e0"></script>
+    <script src="../../../_static/documentation_options.js?v=d37d7c01"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -2702,7 +2702,7 @@
              <span class="n">N_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Z_range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">always_show_p</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">always_show_alpha</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
              <span class="n">hide_xp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hide_xalpha</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-             <span class="n">edge_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">edge_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">edge_label_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
              <span class="n">highlight_filter_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">nucleus_filter_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rate_filter_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">legend_coord</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">plot_to_cbar_ratio</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
@@ -2795,6 +2795,8 @@
 <span class="sd">            a dictionary of the form {(n1, n2): &quot;label&quot;}</span>
 <span class="sd">            that gives labels for the edges in the network connecting</span>
 <span class="sd">            nucleus n1 to n2.</span>
+<span class="sd">        edge_label_size : float</span>
+<span class="sd">            size of the font used to write the edge labels.</span>
 <span class="sd">        highlight_filter_function : Callable</span>
 <span class="sd">            a function that takes a ``Rate`` object and returns True or</span>
 <span class="sd">            False if we want to highlight the rate edge.</span>
@@ -3043,7 +3045,7 @@
         <span class="k">if</span> <span class="n">edge_labels</span><span class="p">:</span>
             <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edge_labels</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">position</span><span class="p">,</span>
                                          <span class="n">connectionstyle</span><span class="o">=</span><span class="n">connectionstyle</span><span class="p">,</span>
-                                         <span class="n">font_size</span><span class="o">=</span><span class="n">node_font_size</span><span class="p">,</span>
+                                         <span class="n">font_size</span><span class="o">=</span><span class="n">edge_label_size</span><span class="p">,</span>
                                          <span class="n">edge_labels</span><span class="o">=</span><span class="n">edge_labels</span><span class="p">)</span>
 
         <span class="c1"># colorbars</span>
