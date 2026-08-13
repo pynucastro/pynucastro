@@ -520,9 +520,17 @@ class BaseCxxNetwork(ABC, RateCollection):
                       self.temperature_tabular_rates
                       if r.weak]
 
-        # branched rates don't do screening or have templates
+        # BranchedRate rates don't do screening or have templates we
+        # need to first evaluate all of the rates the BranchedRate
+        # depends on (whether or not they are weak, since the final
+        # rate is a weak rate)
         weak_branched_rates = [r for r in self.branched_rates
                                if r.weak]
+
+        weak_branched_rates_children = [cr for br in self.branched_rates
+                                        for cr in br.get_child_rates()]
+
+        weak_rates += weak_branched_rates_children
 
         # Compute necessary screening term.
         # This is really only possible for weak ModifiedRates and BranchedRates
@@ -540,6 +548,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         # Call different rate functions to evaluate the rates.
         if len(weak_rates) > 0:
+
             args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
             template_args = ["do_T_derivatives"]
             of.write(f'{self.indent*n_indent}const tf_t tfactors = evaluate_tfactors(state.T);\n\n')
