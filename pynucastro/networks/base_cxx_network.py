@@ -673,7 +673,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write("#endif\n")
 
     def _fill_rates(self, n_indent, of, rates,
-                    args, template_args, do_T_derivatives=True):
+                    args, template_args, do_T_derivatives=True, do_screening=True):
         """Fill in the rates by calling the appropriate rate functions
         given a list of rates.
 
@@ -682,7 +682,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         for r in rates:
             of.write(f"{self.indent*n_indent}" + "{\n")
             of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n\n")
-            self.write_screen_var(n_indent+1, of, r, do_T_derivatives=do_T_derivatives)
+            if do_screening:
+                self.write_screen_var(n_indent+1, of, r, do_T_derivatives=do_T_derivatives)
             if template_args:
                 of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<{', '.join(template_args)}>({', '.join(args)});\n")
             else:
@@ -724,7 +725,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         args = ["rate_eval", "rate", "drate_dT"]
         template_args = None
         self._fill_rates(n_indent, of, self.branched_rates,
-                         args, template_args)
+                         args, template_args, do_screening=False)
 
     def _fill_derived_rates(self, n_indent, of):
         if self.derived_rates:
