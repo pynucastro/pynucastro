@@ -272,8 +272,7 @@ class RateCollection:
             elif isinstance(r, BranchedRate):
                 if r not in self.branched_rates:
                     self.branched_rates.append(r)
-                brates = [r.underlying_rate, r.primary_branch, r.other_branch]
-                for br in brates:
+                for br in r.get_child_rates():
                     # TabularWeakRate is not tested with BranchedRate
                     assert not isinstance(br, TabularWeakRate)
                     self._classify_hidden_rate(br)
@@ -484,8 +483,7 @@ class RateCollection:
                 if r.original_rate.removed:
                     hidden_rates.append(r.original_rate)
             elif isinstance(r, BranchedRate):
-                brates = [r.underlying_rate, r.primary_branch, r.other_branch]
-                for br in brates:
+                for br in r.get_child_rates():
                     if br.removed:
                         hidden_rates.append(br)
         return set(hidden_rates)
