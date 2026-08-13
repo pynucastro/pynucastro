@@ -46,6 +46,14 @@ class TestBranchedRate:
         assert b2.primary_branch == b1.other_branch
         assert b2.other_branch == b1.primary_branch
 
+    def test_get_child_rates(self, branched_rates):
+
+        b1 = branched_rates["n14(pp,ae+nu)c12"]
+        assert len(b1.get_child_rates()) == 3
+
+        b2 = branched_rates["n14(pp,e+nu)o16"]
+        assert len(b2.get_child_rates()) == 3
+
     def test_products(self, branched_rates):
 
         b1 = branched_rates["n14(pp,ae+nu)c12"]
