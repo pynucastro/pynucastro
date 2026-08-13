@@ -520,10 +520,11 @@ class BaseCxxNetwork(ABC, RateCollection):
                       self.temperature_tabular_rates
                       if r.weak]
 
-        # BranchedRate rates don't do screening or have templates we
-        # need to first evaluate all of the rates the BranchedRate
-        # depends on (whether or not they are weak, since the final
-        # rate is a weak rate)
+        # BranchedRate rates don't evaluate their underlying rates
+        # directly (and the interface doesn't need screening or
+        # templates parameters).  This means we need to first evaluate
+        # all of the rates the BranchedRate depends on (whether or not
+        # they are weak, since the final rate is a weak rate)
         weak_branched_rates = [r for r in self.branched_rates
                                if r.weak]
 
