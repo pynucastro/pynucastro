@@ -16,6 +16,8 @@ class SimpleCxxNetwork(BaseCxxNetwork):
         super().__init__(*args, **kwargs)
 
         self.function_specifier = "inline"
+        self.gpu_managed_specifier = ""
+        self.gpu_device_specifier = ""
         self.dtype = "Real"
         self.array_namespace = ""
 
@@ -47,14 +49,14 @@ class SimpleCxxNetwork(BaseCxxNetwork):
                 of.write(f'{self.indent*n_indent}' + '}\n\n')
 
     def _write_network(self, odir=None):
-        """Output the the RHS, jacobian and ancillary files for the
+        """Output the RHS, jacobian and ancillary files for the
         system of ODEs that this network describes, using the template
         files.
 
         """
 
-        # at the moment, we don't support TabularRates
-        assert len(self.tabular_rates) == 0, "SimpleCxxNetwork does not support tabular rates"
+        assert len(self.temperature_tabular_rates) == 0, "SimpleCxxNetwork does not support TemperatureTabular rates"
+        assert len(self.starlib_rates) == 0, "SimpleCxxNetwork does not support StarLib rates"
 
         super()._write_network(odir=odir)
 
@@ -69,32 +71,34 @@ class SimpleCxxNetwork(BaseCxxNetwork):
             of.write("#include <amrex_bridge.H>\n\n")
 
             of.write(f"constexpr int NumSpec = {len(self.unique_nuclei)};\n\n")
+            of.write(f"constexpr int NumSpecExtra = {len(self.approx_nuclei)};\n\n")
+            of.write("constexpr int NumSpecTotal = NumSpec + NumSpecExtra;\n\n")
 
             of.write("// Note: these are 0-based\n")
 
-            of.write("constexpr Real aion[NumSpec] = {\n")
-            for n, nuc in enumerate(self.unique_nuclei):
+            of.write("constexpr Real aion[NumSpecTotal] = {\n")
+            for n, nuc in enumerate(self.unique_nuclei + self.approx_nuclei):
                 of.write(f"    {nuc.A:6.1f}, // {n} : {nuc}\n")
             of.write(" };\n\n")
 
-            of.write("constexpr Real aion_inv[NumSpec] = {\n")
-            for n, nuc in enumerate(self.unique_nuclei):
+            of.write("constexpr Real aion_inv[NumSpecTotal] = {\n")
+            for n, nuc in enumerate(self.unique_nuclei + self.approx_nuclei):
                 of.write(f"    1.0/{nuc.A:6.1f}, // {n} : {nuc}\n")
             of.write(" };\n\n")
 
-            of.write("constexpr Real zion[NumSpec] = {\n")
-            for n, nuc in enumerate(self.unique_nuclei):
+            of.write("constexpr Real zion[NumSpecTotal] = {\n")
+            for n, nuc in enumerate(self.unique_nuclei + self.approx_nuclei):
                 of.write(f"    {nuc.Z:6.1f}, // {n} : {nuc}\n")
             of.write(" };\n\n")
 
             of.write("static const std::vector<std::string> spec_names = {\n")
-            for n, nuc in enumerate(self.unique_nuclei):
+            for n, nuc in enumerate(self.unique_nuclei + self.approx_nuclei):
                 of.write(f"    \"{nuc.short_spec_name.capitalize()}\", // {n}\n")
             of.write(" };\n\n")
 
             of.write("namespace Species {\n")
             of.write("  enum NetworkSpecies {\n")
-            for n, nuc in enumerate(self.unique_nuclei):
+            for n, nuc in enumerate(self.unique_nuclei + self.approx_nuclei):
                 if n == 0:
                     of.write(f"    {nuc.short_spec_name.capitalize()}=1,\n")
                 else:

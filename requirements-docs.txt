@@ -1,0 +1,14 @@
+# dependencies needed for building the docs
+ipykernel
+jinja2
+numpydoc
+Sphinx
+sphinx-copybutton
+sphinx-math-dollar
+sphinx-mdinclude
+sphinx-prompt
+sphinxcontrib-bibtex
+sphinx-book-theme
+myst-nb
+nbclient!=0.10.3
+
