@@ -708,9 +708,8 @@ class RateCollection:
         """
 
         if seed is None:
-            #arbitrarily chosen upper limit for np.random
-            #since it requires one.
-            seed = np.random.randint(10e5)
+            # arbitrarily chosen
+            seed = np.random.default_rng().integers(1.e6)
         rng = np.random.default_rng(seed=seed)
         for rate in self.starlib_rates:
             rate.sample_rates(rng=rng)
