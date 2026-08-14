@@ -7,7 +7,7 @@ effective flows.  For example, a common approximation is to combine
 $A(\alpha,\gamma)B$ and $A(\alpha,p)X(p,\gamma)$ into an effective
 rate and not carry nuclei $X$ in the network.
 
-pynucastro can do several rate approximations.
+pynucastro can do several rate approximations, as described in the next sections:
 
 .. toctree::
    :maxdepth: 1
@@ -15,3 +15,4 @@ pynucastro can do several rate approximations.
    alpha-gamma-approx.ipynb
    double-n-capture.ipynb
    modified-rates.ipynb
+   co-approximations.ipynb

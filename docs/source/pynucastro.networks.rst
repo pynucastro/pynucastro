@@ -16,6 +16,7 @@ Submodules
    pynucastro.networks.base_cxx_network
    pynucastro.networks.fortran_network
    pynucastro.networks.helper
+   pynucastro.networks.network_compare
    pynucastro.networks.nse_network
    pynucastro.networks.python_network
    pynucastro.networks.rate_collection

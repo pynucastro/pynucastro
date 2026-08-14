@@ -11,7 +11,7 @@ import numpy as np
 
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.files import RateFileError, _find_rate_file
-from pynucastro.rates.rate import Rate, Tfactors
+from pynucastro.rates.rate import Rate, Tfactors, ThermoState
 
 
 class SingleSet:
@@ -27,6 +27,17 @@ class SingleSet:
         the coefficients of the exponential fit
     labelprops : str
         a collection of flags that classify a ReacLib rate
+
+    Attributes
+    ----------
+    label : str
+        the ReacLib label for this set
+    resonant : bool
+        whether this set is for a resonance
+    weak : bool
+        whether this set represents a weak interaction
+    derived_from_inverse : bool
+        has this set be recomputed via detailed balance?
 
     """
 
@@ -274,7 +285,11 @@ class ReacLibRate(Rate):
     weak_type : str
         the type of weak reaction the rate represents.
         Possible values include "electron_capture", "beta_pos", or
-        "beta_neg"
+        "beta_neg".  Note for electron-capture rates, we will
+        include an explicit ρYₑ weighting in the evaluation
+    label : str
+        a descriptive label for the rate (usually representative
+        of the source)
     rate_source: str
         the key to get the source information for the rate
         from rate_sources.csv
@@ -282,7 +297,8 @@ class ReacLibRate(Rate):
     """
 
     def __init__(self, reactants=None, products=None,
-                 sets=None, Q=None, weak_type="", rate_source=None):
+                 sets=None, Q=None, weak_type="",
+                 label="reaclib", rate_source=None):
 
         # Metadata for rate data files
         self.rfile_name = set()
@@ -296,8 +312,13 @@ class ReacLibRate(Rate):
         else:
             self.sets = []
 
+        use_ye_weighting = False
+        if weak_type == "electron_capture":
+            use_ye_weighting = True
+
         super().__init__(reactants=reactants, products=products,
-                         Q=Q, weak_type=weak_type, label="reaclib",
+                         Q=Q, weak_type=weak_type, label=label,
+                         use_ye_weighting=use_ye_weighting,
                          stoichiometry=None, rate_source=rate_source,
                          use_identical_particle_factor=True)
 
@@ -315,10 +336,12 @@ class ReacLibRate(Rate):
         if not isinstance(other, ReacLibRate):
             return False
 
-        x = (self.chapter == other.chapter) and (self.products == other.products) and \
-                (self.reactants == other.reactants)
+        x = ((self.chapter == other.chapter) and
+             (self.products == other.products) and
+             (self.reactants == other.reactants))
         if not x:
             return x
+
         x = len(self.sets) == len(other.sets)
         if not x:
             return x
@@ -734,7 +757,7 @@ class ReacLibRate(Rate):
             rates), but needed for evaluating screening effects.
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate the rate with (not needed for ReacLib rates),
             but needed for evaluating screening effects.
         screen_func : Callable
@@ -754,7 +777,8 @@ class ReacLibRate(Rate):
         if screen_func is not None:
             if rho is None or comp is None:
                 raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
-            log_scor = self.evaluate_screening(rho, T, comp, screen_func)
+            state = ThermoState(rho=rho, T=T, comp=comp)
+            log_scor = self.evaluate_screening(state, screen_func=screen_func)
 
         for s in self.sets:
             log_f = s.log_f()
@@ -775,7 +799,7 @@ class ReacLibRate(Rate):
             rates).
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate the rate with (not needed for ReacLib rates).
 
         Returns
@@ -810,7 +834,7 @@ class ReacLibRate(Rate):
             rates), but needed for evaluating screening effects.
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate the rate with (not needed for ReacLib rates),
             but needed for evaluating screening effects.
         screen_func : Callable
@@ -851,7 +875,7 @@ class ReacLibRate(Rate):
             the density to evaluate the screening effect.
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate the screening effect.
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
@@ -878,9 +902,9 @@ class ReacLibRate(Rate):
         if self.dens_exp == 0:
             ax.set_ylabel(r"$\tau$")
         elif self.dens_exp == 1:
-            ax.set_ylabel(r"$N_A <\sigma v>$")
+            ax.set_ylabel(r"$N_A \langle\sigma v\rangle$")
         elif self.dens_exp == 2:
-            ax.set_ylabel(r"$N_A^2 <n_a n_b n_c v>$")
+            ax.set_ylabel(r"$N_A^2 \langle n_a n_b n_c v\rangle$")
 
         ax.set_title(fr"{self.pretty_string}")
 
