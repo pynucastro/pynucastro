@@ -12,6 +12,7 @@
 
 namespace modified_rates {
 
+    using namespace reaclib_rates;
     using namespace temp_tabular;
 
     <modified_rate_functions>(1)

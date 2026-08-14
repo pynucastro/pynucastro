@@ -625,9 +625,10 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, 0.0);\n\n")
 
     def _reaclib_rate_functions(self, n_indent, of):
-        assert n_indent == 0, "function definitions must be at top level"
         for r in self.reaclib_rates:
-            of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
+            fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
+            indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
+            of.write(indented_fstr)
 
     def _modified_rate_functions(self, n_indent, of):
         for r in self.modified_rates:
@@ -669,9 +670,10 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write("};\n\n")
 
     def _approx_rate_functions(self, n_indent, of):
-        assert n_indent == 0, "function definitions must be at top level"
         for r in self.approx_rates:
-            of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
+            fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
+            indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
+            of.write(indented_fstr)
 
     def write_screen_var(self, n_indent, of, rate, do_T_derivatives=True):
         """Return the string that composes the screening variable for a rate."""
