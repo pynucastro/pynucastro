@@ -9,8 +9,9 @@ from pynucastro.rates.library import _rate_name_to_nuc
 
 
 def make_double_neutron_rates(lib, reactant, product):
-    """Return a pair of :py:class:`ApproximateRate` objects for the
-    A(n,g)X(n,g)B -> A(nn,g)B approximation
+    """Return a pair of :py:class:`ApproximateRate
+    <pynucastro.rates.approximate_rates.ApproximateRate>` objects for
+    the A(n,g)X(n,g)B -> A(nn,g)B approximation
 
     Parameters
     ----------
