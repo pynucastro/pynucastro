@@ -124,6 +124,10 @@ reaction rates.  The core rate classes are:
   a container that holds a rate and allows for modifications to the
   reactants, products, or stoichiometry.
 
+* :py:obj:`BranchedRate <pynucastro.rates.branched_rate.BranchedRate>` :
+  a container that holds an underlying rate and rates that affect the
+  endpoint branching.
+
 * :py:obj:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>` :
   a rate computed via detailed balance from a forward rate.
 
@@ -198,11 +202,12 @@ from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
                                  SympyRates, network_helper)
 from pynucastro.nucdata import (Composition, Nucleus, get_all_nuclei,
                                 get_nuclei_in_range)
-from pynucastro.rates import (ApproximateRate, DerivedRate, FFNLibrary,
-                              LangankeLibrary, Library, ModifiedRate,
-                              OdaLibrary, PruetFullerLibrary, Rate, RateFilter,
-                              ReacLibLibrary, StarLibLibrary, SuzukiLibrary,
-                              TabularLibrary, TabularWeakLibrary, Tfactors,
-                              ThermoState, full_library, load_rate)
+from pynucastro.rates import (ApproximateRate, BranchedRate, DerivedRate,
+                              FFNLibrary, LangankeLibrary, Library,
+                              ModifiedRate, OdaLibrary, PruetFullerLibrary,
+                              Rate, RateFilter, ReacLibLibrary, StarLibLibrary,
+                              SuzukiLibrary, TabularLibrary,
+                              TabularWeakLibrary, Tfactors, ThermoState,
+                              full_library, load_rate)
 from pynucastro.reduction import drgep, sens_analysis
 from pynucastro.screening import make_plasma_state, make_screen_factors
