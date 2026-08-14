@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; pynucastro 2.12.0.post31+g598b775d4 documentation</title>
+    <title>Index &#8212; pynucastro 2.12.0.post32+g22ae593b4 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=d37d7c01"></script>
+    <script src="_static/documentation_options.js?v=c0b4a016"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -194,6 +194,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="screening-examples.html">Screening Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modify-example.html">Modifying Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="branched-rates.html"><code class="docutils literal notranslate"><span class="pre">BranchedRate</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="custom-rates.html">Creating a Custom Rate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="derived-rates.html">Derived Rates</a></li>
 </ul>
@@ -318,6 +319,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.branched_rate.html">pynucastro.rates.branched_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
@@ -597,6 +599,8 @@
 </li>
       <li><a href="pynucastro.reduction.sensitivity_analysis.html#pynucastro.reduction.sensitivity_analysis.binary_search_trim">binary_search_trim() (in module pynucastro.reduction.sensitivity_analysis)</a>
 </li>
+      <li><a href="pynucastro.rates.branched_rate.html#pynucastro.rates.branched_rate.BranchedRate">BranchedRate (class in pynucastro.rates.branched_rate)</a>
+</li>
       <li><a href="pynucastro.eos.fermi_integrals.html#pynucastro.eos.fermi_integrals.BreakPoints">BreakPoints (class in pynucastro.eos.fermi_integrals)</a>
 </li>
   </ul></td>
@@ -728,6 +732,8 @@
       <ul>
         <li><a href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate.eval">(pynucastro.rates.approximate_rates.ApproximateRate method)</a>
 </li>
+        <li><a href="pynucastro.rates.branched_rate.html#pynucastro.rates.branched_rate.BranchedRate.eval">(pynucastro.rates.branched_rate.BranchedRate method)</a>
+</li>
         <li><a href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval">(pynucastro.rates.rate.Rate method)</a>
 </li>
       </ul></li>
@@ -807,10 +813,10 @@
 </li>
       <li><a href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus.from_cache">from_cache() (pynucastro.nucdata.nucleus.Nucleus class method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.from_file">from_file() (pynucastro.rates.reaclib_rate.ReacLibRate class method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus.from_Z_A">from_Z_A() (pynucastro.nucdata.nucleus.Nucleus class method)</a>
 </li>
       <li><a href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.full_jacobian_element_string">full_jacobian_element_string() (pynucastro.networks.python_network.PythonNetwork method)</a>
@@ -822,6 +828,8 @@
       <li><a href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate.function_string_cxx">function_string_cxx() (pynucastro.rates.approximate_rates.ApproximateRate method)</a>
 
       <ul>
+        <li><a href="pynucastro.rates.branched_rate.html#pynucastro.rates.branched_rate.BranchedRate.function_string_cxx">(pynucastro.rates.branched_rate.BranchedRate method)</a>
+</li>
         <li><a href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate.function_string_cxx">(pynucastro.rates.derived_rate.DerivedRate method)</a>
 </li>
         <li><a href="pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate.function_string_cxx">(pynucastro.rates.modified_rate.ModifiedRate method)</a>
@@ -836,6 +844,8 @@
       <li><a href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate.function_string_py">function_string_py() (pynucastro.rates.approximate_rates.ApproximateRate method)</a>
 
       <ul>
+        <li><a href="pynucastro.rates.branched_rate.html#pynucastro.rates.branched_rate.BranchedRate.function_string_py">(pynucastro.rates.branched_rate.BranchedRate method)</a>
+</li>
         <li><a href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate.function_string_py">(pynucastro.rates.derived_rate.DerivedRate method)</a>
 </li>
         <li><a href="pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate.function_string_py">(pynucastro.rates.modified_rate.ModifiedRate method)</a>
@@ -872,7 +882,11 @@
       <li><a href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition.get_array">get_array() (pynucastro.nucdata.composition.Composition method)</a>
 </li>
       <li><a href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate.get_child_rates">get_child_rates() (pynucastro.rates.approximate_rates.ApproximateRate method)</a>
+
+      <ul>
+        <li><a href="pynucastro.rates.branched_rate.html#pynucastro.rates.branched_rate.BranchedRate.get_child_rates">(pynucastro.rates.branched_rate.BranchedRate method)</a>
 </li>
+      </ul></li>
       <li><a href="pynucastro.networks.nse_network.html#pynucastro.networks.nse_network.NSENetwork.get_comp_nse">get_comp_nse() (pynucastro.networks.nse_network.NSENetwork method)</a>
 </li>
       <li><a href="pynucastro.mesa_utils.html#pynucastro.mesa_utils.MesaModel.get_data_array">get_data_array() (pynucastro.mesa_utils.MesaModel method)</a>
@@ -917,10 +931,10 @@
 </li>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.get_nuclei_latex_string">get_nuclei_latex_string() (pynucastro.networks.rate_collection.RateCollection method)</a>
 </li>
-      <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.get_nuclei_needing_partition_functions">get_nuclei_needing_partition_functions() (pynucastro.networks.rate_collection.RateCollection method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.get_nuclei_needing_partition_functions">get_nuclei_needing_partition_functions() (pynucastro.networks.rate_collection.RateCollection method)</a>
+</li>
       <li><a href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus.get_part_func_threshold_temp">get_part_func_threshold_temp() (pynucastro.nucdata.nucleus.Nucleus method)</a>
 </li>
       <li><a href="pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunctionCollection.get_partition_function">get_partition_function() (pynucastro.nucdata.partition_function.PartitionFunctionCollection method)</a>
@@ -1100,6 +1114,8 @@
       <li><a href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate.log_eval">log_eval() (pynucastro.rates.approximate_rates.ApproximateRate method)</a>
 
       <ul>
+        <li><a href="pynucastro.rates.branched_rate.html#pynucastro.rates.branched_rate.BranchedRate.log_eval">(pynucastro.rates.branched_rate.BranchedRate method)</a>
+</li>
         <li><a href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate.log_eval">(pynucastro.rates.derived_rate.DerivedRate method)</a>
 </li>
         <li><a href="pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate.log_eval">(pynucastro.rates.modified_rate.ModifiedRate method)</a>
@@ -1274,6 +1290,8 @@
         <li><a href="pynucastro.rates.approximate_rates.html#module-pynucastro.rates.approximate_rates">pynucastro.rates.approximate_rates</a>
 </li>
         <li><a href="pynucastro.rates.aprox_family_rates.html#module-pynucastro.rates.aprox_family_rates">pynucastro.rates.aprox_family_rates</a>
+</li>
+        <li><a href="pynucastro.rates.branched_rate.html#module-pynucastro.rates.branched_rate">pynucastro.rates.branched_rate</a>
 </li>
         <li><a href="pynucastro.rates.derived_rate.html#module-pynucastro.rates.derived_rate">pynucastro.rates.derived_rate</a>
 </li>
@@ -1724,6 +1742,13 @@
 
       <ul>
         <li><a href="pynucastro.rates.aprox_family_rates.html#module-pynucastro.rates.aprox_family_rates">module</a>
+</li>
+      </ul></li>
+      <li>
+    pynucastro.rates.branched_rate
+
+      <ul>
+        <li><a href="pynucastro.rates.branched_rate.html#module-pynucastro.rates.branched_rate">module</a>
 </li>
       </ul></li>
       <li>

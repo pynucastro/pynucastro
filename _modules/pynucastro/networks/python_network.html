@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 2.12.0.post31+g598b775d4 documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 2.12.0.post32+g22ae593b4 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=d37d7c01"></script>
+    <script src="../../../_static/documentation_options.js?v=c0b4a016"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -196,6 +196,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../screening-examples.html">Screening Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modify-example.html">Modifying Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../branched-rates.html"><code class="docutils literal notranslate"><span class="pre">BranchedRate</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../custom-rates.html">Creating a Custom Rate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../derived-rates.html">Derived Rates</a></li>
 </ul>
@@ -320,6 +321,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.branched_rate.html">pynucastro.rates.branched_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
@@ -528,7 +530,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.rate_collection</span><span class="w"> </span><span class="kn">import</span> <span class="n">RateCollection</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.neutrino_cooling</span><span class="w"> </span><span class="kn">import</span> <span class="n">sneut5</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Composition</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApproximateRate</span><span class="p">,</span> <span class="n">ModifiedRate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApproximateRate</span><span class="p">,</span> <span class="n">BranchedRate</span><span class="p">,</span> <span class="n">ModifiedRate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_screening_func</span><span class="p">,</span> <span class="n">get_screening_pair_set</span>
 
 
@@ -1481,6 +1483,11 @@
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modified_rates</span><span class="p">:</span>
             <span class="n">ostr</span> <span class="o">+=</span> <span class="n">format_rate_call</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">branched_rates</span><span class="p">:</span>
+            <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2"># branched rates</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">branched_rates</span><span class="p">:</span>
+            <span class="n">ostr</span> <span class="o">+=</span> <span class="n">format_rate_call</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
         <span class="c1"># Derived rate should go last (before approx rates)</span>
         <span class="c1"># since the inverse rate should be evaluated first.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_rates</span><span class="p">:</span>
@@ -1677,6 +1684,22 @@
                 <span class="c1"># now write out the function that computes the</span>
                 <span class="c1"># approximate rate</span>
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">function_string_py</span><span class="p">())</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">BranchedRate</span><span class="p">):</span>
+                <span class="c1"># we need to write out the function string</span>
+                <span class="c1"># of all the rates we depend on</span>
+                <span class="n">rates_needed</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">underlying_rate</span><span class="p">,</span>
+                                <span class="n">r</span><span class="o">.</span><span class="n">primary_branch</span><span class="p">,</span>
+                                <span class="n">r</span><span class="o">.</span><span class="n">other_branch</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">mr</span> <span class="ow">in</span> <span class="n">rates_needed</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">mr</span> <span class="ow">in</span> <span class="n">_rate_func_written</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">mr</span><span class="o">.</span><span class="n">function_string_py</span><span class="p">())</span>
+                    <span class="n">_rate_func_written</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mr</span><span class="p">)</span>
+
+                <span class="c1"># now write out the function that computes the</span>
+                <span class="c1"># branched rate</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">function_string_py</span><span class="p">())</span>
+
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ModifiedRate</span><span class="p">):</span>
                 <span class="n">orig_rate</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">original_rate</span>
                 <span class="k">if</span> <span class="n">orig_rate</span> <span class="ow">in</span> <span class="n">_rate_func_written</span><span class="p">:</span>

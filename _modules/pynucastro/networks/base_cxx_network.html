@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 2.12.0.post31+g598b775d4 documentation</title>
+    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 2.12.0.post32+g22ae593b4 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=d37d7c01"></script>
+    <script src="../../../_static/documentation_options.js?v=c0b4a016"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -196,6 +196,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../screening-examples.html">Screening Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modify-example.html">Modifying Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../branched-rates.html"><code class="docutils literal notranslate"><span class="pre">BranchedRate</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../custom-rates.html">Creating a Custom Rate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../derived-rates.html">Derived Rates</a></li>
 </ul>
@@ -320,6 +321,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.branched_rate.html">pynucastro.rates.branched_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
@@ -620,9 +622,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;jacnuc&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jacnuc</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;reaclib_rate_functions&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reaclib_rate_functions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;modified_rate_functions&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modified_rate_functions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;branched_rate_functions&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branched_rate_functions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;rate_struct&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rate_struct</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;fill_reaclib_rates&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_reaclib_rates</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;fill_modified_rates&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_modified_rates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;fill_branched_rates&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_branched_rates</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;fill_temp_tabular_rates&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_temp_tabular_rates</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;fill_starlib_rates&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_starlib_rates</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">&#39;&lt;derived_rate_functions&gt;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_derived_rate_functions</span>
@@ -1033,14 +1037,30 @@
 
         <span class="c1"># Fill all the weak rates</span>
 
-        <span class="c1"># Consider possible cases for weak rates in realicb, modified, and starlib rates.</span>
-        <span class="c1"># Here we leave out derived rate since we don&#39;t expect derived rate to be a weak rate.</span>
-        <span class="c1"># Also handle tabular weak rates separately</span>
-        <span class="n">weak_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">modified_rates</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">starlib_rates</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">temperature_tabular_rates</span>
+        <span class="c1"># Consider possible cases for weak rates in realicb, modified,</span>
+        <span class="c1"># branched, and starlib rates.  Here we leave out derived rate</span>
+        <span class="c1"># since we don&#39;t expect derived rate to be a weak rate.  Also</span>
+        <span class="c1"># handle tabular weak rates separately</span>
+        <span class="n">weak_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">modified_rates</span> <span class="o">+</span>
+                      <span class="bp">self</span><span class="o">.</span><span class="n">starlib_rates</span> <span class="o">+</span>
+                      <span class="bp">self</span><span class="o">.</span><span class="n">temperature_tabular_rates</span>
                       <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak</span><span class="p">]</span>
 
+        <span class="c1"># BranchedRate rates don&#39;t evaluate their underlying rates</span>
+        <span class="c1"># directly (and the interface doesn&#39;t need screening or</span>
+        <span class="c1"># templates parameters).  This means we need to first evaluate</span>
+        <span class="c1"># all of the rates the BranchedRate depends on (whether or not</span>
+        <span class="c1"># they are weak, since the final rate is a weak rate)</span>
+        <span class="n">weak_branched_rates</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">branched_rates</span>
+                               <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">weak</span><span class="p">]</span>
+
+        <span class="n">weak_branched_rates_children</span> <span class="o">=</span> <span class="p">[</span><span class="n">cr</span> <span class="k">for</span> <span class="n">br</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">branched_rates</span>
+                                        <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">br</span><span class="o">.</span><span class="n">get_child_rates</span><span class="p">()]</span>
+
+        <span class="n">weak_rates</span> <span class="o">+=</span> <span class="n">weak_branched_rates_children</span>
+
         <span class="c1"># Compute necessary screening term.</span>
-        <span class="c1"># This is really only possible for weak ModifiedRates</span>
+        <span class="c1"># This is really only possible for weak ModifiedRates and BranchedRates</span>
         <span class="n">screening_pair_set</span> <span class="o">=</span> <span class="n">get_screening_pair_set</span><span class="p">(</span><span class="n">weak_rates</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">screening_pair_set</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;#ifdef SCREENING</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -1055,11 +1075,19 @@
 
         <span class="c1"># Call different rate functions to evaluate the rates.</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">weak_rates</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
             <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;tfactors&quot;</span><span class="p">,</span> <span class="s2">&quot;log_scor&quot;</span><span class="p">,</span> <span class="s2">&quot;dlog_scor_dT&quot;</span><span class="p">,</span> <span class="s2">&quot;rate&quot;</span><span class="p">,</span> <span class="s2">&quot;drate_dT&quot;</span><span class="p">]</span>
             <span class="n">template_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;do_T_derivatives&quot;</span><span class="p">]</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s1">const tf_t tfactors = evaluate_tfactors(state.T);</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fill_rates</span><span class="p">(</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="n">weak_rates</span><span class="p">,</span>
                              <span class="n">args</span><span class="p">,</span> <span class="n">template_args</span><span class="p">,</span> <span class="n">do_T_derivatives</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">weak_branched_rates</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;rate_eval&quot;</span><span class="p">,</span> <span class="s2">&quot;rate&quot;</span><span class="p">,</span> <span class="s2">&quot;drate_dT&quot;</span><span class="p">]</span>
+            <span class="n">template_args</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fill_rates</span><span class="p">(</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="n">weak_branched_rates</span><span class="p">,</span>
+                             <span class="n">args</span><span class="p">,</span> <span class="n">template_args</span><span class="p">,</span> <span class="n">do_T_derivatives</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">do_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                             <span class="n">namespace</span><span class="o">=</span><span class="s2">&quot;branched_rates&quot;</span><span class="p">)</span>
 
         <span class="c1"># Now do tabular weak rates explicitly</span>
         <span class="c1"># And get neutrino loss terms from tabular weak rates</span>
@@ -1134,6 +1162,13 @@
             <span class="n">indented_fstr</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">fstr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">indent</span> <span class="o">*</span> <span class="n">n_indent</span><span class="p">)</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">indented_fstr</span><span class="p">)</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_branched_rate_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">branched_rates</span><span class="p">:</span>
+            <span class="n">fstr</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">function_string_cxx</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+                                         <span class="n">specifiers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">function_specifier</span><span class="p">)</span>
+            <span class="n">indented_fstr</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">fstr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">indent</span> <span class="o">*</span> <span class="n">n_indent</span><span class="p">)</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">indented_fstr</span><span class="p">)</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_derived_rate_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">n_indent</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;function definitions must be at top level&quot;</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_rates</span><span class="p">:</span>
@@ -1188,7 +1223,9 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_fill_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="n">rates</span><span class="p">,</span>
-                    <span class="n">args</span><span class="p">,</span> <span class="n">template_args</span><span class="p">,</span> <span class="n">do_T_derivatives</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                    <span class="n">args</span><span class="p">,</span> <span class="n">template_args</span><span class="p">,</span>
+                    <span class="n">do_T_derivatives</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">do_screening</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">namespace</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Fill in the rates by calling the appropriate rate functions</span>
 <span class="sd">        given a list of rates.</span>
 
@@ -1197,8 +1234,15 @@
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rates</span><span class="p">:</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;{</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">// </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">write_screen_var</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">do_T_derivatives</span><span class="o">=</span><span class="n">do_T_derivatives</span><span class="p">)</span>
-            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">rate_</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">&lt;</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">template_args</span><span class="p">)</span><span class="si">}</span><span class="s2">&gt;(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">do_screening</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">write_screen_var</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">do_T_derivatives</span><span class="o">=</span><span class="n">do_T_derivatives</span><span class="p">)</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="s2">&quot;rate_&quot;</span>
+            <span class="k">if</span> <span class="n">namespace</span><span class="p">:</span>
+                <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">::&quot;</span> <span class="o">+</span> <span class="n">prefix</span>
+            <span class="k">if</span> <span class="n">template_args</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">&lt;</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">template_args</span><span class="p">)</span><span class="si">}</span><span class="s2">&gt;(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="p">(</span><span class="n">n_indent</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">rate_eval.screened_rates(k_</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">) = rate;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">do_T_derivatives</span><span class="p">:</span>
@@ -1231,6 +1275,12 @@
         <span class="n">template_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;do_T_derivatives&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fill_rates</span><span class="p">(</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">modified_rates</span><span class="p">,</span>
                          <span class="n">args</span><span class="p">,</span> <span class="n">template_args</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fill_branched_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;rate_eval&quot;</span><span class="p">,</span> <span class="s2">&quot;rate&quot;</span><span class="p">,</span> <span class="s2">&quot;drate_dT&quot;</span><span class="p">]</span>
+        <span class="n">template_args</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fill_rates</span><span class="p">(</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">branched_rates</span><span class="p">,</span>
+                         <span class="n">args</span><span class="p">,</span> <span class="n">template_args</span><span class="p">,</span> <span class="n">do_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_fill_derived_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_rates</span><span class="p">:</span>
