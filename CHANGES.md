@@ -12,8 +12,6 @@
     * remove use of `identical_particle_factor` for double-n capture
       (#1421)
 
-  * `SimpleCxxNetwork` / `FortranNetwork` / `BaseCxxNetwork` :
-
   * `PythonNetwork` / `RateCollection` :
 
     * fix check on `ModifiedRate.original_rate` (#1449)
@@ -21,7 +19,9 @@
     * update `get_nuclei_latex_string` to group nuclei (#1417)
     * add `curved_edge_radius` option to `plot` (#1413)
     * fix `Z_range` / `N_range` for `rotated=True` (#1412)
-    * Add weak-rate energy contributions to integration (#1440)
+    * add weak-rate energy contributions to integration (#1440)
+    * add edge label size separate from node font size (#1455)
+    * remove the `Rate.modified` attribute (#1447)
 
   * `NSENetwork` :
 
@@ -37,13 +37,12 @@
     * extend `eliminate_duplicate_rates()` to deal with ReacLib
       duplicates (#1426)
     * add more rates to `full_library` (#1423)
+    * added `BranchedRate` (#1448)
 
   * nuclei / screening / partition functions:
 
     * simplify the screening pair check on `ApproximateRate` (#1451)
     * rename `LoddersComposition` -> `SolarComposition` (#1416)
-
-  * testing:
 
   * git / project infrastructure:
 
@@ -60,8 +59,6 @@
     * add missing density weighting to intro docs dYdt (#1424)
     * fix navbar issue in `pydata-sphinx-theme` (#1427)
 
-  * EOS:
-
   * neutrino cooling:
 
     * add label to colorbar in neutrino cooling plot (#1422)
@@ -70,7 +67,6 @@
 
     * update the MESA interfaces to be a class and better parse
       composition (#1418)
-
 
 ## 2.12.0
 
