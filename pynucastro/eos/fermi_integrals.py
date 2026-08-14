@@ -20,7 +20,8 @@ import pynucastro.numba_util as numba
 
 from .quadrature_weights import w_lag, w_leg, x_lag, x_leg
 
-MAX_EXPONENT = np.trunc(np.log(np.finfo(np.float64).max))
+INFO = np.finfo(np.float64)
+MAX_EXPONENT = np.trunc(np.log(INFO.max))  # pylint: disable=no-member
 
 
 class BreakPoints:
@@ -146,9 +147,6 @@ def _kernel_p(x, k, eta, beta,
     if abs(delta) < MAX_EXPONENT:
         inv_cosh_term = 0.5 / (1.0 + np.cosh(delta))
 
-    # this is (exp(xsq - eta) - 1.0) / (exp(xsq - eta) + 1.0)
-    tanh_half_delta = np.tanh(0.5 * delta)
-
     testm = delta < -MAX_EXPONENT
     if testm:
         denomi = 1.0
@@ -185,6 +183,8 @@ def _kernel_p(x, k, eta, beta,
         # this is IB = 3 from Gong et al.
         # this corresponds to eq A.3 in terms of x**2
         if not testm:
+            # this is (exp(xsq - eta) - 1.0) / (exp(xsq - eta) + 1.0)
+            tanh_half_delta = np.tanh(0.5 * delta)
             result = num * inv_cosh_term * tanh_half_delta
 
     elif eta_der == 1 and beta_der == 1:
@@ -222,9 +222,6 @@ def _kernel_E(x, k, eta, beta,
     if abs(delta) < MAX_EXPONENT:
         inv_cosh_term = 0.5 / (1.0 + np.cosh(delta))
 
-    # this is (exp(x - eta) - 1.0) / (exp(x - eta) + 1.0)
-    tanh_half_delta = np.tanh(0.5 * delta)
-
     testm = x - eta < -MAX_EXPONENT
     if testm:
         denomi = 1.0
@@ -259,6 +256,8 @@ def _kernel_E(x, k, eta, beta,
         # this is IB = 3 from Gong et al.
         # this corresponds to eq A.3
         if not testm:
+            # this is (exp(x - eta) - 1.0) / (exp(x - eta) + 1.0)
+            tanh_half_delta = np.tanh(0.5 * delta)
             result = num * inv_cosh_term * tanh_half_delta
 
     elif eta_der == 1 and beta_der == 1:
@@ -333,8 +332,6 @@ class FermiIntegral:
                           k, eta, beta,
                           eta_der, beta_der):
 
-        N = len(x_leg)//2
-
         # We set the correspondence (a+b)/2 -> 0 and map the (-1,0) and (0,1)
         # intervals separately.
 
@@ -345,7 +342,7 @@ class FermiIntegral:
                                eta_der=eta_der, beta_der=beta_der) +
                         kernel(fac1 - fac2 * root, k, eta, beta,
                                eta_der=eta_der, beta_der=beta_der)) * weight
-                       for root, weight in zip(x_leg[N:], w_leg[N:]))
+                       for root, weight in zip(x_leg, w_leg))
 
         integral *= (b - a) / 2
         return integral

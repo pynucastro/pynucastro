@@ -8,7 +8,7 @@ import numpy as np
 
 import pynucastro.numba_util as numba
 from pynucastro.numba_util import jitclass
-from pynucastro.rates.rate import Rate
+from pynucastro.rates.rate import Rate, ThermoState
 
 
 @jitclass([
@@ -17,7 +17,9 @@ from pynucastro.rates.rate import Rate
 ])
 class TempTableInterpolator:
     """A class that holds a pointer to the rate data and
-    methods that allow us to interpolate the rate
+    methods that allow us to interpolate the rate.
+    This uses the monotone cubic hermite interpolation for
+    log(rate) and log(T9).
 
     Parameters
     ----------
@@ -35,9 +37,9 @@ class TempTableInterpolator:
         self.log_rate_data = log_rate_data
 
     def _get_logT9_idx(self, log_T9_0):
-        """Find the index into the temperatures such that T[i-1] < T0
-        <= T[i].  We return i-1 here, corresponding to the lower
-        value.  We also make sure that i-2 and i+1 are in bounds.
+        """Find the index into the temperatures such that T[i] < T0
+        <= T[i+1].  We return i here, corresponding to the lower
+        value. We also make sure that i and i+1 are in bounds.
 
         Parameters
         ----------
@@ -51,12 +53,145 @@ class TempTableInterpolator:
         """
 
         max_idx = len(self.log_temp_points) - 2
-        return max(1, min(max_idx, np.searchsorted(self.log_temp_points, log_T9_0)) - 1)
+        return max(0, min(max_idx, np.searchsorted(self.log_temp_points, log_T9_0) - 1))
+
+    def _limit_slope(self, hm, hp, dm, dp):
+        """Given the slope from the left, dm, and the slope
+        from the right, dp. Limit the slope to preserve monotonicity.
+        Uses harmonic mean of the two slopes weighted by the
+        lengths of the two intervals.
+
+        See C. Moler, Numerical Computing with Matlab, 2004.
+        :doi:`10.1137/1.9780898717952`, Chapter 3.4
+
+        Parameters
+        ----------
+        hm : float
+            length interval between i and i-1
+        hp : float
+            length interval between i and i+1
+        dm : float
+            slope using i and i-1 data
+        dp : float
+            slope using i and i+1 data
+
+        Returns
+        -------
+        float
+
+        """
+
+        if dm * dp <= 0.0:
+            return 0.0
+
+        w1 = 2.0 * hp + hm
+        w2 = hp + 2.0 * hm
+        return (w1 + w2) / (w1 / dm + w2 / dp)
+
+    def _linear_extrap(self, T, idx0, idx1):
+        """Do linear extrapolation given the log(T9).
+        This returns log(rate).
+
+        Parameters
+        ----------
+        T : float
+            temperature (log(T/1.e9 K)) to interpolate at
+        idx0 : int
+            reference point index
+        idx1 : int
+            neighboring index for computing derivative
+
+        Returns
+        -------
+        float
+
+        """
+
+        x0 = self.log_temp_points[idx0]
+        x1 = self.log_temp_points[idx1]
+
+        f0 = self.log_rate_data[idx0]
+        f1 = self.log_rate_data[idx1]
+
+        dfdx = (f1 - f0) / (x1 - x0)
+        return f0 + dfdx * (T - x0)
+
+    def _monotone_cubic_interp(self, T, idx):
+        """Given log(T9) and the corresponding index where
+        T[i] < T <= T[i+1], do Monotone Hermite cubic interpolation.
+        Note this method only guarantees monotonicity within
+        the table interval. It returns log(rate).
+
+        See C. Moler, Numerical Computing with Matlab, 2004.
+        :doi:`10.1137/1.9780898717952`, Chapter 3.6
+
+        Parameters
+        ----------
+        T : float
+            temperature (log(T/1.e9 K)) to interpolate at
+        idx : int
+            temperature index where T[i] < T <= T[i+1]
+
+        Returns
+        -------
+        float
+
+        """
+
+        max_idx = len(self.log_temp_points) - 1
+
+        # Get surround 4 data points
+        # Note idx should already be clamped within [0, max_idx-1]
+        assert 0 <= idx < max_idx
+
+        im1 = max(idx - 1, 0)
+        ip1 = idx + 1
+        ip2 = min(idx + 2, max_idx)
+
+        x_im1 = self.log_temp_points[im1]
+        x_idx = self.log_temp_points[idx]
+        x_ip1 = self.log_temp_points[ip1]
+        x_ip2 = self.log_temp_points[ip2]
+
+        f_im1 = self.log_rate_data[im1]
+        f_idx = self.log_rate_data[idx]
+        f_ip1 = self.log_rate_data[ip1]
+        f_ip2 = self.log_rate_data[ip2]
+
+        # Compute the slope at idx and idx + 1
+        m0 = m1 = (f_ip1 - f_idx) / (x_ip1 - x_idx)
+
+        # If NOT on the edge, compute the slope from the other side
+        # and limit the slope to preserve monotonicity
+        if idx != 0:
+            d_im1 = (f_idx - f_im1) / (x_idx - x_im1)
+            m0 = self._limit_slope(x_idx - x_im1, x_ip1 - x_idx,
+                                   d_im1, m0)
+        if idx + 1 != max_idx:
+            d_ip1 = (f_ip2 - f_ip1) / (x_ip2 - x_ip1)
+            m1 = self._limit_slope(x_ip1 - x_idx, x_ip2 - x_ip1,
+                                   m1, d_ip1)
+
+        # Compute cubic Hermite polynomial basis
+        h = x_ip1 - x_idx
+        t = (T - x_idx) / h
+
+        H0 = 2.0*t**3 - 3.0*t**2 + 1.0
+        H1 = -2.0*t**3 + 3.0*t**2
+        Hhat0 = h * (t**3 - 2.0*t**2 + t)
+        Hhat1 = h * (t**3 - t**2)
+
+        # Construct the interpolant
+        # H_3(x) = f0 H_{1,0}(x) + f1 H_{1,1}(x) + f'0 Ĥ_{1,0}(x) + f'1 Ĥ_{1,0}(x)
+
+        return f_idx * H0 + f_ip1 * H1 + m0 * Hhat0 + m1 * Hhat1
 
     def interpolate(self, T0):
-        """Given T0, the temperature where we want the rate, do
-        cubic interpolation to find the value of the rate in the
-        table. Note this returns log(rate).
+        """Given T0, the temperature where we want the rate,
+        do monotone Hermite cubic interpolation to find
+        the value of the rate in the table. Use linear extrapolation
+        when T0 is out of bound of the table.
+        Note this returns log(rate).
 
         Parameters
         ----------
@@ -69,48 +204,26 @@ class TempTableInterpolator:
 
         """
 
-        T9_0 = T0 * 1.e-9
-        log_T9_0 = np.log(T9_0)
+        log_T9_0 = np.log(T0 * 1.e-9)
+        max_idx = len(self.log_temp_points) - 1
 
-        # we'll give a little epsilon buffer here to allow for roundoff
-        eps = 0.005
-        if log_T9_0 < self.log_temp_points.min() - eps or log_T9_0 > self.log_temp_points.max() + eps:
-            raise ValueError("temperature out of table bounds")
+        # Get temperature index such that T[i] < T0 <= T[i+1]
+        # We ensure i is within [0, max_idx - 1]
+        idx = self._get_logT9_idx(log_T9_0)
 
-        idx_t = self._get_logT9_idx(log_T9_0)
+        # For temperature out of the bound, use linear extrapolation
+        if log_T9_0 < self.log_temp_points[0]:
+            return self._linear_extrap(log_T9_0, 0, 1)
 
-        # get the 4 points surrounding T0
+        if log_T9_0 > self.log_temp_points[-1]:
+            return self._linear_extrap(log_T9_0, max_idx, max_idx-1)
 
-        xp = np.array([self.log_temp_points[idx_t-1],
-                       self.log_temp_points[idx_t],
-                       self.log_temp_points[idx_t+1],
-                       self.log_temp_points[idx_t+2]])
-
-        fp = np.array([self.log_rate_data[idx_t-1],
-                       self.log_rate_data[idx_t],
-                       self.log_rate_data[idx_t+1],
-                       self.log_rate_data[idx_t+2]])
-
-        r = 0
-        for m in range(4):
-
-            # create the Lagrange basis function for point m
-            l = 1
-            for n in range(4):
-                if n == m:
-                    continue
-
-                l *= (log_T9_0 - xp[n]) / (xp[m] - xp[n])
-
-            r += fp[m] * l
-
-        return r
+        # Use monotone Hermite cubic interpolation
+        return self._monotone_cubic_interp(log_T9_0, idx)
 
 
 class TemperatureTabularRate(Rate):
     """A rate whose temperature dependence is tabulated.
-
-    Note: presently this only supports strong-mediated rates.
 
     Parameters
     ----------
@@ -126,11 +239,6 @@ class TemperatureTabularRate(Rate):
         super().__init__(label=label, rate_source=rate_source, **kwargs)
 
         self.tabular = True
-
-        # make sure there are no weak interactions -- we don't
-        # support those yet
-        assert sum(n.Z for n in self.reactants) == sum(n.Z for n in self.products)
-        assert sum(n.A for n in self.reactants) == sum(n.A for n in self.products)
 
         self.log_t9_data = log_t9_data
         self.log_rate_data = log_rate_data
@@ -172,12 +280,11 @@ class TemperatureTabularRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, T):\n"
+        fstring += f"def {self.fname}(rate_eval, T, log_scor=0.0):\n"
         fstring += f"    # {self.rid}\n"
         fstring += f"    {self.fname}_interpolator = TempTableInterpolator(*{self.fname}_info)\n"
-
         fstring += f"    log_r = {self.fname}_interpolator.interpolate(T)\n"
-        fstring += f"    rate_eval.{self.fname} = np.exp(log_r)\n\n"
+        fstring += f"    rate_eval.{self.fname} = np.exp(log_r + log_scor)\n\n"
 
         return fstring
 
@@ -208,23 +315,29 @@ class TemperatureTabularRate(Rate):
 
         """
 
+        # pylint: disable=duplicate-code
         if extra_args is None:
             extra_args = ()
 
-        args = ["const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+        args = ["const tf_t& tfactors",
+                f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
+                f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
         fstring += "template <int do_T_derivatives>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
-        fstring += "    auto [_rate, _drate_dT] = interp_net::cubic_interp_uneven<do_T_derivatives>(\n"
+        # pylint: enable=duplicate-code
+
+        fstring += "    auto [_log_rate, _dlog_rate_dlogT9] = interp_net::monotone_1d_interp<do_T_derivatives>(\n"
         fstring += "                                               tfactors.lnT9,\n"
         fstring += f"                                               {self.fname}_data::log_t9,\n"
         fstring += f"                                               {self.fname}_data::log_rate);\n"
-        fstring += "    rate = std::exp(_rate);\n"
+        fstring += "    rate = std::exp(_log_rate + log_scor);\n"
         fstring += "    // we found dlog(rate)/dlog(T9)\n"
         fstring += "    if constexpr (do_T_derivatives) {\n"
-        fstring += "        drate_dT = rate * tfactors.T9i * _drate_dT * 1.0e-9_rt;\n"
+        fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * _dlog_rate_dlogT9 * 1.0e-9_rt + dlog_scor_dT\n;"
+        fstring += "        drate_dT = rate * dlog_rate_dT;\n"
         fstring += "    }\n"
 
         if not leave_open:
@@ -232,9 +345,9 @@ class TemperatureTabularRate(Rate):
 
         return fstring
 
-    def eval(self, T, *, rho=None, comp=None,
-             screen_func=None):
-        """Evaluate the reaction rate.
+    def log_eval(self, T, *, rho=None, comp=None,
+                 screen_func=None):
+        """Evaluate the natural log of reaction rate for temperature T.
 
         Parameters
         ----------
@@ -244,7 +357,7 @@ class TemperatureTabularRate(Rate):
             the density to evaluate the rate at.
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate the rate with.
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
@@ -256,18 +369,18 @@ class TemperatureTabularRate(Rate):
 
         """
 
-        log_r = self.interpolator.interpolate(T)
-        r = np.exp(log_r)
+        log_rate = self.interpolator.interpolate(T)
 
-        scor = 1.0
+        log_scor = 0.0
         if screen_func is not None:
             if rho is None or comp is None:
                 raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
-            scor = self.evaluate_screening(rho, T, comp, screen_func)
+            state = ThermoState(rho=rho, T=T, comp=comp)
+            log_scor = self.evaluate_screening(state, screen_func=screen_func)
 
-        r *= scor
+        log_rate += log_scor
 
-        return r
+        return log_rate
 
     def plot(self, *, Tmin=None, Tmax=None, figsize=(6, 6),
              rho=None, comp=None, screen_func=None):
@@ -285,7 +398,7 @@ class TemperatureTabularRate(Rate):
             the density to evaluate the screening effect.
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate the screening effect.
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
@@ -304,7 +417,6 @@ class TemperatureTabularRate(Rate):
         if Tmax is None:
             Tmax = self.table_Tmax
 
-        # pylint: disable=duplicate-code
         temps = np.logspace(np.log10(Tmin), np.log10(Tmax), 100)
         r = np.zeros_like(temps)
 
@@ -312,17 +424,25 @@ class TemperatureTabularRate(Rate):
             r[n] = self.eval(T, rho=rho, comp=comp, screen_func=screen_func)
 
         ax.loglog(temps, r)
-        ax.set_xlabel(r"$T$")
 
+        # overplot tabular data within plotting range
+        T_data = np.exp(self.log_t9_data) * 1e9
+        rate_data = np.exp(self.log_rate_data)
+        mask = (T_data >= Tmin) & (T_data <= Tmax)
+
+        ax.plot(T_data[mask], rate_data[mask],
+                marker='^', markersize=6, color='k',
+                linestyle="none", label="Tabular Data")
+
+        ax.set_xlabel(r"$T [K]$")
         if self.dens_exp == 0:
             ax.set_ylabel(r"$\tau$")
         elif self.dens_exp == 1:
-            ax.set_ylabel(r"$N_A <\sigma v>$")
+            ax.set_ylabel(r"$N_A \langle \sigma v\rangle$")
         elif self.dens_exp == 2:
-            ax.set_ylabel(r"$N_A^2 <n_a n_b n_c v>$")
+            ax.set_ylabel(r"$N_A^2 \langle n_a n_b n_c v\rangle$")
 
         ax.set_title(fr"{self.pretty_string}")
-        #pylint: enable=duplicate-code
         ax.grid(ls=":")
 
         return fig

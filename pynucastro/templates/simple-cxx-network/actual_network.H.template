@@ -6,14 +6,18 @@
 #include <fundamental_constants.H>
 #include <network_properties.H>
 
-void actual_network_init();
+inline void actual_network_init() {}
 
 const std::string network_name = "pynucastro-cxx";
 
 namespace network
 {
-    extern Array1D<Real, 1, NumSpec> bion;
-    extern Array1D<Real, 1, NumSpec> mion;
+
+    // nuclei masses (in grams)
+
+    inline Array1D<Real, 1, NumSpec> mion{
+        <mion>(2)
+    };
 }
 
 namespace Rates
@@ -22,6 +26,11 @@ namespace Rates
     enum NetworkRates
     {
         <nrxn>(2)
+    };
+
+    enum ScreenPairs
+    {
+        <screen_pair>(2)
     };
 
     // rate names -- note: the rates are 1-based, not zero-based, so we pad

@@ -4,8 +4,8 @@ hydrodynamics codes
 
 """
 
-
 import re
+import shutil
 from pathlib import Path
 
 from pynucastro.constants import constants
@@ -29,12 +29,12 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         super().__init__(*args, **kwargs)
 
         self.ftags['<rate_param_tests>'] = self._rate_param_tests
-        self.ftags['<rate_indices>'] = self._fill_rate_indices
-        self.ftags['<rate_indices_extern>'] = self._fill_rate_indices_extern
-        self.ftags['<npa_index>'] = self._fill_npa_index
+        self.ftags['<nse_rate_pair_data>'] = self._write_nse_rate_pair_data
 
         self.disable_rate_params = disable_rate_params
-        self.function_specifier = "AMREX_GPU_HOST_DEVICE AMREX_INLINE"
+        self.function_specifier = "AMREX_GPU_DEVICE AMREX_INLINE"
+        self.gpu_managed_specifier = "AMREX_GPU_MANAGED"
+        self.gpu_device_specifier = "AMREX_GPU_DEVICE"
         self.dtype = "amrex::Real"
         self.array_namespace = "amrex::"
 
@@ -88,7 +88,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         amrex_powi_replacement = r"amrex::Math::powi<\2>(\1)"
         return re.sub(std_pow_pattern, amrex_powi_replacement, cxx_code)
 
-    def _write_network(self, odir=None):
+    def _write_network(self, odir=None, standalone_build=False):
         """Output the RHS, jacobian and ancillary files for the system
         of ODEs that this network describes, using the template files.
 
@@ -98,6 +98,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
 
         if odir is None:
             odir = Path.cwd()
+
         # create a .net file with the nuclei properties
         with open(Path(odir, "pynucastro.net"), "w") as of:
             for nuc in self.unique_nuclei:
@@ -118,75 +119,136 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
             if self.disable_rate_params:
                 for r in self.disable_rate_params:
                     of.write(f"disable_{r.fname}    int     0\n")
+            if self.starlib_rates:
+                of.write("starlib_seed      int       -1\n")
 
-    def _fill_npa_index(self, n_indent, of):
-        #Get the index of h1, neutron, and helium-4 if they're present in the network.
+        # copy the standalone build files if requested
+        if standalone_build:
+            path = self.pynucastro_dir / "templates" / "amrexastro-cxx-microphysics" / "standalone"
 
-        LIG = list(map(Nucleus, ["p", "n", "he4"]))
+            for sf in path.glob("*"):
+                if sf.is_file():
+                    try:
+                        shutil.copy(sf, odir)
+                    except IOError:
+                        print(f"Error copying {sf}\n")
 
-        for nuc in LIG:
-            if nuc in self.unique_nuclei:
-                of.write(f"{self.indent*n_indent}constexpr int {nuc.short_spec_name.capitalize()}_index = {self.unique_nuclei.index(nuc)};\n")
-            else:
-                of.write(f"{self.indent*n_indent}constexpr int {nuc.short_spec_name.capitalize()}_index = -1;\n")
+    def _get_nse_rate_pairs(self):
+        """Return a list of RatePairs eligible for NSE_NET grouping.
 
-    def _fill_rate_indices(self, n_indent, of):
+        Filtering criteria:
+        1. Must have both forward and reverse rate
+        2. Excludes weak or removed rates
+        3. At most 2 reactants and 2 products (except for triple-alpha)
+        4. Only 1 or 2 nuclei not in {p, n, He4} across reactants + products
+
         """
-        Fill the index needed for the NSE_NET algorithm.
 
-        Fill rate_indices: 2D array with 1-based index of shape of size (NumRates, 7).
-           - Each row represents a rate in self.all_rates.
-           - The first 3 elements of the row represents the index of reactants in self.unique_nuclei
-           - The next 3 elements of the row represents the index of the products in self.unique_nuclei.
-           - The 7th element of the row represents the index of the corresponding reverse rate
-             (set to -1 if no corresponding reverse rate). This is a 1-based instead of 0-based index.
-           - Set all elements of the current row to -1 if the rate has removed suffix
-             indicating its not directly in the network.
-        """
+        nse_rate_pairs = []
 
-        dtype = _signed_rate_dtype(len(self.all_rates))
+        # Light isotope group
+        LIG = Nucleus.cast_list(["p", "n", "he4"])
 
-        # Fill in the rate indices
-        of.write(f"{self.indent*n_indent}AMREX_GPU_MANAGED amrex::Array2D<{dtype}, 1, Rates::NumRates, 1, 7, amrex::Order::C> rate_indices {{\n")
+        # Triple alpha reactants and products
+        reactants_3a = Nucleus.cast_list(["he4", "he4", "he4"])
+        products_3a = [Nucleus("c12")]
 
-        for n, rate in enumerate(self.all_rates):
-            tmp = ','
-            if n == len(self.all_rates) - 1:
-                tmp = ''
-
-            # meaning it is removed.
-            if rate.weak_type or rate.removed:
-                of.write(f"{self.indent*n_indent}    -1, -1, -1, -1, -1, -1, -1{tmp}  // {rate.fname}\n")
+        # Get RatePairs, and make sure both forward and reverse are not None
+        # It also filters out removed rates since it considers self.rates
+        # Then do additional filtering based on different criteria
+        for rp in self.get_rate_pairs():
+            if rp.forward is None or rp.reverse is None:
                 continue
 
-            # Find the reactants and products indices
-            reactant_ind = [-1 for n in range(3 - len(rate.reactants))]
-            product_ind = [-1 for n in range(3 - len(rate.products))]
+            reactants = rp.forward.reactants
+            products = rp.forward.products
+            if rp.forward.weak or rp.reverse.weak:
+                continue
+            if len(reactants) > 2 or len(products) > 2:
+                if reactants == reactants_3a and products == products_3a:
+                    nse_rate_pairs.append(rp)
+                continue
 
-            for nuc in rate.reactants:
-                reactant_ind.append(self.unique_nuclei.index(nuc))
+            non_LIG_count = sum(nuc not in LIG for nuc in reactants + products)
+            if non_LIG_count in (1, 2):
+                nse_rate_pairs.append(rp)
 
-            for nuc in rate.products:
-                product_ind.append(self.unique_nuclei.index(nuc))
+        return nse_rate_pairs
 
-            reactant_ind.sort()
-            product_ind.sort()
+    def _write_nse_rate_pair_data(self, n_indent, of):
+        """Write 1-based indices of light isotopes (n, H1, He4) if present
+        in the network (set to -1 if absent). Also write the RatePair data table,
+        2D array of shape (NumNSERatePairs, 10), needed for the NSE_NET algorithm.
 
-            # Find the reverse rate index
-            rr_ind = -1
-            rr = self.find_reverse(rate)
+        Each row corresponds to a RatePair returned by _get_nse_rate_pairs().
+        Nuclei indices follow NetworkSpecies and rate indices follow NetworkRates.
 
-            # Note that rate index is 1-based
-            if rr is not None:
-                rr_ind = self.all_rates.index(rr) + 1
+        - Columns 1–3: 1-based index of reactant nuclei (forward rate)
+        - Columns 4–6: 1-based index of product nuclei (forward rate)
+        - Columns 7-8: 1-based index of non (n, H1, He4) nuclei.
+        - Column  9:   1-based index of the forward rate
+        - Column  10:  1-based index of the reverse rate
 
-            of.write(f"{self.indent*n_indent}    {reactant_ind[0]}, {reactant_ind[1]}, {reactant_ind[2]}, {product_ind[0]}, {product_ind[1]}, {product_ind[2]}, {rr_ind}{tmp}  // {rate.fname}\n")
+        """
 
-        of.write(f"{self.indent*n_indent}}};\n")
+        # Write index for the light-isotope-group
+        LIG = Nucleus.cast_list(["p", "n", "he4"])
+        for nuc in LIG:
+            idx = self.unique_nuclei.index(nuc) + 1 if nuc in self.unique_nuclei else -1
+            of.write(f"{self.indent*n_indent}constexpr int {nuc.short_spec_name.capitalize()}_index = {idx};\n")
 
-    def _fill_rate_indices_extern(self, n_indent, of):
+        # Write RatePair data table
+        nse_rate_pairs = self._get_nse_rate_pairs()
+        NumNSERatePairs = len(nse_rate_pairs)
 
+        # the data type must accommodate the largest rate index, not
+        # just the number of rate pairs.  It also is signed because
+        # we use -1 to indicate no nucleus for < 3-body reactions.
         dtype = _signed_rate_dtype(len(self.all_rates))
 
-        # Fill in the rate indices
-        of.write(f"{self.indent*n_indent}extern AMREX_GPU_MANAGED amrex::Array2D<{dtype}, 1, Rates::NumRates, 1, 7, amrex::Order::C> rate_indices;\n")
+        # Write Fill in the rate indices
+        of.write(f"{self.indent*n_indent}constexpr int NumNSERatePairs = {NumNSERatePairs};\n\n")
+        of.write(f"{self.indent*n_indent}inline {self.gpu_managed_specifier} amrex::Array2D<{dtype}, 1, NumNSERatePairs, 1, 10, amrex::Order::C> rate_pair_data {{\n")
+
+        for n, rp in enumerate(nse_rate_pairs):
+            fr = rp.forward
+            rr = rp.reverse
+
+            # Find the reactants and products indices for the forward rate
+            # Use -1 if there are less than 3 reactants / products.
+            # Species / rate names are enums when wring out the C++ code
+            # Note that they're 1-based indexing.
+
+            reactant_idx = []
+            product_idx = []
+            non_NHA_idx = []
+
+            for nuc in fr.reactants:
+                spec_name = nuc.short_spec_name.capitalize()
+                reactant_idx.append(spec_name)
+                if nuc not in LIG:
+                    non_NHA_idx.append(spec_name)
+
+            for nuc in fr.products:
+                spec_name = nuc.short_spec_name.capitalize()
+                product_idx.append(spec_name)
+                if nuc not in LIG:
+                    non_NHA_idx.append(spec_name)
+
+            reactant_idx += [-1 for n in range(3 - len(reactant_idx))]
+            product_idx += [-1 for n in range(3 - len(product_idx))]
+            non_NHA_idx += [-1 for n in range(2 - len(non_NHA_idx))]
+
+            fr_idx = f"k_{fr.fname}"
+            rr_idx = f"k_{rr.fname}"
+
+            of.write(f"{self.indent*(n_indent+1)}"
+                     f"{reactant_idx[0]}, {reactant_idx[1]}, {reactant_idx[2]}, "
+                     f"{product_idx[0]}, {product_idx[1]}, {product_idx[2]}, "
+                     f"{non_NHA_idx[0]}, {non_NHA_idx[1]}, "
+                     f"{fr_idx}, {rr_idx}")
+
+            if n < NumNSERatePairs - 1:
+                of.write(",")
+            of.write("\n")
+        of.write(f"{self.indent*n_indent}}};\n")

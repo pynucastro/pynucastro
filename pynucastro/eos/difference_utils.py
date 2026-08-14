@@ -137,7 +137,7 @@ def adaptive_diff(func, x0, h, *, component=None, max_levels=10):
         if func returns an object, use this component for the derivative.
     max_levels : int
         the number of levels / iterations in the tableau used in
-        extrapolating the deriviative to higher order
+        extrapolating the derivative to higher order
 
     Returns
     -------
@@ -202,7 +202,8 @@ def adaptive_diff(func, x0, h, *, component=None, max_levels=10):
     A[0, 0] = 0.5 * (_fp - _fm) / _h
     deriv = A[0, 0]
 
-    err = np.finfo(np.float64).max
+    info = np.finfo(np.float64)
+    err = info.max  # pylint: disable=no-member
 
     for n in range(1, max_levels):
         _h /= jump

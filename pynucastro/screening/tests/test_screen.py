@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 from pytest import approx
 
@@ -9,7 +10,8 @@ from pynucastro.screening import (chugunov_2007, chugunov_2009, debye_huckel,
 
 class TestScreen:
     @pytest.fixture(scope="class")
-    def nuclei(self):
+    @classmethod
+    def nuclei(cls):
         return [pyna.Nucleus("h1"),
                 pyna.Nucleus("he4"),
                 pyna.Nucleus("c12"),
@@ -18,7 +20,8 @@ class TestScreen:
                 pyna.Nucleus("ca40")]
 
     @pytest.fixture(scope="class")
-    def plasma_state(self, nuclei):
+    @classmethod
+    def plasma_state(cls, nuclei):
         temp = 1.e6
         dens = 1.e5
         comp = pyna.Composition(nuclei)
@@ -26,7 +29,8 @@ class TestScreen:
         return make_plasma_state(temp, dens, comp.get_molar())
 
     @pytest.fixture(scope="class")
-    def plasma_state2(self, nuclei):
+    @classmethod
+    def plasma_state2(cls, nuclei):
         temp = 2.e8
         dens = 1.e9
         comp = pyna.Composition(nuclei)
@@ -34,7 +38,8 @@ class TestScreen:
         return make_plasma_state(temp, dens, comp.get_molar())
 
     @pytest.fixture(scope="class")
-    def scn_fac(self):
+    @classmethod
+    def scn_fac(cls):
         c12 = pyna.Nucleus("c12")
         he4 = pyna.Nucleus("he4")
         return make_screen_factors(c12, he4)
@@ -64,48 +69,59 @@ class TestScreen:
         assert scn_fac.ztilde == approx(1.5385208213635064)
 
     def test_chugunov_2007(self, plasma_state, scn_fac):
-        scor = chugunov_2007(plasma_state, scn_fac)
+        log_scor = chugunov_2007(plasma_state, scn_fac)
+        scor = np.exp(log_scor)
         assert scor == approx(7.785569477042635e+33)
 
     def test_chugunov_2007_ps2(self, plasma_state2, scn_fac):
-        scor = chugunov_2007(plasma_state2, scn_fac)
+        log_scor = chugunov_2007(plasma_state2, scn_fac)
+        scor = np.exp(log_scor)
         assert scor == approx(2761.2218597965607)
 
     def test_chugunov_2009(self, plasma_state, scn_fac):
-        scor = chugunov_2009(plasma_state, scn_fac)
+        log_scor = chugunov_2009(plasma_state, scn_fac)
+        scor = np.exp(log_scor)
         assert scor == approx(2.87983449091315e+33)
 
     def test_chugunov_2009_ps2(self, plasma_state2, scn_fac):
-        scor = chugunov_2009(plasma_state2, scn_fac)
+        log_scor = chugunov_2009(plasma_state2, scn_fac)
+        scor = np.exp(log_scor)
         assert scor == approx(2370.630076875232)
 
     def test_debye_huckel(self, plasma_state, scn_fac):
-        scor = debye_huckel(plasma_state, scn_fac)
+        log_scor = debye_huckel(plasma_state, scn_fac)
+        log_scor = min(log_scor, 300)
+        scor = np.exp(log_scor)
         assert scor == approx(1.9424263952412558e+130)
 
     def test_debye_huckel_ps2(self, plasma_state2, scn_fac):
-        scor = debye_huckel(plasma_state2, scn_fac)
+        log_scor = debye_huckel(plasma_state2, scn_fac)
+        scor = np.exp(log_scor)
         assert scor == approx(1.5936621594708264e+21)
 
     def test_potekhin_1998(self, plasma_state, scn_fac):
-        scor = potekhin_1998(plasma_state, scn_fac)
+        log_scor = potekhin_1998(plasma_state, scn_fac)
+        scor = np.exp(log_scor)
         assert scor == approx(1.0508243810383098e+36)
 
     def test_potekhin_1998_ps2(self, plasma_state2, scn_fac):
-        scor = potekhin_1998(plasma_state2, scn_fac)
+        log_scor = potekhin_1998(plasma_state2, scn_fac)
+        scor = np.exp(log_scor)
         assert scor == approx(2918.3445667367027)
 
     def test_screen5(self, plasma_state, scn_fac):
-        scor = screen5(plasma_state, scn_fac)
+        log_scor = screen5(plasma_state, scn_fac)
+        scor = np.exp(log_scor)
         assert scor == approx(4.049488384394272e+33)
 
     def test_screen5_ps2(self, plasma_state2, scn_fac):
-        scor = screen5(plasma_state2, scn_fac)
+        log_scor = screen5(plasma_state2, scn_fac)
+        scor = np.exp(log_scor)
         assert scor == approx(2431.870830574753)
 
     @pytest.mark.parametrize("screen_func", [chugunov_2007, chugunov_2009, potekhin_1998, screen5])
     def test_screening_check(self, plasma_state, scn_fac, screen_func):
         wrapped_screen_func = screening_check()(screen_func)
-        scor_wrapped = wrapped_screen_func(plasma_state, scn_fac)
-        scor = screen_func(plasma_state, scn_fac)
-        assert scor_wrapped == approx(scor)
+        log_scor_wrapped = wrapped_screen_func(plasma_state, scn_fac)
+        log_scor = screen_func(plasma_state, scn_fac)
+        assert log_scor_wrapped == approx(log_scor)

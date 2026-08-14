@@ -8,6 +8,8 @@ the core functionality.
 
 Here we describe the most commonly used rates.
 
+.. _reaclib:
+
 ReacLib
 -------
 
@@ -92,13 +94,13 @@ The ReacLib database lists the source / reference of each rate with a 6 characte
   .. note::
 
      This is not necessarily a reverse rate ($Q < 0$), so in
-     pynucastro, we call it "derived from inverse".  
+     pynucastro, we call it "derived from inverse".
 
 
 Weak rates
 ^^^^^^^^^^
 
-Electron capture capture rates are those identified with a label of either ``ec`` or ``bec``.  These
+Electron capture rates are those identified with a label of either ``ec`` or ``bec``.  These
 have ``ReacLibRate.weak_type`` set to ``electron_capture``.  For these rates, and only these rates,
 we include :math:`Y_e` in the overall rate (multiplying density).
 
@@ -186,6 +188,71 @@ where :math:`n_A` is the number of nucleus :math:`A` in the reaction.
 Similarly,  :func:`jacobian_string_py <pynucastro.rates.rate.Rate.jacobian_string_py>`
 outputs the contribution to the Jacobian for this rate.
 
+Temperature-tabulated Rates
+---------------------------
+
+For charged-particle capture rates, an alternative to the ReacLib parameterization
+is to provide a table of $T$ vs. $N_A \langle \sigma v \rangle$.  This tabulation
+is provided by the :py:obj:`TemperatureTabularRate <pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate>`.
+
+A ``TemperatureTabularRate`` stores the 1D table of $N_A \langle \sigma v\rangle$ and
+the ``eval()`` method performs an interpolation on this given a
+temperature.  This rate can then be used in the same way as a
+``ReacLibRate``, and it provides compatible functions to write out the
+function string needed to evaluate the rate.
+
+
+StarLib rates
+-------------
+
+`STARLIB <https://starlib.github.io/Rate-Library/>`_ is a rate library that provides rate probability densities over a
+tabulated temperature grid ranging from 0.001 GK to 10 GK. These rate
+probability densities are approximated as lognormal distributions, i.e.,
+they are described by two parameters :math:`\mu` and :math:`\sigma` as follows:
+
+.. math::
+
+   f(x) = \frac{1}{ \sigma \sqrt{2 \pi}} \frac{1}{x}e^{-( \ln x - \mu)^2 / 2 \sigma^2}
+
+Thus, for each rate at every listed temperature, StarLib provides the
+median rate and the factor uncertainty, i.e., :math:`e^{\mu}` and :math:`e^{\sigma}` respectively.
+In pynucastro, rates are sampled as :math:`\ln (x_i) = \mu_i + p_i \sigma_i`.
+Where :math:`x_i` is a sampled rate and :math:`p_i` is a standard normal
+deviate. Note that, once sampled, :math:`p_i` is held constant with temperature
+across a rate's tabulated data. See Section 4 of `Sallaska et al.,  <https://doi.org/10.1088/0067-0049/207/1/18>`_ for more.
+
+Every rate also has an associated header which provides:
+
+* An interaction type that classifies reactions based on number of
+  reactants and products. Analogous to chapters for ReacLib Rates.
+
+* Nuclides that are to be interpreted as reactants or products given the
+  interaction type.
+
+* A label that corresponds to the source of a given rate along with an
+  "interaction specific label" which is a ``char`` set to "w"
+  if a given rate is weak, "v" if a rate is a reverse reaction and
+  "g" if a rate describes a gamma-ray transition.
+
+* Energy released (+) or consumed (-).
+
+The :py:class:`StarLibRate
+<pynucastro.rates.starlib_rate.StarLibRate>` class provides the
+structure necessary to store and sample StarLib rates within
+pynucastro.  This is based on ``TemperatureTabularRate``, and uses the
+same interpolation methods.
+
+Note that StarLib provides rates for isomers of Al26 which are not
+presently supported in pynucastro.
+
+Sampling
+^^^^^^^^
+
+Upon creation, instances of ``StarLibRate`` sample log rates across the
+temperature grid given the lognormal distributions and a rng seed.
+The :py:func:`sample_rates <pynucastro.rates.starlib_rate.StarLibRate.sample_rates>`
+can be used to resample the rates in the library.
+
 
 Tabulated Weak Rates
 --------------------
@@ -193,7 +260,7 @@ Tabulated Weak Rates
 For electron captures and beta-decays (which are of the form
 :math:`\rm{A \rightarrow B}`), we use tabulated rates.  These are
 two-dimensional tables, in terms of :math:`T` and :math:`\rho Y_e`,
-and managed by the :func:`TabularRate <pynucastro.rates.tabular_rate.TabularRate>` class.
+and managed by the :func:`TabularWeakRate <pynucastro.rates.tabular_rate.TabularWeakRate>` class.
 
 .. note::
 
@@ -205,7 +272,7 @@ A tabular rate is described by a single file for each reaction
 (i.e., beta-decays and electron-captures are in separate files).
 
 The data reading and interpolation are managed by the
-:py:obj:`TabularRate <pynucastro.rates.tabular_rate.TabularRate>`
+:py:obj:`TabularWeakRate <pynucastro.rates.tabular_rate.TabularWeakRate>`
 class.
 
 ydot term
@@ -225,8 +292,8 @@ Table format
 
 Each rate table has a header (with lines starting with ``!``), followed
 by the data.  An example can be seen as:
-`suzuki-23na-23ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/suzuki-23na-23ne_electroncapture.dat>`_ in
-``pynucastro/library/tabular/suzuki``
+`suzuki-23na-23ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/data/tabular/suzuki/suzuki-23na-23ne_electroncapture.dat>`_ in
+``pynucastro/data/tabular/suzuki``
 
 .. important::
 
@@ -275,23 +342,11 @@ given ``rhoY`` we loop over all of the temperatures).
 Rate evaluation functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Analogous to ``ReacLibRate``, ``TabularRate`` provides functions to
+Analogous to ``ReacLibRate``, ``TabularWeakRate`` provides functions to
 evaluate the rate and output the python code.  The function
 :func:`function_string_py
-<pynucastro.rates.tabular_rate.TabularRate.function_string_py>`
+<pynucastro.rates.tabular_rate.TabularWeakRate.function_string_py>`
 outputs the python code for managing the interpolation of the data.
 For C++ networks, this interpolation is handled directly by the network class.
 
 
-Temperature-tabulated Rates
----------------------------
-
-For charged-particle capture rates, an alternative to the ReacLib parameterization
-is to provide a table of $T$ vs. $N_A \langle \sigma v \rangle$.  This tabulation
-is provided by the :py:obj:`TemperatureTabularRate <pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate>`.
-
-A ``TemperatureTabularRate`` stores the 1D table of $N_A \langle \sigma v\rangle$ and
-the ``eval()`` method performs an interpolation on this given a
-temperature.  This rate can then be used in the same way as a
-``ReacLibRate``, and it provides compatible functions to write out the
-function string needed to evaluate the rate.

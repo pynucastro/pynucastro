@@ -3,21 +3,29 @@ multiple sources.
 
 """
 
+import bz2
 import collections
+import copy
+import inspect
 import io
 import re
+import warnings
+from itertools import islice
 from os import walk
 from pathlib import Path
 
+import numpy as np
+
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
-from pynucastro.rates.alternate_rates import DeBoerC12agO16
+from pynucastro.rates import alternate_rates
 from pynucastro.rates.derived_rate import DerivedRate
 from pynucastro.rates.files import _find_rate_file, get_rates_dir
 from pynucastro.rates.known_duplicates import (find_duplicate_rates,
                                                is_allowed_dupe)
 from pynucastro.rates.rate import Rate
 from pynucastro.rates.reaclib_rate import ReacLibRate
-from pynucastro.rates.tabular_rate import TabularRate
+from pynucastro.rates.starlib_rate import StarLibRate
+from pynucastro.rates.tabular_rate import TabularWeakRate
 
 
 def _rate_name_to_nuc(name):
@@ -48,8 +56,20 @@ def _rate_name_to_nuc(name):
             if nuc.lower() == "pp":
                 reactants += [Nucleus("p"), Nucleus("p")]
                 continue
+            if nuc.lower() == "nn":
+                reactants += [Nucleus("n"), Nucleus("n")]
+                continue
             if nuc.lower() == "aa":
                 reactants += [Nucleus("he4"), Nucleus("he4")]
+                continue
+            if nuc.lower() == "npa":
+                reactants += [Nucleus("n"), Nucleus("p"), Nucleus("he4")]
+                continue
+            if nuc.lower() == "nna":
+                reactants += [Nucleus("n"), Nucleus("n"), Nucleus("he4")]
+                continue
+            if nuc.lower() == "nnn":
+                reactants += [Nucleus("n"), Nucleus("n"), Nucleus("n")]
                 continue
             print(f"couldn't deal with {nuc}")
             raise
@@ -69,8 +89,20 @@ def _rate_name_to_nuc(name):
             if nuc.lower() == "pp":
                 products += [Nucleus("p"), Nucleus("p")]
                 continue
+            if nuc.lower() == "nn":
+                products += [Nucleus("n"), Nucleus("n")]
+                continue
             if nuc.lower() == "aa":
                 products += [Nucleus("he4"), Nucleus("he4")]
+                continue
+            if nuc.lower() == "npa":
+                products += [Nucleus("n"), Nucleus("p"), Nucleus("he4")]
+                continue
+            if nuc.lower() == "nna":
+                products += [Nucleus("n"), Nucleus("n"), Nucleus("he4")]
+                continue
+            if nuc.lower() == "nnn":
+                products += [Nucleus("n"), Nucleus("n"), Nucleus("n")]
                 continue
             print(f"couldn't deal with {nuc}")
             raise
@@ -145,14 +177,28 @@ class Library:
             else:
                 raise TypeError("rates in Library constructor must be a Rate object, list of Rate objects, or dictionary of Rate objects keyed by Rate.id")
 
-    def get_rates(self):
+    def get_rates(self, *, as_copies=False):
         """Return a list of the rates in this library.
+
+        Parameters
+        ----------
+        as_copies : bool
+            Do we return a copy of the rate?  This is useful since it
+            will no longer be a reference to a rate in the underlying
+            library.
 
         Returns
         -------
         list
 
         """
+
+        if as_copies:
+            rates = []
+            for r in self._rates.values():
+                rates.append(copy.copy(r))
+            return rates
+
         return list(self._rates.values())
 
     def get_rate(self, rate_id):
@@ -451,30 +497,70 @@ class Library:
 
         return duplicates
 
-    def eliminate_duplicates(self, *, rate_type_preference="tabular"):
+    def eliminate_duplicates(self, *, rate_type_preference='tabular'):
         """Attempt to eliminate duplicate rates for the same link.
-        Presently, this works for the case where there are 2 instances of the
-        same link, and one is a ``ReacLibRate`` (or derived from that) and
-        the other is a ``TabularRate``
+        Presently, this works for the case where there are 2 or 3 instances
+        of the same link. The duplicate rates must be instances of
+        ``ReacLibRate`` (or derived from it), ``TabularWeakRate``, and/or
+        ``StarLibRate``
 
         Parameters
         ----------
-        rate_type_preference : str
-            In the event of a duplicate, which type of rate do we keep?
-            Valid options are "tabular" or "reaclib"
-
+        rate_type_preference : list[str] or str
+            In what priority should different rate types be
+            eliminated for a given group of duplicate rates.
+            Default priority is "tabular" -> "starlib" -> "reaclib".
+            Passing "tabular" sets default priority
+            Passing "reaclib" sets "reaclib" -> "tabular" -> "starlib"
+            Passing "starlib" sets "starlib" -> "tabular" -> "reaclib"
+            One may also pass a list[str] with custom priority
         """
 
         duplicates = self.find_duplicate_links()
 
+        if rate_type_preference == "tabular":
+            rate_type_preference = ["tabular", "starlib", "reaclib"]
+        elif rate_type_preference == "reaclib":
+            rate_type_preference = ["reaclib", "tabular", "starlib"]
+        elif rate_type_preference == "starlib":
+            rate_type_preference = ["starlib", "tabular", "reaclib"]
+
+        # this dict sets up the rate types given a preferred rate
+        types = {"tabular": lambda r: isinstance(r, TabularWeakRate),
+                 "starlib": lambda r: isinstance(r, StarLibRate),
+                 "reaclib": lambda r: isinstance(r, ReacLibRate)}
+
         rates_to_remove = []
-        for pair in duplicates:
-            assert len(pair) == 2
-            for r in pair:
-                if rate_type_preference == "tabular" and isinstance(r, ReacLibRate):
-                    rates_to_remove.append(r)
-                elif rate_type_preference == "reaclib" and isinstance(r, TabularRate):
-                    rates_to_remove.append(r)
+        for group in duplicates:
+            for pref_type in rate_type_preference:
+                match = [r for r in group if types[pref_type](r)]
+
+                if len(match) == 2 and all((isinstance(r, ReacLibRate) for r in match)):
+                    rate_a, rate_b = match
+
+                    if all((len(r.sets) == 1 for r in match)):
+                        info_a = rate_a.sets[0]
+                        info_b = rate_b.sets[0]
+
+                        # if two rates are both included in the recommended rates by ReacLib,
+                        # I found that:
+                        # (1) one was constant with respect to temperature, and originated
+                        # from wc17
+                        # (2) and the other was derived from the inverse (marked by the 'v'
+                        # flag), originated from rath or ths8, and had a comment "unrecommended
+                        # via script" when viewed online at the ReacLib website.
+                        #
+                        # Knowing that (1) looks constant, I choose to keep (2). We identify
+                        # (2) by .derived_from_inverse.
+
+                        if info_a.derived_from_inverse and not info_b.derived_from_inverse:
+                            match = [rate_a]
+                        elif info_b.derived_from_inverse and not info_a.derived_from_inverse:
+                            match = [rate_b]
+
+                if match:
+                    rates_to_remove.extend([r for r in group if r not in match])
+                    break
 
         for r in rates_to_remove:
             self.remove_rate(r)
@@ -906,7 +992,7 @@ class ReacLibLibrary(Library):
                 sio = io.StringIO('\n'.join([f'{chapter}'] + rlines))
                 try:
                     if rate_type == "reaclib":
-                        r = ReacLibRate(rfile=sio)
+                        r = ReacLibRate.from_file(rfile=sio)
                     else:
                         raise NotImplementedError("rate not implemented")
                 except UnsupportedNucleus:
@@ -940,7 +1026,7 @@ class ReacLibLibrary(Library):
                 rate.write_to_file(f)
 
 
-class TabularLibrary(Library):
+class TabularWeakLibrary(Library):
     """Create a :py:class:`Library` containing all of the tabular
     rates we know (excluding duplications) across multiple sources.
 
@@ -956,7 +1042,7 @@ class TabularLibrary(Library):
 
     """
 
-    lib_path = Path(__file__).parents[1]/"library/tabular"
+    lib_path = Path(__file__).parents[1]/"data/tabular"
 
     def __init__(self, ordering=None):
         # find all of the tabular rates that pynucastro knows about
@@ -973,7 +1059,7 @@ class TabularLibrary(Library):
             for _, _, filenames in sorted(walk(source_dir)):
                 for f in sorted(filenames):
                     if f.endswith("electroncapture.dat") or f.endswith("betadecay.dat"):
-                        r = TabularRate(rfile=source_dir / f)
+                        r = TabularWeakRate(rfile=source_dir / f)
                         if r in trates:
                             # we are looping over the various libraries in order
                             # from lowest precedence to highest.  So if the rate
@@ -986,7 +1072,167 @@ class TabularLibrary(Library):
         Library.__init__(self, rates=trates)
 
 
-class SuzukiLibrary(TabularLibrary):
+class TabularLibrary(TabularWeakLibrary):
+    """Create a :py:class:`Library` containing all of the tabular
+    rates we know (excluding duplications) across multiple sources.
+
+    .. deprecated:: 3.0 ``TabularLibrary`` has been deprecated.  Use
+       ``TabularWeakLibrary`` instead.  ``TabularLibrary`` will be
+       removed in version 3.1.
+
+    Parameters
+    ----------
+    ordering : list of str
+        The list of sources of the rates from lowest to highest
+        precedence.  We will read from the first source, and then for
+        any later sources, for any duplicate rates, we will replace
+        the existing rate with the version from the higher-priority
+        library.  The default ordering is ``["ffn", "oda", "pruet_fuller",
+        "langanke", "suzuki"]``
+
+    """
+
+    def __init__(self, *args, **kwargs):
+        warnings.warn(
+            "TabularLibrary is deprecated; use TabularWeakLibrary instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        super().__init__(*args, **kwargs)
+
+
+class StarLibLibrary(Library):
+    """Create a :py:class:`Library` containing tabulated rates (excluding
+    isomers of 'al26') as described in the Starlib Library.
+
+    Parameters
+    ----------
+    seed : int
+        Rates in StarLibLibrary are sampled from a lognormal distribution
+        upon creation. This argument seeds the rng necessary to carry out
+        sampling. If no seed is proved then rates will return median
+        values.
+
+    """
+
+    file_path = Path(__file__).parents[1]/"data/starlib.dat.bz2"
+    INTERACTION_MAP = {1: (1, 1), 2: (1, 2), 3: (1, 3), 4: (2, 1),
+                       5: (2, 2), 6: (2, 3), 7: (2, 4), 8: (3, 1),
+                       9: (3, 2), 10: (4, 2), 11: (1, 4)}
+    NLINES = 60
+    UNSUPPORTED_NUCLIDES = frozenset(["al-6", "al*6", "al01", "al02", "al03"])
+
+    def __init__(self, seed=None):
+        rates = []
+
+        # Initialize rng for rate sampling
+        rng = None
+        self.seed = seed
+        if seed is not None:
+            rng = np.random.default_rng(seed=self.seed)
+
+        # Read data
+        with bz2.open(self.file_path, mode="rt") as f:
+            for header in f:
+                # Read header and relevant info
+                rate_info = self.parse_header(header)
+
+                # Skip unsupported al26 rates
+                if any(nuc in self.UNSUPPORTED_NUCLIDES for nuc in rate_info["nuclides"]):
+                    for _ in islice(f, self.NLINES):
+                        pass
+                    continue
+
+                # Parse each 60-row numeric block in one numpy call instead of
+                # splitting and converting every line in Python.
+                # here islice does a lazy read from the file object
+                block = np.fromstring("".join(islice(f, self.NLINES)), sep=" ")
+                if block.size != 3 * self.NLINES:
+                    raise ValueError(f"incomplete STARLIB data block for header: {header!r}")
+                block = block.reshape(self.NLINES, 3)
+
+                # Sometimes there are 0 rates in the original data
+                # These are likely placeholders values.
+                # So including them is not physical and messes up interpolation
+                positive = block[:, 1] > 0.0
+                log_block = np.log(block[positive])
+                log_t9 = log_block[:, 0]
+                log_rate = log_block[:, 1]
+                sigma = log_block[:, 2]
+
+                # Create rate
+                rate = StarLibRate(log_t9, log_rate, sigma, rng=rng,
+                                   reactants=rate_info["reactants"],
+                                   products=rate_info["products"],
+                                   Q=rate_info["Q"],
+                                   labelprops=rate_info["labelprops"])
+
+                rates.append(rate)
+
+        super().__init__(rates=rates)
+
+    def parse_header(self, line):
+        """Starlib provides its data in blocks where each block consists of
+        a header followed by a 60 row grid of temperature, median rate and factor
+        uncertainty. This method parses the header and returns a dict containing
+        reactants, products, Q and more.
+
+        Parameters
+        ----------
+        line: str
+            header that is to be parsed
+
+        """
+        interaction_type = int(line[0:2])
+        nreactants, nproducts = self.INTERACTION_MAP[interaction_type]
+        nnuc = nreactants + nproducts
+
+        begin_idx = 5
+        nuclides = []
+        for i in range(nnuc):
+            nuclide = line[begin_idx + i * 5: begin_idx + (i+1) * 5]
+            nuclides.append(nuclide.strip())
+
+        reactants = nuclides[:nreactants]
+        products = nuclides[nreactants:]
+
+        #In accordance with STARLIB documentation
+        labelprops = line[43:48]
+        Q_val = float(line[53:65].strip())
+
+        return {"interaction_type": interaction_type,
+                "reactants": reactants,
+                "products": products,
+                "nuclides": nuclides,
+                "labelprops": labelprops,
+                "Q": Q_val}
+
+    def resample(self, seed=None):
+        """Resample rates
+
+        Parameters
+        ----------
+        seed: int
+            Seed for resampling. If no seed is provided then
+            an arbitrary seed is used.
+        """
+        if seed is None:
+            #arbitrarily chosen upper limit for np.random
+            #since it requires one.
+            seed = np.random.randint(10e5)
+        self.seed = seed
+        rng = np.random.default_rng(seed=self.seed)
+
+        for rate in self._rates.values():
+            rate.sample_rates(rng=rng)
+
+    def unsample(self):
+        """Restore rates to median values."""
+        for rate in self._rates.values():
+            rate.sample_rates()
+
+
+class SuzukiLibrary(TabularWeakLibrary):
     """Create a :py:class:`Library` containing all of the tabular
     rates inside the "suzuki" subdirectory.
 
@@ -996,7 +1242,7 @@ class SuzukiLibrary(TabularLibrary):
         super().__init__(ordering=["suzuki"])
 
 
-class LangankeLibrary(TabularLibrary):
+class LangankeLibrary(TabularWeakLibrary):
     """Create a :py:class:`Library` containing all of the tabular
     rates inside the "langanke" subdirectory.
 
@@ -1006,7 +1252,7 @@ class LangankeLibrary(TabularLibrary):
         super().__init__(ordering=["langanke"])
 
 
-class PruetFullerLibrary(TabularLibrary):
+class PruetFullerLibrary(TabularWeakLibrary):
     """Create a :py:class:`Library` containing all of the tabular
     rates inside the "pruet_fuller" subdirectory.
 
@@ -1016,7 +1262,7 @@ class PruetFullerLibrary(TabularLibrary):
         super().__init__(ordering=["pruet_fuller"])
 
 
-class FFNLibrary(TabularLibrary):
+class FFNLibrary(TabularWeakLibrary):
     """Create a :py:class:`Library` containing all of the tabular
     rates inside the "ffn" subdirectory.
 
@@ -1026,7 +1272,7 @@ class FFNLibrary(TabularLibrary):
         super().__init__(ordering=["ffn"])
 
 
-class OdaLibrary(TabularLibrary):
+class OdaLibrary(TabularWeakLibrary):
     """Create a :py:class:`Library` containing all of the tabular
     rates inside the "oda" subdirectory.
 
@@ -1049,12 +1295,20 @@ def full_library():
 
     lib = Library()
     lib += ReacLibLibrary()
+    lib += StarLibLibrary()
     lib += SuzukiLibrary()
     lib += LangankeLibrary()
     lib += PruetFullerLibrary()
     lib += FFNLibrary()
     lib += OdaLibrary()
-    _r = DeBoerC12agO16()
-    lib.add_rate(_r)
+
+    # discover the alternate rates from the module directly
+    rate_classes = [
+        cls for _, cls in inspect.getmembers(alternate_rates, inspect.isclass)
+        if cls.__module__ == alternate_rates.__name__
+    ]
+
+    for rate in rate_classes:
+        lib.add_rate(rate())
 
     return lib

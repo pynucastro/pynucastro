@@ -47,13 +47,13 @@ namespaces = false
 [tool.setuptools.package-data]
 # additional files to include when building a wheel
 pynucastro = [
-  "library/*",
-  "library/tabular/*",
-  "library/tabular/suzuki/*",
-  "library/tabular/langanke/*",
-  "library/tabular/pruet_fuller/*",
-  "library/tabular/ffn/*",
-  "library/tabular/oda/*",
+  "data/*",
+  "data/tabular/*",
+  "data/tabular/suzuki/*",
+  "data/tabular/langanke/*",
+  "data/tabular/pruet_fuller/*",
+  "data/tabular/ffn/*",
+  "data/tabular/oda/*",
   "templates/**/*",
   "nucdata/*",
   "nucdata/AtomicMassEvaluation/*",
@@ -68,8 +68,8 @@ version_file = "pynucastro/_version.py"
 # development tools
 
 [tool.pylint.main]
-ignore-paths = ['pynucastro/networks/tests/_python_reference/network.py',
-                'pynucastro/networks/tests/test_full_python_net.py']
+ignore-paths = ['pynucastro/networks/tests/python_net_tests/_python_reference/network.py',
+                'pynucastro/networks/tests/python_net_tests/test_full_python_net.py']
 
 extension-pkg-allow-list = ['mpi4py']
 
@@ -123,16 +123,16 @@ skip = ".git,*docs/build,*.bib"
 
 [tool.isort]
 known_first_party = ["pynucastro"]
-skip = ["pynucastro/networks/tests/_python_reference/network.py",
+skip = ["pynucastro/networks/tests/python_net_tests/_python_reference/network.py",
         "pynucastro/_version.py"]
 
 
 [tool.pytest.ini_options]
 # Example-Integrating-Network-diffeqpy.ipynb: needs Julia
 # docs/source/*.ipynb: symlinks to notebooks we're already testing
-# pynucastro/library/tabular/*/generate_*.ipynb: tabular rate file generation
-# examples/rxn-network-integration.ipynb: very slow integration
+# pynucastro/data/tabular/*/generate_*.ipynb: tabular rate file generation
 addopts = """\
+  --ignore-glob=external/** \
   --ignore=docs/source/Example-Integrating-Network-diffeqpy.ipynb \
   --ignore=docs/source/library-examples.ipynb \
   --ignore=docs/source/pynucastro-examples.ipynb \
@@ -140,10 +140,9 @@ addopts = """\
   --ignore=docs/source/duplicate-rates.ipynb \
   --ignore=docs/source/electron-eos.ipynb \
   --ignore=docs/source/stellar-eos.ipynb \
-  --ignore-glob=pynucastro/library/tabular/*/generate_*.ipynb \
+  --ignore-glob=pynucastro/data/tabular/*/generate_*.ipynb \
   --ignore=pynucastro/eos/generate_quadrature_weights.ipynb \
   --ignore=pynucastro/eos/degenerate_derivatives.ipynb \
-  --ignore=examples/rxn-network-integration.ipynb \
   --nbval-sanitize-with .github/workflows/nbval_sanitize.cfg \
   """
 filterwarnings = [
@@ -156,7 +155,7 @@ line-length = 132
 exclude = [
   "docs/",
   "examples/",
-  "pynucastro/networks/tests/_python_reference/",
+  "pynucastro/networks/tests/python_net_tests/_python_reference/",
   "pynucastro/nucdata/AtomicMassEvaluation/",
 ]
 
@@ -196,5 +195,5 @@ add-ignore = [
   "D400",  # First line should end with a period
 ]
 # exclude directories that start with "." or "_", as well as the
-# scripts under pynucastro/library
-match-dir='^(?![._])(?!library$).*'
+# scripts under pynucastro/data
+match-dir='^(?![._])(?!data$).*'

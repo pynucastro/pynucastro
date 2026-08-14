@@ -31,7 +31,7 @@ and interactively exploring nuclear reaction networks.
 
    sources
    nucleus
-   lodders_composition.ipynb
+   solar_composition.ipynb
 
 .. toctree::
    :maxdepth: 1
@@ -42,6 +42,7 @@ and interactively exploring nuclear reaction networks.
    plot-types.ipynb
    basic_network.ipynb
    pynucastro-integration.ipynb
+   starlib.ipynb
 
 
 .. toctree::
@@ -63,6 +64,7 @@ and interactively exploring nuclear reaction networks.
    electron-captures.ipynb
    alternate-rates.ipynb
    inert-nuclei.ipynb
+   documenting-networks.ipynb
 
 .. toctree::
    :maxdepth: 1
@@ -71,8 +73,9 @@ and interactively exploring nuclear reaction networks.
 
    screening-examples
    modify-example.ipynb
+   branched-rates.ipynb
    custom-rates.ipynb
-   partition-function
+   derived-rates
 
 .. toctree::
    :maxdepth: 1
@@ -113,6 +116,7 @@ and interactively exploring nuclear reaction networks.
    :hidden:
 
    neutrino-cooling.ipynb
+   neutrino-cooling-effects.ipynb
 
 .. toctree::
    :maxdepth: 1
@@ -131,6 +135,7 @@ and interactively exploring nuclear reaction networks.
    :caption: Some Useful Networks
    :hidden:
 
+   aprox13
    he-burning-example
 
 .. toctree::
@@ -144,6 +149,15 @@ and interactively exploring nuclear reaction networks.
    examples/triple_alpha_eval.ipynb
    examples/he-burning.ipynb
    examples/supernova-lightcurve.ipynb
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Developer Documentation
+   :hidden:
+
+   rates-devel
+   adding-rates
+   testing
 
 .. toctree::
    :maxdepth: 1

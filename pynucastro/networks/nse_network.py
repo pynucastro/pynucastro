@@ -10,8 +10,9 @@ from scipy.optimize import fsolve
 
 from pynucastro._version import version
 from pynucastro.constants import constants
-from pynucastro.networks.rate_collection import Composition, RateCollection
-from pynucastro.rates import TabularRate
+from pynucastro.networks.rate_collection import RateCollection
+from pynucastro.nucdata import Composition
+from pynucastro.rates import TabularWeakRate, ThermoState
 from pynucastro.screening import NseState, potekhin_1998
 
 
@@ -308,7 +309,7 @@ class NSENetwork(RateCollection):
                 Xs = self._nucleon_fraction_nse(u, u_c, state)
                 res = self._constraint_eq(u, u_c, state)
                 is_pos_new = all(k > 0 for k in res)
-                found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1.0e-11, atol=1.0e-11))
+                found_sol = np.all(np.abs(res) < tol)
 
                 if found_sol:
                     Xs = self._nucleon_fraction_nse(u, u_c, state)
@@ -388,11 +389,12 @@ class NSENetwork(RateCollection):
                     mu_n[irho, iye] = sol[1]
 
                     # get the dY/dt for just the weak rates
-                    ydots = self.evaluate_ydots(rho, T, comp,
+                    state = ThermoState(rho=rho, T=T, comp=comp)
+                    ydots = self.evaluate_ydots(state,
                                                 screen_func=potekhin_1998,
-                                                rate_filter=lambda r: isinstance(r, TabularRate))
+                                                rate_filter=lambda r: isinstance(r, TabularWeakRate))
 
-                    _, enu = self.evaluate_energy_generation(rho, T, comp,
+                    _, enu = self.evaluate_energy_generation(state,
                                                              screen_func=potekhin_1998,
                                                              return_enu=True)
 

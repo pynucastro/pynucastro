@@ -9,10 +9,9 @@ the method of :cite:`chugunov:2007`).
 
    Currently, the following features are not supported:
 
-   * tabular rates
-   * partition functions
-   * NSE
-   * plasma neutrino losses
+   * an NSE solver
+   * thermal / plasma neutrino losses
+   * StarLib and ``TemperatureTabular`` rates
 
 A simple C++ network can be created as:
 
@@ -29,25 +28,23 @@ A simple C++ network can be created as:
 .. note::
 
    The ``SimpleCxxNetwork`` outputs the righthand side function
-   ($dY/dt$) and Jacobian.  It is meant to be used in an application
-   code that provides its own time integrator.  Furthermore, there
-   is no energy/temperature evolution, but the application code can
-   augment the set of equations being integrated with an energy
+   (providing $dY/dt$ and the energy loss due to weak rate neutrinos)
+   and Jacobian.  It is meant to be used in an application code that
+   provides its own time integrator.
+
+   There is no energy/temperature evolution, but the application code
+   can augment the set of equations being integrated with an energy
    equation as needed.
 
 .. note::
 
-   A C++17 compiler is required
+   A C++20 compiler is required
 
 
 This will output the following files:
 
-* ``actual_network_data.cpp`` : this contains the initialization
-  function, ``actual_network_init()`` and the definitions of the mass
-  and binding energy arrays.
-
-* ``actual_network.H`` : this provides enums to index the rates and a
-  vector of strings that give the rate names.
+* ``actual_network.H`` : this provides the nuclei masses, enums to
+  index the rates, and a vector of strings that give the rate names.
 
 * ``actual_rhs.H`` : this provides the righthand side function and Jacobian.
 
@@ -56,19 +53,34 @@ This will output the following files:
   since we reuse some of the ``AmrexAstroCxxNetwork`` code to create a
   ``SimpleNetwork``.
 
+* ``approximate_rates.H`` : the functions that evaluate ``AproximateRate`` rates.
+
 * ``burn_type.H`` : this is a simple struct, ``burn_t``, that holds
   thermodynamic data.  An application code can add more members to the
   struct, as needed, to store additional data.
+
+* ``derived_rates.H`` : the functions that evaluate rates recomputed via
+  detailed balance.
 
 * ``fundamental_constants.H`` : this provides the fundamental constants
   needed throughout the network.
 
 * ``GNUmakefile`` : a GNU makefile to build the test program.
 
+* ``interp_tools.H`` : functions used for interpolating partition functions
+  and rates.
+
 * ``main.cpp`` : a simple driver that simply evaluates the righthand side and Jacobian
   for a single thermodynamic state and compute the energy release.
 
+* ``modified_rates.H`` : the functions that evaluate ``ModifiedRate`` rates.
+
 * ``network_properties.H`` : a header providing the properties of the nuclei.
+
+* ``partition_functions.H`` : data and functions used for interpolating
+  partition functions.
+
+* ``rate_type.H`` : the core ``struct`` used for holding rate evaluations
 
 * ``reaclib_rates.H`` : the functions that evaluate the ReacLib reaction rates.
 
@@ -76,6 +88,8 @@ This will output the following files:
   screening factors.
 
 * ``screen.H`` : the actual implementation of the Chugunov 2007 screening.
+
+* ``table_rates.H`` : the data and functions for interpolating tabular rates.
 
 * ``tfactors.H`` : a struct that stores the various temperature powers needed
   to compute reaction rates.
@@ -97,8 +111,11 @@ and run as:
    ./main
 
 This will simply evaluate the righthand side and Jacobian at a single
-thermodynamic state and print out the output.  It is intended to show
-how to work with the interfaces provided by pynucastro.
+thermodynamic state and print out the output, including the $dY/dt$
+terms, the individual rates evaluations (without density or
+composition terms) and the weak-rate neutrino energy loss term.  It is
+intended to show how to work with the interfaces provided by
+pynucastro.
 
 To change the density and temperature, you can pass values as arguments
 (both must be specified if you are overriding the defaults), e.g.:

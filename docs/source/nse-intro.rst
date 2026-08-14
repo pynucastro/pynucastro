@@ -46,7 +46,8 @@ NSE Constraint Equations
 
 Given the input, :math:`(\rho, T, Y_e)`, the NSE abundance equation has two unknowns,
 :math:`\mu_p^{\mathrm{kin}}` and :math:`\mu_n^{\mathrm{kin}}`, which can be solved
-subject two constraint equations:
+subject two constraint equations (see :cite:t:`calder:2007` and
+:cite:t:`seitenzahl:2009`):
 
 1. Conservation of mass, or a constraint on the input density, :math:`\rho`.
 

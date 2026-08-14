@@ -27,6 +27,7 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   pynucastro.mesa_utils
    pynucastro.mpi_utils
    pynucastro.numba_util
    pynucastro.utils

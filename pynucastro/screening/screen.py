@@ -2,6 +2,7 @@
 
 import numpy as np
 
+import pynucastro.numba_util as numba
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
 from pynucastro.numba_util import jitclass, njit
@@ -11,20 +12,39 @@ from pynucastro.numba_util import jitclass, njit
 __all__ = ["NseState", "PlasmaState", "ScreenFactors",
            "chugunov_2007", "chugunov_2009", "f0", "debye_huckel",
            "make_plasma_state", "make_screen_factors",
-           "potekhin_1998", "screen5", "smooth_clip", "screening_check"]
+           "potekhin_1998", "screen5", "smooth_clip", "screening_check",
+           "get_screening_func"]
 
 
-@jitclass()
+@jitclass([
+    ("temp", numba.float64),
+    ("dens", numba.float64),
+    ("qlam0z", numba.float64),
+    ("taufac", numba.float64),
+    ("aa", numba.float64),
+    ("abar", numba.float64),
+    ("zbar", numba.float64),
+    ("z2bar", numba.float64),
+    ("n_e", numba.float64),
+    ("gamma_e_fac", numba.float64)
+])
 class PlasmaState:
     """Store precomputed values that are reused for all screening
     correction factor calculations.
 
-    Attributes
+    Parameters
     ----------
     temp : float
         temperature in K
     dens : float
         density in g/cm^3
+    Ys : Iterable
+        molar fractions of the composition
+    Zs : Iterable
+         proton numbers of the composition
+
+    Attributes
+    ----------
     qlam0z : float
         a common factor from Graboske 1973
     taufac : float
@@ -43,17 +63,6 @@ class PlasmaState:
          temperature-independent part of Gamma_e
 
     """
-
-    temp: float
-    dens: float
-    qlam0z: float
-    taufac: float
-    aa: float
-    abar: float
-    zbar: float
-    z2bar: float
-    n_e: float
-    gamma_e_fac: float
 
     def __init__(self, temp, dens, Ys, Zs):
         self.temp = temp
@@ -97,7 +106,12 @@ class PlasmaState:
         self.gamma_e_fac = constants.q_e**2 / constants.k * np.cbrt(4 * np.pi / 3) * np.cbrt(self.n_e)
 
 
-@jitclass()
+@jitclass([
+    ("temp", numba.float64),
+    ("dens", numba.float64),
+    ("ye", numba.float64),
+    ("gamma_e_fac", numba.float64)
+])
 class NseState:
     """Store precomputed values that are reused in the NSE state
     screening calculations
@@ -117,11 +131,6 @@ class NseState:
         Temperature-independent part of Gamma_e.
 
     """
-
-    temp: float
-    dens: float
-    ye: float
-    gamma_e_fac: float
 
     def __init__(self, temp, dens, ye):
 
@@ -155,12 +164,23 @@ def make_plasma_state(temp, dens, molar_fractions):
     return PlasmaState(temp, dens, Ys, Zs)
 
 
-@jitclass()
+@jitclass([
+    ("z1", numba.int32),
+    ("z2", numba.int32),
+    ("a1", numba.int32),
+    ("a2", numba.int32),
+    ("zs13", numba.float64),
+    ("zhat", numba.float64),
+    ("zhat2", numba.float64),
+    ("lzav", numba.float64),
+    ("aznut", numba.float64),
+    ("ztilde", numba.float64)
+])
 class ScreenFactors:
     """Store values that will be used to calculate the screening
     correction factor for a specific pair of nuclei.
 
-    Attributes
+    Parameters
     ----------
     z1 : float
         atomic number of first nucleus
@@ -170,6 +190,9 @@ class ScreenFactors:
         atomic mass of first nucleus
     a2 : float
         atomic mass of second nucleus
+
+    Attributes
+    ----------
     zs13 : float
         (z1+z2)**(1/3)
     zhat : float
@@ -184,17 +207,6 @@ class ScreenFactors:
         effective ion radius factor for a MCP
 
     """
-
-    z1: int
-    z2: int
-    a1: int
-    a2: int
-    zs13: float
-    zhat: float
-    zhat2: float
-    lzav: float
-    aznut: float
-    ztilde: float
 
     def __init__(self, z1, a1, z2, a2):
         self.z1 = z1
@@ -255,10 +267,7 @@ def debye_huckel(state, scn_fac) -> float:
     # eq. A1
     h_DH = z1z2 * np.sqrt(3 * Gamma_e**3 * state.z2bar / state.zbar)
 
-    # machine limit the output
-    h_max = 300
-    h = min(h_DH, h_max)
-    return np.exp(h)
+    return h_DH
 
 
 @njit
@@ -285,7 +294,6 @@ def screen5(state: PlasmaState, scn_fac):
     fact = np.cbrt(2)
     gamefx = 0.3e0  # lower gamma limit for intermediate screening
     gamefs = 0.8e0  # upper gamma limit for intermediate screening
-    h12_max = 300.e0
 
     # Get the ion data based on the input index
     z1 = scn_fac.z1
@@ -399,12 +407,10 @@ def screen5(state: PlasmaState, scn_fac):
 
         # end of intermediate and strong screening
 
-    # machine limit the output
-    # further limit to avoid the pycnonuclear regime
-    h12 = max(min(h12, h12_max), 0.0)
-    scor = np.exp(h12)
+    # limit to avoid the pycnonuclear regime
+    log_scor = max(h12, 0.0)
 
-    return scor
+    return log_scor
 
 
 @njit
@@ -545,12 +551,10 @@ def chugunov_2007(state, scn_fac):
 
     h = gamtilde**(3 / 2) * (A1 * term1 + A3 * term2) + B1 * term3 + B3 * term4
 
-    # machine limit the output
-    h_max = 300
-    h = min(h, h_max)
-    scor = np.exp(h)
+    # Assume h >= 0
+    log_scor = max(h, 0.0)
 
-    return scor
+    return log_scor
 
 
 @njit
@@ -656,12 +660,10 @@ def chugunov_2009(state, scn_fac):
     denom = 1 + Gamma_12_2
     h12 = numer / denom * h_fit
 
-    # machine limit the output
-    h12_max = 300
-    h12 = min(h12, h12_max)
-    scor = np.exp(h12)
+    # Assume h >= 0
+    log_scor = max(h12, 0.0)
 
-    return scor
+    return log_scor
 
 
 @njit
@@ -704,15 +706,13 @@ def potekhin_1998(state, scn_fac):
 
     h12 = f1 + f2 - f12
 
-    # machine limit the output
-    h12_max = 300
-    h12 = min(h12, h12_max)
-    scor = np.exp(h12)
+    # Assume h >= 0
+    log_scor = max(h12, 0.0)
 
-    return scor
+    return log_scor
 
 
-def screening_check(check_func=debye_huckel, threshold: float = 1.01):
+def screening_check(check_func=debye_huckel, threshold: float = 1e-2):
     """Create a decorator factory that wraps a screening function with
     a check that determines whether that function can be skipped for a
     given plasma state and screening pair.
@@ -740,3 +740,38 @@ def screening_check(check_func=debye_huckel, threshold: float = 1.01):
             return screen_func(state, scn_fac)
         return screening_wrapper
     return screening_decorator
+
+
+# A list of all different screening functions
+SCREEN_METHODS = {
+    "screen5": screen5,
+    "chugunov_2007": chugunov_2007,
+    "chugunov_2009": chugunov_2009,
+    "potekhin_1998": potekhin_1998,
+    "debye_huckel": debye_huckel
+}
+
+
+def get_screening_func(screen_method):
+    """Return the screening function by its name
+
+    Parameters
+    ----------
+    screen_method : str
+        name of the screening function
+
+    Returns
+    -------
+    Callable
+    """
+
+    if screen_method is None:
+        return None
+
+    try:
+        return SCREEN_METHODS[screen_method]
+    except KeyError as exc:
+        raise ValueError(
+            f"{screen_method} is not a valid screening method. "
+            f"Choose from {list(SCREEN_METHODS)}"
+        ) from exc
