@@ -8,9 +8,51 @@ from pynucastro.rates.approximate_rates import ApproximateRate
 from pynucastro.rates.library import _rate_name_to_nuc
 
 
+def make_double_neutron_rates(lib, reactant, product):
+    """Return a pair of :py:class:`ApproximateRate` objects for the
+    A(n,g)X(n,g)B -> A(nn,g)B approximation
+
+    Parameters
+    ----------
+    lib : Library
+         A Library object containing the neutron-capture rates
+    reactant : Nucleus, str
+         The reactant, A, in the sequence A(n,g)X(n,g)B
+    product: Nucleus, str
+         The product, B, in the sequence A(n,g)X(n,g)B
+
+    Returns
+    -------
+    ApproximateRate, ApproximateRate
+
+    """
+
+    if isinstance(reactant, str):
+        reactant = Nucleus(reactant)
+
+    if isinstance(product, str):
+        product = Nucleus(product)
+
+    intermediate = reactant + Nucleus("n")
+
+    rates = {}
+    rates["A(n,g)X"] = lib.get_rate_by_name(f"{reactant.raw}(n,){intermediate.raw}")
+    rates["X(n,g)B"] = lib.get_rate_by_name(f"{intermediate.raw}(n,){product.raw}")
+
+    rates["B(g,n)X"] = lib.get_rate_by_name(f"{product.raw}(,n){intermediate.raw}")
+    rates["X(g,n)A"] = lib.get_rate_by_name(f"{intermediate.raw}(,n){reactant.raw}")
+
+    forward = ApproximateRate(rates, approx_type="nn_g")
+
+    reverse = ApproximateRate(rates, approx_type="nn_g", is_reverse=True)
+
+    return forward, reverse
+
+
 def make_CO_approx_rates(all_rates, root_nuclei,
                          return_obsolete_rate_names=False):
-    """We want to model a sequence like:
+    """Create approximate rates describing C/O burning.
+    We want to model a sequence like:
 
     ::
 
