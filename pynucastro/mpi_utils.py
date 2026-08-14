@@ -31,7 +31,7 @@ def mpi_importer():
     """
 
     try:
-        from mpi4py import MPI  # pylint: disable=import-outside-toplevel
+        from mpi4py import MPI  # pylint: disable=import-outside-toplevel  # noqa: PLC0415
     except (ModuleNotFoundError, ImportError) as e:
         MPI = FailedMPIImport(e)
 

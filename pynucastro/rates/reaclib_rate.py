@@ -14,7 +14,7 @@ from pynucastro.rates.files import RateFileError, _find_rate_file
 from pynucastro.rates.rate import Rate, Tfactors, ThermoState
 
 
-class SingleSet:
+class SingleSet:  # noqa: PLW1641 (not hashable)
     """A single ReacLib set for a reaction in the form:
 
     λ = exp[ a_0 + sum_{i=1}^5  a_i T_9**(2i-5)/3  + a_6 log T_9]
