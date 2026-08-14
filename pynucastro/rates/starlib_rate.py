@@ -41,11 +41,14 @@ class StarLibRate(TemperatureTabularRate):
         rate_source = labelprops[0:4].strip()
         #Check for electron capture
         weak_type = ''
+        use_ye_weighting = False
         if rate_source == 'ec':
             weak_type = "electron_capture"
+            use_ye_weighting = True
 
         super().__init__(log_t9_data, log_rate_data, label=label,
                          rate_source=rate_source, weak_type=weak_type,
+                         use_ye_weighting=use_ye_weighting,
                          **kwargs)
 
         #Set relevant flags
@@ -144,12 +147,12 @@ class StarLibRate(TemperatureTabularRate):
         fstring += "    // our rate is exp(μ + pσ + h)\n"
         fstring += "    // where μ = median rate, p = Gaussian random #,\n"
         fstring += "    //       σ = uncertainty, h = screening potential\n"
-        fstring += "    auto [_mu, _dmu_dlogT9] = interp_net::cubic_interp_uneven<do_T_derivatives>(\n"
+        fstring += "    auto [_mu, _dmu_dlogT9] = interp_net::monotone_1d_interp<do_T_derivatives>(\n"
         fstring += "                                          tfactors.lnT9,\n"
         fstring += f"                                          {self.fname}_data::log_t9,\n"
         fstring += f"                                          {self.fname}_data::log_rate);\n"
         fstring += f"    auto p = Rates::get_p_random<k_{self.fname}>();\n"
-        fstring += "    auto [_sigma, _dsigma_dlogT9] = interp_net::cubic_interp_uneven<do_T_derivatives>(\n"
+        fstring += "    auto [_sigma, _dsigma_dlogT9] = interp_net::monotone_1d_interp<do_T_derivatives>(\n"
         fstring += "                                                 tfactors.lnT9,\n"
         fstring += f"                                                 {self.fname}_data::log_t9,\n"
         fstring += f"                                                 {self.fname}_data::sigma_rate);\n"

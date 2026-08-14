@@ -9,7 +9,8 @@ import pynucastro as pyna
 
 class TestPythonPartitionNetwork:
     @pytest.fixture(scope="class")
-    def pynet(self, reaclib_library):
+    @classmethod
+    def pynet(cls, reaclib_library):
 
         fwd_reactions = reaclib_library.forward_for_detailed_balance(use_unreliable_spins=False)
 

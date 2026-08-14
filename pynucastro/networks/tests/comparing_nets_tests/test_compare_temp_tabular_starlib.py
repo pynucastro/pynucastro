@@ -20,7 +20,8 @@ def _skip_build():
 class TestNetworkCompare:
 
     @pytest.fixture(scope="class")
-    def lib(self, reaclib_library, starlib_library):
+    @classmethod
+    def lib(cls, reaclib_library, starlib_library):
         nuc = ["p", "n15", "o16"]
         lib = reaclib_library.linking_nuclei(nuc, with_reverse=False)
 
@@ -39,7 +40,8 @@ class TestNetworkCompare:
         return lib
 
     @pytest.fixture(scope="class")
-    def nc(self, lib):
+    @classmethod
+    def nc(cls, lib):
         amrex_test_path = Path("_test_tt_amrex/")
 
         nc = NetworkCompare(lib,
@@ -50,7 +52,8 @@ class TestNetworkCompare:
         return nc
 
     @pytest.fixture(scope="class")
-    def eval_cond1(self, nc):
+    @classmethod
+    def eval_cond1(cls, nc):
         # thermodynamic conditions
         rho = 2.e8
         T = 1.e9
@@ -63,7 +66,8 @@ class TestNetworkCompare:
         return nc
 
     @pytest.fixture(scope="class")
-    def eval_cond2(self, nc):
+    @classmethod
+    def eval_cond2(cls, nc):
         # thermodynamic conditions
         rho = 2.1e6
         T = 3.95e8

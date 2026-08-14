@@ -11,7 +11,8 @@ import pynucastro as pyna
 class TestTabularRates:
 
     @pytest.fixture(scope="class")
-    def rc_su(self, suzuki_library):
+    @classmethod
+    def rc_su(cls, suzuki_library):
         return pyna.RateCollection(libraries=[suzuki_library])
 
     def test_rate_values_suzuki(self, rc_su):
@@ -184,8 +185,9 @@ class TestTabularRates:
             'Si28_to_Al28_weaktab': 9.226341626912568e-15,
         }
 
+        state = pyna.ThermoState(rho=rho, T=T, comp=comp_su)
         for r in rc_su.get_rates():
-            nu_loss = r.get_nu_loss(T, rho=rho, comp=comp_su)
+            nu_loss = r.get_nu_loss(state)
             if r.fname in stored_nu_loss_su:
                 assert nu_loss == approx(stored_nu_loss_su[r.fname], rel=1.e-6, abs=1.e-100), f"rate: {r} does not agree"
             else:

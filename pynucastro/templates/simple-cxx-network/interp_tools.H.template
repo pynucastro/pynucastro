@@ -8,7 +8,7 @@ using namespace literals;
 namespace interp_net {
 
     // index locator
-    // return the index i such that x_array[i] <= x0 <= x_array[i+1]
+    // return the index i such that x_array[i] <= x0 < x_array[i+1]
 
     template <typename T>
     inline
@@ -55,7 +55,7 @@ namespace interp_net {
 
         if (x0 < x_array(left)) {
             idx = left;
-        } else if (x0 > x_array(right)) {
+        } else if (x0 >= x_array(right)) {
             idx = right - 1;
         } else {
             idx = find_index(x0, x_array);
@@ -64,78 +64,156 @@ namespace interp_net {
         return idx;
     }
 
-    // fit a function f(x) = a (x - x0)**3 + b (x - x0)**2 + c (x - x0) + d
-    // to 4 points (x0, f0), ..., (x3, f3)
-    // this version works for unevenly spaced data points
-    // it will return f and f' at x = xv
 
     template <int do_derivative, typename T>
     inline
     std::pair<Real, Real>
-    cubic_interp_uneven(const Real xv, const T& x_array, const T& f_array) {
+    linear_extrap(const Real xv, const int idx0, const int idx1,
+                  const T& x_array, const T& f_array) {
 
-        // find the index such that x_array[idx] <= xv <= x_array[idx+1]
-        int idx = interp_net::find_index_extrap(xv, x_array);
+        const auto x0 = x_array(idx0);
+        const auto x1 = x_array(idx1);
 
-        // we need 4 points, so if idx is on the boundary, shift it
-        idx = amrex::Clamp(idx, x_array.lo()+1, x_array.hi()-2);
+        const auto f0 = f_array(idx0);
+        const auto f1 = f_array(idx1);
 
-        const auto x0 = x_array(idx-1);
-        const auto x1 = x_array(idx);
-        const auto x2 = x_array(idx+1);
-        const auto x3 = x_array(idx+2);
+        const Real slope = (f1 - f0) / (x1 - x0);
+        const Real f = f0 + slope * (xv - x0);
 
-        const auto f0 = f_array(idx-1);
-        const auto f1 = f_array(idx);
-        const auto f2 = f_array(idx+1);
-        const auto f3 = f_array(idx+2);
-
-        const Real D1 = x1 - x0;
-        const Real D2 = x2 - x0;
-        const Real D3 = x3 - x0;
-
-        const Real D1sq = D1 * D1;
-        const Real D1cb = D1sq * D1;
-
-        const Real D2sq = D2 * D2;
-        const Real D2cb = D2sq * D2;
-
-        const Real D3sq = D3 * D3;
-        const Real D3cb = D3sq * D3;
-
-        Real a{};
-        Real b{};
-        Real c{};
-        Real d{f0};
-
-        Real denom_inv = 1.0_rt / (D1 * D2 * D3 * (D1 - D2) * (D1 - D3) * (D2 - D3));
-
-        a = -denom_inv * (D1sq * (D2 * (f0 - f3) - D3 * (f0 - f2)) +
-                          D2sq * (D3 * (f0 - f1) - D1 * (f0 - f3)) +
-                          D3sq * (D1 * (f0 - f2) - D2 * (f0 - f1)));
-
-        b = denom_inv * (D1cb * (D2 * (f0 - f3) - D3 * (f0 - f2)) +
-                         D2cb * (D3 * (f0 - f1) - D1 * (f0 - f3)) +
-                         D3cb * (D1 * (f0 - f2) - D2 * (f0 - f1)));
-
-        c = -denom_inv * (D1cb * (D2sq * (f0 - f3) - D3sq * (f0 - f2)) +
-                          D2cb * (D3sq * (f0 - f1) - D1sq * (f0 - f3)) +
-                          D3cb * (D1sq * (f0 - f2) - D2sq * (f0 - f1)));
-
-        Real fv = a * amrex::Math::powi<3>(xv - x0) +
-                         b * amrex::Math::powi<2>(xv - x0) +
-                         c * (xv - x0) +
-                         d;
-
-        Real dfdx{};
-
+        Real dfdx {0.0_rt};
         if constexpr (do_derivative) {
-            dfdx = 3.0_rt * a * amrex::Math::powi<2>(xv - x0) +
-                   2.0_rt * b * (xv - x0) +
-                   c;
+            dfdx = slope;
+        }
+
+        return {f, dfdx};
+    }
+
+    inline
+    Real
+    limit_slope(const Real hm, const Real hp,
+                const Real dm, const Real dp) {
+        // Slope Limiter to preserve monotonicity
+        // See C. Moler, Numerical Computing with Matlab, 2004.
+        // :doi:`10.1137/1.9780898717952`, Chapter 3.4
+
+        if (dm * dp <= 0.0_rt) {
+            return 0.0_rt;
+        }
+
+        const Real w1 = 2.0_rt * hp + hm;
+        const Real w2 = hp + 2.0_rt * hm;
+        return (w1 + w2) / (w1 / dm + w2 / dp);
+    }
+
+    // Monotone cubic Hermite interpolation
+    // Uses Hermite polynomials as basis to construct the cubic interpolant
+    //
+    // H(x) = f0 H_{1,0}(x) + f1 H_{1,1}(x) + f'0 Ĥ_{1,0}(x) + f'1 Ĥ_{1,0}(x)
+    //
+    // The slope f' is limited to preserve monotonicity.
+    // Also use simple one-sided slope for edge cases
+    // this version works for unevenly spaced data points
+    // it will return f and f' at x = xv
+    //
+    // See C. Moler, Numerical Computing with Matlab, 2004.
+    // :doi:`10.1137/1.9780898717952`, Chapter 3.4 and 3.6
+
+    template <int do_derivative, typename T>
+    inline
+    std::pair<Real, Real>
+    monotone_cubic_interp(const Real xv, const int idx,
+                          const T& x_array, const T& f_array) {
+
+        const int ilo = x_array.lo();
+        const int ihi = x_array.hi();
+
+        // Clamp index within table boundary
+        // Note idx should already be clamped within [ilo, ihi-1]
+        assert(idx >= ilo && idx < ihi);
+
+        const int im1 = std::max(idx - 1, ilo);
+        const int ip1 = idx + 1;
+        const int ip2 = std::min(idx + 2, ihi);
+
+        const auto x_im1 = x_array(im1);
+        const auto x_idx = x_array(idx);
+        const auto x_ip1 = x_array(ip1);
+        const auto x_ip2 = x_array(ip2);
+
+        const auto f_im1 = f_array(im1);
+        const auto f_idx = f_array(idx);
+        const auto f_ip1 = f_array(ip1);
+        const auto f_ip2 = f_array(ip2);
+
+        // Compute the slope at idx and idx + 1
+        Real m0, m1;
+        m1 = m0 = (f_ip1 - f_idx) / (x_ip1 - x_idx);
+
+        // If NOT on the edge, compute the slope from the other side
+        // and limit the slope to preserve monotonicity
+        if (idx != ilo) {
+            Real d_im1 = (f_idx - f_im1) / (x_idx - x_im1);
+            m0 = limit_slope(x_idx - x_im1, x_ip1 - x_idx, d_im1, m0);
+        }
+
+        if (ip1 != ihi) {
+            Real d_ip1 = (f_ip2 - f_ip1) / (x_ip2 - x_ip1);
+            m1 = limit_slope(x_ip1 - x_idx, x_ip2 - x_ip1, m1, d_ip1);
+        }
+
+        // Compute cubic Hermite polynomial basis
+        const Real h = x_ip1 - x_idx;
+        const Real t = (xv - x_idx) / h;
+        const Real t2 = t * t;
+        const Real t3 = t2 * t;
+
+        const Real H1 = -2.0_rt * t3 + 3.0_rt * t2;
+        const Real H0 = -H1 + 1.0_rt;
+        const Real Hhat1 = h * (t3 - t2);
+        const Real Hhat0 = h * (t3 - 2.0_rt * t2 + t);
+
+        // Construct the interpolant
+        // H_3(x) = f0 H_{1,0}(x) + f1 H_{1,1}(x) + f'0 Ĥ_{1,0}(x) + f'1 Ĥ_{1,0}(x)
+
+        const Real fv = f_idx * H0 + f_ip1 * H1 + m0 * Hhat0 + m1 * Hhat1;
+
+        // Compute the derivative if necessary
+        Real dfdx {0.0_rt};
+        if constexpr (do_derivative) {
+            const Real dH1dx = -6.0_rt * (t2 - t) / h;
+            const Real dH0dx = -dH1dx;
+            const Real dHhat1dx = 3.0_rt * t2 - 2.0_rt * t;
+            const Real dHhat0dx = 3.0_rt * t2 - 4.0_rt * t + 1.0_rt;
+            dfdx = f_idx * dH0dx + f_ip1 * dH1dx + m0 * dHhat0dx + m1 * dHhat1dx;
         }
 
         return {fv, dfdx};
+    }
+
+    template <int do_derivative, typename T>
+    inline
+    std::pair<Real, Real>
+    monotone_1d_interp(const Real xv, const T& x_array, const T& f_array) {
+        // Main driver for interpolating and extrapolating 1D table data.
+        // Uses monotone Hermite cubic interpolation and linear extrapolation
+        // to preserve monotonicity.
+
+        // find the index such that x_array[idx] <= xv < x_array[idx+1]
+        // We ensure that ilo <= i <= ihi - 1
+        const int idx = interp_net::find_index_extrap(xv, x_array);
+
+        const int ilo = x_array.lo();
+        const int ihi = x_array.hi();
+
+        if (xv < x_array(ilo)) {
+            return linear_extrap<do_derivative>(xv, ilo, ilo+1, x_array, f_array);
+        }
+
+        if (xv > x_array(ihi)){
+            return linear_extrap<do_derivative>(xv, ihi, ihi-1, x_array, f_array);
+        }
+
+        return monotone_cubic_interp<do_derivative>(xv, idx, x_array, f_array);
     }
 
 }

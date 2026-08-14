@@ -4,11 +4,13 @@ from pytest import approx
 
 from pynucastro import networks
 from pynucastro.nucdata import Composition, Nucleus
+from pynucastro.rates import ThermoState
 
 
 class TestRateCollection:
     @pytest.fixture(scope="class")
-    def rc(self, reaclib_library):
+    @classmethod
+    def rc(cls, reaclib_library):
         rate_names = ["c12(p,g)n13",
                       "c13(p,g)n14",
                       "n13(,)c13",
@@ -45,7 +47,8 @@ class TestRateCollection:
                  "O14 --> N14 <reaclib_wc12>": 2.0036691481625654e-06,
                  "O15 --> N15 <reaclib_wc12>": 1.0822012944765837e-06}
 
-        rv = rc.evaluate_rates(1.e4, 1.e8, c)
+        state = ThermoState(rho=1.e4, T=1.e8, comp=c)
+        rv = rc.evaluate_rates(state)
 
         for r in rv:
             assert rv[r] == approx(rates[r.id])

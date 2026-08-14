@@ -11,7 +11,7 @@ import numpy as np
 
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.files import RateFileError, _find_rate_file
-from pynucastro.rates.rate import Rate, Tfactors
+from pynucastro.rates.rate import Rate, Tfactors, ThermoState
 
 
 class SingleSet:
@@ -285,7 +285,11 @@ class ReacLibRate(Rate):
     weak_type : str
         the type of weak reaction the rate represents.
         Possible values include "electron_capture", "beta_pos", or
-        "beta_neg"
+        "beta_neg".  Note for electron-capture rates, we will
+        include an explicit ρYₑ weighting in the evaluation
+    label : str
+        a descriptive label for the rate (usually representative
+        of the source)
     rate_source: str
         the key to get the source information for the rate
         from rate_sources.csv
@@ -293,7 +297,8 @@ class ReacLibRate(Rate):
     """
 
     def __init__(self, reactants=None, products=None,
-                 sets=None, Q=None, weak_type="", rate_source=None):
+                 sets=None, Q=None, weak_type="",
+                 label="reaclib", rate_source=None):
 
         # Metadata for rate data files
         self.rfile_name = set()
@@ -307,8 +312,13 @@ class ReacLibRate(Rate):
         else:
             self.sets = []
 
+        use_ye_weighting = False
+        if weak_type == "electron_capture":
+            use_ye_weighting = True
+
         super().__init__(reactants=reactants, products=products,
-                         Q=Q, weak_type=weak_type, label="reaclib",
+                         Q=Q, weak_type=weak_type, label=label,
+                         use_ye_weighting=use_ye_weighting,
                          stoichiometry=None, rate_source=rate_source,
                          use_identical_particle_factor=True)
 
@@ -767,7 +777,8 @@ class ReacLibRate(Rate):
         if screen_func is not None:
             if rho is None or comp is None:
                 raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
-            log_scor = self.evaluate_screening(rho, T, comp, screen_func)
+            state = ThermoState(rho=rho, T=T, comp=comp)
+            log_scor = self.evaluate_screening(state, screen_func=screen_func)
 
         for s in self.sets:
             log_f = s.log_f()
@@ -891,9 +902,9 @@ class ReacLibRate(Rate):
         if self.dens_exp == 0:
             ax.set_ylabel(r"$\tau$")
         elif self.dens_exp == 1:
-            ax.set_ylabel(r"$N_A <\sigma v>$")
+            ax.set_ylabel(r"$N_A \langle\sigma v\rangle$")
         elif self.dens_exp == 2:
-            ax.set_ylabel(r"$N_A^2 <n_a n_b n_c v>$")
+            ax.set_ylabel(r"$N_A^2 \langle n_a n_b n_c v\rangle$")
 
         ax.set_title(fr"{self.pretty_string}")
 

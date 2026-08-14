@@ -14,7 +14,8 @@ from pynucastro.screening import chugunov_2007
 
 class TestPythonNetwork:
     @pytest.fixture(scope="class")
-    def pynet(self, reaclib_library):
+    @classmethod
+    def pynet(cls, reaclib_library):
         mynet = reaclib_library.linking_nuclei(["p", "he4", "mg24",
                                                 "al27", "si28", "p31", "s32"])
         pynet = pyna.PythonNetwork(libraries=[mynet])

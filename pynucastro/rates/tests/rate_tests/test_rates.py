@@ -2,6 +2,7 @@
 
 import copy
 import math
+import warnings
 
 import pytest
 from pytest import approx
@@ -15,7 +16,8 @@ from pynucastro.screening.screen import chugunov_2007
 
 class TestTfactors:
     @pytest.fixture(scope="class")
-    def tf(self):
+    @classmethod
+    def tf(cls):
         return rates.Tfactors(2.e9)
 
     def test_tfactors(self, tf):
@@ -29,291 +31,234 @@ class TestTfactors:
 
 class TestRate:
 
+    @pytest.fixture(scope="class")
     @classmethod
-    def setup_class(cls):
-        """ this is run once for each class before any tests """
+    def srates(cls, reaclib_library):
 
-    @classmethod
-    def teardown_class(cls):
-        """ this is run once for each class after all tests """
-
-    def setup_method(self):
-        """ this is run before each test """
+        sample_rates = {}
 
         # chapter-1
-        self.rate1 = rates.load_rate("o15--n15-wc12")
+        sample_rates["ch1"] = reaclib_library.get_rate_by_name("o15(,)n15")
 
         # chapter-2
-        self.rate2 = rates.load_rate("t-gn-d-nk06")
+        sample_rates["ch2"] = reaclib_library.get_rate_by_name("t(g,n)d")
 
         # chapter-3
-        self.rate3 = rates.load_rate("he6-gnn-he4-cf88")
+        sample_rates["ch3"] = reaclib_library.get_rate_by_name("he6(g,nn)he4")
 
         # chapter-4
-        self.rate4 = rates.load_rate("c12-ag-o16-nac2")
+        sample_rates["ch4"] = reaclib_library.get_rate_by_name("c12(a,g)o16")
 
         # chapter-5
-        self.rate5 = rates.load_rate("n15-pa-c12-nacr")
+        sample_rates["ch5"] = reaclib_library.get_rate_by_name("n15(p,a)c12")
 
         # chapter-6
-        self.rate6 = rates.load_rate("he3-he3pp-he4-nacr")
+        sample_rates["ch6"] = reaclib_library.get_rate_by_name("he3(he3,pp)he4")
 
         # chapter-7
-        self.rate7 = rates.load_rate("li7-tnna-he4-mafo")
+        sample_rates["ch7"] = reaclib_library.get_rate_by_name("li7(t,nna)he4")
 
         # chapter-8
-        self.rate8 = rates.load_rate("he4-aag-c12-fy05")
-
-        # chapter-8, historical format (same rate as chapter-9)
-        self.rate8_hist = rates.load_rate("he4-pphe3-he3-nacr-historical")
+        sample_rates["ch8"] = reaclib_library.get_rate_by_name("he4(aa,g)c12")
 
         # chapter-9
-        self.rate9 = rates.load_rate("he4-pphe3-he3-nacr")
+        sample_rates["ch9"] = reaclib_library.get_rate_by_name("he4(pp,he3)he3")
 
         # chapter-10
-        self.rate10 = rates.load_rate("he4-npahe3-li7-mafo")
+        sample_rates["ch10"] = reaclib_library.get_rate_by_name("he4(npa,he3)li7")
 
         # chapter-11
-        self.rate11 = rates.load_rate("b17-nnn-c14-wc12")
+        sample_rates["ch11"] = reaclib_library.get_rate_by_name("b17(g,nnn)c14")
 
-        self.n = Nucleus("n")
+        return sample_rates
 
-        self.p = Nucleus("p")
-        self.h1 = Nucleus("H1")
-        self.d = Nucleus("d")
-        self.h3 = Nucleus("H3")
+    def test_source(self, srates):
+        assert srates["ch1"].source["Year"] == "2012"
 
-        self.he3 = Nucleus("He3")
-        self.he4 = Nucleus("He4")
-        self.he6 = Nucleus("He6")
+    def test_chapter(self, srates):
+        assert srates["ch1"].chapter == 1
+        assert srates["ch2"].chapter == 2
+        assert srates["ch3"].chapter == 3
+        assert srates["ch4"].chapter == 4
+        assert srates["ch5"].chapter == 5
+        assert srates["ch6"].chapter == 6
+        assert srates["ch7"].chapter == 7
+        assert srates["ch8"].chapter == 8
+        assert srates["ch9"].chapter == 9
+        assert srates["ch10"].chapter == 10
+        assert srates["ch11"].chapter == 11
 
-        self.li7 = Nucleus("Li7")
+    def test_labelprops(self, srates):
+        assert srates["ch1"].labelprops == "wc12w "
+        assert srates["ch2"].labelprops == "nk06nv"
+        assert srates["ch3"].labelprops == "cf88rv"
+        assert srates["ch4"].labelprops == "nac2  "
+        assert srates["ch5"].labelprops == "nacrc "
+        assert srates["ch6"].labelprops == "nacrn "
+        assert srates["ch7"].labelprops == "mafon "
+        assert srates["ch8"].labelprops == "fy05c "
+        assert srates["ch9"].labelprops == "nacrnv"
+        assert srates["ch10"].labelprops == "mafonv"
+        assert srates["ch11"].labelprops == "wc12w "
 
-        self.b17 = Nucleus("B17")
-
-        self.c12 = Nucleus("C12")
-        self.c14 = Nucleus("C14")
-
-        self.n15 = Nucleus("N15")
-
-        self.o15 = Nucleus("O15")
-        self.o16 = Nucleus("O16")
-
-        self.ni56 = Nucleus("Ni56")
-        self.u238 = Nucleus("U238")
-        self.he4_also = Nucleus("he4")
-
-    def teardown_method(self):
-        """ this is run after each test """
-
-    def test_source(self):
-        assert self.rate1.source["Year"] == "2012"
-
-    def test_rfile_name(self):
-        assert self.rate1.rfile_name == {"o15--n15-wc12"}
-        assert self.rate2.rfile_name == {"t-gn-d-nk06"}
-        assert self.rate3.rfile_name == {"he6-gnn-he4-cf88"}
-        assert self.rate4.rfile_name == {"c12-ag-o16-nac2"}
-        assert self.rate5.rfile_name == {"n15-pa-c12-nacr"}
-        assert self.rate6.rfile_name == {"he3-he3pp-he4-nacr"}
-        assert self.rate7.rfile_name == {"li7-tnna-he4-mafo"}
-        assert self.rate8.rfile_name == {"he4-aag-c12-fy05"}
-        assert self.rate8_hist.rfile_name == {"he4-pphe3-he3-nacr-historical"}
-        assert self.rate9.rfile_name == {"he4-pphe3-he3-nacr"}
-        assert self.rate10.rfile_name == {"he4-npahe3-li7-mafo"}
-        assert self.rate11.rfile_name == {"b17-nnn-c14-wc12"}
-
-    def test_chapter(self):
-        assert self.rate1.chapter == 1
-        assert self.rate2.chapter == 2
-        assert self.rate3.chapter == 3
-        assert self.rate4.chapter == 4
-        assert self.rate5.chapter == 5
-        assert self.rate6.chapter == 6
-        assert self.rate7.chapter == 7
-        assert self.rate8.chapter == 8
-        assert self.rate8_hist.chapter == 8
-        assert self.rate9.chapter == 9
-        assert self.rate10.chapter == 10
-        assert self.rate11.chapter == 11
-
-    def test_labelprops(self):
-        assert self.rate1.labelprops == "wc12w "
-        assert self.rate2.labelprops == "nk06nv"
-        assert self.rate3.labelprops == "cf88rv"
-        assert self.rate4.labelprops == "nac2  "
-        assert self.rate5.labelprops == "nacrc "
-        assert self.rate6.labelprops == "nacrn "
-        assert self.rate7.labelprops == "mafon "
-        assert self.rate8.labelprops == "fy05c "
-        assert self.rate8_hist.labelprops == "nacrnv"
-        assert self.rate9.labelprops == "nacrnv"
-        assert self.rate10.labelprops == "mafonv"
-        assert self.rate11.labelprops == "wc12w "
-
-    def test_reactants(self):
+    def test_reactants(self, srates):
 
         # o15--n15-wc12
-        assert self.rate1.reactants[0] == self.o15
-        assert len(self.rate1.reactants) == 1
+        assert srates["ch1"].reactants[0] == Nucleus("o15")
+        assert len(srates["ch1"].reactants) == 1
 
         # t-gn-d-nk06
-        assert self.rate2.reactants[0] == self.h3
-        assert len(self.rate2.reactants) == 1
+        assert srates["ch2"].reactants[0] == Nucleus("h3")
+        assert len(srates["ch2"].reactants) == 1
 
         # he6-gnn-he4-cf88
-        assert self.rate3.reactants[0] == self.he6
-        assert len(self.rate3.reactants) == 1
+        assert srates["ch3"].reactants[0] == Nucleus("he6")
+        assert len(srates["ch3"].reactants) == 1
 
         # c12-ag-o16-nac2
-        assert self.rate4.reactants[0] == self.he4
-        assert self.rate4.reactants[1] == self.c12
-        assert len(self.rate4.reactants) == 2
+        assert srates["ch4"].reactants[0] == Nucleus("he4")
+        assert srates["ch4"].reactants[1] == Nucleus("c12")
+        assert len(srates["ch4"].reactants) == 2
 
         # n15-pa-c12-nacr
-        assert self.rate5.reactants[0] == self.h1
-        assert self.rate5.reactants[1] == self.n15
-        assert len(self.rate5.reactants) == 2
+        assert srates["ch5"].reactants[0] == Nucleus("h1")
+        assert srates["ch5"].reactants[1] == Nucleus("n15")
+        assert len(srates["ch5"].reactants) == 2
 
         # he3-he3pp-he4-nacr
-        assert self.rate6.reactants[0] == self.he3
-        assert self.rate6.reactants[1] == self.he3
-        assert len(self.rate6.reactants) == 2
+        assert srates["ch6"].reactants[0] == Nucleus("he3")
+        assert srates["ch6"].reactants[1] == Nucleus("he3")
+        assert len(srates["ch6"].reactants) == 2
 
         # li7-tnna-he4-mafo
-        assert self.rate7.reactants[0] == self.h3
-        assert self.rate7.reactants[1] == self.li7
-        assert len(self.rate7.reactants) == 2
+        assert srates["ch7"].reactants[0] == Nucleus("h3")
+        assert srates["ch7"].reactants[1] == Nucleus("li7")
+        assert len(srates["ch7"].reactants) == 2
 
         # he4-aag-c12-fy05
-        assert self.rate8.reactants[0] == self.he4
-        assert self.rate8.reactants[1] == self.he4
-        assert self.rate8.reactants[2] == self.he4
-        assert len(self.rate8.reactants) == 3
-
-        # he4-pphe3-he3-nacr-historical
-        assert self.rate8_hist.reactants[0] == self.p
-        assert self.rate8_hist.reactants[1] == self.h1
-        assert self.rate8_hist.reactants[2] == self.he4
-        assert len(self.rate8_hist.reactants) == 3
+        assert srates["ch8"].reactants[0] == Nucleus("he4")
+        assert srates["ch8"].reactants[1] == Nucleus("he4")
+        assert srates["ch8"].reactants[2] == Nucleus("he4")
+        assert len(srates["ch8"].reactants) == 3
 
         # he4-pphe3-he3-nacr
-        assert self.rate9.reactants[0] == self.p
-        assert self.rate9.reactants[1] == self.h1
-        assert self.rate9.reactants[2] == self.he4
-        assert len(self.rate9.reactants) == 3
+        assert srates["ch9"].reactants[0] == Nucleus("p")
+        assert srates["ch9"].reactants[1] == Nucleus("h1")
+        assert srates["ch9"].reactants[2] == Nucleus("he4")
+        assert len(srates["ch9"].reactants) == 3
 
         # he4-npahe3-li7-mafo
-        assert self.rate10.reactants[0] == self.n
-        assert self.rate10.reactants[1] == self.h1
-        assert self.rate10.reactants[2] == self.he4
-        assert self.rate10.reactants[3] == self.he4
-        assert len(self.rate10.reactants) == 4
+        assert srates["ch10"].reactants[0] == Nucleus("n")
+        assert srates["ch10"].reactants[1] == Nucleus("h1")
+        assert srates["ch10"].reactants[2] == Nucleus("he4")
+        assert srates["ch10"].reactants[3] == Nucleus("he4")
+        assert len(srates["ch10"].reactants) == 4
 
         # b17-nnn-c14-wc12
-        assert self.rate11.reactants[0] == self.b17
-        assert len(self.rate11.reactants) == 1
+        assert srates["ch11"].reactants[0] == Nucleus("b17")
+        assert len(srates["ch11"].reactants) == 1
 
-    def test_products(self):
-        assert self.rate4.products[0] == self.o16
-        assert self.rate8.products[0] == self.c12
-        assert len(self.rate8.products) == 1
-
-        # he4-pphe3-he3-nacr-historical
-        assert self.rate8_hist.products[0] == self.he3
-        assert self.rate8_hist.products[1] == self.he3
-        assert len(self.rate8_hist.products) == 2
+    def test_products(self, srates):
+        assert srates["ch4"].products[0] == Nucleus("o16")
+        assert srates["ch8"].products[0] == Nucleus("c12")
+        assert len(srates["ch8"].products) == 1
 
         # he4-pphe3-he3-nacr
-        assert self.rate9.products[0] == self.he3
-        assert self.rate9.products[1] == self.he3
-        assert len(self.rate9.products) == 2
+        assert srates["ch9"].products[0] == Nucleus("he3")
+        assert srates["ch9"].products[1] == Nucleus("he3")
+        assert len(srates["ch9"].products) == 2
 
-    def test_count(self):
-        assert self.rate3.reactant_count(Nucleus("he6")) == 1
-        assert self.rate3.product_count(Nucleus("he6")) == 0
+    def test_count(self, srates):
+        assert srates["ch3"].reactant_count(Nucleus("he6")) == 1
+        assert srates["ch3"].product_count(Nucleus("he6")) == 0
 
-        assert self.rate5.reactant_count(Nucleus("n15")) == 1
-        assert self.rate5.reactant_count(Nucleus("p")) == 1
-        assert self.rate5.reactant_count(Nucleus("a")) == 0
-        assert self.rate5.reactant_count(Nucleus("c12")) == 0
+        assert srates["ch5"].reactant_count(Nucleus("n15")) == 1
+        assert srates["ch5"].reactant_count(Nucleus("p")) == 1
+        assert srates["ch5"].reactant_count(Nucleus("a")) == 0
+        assert srates["ch5"].reactant_count(Nucleus("c12")) == 0
 
-        assert self.rate5.product_count(Nucleus("n15")) == 0
-        assert self.rate5.product_count(Nucleus("p")) == 0
-        assert self.rate5.product_count(Nucleus("a")) == 1
-        assert self.rate5.product_count(Nucleus("c12")) == 1
+        assert srates["ch5"].product_count(Nucleus("n15")) == 0
+        assert srates["ch5"].product_count(Nucleus("p")) == 0
+        assert srates["ch5"].product_count(Nucleus("a")) == 1
+        assert srates["ch5"].product_count(Nucleus("c12")) == 1
 
-        assert self.rate8.reactant_count(Nucleus("a")) == 3
+        assert srates["ch8"].reactant_count(Nucleus("a")) == 3
 
-    def test_prefactor(self):
-        assert self.rate4.prefactor == 1.0
-        assert self.rate8.prefactor == approx(0.16666666)
+    def test_prefactor(self, srates):
+        assert srates["ch4"].prefactor == 1.0
+        assert srates["ch8"].prefactor == approx(0.16666666)
 
-    def test_rate_exponent(self):
-        assert self.rate8.get_rate_exponent(1.e8) == approx(40.9106396)
+    def test_rate_exponent(self, srates):
+        assert srates["ch8"].get_rate_exponent(1.e8) == approx(40.9106396)
 
-    def test_eval(self):
-        assert self.rate8.eval(1.e8) == approx(2.0403192412842946e-24, rel=1.e-6, abs=1.e-40)
+    def test_eval(self, srates):
+        assert srates["ch8"].eval(1.e8) == approx(2.0403192412842946e-24, rel=1.e-6, abs=1.e-40)
 
-    def test_eval_deriv(self):
+    def test_eval_deriv(self, srates):
         T0 = 1.e8
         eps = 1.e-8
 
         # compare finite diff to analytic diff
 
         # rate4
-        diff = (self.rate4.eval(T0*(1.0+eps)) - self.rate4.eval(T0)) / (T0 * eps)
-        err = abs(diff - self.rate4.eval_deriv(T0)) / diff
+        diff = (srates["ch4"].eval(T0*(1.0+eps)) - srates["ch4"].eval(T0)) / (T0 * eps)
+        err = abs(diff - srates["ch4"].eval_deriv(T0)) / diff
 
         assert err < 1.e-6
 
         # rate5
-        diff = (self.rate5.eval(T0*(1.0+eps)) - self.rate5.eval(T0)) / (T0 * eps)
-        err = abs(diff - self.rate5.eval_deriv(T0)) / diff
+        diff = (srates["ch5"].eval(T0*(1.0+eps)) - srates["ch5"].eval(T0)) / (T0 * eps)
+        err = abs(diff - srates["ch5"].eval_deriv(T0)) / diff
 
         assert err < 1.e-6
 
         # rate6
-        diff = (self.rate6.eval(T0*(1.0+eps)) - self.rate6.eval(T0)) / (T0 * eps)
-        err = abs(diff - self.rate6.eval_deriv(T0)) / diff
+        diff = (srates["ch6"].eval(T0*(1.0+eps)) - srates["ch6"].eval(T0)) / (T0 * eps)
+        err = abs(diff - srates["ch6"].eval_deriv(T0)) / diff
 
         assert err < 1.e-6
 
-    def test_comparison(self):
-        assert self.rate1 > self.rate2
-        assert self.rate1 > self.rate4
-        assert self.rate8 > self.rate9
+    def test_comparison(self, srates):
+        assert srates["ch1"] > srates["ch2"]
+        assert srates["ch1"] > srates["ch4"]
+        assert srates["ch8"] > srates["ch9"]
 
-    def test_weak(self):
-        assert self.rate1.weak
-        assert not self.rate2.weak
+    def test_weak(self, srates):
+        assert srates["ch1"].weak
+        assert not srates["ch2"].weak
 
-    def test_weak_type(self):
-        assert self.rate1.weak_type == "beta_pos"
-        assert self.rate2.weak_type == ""
-        assert self.rate11.weak_type == "beta_neg"
+    def test_weak_type(self, srates):
+        assert srates["ch1"].weak_type == "beta_pos"
+        assert srates["ch2"].weak_type == ""
+        assert srates["ch11"].weak_type == "beta_neg"
 
-    def test_screen(self):
-        assert not self.rate1.ion_screen
-        assert self.rate4.ion_screen == [Nucleus("he4"), Nucleus("c12")]
-        assert self.rate8.ion_screen == 3*[Nucleus("he4")]
+    def test_screen(self, srates):
+        assert not srates["ch1"].ion_screen
+        assert srates["ch4"].ion_screen == [Nucleus("he4"), Nucleus("c12")]
+        assert srates["ch8"].ion_screen == 3*[Nucleus("he4")]
 
-    def test_heaviest_lightest(self):
-        assert self.rate4.heaviest() == Nucleus("o16")
-        assert self.rate4.lightest() == Nucleus("he4")
-        assert self.rate2.lightest() == Nucleus("n")
-        assert self.rate2.heaviest() == Nucleus("t")
+    def test_heaviest_lightest(self, srates):
+        assert srates["ch4"].heaviest() == Nucleus("o16")
+        assert srates["ch4"].lightest() == Nucleus("he4")
+        assert srates["ch2"].lightest() == Nucleus("n")
+        assert srates["ch2"].heaviest() == Nucleus("t")
 
-    def test_identical_particle_factor(self):
-        assert self.rate8.prefactor == approx(0.16666667)
+    def test_identical_particle_factor(self, srates):
 
-        self.rate8.use_identical_particle_factor = False
-        self.rate8._set_rhs_properties()  # pylint: disable=protected-access
+        # work on a copy so this doesn't persist in the library as a
+        # reference
 
-        assert self.rate8.prefactor == 1.0
+        rr = copy.deepcopy(srates["ch8"])
 
-    def test_stoichiometry(self, reaclib_library):
-        assert repr(self.rate4) == "C12 + He4 ⟶ O16 + 𝛾"
+        assert rr.prefactor == approx(0.16666667)
+
+        rr.use_identical_particle_factor = False
+        rr._set_rhs_properties()  # pylint: disable=protected-access
+
+        assert rr.prefactor == 1.0
+
+    def test_stoichiometry(self, srates, reaclib_library):
+        assert repr(srates["ch4"]) == "C12 + He4 ⟶ O16 + 𝛾"
 
         # create a separate version since rates are mutable
         _c12ag = reaclib_library.get_rate_by_name("c12(a,g)o16")
@@ -421,28 +366,34 @@ class TestDerivedRate:
 
 class TestWeakRates:
     @pytest.fixture(scope="class")
-    def rate1(self):
-        return rates.TabularRate("suzuki-18o-18f_betadecay.dat")
+    @classmethod
+    def rate1(cls):
+        return rates.TabularWeakRate("suzuki-18o-18f_betadecay.dat")
 
     @pytest.fixture(scope="class")
-    def rate2(self):
-        return rates.TabularRate("suzuki-22na-22ne_electroncapture.dat")
+    @classmethod
+    def rate2(cls):
+        return rates.TabularWeakRate("suzuki-22na-22ne_electroncapture.dat")
 
     @pytest.fixture(scope="class")
-    def rate3(self):
-        return rates.TabularRate("langanke-45sc-45ca_electroncapture.dat")
+    @classmethod
+    def rate3(cls):
+        return rates.TabularWeakRate("langanke-45sc-45ca_electroncapture.dat")
 
     @pytest.fixture(scope="class")
-    def rate4(self):
-        return rates.TabularRate("langanke-45ti-45sc_electroncapture.dat")
+    @classmethod
+    def rate4(cls):
+        return rates.TabularWeakRate("langanke-45ti-45sc_electroncapture.dat")
 
     @pytest.fixture(scope="class")
-    def rate5(self):
-        return rates.TabularRate("langanke-45v-45ti_electroncapture.dat")
+    @classmethod
+    def rate5(cls):
+        return rates.TabularWeakRate("langanke-45v-45ti_electroncapture.dat")
 
     @pytest.fixture(scope="class")
-    def rate6(self):
-        return rates.TabularRate("langanke-45ca-45sc_betadecay.dat")
+    @classmethod
+    def rate6(cls):
+        return rates.TabularWeakRate("langanke-45ca-45sc_betadecay.dat")
 
     def test_reactants(self, rate1, rate2, rate3, rate4, rate5, rate6):
 
@@ -483,22 +434,25 @@ class TestWeakRates:
 
 class TestModify:
     @pytest.fixture(scope="function")
-    def rate(self):
-        return rates.load_rate("c12-c12n-mg23-cf88")
+    @classmethod
+    def rate(cls, reaclib_library):
+        return copy.deepcopy(reaclib_library.get_rate_by_name("c12(c12,n)mg23"))
 
     def test_modify(self, rate):
 
-        rate.modify_products("mg24")
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            rate.modify_products("mg24")
 
         assert rate.Q == approx(13.933578000000125)
         assert rate.products == [Nucleus("mg24")]
-        assert rate.modified
 
 
 class TestModifiedRate:
     @pytest.fixture(scope="function")
-    def rate(self):
-        return rates.load_rate("c12-c12n-mg23-cf88")
+    @classmethod
+    def rate(cls, reaclib_library):
+        return copy.deepcopy(reaclib_library.get_rate_by_name("c12(c12,n)mg23"))
 
     def test_eval(self, rate):
 

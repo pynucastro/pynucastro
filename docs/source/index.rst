@@ -31,7 +31,7 @@ and interactively exploring nuclear reaction networks.
 
    sources
    nucleus
-   lodders_composition.ipynb
+   solar_composition.ipynb
 
 .. toctree::
    :maxdepth: 1
@@ -64,6 +64,7 @@ and interactively exploring nuclear reaction networks.
    electron-captures.ipynb
    alternate-rates.ipynb
    inert-nuclei.ipynb
+   documenting-networks.ipynb
 
 .. toctree::
    :maxdepth: 1
@@ -72,6 +73,7 @@ and interactively exploring nuclear reaction networks.
 
    screening-examples
    modify-example.ipynb
+   branched-rates.ipynb
    custom-rates.ipynb
    derived-rates
 
@@ -114,6 +116,7 @@ and interactively exploring nuclear reaction networks.
    :hidden:
 
    neutrino-cooling.ipynb
+   neutrino-cooling-effects.ipynb
 
 .. toctree::
    :maxdepth: 1
@@ -153,6 +156,7 @@ and interactively exploring nuclear reaction networks.
    :hidden:
 
    rates-devel
+   adding-rates
    testing
 
 .. toctree::

@@ -3,8 +3,8 @@ tabulated in terms of electron density and temperature.
 
 """
 
-import math
 import re
+import warnings
 from enum import Enum
 from pathlib import Path
 
@@ -15,7 +15,7 @@ import pynucastro.numba_util as numba
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
 from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import RateFileError, _find_rate_file
-from pynucastro.rates.rate import Rate
+from pynucastro.rates.rate import Rate, need_state
 
 
 class TableIndex(Enum):
@@ -202,7 +202,7 @@ class TableInterpolator:
         return r
 
 
-class TabularRate(Rate):
+class TabularWeakRate(Rate):
     """A rate tabulated in terms of log10(ρ Y_e) and log10(T).
 
     Parameters
@@ -261,7 +261,7 @@ class TabularRate(Rate):
 
         """
 
-        if not isinstance(other, TabularRate):
+        if not isinstance(other, TabularWeakRate):
             return False
 
         return self.reactants == other.reactants and self.products == other.products
@@ -345,19 +345,6 @@ class TabularRate(Rate):
         self.table_num_vars = 6  # Hard-coded number of variables in tables for now.
         self.table_index_name = f'j_{self.reactants[0]}_{self.products[0]}'
 
-    def _set_rhs_properties(self):
-        """Compute statistical prefactor and density exponent from the
-        reactants.
-
-        """
-        self.prefactor = 1.0  # this is 1/2 for rates like a + a (double counting)
-        self.inv_prefactor = 1
-        if self.use_identical_particle_factor:
-            for r in set(self.reactants):
-                self.inv_prefactor = self.inv_prefactor * math.factorial(self.reactants.count(r))
-        self.prefactor = self.prefactor/float(self.inv_prefactor)
-        self.dens_exp = len(self.reactants)-1
-
     def _set_screening(self):
         """Tabular rates are not currently screened (they are
         e-capture or beta-decay)
@@ -383,8 +370,17 @@ class TabularRate(Rate):
 
         fstring += f"    {self.fname}_interpolator = TableInterpolator(*{self.fname}_info)\n"
 
-        fstring += f"    r = {self.fname}_interpolator.interpolate(np.log10(rhoY), np.log10(T), TableIndex.RATE.value)\n"
-        fstring += f"    rate_eval.{self.fname} = 10.0**r\n\n"
+        fstring += "    log_rhoY = np.log10(rhoY)\n"
+        fstring += "    log_T = np.log10(T)\n\n"
+
+        fstring += f"    r = {self.fname}_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)\n"
+        fstring += f"    enu = {self.fname}_interpolator.interpolate(log_rhoY, log_T, TableIndex.NU.value)\n"
+        fstring += f"    egamma = {self.fname}_interpolator.interpolate(log_rhoY, log_T, TableIndex.GAMMA.value)\n\n"
+
+        fstring += f"    rate_eval.{self.fname} = 10.0**r\n"
+        fstring += "    edot_nu = -10.0**enu\n"
+        fstring += "    edot_gamma = 10.0**egamma\n"
+        fstring += f"    rate_eval.enuc_weak += N_A * Y[j{self.reactants[0].raw}] * (edot_nu + edot_gamma)\n\n"
 
         return fstring
 
@@ -421,19 +417,15 @@ class TabularRate(Rate):
                                           TableIndex.RATE.value)
         return log10_r * np.log(10)
 
-    def get_nu_loss(self, T, *, rho=None, comp=None):
+    @need_state
+    def get_nu_loss(self, state):
         """Evaluate the neutrino loss for the rate.
 
         Parameters
         ----------
-        T : float
-            the temperature to evaluate the rate at
-        rho : float
-            the density to evaluate the rate at.
-        comp : float
-            the composition (of type
-            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
-            to evaluate the rate with.
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate neutrino loss. It knows about (rho, T, composition).
 
         Returns
         -------
@@ -441,8 +433,8 @@ class TabularRate(Rate):
 
         """
 
-        rhoY = rho * comp.ye
-        r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
+        rhoY = state.rho * state.ye
+        r = self.interpolator.interpolate(np.log10(rhoY), np.log10(state.T),
                                           TableIndex.NU.value)
         return 10**r
 
@@ -522,3 +514,30 @@ class TabularRate(Rate):
         ax.set_title(fr"{self.pretty_string}" + "\n" + title)
 
         return fig
+
+
+class TabularRate(TabularWeakRate):
+    """A rate tabulated in terms of log10(ρ Y_e) and log10(T).
+
+    .. deprecated:: 3.0
+       ``TabularRate`` has been deprecated.  Use ``TabularWeakRate``
+       instead.  ``TabularRate`` will be removed in version 3.1.
+
+    Parameters
+    ----------
+    rfile : str, pathlib.Path, io.StringIO
+        the file containing the data table
+
+    """
+
+    def __init__(self, *args, **kwargs):
+        warnings.warn(
+            "TabularRate is deprecated; use TabularWeakRate instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        super().__init__(*args, **kwargs)
+
+    # needed because __add__ is abstract in TabularWeakRate
+    def __add__(self, other):
+        raise NotImplementedError("addition not defined for tabular rates")

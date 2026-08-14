@@ -100,7 +100,7 @@ The nuclear data is derived from the Atomic Mass Evaluations
 ---------
 
 :py:mod:`rates <pynucastro.rates>` provides classes and functions for interpreting individual
-reaction rates.  The main core rate classes are:
+reaction rates.  The core rate classes are:
 
 * :py:obj:`Rate <pynucastro.rates.rate.Rate>` : the base class for all rates.
 
@@ -108,14 +108,25 @@ reaction rates.  The main core rate classes are:
   temperature-depended rate from the ReacLib library, including
   methods to visualize and evaluate it.
 
-* :py:obj:`TabularRate <pynucastro.rates.tabular_rate.TabularRate>` :
+* :py:obj:`TabularWeakRate <pynucastro.rates.tabular_rate.TabularWeakRate>` :
   a tabulated (temperature and electron density) weak reaction rate),
   with methods to visualize and evaluate it.
 
 * :py:obj:`TemperatureTabularRate
   <pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate>`
-  : a tabulated temperature dependent rate (T vs. N_A <σv>), with
+  : a tabulated temperature-dependent rate (T vs. N_A <σv>), with
   methods to visualize and evaluate it.
+
+* :py:obj:`StarLibRate <pynucastro.rates.starlib_rate.StarLibRate>` : a
+  tabulated temperature-dependent rate with uncertainties.
+
+* :py:obj:`ModifiedRate <pynucastro.rates.modified_rate.ModifiedRate>` :
+  a container that holds a rate and allows for modifications to the
+  reactants, products, or stoichiometry.
+
+* :py:obj:`BranchedRate <pynucastro.rates.branched_rate.BranchedRate>` :
+  a container that holds an underlying rate and rates that affect the
+  endpoint branching.
 
 * :py:obj:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>` :
   a rate computed via detailed balance from a forward rate.
@@ -123,6 +134,16 @@ reaction rates.  The main core rate classes are:
 * :py:obj:`ApproximateRate <pynucastro.rates.approximate_rates.ApproximateRate>` :
   an approximation to a rate that uses multiple "hidden rates" to
   compute an effective rate.
+
+Some helper functions and special rates are contained in:
+
+* :py:mod:`alternate_rates <pynucastro.rates.alternate_rates>` :
+  Some rates from the literature that are not yet incorporated into
+  one of the main libraries.
+
+* :py:mod:`aprox_family_rates <pynucastro.rates.aprox_family_rates>` :
+  Functions to construct approximate rates that are used in the
+  aprox-family of networks.
 
 For some temperature-dependent rates, we have a class to hold
 temperature factors:
@@ -146,7 +167,10 @@ with some specialized library collections available as:
 * :py:obj:`ReacLibLibrary <pynucastro.rates.library.ReacLibLibrary>` :
   read in the entire collection of ReacLib rates.
 
-* :py:obj:`TabularLibrary <pynucastro.rates.library.TabularLibrary>` :
+* :py:obj:`StarLibLibrary <pynucastro.rates.library.StarLibLibrary>` :
+  read in the entire collection of StarLib rates.
+
+* :py:obj:`TabularWeakLibrary <pynucastro.rates.library.TabularWeakLibrary>` :
   read in all known tabular reaction rates.
 
 ``reduction``
@@ -178,11 +202,12 @@ from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
                                  SympyRates, network_helper)
 from pynucastro.nucdata import (Composition, Nucleus, get_all_nuclei,
                                 get_nuclei_in_range)
-from pynucastro.rates import (ApproximateRate, DerivedRate, FFNLibrary,
-                              LangankeLibrary, Library, ModifiedRate,
-                              OdaLibrary, PruetFullerLibrary, Rate, RateFilter,
-                              ReacLibLibrary, StarLibLibrary, SuzukiLibrary,
-                              TabularLibrary, Tfactors, full_library,
-                              load_rate)
+from pynucastro.rates import (ApproximateRate, BranchedRate, DerivedRate,
+                              FFNLibrary, LangankeLibrary, Library,
+                              ModifiedRate, OdaLibrary, PruetFullerLibrary,
+                              Rate, RateFilter, ReacLibLibrary, StarLibLibrary,
+                              SuzukiLibrary, TabularLibrary,
+                              TabularWeakLibrary, Tfactors, ThermoState,
+                              full_library, load_rate)
 from pynucastro.reduction import drgep, sens_analysis
 from pynucastro.screening import make_plasma_state, make_screen_factors

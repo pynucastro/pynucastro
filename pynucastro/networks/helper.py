@@ -1,7 +1,7 @@
 """Methods to ease the creation of networks."""
 
 from pynucastro.rates import (DerivedRate, ReacLibLibrary, StarLibLibrary,
-                              TabularLibrary)
+                              TabularWeakLibrary)
 
 from .amrexastro_cxx_network import AmrexAstroCxxNetwork
 from .fortran_network import FortranNetwork
@@ -71,9 +71,9 @@ def network_helper(nuclei, *,
 
     if use_tabular_rates:
         if tabular_ordering:
-            tl = TabularLibrary(ordering=tabular_ordering)
+            tl = TabularWeakLibrary(ordering=tabular_ordering)
         else:
-            tl = TabularLibrary()
+            tl = TabularWeakLibrary()
 
         lib += tl.linking_nuclei(nuclei, print_warning=verbose)
 

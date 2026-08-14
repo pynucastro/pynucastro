@@ -8,7 +8,8 @@ import pynucastro as pyna
 
 class TestAmrexAstroCxxNetwork:
     @pytest.fixture(scope="class")
-    def fn(self, reaclib_library):
+    @classmethod
+    def fn(cls, reaclib_library):
 
         mylib = reaclib_library.linking_nuclei(["mg24", "al27", "si28", "p31", "s32", "he4", "p"])
         net = pyna.AmrexAstroCxxNetwork(libraries=[mylib])

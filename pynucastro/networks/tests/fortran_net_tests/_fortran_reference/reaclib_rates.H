@@ -356,6 +356,8 @@ fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
     Real drate_dT;
 
     {
+        // C12_C12_to_He4_Ne20_reaclib
+
         Real log_scor {0.0_rt};
         Real dlog_scor_dT {0.0_rt};
 #ifdef SCREENING
@@ -372,6 +374,8 @@ fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
     }
 
     {
+        // C12_C12_to_n_Mg23_reaclib
+
         Real log_scor {0.0_rt};
         Real dlog_scor_dT {0.0_rt};
 #ifdef SCREENING
@@ -388,6 +392,8 @@ fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
     }
 
     {
+        // C12_C12_to_p_Na23_reaclib
+
         Real log_scor {0.0_rt};
         Real dlog_scor_dT {0.0_rt};
 #ifdef SCREENING
@@ -404,6 +410,8 @@ fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
     }
 
     {
+        // He4_C12_to_O16_reaclib
+
         Real log_scor {0.0_rt};
         Real dlog_scor_dT {0.0_rt};
 #ifdef SCREENING
@@ -420,6 +428,8 @@ fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
     }
 
     {
+        // He4_Ne20_to_Mg24_reaclib
+
         Real log_scor {0.0_rt};
         Real dlog_scor_dT {0.0_rt};
 #ifdef SCREENING
@@ -436,6 +446,8 @@ fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
     }
 
     {
+        // n_Mg23_to_Mg24_reaclib
+
         Real log_scor {0.0_rt};
         Real dlog_scor_dT {0.0_rt};
         rate_n_Mg23_to_Mg24_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
@@ -446,6 +458,8 @@ fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
     }
 
     {
+        // n_to_p_reaclib
+
         Real log_scor {0.0_rt};
         Real dlog_scor_dT {0.0_rt};
         rate_n_to_p_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);

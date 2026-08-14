@@ -7,13 +7,15 @@ import pynucastro as pyna
 
 class TestRateCollectionJacobian:
     @pytest.fixture(scope="class")
-    def rc(self, reaclib_library):
+    @classmethod
+    def rc(cls, reaclib_library):
         mylib = reaclib_library.linking_nuclei(["he4", "c12", "o16", "ne20"],
                                                with_reverse=False)
         return pyna.RateCollection(libraries=[mylib])
 
     @pytest.fixture(scope="class")
-    def comp(self, rc):
+    @classmethod
+    def comp(cls, rc):
         _comp = pyna.Composition(rc.unique_nuclei)
         _comp.set_solar_like()
         return _comp
@@ -23,7 +25,8 @@ class TestRateCollectionJacobian:
         T = 5.e8
         ymolar = comp.get_molar()
 
-        jac = rc.evaluate_jacobian(rho, T, comp)
+        state = pyna.ThermoState(rho=rho, T=T, comp=comp)
+        jac = rc.evaluate_jacobian(state)
 
         # let's look now at jac(0, 0), which should be dYdot(He4)/dY(He4)
         #               and jac(1, 1), which should be dYdot(C12)/dY(C12)

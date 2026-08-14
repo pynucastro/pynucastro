@@ -36,7 +36,7 @@ The main classes are:
     This is a rate in the StarLib, with median rate and uncertainty
     tabulated in terms of temperature.
 
-  * :py:obj:`TabularRate <pynucastro.rates.tabular_rate.TabularRate>`:
+  * :py:obj:`TabularWeakRate <pynucastro.rates.tabular_rate.TabularWeakRate>`:
     This is a rate that is tabulated in terms of :math:`(T, \rho
     Y_e)`.  This is how the weak rates (electron captures and
     beta-decays) are stored.  Interpolation is used to find the rate
@@ -98,7 +98,7 @@ The main classes are:
     entire StarLib reaction rate library, which provides uncertainties
     on rates.
 
-  * :py:obj:`TabularLibrary <pynucastro.rates.library.TabularLibrary>`: A
+  * :py:obj:`TabularWeakLibrary <pynucastro.rates.library.TabularWeakLibrary>`: A
     `Library` providing tabulated weak rate coverage of nuclei.
 
   additionally, the helper function, :func:`full_library
@@ -163,19 +163,21 @@ There are two modes of usage for pynucastro.
 
 * You can use pynucastro to write the righthand side routine for the
   system of ODEs that must be integrated to evolve a reaction network.
-  A reaction network takes the form:
+  A reaction network (considering binary reactions) takes the form:
 
   .. math::
 
-     \frac{dY_i}{dt} = - \sum_{j,k} Y_i Y_j \lambda_{i(j,k)l} + \sum_{j,k} Y_l Y_k \lambda_{l(k,j)i}
+     \frac{dY_i}{dt} = - \sum_{j,k} \rho Y_i Y_j \lambda_{i(j,k)l} + \sum_{j,k} \rho Y_l Y_k \lambda_{l(k,j)i}
 
   where the :math:`\lambda`'s are the rates of destruction and creation
   of species i, represented by the molar fraction :math:`Y_i` (see,
-  e.g., :cite:t:`timmes:1999`).  pynucastro
-  will create the righthand sides of this system of ODEs (as python or
-  C++ code) from the list of rates you provide. One can use this to
-  add reaction networks to existing simulation codes, for example, the
-  `MAESTROeX <https://amrex-astro.github.io/MAESTROeX/>`_ and `Castro
-  <https://amrex-astro.github.io/Castro/>`_ codes.
+  e.g., :cite:t:`timmes:1999`).  For strong-force-mediated rates,
+  $\lambda = N_A \langle \sigma v \rangle$.
+
+  pynucastro will create the righthand sides of this system of ODEs
+  (as python or C++ code) from the list of rates you provide. One can
+  use this to add reaction networks to existing simulation codes, for
+  example, the `MAESTROeX <https://amrex-astro.github.io/MAESTROeX/>`_
+  and `Castro <https://amrex-astro.github.io/Castro/>`_ codes.
 
 

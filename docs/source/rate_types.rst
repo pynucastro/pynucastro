@@ -260,7 +260,7 @@ Tabulated Weak Rates
 For electron captures and beta-decays (which are of the form
 :math:`\rm{A \rightarrow B}`), we use tabulated rates.  These are
 two-dimensional tables, in terms of :math:`T` and :math:`\rho Y_e`,
-and managed by the :func:`TabularRate <pynucastro.rates.tabular_rate.TabularRate>` class.
+and managed by the :func:`TabularWeakRate <pynucastro.rates.tabular_rate.TabularWeakRate>` class.
 
 .. note::
 
@@ -272,7 +272,7 @@ A tabular rate is described by a single file for each reaction
 (i.e., beta-decays and electron-captures are in separate files).
 
 The data reading and interpolation are managed by the
-:py:obj:`TabularRate <pynucastro.rates.tabular_rate.TabularRate>`
+:py:obj:`TabularWeakRate <pynucastro.rates.tabular_rate.TabularWeakRate>`
 class.
 
 ydot term
@@ -292,8 +292,8 @@ Table format
 
 Each rate table has a header (with lines starting with ``!``), followed
 by the data.  An example can be seen as:
-`suzuki-23na-23ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/library/tabular/suzuki/suzuki-23na-23ne_electroncapture.dat>`_ in
-``pynucastro/library/tabular/suzuki``
+`suzuki-23na-23ne_electroncapture.dat <https://github.com/pynucastro/pynucastro/blob/main/pynucastro/data/tabular/suzuki/suzuki-23na-23ne_electroncapture.dat>`_ in
+``pynucastro/data/tabular/suzuki``
 
 .. important::
 
@@ -342,10 +342,10 @@ given ``rhoY`` we loop over all of the temperatures).
 Rate evaluation functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Analogous to ``ReacLibRate``, ``TabularRate`` provides functions to
+Analogous to ``ReacLibRate``, ``TabularWeakRate`` provides functions to
 evaluate the rate and output the python code.  The function
 :func:`function_string_py
-<pynucastro.rates.tabular_rate.TabularRate.function_string_py>`
+<pynucastro.rates.tabular_rate.TabularWeakRate.function_string_py>`
 outputs the python code for managing the interpolation of the data.
 For C++ networks, this interpolation is handled directly by the network class.
 

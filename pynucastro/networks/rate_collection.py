@@ -5,10 +5,9 @@ rates that together make up a network.
 
 import collections
 import copy
-import functools
 import math
 import warnings
-from operator import mul
+from itertools import groupby
 from pathlib import Path
 
 import matplotlib as mpl
@@ -25,11 +24,13 @@ from scipy.linalg import eigvals
 # Import Rate
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates import (ApproximateRate, DerivedRate, Library,
-                              ModifiedRate, Rate, RateFileError, RatePair,
-                              ReacLibRate, StarLibRate, TabularRate,
-                              TemperatureTabularRate, find_duplicate_rates,
-                              is_allowed_dupe, load_rate, make_CO_approx_rates)
+from pynucastro.rates import (ApproximateRate, BranchedRate, DerivedRate,
+                              Library, ModifiedRate, Rate, RateFileError,
+                              RatePair, ReacLibRate, StarLibRate,
+                              TabularWeakRate, TemperatureTabularRate,
+                              ThermoState, find_duplicate_rates,
+                              is_allowed_dupe, load_rate, make_CO_approx_rates,
+                              need_state)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_id
 
 mpl.rcParams['figure.dpi'] = 100
@@ -174,11 +175,10 @@ class RateCollection:
 
     def _classify_hidden_rate(self, cr):
 
-        # Check whether this child rate is removed or not.
-        # "removed" means that this rate is never used on
-        # its own to connect two nuclei in the network it
-        # is only used in one or more ApproximateRate or
-        # ModifiedRate
+        # Check whether this child rate is removed or not.  "removed"
+        # means that this rate is never used on its own to connect two
+        # nuclei in the network it is only used in one or more
+        # ApproximateRate, BranchedRate, or ModifiedRate
         if cr not in self.rates:
             cr.removed = True
         else:
@@ -193,6 +193,9 @@ class RateCollection:
         elif isinstance(cr, ModifiedRate):
             if cr not in self.modified_rates:
                 self.modified_rates.append(cr)
+        elif isinstance(cr, BranchedRate):
+            if cr not in self.branched_rates:
+                self.branched_rates.append(cr)
         elif isinstance(cr, StarLibRate):
             if cr not in self.starlib_rates:
                 self.starlib_rates.append(cr)
@@ -260,7 +263,7 @@ class RateCollection:
         # targets of a pointer array.  It is desired to avoid wasting
         # array size storing meaningless Tabular coefficient pointers.
         self.rates = sorted(self.rates,
-                            key=lambda r: isinstance(r, TabularRate))
+                            key=lambda r: isinstance(r, TabularWeakRate))
 
         self.tabular_rates = []
         self.temperature_tabular_rates = []
@@ -270,22 +273,27 @@ class RateCollection:
         self.approx_rates = []
         self.derived_rates = []
         self.modified_rates = []
+        self.branched_rates = []
 
         for r in self.rates:
             if isinstance(r, ApproximateRate):
                 self.approx_rates.append(r)
                 for cr in r.get_child_rates():
-                    assert not isinstance(cr, TabularRate)
+                    assert not isinstance(cr, TabularWeakRate)
                     self._classify_hidden_rate(cr)
-
             elif isinstance(r, ModifiedRate):
                 if r not in self.modified_rates:
                     self.modified_rates.append(r)
-
-                cr = r.original_rate
-                self._classify_hidden_rate(cr)
-
-            elif isinstance(r, TabularRate):
+                    cr = r.original_rate
+                    self._classify_hidden_rate(cr)
+            elif isinstance(r, BranchedRate):
+                if r not in self.branched_rates:
+                    self.branched_rates.append(r)
+                for br in r.get_child_rates():
+                    # TabularWeakRate is not tested with BranchedRate
+                    assert not isinstance(br, TabularWeakRate)
+                    self._classify_hidden_rate(br)
+            elif isinstance(r, TabularWeakRate):
                 self.tabular_rates.append(r)
             elif isinstance(r, StarLibRate):
                 self.starlib_rates.append(r)
@@ -313,7 +321,8 @@ class RateCollection:
         self.all_rates = (self.reaclib_rates + self.custom_rates +
                           self.tabular_rates + self.starlib_rates +
                           self.temperature_tabular_rates + self.approx_rates +
-                          self.modified_rates + self.derived_rates)
+                          self.modified_rates + self.branched_rates +
+                          self.derived_rates)
 
         # finally check for duplicate rates -- these are not
         # allowed
@@ -490,6 +499,10 @@ class RateCollection:
             elif isinstance(r, ModifiedRate):
                 if r.original_rate.removed:
                     hidden_rates.append(r.original_rate)
+            elif isinstance(r, BranchedRate):
+                for br in r.get_child_rates():
+                    if br.removed:
+                        hidden_rates.append(br)
         return set(hidden_rates)
 
     def get_rate(self, fname):
@@ -701,6 +714,29 @@ class RateCollection:
 
         self._build_collection()
 
+    def resample(self, seed=None):
+        """Resample starlib rates
+
+        Parameters
+        ----------
+        seed: int
+            Seed for resampling. If no seed is provided then
+            an arbitrary seed is used.
+        """
+
+        if seed is None:
+            #arbitrarily chosen upper limit for np.random
+            #since it requires one.
+            seed = np.random.randint(10e5)
+        rng = np.random.default_rng(seed=seed)
+        for rate in self.starlib_rates:
+            rate.sample_rates(rng=rng)
+
+    def unsample(self):
+        """Restore starlib rates to median values."""
+        for rate in self.starlib_rates:
+            rate.sample_rates()
+
     def make_ap_pg_approx(self, intermediate_nuclei=None):
         """Combine the rates A(a,g)B and A(a,p)X(p,g)B (and the
         reverse) into a single effective approximate rate.  The new
@@ -858,11 +894,9 @@ class RateCollection:
             rates = {"A(n,g)X": rf1, "X(n,g)B": rf2,
                      "B(g,n)X": rr1, "X(g,n)A": rr2}
 
-            ar = ApproximateRate(rates, approx_type="nn_g",
-                                 use_identical_particle_factor=False)
+            ar = ApproximateRate(rates, approx_type="nn_g")
 
-            ar_reverse = ApproximateRate(rates, is_reverse=True, approx_type="nn_g",
-                                         use_identical_particle_factor=False)
+            ar_reverse = ApproximateRate(rates, is_reverse=True, approx_type="nn_g")
 
             nuclei_approximated_out.append(inter_nuc)
             if self.verbose:
@@ -1097,10 +1131,13 @@ class RateCollection:
         print(f"  weak tabular rates: {len(self.tabular_rates)}")
         print(f"  approximate rates: {len(self.approx_rates)}")
         print(f"  derived rates: {len(self.derived_rates)}")
+        print(f"  branched rates: {len(self.branched_rates)}")
         print(f"  modified rates: {len(self.modified_rates)}")
         print(f"  custom rates: {len(self.custom_rates)}")
 
-    def evaluate_rates(self, rho, T, composition, screen_func=None):
+    @need_state
+    def evaluate_rates(self, state, *,
+                       screen_func=None):
         """Evaluate the rates for a specific density, temperature, and
         composition, with optional screening.  Note: this returns that
         rate as dY/dt, where Y is the molar fraction.  For a 2 body
@@ -1116,12 +1153,9 @@ class RateCollection:
 
         Parameters
         ----------
-        rho : float
-            density used to evaluate rates
-        T : float
-            temperature used to evaluate rates
-        composition : Composition
-            composition used to evaluate rates
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate rates. It knows about (rho, T, composition).
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
@@ -1134,33 +1168,26 @@ class RateCollection:
         """
 
         rvals = {}
-        ys = composition.get_molar()
-        y_e = composition.ye
+        ys = state.get_molar()
+        y_e = state.ye
 
         for r in self.rates:
-            # Note screening effect is already included
-            val = r.prefactor * rho**r.dens_exp * r.eval(T, rho=rho, comp=composition,
-                                                         screen_func=screen_func)
-            if (r.weak_type == 'electron_capture' and not isinstance(r, TabularRate)):
-                val = val * y_e
-            yfac = functools.reduce(mul, [ys[q] for q in r.reactants])
-            rvals[r] = yfac * val
+            rvals[r] = r.eval_full_rate(state, screen_func=screen_func,
+                                        y_molar=ys, y_e=y_e)
 
         return rvals
 
-    def evaluate_jacobian(self, rho, T, comp, *,
+    @need_state
+    def evaluate_jacobian(self, state, *,
                           screen_func=None, exclude_rates=None):
         """Return an array of the form J_ij = dYdot_i/dY_j for the
         network
 
         Parameters
         ----------
-        rho : float
-            density used to evaluate Jacobian terms
-        T : float
-            temperature used to evaluate Jacobian terms
-        comp : Composition
-            composition used to evaluate Jacobian terms
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate Jacobian terms. It knows about (rho, T, composition).
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
@@ -1196,7 +1223,7 @@ class RateCollection:
 
                     # Note eval_jacobian_term already includes screening
                     jac[i, j] -= c * \
-                        r.eval_jacobian_term(T, rho, comp, n_j,
+                        r.eval_jacobian_term(state, n_j,
                                              screen_func=screen_func)
 
                 for r in self.nuclei_produced[n_i]:
@@ -1206,24 +1233,22 @@ class RateCollection:
                     # how many of n_i are produced by this reaction
                     c = r.product_count(n_i)
                     jac[i, j] += c * \
-                        r.eval_jacobian_term(T, rho, comp, n_j,
+                        r.eval_jacobian_term(state, n_j,
                                              screen_func=screen_func)
 
         return jac
 
-    def spectral_radius(self, rho, T, comp, *,
+    @need_state
+    def spectral_radius(self, state, *,
                         screen_func=None, exclude_rates=None):
         """Compute the spectral radius of the Jacobian---this is the
         max{abs(e_i)}, where e_i are the eigenvalues of the Jacobian.
 
         Parameters
         ----------
-        rho : float
-            density used to evaluate Jacobian terms
-        T : float
-            temperature used to evaluate Jacobian terms
-        comp : Composition
-            composition used to evaluate Jacobian terms
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate Jacobian terms. It knows about (rho, T, composition).
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
@@ -1242,13 +1267,14 @@ class RateCollection:
         with warnings.catch_warnings():
             # don't display partition function warnings
             warnings.simplefilter("ignore", UserWarning)
-            J = self.evaluate_jacobian(rho, T, comp,
+            J = self.evaluate_jacobian(state,
                                        screen_func=screen_func,
                                        exclude_rates=exclude_rates)
         e = eigvals(J)
         return np.max(np.abs(e))
 
-    def find_stiffest_rate(self, rho, T, comp, *,
+    @need_state
+    def find_stiffest_rate(self, state, *,
                         screen_func=None):
         """Iterate through rates and compute the spectral radius for the
         network excluding the rate to determine which rate is most responsible
@@ -1256,12 +1282,9 @@ class RateCollection:
 
         Parameters
         ----------
-        rho : float
-            density used to evaluate Jacobian terms
-        T : float
-            temperature used to evaluate Jacobian terms
-        comp : Composition
-            composition used to evaluate Jacobian terms
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate Jacobian terms. It knows about (rho, T, composition).
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
@@ -1274,23 +1297,33 @@ class RateCollection:
         """
 
         stiff_rate = None
-        spectral_radius = self.spectral_radius(rho, T, comp, screen_func=screen_func)
+        spectral_radius = self.spectral_radius(state, screen_func=screen_func)
 
         for r in self.rates:
-            _sprad = self.spectral_radius(rho, T, comp, screen_func=screen_func, exclude_rates=[r])
+            _sprad = self.spectral_radius(state, screen_func=screen_func, exclude_rates=[r])
             if _sprad < spectral_radius:
                 stiff_rate = r
                 spectral_radius = _sprad
 
         return stiff_rate
 
-    def validate(self, other_library, *, forward_only=True):
+    def validate(self, other_library, *,
+                 forward_only=True, return_dict=False, skip_duplicates=True):
         """Perform various checks on the library, comparing to
         ``other_library``, to ensure that we are not missing important
-        rates.  The idea is that the current library should be a
-        reduced library (perhaps the result of filtering) and then we
-        want to compare to the larger ``other_library`` to see if we
-        missed something important.
+        rates.  The idea is that the current network represents a
+        reduced set of rates (perhaps the result of filtering) and
+        then we want to compare to the larger ``other_library`` to see
+        if we missed something important.
+
+        Currently we check:
+
+        * If there are any additional rates in ``other_library`` that
+          have the same reactants as rates we already carry.
+
+        * If we are missing any p, n, or α-captures on the nuclei in
+          our network (only checked if p, n or α already exist in the
+          network).
 
         Parameters
         ----------
@@ -1298,12 +1331,21 @@ class RateCollection:
             the library to compare to
         forward_only : bool
             do we only check the forward rates?
+        return_dict : bool
+            do we return a dictionary of the rates that are missing?
+            if so, we suppress their output to stdout and include the
+            reason as the dictionary value.
+        skip_duplicates : bool
+            if a rate in `other_library` represents the same process
+            as one already in the network, don't consider it missing
 
         Returns
         -------
-        bool
+        bool, dict(Rate)
 
         """
+
+        missing_rates = {}
 
         current_rates = sorted(self.get_rates())
 
@@ -1330,7 +1372,8 @@ class RateCollection:
                     msg = f"validation: {p} produced in {rate} never consumed."
                     print(msg)
 
-        # now check if we are missing any rates from other_library with the exact same reactants
+        # now check if we are missing any rates from other_library
+        # with the exact same reactants
 
         other_by_reactants = collections.defaultdict(list)
         for rate in sorted(other_library.get_rates()):
@@ -1343,14 +1386,50 @@ class RateCollection:
             key = tuple(sorted(rate.reactants))
             for other_rate in other_by_reactants[key]:
                 # check to see if other_rate is already in current_rates
+                # start by assuming we already have other_rate
                 found = True
                 if other_rate not in current_rates:
                     found = False
 
+                # now check to see if perhaps it is a duplicate of
+                # something we already have
+                if skip_duplicates:
+                    if len(find_duplicate_rates([other_rate] + self.get_rates())) > 0:
+                        found = True
+
                 if not found:
                     msg = f"validation: missing {other_rate} as alternative to {rate} (Q = {other_rate.Q} MeV)."
-                    print(msg)
+                    if return_dict:
+                        missing_rates[other_rate] = msg
+                    else:
+                        print(msg)
 
+        # next loop over the nuclei in our network and check if we are missing
+        # any alpha, p, or n captures
+        net_has_n = bool(Nucleus("n") in self.unique_nuclei)
+        net_has_p = bool(Nucleus("p") in self.unique_nuclei)
+        net_has_alpha = bool(Nucleus("he4") in self.unique_nuclei)
+        for nuc in self.unique_nuclei:
+            if net_has_n:
+                key = tuple(sorted([Nucleus("n"), nuc]))
+                for rate in other_by_reactants[key]:
+                    if rate not in current_rates and rate not in missing_rates:
+                        missing_rates[rate] = "neutron capture"
+
+            if net_has_p:
+                key = tuple(sorted([Nucleus("p"), nuc]))
+                for rate in other_by_reactants[key]:
+                    if rate not in current_rates and rate not in missing_rates:
+                        missing_rates[rate] = "proton capture"
+
+            if net_has_alpha:
+                key = tuple(sorted([Nucleus("he4"), nuc]))
+                for rate in other_by_reactants[key]:
+                    if rate not in current_rates and rate not in missing_rates:
+                        missing_rates[rate] = "alpha capture"
+
+        if return_dict:
+            return passed_validation, missing_rates
         return passed_validation
 
     def find_duplicate_links(self):
@@ -1392,8 +1471,7 @@ class RateCollection:
         Parameters
         ----------
         states : list, tuple
-             A tuple of the form (density, temperature, composition),
-             where composition is a Composition object
+             A list or tuple of ThermoState objects.
         cutoff_ratio : float
              The ratio of a rate to the fastest rate, below which we
              consider this rate to be unimportant.
@@ -1408,26 +1486,24 @@ class RateCollection:
 
         """
         largest_ratio = {r: 0 for r in self.rates}
-        for rho, T, comp in states:
-            rvals = self.evaluate_rates(rho, T, comp, screen_func)
+        for state in states:
+            rvals = self.evaluate_rates(state, screen_func=screen_func)
             fastest = max(rvals.values())
             for r, value in rvals.items():
                 largest_ratio[r] = max(largest_ratio[r], value / fastest)
         return {r: ratio for r, ratio in largest_ratio.items() if ratio < cutoff_ratio}
 
-    def evaluate_ydots(self, rho, T, composition,
+    @need_state
+    def evaluate_ydots(self, state, *,
                        screen_func=None, rate_filter=None):
         """Evaluate net rate of change of molar abundance for each
         nucleus for a specific density, temperature, and composition
 
         Parameters
         ----------
-        rho : float
-            density used to evaluate rates
-        T : float
-            temperature used to evaluate rates
-        composition : Composition
-            composition used to evaluate rates
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate ydots. It knows about (rho, T, composition).
         screen_func : Callable
             a function from :py:mod:`pynucastro.screening` used to compute the
             screening enhancement for the rates.
@@ -1441,7 +1517,7 @@ class RateCollection:
 
         """
 
-        rvals = self.evaluate_rates(rho, T, composition, screen_func)
+        rvals = self.evaluate_rates(state, screen_func=screen_func)
         ydots = {}
 
         for nuc in self.unique_nuclei:
@@ -1467,19 +1543,17 @@ class RateCollection:
 
         return ydots
 
-    def evaluate_energy_generation(self, rho, T, composition,
+    @need_state
+    def evaluate_energy_generation(self, state, *,
                                    screen_func=None, return_enu=False):
         """Evaluate the specific energy generation rate of the network for a specific
         density, temperature and composition
 
         Parameters
         ----------
-        rho : float
-            density to evaluate the rates with
-        T : float
-            temperature to evaluate the rates with
-        composition : Composition
-            composition to evaluate the rates with
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate rates. It knows about (rho, T, composition).
         screen_func : Callable
             a function from :py:mod:`pynucastro.screening` to
             call to compute the screening factor
@@ -1496,7 +1570,7 @@ class RateCollection:
 
         """
 
-        ydots = self.evaluate_ydots(rho, T, composition, screen_func)
+        ydots = self.evaluate_ydots(state, screen_func=screen_func)
         enuc = 0.
 
         # compute constants and units
@@ -1511,32 +1585,30 @@ class RateCollection:
         # subtract neutrino losses for tabular weak reactions
         enu = 0.0
         for r in self.rates:
-            if isinstance(r, TabularRate):
+            if isinstance(r, TabularWeakRate):
                 # get composition
-                ys = composition.get_molar()
+                ys = state.get_molar()
 
                 # need to get reactant nucleus
                 nuc = r.reactants[0]
-                enu += constants.N_A * ys[nuc] * r.get_nu_loss(T, rho=rho, comp=composition)
+                enu += constants.N_A * ys[nuc] * r.get_nu_loss(state)
 
         enuc -= enu
         if return_enu:
             return enuc, enu
         return enuc
 
-    def evaluate_activity(self, rho, T, composition, screen_func=None):
+    @need_state
+    def evaluate_activity(self, state, *, screen_func=None):
         """Compute the activity for each nucleus--the sum of
         abs(creation rate) + abs(destruction rate), i.e., this neglects the
         sign of the terms.
 
         Parameters
         ----------
-        rho : float
-            density used to evaluate rates
-        T : float
-            temperature used to evaluate rates
-        composition : Composition
-            composition used to evaluate rates
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate rates. It knows about (rho, T, composition).
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
@@ -1548,7 +1620,7 @@ class RateCollection:
 
         """
 
-        rvals = self.evaluate_rates(rho, T, composition, screen_func)
+        rvals = self.evaluate_rates(state, screen_func=screen_func)
         act = {}
 
         for nuc in self.unique_nuclei:
@@ -1567,13 +1639,24 @@ class RateCollection:
 
         return act
 
-    def _get_network_chart(self, rho, T, composition):
+    @need_state
+    def _get_network_chart(self, state):
         """Create a dict, keyed by rate that holds a list of tuples
         (Nucleus, ydot)
 
+        Parameter
+        ---------
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate Jacobian terms. It knows about (rho, T, composition).
+
+        Returns
+        -------
+        Dict
+
         """
 
-        rvals = self.evaluate_rates(rho, T, composition)
+        rvals = self.evaluate_rates(state)
 
         nc = {}
 
@@ -1628,8 +1711,14 @@ class RateCollection:
                 ostr += f"     {rp}\n"
         return ostr
 
-    def get_nuclei_latex_string(self):
+    def get_nuclei_latex_string(self, combine=True):
         """Return a string listing the nuclei in latex format
+
+        Parameters
+        ----------
+        combine : bool
+            Do we combine all isotopes of the same element together
+            into a single quantity (e.g. ¹²⁻¹⁴C)?
 
         Returns
         -------
@@ -1638,10 +1727,42 @@ class RateCollection:
         """
 
         ostr = ""
-        for i, n in enumerate(self.unique_nuclei):
-            ostr += f"${n.pretty}$"
-            if i != len(self.unique_nuclei)-1:
-                ostr += ", "
+
+        if combine:
+
+            # make a dict keyed by element that gives the mass numbers
+            nuc_combined = {}
+            for n in self.unique_nuclei:
+                if n.el in nuc_combined:
+                    nuc_combined[n.el].append(n.A)
+                else:
+                    nuc_combined[n.el] = [n.A]
+
+            # now combine them into contiguous sequences
+            nuc_list = {}
+            for el, As in nuc_combined.items():
+                ranges = []
+                for _, g in groupby(enumerate(As), lambda x: x[1] - x[0]):
+                    group = [v for _, v in g]
+                    if len(group) == 1:
+                        ranges.append(f"{group[0]}")
+                    else:
+                        ranges.append(rf"{group[0]}\mbox{{-}}{group[-1]}")
+
+                nuc_list[el] = ranges
+
+            for i, (el, As) in enumerate(nuc_list.items()):
+                A_str = ",".join(As)
+                ostr += rf"${{}}^{{{A_str}}}\mathrm{{{el.capitalize()}}}$"
+                if i != len(nuc_list)-1:
+                    ostr += ", "
+        else:
+
+            for i, n in enumerate(self.unique_nuclei):
+                ostr += f"${n.pretty}$"
+                if i != len(self.unique_nuclei)-1:
+                    ostr += ", "
+
         return ostr
 
     def get_rates_latex_table_string(self):
@@ -1658,9 +1779,9 @@ class RateCollection:
         ostr = ""
         for rp in sorted(self.get_rate_pairs()):
             if rp.forward:
-                ostr += f"{rp.forward.pretty_string:38} & \n"
+                ostr += f"{rp.forward.pretty_string:38} &"
             else:
-                ostr += f"{' ':38} \n &"
+                ostr += f"{' ':38}  &"
 
             if rp.reverse:
                 ostr += rf"  {rp.reverse.pretty_string:38} \\"
@@ -1965,11 +2086,11 @@ class RateCollection:
              node_color="#444444", node_shape="o",
              color_nodes_by_abundance=False, node_abundance_cutoff=1.e-10,
              nuclei_custom_labels=None,
-             curved_edges=False,
+             curved_edges=False, curved_edge_radius=0.2,
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False,
              hide_xp=True, hide_xalpha=True,
-             edge_labels=None,
+             edge_labels=None, edge_label_size=12,
              highlight_filter_function=None,
              nucleus_filter_function=None, rate_filter_function=None,
              legend_coord=None, plot_to_cbar_ratio=20,
@@ -2035,6 +2156,10 @@ class RateCollection:
             the lower cutoff value used for coloring nodes by abundance.
         curved_edges : bool
             do we use arcs to connect the nodes?
+        curved_edge_radius : float
+            amount of curvature when drawing the edges with
+            ``curved_edges=True``.  This is used by the
+            matplotlib ``connectionstyle``.
         N_range : Iterable
             range of neutron number to zoom in on
         Z_range : Iterable
@@ -2058,6 +2183,8 @@ class RateCollection:
             a dictionary of the form {(n1, n2): "label"}
             that gives labels for the edges in the network connecting
             nucleus n1 to n2.
+        edge_label_size : float
+            size of the font used to write the edge labels.
         highlight_filter_function : Callable
             a function that takes a ``Rate`` object and returns True or
             False if we want to highlight the rate edge.
@@ -2147,7 +2274,7 @@ class RateCollection:
             else:
                 # show hidden nuclei only if they react with themselves
                 for r in self.rates:
-                    if not isinstance(r, (ApproximateRate, ModifiedRate)) and r.reactant_count(n) > 1:
+                    if not isinstance(r, (ApproximateRate, BranchedRate, ModifiedRate)) and r.reactant_count(n) > 1:
                         node_nuclei.append(n)
                         colors.append(get_node_color(n))
                         break
@@ -2172,7 +2299,8 @@ class RateCollection:
         # get the rates for each reaction
 
         if rho is not None and T is not None and comp is not None:
-            rate_ydots = self.evaluate_rates(rho, T, comp,
+            state = ThermoState(rho=rho, T=T, comp=comp)
+            rate_ydots = self.evaluate_rates(state,
                                              screen_func=screen_func)
         else:
             rate_ydots = None
@@ -2220,7 +2348,7 @@ class RateCollection:
         # draw the edges -- we'll do this in several groups
 
         if curved_edges:
-            connectionstyle = "arc3, rad = 0.2"
+            connectionstyle = f"arc3, rad = {curved_edge_radius}"
             sort_reverse = False
         else:
             connectionstyle = "arc3"
@@ -2306,7 +2434,7 @@ class RateCollection:
         if edge_labels:
             nx.draw_networkx_edge_labels(G, G.position,
                                          connectionstyle=connectionstyle,
-                                         font_size=node_font_size,
+                                         font_size=edge_label_size,
                                          edge_labels=edge_labels)
 
         # colorbars
@@ -2366,13 +2494,17 @@ class RateCollection:
         ax.xaxis.set_ticks_position('bottom')
         ax.yaxis.set_ticks_position('left')
 
-        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True, min_n_ticks=1))
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True, min_n_ticks=1))
 
         if not rotated:
             if Z_range is not None and N_range is not None:
                 ax.set_xlim(N_range[0], N_range[1])
                 ax.set_ylim(Z_range[0], Z_range[1])
+                ax.set_aspect("equal")
+            else:
+                ax.set_aspect("equal", "datalim")
+
         else:
             if Z_range is not None:
                 ax.set_xlim(Z_range[0], Z_range[1])
@@ -2383,9 +2515,6 @@ class RateCollection:
             ZA = np.array([n.A - 2 * n.Z for n in node_nuclei])
             if ZA.min() == ZA.max():
                 ax.set_ylim(ZA.min() - 0.5, ZA.min() + 0.5)
-
-        if not rotated:
-            ax.set_aspect("equal", "datalim")
 
         # add a legend showing the direction that each type of capture
         # moves you in the plane
@@ -2417,7 +2546,8 @@ class RateCollection:
 
         return fig
 
-    def plot_jacobian(self, rho, T, comp, *,
+    @need_state
+    def plot_jacobian(self, state, *,
                       outfile=None, screen_func=None,
                       rate_scaling=1.e10,
                       size=(800, 800), dpi=100):
@@ -2425,12 +2555,9 @@ class RateCollection:
 
         Parameters
         ----------
-        rho : float
-            density used to evaluate terms
-        T : float
-            temperature used to evaluate terms
-        comp : Composition
-            composition used to evaluate terms
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate Jacobian terms. It knows about (rho, T, composition).
         outfile : str
             output file for plot (extension is used to specify file type)
         screen_func : Callable
@@ -2451,7 +2578,7 @@ class RateCollection:
 
         """
 
-        jac = self.evaluate_jacobian(rho, T, comp, screen_func=screen_func)
+        jac = self.evaluate_jacobian(state, screen_func=screen_func)
 
         valid_max = np.abs(jac).max()
 
@@ -2486,7 +2613,8 @@ class RateCollection:
 
         return fig
 
-    def plot_network_chart(self, rho=None, T=None, comp=None, *,
+    @need_state
+    def plot_network_chart(self, state, *,
                            outfile=None,
                            size=(800, 800), dpi=100,
                            force_one_column=False,
@@ -2497,12 +2625,9 @@ class RateCollection:
 
         Parameters
         ----------
-        rho : float
-            density used to evaluate rates
-        T : float
-            temperature used to evaluate rates
-        comp : Composition
-            composition used to evaluate rates
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate rates. It knows about (rho, T, composition).
         outfile : str
             filename to output image
         size : Iterable(int)
@@ -2522,7 +2647,7 @@ class RateCollection:
 
         """
 
-        nc = self._get_network_chart(rho, T, comp)
+        nc = self._get_network_chart(state)
 
         # find the limits
         _ydot = []
@@ -2767,32 +2892,29 @@ class RateCollection:
             raise ValueError(f"Invalid color field: '{color_field}'")
 
         if comp is None:
-
             values = np.zeros(len(nuclei))
 
         elif color_field == "x":
-
             values = np.array([comp[nuc] for nuc in nuclei])
 
         elif color_field == "y":
-
             ys = comp.get_molar()
             values = np.array([ys[nuc] for nuc in nuclei])
 
         elif color_field in {"ydot", "xdot"}:
-
             if rho is None or T is None:
                 raise ValueError("Need both rho and T to evaluate rates!")
-            ydots = self.evaluate_ydots(rho, T, comp)
+            state = ThermoState(rho=rho, T=T, comp=comp)
+            ydots = self.evaluate_ydots(state)
             values = np.array([ydots[nuc] for nuc in nuclei])
             if color_field == "xdot":
                 values *= As
 
         elif color_field == "activity":
-
             if rho is None or T is None:
                 raise ValueError("Need both rho and T to evaluate rates!")
-            act = self.evaluate_activity(rho, T, comp)
+            state = ThermoState(rho=rho, T=T, comp=comp)
+            act = self.evaluate_activity(state)
             values = np.array([act[nuc] for nuc in nuclei])
 
         if scale == "log":

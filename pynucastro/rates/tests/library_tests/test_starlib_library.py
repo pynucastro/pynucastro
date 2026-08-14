@@ -6,16 +6,19 @@ import pynucastro as pyna
 
 class TestStarLibLibrary:
     @pytest.fixture(scope="class")
-    def sl_median(self, starlib_library):
+    @classmethod
+    def sl_median(cls, starlib_library):
         return starlib_library
 
     @pytest.fixture(scope="class")
-    def median_eval_1GK(self, sl_median):
+    @classmethod
+    def median_eval_1GK(cls, sl_median):
         T = 1.0e9
         return np.array([r.eval(T) for r in sl_median.get_rates()])
 
     @pytest.fixture(scope="class")
-    def sl_sampled(self):
+    @classmethod
+    def sl_sampled(cls):
         # use arbitrary yet fixed seed
         return pyna.StarLibLibrary(seed=142)
 

@@ -1,5 +1,171 @@
 # Changelog
 
+## 3.0.0
+
+  * `AmrexAstroCxxNetwork` :
+
+    * add `#define STARLIB` (#1428)
+    * fix datatype for `rate_pair_data` (#1411)
+
+  * `ApproximateRate` :
+
+    * remove use of `identical_particle_factor` for double-n capture
+      (#1421)
+
+  * `PythonNetwork` / `RateCollection` :
+
+    * fix check on `ModifiedRate.original_rate` (#1449)
+    * add customization to `plot_evolution` (#1439)
+    * update `get_nuclei_latex_string` to group nuclei (#1417)
+    * add `curved_edge_radius` option to `plot` (#1413)
+    * fix `Z_range` / `N_range` for `rotated=True` (#1412)
+    * add weak-rate energy contributions to integration (#1440)
+    * add edge label size separate from node font size (#1455)
+    * remove the `Rate.modified` attribute (#1447)
+
+  * `NSENetwork` :
+
+    * use runtime tol for checking residual (#1420)
+
+  * general rate changes:
+
+    * add `ThermoState` class (#1436)
+    * add deprecation warning for `Rate.modify_products` (#1434)
+    * rename `TabularRate` -> `TabularWeakRate` (#1431)
+    * remove individual ReacLib rate files (#1432)
+    * rename `library/` to `data/` (#1430)
+    * extend `eliminate_duplicate_rates()` to deal with ReacLib
+      duplicates (#1426)
+    * add more rates to `full_library` (#1423)
+    * added `BranchedRate` (#1448)
+
+  * nuclei / screening / partition functions:
+
+    * simplify the screening pair check on `ApproximateRate` (#1451)
+    * rename `LoddersComposition` -> `SolarComposition` (#1416)
+
+  * git / project infrastructure:
+
+    * modernize github actions (#1441)
+    * bump `setup-python` from 6 to 7 (#1425)
+
+  * documentation:
+
+    * clean-up Sphinx `conf.py` and update dependencies (#1442)
+    * fix a broken link (#1443)
+    * add `ModifiedRate` and `StarLibLibrary` to main pynucastro
+      docstring (#1438)
+    * fix the sensitivity example (#1437)
+    * add missing density weighting to intro docs dYdt (#1424)
+    * fix navbar issue in `pydata-sphinx-theme` (#1427)
+
+  * neutrino cooling:
+
+    * add label to colorbar in neutrino cooling plot (#1422)
+
+  * helper functionality:
+
+    * update the MESA interfaces to be a class and better parse
+      composition (#1418)
+
+## 2.12.0
+
+  * `AmrexAstroCxxNetwork` :
+
+    * Scope screening into its own block (#1390)
+    * Generalize `get_ydot_weak` to all weak rates (#1388)
+    * ROCm/HIP does not like managed inline data (#1387)
+    * Fix undefined behavior in interpolating right on the upper
+      boundary of data (#1382)
+
+  * `SimpleCxxNetwork` / `FortranNetwork` / `BaseCxxNetwork` :
+
+    * Add helper functions to `fill_rates` and
+      `compute_screening_factors` (#1386)
+
+  * `PythonNetwork` / `RateCollection` :
+
+    * integration now supports self-heating (#1378) including with
+      thermal neutrino loses (#1402)
+    * fix broadcast in `NetworkSolution` (#1392, #1399)
+    * allow resampling of StarLib rates within the network (#1393)
+    * allow `integrate_network` to take a `Composition` object (#1398)
+
+  * `Library` :
+
+     * update `eliminate_duplicates` to support `StarLibRate` (#1401)
+
+  * general rate changes:
+
+    * we now use PCHIP interpolation + linear extrapolation for
+      StarLib rates (#1391)
+    * Remove placeholder rate data for StarLib (#1384)
+
+  * nuclei / screening / partition functions:
+
+    * `Composition` with `init="solar"` now uses the Lodders solar
+       composition.  Also added `init="lightest"` (#1409)
+
+  * git / project infrastructure:
+
+    * update to checkout 7 (#1404)
+
+  * documentation:
+
+    * fix spelling (#1400)
+
+  * testing:
+
+    * make pytest fixtures as `@classmethod` for pytest 9.1.0
+      compatibility (#1397)
+
+  * helper functionality:
+
+    * update `yt_utils` to recognize neutrons (#1403)
+
+## 2.11.0
+
+  * `PythonNetwork` / `RateCollection` :
+
+    * assign colors better in `plot_evolution` (#1355, #1379)
+    * rename `isNSECompatible` -> `is_NSE_compatible` (#1357)
+    * change default for `hide_xp` and `hide_xalpha` (#1361)
+    * add a method `find_stiffest_rate` (#1363)
+    * `RateCollection.validate` now returns a dict of missing rates +
+      includes some additional checks (#1366)
+    * enforce integer tick values for `RateCollection.plot` (#1383)
+
+  * general rate changes:
+
+    * fix rate plot to use LaTeX for <> (#1365)
+    * move the full rate evaluation into `Rate` (#1367)
+    * reorganize `_set_rhs_properties` (#1368)
+    * clean up the deBoer rate class (#1371)
+    * update `DerivedRate` to work with C++ `StarLibRate` (#1381)
+
+  * nuclei / screening / partition functions:
+
+    * `Composition` : add `get_array` and `get_molar_array` methods
+      (#1354)
+
+  * documentation:
+
+    * update the StarLib example to use the new integration (#1359)
+    * fix typos (#1362)
+    * update the double-n capture docs to use the new integration
+      (#1364)
+    * update the comparing networks test docs (#1372)
+    * add some missing modules to the rate module docstring (#1373)
+    * add documentation on adding new rates from papers (#1374)
+    * fix API doc rendering (#1375)
+    * use `get_molar_array` for `Y0` when integrating (#1377)
+
+  * helper functionality:
+
+    * `network_helper` : if `verbose=False`, then suppress linking nuclei
+      warnings (#1358)
+    * add `main_library` to `network_helper` (#1360)
+
 ## 2.10.0
 
   * `AmrexAstroCxxNetwork` :

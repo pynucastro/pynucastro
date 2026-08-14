@@ -86,7 +86,8 @@ validation: missing Co55 + p ⟶ n + Ni55 as alternative to Co55 + p ⟶ Ni56 + 
 class TestValidate:
 
     @pytest.fixture(scope="class")
-    def reduced_library(self, reaclib_library):
+    @classmethod
+    def reduced_library(cls, reaclib_library):
         all_reactants = ["n", "p",
                          "he4", "c12", "o16", "ne20", "mg24", "si28", "s32",
                          "ar36", "ca40", "ti44", "cr48", "fe52", "ni56",

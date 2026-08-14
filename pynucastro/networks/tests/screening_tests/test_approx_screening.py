@@ -8,12 +8,14 @@ from pynucastro.screening import get_screening_pair_set
 
 class TestApproxScreening:
     @pytest.fixture(scope="class")
-    def mynet(self, reaclib_library):
+    @classmethod
+    def mynet(cls, reaclib_library):
         return reaclib_library.linking_nuclei(["p", "he4", "mg24",
                                                "al27", "si28", "p31", "s32"])
 
     @pytest.fixture(scope="class")
-    def pynet(self, mynet):
+    @classmethod
+    def pynet(cls, mynet):
         pynet = pyna.PythonNetwork(libraries=[mynet])
         pynet.make_ap_pg_approx()
         pynet.remove_nuclei(["al27", "p31"])

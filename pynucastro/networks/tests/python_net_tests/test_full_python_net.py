@@ -10,7 +10,8 @@ from pynucastro import networks
 
 class TestFullPythonNetwork:
     @pytest.fixture(scope="class")
-    def fn(self, reaclib_library, suzuki_library):
+    @classmethod
+    def fn(cls, reaclib_library, suzuki_library):
         rate_names = ["c12(c12,a)ne20",
                       "c12(c12,n)mg23",
                       "c12(c12,p)na23",
@@ -67,3 +68,8 @@ class TestFullPythonNetwork:
                                    4.712856e-06])
 
         assert_allclose(ydot, ydot_benchmark, rtol=1.e-6)
+
+        rate_eval = net.do_rate_eval(0.0, Y, rho, T, None)
+        ydot_with_enuc = net.ydot_eq(Y, rho, rate_eval)
+        assert_allclose(ydot_with_enuc, ydot, rtol=1.e-6)
+        assert net.energy_release(ydot_with_enuc) + rate_eval.enuc_weak < net.energy_release(ydot_with_enuc)

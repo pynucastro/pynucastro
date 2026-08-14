@@ -13,7 +13,8 @@ from pynucastro.screening import get_screening_pair_set
 
 class Test3alphaScreening:
     @pytest.fixture(scope="class")
-    def net(self):
+    @classmethod
+    def net(cls):
         return pyna.network_helper(["n", "p", "he4", "be9", "b11", "c12"])
 
     def test_ion_screen(self, net):

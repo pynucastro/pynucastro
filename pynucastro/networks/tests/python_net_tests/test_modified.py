@@ -4,6 +4,7 @@
 # that these give the same values for the rates.
 
 import copy
+import warnings
 
 import numpy as np
 import pytest
@@ -14,7 +15,8 @@ import pynucastro as pyna
 
 class TestModifiedRate:
     @pytest.fixture(scope="class")
-    def original_net(self, reaclib_library):
+    @classmethod
+    def original_net(cls, reaclib_library):
         # create a network and use the rate .modify_products()
         # to change the endpoints
 
@@ -24,13 +26,16 @@ class TestModifiedRate:
 
         _c12c12_other = reaclib_library.get_rate_by_name("c12(c12,n)mg23")
         c12c12_other = copy.deepcopy(_c12c12_other)
-        c12c12_other.modify_products(["mg24"])
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            c12c12_other.modify_products(["mg24"])
         lib.add_rate(c12c12_other)
 
         return pyna.PythonNetwork(libraries=[lib])
 
     @pytest.fixture(scope="class")
-    def new_net(self, reaclib_library):
+    @classmethod
+    def new_net(cls, reaclib_library):
         # create a network that uses a ModifiedRate
 
         lib = reaclib_library.linking_nuclei(["he4", "c12", "o16",
@@ -64,11 +69,10 @@ class TestModifiedRate:
         comp = pyna.Composition(original_net.unique_nuclei)
         comp.set_equal()
 
-        rho = 1.e8
-        T = 2.e9
+        state = pyna.ThermoState(rho=1e8, T=2e9, comp=comp)
 
-        onet_eval = original_net.evaluate_rates(rho=rho, T=T, composition=comp)
-        nnet_eval = new_net.evaluate_rates(rho=rho, T=T, composition=comp)
+        onet_eval = original_net.evaluate_rates(state)
+        nnet_eval = new_net.evaluate_rates(state)
 
         for key in onet_eval:
             assert onet_eval[key] == nnet_eval[key]
@@ -82,11 +86,10 @@ class TestModifiedRate:
         comp = pyna.Composition(original_net.unique_nuclei)
         comp.set_equal()
 
-        rho = 1.e8
-        T = 2.e9
+        state = pyna.ThermoState(rho=1e8, T=2e9, comp=comp)
 
-        onet_ydot = original_net.evaluate_ydots(rho=rho, T=T, composition=comp)
-        nnet_ydot = new_net.evaluate_ydots(rho=rho, T=T, composition=comp)
+        onet_ydot = original_net.evaluate_ydots(state)
+        nnet_ydot = new_net.evaluate_ydots(state)
 
         for key in onet_ydot:
             assert onet_ydot[key] == nnet_ydot[key]
@@ -109,7 +112,8 @@ class TestModifiedRate:
 
         module_ydots = mn.rhs(0.0, Y, rho, T)
 
-        net_ydots = new_net.evaluate_ydots(rho=rho, T=T, composition=comp)
+        state = pyna.ThermoState(rho=rho, T=T, comp=comp)
+        net_ydots = new_net.evaluate_ydots(state)
 
         for n, k in enumerate(net_ydots):
             assert net_ydots[k] == approx(module_ydots[n], rel=1.e-11, abs=1.e-14)

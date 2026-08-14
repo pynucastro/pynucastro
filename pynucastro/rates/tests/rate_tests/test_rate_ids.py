@@ -12,7 +12,8 @@ from pynucastro.rates.known_duplicates import ALLOWED_DUPLICATES
 
 class TestRateIds:
     @pytest.fixture(scope="class")
-    def approx_rate(self, reaclib_library):
+    @classmethod
+    def approx_rate(cls, reaclib_library):
         mylib = reaclib_library.linking_nuclei(["mg24", "al27", "si28",
                                                 "p31", "s32", "he4", "p"])
         pynet = pyna.PythonNetwork(libraries=[mylib], verbose=True)

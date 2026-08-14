@@ -22,7 +22,7 @@ namespace part_fun {
 
     // this is T9
 
-    inline AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1-1> temp_array_1 = {
+    inline AMREX_GPU_DEVICE amrex::Array1D<amrex::Real, 0, npts_1-1> temp_array_1 = {
         0.01, 0.15, 0.2, 0.3, 0.4,
         0.5, 0.6, 0.7, 0.8, 0.9,
         1.0, 1.5, 2.0, 2.5, 3.0,
@@ -45,7 +45,7 @@ namespace part_fun {
 
     // this is log(partition function)
 
-    inline AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1-1> Fe52_pf_array = {
+    inline AMREX_GPU_DEVICE amrex::Array1D<amrex::Real, 0, npts_1-1> Fe52_pf_array = {
         0.0, 0.0, 0.0, 0.0, 0.0,
         0.0, 0.0, 3.999991999914312e-06, 2.1999758003515767e-05, 8.699621571943491e-05,
         0.00026096594542543384, 0.006963697081509575, 0.035510955889664755, 0.09259923578662213, 0.17220724583011637,
@@ -69,7 +69,7 @@ namespace part_fun {
 
     // this is log(partition function)
 
-    inline AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1-1> Co55_pf_array = {
+    inline AMREX_GPU_DEVICE amrex::Array1D<amrex::Real, 0, npts_1-1> Co55_pf_array = {
         0.0, 0.0, 0.0, 0.0, 0.0,
         0.0, 0.0, 0.0, 0.0, 0.0,
         0.0, 0.0, 1.9999980000601777e-06, 3.299945551192844e-05, 0.0002149768908123338,
@@ -93,7 +93,7 @@ namespace part_fun {
 
     // this is log(partition function)
 
-    inline AMREX_GPU_MANAGED amrex::Array1D<amrex::Real, 0, npts_1-1> Ni56_pf_array = {
+    inline AMREX_GPU_DEVICE amrex::Array1D<amrex::Real, 0, npts_1-1> Ni56_pf_array = {
         0.0, 0.0, 0.0, 0.0, 0.0,
         0.0, 0.0, 0.0, 0.0, 0.0,
         0.0, 0.0, 9.999994999180668e-07, 1.7999838002017484e-05, 0.00014798904908051437,
@@ -117,7 +117,7 @@ namespace part_fun {
     // interpolation routine
 
     template <typename T>
-    AMREX_GPU_HOST_DEVICE AMREX_INLINE
+    AMREX_GPU_DEVICE AMREX_INLINE
     void interpolate_pf(const amrex::Real t9, int idx,
                         const T& temp_array, const T& pf_array,
                         amrex::Real& logpf, amrex::Real& dlogpf_dT9) {
@@ -163,7 +163,7 @@ namespace part_fun {
         amrex::Array2D<amrex::Real, 1, NumSpecTotal, 1, 2, amrex::Order::C> data;
         int index_temp_array_1{-1};
 
-        AMREX_GPU_HOST_DEVICE AMREX_INLINE
+        AMREX_GPU_DEVICE AMREX_INLINE
         pf_cache_t() {
             // The entries will be default-initialized to -900,
             // log(partition_function) should never be -900.
@@ -179,7 +179,7 @@ namespace part_fun {
 // get the partition function for nucleus inuc.  Here pf_cache
 // should already contain the index into the temp / pf arrays
 
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void get_partition_function(const int inuc,
                             [[maybe_unused]] const amrex::Real T9,
                             const part_fun::pf_cache_t& pf_cache,
@@ -225,7 +225,7 @@ void get_partition_function(const int inuc,
 // index into the arrays. Uses tfactors instead of T9 as argument,
 // and returns pf and dpf_dT instead of logpf and dlogpf_dT9
 
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void get_partition_function(const int inuc,
                             [[maybe_unused]] const tf_t& tfactors,
                             amrex::Real& pf, amrex::Real& dpf_dT) {
@@ -245,7 +245,7 @@ void get_partition_function(const int inuc,
 }
 
 
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void get_partition_function_cached(const int inuc, const amrex::Real T9,
                                    part_fun::pf_cache_t& pf_cache,
                                    amrex::Real& logpf, amrex::Real& dlogpf_dT9) {
@@ -263,7 +263,7 @@ void get_partition_function_cached(const int inuc, const amrex::Real T9,
 
 
 template <int spec>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 constexpr amrex::Real get_spin_state() {
 
     static_assert(spec >= 1 && spec <= NumSpec);
@@ -296,7 +296,7 @@ constexpr amrex::Real get_spin_state() {
 
 // Legacy (non-templated) interface
 
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 amrex::Real get_spin_state (int spec) {
 
     amrex::Real s = -1.0_rt;

@@ -12,7 +12,7 @@ from pytest import approx
 from pynucastro.networks.network_compare import NetworkCompare
 from pynucastro.networks.python_network import PythonNetwork
 from pynucastro.rates.derived_rate import DerivedRate
-from pynucastro.rates.library import Library, TabularLibrary
+from pynucastro.rates.library import Library, TabularWeakLibrary
 from pynucastro.rates.modified_rate import ModifiedRate
 
 
@@ -24,7 +24,8 @@ class TestNetworkCompare:
 
     # pylint: disable=duplicate-code
     @pytest.fixture(scope="class")
-    def lib(self, reaclib_library):
+    @classmethod
+    def lib(cls, reaclib_library):
         all_reactants = ["p",
                          "he4", "c12", "o16", "ne20", "mg24", "si28", "s32",
                          "ar36", "ca40", "ti44", "cr48", "fe52", "ni56",
@@ -70,7 +71,7 @@ class TestNetworkCompare:
                      "ni56", "ni57", "ni58"]
         lib += reaclib_library.linking_nuclei(iron_peak,
                                               print_warning=False)
-        weak_lib = TabularLibrary(ordering=["ffn", "langanke", "oda"])
+        weak_lib = TabularWeakLibrary(ordering=["ffn", "langanke", "oda"])
         iron_weak_lib = weak_lib.linking_nuclei(set(iron_peak + all_reactants),
                                                 print_warning=False)
         lib += iron_weak_lib
@@ -108,7 +109,8 @@ class TestNetworkCompare:
         return Library(rates=net.get_rates())
 
     @pytest.fixture(scope="class")
-    def nc(self, lib):
+    @classmethod
+    def nc(cls, lib):
         cxx_test_path = Path("_test_compare_bignet_cxx/")
         amrex_test_path = Path("_test_compare_bignet_amrex/")
 
@@ -121,7 +123,8 @@ class TestNetworkCompare:
         return nc
 
     @pytest.fixture(scope="class")
-    def eval_cond(self, nc):
+    @classmethod
+    def eval_cond(cls, nc):
         # thermodynamic conditions
         rho = 2.e8
         T = 1.e9
@@ -134,7 +137,8 @@ class TestNetworkCompare:
         return nc
 
     @pytest.fixture(scope="class")
-    def eval_cond2(self, nc):
+    @classmethod
+    def eval_cond2(cls, nc):
         # thermodynamic conditions
         rho = 2.e7
         T = 4.e9

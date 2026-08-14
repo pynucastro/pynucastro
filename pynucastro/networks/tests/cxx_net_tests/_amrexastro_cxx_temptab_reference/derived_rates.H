@@ -10,7 +10,7 @@
 using namespace Rates;
 
 template <int do_T_derivatives, typename T>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void rate_F17_to_O16_p_derived(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT, [[maybe_unused]] const T& rate_eval, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
 
     // F17 --> O16 + p
@@ -39,7 +39,7 @@ void rate_F17_to_O16_p_derived(const tf_t& tfactors, const amrex::Real log_scor,
     amrex::Real net_log_pf = O16_log_pf + p_log_pf - F17_log_pf;
     [[maybe_unused]] amrex::Real net_dlog_pf_dT9 = dO16_log_pf_dT9 + dp_log_pf_dT9 - dF17_log_pf_dT9;
 
-    auto [_rate, _drate_dT] = interp_net::cubic_interp_uneven<do_T_derivatives>(
+    auto [_rate, _drate_dT] = interp_net::monotone_1d_interp<do_T_derivatives>(
                                                tfactors.lnT9,
                                                O16_p_to_F17_iliadis_data::log_t9,
                                                O16_p_to_F17_iliadis_data::log_rate);
@@ -81,6 +81,8 @@ fill_derived_rates(const tf_t& tfactors, T& rate_eval)
     pf_cache.index_temp_array_1 = interp_net::find_index(tfactors.T9, part_fun::temp_array_1);
 
     {
+        // F17_to_O16_p_derived
+
         amrex::Real log_scor {0.0_rt};
         amrex::Real dlog_scor_dT {0.0_rt};
         rate_F17_to_O16_p_derived<do_T_derivatives, T>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT, rate_eval, pf_cache);

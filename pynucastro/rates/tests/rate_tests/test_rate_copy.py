@@ -9,11 +9,13 @@ from pynucastro.nucdata import Nucleus
 
 class TestRateCopy:
     @pytest.fixture(scope="class")
-    def rl_rate(self, reaclib_library):
+    @classmethod
+    def rl_rate(cls, reaclib_library):
         return reaclib_library.get_rate_by_name("c12(a,g)o16")
 
     @pytest.fixture(scope="class")
-    def tl_rate(self, tabular_library):
+    @classmethod
+    def tl_rate(cls, tabular_library):
         return tabular_library.get_rate_by_name("ni56(,)co56")
 
     def test_copy_rl(self, rl_rate):

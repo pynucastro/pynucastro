@@ -3,10 +3,11 @@ import pytest
 import pynucastro as pyna
 
 
-class TestTabularLibrary:
+class TestTabularWeakLibrary:
     @pytest.fixture(scope="class")
-    def tl_default(self):
-        return pyna.TabularLibrary()
+    @classmethod
+    def tl_default(cls):
+        return pyna.TabularWeakLibrary()
 
     def test_number_of_rates(self, tl_default):
         assert tl_default.num_rates == 739
@@ -33,7 +34,7 @@ class TestTabularLibrary:
 
     def test_ordering(self):
 
-        tl_new = pyna.TabularLibrary(ordering=["suzuki", "oda", "langanke", "ffn"])
+        tl_new = pyna.TabularWeakLibrary(ordering=["suzuki", "oda", "langanke", "ffn"])
 
         assert tl_new.num_rates == 458
 
