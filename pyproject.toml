@@ -155,6 +155,9 @@ line-length = 132
 exclude = [
   "docs/",
   "examples/",
+  "pynucastro/data/",
+  "pynucastro/eos/degenerate_derivatives.ipynb",
+  "pynucastro/eos/degeneracy-parameter-bounds.ipynb",
   "pynucastro/networks/tests/python_net_tests/_python_reference/",
   "pynucastro/nucdata/AtomicMassEvaluation/",
 ]
@@ -169,6 +172,7 @@ ignore = [
   "PLR0915",  # too-many-statements
   "RUF001",  # ambiguous-unicode-character-string
   "RUF002",  # ambiguous-unicode-character-docstring
+  "RUF003",  # ambiguous-unicode-character-comment
   "RUF005",  # Consider {expr} instead of concatenation
   "RUF012",  # Mutable class attributes should be annotated with `typing.ClassVar`
   "RUF013",  # PEP 484 prohibits implicit `Optional`
