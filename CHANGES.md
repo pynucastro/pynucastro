@@ -1,5 +1,73 @@
 # Changelog
 
+## 3.0
+
+  * `AmrexAstroCxxNetwork` :
+
+    * add `#define STARLIB` (#1428)
+    * fix datatype for `rate_pair_data` (#1411)
+
+  * `ApproximateRate` :
+
+    * remove use of `identical_particle_factor` for double-n capture
+      (#1421)
+
+  * `PythonNetwork` / `RateCollection` :
+
+    * fix check on `ModifiedRate.original_rate` (#1449)
+    * add customization to `plot_evolution` (#1439)
+    * update `get_nuclei_latex_string` to group nuclei (#1417)
+    * add `curved_edge_radius` option to `plot` (#1413)
+    * fix `Z_range` / `N_range` for `rotated=True` (#1412)
+    * add weak-rate energy contributions to integration (#1440)
+    * add edge label size separate from node font size (#1455)
+    * remove the `Rate.modified` attribute (#1447)
+
+  * `NSENetwork` :
+
+    * use runtime tol for checking residual (#1420)
+
+  * general rate changes:
+
+    * add `ThermoState` class (#1436)
+    * add deprecation warning for `Rate.modify_products` (#1434)
+    * rename `TabularRate` -> `TabularWeakRate` (#1431)
+    * remove individual ReacLib rate files (#1432)
+    * rename `library/` to `data/` (#1430)
+    * extend `eliminate_duplicate_rates()` to deal with ReacLib
+      duplicates (#1426)
+    * add more rates to `full_library` (#1423)
+    * added `BranchedRate` (#1448)
+
+  * nuclei / screening / partition functions:
+
+    * simplify the screening pair check on `ApproximateRate` (#1451)
+    * rename `LoddersComposition` -> `SolarComposition` (#1416)
+
+  * git / project infrastructure:
+
+    * modernize github actions (#1441)
+    * bump `setup-python` from 6 to 7 (#1425)
+
+  * documentation:
+
+    * clean-up Sphinx `conf.py` and update dependencies (#1442)
+    * fix a broken link (#1443)
+    * add `ModifiedRate` and `StarLibLibrary` to main pynucastro
+      docstring (#1438)
+    * fix the sensitivity example (#1437)
+    * add missing density weighting to intro docs dYdt (#1424)
+    * fix navbar issue in `pydata-sphinx-theme` (#1427)
+
+  * neutrino cooling:
+
+    * add label to colorbar in neutrino cooling plot (#1422)
+
+  * helper functionality:
+
+    * update the MESA interfaces to be a class and better parse
+      composition (#1418)
+
 ## 2.12.0
 
   * `AmrexAstroCxxNetwork` :
