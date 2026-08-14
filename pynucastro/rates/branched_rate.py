@@ -190,6 +190,17 @@ class BranchedRate(Rate):
 
         return f * r0
 
+    def get_child_rates(self):
+        """Return a list of all of the rates that are used in this
+        approximation.
+
+        Returns
+        -------
+        list(Rate)
+
+        """
+        return [self.underlying_rate, self.primary_branch, self.other_branch]
+
     def function_string_py(self):
         """Return a string containing the python function that
         computes the rate -- in this case it is the underlying rate

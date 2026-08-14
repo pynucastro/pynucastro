@@ -516,9 +516,22 @@ class BaseCxxNetwork(ABC, RateCollection):
         # since we don't expect derived rate to be a weak rate.  Also
         # handle tabular weak rates separately
         weak_rates = [r for r in self.reaclib_rates + self.modified_rates +
-                      self.branched_rates + self.starlib_rates +
+                      self.starlib_rates +
                       self.temperature_tabular_rates
                       if r.weak]
+
+        # BranchedRate rates don't evaluate their underlying rates
+        # directly (and the interface doesn't need screening or
+        # templates parameters).  This means we need to first evaluate
+        # all of the rates the BranchedRate depends on (whether or not
+        # they are weak, since the final rate is a weak rate)
+        weak_branched_rates = [r for r in self.branched_rates
+                               if r.weak]
+
+        weak_branched_rates_children = [cr for br in self.branched_rates
+                                        for cr in br.get_child_rates()]
+
+        weak_rates += weak_branched_rates_children
 
         # Compute necessary screening term.
         # This is really only possible for weak ModifiedRates and BranchedRates
@@ -536,11 +549,19 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         # Call different rate functions to evaluate the rates.
         if len(weak_rates) > 0:
+
             args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
             template_args = ["do_T_derivatives"]
             of.write(f'{self.indent*n_indent}const tf_t tfactors = evaluate_tfactors(state.T);\n\n')
             self._fill_rates(n_indent, of, weak_rates,
                              args, template_args, do_T_derivatives=False)
+
+        if len(weak_branched_rates) > 0:
+            args = ["rate_eval", "rate", "drate_dT"]
+            template_args = None
+            self._fill_rates(n_indent, of, weak_branched_rates,
+                             args, template_args, do_T_derivatives=False, do_screening=False,
+                             namespace="branched_rates")
 
         # Now do tabular weak rates explicitly
         # And get neutrino loss terms from tabular weak rates
@@ -673,7 +694,9 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write("#endif\n")
 
     def _fill_rates(self, n_indent, of, rates,
-                    args, template_args, do_T_derivatives=True):
+                    args, template_args,
+                    do_T_derivatives=True, do_screening=True,
+                    namespace=None):
         """Fill in the rates by calling the appropriate rate functions
         given a list of rates.
 
@@ -682,11 +705,15 @@ class BaseCxxNetwork(ABC, RateCollection):
         for r in rates:
             of.write(f"{self.indent*n_indent}" + "{\n")
             of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n\n")
-            self.write_screen_var(n_indent+1, of, r, do_T_derivatives=do_T_derivatives)
+            if do_screening:
+                self.write_screen_var(n_indent+1, of, r, do_T_derivatives=do_T_derivatives)
+            prefix = "rate_"
+            if namespace:
+                prefix = f"{namespace}::" + prefix
             if template_args:
-                of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}<{', '.join(template_args)}>({', '.join(args)});\n")
+                of.write(f"{self.indent*(n_indent+1)}{prefix}{r.fname}<{', '.join(template_args)}>({', '.join(args)});\n")
             else:
-                of.write(f"{self.indent*(n_indent+1)}rate_{r.fname}({', '.join(args)});\n")
+                of.write(f"{self.indent*(n_indent+1)}{prefix}{r.fname}({', '.join(args)});\n")
             of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
 
             if do_T_derivatives:
@@ -724,7 +751,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         args = ["rate_eval", "rate", "drate_dT"]
         template_args = None
         self._fill_rates(n_indent, of, self.branched_rates,
-                         args, template_args)
+                         args, template_args, do_screening=False)
 
     def _fill_derived_rates(self, n_indent, of):
         if self.derived_rates:
