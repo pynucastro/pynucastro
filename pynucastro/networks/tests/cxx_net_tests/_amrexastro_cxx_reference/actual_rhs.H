@@ -198,7 +198,7 @@ void get_ydot_weak(const burn_t& state,
 
         amrex::Real log_scor {0.0_rt};
         amrex::Real dlog_scor_dT {0.0_rt};
-        rate_n_to_p_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+        reaclib_rates::rate_n_to_p_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
         rate_eval.screened_rates(k_n_to_p_reaclib) = rate;
     }
 
