@@ -645,9 +645,10 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(indented_fstr)
 
     def _derived_rate_functions(self, n_indent, of):
-        assert n_indent == 0, "function definitions must be at top level"
         for r in self.derived_rates:
-            of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
+            fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
+            indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
+            of.write(indented_fstr)
 
     def _rate_struct(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"
