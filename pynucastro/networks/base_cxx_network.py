@@ -377,8 +377,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             idnt = self.indent*n_indent
 
-            of.write(f'{idnt}{self.dtype} log_temp = std::log10(temp);\n')
-            of.write(f'{idnt}{self.dtype} log_rhoy = std::log10(rhoy);\n\n')
+            of.write(f'{idnt}const {self.dtype} log_temp = std::log10(temp);\n')
+            of.write(f'{idnt}const {self.dtype} log_rhoy = std::log10(rhoy);\n\n')
 
             for r in self.tabular_rates:
 
