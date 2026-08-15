@@ -3,6 +3,8 @@
 
 #include <AMReX.H>
 
+#include <table_rates.H>
+
 namespace tabular_weak_rates {
 
     using namespace Rates;

@@ -20,7 +20,6 @@
 #include <approximate_rates.H>
 #include <modified_rates.H>
 #include <branched_rates.H>
-#include <table_rates.H>
 #include <temperature_table_rates.H>
 #include <tabular_weak_rates.H>
 #include <derived_rates.H>
