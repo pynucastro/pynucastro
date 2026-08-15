@@ -191,6 +191,7 @@ void get_ydot_weak(const burn_t& state,
 
     // Compute all weak rates and get ydot_weak
 
+    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
 
     ydot_nuc(H1) = 0.0_rt;
 

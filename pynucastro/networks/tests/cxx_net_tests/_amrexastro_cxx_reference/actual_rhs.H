@@ -202,19 +202,7 @@ void get_ydot_weak(const burn_t& state,
         rate_eval.screened_rates(k_n_to_p_reaclib) = rate;
     }
 
-    amrex::Real log_temp = std::log10(state.T);
-    amrex::Real log_rhoy = std::log10(rhoy);
-
-    tabular_evaluate(j_Na23_Ne23_meta, j_Na23_Ne23_rhoy, j_Na23_Ne23_temp, j_Na23_Ne23_data,
-                     log_rhoy, log_temp, state.T, rate, drate_dT, edot_nu, edot_gamma);
-    rate_eval.screened_rates(k_Na23_to_Ne23_weaktab) = rate;
-    rate_eval.enuc_weak += C::n_A * Y(Na23) * (edot_nu + edot_gamma);
-
-    tabular_evaluate(j_Ne23_Na23_meta, j_Ne23_Na23_rhoy, j_Ne23_Na23_temp, j_Ne23_Na23_data,
-                     log_rhoy, log_temp, state.T, rate, drate_dT, edot_nu, edot_gamma);
-    rate_eval.screened_rates(k_Ne23_to_Na23_weaktab) = rate;
-    rate_eval.enuc_weak += C::n_A * Y(Ne23) * (edot_nu + edot_gamma);
-
+    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
 
     const auto& screened_rates = rate_eval.screened_rates;
 

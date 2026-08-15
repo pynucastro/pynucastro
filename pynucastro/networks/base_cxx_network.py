@@ -564,17 +564,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                              namespace="branched_rates")
 
         # Now do tabular weak rates explicitly
-        # And get neutrino loss terms from tabular weak rates
-        if len(self.tabular_rates) > 0:
-            of.write(f'{self.indent*n_indent}{self.dtype} log_temp = std::log10(state.T);\n')
-            of.write(f'{self.indent*n_indent}{self.dtype} log_rhoy = std::log10(rhoy);\n\n')
-
-            for r in self.tabular_rates:
-                of.write(f'{self.indent*n_indent}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
-                of.write(f'{self.indent*n_indent}                 log_rhoy, log_temp, state.T, rate, drate_dT, edot_nu, edot_gamma);\n')
-                of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n')
-                of.write(f'{self.indent*n_indent}rate_eval.enuc_weak += C::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
-                of.write('\n')
+        of.write(f"{self.indent*n_indent}tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);\n")
         of.write('\n')
 
         # Compose and write ydot for all weak reactions
