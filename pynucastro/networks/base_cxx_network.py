@@ -23,7 +23,6 @@ from pynucastro.rates.tabular_rate import TableIndex
 from pynucastro.screening import get_screening_pair_set
 from pynucastro.utils import pynucastro_version
 
-
 # dict to convert rate type to the C++ namespace
 namespaces = {"ModifiedRate": "modified_rates",
               "ReacLibRate": "reaclib_rates",
