@@ -119,7 +119,7 @@ void evaluate_rates(const burn_t& state,
 
     // here Y is consistent with state.xn
 
-    [[maybe_unused]] amrex::Real rhoy = state.rho * state.y_e;
+    [[maybe_unused]] const amrex::Real rhoy = state.rho * state.y_e;
 
     const tf_t tfactors = evaluate_tfactors(state.T);
 

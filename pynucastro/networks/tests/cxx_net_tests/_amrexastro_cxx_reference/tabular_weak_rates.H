@@ -26,8 +26,8 @@ namespace tabular_weak_rates {
 
         rate_eval.enuc_weak = 0.0_rt;
 
-        amrex::Real log_temp = std::log10(temp);
-        amrex::Real log_rhoy = std::log10(rhoy);
+        const amrex::Real log_temp = std::log10(temp);
+        const amrex::Real log_rhoy = std::log10(rhoy);
 
         tabular_evaluate(j_Na23_Ne23_meta, j_Na23_Ne23_rhoy, j_Na23_Ne23_temp, j_Na23_Ne23_data,
                          log_rhoy, log_temp, temp, rate, drate_dt, edot_nu, edot_gamma);
