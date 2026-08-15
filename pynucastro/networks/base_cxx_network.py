@@ -24,6 +24,14 @@ from pynucastro.screening import get_screening_pair_set
 from pynucastro.utils import pynucastro_version
 
 
+# dict to convert rate type to the C++ namespace
+namespaces = {"ModifiedRate": "modified_rates",
+              "ReacLibRate": "reaclib_rates",
+              "StarLibRate": "temp_tabular",
+              "TemperatureTabularRate": "temp_tabular",
+              "DerivedRate": "derived_rates"}
+
+
 def _rate_dtype(nrxn):
     """Given the number of reactions (nrxn), return the smallest C++
     unsigned integer type that can hold them
@@ -528,8 +536,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         weak_branched_rates = [r for r in self.branched_rates
                                if r.weak]
 
-        weak_branched_rates_children = [cr for br in self.branched_rates
-                                        for cr in br.get_child_rates()]
+        weak_branched_rates_children = {cr for br in weak_branched_rates
+                                        for cr in br.get_child_rates()}
 
         weak_rates += weak_branched_rates_children
 
@@ -553,8 +561,14 @@ class BaseCxxNetwork(ABC, RateCollection):
             args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
             template_args = ["do_T_derivatives"]
             of.write(f'{self.indent*n_indent}const tf_t tfactors = evaluate_tfactors(state.T);\n\n')
-            self._fill_rates(n_indent, of, weak_rates,
-                             args, template_args, do_T_derivatives=False)
+
+            # there can be many different types and each type is in a
+            # different namespace, so fill them by namespace
+            names = {type(r).__name__ for r in weak_rates}
+            for nm in names:
+                self._fill_rates(n_indent, of, [r for r in weak_rates if type(r).__name__ == nm],
+                                 args, template_args, do_T_derivatives=False,
+                                 namespace=namespaces[nm])
 
         if len(weak_branched_rates) > 0:
             args = ["rate_eval", "rate", "drate_dT"]
