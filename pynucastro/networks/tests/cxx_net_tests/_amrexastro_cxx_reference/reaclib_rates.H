@@ -121,7 +121,7 @@ void rate_C12_C12_to_p_Na23_reaclib(const tf_t& tfactors, const amrex::Real log_
 
 template <int do_T_derivatives>
 AMREX_GPU_DEVICE AMREX_INLINE
-void rate_He4_C12_to_O16_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+void rate_C12_He4_to_O16_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
     // C12 + He4 --> O16
 
@@ -277,7 +277,7 @@ fill_reaclib_rates([[maybe_unused]] const tf_t& tfactors,
     }
 
     {
-        // He4_C12_to_O16_reaclib
+        // C12_He4_to_O16_reaclib
 
         amrex::Real log_scor {0.0_rt};
         amrex::Real dlog_scor_dT {0.0_rt};
@@ -287,10 +287,10 @@ fill_reaclib_rates([[maybe_unused]] const tf_t& tfactors,
             dlog_scor_dT = rate_eval.dlog_screen_dT(k_He4_C12);
         }
 #endif
-        rate_He4_C12_to_O16_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
-        rate_eval.screened_rates(k_He4_C12_to_O16_reaclib) = rate;
+        rate_C12_He4_to_O16_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+        rate_eval.screened_rates(k_C12_He4_to_O16_reaclib) = rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            rate_eval.dscreened_rates_dT(k_He4_C12_to_O16_reaclib) = drate_dT;
+            rate_eval.dscreened_rates_dT(k_C12_He4_to_O16_reaclib) = drate_dT;
         }
     }
 

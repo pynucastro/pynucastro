@@ -489,6 +489,7 @@ class Rate:
 
         # this produces a sorted list with no dupes
         react_set = list(dict.fromkeys(treactants))
+        fname_reactants = []
         for n, r in enumerate(react_set):
             c = self.reactant_count(r)
             if c == 2:
@@ -496,6 +497,7 @@ class Rate:
                 self.string += f"{r.c()} + {r.c()}"
                 self.rid += f"{r} + {r}"
                 self.pretty_string += fr"{r.pretty} + {r.pretty}"
+                fname_reactants += [f"{r!r}", f"{r!r}"]
             else:
                 factor = ""
                 if c != 1:
@@ -506,6 +508,7 @@ class Rate:
                     self.pretty_string += fr"{factor}~{r.pretty}"
                 else:
                     self.pretty_string += fr"{r.pretty}"
+                fname_reactants += [f"{factor.strip()}{r!r}"]
             if not n == len(react_set)-1:
                 self.string += " + "
                 self.rid += " + "
@@ -521,6 +524,7 @@ class Rate:
         self.pretty_string += r" \rightarrow "
 
         prod_set = list(dict.fromkeys(self.products))
+        fname_products = []
         for n, p in enumerate(prod_set):
             c = self.product_count(p)
             if c == 2:
@@ -528,6 +532,7 @@ class Rate:
                 self.string += f"{p.c()} + {p.c()}"
                 self.rid += f"{p} + {p}"
                 self.pretty_string += fr"{p.pretty} + {p.pretty}"
+                fname_products += [f"{p!r}", f"{p!r}"]
             else:
                 factor = ""
                 if c != 1:
@@ -535,6 +540,7 @@ class Rate:
                 self.string += f"{factor}{p.c()}"
                 self.rid += f"{factor}{p}"
                 self.pretty_string += fr"{factor}{p.pretty}"
+                fname_products += [f"{factor.strip()}{p!r}"]
             if not n == len(prod_set)-1:
                 self.string += " + "
                 self.rid += " + "
@@ -559,10 +565,9 @@ class Rate:
 
         self.pretty_string += r"$"
 
-        # Set fname last
-        reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
-        products_str = '_'.join([repr(nuc) for nuc in self.products])
-        self.fname = f'{reactants_str}_to_{products_str}_{self.label}'
+        # fname is used in exported networks for the function names of
+        # the rates
+        self.fname = "_".join(fname_reactants) + "_to_" + "_".join(fname_products) + f"_{self.label}"
 
         # Treat special duplicate rate cases
         # These are likely weak rates with beta plus decay and electron captures
