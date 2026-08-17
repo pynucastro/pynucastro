@@ -56,19 +56,19 @@ class TestLibrary:
                 reaclib_library.get_rate_by_name("c12(p,g)n13"))
 
         # get by fname
-        assert (regular_library.get_rate("p_N14_to_O15_reaclib") ==
+        assert (regular_library.get_rate("N14_p_to_O15_reaclib") ==
                 reaclib_library.get_rate_by_name("n14(p,g)o15"))
 
         # get by fname
-        assert (regular_library.get_rate("p_n15_to_he4_c12_reaclib") ==
+        assert (regular_library.get_rate("n15_p_to_he4_c12_reaclib") ==
                 reaclib_library.get_rate_by_name("n15(p,a)c12"))
 
         # get by fname without label, i.e. use base name
-        assert (regular_library.get_rate("p_N14_to_O15") ==
+        assert (regular_library.get_rate("N14_p_to_O15") ==
                 reaclib_library.get_rate_by_name("n14(p,g)o15"))
 
         # get by fname without label, lowercase
-        assert (regular_library.get_rate("p_n15_to_he4_c12") ==
+        assert (regular_library.get_rate("n15_p_to_he4_c12") ==
                 reaclib_library.get_rate_by_name("n15(p,a)c12"))
 
     def test_get_rate_failure(self, regular_library):

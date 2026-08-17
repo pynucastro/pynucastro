@@ -25,26 +25,26 @@ class TestPythonNetwork:
 
     def test_ydot_string(self, rate1, rate2, rate3, rate4):
         ydot1 = rate1.ydot_string_py()
-        assert ydot1 == "rho*Y[jp]*Y[jc13]*rate_eval.p_C13_to_N14_reaclib"
+        assert ydot1 == "rho*Y[jp]*Y[jc13]*rate_eval.C13_p_to_N14_reaclib"
 
         ydot2 = rate2.ydot_string_py()
-        assert ydot2 == "5.00000000000000e-01*rho**2*Y[jp]**2*Y[jhe4]*rate_eval.p_p_He4_to_He3_He3_reaclib"
+        assert ydot2 == "5.00000000000000e-01*rho**2*Y[jp]**2*Y[jhe4]*rate_eval.He4_p_p_to_He3_He3_reaclib"
 
         ydot3 = rate3.ydot_string_py()
-        assert ydot3 == "5.00000000000000e-01*rho**3*Y[jn]*Y[jp]*Y[jhe4]**2*rate_eval.n_p_He4_He4_to_He3_Li7_reaclib"
+        assert ydot3 == "5.00000000000000e-01*rho**3*Y[jn]*Y[jp]*Y[jhe4]**2*rate_eval.He4_He4_p_n_to_He3_Li7_reaclib"
 
         ydot4 = rate4.ydot_string_py()
         assert ydot4 == "5.00000000000000e-01*rho**2*ye(Y)*Y[jp]**2*rate_eval.p_p_to_d_reaclib_electron_capture"
 
     def test_jacobian_string(self, rate1, rate2, rate3, rate4):
         jac1 = rate1.jacobian_string_py(rate1.reactants[0])
-        assert jac1 == "rho*Y[jc13]*rate_eval.p_C13_to_N14_reaclib"
+        assert jac1 == "rho*Y[jc13]*rate_eval.C13_p_to_N14_reaclib"
 
         jac2 = rate2.jacobian_string_py(rate2.reactants[0])
-        assert jac2 == "5.00000000000000e-01*rho**2*2*Y[jp]*Y[jhe4]*rate_eval.p_p_He4_to_He3_He3_reaclib"
+        assert jac2 == "5.00000000000000e-01*rho**2*2*Y[jp]*Y[jhe4]*rate_eval.He4_p_p_to_He3_He3_reaclib"
 
         jac3 = rate3.jacobian_string_py(rate3.reactants[0])
-        assert jac3 == "5.00000000000000e-01*rho**3*Y[jp]*Y[jhe4]**2*rate_eval.n_p_He4_He4_to_He3_Li7_reaclib"
+        assert jac3 == "5.00000000000000e-01*rho**3*Y[jp]*Y[jhe4]**2*rate_eval.He4_He4_p_n_to_He3_Li7_reaclib"
 
         jac4 = rate4.jacobian_string_py(rate4.reactants[0])
         assert jac4 == "5.00000000000000e-01*rho**2*ye(Y)*2*Y[jp]*rate_eval.p_p_to_d_reaclib_electron_capture"
@@ -53,7 +53,7 @@ class TestPythonNetwork:
 
         ostr1 = """
 @numba.njit()
-def p_C13_to_N14_reaclib(rate_eval, tf, log_scor=0.0):
+def C13_p_to_N14_reaclib(rate_eval, tf, log_scor=0.0):
     # C13 + p --> N14
     rate = 0.0
 
@@ -81,13 +81,13 @@ def p_C13_to_N14_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.p_C13_to_N14_reaclib = rate
+    rate_eval.C13_p_to_N14_reaclib = rate
 """
 
         ostr2 = """
 @numba.njit()
-def p_p_He4_to_He3_He3_reaclib(rate_eval, tf, log_scor=0.0):
-    # p + p + He4 --> He3 + He3
+def He4_p_p_to_He3_He3_reaclib(rate_eval, tf, log_scor=0.0):
+    # He4 + p + p --> He3 + He3
     rate = 0.0
 
     # nacrn
@@ -98,13 +98,13 @@ def p_p_He4_to_He3_He3_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.p_p_He4_to_He3_He3_reaclib = rate
+    rate_eval.He4_p_p_to_He3_He3_reaclib = rate
 """
 
         ostr3 = """
 @numba.njit()
-def n_p_He4_He4_to_He3_Li7_reaclib(rate_eval, tf, log_scor=0.0):
-    # n + p + He4 + He4 --> He3 + Li7
+def He4_He4_p_n_to_He3_Li7_reaclib(rate_eval, tf, log_scor=0.0):
+    # He4 + He4 + p + n --> He3 + Li7
     rate = 0.0
 
     # mafon
@@ -115,7 +115,7 @@ def n_p_He4_He4_to_He3_Li7_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.n_p_He4_He4_to_He3_Li7_reaclib = rate
+    rate_eval.He4_He4_p_n_to_He3_Li7_reaclib = rate
 """
 
         ostr4 = """

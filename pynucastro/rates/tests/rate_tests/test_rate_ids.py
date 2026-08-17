@@ -27,7 +27,7 @@ class TestRateIds:
 
         assert r1.rid == "C12 + He4 --> O16"
         assert r1.id == "C12 + He4 --> O16 <reaclib_nac2>"
-        assert r1.fname == "He4_C12_to_O16_reaclib"
+        assert r1.fname == "C12_He4_to_O16_reaclib"
 
     def test_alternate_rate(self):
         r1 = DeBoerC12agO16()
@@ -82,7 +82,7 @@ class TestRateIds:
 
         assert cr.rid == "Mg24 + He4 --> p + Al27"
         assert cr.id == "Mg24 + He4 --> p + Al27 <reaclib_il10>"
-        assert cr.fname == "He4_Mg24_to_p_Al27_reaclib"
+        assert cr.fname == "Mg24_He4_to_p_Al27_reaclib"
 
     def test_duplicate_rates(self, full_library):
         # Make sure duplicate sets in ALLOWED_DUPLICATES have different fname and id
