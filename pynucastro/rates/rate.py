@@ -568,6 +568,9 @@ class Rate:
         # fname is used in exported networks for the function names of
         # the rates
         self.fname = "_".join(fname_reactants) + "_to_" + "_".join(fname_products) + f"_{self.label}"
+        # for fractional stoichiometry, we cannot have "." in the
+        # name, since it won't compile
+        self.fname.replace(".", "_")
 
         # Treat special duplicate rate cases
         # These are likely weak rates with beta plus decay and electron captures
