@@ -23,19 +23,19 @@ class BranchedRate(Rate):
 
     An example application would be the sequences:
 
-       N14(p,γ)O15(,e⁺ν)N15(p,α)C12
-       N14(p,γ)O15(,e⁺ν)N15(p,γ)O16
+    * N14(p,γ)O15(,e⁺ν)N15(p,α)C12
+    * N14(p,γ)O15(,e⁺ν)N15(p,γ)O16
 
     These differ only in the last rate.  We would set the
     underlying_rate to be N14(p,γ)O15, the primary_branch to be
     N15(p,α)C12 and the secondary branch to be N15(p,γ))O16.  It would
     then compute the branching ratio:
 
-       f = λ_{N15(p,α)C12} / (λ_{N15(p,α)C12} + λ_{N15(p,γ)O16)
+    f = λ_{N15(p,α)C12} / (λ_{N15(p,α)C12} + λ_{N15(p,γ)O16))
 
     and the final rate evaluation would be
 
-       λ = f λ_{N14(p,γ)O15}
+    λ = f λ_{N14(p,γ)O15}
 
     Parameters
     ----------
