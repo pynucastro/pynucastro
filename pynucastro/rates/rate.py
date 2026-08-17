@@ -1167,7 +1167,7 @@ class RateSource:
         return cls.labels.get(label.lower().strip())
 
 
-class RatePair:
+class RatePair:  # noqa: PLW1641  (not hashable)
     """A pair of rates: the forward and reverse rates for a single
     reaction sequence.  Forward rates are those with Q >= 0.
 
