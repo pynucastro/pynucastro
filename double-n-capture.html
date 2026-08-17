@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Approximating double n-capture &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
+    <title>Approximating double n-capture &#8212; pynucastro 3.0.0.post4+g7c5b6a03c documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=696fc4a0"></script>
+    <script src="_static/documentation_options.js?v=cf38084f"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -694,10 +694,10 @@
 </section>
 <section id="approximating-the-double-n-capture">
 <h2>Approximating the double n capture<a class="headerlink" href="#approximating-the-double-n-capture" title="Link to this heading">#</a></h2>
-<p>We can use the helper function <code class="docutils literal notranslate"><span class="pre">create_double_neutron_capture()</span></code> to create a pair (forward and reverse) of <code class="docutils literal notranslate"><span class="pre">ApproximateRates</span></code> that approximate out the intermediate nucleus:</p>
+<p>We can use the helper function <a class="reference internal" href="pynucastro.rates.aprox_family_rates.html#pynucastro.rates.aprox_family_rates.make_double_neutron_rates" title="pynucastro.rates.aprox_family_rates.make_double_neutron_rates"><code class="xref py py-meth docutils literal notranslate"><span class="pre">make_double_neutron_rates</span></code></a> to create a pair (forward and reverse) of <code class="docutils literal notranslate"><span class="pre">ApproximateRates</span></code> that approximate out the intermediate nucleus:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rf</span><span class="p">,</span> <span class="n">rr</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">create_double_neutron_capture</span><span class="p">(</span><span class="n">rl</span><span class="p">,</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"fe52"</span><span class="p">),</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"fe54"</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rf</span><span class="p">,</span> <span class="n">rr</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">make_double_neutron_rates</span><span class="p">(</span><span class="n">rl</span><span class="p">,</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"fe52"</span><span class="p">),</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"fe54"</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
